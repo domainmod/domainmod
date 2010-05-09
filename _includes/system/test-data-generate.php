@@ -19,7 +19,7 @@ session_start();
 include("../software.inc.php");
 include("../config.inc.php");
 include("../database.inc.php");
-include("../auth/auth-check.inc.php");
+// include("../auth/auth-check.inc.php");
 include("../timestamps/current-timestamp.inc.php");
 include("../timestamps/current-timestamp-basic.inc.php");
 
@@ -338,8 +338,6 @@ while ($count <= 5) {
 if ($_SESSION['session_installation_mode'] == 1 || $_SESSION['session_first_login'] == 1) {
 	
 	$_SESSION['session_first_login'] = 0;
-	$_SESSION['session_result_message'] = "Installation Was Successul!<BR><BR>We <strong>strongly</strong> recommend that you delete the /installer/ directory.<BR>";
-
 	header("Location: ../../index.php");
 	exit;
 	

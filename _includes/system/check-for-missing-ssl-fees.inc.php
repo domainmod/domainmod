@@ -16,15 +16,15 @@
 <?php
 session_start();
 
-$sql = "select count(id) as total_count
+$sql_missing_ssl_fees = "select count(id) as total_count
         from ssl_certs
         where fee_id = '0'";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) { $total_results = $row->total_count; }
+$result_missing_ssl_fees = mysql_query($sql_missing_ssl_fees,$connection);
+while ($row_missing_ssl_fees = mysql_fetch_object($result_missing_ssl_fees)) { $total_results = $row_missing_ssl_fees->total_count; }
 
-if ($total_results != "0") { 
-    $_SESSION['session_missing_ssl_fees'] = "1"; 
+if ($total_results != 0) { 
+    $_SESSION['session_missing_ssl_fees'] = 1; 
 } else {
-    $_SESSION['session_missing_ssl_fees'] = "0"; 
+    $_SESSION['session_missing_ssl_fees'] = 0; 
 }
 ?>

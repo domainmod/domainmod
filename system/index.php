@@ -20,6 +20,7 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 $page_title = "System Tools";
+$software_section = "system";
 ?>
 <html>
 <head>
@@ -29,7 +30,8 @@ $page_title = "System Tools";
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
- &raquo; <a href="../_includes/system/fix-domain-fees.php">Fix All Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-tlds.php">Fix All TLDs</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-ssl-fees.php">Fix All SSL Fees</a><BR /><BR /> 
+ &raquo; <a href="change-password.php">Change Password</a><BR><BR> 
+ &raquo; <a href="../_includes/system/fix-domain-fees.php">Fix All Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-tlds.php">Fix All TLDs</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-ssl-fees.php">Fix All SSL Fees</a><BR><BR> 
  &raquo; <a href="../_includes/system/test-data-delete.php?generating_test_data=1">Regenerate Test Data</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/test-data-delete.php">Delete Test Data</a>
 
 <?php include("../_includes/footer.inc.php"); ?>

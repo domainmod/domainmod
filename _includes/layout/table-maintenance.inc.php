@@ -17,7 +17,7 @@
 session_start();
 ?>
 
-<?php if ($_SESSION['session_missing_domain_fees'] == "1" || $_SESSION['session_missing_ssl_fees'] == "1") { ?>
+<?php if ($_SESSION['session_missing_domain_fees'] == 1 || $_SESSION['session_missing_ssl_fees'] == 1) { ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" bordercolor="#000000">
 	<tr>
     	<td bordercolor="#000000">
@@ -27,10 +27,10 @@ session_start();
                 	<td class="cell-maintenance-table">
                     <BR>
                     <strong>Maintenance Warning! (clear up the issues to make this table disappear)</strong><BR><BR>
-					<?php if ($_SESSION['session_missing_domain_fees'] == "1") { ?>
+					<?php if ($_SESSION['session_missing_domain_fees'] == 1) { ?>
                     <LI>Some of your Registrars/TLDs are missing domain fees. <a href="<?=$web_root?>/missing-domain-fees.php">Click here to fix this</a>.</LI>
                     <?php } ?>
-					<?php if ($_SESSION['session_missing_ssl_fees'] == "1") { ?>
+					<?php if ($_SESSION['session_missing_ssl_fees'] == 1) { ?>
                     <LI>Some of your SSL Certificates are missing fees. <a href="<?=$web_root?>/missing-ssl-fees.php">Click here to fix this</a>.</LI>
                     <?php } ?>
 					<BR>

@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License along with Domain Manager. If not, please 
 // see http://www.gnu.org/licenses/
 ?>
-<BR /><BR />
+<br><br>
 <?php if ($software_section == "domains") { ?>
  &raquo; <a href="<?=$web_root?>/add/domain.php">Add A New Domain</a>
 <?php } elseif ($software_section == "ssl-providers") { ?>

@@ -16,15 +16,21 @@
 <?php
 session_start();
 
-$sql_missing_domain_fees = "select count(id) as total_count
-        from domains
-        where fee_id = '0'";
-$result_missing_domain_fees = mysql_query($sql_missing_domain_fees,$connection);
-while ($row_missing_domain_fees = mysql_fetch_object($result_missing_domain_fees)) { $total_results = $row_missing_domain_fees->total_count; }
+include("../../database.inc.php");
 
-if ($total_results != 0) { 
-    $_SESSION['session_missing_domain_fees'] = 1; 
-} else {
-    $_SESSION['session_missing_domain_fees'] = 0; 
+$sql = "select new_password 
+		from users
+		where id = '" . $_SESSION['session_user_id'] . "' 
+		and email_address = '" . $_SESSION['session_email_address'] . "'";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+
+while ($row = mysql_fetch_object($result)) { $is_it_a_new_password = $row->new_password; }
+
+if ($is_it_a_new_password == 1) {
+
+	$_SESSION['session_result_message'] = "Since your password was recently reset, you are required to change it for security purposes.<BR>";
+	header("Location: ../../../system/change-password.php");
+	exit;
+
 }
 ?>

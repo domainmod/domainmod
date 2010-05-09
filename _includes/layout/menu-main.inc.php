@@ -24,7 +24,7 @@
 [ <a href="<?=$web_root?>/ssl-accounts.php">SSL Accounts</a> ]&nbsp;
 [ <a href="<?=$web_root?>/tlds.php">TLDs</a> ]&nbsp;
 [ <a href="<?=$web_root?>/currencies.php">Currencies</a> ]
-<BR /><BR />
+<br><br>
 [ <a href="<?=$web_root?>/segments.php">Segment Filters</a> ]&nbsp;
 [ <a href="<?=$web_root?>/bulk-actions.php">Perform Bulk Actions</a> ]&nbsp;
 [ <a href="<?=$web_root?>/expiring-domains.php">Expiring Domains</a> ]&nbsp;

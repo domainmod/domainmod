@@ -17,7 +17,7 @@
 session_start();
 if ($_SESSION['session_is_logged_in'] != 1) {
 	
-		$_SESSION['session_member_redirect'] = $_SERVER["REQUEST_URI"];
+		$_SESSION['session_user_redirect'] = $_SERVER["REQUEST_URI"];
 	
 		$_SESSION['session_result_message'] = "You must be logged in to access this area.<BR>";
 	

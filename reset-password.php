@@ -31,7 +31,8 @@ if ($submitted == "YES" && $new_username != "") {
 
    $sql = "select username, email_address
            from users
-		   where username = '$new_username'";
+		   where username = '$new_username'
+		   and active = '1'";
 
    $result = mysql_query($sql,$connection) 
              or die('Query failed. 1. ' . mysql_error()); 
@@ -42,8 +43,10 @@ if ($submitted == "YES" && $new_username != "") {
 	
 			$new_password = substr(md5(time()),0,8);
 			
-			$sql2 = "update users set password = password('$new_password'), 
-								 update_time = '$current_timestamp'
+			$sql2 = "update users 
+					 set password = password('$new_password'), 
+					 	 new_password = '1',
+					 	 update_time = '$current_timestamp'
 					 where username = '$row->username'
 					 and email_address = '$row->email_address'";
 			$result2 = mysql_query($sql2,$connection);

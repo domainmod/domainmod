@@ -40,12 +40,13 @@ $new_password = $_POST['new_password'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
 	
-	$sql = "select username, email_address, password
+	$sql = "select id, username, email_address, password, admin
 			from users
 			where username = '$new_username'
-			and password = password('$new_password')"; 
+			and password = password('$new_password')
+			and active = '1'";
 	$result = mysql_query($sql,$connection) or die('Login Failed'); 
-
+	
    if (mysql_num_rows($result) == 1) {
 	   
 	   while ($row = mysql_fetch_object($result)) {
@@ -53,23 +54,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			include("_includes/system/check-for-missing-domain-fees.inc.php");
 			include("_includes/system/check-for-missing-ssl-fees.inc.php");
 
+			$_SESSION['session_user_id'] = $row->id;
 			$_SESSION['session_username'] = $row->username;
 			$_SESSION['session_email_address'] = $row->email_address;
+			if ($row->admin == 1) $_SESSION['session_is_admin'] = 1;
 			$_SESSION['session_is_logged_in'] = 1;
-			$_SESSION['session_result_message'] = "You have been successfully logged in.<BR>";
-		   
-		   	if (isset($_SESSION['session_member_redirect'])) {
-
-				header("Location: " . $_SESSION['session_member_redirect']);
-				exit;
-
-			} else {
-
-			   header("Location: domains.php");
-			   exit;
-
-			}
-
+			
+			header("Location: _includes/auth/login-checks/main.inc.php");
+			exit;
 	   }
 
 	} else {

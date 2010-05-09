@@ -29,6 +29,11 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` varchar(20) NOT NULL,
   `email_address` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `new_password` int(1) NOT NULL default '1',
+  `admin` int(1) NOT NULL default '0',
+  `active` int(1) NOT NULL default '1',
+  `number_of_logins` int(10) NOT NULL default '0',
+  `last_login` datetime NOT NULL,
   `insert_time` datetime NOT NULL,
   `update_time` datetime NOT NULL,
   PRIMARY KEY  (`id`)
@@ -37,8 +42,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "
-INSERT INTO `users` (`username`, `email_address`, `password`, `insert_time`) VALUES
-('admin', 'admin@aysmedia.com', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '$current_timestamp');
+INSERT INTO `users` (`username`, `email_address`, `password`, `admin`, `insert_time`) VALUES
+('admin', 'admin@aysmedia.com', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 

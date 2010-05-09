@@ -13,6 +13,9 @@
 // You should have received a copy of the GNU General Public License along with Domain Manager. If not, please 
 // see http://www.gnu.org/licenses/
 ?>
+<?php
+session_start();
+?>
 <a name="top"></a>
 <BR>
 
@@ -28,7 +31,7 @@
 <table align="center" width="<?=$site_width?>" border="0" cellspacing="0" cellpadding="0">
 	<tr>
         <td class="main-table" height="100%">
-<?php if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword") { ?>
+<?php if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['session_running_login_checks'] != 1) { ?>
 <?php include($full_server_path . "/_includes/layout/menu-main.inc.php"); ?><BR>
 <hr width="100%" size="1" noshade><BR>
 <?php } ?>
