@@ -25,7 +25,9 @@ session_start();
 <font class="headline"><?=$software_title?></font>
 		</td>
         <td align="right" valign="bottom" height="100%">
+        <?php if ($_SESSION['session_is_logged_in'] == 1) { ?>
         <em>logged in as <?=$_SESSION['session_username']?> (<?=$_SESSION['session_first_name']?> <?=$_SESSION['session_last_name']?>)&nbsp;&nbsp;</em><BR><BR>
+        <?php } ?>
 		</td>
 	</tr>
 </table>

@@ -20,8 +20,6 @@ include("auth-check.inc.php");
 
 $_SESSION = array();
 
-$_SESSION['session_result_message'] .= "You have been successfully logged out.<BR>";
-
 header("Location: ../../");
 exit;
 ?>
