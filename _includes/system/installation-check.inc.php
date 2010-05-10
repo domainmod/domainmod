@@ -25,7 +25,7 @@ if (is_dir($full_install_path)) {
 		
 		$_SESSION['session_installation_mode'] = 1;
 		$_SESSION['session_first_login'] = 1;
-		$_SESSION['session_result_message'] .= "Please <a href=\"" . $web_root . "/installer/\">click here</a> to install.<BR>";
+		$_SESSION['session_result_message'] .= "<a href=\"" . $web_root . "/installer/\">Please click here to install</a><BR>";
 
 	} else {
 		
