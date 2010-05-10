@@ -25,9 +25,8 @@ $page_title = "Reset Password";
 $software_section = "resetpassword";
 
 $new_username = $_POST['new_username'];
-$submitted = $_POST['submitted'];
 
-if ($submitted == "YES" && $new_username != "") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "") {
 
    $sql = "select username, email_address
            from users
@@ -68,7 +67,7 @@ if ($submitted == "YES" && $new_username != "") {
 
 } else {
 
-	if ($submitted == "YES") {
+	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		if ($new_username == "") $_SESSION['session_result_message'] .= "Enter your username<BR>";
 	}
@@ -86,7 +85,6 @@ if ($submitted == "YES" && $new_username != "") {
 <BR>
 <form name="login_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Username:<strong><BR><input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
-<input name="submitted" type="hidden" value="YES">
 <input type="submit" name="button" value="Reset Password &raquo;">
 </form>
 <?php include("_includes/footer.inc.php"); ?>

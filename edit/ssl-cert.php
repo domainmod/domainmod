@@ -37,9 +37,8 @@ $new_account_id = $_POST['new_account_id'];
 $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 $new_sslcid = $_POST['new_sslcid'];
-$IS_SUBMITTED = $_POST['IS_SUBMITTED'];
 
-if ($IS_SUBMITTED == "1") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "" && $new_type != "") {
 
@@ -224,7 +223,6 @@ echo "</select>";
 <textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_sslcid" value="<?=$sslcid?>">
-<input type="hidden" name="IS_SUBMITTED" value="1">
 <input type="submit" name="button" value="Update This SSL Certificate &raquo;">
 </form>
 <BR><BR>

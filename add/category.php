@@ -26,9 +26,8 @@ $software_section = "categories";
 $new_category = $_POST['new_category'];
 $new_notes = $_POST['new_notes'];
 $new_default_category = $_POST['new_default_category'];
-$IS_SUBMITTED = $_POST['IS_SUBMITTED'];
 
-if ($IS_SUBMITTED == "1") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_category != "") {
 		
@@ -87,7 +86,6 @@ $page_title = "Adding A New Category";
 <strong>Default Category?:</strong>&nbsp;
 <input name="new_default_category" type="checkbox" id="new_default_category" value="1">
 <BR><BR><BR>
-<input type="hidden" name="IS_SUBMITTED" value="1">
 <input type="submit" name="button" value="Add This Category &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>

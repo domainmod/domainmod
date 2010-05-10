@@ -40,11 +40,10 @@ $new_privacy = $_POST['new_privacy'];
 $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 $new_renewal_years = $_POST['new_renewal_years'];
-$IS_SUBMITTED = $_POST['IS_SUBMITTED'];
 
 $choose_text = "Click Here To Choose A New";
 
-if ($IS_SUBMITTED == "1" && $new_data != "") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 
 		$lines = explode("\r\n", $new_data);
 		$number_of_domains = count($lines);
@@ -611,7 +610,6 @@ Enter the domains one per line.
 <?php } ?>
 
 <BR>
-<input type="hidden" name="IS_SUBMITTED" value="1">
 <input type="hidden" name="action" value="<?=$action?>">
 <?php if ($action == "CDNS") { ?>
 <input type="hidden" name="dnsid" value="<?=$new_dnsid?>">

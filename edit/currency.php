@@ -31,9 +31,8 @@ $new_conversion = $_POST['new_conversion'];
 $new_default_currency = $_POST['new_default_currency'];
 $new_notes = $_POST['new_notes'];
 $new_curid = $_POST['new_curid'];
-$IS_SUBMITTED = $_POST['IS_SUBMITTED'];
 
-if ($IS_SUBMITTED == "1") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != "" && $new_abbreviation != "" && $new_conversion != "") {
 		
@@ -122,7 +121,6 @@ $page_title = "Editting A Currency";
 <textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_curid" value="<?=$curid?>">
-<input type="hidden" name="IS_SUBMITTED" value="1">
 <input type="submit" name="button" value="Update This Currency &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>

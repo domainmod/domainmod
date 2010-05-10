@@ -35,9 +35,8 @@ $new_dns7 = $_POST['new_dns7'];
 $new_dns8 = $_POST['new_dns8'];
 $new_dns9 = $_POST['new_dns9'];
 $new_dns10 = $_POST['new_dns10'];
-$IS_SUBMITTED = $_POST['IS_SUBMITTED'];
 
-if ($IS_SUBMITTED == "1") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != '') {
 		
@@ -136,7 +135,6 @@ $page_title = "Adding A New DNS Profile";
 <strong>DNS 10:</strong><BR><BR>
 <input name="new_dns10" type="text" size="50" maxlength="255" value="<?=stripslashes($new_dns10)?>">
 <BR><BR><BR>
-<input type="hidden" name="IS_SUBMITTED" value="1">
 <input type="submit" name="button" value="Add This DNS Profile &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>

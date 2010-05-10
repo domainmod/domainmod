@@ -29,9 +29,8 @@ $new_category = $_REQUEST['new_category'];
 $new_notes = $_REQUEST['new_notes'];
 $new_default_category = $_REQUEST['new_default_category'];
 $new_pcid = $_REQUEST['new_pcid'];
-$IS_SUBMITTED = $_POST['IS_SUBMITTED'];
 
-if ($IS_SUBMITTED == "1") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_category != "") {
 
@@ -112,7 +111,6 @@ $page_title = "Editting A Category";
 <input name="new_default_category" type="checkbox" value="1"<?php if ($new_default_category == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_pcid" value="<?=$pcid?>">
-<input type="hidden" name="IS_SUBMITTED" value="1">
 <input type="submit" name="button" value="Update This Category &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>

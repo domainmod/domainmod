@@ -26,9 +26,8 @@ $software_section = "ssl-providers";
 $new_ssl_provider = $_POST['new_ssl_provider'];
 $new_url = $_POST['new_url'];
 $new_notes = $_POST['new_notes'];
-$IS_SUBMITTED = $_POST['IS_SUBMITTED'];
 
-if ($IS_SUBMITTED == "1") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_ssl_provider != "" && $new_url != "") {
 
@@ -70,7 +69,6 @@ $page_title = "Adding A New SSL Provider";
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
 <BR><BR><BR>
-<input type="hidden" name="IS_SUBMITTED" value="1">
 <input type="submit" name="button" value="Add This SSL Provider &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>

@@ -38,9 +38,8 @@ $new_dns9 = $_POST['new_dns9'];
 $new_dns10 = $_POST['new_dns10'];
 $new_dnsid = $_POST['new_dnsid'];
 $new_notes = $_POST['new_notes'];
-$IS_SUBMITTED = $_POST['IS_SUBMITTED'];
 
-if ($IS_SUBMITTED == "1") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		$new_number_of_servers = 10;
 		
@@ -171,7 +170,6 @@ $page_title = "Editting A DNS Profile";
 <input name="new_dns10" type="text" size="50" maxlength="255" value="<?php if ($new_dns10 != "") echo stripslashes($new_dns10); ?>">
 <BR><BR><BR>
 <input type="hidden" name="new_dnsid" value="<?=$dnsid?>">
-<input type="hidden" name="IS_SUBMITTED" value="1">
 <input type="submit" name="button" value="Update This DNS Profile &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>

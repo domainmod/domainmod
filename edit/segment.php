@@ -34,9 +34,8 @@ $new_description = $_POST['new_description'];
 $new_segment = $_POST['new_segment'];
 $new_notes = $_POST['new_notes'];
 $new_segid = $_POST['new_segid'];
-$IS_SUBMITTED = $_POST['IS_SUBMITTED'];
 
-if ($IS_SUBMITTED == "1") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != "" && $new_segment != "") {
 
@@ -140,7 +139,6 @@ Enter the domains one per line.<BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_segid" value="<?=$segid?>">
-<input type="hidden" name="IS_SUBMITTED" value="1">
 <input type="submit" name="button" value="Update This Segment &raquo;">
 </form>
 <BR><BR>

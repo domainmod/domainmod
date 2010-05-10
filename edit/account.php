@@ -31,9 +31,8 @@ $new_username = $_POST['new_username'];
 $new_reseller = $_POST['new_reseller'];
 $new_notes = $_POST['new_notes'];
 $new_raid = $_POST['new_raid'];
-$IS_SUBMITTED = $_POST['IS_SUBMITTED'];
 
-if ($IS_SUBMITTED == "1") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_username != "") {
 
@@ -145,7 +144,6 @@ echo "</select>";
 <textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_raid" value="<?=$raid?>">
-<input type="hidden" name="IS_SUBMITTED" value="1">
 <input type="submit" name="button" value="Update This Account &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>

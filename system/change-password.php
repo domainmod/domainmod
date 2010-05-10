@@ -26,9 +26,8 @@ $software_section = "system";
 // Form Variables
 $new_password = $_POST['new_password'];
 $new_password_confirmation = $_POST['new_password_confirmation'];
-$submitted = $_POST['submitted'];
 
-if ($submitted == "YES" && $new_password != "" && $new_password_confirmation != "" && $new_password == $new_password_confirmation) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password_confirmation != "" && $new_password == $new_password_confirmation) {
 
 	$sql = "select id 
 			from users 
@@ -71,7 +70,7 @@ if ($submitted == "YES" && $new_password != "" && $new_password_confirmation != 
 } else {
 
 
-	if ($submitted == "YES") {
+	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		if ($new_password == "" && $new_password_confirmation == "") {
 		
@@ -100,7 +99,6 @@ New Password<BR><input type="password" name="new_password" size="20">
 Confirm New Password<BR><input type="password" name="new_password_confirmation" size="20">
 <BR><BR>
 <input type="submit" name="button" value="Change Password &raquo;">
-<input type="hidden" name="submitted" value="YES">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
