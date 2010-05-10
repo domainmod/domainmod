@@ -24,6 +24,9 @@ session_start();
         <td class="header-table" height="100%">
 <font class="headline"><?=$software_title?></font>
 		</td>
+        <td align="right" valign="bottom" height="100%">
+        <em>logged in as <?=$_SESSION['session_username']?> (<?=$_SESSION['session_first_name']?> <?=$_SESSION['session_last_name']?>)&nbsp;&nbsp;</em><BR><BR>
+		</td>
 	</tr>
 </table>
 

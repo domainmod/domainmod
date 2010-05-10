@@ -40,7 +40,7 @@ $new_password = $_POST['new_password'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
 	
-	$sql = "select id, username, email_address, password, admin
+	$sql = "select id, first_name, last_name, username, email_address, password, admin
 			from users
 			where username = '$new_username'
 			and password = password('$new_password')
@@ -55,6 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			include("_includes/system/check-for-missing-ssl-fees.inc.php");
 
 			$_SESSION['session_user_id'] = $row->id;
+			$_SESSION['session_first_name'] = $row->first_name;
+			$_SESSION['session_last_name'] = $row->last_name;
 			$_SESSION['session_username'] = $row->username;
 			$_SESSION['session_email_address'] = $row->email_address;
 			if ($row->admin == 1) $_SESSION['session_is_admin'] = 1;

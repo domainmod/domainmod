@@ -26,6 +26,8 @@ include("../_includes/timestamps/current-timestamp-basic.inc.php");
 $sql = "
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(10) NOT NULL auto_increment,
+  `first_name` varchar(50) NOT NULL,
+  `last_name` varchar(50) NOT NULL,
   `username` varchar(20) NOT NULL,
   `email_address` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
@@ -42,8 +44,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "
-INSERT INTO `users` (`username`, `email_address`, `password`, `admin`, `insert_time`) VALUES
-('admin', 'admin@aysmedia.com', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '$current_timestamp');
+INSERT INTO `users` (`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `insert_time`) VALUES
+('Domain', 'Administrator', 'admin', 'admin@aysmedia.com', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
