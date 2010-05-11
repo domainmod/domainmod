@@ -540,18 +540,18 @@ echo "</select>";
 &nbsp;&nbsp;
 <?php 
 // TLD
-if ($is_active == "0") { $is_active_string = " and active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " and active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " and active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " and active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " and active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " and active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " and active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " and active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " and active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " and active = '9' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " and active in ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; } 
-elseif ($is_active == "ALL") { $is_active_string = " and active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') "; } 
+if ($is_active == "0") { $is_active_string = " where active = '0' "; } 
+elseif ($is_active == "1") { $is_active_string = " where active = '1' "; } 
+elseif ($is_active == "2") { $is_active_string = " where active = '2' "; } 
+elseif ($is_active == "3") { $is_active_string = " where active = '3' "; } 
+elseif ($is_active == "4") { $is_active_string = " where active = '4' "; } 
+elseif ($is_active == "5") { $is_active_string = " where active = '5' "; } 
+elseif ($is_active == "6") { $is_active_string = " where active = '6' "; } 
+elseif ($is_active == "7") { $is_active_string = " where active = '7' "; } 
+elseif ($is_active == "8") { $is_active_string = " where active = '8' "; } 
+elseif ($is_active == "9") { $is_active_string = " where active = '9' "; } 
+elseif ($is_active == "LIVE") { $is_active_string = " where active in ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; } 
+elseif ($is_active == "ALL") { $is_active_string = " where active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') "; } 
 
 if ($pcid != "") { $pcid_string = " and cat_id = '$pcid' "; } else { $pcid_string = ""; }
 if ($cid != "") { $cid_string = " and company_id = '$cid' "; } else { $cid_string = ""; }
