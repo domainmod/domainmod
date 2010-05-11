@@ -26,7 +26,7 @@ $software_section = "ssl-certs";
 // Form Variables
 $new_domain_id = $_POST['new_domain_id'];
 $new_name = $_POST['new_name'];
-$new_type = $_POST['new_type'];
+$new_type_id = $_POST['new_type_id'];
 $new_expiry_date = $_POST['new_expiry_date'];
 $new_account_id = $_POST['new_account_id'];
 $new_active = $_POST['new_active'];
@@ -34,7 +34,7 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "" && $new_type != "" && $new_domain_id != "") {
+	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "" && $new_type_id != "" && $new_domain_id != "") {
 
 		$sql = "select ssl_provider_id, company_id
 				from ssl_accounts
@@ -45,14 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "select id
 				from ssl_fees
-				where ssl_provider_id = '$new_ssl_provider_id' and type = '$new_type'";
+				where ssl_provider_id = '$new_ssl_provider_id' and type_id = '$new_type_id'";
 		$result = mysql_query($sql,$connection);
 		
 		while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
 
 		$sql = "insert into ssl_certs
-				(company_id, ssl_provider_id, account_id, domain_id, name, type, expiry_date, fee_id, notes, active, insert_time)
-				values ('$new_company_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '$new_name', '$new_type', '$new_expiry_date', '$new_fee_id', '$new_notes', '$new_active', '$current_timestamp')";
+				(company_id, ssl_provider_id, account_id, domain_id, name, type_id, expiry_date, fee_id, notes, active, insert_time)
+				values ('$new_company_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '$new_name', '$new_type_id', '$new_expiry_date', '$new_fee_id', '$new_notes', '$new_active', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -103,12 +103,31 @@ while ($row_domain = mysql_fetch_object($result_domain)) {
 echo "</select>";
 ?>
 <BR><BR>
-
-<strong>Label:</strong><BR><BR>
+<strong>Host / Label:</strong><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?=stripslashes($new_name)?>">
 <BR><BR>
 <strong>Type:</strong><BR><BR>
-<input name="new_type" type="text" size="50" maxlength="255" value="<?=stripslashes($new_type)?>">
+<?php
+$sql_type = "select id, type
+				from ssl_cert_types
+				where active = '1'
+				order by type asc";
+$result_type = mysql_query($sql_type,$connection) or die(mysql_error());
+echo "<select name=\"new_type_id\">";
+while ($row_type = mysql_fetch_object($result_type)) {
+
+	if ($row_type->id == $new_type_id) {
+
+		echo "<option value=\"$row_type->id\" selected>$row_type->type</option>";
+	
+	} else {
+
+		echo "<option value=\"$row_type->id\">$row_type->type</option>";
+	
+	}
+}
+echo "</select>";
+?>
 <BR><BR>
 <strong>Expiry Date (YYYY-MM-DD):</strong><BR><BR>
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_plus_one_year_date_only; } ?>">

@@ -56,12 +56,13 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
 	</td>
 	<td>
     	<?php
-		$sql2 = "select type
-				 from ssl_certs
-				 where ssl_provider_id = '$row->ssl_provider_id'
-				 and fee_id = '0'
-				 group by type
-				 order by type asc";
+		$sql2 = "select sslct.type
+				 from ssl_cert_types as sslct, ssl_certs as sslc
+				 where sslct.id = sslc.type_id
+				 and sslc.ssl_provider_id = '$row->ssl_provider_id'
+				 and sslc.fee_id = '0'
+				 group by sslct.type
+				 order by sslct.type asc";
 		$result2 = mysql_query($sql2,$connection);
 		$full_type_list = "";
 		while ($row2 = mysql_fetch_object($result2)) {

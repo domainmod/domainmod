@@ -31,7 +31,7 @@ $really_del = $_GET['really_del'];
 // Form Variables
 $new_domain_id = $_POST['new_domain_id'];
 $new_name = $_POST['new_name'];
-$new_type = $_POST['new_type'];
+$new_type_id = $_POST['new_type_id'];
 $new_expiry_date = $_POST['new_expiry_date'];
 $new_account_id = $_POST['new_account_id'];
 $new_active = $_POST['new_active'];
@@ -40,7 +40,7 @@ $new_sslcid = $_POST['new_sslcid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "" && $new_type != "") {
+	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "") {
 
 		$sql = "select ssl_provider_id, company_id
 				from ssl_accounts
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql2 = "select id
 				from ssl_fees
 				where ssl_provider_id = '$new_ssl_provider_id'
-				and type = '$new_type'";
+				and type_id = '$new_type_id'";
 		$result2 = mysql_query($sql2,$connection);
 		
 		if (mysql_num_rows($result2) >= 1) { 
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					account_id = '$new_account_id',
 					domain_id = '$new_domain_id',
 					name = '$new_name',
-					type = '$new_type',
+					type_id = '$new_type_id',
 					expiry_date = '$new_expiry_date',
 					fee_id = '$temp_fee_id',
 					notes = '$new_notes',
@@ -95,17 +95,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		if ($new_name == "") { $_SESSION['session_result_message'] .= "Enter The SSL Certificate Name<BR>"; }
 
-		if ($new_type == "") { $_SESSION['session_result_message'] .= "Enter The SSL Certificate Type<BR>"; }
-
 		if (!preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date)) { $_SESSION['session_result_message'] .= "The Expiry Date Format Is Incorrect<BR>"; }
 
 	}
 
 } else {
 
-	$sql = "select sslc.domain_id, sslc.name, sslc.type, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id as account_id
-			from ssl_certs as sslc, ssl_accounts as sslpa
+	$sql = "select sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id as account_id, sslct.id as type_id, sslct.type
+			from ssl_certs as sslc, ssl_accounts as sslpa, ssl_cert_types as sslct
 			where sslc.account_id = sslpa.id
+			and sslc.type_id = sslct.id
 			and sslc.id = '$sslcid'";
 	$result = mysql_query($sql,$connection);
 	
@@ -113,6 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		$new_domain_id = $row->domain_id;
 		$new_name = $row->name;
+		$new_type_id = $row->type_id;
 		$new_type = $row->type;
 		$new_expiry_date = $row->expiry_date;
 		$new_notes = $row->notes;
@@ -175,12 +175,34 @@ echo "</select>";
 ?>
 <BR><BR>
 
-<strong>Label:</strong><BR><BR>
+<strong>Host / Label:</strong><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo stripslashes($new_name); ?>">
 <BR><BR>
+
 <strong>Type:</strong><BR><BR>
-<input name="new_type" type="text" size="50" maxlength="255" value="<?php if ($new_type != "") echo stripslashes($new_type); ?>">
+<?php
+$sql_type = "select id, type
+				from ssl_cert_types
+				where active = '1'
+				order by type asc";
+$result_type = mysql_query($sql_type,$connection) or die(mysql_error());
+echo "<select name=\"new_type_id\">";
+while ($row_type = mysql_fetch_object($result_type)) {
+
+	if ($row_type->id == $new_type_id) {
+
+		echo "<option value=\"$row_type->id\" selected>[ $row_type->type ]</option>";
+	
+	} else {
+
+		echo "<option value=\"$row_type->id\">$row_type->type</option>";
+	
+	}
+}
+echo "</select>";
+?>
 <BR><BR>
+
 <strong>Expiry Date (YYYY-MM-DD):</strong><BR><BR>
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
 <BR><BR>

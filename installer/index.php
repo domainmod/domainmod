@@ -144,7 +144,7 @@ $sql = "
 CREATE TABLE IF NOT EXISTS `ssl_fees` (
   `id` int(10) NOT NULL auto_increment,
   `ssl_provider_id` int(5) NOT NULL,
-  `type` varchar(255) NOT NULL,
+  `type_id` int(5) NOT NULL,
   `initial_fee` float NOT NULL,
   `renewal_fee` float NOT NULL,
   `currency_id` int(10) NOT NULL,
@@ -192,8 +192,9 @@ CREATE TABLE IF NOT EXISTS `ssl_certs` (
   `ssl_provider_id` int(5) NOT NULL,
   `account_id` int(5) NOT NULL,
   `domain_id` int(10) NOT NULL,
+  `type_id` int(10) NOT NULL,
+  `function_id` int(10) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `type` varchar(255) NOT NULL,
   `expiry_date` date NOT NULL,
   `fee_id` int(10) NOT NULL,
   `notes` longtext NOT NULL,
@@ -204,6 +205,47 @@ CREATE TABLE IF NOT EXISTS `ssl_certs` (
   `update_time` datetime NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+
+$sql = "
+CREATE TABLE IF NOT EXISTS `ssl_cert_types` (
+  `id` int(10) NOT NULL auto_increment,
+  `type` varchar(255) NOT NULL,
+  `notes` longtext NOT NULL,
+  `active` int(1) NOT NULL default '1',
+  `insert_time` datetime NOT NULL,
+  `update_time` datetime NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+
+$sql = "
+INSERT INTO `ssl_cert_types` (`id`, `type`, `insert_time`) VALUES
+(1, 'Wildcard', '$current_timestamp'),
+(2, 'Single Host', '$current_timestamp');
+";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+
+$sql = "
+CREATE TABLE IF NOT EXISTS `ssl_cert_functions` (
+  `id` int(10) NOT NULL auto_increment,
+  `function` varchar(255) NOT NULL,
+  `notes` longtext NOT NULL,
+  `active` int(1) NOT NULL default '1',
+  `insert_time` datetime NOT NULL,
+  `update_time` datetime NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+
+$sql = "
+INSERT INTO `ssl_cert_functions` (`id`, `function`, `insert_time`) VALUES
+(1, 'Web Server SSL/TLS Certificate', '$current_timestamp'),
+(2, 'S/MIME and Authentication Certificate', '$current_timestamp'),
+(3, 'Object Code Signing Certificate', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
