@@ -247,7 +247,7 @@ INSERT INTO `ssl_cert_functions` (`id`, `function`, `insert_time`) VALUES
 (1, 'Web Server SSL/TLS Certificate', '$current_timestamp'),
 (2, 'S/MIME and Authentication Certificate', '$current_timestamp'),
 (3, 'Object Code Signing Certificate', '$current_timestamp'),
-(4, 'DigitalID', '$current_timestamp');
+(4, 'Digital ID', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
