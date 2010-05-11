@@ -39,14 +39,16 @@ while ($row2 = mysql_fetch_object($result2)) {
 	$default_currency_conversion = $row2->conversion;
 }
 
-$sql = "select sslc.id, sslc.name, sslct.type, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
-		from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, ssl_cert_types as sslct
+$sql = "select sslc.id, sslc.name, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
+		from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
 		where sslc.account_id = sslpa.id
 		and sslc.type_id = sslct.id
+		and sslc.function_id = sslcf.id
 		and sslpa.ssl_provider_id = sslp.id
 		and sslpa.company_id = c.id
 		and sslc.ssl_provider_id = f.ssl_provider_id
 		and sslc.type_id = f.type_id
+		and sslc.function_id = f.function_id
 		and f.currency_id = cc.id
 		and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')
 		and sslc.expiry_date between '$new_expiry_start' and '$new_expiry_end'
@@ -62,14 +64,14 @@ if ($export == "1") {
 
 	$full_export .= "\"All prices are listed in $default_currency\"\n\n";
 
-	$full_export .= "\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Type\",\"Company\",\"Registrar\",\"Username\"\n";
+	$full_export .= "\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Function\",\"Type\",\"Company\",\"Registrar\",\"Username\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
 		$temp_renewal_fee = number_format($row->renewal_fee * $row->conversion, 2, '.', ',');
 		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
-		$full_export .= "\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->name\",\"$row->type\",\"$row->company_name\",\"$row->ssl_provider_name\",\"$row->username\"\n";
+		$full_export .= "\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->name\",\"$row->function\",\"$row->type\",\"$row->company_name\",\"$row->ssl_provider_name\",\"$row->username\"\n";
 	}
 	
 	$full_export .= "\n";
