@@ -32,6 +32,7 @@ $really_del = $_GET['really_del'];
 $new_domain_id = $_POST['new_domain_id'];
 $new_name = $_POST['new_name'];
 $new_type_id = $_POST['new_type_id'];
+$new_function_id = $_POST['new_function_id'];
 $new_expiry_date = $_POST['new_expiry_date'];
 $new_account_id = $_POST['new_account_id'];
 $new_active = $_POST['new_active'];
@@ -52,7 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql2 = "select id
 				from ssl_fees
 				where ssl_provider_id = '$new_ssl_provider_id'
-				and type_id = '$new_type_id'";
+				and type_id = '$new_type_id'
+				and function_id = '$new_function_id'";
 		$result2 = mysql_query($sql2,$connection);
 		
 		if (mysql_num_rows($result2) >= 1) { 
@@ -76,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					domain_id = '$new_domain_id',
 					name = '$new_name',
 					type_id = '$new_type_id',
+					function_id = '$new_function_id',
 					expiry_date = '$new_expiry_date',
 					fee_id = '$temp_fee_id',
 					notes = '$new_notes',
@@ -101,10 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id as account_id, sslct.id as type_id, sslct.type
-			from ssl_certs as sslc, ssl_accounts as sslpa, ssl_cert_types as sslct
+	$sql = "select sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id as account_id, sslct.id as type_id, sslct.type, sslcf.id as function_id, sslcf.function
+			from ssl_certs as sslc, ssl_accounts as sslpa, ssl_cert_types as sslct, ssl_cert_functions as sslcf
 			where sslc.account_id = sslpa.id
 			and sslc.type_id = sslct.id
+			and sslc.function_id = sslcf.id
 			and sslc.id = '$sslcid'";
 	$result = mysql_query($sql,$connection);
 	
@@ -113,7 +117,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_domain_id = $row->domain_id;
 		$new_name = $row->name;
 		$new_type_id = $row->type_id;
+		$new_function_id = $row->function_id;
 		$new_type = $row->type;
+		$new_function = $row->function;
 		$new_expiry_date = $row->expiry_date;
 		$new_notes = $row->notes;
 		$new_active = $row->active;
@@ -177,6 +183,30 @@ echo "</select>";
 
 <strong>Host / Label:</strong><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo stripslashes($new_name); ?>">
+<BR><BR>
+
+<strong>Function:</strong><BR><BR>
+<?php
+$sql_function = "select id, function
+				from ssl_cert_functions
+				where active = '1'
+				order by function asc";
+$result_function = mysql_query($sql_function,$connection) or die(mysql_error());
+echo "<select name=\"new_function_id\">";
+while ($row_function = mysql_fetch_object($result_function)) {
+
+	if ($row_function->id == $new_function_id) {
+
+		echo "<option value=\"$row_function->id\" selected>[ $row_function->function ]</option>";
+	
+	} else {
+
+		echo "<option value=\"$row_function->id\">$row_function->function</option>";
+	
+	}
+}
+echo "</select>";
+?>
 <BR><BR>
 
 <strong>Type:</strong><BR><BR>

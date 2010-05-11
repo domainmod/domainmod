@@ -63,10 +63,22 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
 				 and sslc.fee_id = '0'
 				 group by sslct.type
 				 order by sslct.type asc";
+				 
+$sql2 = "select concat(sslcf.function, ' (', sslct.type, ')') as full_tf_string
+		from ssl_certs as sslc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
+		where sslc.type_id = sslct.id
+		and sslc.function_id = sslcf.id
+		and sslc.active = '1'
+		and sslc.ssl_provider_id = '$row->ssl_provider_id'
+		and sslc.fee_id = '0'
+		group by full_tf_string
+		order by full_tf_string asc";
+
+
 		$result2 = mysql_query($sql2,$connection);
 		$full_type_list = "";
 		while ($row2 = mysql_fetch_object($result2)) {
-			$full_type_list .= $row2->type . ", ";
+			$full_type_list .= $row2->full_tf_string . " / ";
 		}
 		$full_type_list_formatted = substr($full_type_list, 0, -2); 
 		?>

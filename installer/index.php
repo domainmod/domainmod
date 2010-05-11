@@ -145,6 +145,7 @@ CREATE TABLE IF NOT EXISTS `ssl_fees` (
   `id` int(10) NOT NULL auto_increment,
   `ssl_provider_id` int(5) NOT NULL,
   `type_id` int(5) NOT NULL,
+  `function_id` int(5) NOT NULL,
   `initial_fee` float NOT NULL,
   `renewal_fee` float NOT NULL,
   `currency_id` int(10) NOT NULL,
@@ -245,7 +246,8 @@ $sql = "
 INSERT INTO `ssl_cert_functions` (`id`, `function`, `insert_time`) VALUES
 (1, 'Web Server SSL/TLS Certificate', '$current_timestamp'),
 (2, 'S/MIME and Authentication Certificate', '$current_timestamp'),
-(3, 'Object Code Signing Certificate', '$current_timestamp');
+(3, 'Object Code Signing Certificate', '$current_timestamp'),
+(4, 'DigitalID', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
