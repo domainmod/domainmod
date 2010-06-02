@@ -49,7 +49,7 @@ $sql = "select d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.sta
 		and f.currency_id = cc.id
 		and d.cat_id = cat.id
 		and cat.active = '1'
-		and d.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')
+		and d.active in ('1')
 		and d.expiry_date between '$new_expiry_start' and '$new_expiry_end'
 		order by d.expiry_date asc
 		";	
