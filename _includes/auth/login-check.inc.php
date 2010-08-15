@@ -23,7 +23,11 @@ if ($_SESSION['session_is_logged_in'] == 1) {
 	    exit;
 	}
 	
-	header("Location: " . $web_root . "/domains.php");
+	if ($web_root == "/") {
+		header("Location: /domains.php");
+	} else {
+		header("Location: " . $web_root . "/domains.php");
+	}
     exit;
 }
 ?>

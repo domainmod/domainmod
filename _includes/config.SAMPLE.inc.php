@@ -15,7 +15,7 @@
 ?>
 <?php 
 // Path Settings
-$web_root = "/dm"; // If you installed in the root of a domain or subdomain, leave this blank
+$web_root = "/dm";
 $full_server_path = "/home/user/public_html/dm";
 
 // Database Settings

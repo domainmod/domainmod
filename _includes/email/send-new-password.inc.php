@@ -52,7 +52,17 @@ $message .= "
 			$message .= "will be easier for you to remember, but still hard for someone ";
 			$message .= "else to guess.<BR>";
 			$message .= "<BR>";
-			$message .= "URL: <a target=\"_blank\" href=\"" . $_SERVER["HTTP_ORIGIN"] . $web_root . "/\">" . $_SERVER["HTTP_ORIGIN"] . $web_root . "/</a><BR>";
+
+			if ($web_root == "/") {
+
+				$message .= "URL: <a target=\"_blank\" href=\"" . $_SERVER["HTTP_ORIGIN"] . "\">" . $_SERVER["HTTP_ORIGIN"] . "</a><BR>";
+				
+			} else {
+
+				$message .= "URL: <a target=\"_blank\" href=\"" . $_SERVER["HTTP_ORIGIN"] . $web_root . "/\">" . $_SERVER["HTTP_ORIGIN"] . $web_root . "/</a><BR>";
+
+			}
+
 			$message .= "<BR>";
 			$message .= "Your Username: $row->username<BR>";
 			$message .= "Your New Password: $new_password<BR>";
