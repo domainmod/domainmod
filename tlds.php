@@ -40,7 +40,6 @@ $result = mysql_query($sql,$connection);
 This is a breakdown of the Top Level Domains that are currently in use.
 <BR><BR>
 <strong>Number of Active TLDs:</strong> <?=mysql_num_rows($result)?>
-
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
