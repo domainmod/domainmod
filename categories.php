@@ -31,7 +31,7 @@ $software_section = "categories";
 <body>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-$sql = "select id, name, default_category
+$sql = "select id, name, owner, default_category
 		from categories
 		where active = '1'
 		order by name asc";
@@ -47,6 +47,8 @@ Here you can create categories that you can use to help organize your domains.
 <tr height="30">
 	<td width="300">
    	<font class="subheadline">Category</font></td>
+	<td width="200">
+   	<font class="subheadline">Owner</font></td>
 	<td>
     	<font class="subheadline"># of Domains</font>
     </td>
@@ -55,6 +57,9 @@ Here you can create categories that you can use to help organize your domains.
 <tr height="20">
     <td>
 		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+	</td>
+    <td>
+		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->owner?></a>
 	</td>
 	<td>
     <?php

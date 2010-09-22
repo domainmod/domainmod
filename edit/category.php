@@ -26,6 +26,7 @@ $pcid = $_GET['pcid'];
 
 // Form Variables
 $new_category = $_REQUEST['new_category'];
+$new_owner = $_REQUEST['new_owner'];
 $new_notes = $_REQUEST['new_notes'];
 $new_default_category = $_REQUEST['new_default_category'];
 $new_pcid = $_REQUEST['new_pcid'];
@@ -54,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "update categories
 				set name = '$new_category', 
+				owner = '$new_owner',
 				notes = '$new_notes',
 				default_category = '$new_default_category',
 				update_time = '$current_timestamp'
@@ -61,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$new_category = stripslashes($new_category);
+		$new_owner = stripslashes($new_owner);
 		$new_default_category = stripslashes($new_default_category);
 		$new_notes = stripslashes($new_notes);
 
@@ -76,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select name, notes, default_category
+	$sql = "select name, owner, notes, default_category
 			from categories
 			where id = '$pcid'";
 	$result = mysql_query($sql,$connection);
@@ -84,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	while ($row = mysql_fetch_object($result)) { 
 	
 		$new_category = $row->name;
+		$new_owner = $row->owner;
 		$new_default_category = $row->default_category;
 		$new_notes = $row->notes;
 	}
@@ -102,6 +106,9 @@ $page_title = "Editting A Category";
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Category Name:</strong><BR><BR>
 <input name="new_category" type="text" value="<?php if ($new_category != "") echo stripslashes($new_category); ?>
+" size="50" maxlength="255">
+<strong>Owner/Stakeholder:</strong><BR><BR>
+<input name="new_owner" type="text" value="<?php if ($new_owner != "") echo stripslashes($new_owner); ?>
 " size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>

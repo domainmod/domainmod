@@ -53,6 +53,7 @@ $sql = "
 CREATE TABLE IF NOT EXISTS `categories` (
   `id` int(10) NOT NULL auto_increment,
   `name` varchar(255) NOT NULL,
+  `owner` varchar(255) NOT NULL,
   `notes` longtext NOT NULL,
   `default_category` int(1) NOT NULL default '0',
   `active` int(1) NOT NULL default '1',

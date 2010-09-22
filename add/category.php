@@ -24,6 +24,7 @@ $software_section = "categories";
 
 // Form Variables
 $new_category = $_POST['new_category'];
+$new_owner = $_POST['new_owner'];
 $new_notes = $_POST['new_notes'];
 $new_default_category = $_POST['new_default_category'];
 
@@ -50,8 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 
 		$sql = "insert into categories
-				(name, notes, default_category, insert_time)
-				values ('$new_category', '$new_notes', '$new_default_category', '$current_timestamp')";
+				(name, owner, notes, default_category, insert_time)
+				values ('$new_category', '$new_owner', '$new_notes', '$new_default_category', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Category Added<BR>";
@@ -79,6 +80,9 @@ $page_title = "Adding A New Category";
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Category Name:</strong><BR><BR>
 <input name="new_category" type="text" value="<?=stripslashes($new_category)?>" size="50" maxlength="255">
+<BR><BR>
+<strong>Owner/Stakeholder:</strong><BR><BR>
+<input name="new_owner" type="text" value="<?=stripslashes($new_owner)?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
