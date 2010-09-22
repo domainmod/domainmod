@@ -63,7 +63,7 @@ if ($export == "1") {
 
 	$full_export .= "\"All prices are listed in $default_currency\"\n\n";
 
-	$full_export .= "\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Owner\",\"Company\",\"Registrar\",\"Username\"\n";
+	$full_export .= "\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Owner\",\"Company\",\"Registrar\",\"Username\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
