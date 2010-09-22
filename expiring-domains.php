@@ -39,7 +39,7 @@ while ($row2 = mysql_fetch_object($result2)) {
 	$default_currency_conversion = $row2->conversion;
 }
 
-$sql = "select d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name as registrar_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion, cat.name as category_name
+$sql = "select d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name as registrar_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion, cat.name as category_name, cat.owner as category_owner
 		from domains as d, registrar_accounts as ra, registrars as r, companies as c, fees as f, currencies as cc, categories as cat
 		where d.account_id = ra.id
 		and ra.registrar_id = r.id
@@ -63,14 +63,14 @@ if ($export == "1") {
 
 	$full_export .= "\"All prices are listed in $default_currency\"\n\n";
 
-	$full_export .= "\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Company\",\"Registrar\",\"Username\"\n";
+	$full_export .= "\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Owner\",\"Company\",\"Registrar\",\"Username\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
 		$temp_renewal_fee = number_format($row->renewal_fee * $row->conversion, 2, '.', ',');
 		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
-		$full_export .= "\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->company_name\",\"$row->registrar_name\",\"$row->username\"\n";
+		$full_export .= "\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_owner\",\"$row->company_name\",\"$row->registrar_name\",\"$row->username\"\n";
 	}
 	
 	$full_export .= "\n";
