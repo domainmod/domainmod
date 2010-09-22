@@ -107,6 +107,7 @@ $page_title = "Editting A Category";
 <strong>Category Name:</strong><BR><BR>
 <input name="new_category" type="text" value="<?php if ($new_category != "") echo stripslashes($new_category); ?>
 " size="50" maxlength="255">
+<BR><BR>
 <strong>Owner/Stakeholder:</strong><BR><BR>
 <input name="new_owner" type="text" value="<?php if ($new_owner != "") echo stripslashes($new_owner); ?>
 " size="50" maxlength="255">

@@ -45,7 +45,7 @@ Here you can create categories that you can use to help organize your domains.
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="30">
-	<td width="300">
+	<td width="550">
    	<font class="subheadline">Category</font></td>
 	<td width="200">
    	<font class="subheadline">Owner</font></td>
