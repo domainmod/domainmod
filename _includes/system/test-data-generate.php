@@ -26,7 +26,7 @@ include("../timestamps/current-timestamp-basic.inc.php");
 $sql = "
 INSERT INTO `categories` (`name`, `owner`, `notes`, `test_data`, `insert_time`) VALUES
 ('AYS Media Domains', 'AYS Media Domain Administrator', '$current_timestamp_date_only - Category ''AYS Media Domains'' Added', '1', '$current_timestamp'),
-('Dummy Domains', '$current_timestamp_date_only - Category ''Dummy Domains'' Added', '1', '$current_timestamp');
+('Dummy Domains', 'Dummy Domain Administrator', '$current_timestamp_date_only - Category ''Dummy Domains'' Added', '1', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $sql = "
