@@ -43,7 +43,7 @@ Here you can create categories that you can use to help organize your domains.
 <strong>Number of Active Categories:</strong> <?=$number_of_categories?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>
-<table width="100%" border="1" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="30">
 	<td width="500">
    	<font class="subheadline">Category</font></td>
