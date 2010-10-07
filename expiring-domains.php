@@ -1,4 +1,5 @@
 <?php
+// Tester
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
 // 
