@@ -23,19 +23,15 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/currencies.php">Currencies</a> ]
 <br><br>
 
-<?php /* Temp hiding because SSL management isn't fully implemented yet ?>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-certs.php">SSL Certs</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-providers.php">SSL Providers</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-accounts.php">SSL Accounts</a> ]&nbsp;
 <br><br>
-<?php */ ?>
 
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/segments.php">Segment Filters</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-actions.php">Perform Bulk Actions</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/expiring-domains.php">Expiring Domains</a> ]&nbsp;
-<?php /* Temp hiding because SSL management isn't fully implemented yet ?>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/expiring-ssl-certs.php">Expiring SSL Certs</a> ]&nbsp;
-<?php */ ?>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">System</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/">Help!</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/logout.php">Logout</a> ]
