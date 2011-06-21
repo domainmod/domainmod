@@ -278,7 +278,7 @@ echo "</select>";
 <input type="submit" name="button" value="Update This Domain &raquo;">
 </form>
 <BR><BR>
-<a href="dns.php?did=<?=$new_dns_id?>">EDIT DNS</a>
+<a href="dns.php?dnsid=<?=$new_dns_id?>">EDIT DNS</a>
 <BR><BR>
 <a href="<?=$PHP_SELF?>?did=<?=$did?>&del=1">DELETE THIS DOMAIN</a>
 <?php include("../_includes/footer.inc.php"); ?>
