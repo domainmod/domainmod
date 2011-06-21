@@ -400,7 +400,7 @@ if ($search_for != "") { $search_string = " and d.domain like '%$search_for%'"; 
 
 $sql_dns = "select dns.id, dns.name 
 				from dns as dns, domains as d
-				where dns.id = d.company_id
+				where dns.id = d.dns_id
 				and dns.active = '1'
 				$is_active_string
 				$pcid_string
