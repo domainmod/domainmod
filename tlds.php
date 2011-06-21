@@ -34,7 +34,7 @@ $sql = "select tld, count(*) as total_tld_count
 		from domains
 		where active != '0' and active != '10'
 		group by tld
-		order by total_tld_count desc";
+		order by total_tld_count desc, tld asc";
 $result = mysql_query($sql,$connection);
 ?>
 This is a breakdown of the Top Level Domains that are currently in use.
