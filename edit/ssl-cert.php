@@ -268,6 +268,7 @@ echo "<option value=\"5\""; if ($new_active == "5") echo " selected"; echo ">Pen
 echo "<option value=\"3\""; if ($new_active == "3") echo " selected"; echo ">Pending (Renewal)</option>";
 echo "<option value=\"4\""; if ($new_active == "4") echo " selected"; echo ">Pending (Other)</option>";
 echo "<option value=\"0\""; if ($new_active == "0") echo " selected"; echo ">Expired</option>";
+echo "<option value=\"10\""; if ($new_active == "10") echo " selected"; echo ">Sold</option>";
 echo "</select>";
 ?>
 <BR><BR>

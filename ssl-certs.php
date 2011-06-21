@@ -164,8 +164,9 @@ elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; }
 elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
 elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
 elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
 elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
 if ($cid != "") { $cid_string = " and c.id = '$cid' "; } else { $cid_string = ""; }
 if ($did != "") { $did_string = " and d.id = '$did' "; } else { $did_string = ""; }
@@ -254,8 +255,9 @@ elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; }
 elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
 elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
 elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
 elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
 if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_string = ""; }
 if ($sslpid != "") { $sslpid_string = " and sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
@@ -301,8 +303,9 @@ elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; }
 elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
 elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
 elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
 elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
 if ($cid != "") { $cid_string = " and sslc.company_id = '$cid' "; } else { $cid_string = ""; }
 if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_string = ""; }
@@ -348,8 +351,9 @@ elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; }
 elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
 elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
 elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
 elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
 if ($cid != "") { $cid_string = " and sslc.company_id = '$cid' "; } else { $cid_string = ""; }
 if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_string = ""; }
@@ -399,8 +403,9 @@ elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; }
 elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
 elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
 elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
 elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
 if ($cid != "") { $cid_string = " and sslc.company_id = '$cid' "; } else { $cid_string = ""; }
 if ($sslpid != "") { $sslpid_string = " and sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
@@ -445,8 +450,9 @@ elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; }
 elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
 elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
 elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
 elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
 if ($cid != "") { $cid_string = " and sslc.company_id = '$cid' "; } else { $cid_string = ""; }
 if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_string = ""; }
@@ -491,8 +497,9 @@ elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; }
 elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
 elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
 elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
 elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
 if ($cid != "") { $cid_string = " and sslc.company_id = '$cid' "; } else { $cid_string = ""; }
 if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_string = ""; }
@@ -536,8 +543,9 @@ elseif ($is_active == "6") { $is_active_string = " and active = '6' "; }
 elseif ($is_active == "7") { $is_active_string = " and active = '7' "; } 
 elseif ($is_active == "8") { $is_active_string = " and active = '8' "; } 
 elseif ($is_active == "9") { $is_active_string = " and active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " and active = '10' "; } 
 elseif ($is_active == "LIVE") { $is_active_string = " and active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " and active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
 if ($cid != "") { $cid_string = " and company_id = '$cid' "; } else { $cid_string = ""; }
 if ($did != "") { $did_string = " and domain_id = '$did' "; } else { $did_string = ""; }

@@ -35,6 +35,7 @@ $sql = "select r.id, r.name, r.url, count(distinct d.account_id) as total_regist
 		from registrars as r, domains as d
 		where r.id = d.registrar_id
 		and d.active != '0'
+		and d.active != '10'
 		group by r.name
 		order by r.name asc";
 $sql = "select id, name, url

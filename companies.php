@@ -36,6 +36,7 @@ $sql = "select c.id, c.name, count(distinct d.account_id) as total_registrar_acc
 		where c.id = d.company_id
 		and c.active = '1'
 		and d.active != '0'
+		and d.active != '10'
 		group by c.name
 		order by c.name asc";
 $sql = "select id, name
