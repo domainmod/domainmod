@@ -741,7 +741,8 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 		  <?php if ($row->active == "0") { 
 					echo "<a title=\"Inactive Domain\"><strong><font color=\"#DD0000\">x</font></strong></a>"; 
 				} elseif ($row->active == "10") { 
-					echo "<a title=\"Sold\"><strong><font color=\"#DD0000\">s</font></strong></a>"; 
+//					echo "<a title=\"Sold\"><strong><font color=\"#DD0000\">s</font></strong></a>"; 
+					echo "<a title=\"Sold\"></a>"; 
 				} elseif ($row->active == "2") { 
 					echo "<a title=\"In Transfer\"><strong><font color=\"#DD0000\">T</font></strong></a>"; 
 				} elseif ($row->active == "3") { 
