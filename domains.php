@@ -627,7 +627,7 @@ echo "<select name=\"is_active\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&cid=$cid&dnsid=$dnsid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Transfer / Pending)</option>";
 
 while ($row_active = mysql_fetch_object($result_active)) { 
-echo "<option value=\"$PHP_SELF?pcid=$pcid&cid=$cid&dnsid=$dnsid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$row_active->active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_active->active == $is_active) echo " selected"; echo ">"; if ($row_active->active == "0") { echo "Expired"; } elseif ($row_active->active == "1") { echo "Active"; } elseif ($row_active->active == "2") { echo "In Transfer"; } elseif ($row_active->active == "3") { echo "Pending (Renewal)"; } elseif ($row_active->active == "4") { echo "Pending (Other)"; } elseif ($row_active->active == "5") { echo "Pending (Registration)"; } echo "</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&cid=$cid&dnsid=$dnsid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$row_active->active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_active->active == $is_active) echo " selected"; echo ">"; if ($row_active->active == "0") { echo "Expired"; } elseif ($row_active->active == "10") { echo "Sold"; } elseif ($row_active->active == "1") { echo "Active"; } elseif ($row_active->active == "2") { echo "In Transfer"; } elseif ($row_active->active == "3") { echo "Pending (Renewal)"; } elseif ($row_active->active == "4") { echo "Pending (Other)"; } elseif ($row_active->active == "5") { echo "Pending (Registration)"; } echo "</option>";
 } 
 
 echo "<option value=\"$PHP_SELF?pcid=$pcid&cid=$cid&dnsid=$dnsid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=ALL&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($is_active == "ALL") echo " selected"; echo ">"; echo "ALL</option>";
@@ -740,6 +740,8 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 	<td valign="top" align="right">
 		  <?php if ($row->active == "0") { 
 					echo "<a title=\"Inactive Domain\"><strong><font color=\"#DD0000\">x</font></strong></a>"; 
+				} elseif ($row->active == "10") { 
+					echo "<a title=\"Sold\"><strong><font color=\"#DD0000\">s</font></strong></a>"; 
 				} elseif ($row->active == "2") { 
 					echo "<a title=\"In Transfer\"><strong><font color=\"#DD0000\">T</font></strong></a>"; 
 				} elseif ($row->active == "3") { 
