@@ -14,16 +14,17 @@
 // see http://www.gnu.org/licenses/
 ?>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/domains.php">Domains</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-certs.php">SSL Certs</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/categories.php">Categories</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/companies.php">Companies</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/dns.php">DNS</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/registrars.php">Registrars</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/accounts.php">Registrar Accounts</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-providers.php">SSL Providers</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-accounts.php">SSL Accounts</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/tlds.php">TLDs</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/currencies.php">Currencies</a> ]
+<br><br>
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-certs.php">SSL Certs</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-providers.php">SSL Providers</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-accounts.php">SSL Accounts</a> ]&nbsp;
 <br><br>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/segments.php">Segment Filters</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-actions.php">Perform Bulk Actions</a> ]&nbsp;
