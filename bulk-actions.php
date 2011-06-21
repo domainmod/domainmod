@@ -246,6 +246,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 			
 			$_SESSION['session_result_message'] = "Domains Marked As Expired<BR>";
 
+		} elseif ($action == "S") { 
+		
+			$sql = "update domains
+					set active = '10',
+				    update_time = '$current_timestamp'
+					where domain in ($new_data_formatted)";
+			$result = mysql_query($sql,$connection) or die(mysql_error());
+			
+			$_SESSION['session_result_message'] = "Domains Marked As Sold<BR>";
+
 		} elseif ($action == "A") { 
 		
 			$sql = "update domains
@@ -363,6 +373,8 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
     	<BR><strong>The Following Domains Were Fully Renewed For <?=$new_renewal_years?> Year<?php if ($new_renewal_years > 1) { echo "s"; } ?>:</strong><BR>
     <?php } elseif ($action == "E") { ?>
     	<BR><strong>The Following Domains Were Marked As Expired:</strong><BR>
+    <?php } elseif ($action == "S") { ?>
+    	<BR><strong>The Following Domains Were Marked As Sold:</strong><BR>
     <?php } elseif ($action == "A") { ?>
     	<BR><strong>The Following Domains Were Marked As Active:</strong><BR>
     <?php } elseif ($action == "T") { ?>
@@ -403,6 +415,7 @@ Instead of having to waste time editting domains one-by-one, you can use the bel
 	<option value="bulk-actions.php?action=PRn"<?php if ($action == "PRn") { echo " selected"; } ?>>Mark As 'Pending (Renewal)'</option>
 	<option value="bulk-actions.php?action=PO"<?php if ($action == "PO") { echo " selected"; } ?>>Mark As 'Pending (Other)'</option>
     <option value="bulk-actions.php?action=E"<?php if ($action == "E") { echo " selected"; } ?>>Mark As 'Expired'</option>
+    <option value="bulk-actions.php?action=S"<?php if ($action == "S") { echo " selected"; } ?>>Mark As 'Sold'</option>
     <option value="bulk-actions.php?action=CPC"<?php if ($action == "CPC") { echo " selected"; } ?>>Change Primary Category</option>
     <option value="bulk-actions.php?action=CDNS"<?php if ($action == "CDNS") { echo " selected"; } ?>>Change DNS Profile</option>
     <option value="bulk-actions.php?action=CRA"<?php if ($action == "CRA") { echo " selected"; } ?>>Change Registrar Account</option>
