@@ -32,7 +32,7 @@ $page_title = "Top Level Domain Breakdown";
 <?php
 $sql = "select tld, count(*) as total_tld_count
 		from domains
-		where active != '0' and active != '10'
+		where active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')
 		group by tld
 		order by total_tld_count desc, tld asc";
 $result = mysql_query($sql,$connection);
