@@ -53,7 +53,7 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 		$rid = $new_rid;
 
 		$_SESSION['session_result_message'] = "Registrar Updated<BR>";
-
+		
 	} else {
 
 		if ($new_registrar == "") $_SESSION['session_result_message'] .= "Please Enter The Registrar's Name<BR>";
@@ -87,6 +87,9 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 			mysql_query($sql,$connection);
 			
 			$_SESSION['session_result_message'] = "Fee Deleted<BR>";
+
+			header("Location: registrar.php?rid=$new_rid");
+			exit;
 			
 		}
 		
@@ -130,6 +133,9 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 			$rid = $new_rid;
 
 			$_SESSION['session_result_message'] = "Fee Updated Successfully<BR>";
+			
+			header("Location: registrar.php?rid=$new_rid");
+			exit;
 
 		} else {
 			
@@ -160,6 +166,9 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 			$result = mysql_query($sql,$connection);
 	
 			$_SESSION['session_result_message'] = "Fee Submitted Successfully<BR>";
+			
+			header("Location: registrar.php?rid=$new_rid");
+			exit;
 
 		}
 
