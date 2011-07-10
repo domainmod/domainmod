@@ -83,6 +83,8 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 					and tld = '$new_tld'";
 			mysql_query($sql,$connection);
 			
+			$_SESSION['session_result_message'] = "Fee Deleted<BR>";
+			
 			header("Location: registrar.php?rid=$new_rid");
 			exit;
 		}
