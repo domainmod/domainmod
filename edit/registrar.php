@@ -54,15 +54,15 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 
 		$_SESSION['session_result_message'] = "Registrar Updated<BR>";
 
-		header("Location: registrar.php?rid=$new_rid");
-		exit;
-
 	} else {
 
 		if ($new_registrar == "") $_SESSION['session_result_message'] .= "Please Enter The Registrar's Name<BR>";
 		if ($new_url == "") $_SESSION['session_result_message'] .= "Please Enter The Registrar's URL<BR>";
 
 	}
+
+	header("Location: registrar.php?rid=$new_rid");
+	exit;
 
 } elseif ($IS_SUBMITTED_FEE == "1") {
 
@@ -88,8 +88,6 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 			
 			$_SESSION['session_result_message'] = "Fee Deleted<BR>";
 			
-			header("Location: registrar.php?rid=$new_rid");
-			exit;
 		}
 		
 		$sql = "select *
@@ -133,9 +131,6 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 
 			$_SESSION['session_result_message'] = "Fee Updated Successfully<BR>";
 
-			header("Location: registrar.php?rid=$new_rid");
-			exit;
-
 		} else {
 			
 			$sql = "insert into fees
@@ -166,12 +161,12 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 	
 			$_SESSION['session_result_message'] = "Fee Submitted Successfully<BR>";
 
-			header("Location: registrar.php?rid=$new_rid");
-			exit;
-	
 		}
 
 	}
+
+	header("Location: registrar.php?rid=$new_rid");
+	exit;
 
 }
 
