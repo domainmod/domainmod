@@ -417,7 +417,7 @@ if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' 
 $sql_domain = "select d.id, d.domain 
 				from domains as d, ssl_certs as sslc
 				where d.id = sslc.domain_id
-				and d.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')
+				and d.active not in ('0', '10')
 				$is_active_string
 				$cid_string
 				$sslpid_string

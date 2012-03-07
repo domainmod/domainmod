@@ -232,7 +232,7 @@ while ($row = mysql_fetch_object($result)) {
 }
 	$all_tlds = substr($temp_all_tlds, 0, -2); 
 ?>
-<?=$all_tlds_temp_disable?>
+<?=$all_tlds?>
 <BR><BR><BR><BR>
 <?php
 $sql = "select tld
