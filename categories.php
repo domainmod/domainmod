@@ -33,7 +33,7 @@ $software_section = "categories";
 <?php
 $sql = "select id, name, owner, default_category
 		from categories
-		where active = '1'
+		where active not in ('0', '10')
 		order by name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $number_of_categories = mysql_num_rows($result);
@@ -66,7 +66,7 @@ Here you can create categories that you can use to help organize your domains.
 	$sql2 = "select count(*) as total_count
 			 from domains
 			 where cat_id = '$row->id'
-			 and active = '1'";
+			 and active not in ('0', '10')";
 	$result2 = mysql_query($sql2,$connection);
 	while ($row2 = mysql_fetch_object($result2)) { $active_domains = $row2->total_count; }
 	?>
