@@ -223,6 +223,7 @@ $page_title = "Editting A Registrar";
 $sql = "select tld 
 		from domains
 		where registrar_id = '$rid'
+		and active not in ('0', '10')
 		group by tld
 		order by tld asc";
 $result = mysql_query($sql,$connection);
@@ -231,7 +232,7 @@ while ($row = mysql_fetch_object($result)) {
 }
 	$all_tlds = substr($temp_all_tlds, 0, -2); 
 ?>
-<?=$all_tlds?>
+<?=$all_tlds_temp_disable?>
 <BR><BR><BR><BR>
 <?php
 $sql = "select tld

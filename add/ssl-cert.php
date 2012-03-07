@@ -87,7 +87,7 @@ $page_title = "Adding A New SSL Certificate";
 <?php
 $sql_domain = "select id, domain
 				from domains
-				where active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')
+				where active not in ('0', '10')
 				order by domain asc";
 $result_domain = mysql_query($sql_domain,$connection) or die(mysql_error());
 echo "<select name=\"new_domain_id\">";
