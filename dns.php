@@ -68,7 +68,7 @@ This is a breakdown of the DNS Profiles that are currently in use.
 		$sql2 = "select count(*) as total_count
 				 from domains
 				 where dns_id = '$row->id'
-				 and active = '1'";
+				 and active not in ('0', '10')";
 		$result2 = mysql_query($sql2,$connection);
 		while ($row2 = mysql_fetch_object($result2)) {
 			$total_dns_count = $row2->total_count;
