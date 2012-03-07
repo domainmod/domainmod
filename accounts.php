@@ -109,8 +109,7 @@ while ($row = mysql_fetch_object($result)) { ?>
 				$sql3 = "select count(*) as total_domain_count
 						 from domains
 						 where account_id = '$row->id'
-						 and active != '0'
-						 and active != '10'";
+						 and active not in ('0', '10')";
 				$result3 = mysql_query($sql3,$connection);
 				while ($row3 = mysql_fetch_object($result3)) {
 					if ($row3->total_domain_count != 0) {
