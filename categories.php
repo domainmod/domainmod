@@ -33,7 +33,7 @@ $software_section = "categories";
 <?php
 $sql = "select id, name, owner, default_category
 		from categories
-		where active not in ('0', '10')
+		where active = '1'
 		order by name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $number_of_categories = mysql_num_rows($result);

@@ -35,8 +35,7 @@ $sql = "select c.id, c.name, count(distinct d.account_id) as total_registrar_acc
 		from companies as c, domains as d
 		where c.id = d.company_id
 		and c.active = '1'
-		and d.active != '0'
-		and d.active != '10'
+		and d.active not in ('0', '10')
 		group by c.name
 		order by c.name asc";
 $sql = "select id, name
@@ -90,7 +89,7 @@ fix all these writeups
     <?php
 	$sql3 = "select count(*) as total_count
 			 from domains
-			 where active = '1'
+			 where active not in ('0', '10')
 			 and company_id = '$row->id'";
 	$result3 = mysql_query($sql3,$connection);
 	while ($row3 = mysql_fetch_object($result3)) { $total_domains = $row3->total_count; }
