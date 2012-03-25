@@ -39,21 +39,42 @@ while ($row2 = mysql_fetch_object($result2)) {
 	$default_currency_conversion = $row2->conversion;
 }
 
-$sql = "select d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name as registrar_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion, cat.name as category_name, cat.owner as category_owner, dns.name as dns_profile
-		from domains as d, registrar_accounts as ra, registrars as r, companies as c, fees as f, currencies as cc, categories as cat, dns
-		where d.account_id = ra.id
-		and ra.registrar_id = r.id
-		and ra.company_id = c.id
-		and d.registrar_id = f.registrar_id
-		and d.tld = f.tld
-		and f.currency_id = cc.id
-		and d.cat_id = cat.id
-		and d.dns_id = dns.id
-		and cat.active = '1'
-		and d.expiry_date between '$new_expiry_start' and '$new_expiry_end'
-		order by d.expiry_date asc
-		";	
-//		and d.active not in ('0', '10')
+if ($export == "1") {
+
+	$sql = "select d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name as registrar_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion, cat.name as category_name, cat.owner as category_owner, dns.name as dns_profile
+			from domains as d, registrar_accounts as ra, registrars as r, companies as c, fees as f, currencies as cc, categories as cat, dns
+			where d.account_id = ra.id
+			and ra.registrar_id = r.id
+			and ra.company_id = c.id
+			and d.registrar_id = f.registrar_id
+			and d.tld = f.tld
+			and f.currency_id = cc.id
+			and d.cat_id = cat.id
+			and d.dns_id = dns.id
+			and cat.active = '1'
+			and d.expiry_date between '$new_expiry_start' and '$new_expiry_end'
+			order by d.expiry_date asc
+			";	
+
+} else {
+
+	$sql = "select d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name as registrar_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion, cat.name as category_name, cat.owner as category_owner, dns.name as dns_profile
+			from domains as d, registrar_accounts as ra, registrars as r, companies as c, fees as f, currencies as cc, categories as cat, dns
+			where d.account_id = ra.id
+			and ra.registrar_id = r.id
+			and ra.company_id = c.id
+			and d.registrar_id = f.registrar_id
+			and d.tld = f.tld
+			and f.currency_id = cc.id
+			and d.cat_id = cat.id
+			and d.dns_id = dns.id
+			and cat.active = '1'
+			and d.active not in ('0', '10')
+			and d.expiry_date between '$new_expiry_start' and '$new_expiry_end'
+			order by d.expiry_date asc
+			";	
+
+}
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $result2 = mysql_query($sql,$connection) or die(mysql_error());
@@ -64,7 +85,7 @@ if ($export == "1") {
 
 	$full_export .= "\"All prices are listed in $default_currency\"\n\n";
 
-	$full_export .= "\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Domain Status\",\"DNS Profile\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Owner\",\"Company\",\"Registrar\",\"Username\"\n";
+	$full_export .= "\"DOMAIN STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"DNS Profile\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Owner\",\"Company\",\"Registrar\",\"Username\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
@@ -72,24 +93,24 @@ if ($export == "1") {
 		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
 		if ($row->active == "0") { 
-			$domain_status = "Expired";
+			$domain_status = "EXPIRED";
 		} elseif ($row->active == "1") { 
-			$domain_status = "Active";
+			$domain_status = "ACTIVE";
 		} elseif ($row->active == "2") { 
-			$domain_status = "In Transfer";
+			$domain_status = "IN TRANSFER";
 		} elseif ($row->active == "3") { 
-			$domain_status = "Pending (Renewal)";
+			$domain_status = "PENDING (RENEWAL)";
 		} elseif ($row->active == "4") { 
-			$domain_status = "Pending (Other)";
+			$domain_status = "PENDING (OTHER)";
 		} elseif ($row->active == "5") { 
-			$domain_status = "Pending (Registration)";
+			$domain_status = "PENDING (REGISTRATION)";
 		} elseif ($row->active == "10") { 
-			$domain_status = "Sold";
+			$domain_status = "SOLD";
 		} else { 
-			echo "ERROR -- PROBLEM WITH CODE IN EXPORT-DOMAINS.PHP"; 
+			$domain_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-DOMAINS_PHP"; 
 		} 
 
-		$full_export .= "\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$domain_status\",\"$row->dns_profile\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_owner\",\"$row->company_name\",\"$row->registrar_name\",\"$row->username\"\n";
+		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$row->dns_profile\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_owner\",\"$row->company_name\",\"$row->registrar_name\",\"$row->username\"\n";
 	}
 	
 	$full_export .= "\n";
