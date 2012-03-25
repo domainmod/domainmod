@@ -110,7 +110,7 @@ if ($export == "1") {
 			$domain_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-DOMAINS_PHP"; 
 		} 
 
-		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"\.$row->tld\",\"$row->dns_profile\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_owner\",\"$row->company_name\",\"$row->registrar_name\",\"$row->username\"\n";
+		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$row->dns_profile\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_owner\",\"$row->company_name\",\"$row->registrar_name\",\"$row->username\"\n";
 	}
 	
 	$full_export .= "\n";
