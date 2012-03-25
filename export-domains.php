@@ -115,7 +115,7 @@ if ($export == "1") {
 	
 	$full_export .= "\n";
 	
-	$full_export .= "\"\",\"Total Cost:\",\"\$" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"$default_currency\"\n";
+	$full_export .= "\"\",\"\",\"Total Cost:\",\"\$" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"$default_currency\"\n";
 	
 	$export = "0";
 	
