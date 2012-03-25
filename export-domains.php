@@ -131,7 +131,7 @@ Expiring Between
   <input name="new_expiry_start" type="text" size="10" maxlength="10" <?php if ($new_expiry_start == "") { echo "value=\"$current_timestamp_date_only\""; } else { echo "value=\"$new_expiry_start\""; } ?>> 
   and 
   <input name="new_expiry_end" type="text" size="10" maxlength="10" <?php if ($new_expiry_end == "") { echo "value=\"$current_timestamp_date_only\""; } else { echo "value=\"$new_expiry_end\""; } ?>> 
-  &nbsp;&nbsp;<input type="submit" name="button" value="List Exporting Domains &raquo;">
+  &nbsp;&nbsp;<input type="submit" name="button" value="List Domains &raquo;">
 </form>
 </td>
 <td class="search-table-inside" width="200" valign="middle" align="center">
