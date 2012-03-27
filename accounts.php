@@ -54,7 +54,7 @@ $sql = "select ra.id as raid, ra.username, ra.company_id, ra.registrar_id, ra.re
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-<strong>Active Accounts:</strong> <?=mysql_num_rows($result)?>
+<strong>Number of Active Accounts:</strong> <?=mysql_num_rows($result)?>
 <?php 
 
 if (mysql_num_rows($result) > 0) { ?>
@@ -136,7 +136,7 @@ $sql = "select ra.id as raid, ra.username, ra.company_id, ra.registrar_id, ra.re
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <BR>
-<strong>Inactive Accounts:</strong> <?=mysql_num_rows($result)?>
+<strong>Number of Inactive Accounts:</strong> <?=mysql_num_rows($result)?>
 <?php
 
 if (mysql_num_rows($result) > 0) { ?>
