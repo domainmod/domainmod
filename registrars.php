@@ -31,87 +31,184 @@ $software_section = "registrars";
 <body>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-$sql = "select r.id, r.name, r.url, count(distinct d.account_id) as total_registrar_accounts, count(distinct d.id) as total_domain_count
+$sql = "select r.id as rid, r.name as rname, r.url
 		from registrars as r, domains as d
 		where r.id = d.registrar_id
-		and d.active not in ('0', '10')
+		and r.active = '1'
+		and d.domain not in ('0', '10')
+		and (select count(*) from domains where registrar_id = r.id and active = '1') > 0
 		group by r.name
 		order by r.name asc";
-$sql = "select id, name, url
-		from registrars
-		where active = '1'
-		order by name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-These are the registrars that have active domains.
-<BR><BR>
 <strong>Number of Active Registrars:</strong> <?=mysql_num_rows($result)?>
+<?php
 
-<?php if (mysql_num_rows($result) > 0) { ?>
+if (mysql_num_rows($result) > 0) { ?>
+
+    <BR><BR>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr height="30">
+        <td width="300">
+            <font class="subheadline">Registrar Name</font>
+        </td>
+        <td width="150">
+            <font class="subheadline"># of Accounts</font>
+        </td>
+        <td>
+            <font class="subheadline"># of Domains</font>
+        </td>
+    </tr>
+    <?php 
+    
+    while ($row = mysql_fetch_object($result)) {
+
+	    $new_rid = $row->rid;
+    
+        if ($current_rid != $new_rid) {
+			$exclude_registrar_string_raw .= "'$row->rid', ";
+		} ?>
+    
+        <tr height="20">
+            <td>
+                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
+            </td>
+            <td>
+                <?php
+                $sql2 = "select count(*) as total_count
+                         from registrar_accounts
+                         where active = '1'
+                         and registrar_id = '$row->rid'";
+                $result2 = mysql_query($sql2,$connection);
+        
+                while ($row2 = mysql_fetch_object($result2)) { 
+                    $total_accounts = $row2->total_count;
+                }
+                
+                    if ($total_accounts >= 1) { ?>
+            
+                        <a class="nobold" href="registrar-accounts.php?rid=<?=$row->rid?>"><?=number_format($total_accounts)?></a>
+                        <?php 
+            
+                    } else { ?>
+            
+                        <?=number_format($total_accounts)?>
+                        <?php
+                    } ?>
+        
+            </td>
+            <td>
+                <?php
+                $sql3 = "select count(*) as total_count
+                         from domains
+                         where active not in ('0', '10')
+                         and registrar_id = '$row->rid'";
+                $result3 = mysql_query($sql3,$connection);
+        
+                while ($row3 = mysql_fetch_object($result3)) { 
+                    $total_domains = $row3->total_count;
+                }		
+        
+                    if ($total_accounts >= 1) { ?>
+            
+                        <a class="nobold" href="domains.php?rid=<?=$row->rid?>"><?=number_format($total_domains)?></a>
+                        <?php 
+            
+                    } else { ?>
+            
+                        <?=number_format($total_domains)?>
+                        <?php 
+                    
+                    } ?>
+        
+            </td>
+        </tr>
+        <?php 
+		$current_rid = $row->rid;
+
+	} ?>
+
+    </table>
+	<?php
+
+} ?>
+
+<?php
+$exclude_registrar_string = substr($exclude_registrar_string_raw, 0, -2); 
+
+$sql = "select r.id as rid, r.name as rname, r.url
+		from registrars as r
+		where r.id
+		and r.active = '1'
+		and r.id not in ($exclude_registrar_string)
+		group by r.name
+		order by r.name asc";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+?>
 <BR><BR>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
-	<td width="300">
-    	<font class="subheadline">Registrar Name</font>
-    </td>
-	<td width="150">
-    	<font class="subheadline"># of Accounts</font>
-    </td>
-	<td>
-    	<font class="subheadline"># of Domains</font>
-    </td>
-</tr>
-<?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td>
-		<a class="subtlelink" href="edit/registrar.php?rid=<?=$row->id?>"><?=$row->name?></a>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
-	</td>
-	<td>
-		<?php
-        $sql2 = "select count(*) as total_count
-                 from registrar_accounts
-                 where active = '1'
-                 and registrar_id = '$row->id'";
-        $result2 = mysql_query($sql2,$connection);
-        while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
-        ?>
+<strong>Number of Inactive Registrars:</strong> <?=mysql_num_rows($result)?>
+<?php
 
-    	<?php if ($total_accounts >= 1) { ?>
+if (mysql_num_rows($result) > 0) { ?>
 
-	        <a class="nobold" href="registrar-accounts.php?rid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
-
-        <?php } else { ?>
-
-	        <?=number_format($total_accounts)?>
+    <BR><BR>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr height="30">
+        <td width="300">
+            <font class="subheadline">Registrar Name</font>
+        </td>
+        <td width="150">
+            <font class="subheadline"># of Accounts</font>
+        </td>
+        <td>&nbsp;
+        	
+        </td>
+    </tr>
+    <?php 
+    
+    while ($row = mysql_fetch_object($result)) { ?>
+    
+        <tr height="20">
+            <td>
+                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
+            </td>
+            <td>
+                <?php
+                $sql2 = "select count(*) as total_count
+                         from registrar_accounts
+                         where active = '1'
+                         and registrar_id = '$row->rid'";
+                $result2 = mysql_query($sql2,$connection);
         
-        <?php } ?>
-
-    </td>
-	<td>
-		<?php
-        $sql3 = "select count(*) as total_count
-                 from domains
-                 where active not in ('0', '10')
-                 and registrar_id = '$row->id'";
-        $result3 = mysql_query($sql3,$connection);
-        while ($row3 = mysql_fetch_object($result3)) { $total_domains = $row3->total_count; }
-        ?>
-
-    	<?php if ($total_accounts >= 1) { ?>
-
-	        <a class="nobold" href="domains.php?rid=<?=$row->id?>"><?=number_format($total_domains)?></a>
-
-        <?php } else { ?>
-
-	        <?=number_format($total_domains)?>
+                while ($row2 = mysql_fetch_object($result2)) { 
+                    $total_accounts = $row2->total_count;
+                }
+                
+                    if ($total_accounts >= 1) { ?>
+            
+                        <a class="nobold" href="registrar-accounts.php?rid=<?=$row->rid?>"><?=number_format($total_accounts)?></a>
+                        <?php 
+            
+                    } else { ?>
+            
+                        <?=number_format($total_accounts)?>
+                        <?php
+                    } ?>
         
-        <?php } ?>
+            </td>
+            <td>&nbsp;
+				
+            </td>
+        </tr>
+        <?php 
 
-    </td>
-</tr>
-<?php } ?>
-</table>
-<?php } ?>
+	} ?>
+
+    </table>
+	<?php
+
+} ?>
+
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

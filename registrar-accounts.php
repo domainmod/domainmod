@@ -24,6 +24,7 @@ $software_section = "accounts";
 
 // Form Variables
 $rid = $_GET['rid'];
+$raid = $_GET['raid'];
 $cid = $_GET['cid'];
 ?>
 <html>
@@ -37,6 +38,7 @@ $cid = $_GET['cid'];
 <?php
 
 if ($rid != "") { $rid_string = " and ra.registrar_id = '$rid' "; } else { $rid_string = ""; }
+if ($raid != "") { $raid_string = " and ra.id = '$raid' "; } else { $raid_string = ""; }
 if ($cid != "") { $cid_string = " and ra.company_id = '$cid' "; } else { $cid_string = ""; }
 
 $sql = "select ra.id as raid, ra.username, ra.company_id, ra.registrar_id, ra.reseller, c.id as cid, c.name as cname, r.id as rid, r.name as rname
@@ -47,17 +49,19 @@ $sql = "select ra.id as raid, ra.username, ra.company_id, ra.registrar_id, ra.re
 		and ra.id = d.account_id
 		and d.active not in ('0', '10')
 		$rid_string
+		$raid_string
 		$cid_string
-		and (select count(*) from domains where d.account_id = ra.id) > 0
+		and (select count(*) from domains where account_id = ra.id and active not in ('0', '10')) > 0
 		group by ra.username, cname, rname
 		order by rname asc";
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
-?>
-<strong>Number of Active Accounts:</strong> <?=mysql_num_rows($result)?>
-<?php 
 
-if (mysql_num_rows($result) > 0) { ?>
+if (mysql_num_rows($result) > 0) { 
+	
+    $has_active_accounts = 1; ?>
+
+	<strong>Number of Active Accounts:</strong> <?=mysql_num_rows($result)?>
 
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -90,7 +94,7 @@ if (mysql_num_rows($result) > 0) { ?>
 				<a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a>
 			</td>
 			<td valign="top" width="275">
-				<a class="subtlelink" href="edit/account.php?raid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
 			</td>
 			<td width="200">
 				<a class="subtlelink" href="edit/company.php?cid=<?=$row->cid?>"><?=$row->cname?></a>
@@ -115,12 +119,14 @@ if (mysql_num_rows($result) > 0) { ?>
 	} ?>
 
 	</table>
-    <?php 
+	<?php 
 
 } ?>
 
 <?php
 $exclude_account_string = substr($exclude_account_string_raw, 0, -2); 
+
+if ($exclude_account_string != "") { $raid_string = " and ra.id not in ($exclude_account_string) "; } else { $raid_string = ""; }
 
 $sql = "select ra.id as raid, ra.username, ra.company_id, ra.registrar_id, ra.reseller, c.id as cid, c.name as cname, r.id as rid, r.name as rname
 		from registrar_accounts as ra, companies as c, registrars as r, domains as d
@@ -128,18 +134,18 @@ $sql = "select ra.id as raid, ra.username, ra.company_id, ra.registrar_id, ra.re
 		and ra.company_id = c.id
 		and ra.registrar_id = r.id
 		$rid_string
+		$raid_string
 		$cid_string
-		and ra.id not in ($exclude_account_string)
 		group by ra.username, cname, rname
 		order by rname";
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
-?>
-<BR>
-<strong>Number of Inactive Accounts:</strong> <?=mysql_num_rows($result)?>
-<?php
 
-if (mysql_num_rows($result) > 0) { ?>
+if (mysql_num_rows($result) > 0) {
+
+    if ($has_active_accounts == 1) { echo "<BR><BR>"; } ?>
+    
+    <strong>Number of Inactive Accounts:</strong> <?=mysql_num_rows($result)?>
 
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
