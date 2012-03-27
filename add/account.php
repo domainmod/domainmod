@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$_SESSION['session_result_message'] = "Account Added<BR>";
 		
-		header("Location: ../accounts.php");
+		header("Location: ../registrar-accounts.php");
 		exit;
 
 	} else {

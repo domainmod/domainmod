@@ -77,7 +77,7 @@ fix all these writeups
 	?>
     	<?php if ($total_accounts >= 1) { ?>
 
-	        <a class="nobold" href="accounts.php?cid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
+	        <a class="nobold" href="registrar-accounts.php?cid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
 
         <?php } else { ?>
 

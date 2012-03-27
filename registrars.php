@@ -78,7 +78,7 @@ These are the registrars that have active domains.
 
     	<?php if ($total_accounts >= 1) { ?>
 
-	        <a class="nobold" href="accounts.php?rid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
+	        <a class="nobold" href="registrar-accounts.php?rid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
 
         <?php } else { ?>
 
