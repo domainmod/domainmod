@@ -36,99 +36,156 @@ $cid = $_GET['cid'];
 <?php include("_includes/header.inc.php"); ?>
 <?php
 
-if ($rid != "") { $rid_string = " and registrar_id = '$rid' "; } else { $rid_string = ""; }
-if ($cid != "") { $cid_string = " and company_id = '$cid' "; } else { $cid_string = ""; }
+if ($rid != "") { $rid_string = " and ra.registrar_id = '$rid' "; } else { $rid_string = ""; }
+if ($cid != "") { $cid_string = " and ra.company_id = '$cid' "; } else { $cid_string = ""; }
 
-$sql = "select id, username, company_id, registrar_id, reseller
-		from registrar_accounts
-		where active = '1'
+$sql = "select ra.id as raid, ra.username, ra.company_id, ra.registrar_id, ra.reseller, c.id as cid, c.name as cname, r.id as rid, r.name as rname
+		from registrar_accounts as ra, companies as c, registrars as r, domains as d
+		where ra.active = '1'
+		and ra.company_id = c.id
+		and ra.registrar_id = r.id
+		and ra.id = d.account_id
+		and d.active not in ('0', '10')
 		$rid_string
 		$cid_string
-		order by username asc";
+		and (select count(*) from domains where d.account_id = ra.id) > 0
+		group by ra.username, cname, rname
+		order by rname asc";
+
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-These are the registrar accounts that have active domains.
-<BR><BR>
 <strong>Number of Active Accounts:</strong> <?=mysql_num_rows($result)?>
-
-<?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
-	<td width="200">
-    	<font class="subheadline">Account/Username</font>
-    </td>
-	<td width="275">
-    	<font class="subheadline">Company</font>
-    </td>
-	<td width="275">
-    	<font class="subheadline">Registrar</font>
-    </td>
-	<td>
-    	<font class="subheadline"># of Domains</font>
-    </td>
-</tr>
-
 <?php 
-while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td valign="top" width="200">
-			<a class="subtlelink" href="edit/account.php?raid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
-	</td>
-	<td colspan="3">
-    	<table width="100%" border="0" cellspacing="3" cellpadding="0">
-            <tr>
-            	<td width="270">
+
+if (mysql_num_rows($result) > 0) { ?>
+
+    <BR><BR>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr height="30">
+        <td width="200">
+            <font class="subheadline">Registrar</font>
+        </td>
+        <td width="275">
+            <font class="subheadline">Account/Username</font>
+        </td>
+        <td width="200">
+            <font class="subheadline">Company</font>
+        </td>
+        <td>
+            <font class="subheadline"># of Domains</font>
+        </td>
+    </tr>
+    <?php 
+
+    while ($row = mysql_fetch_object($result)) { 
+
+	    $new_raid = $row->raid;
+    
+        if ($current_raid != $new_raid) {
+			$exclude_account_string_raw .= "'$row->raid', ";
+		} ?>
+
+		<tr height="20">
+			<td width="200">
+				<a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a>
+			</td>
+			<td valign="top" width="275">
+				<a class="subtlelink" href="edit/account.php?raid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+			</td>
+			<td width="200">
+				<a class="subtlelink" href="edit/company.php?cid=<?=$row->cid?>"><?=$row->cname?></a>
+			</td>
+			<td>
 				<?php
-                $sql2 = "select id, name
-                         from companies
-                         where id = '$row->company_id'";
-                $result2 = mysql_query($sql2,$connection) or die(mysql_error());
-                while ($row2 = mysql_fetch_object($result2)) {
-                    $temp_id = $row2->id;
-                    $temp_company_name = $row2->name;
-                }
-                ?>
-				<a class="subtlelink" href="edit/company.php?cid=<?=$temp_id?>"><?=$temp_company_name?></a>
-                </td>
-            	<td width="271">
-				<?php
-                $sql2 = "select id, name
-                         from registrars
-                         where id = '$row->registrar_id'";
-                $result2 = mysql_query($sql2,$connection) or die(mysql_error());
-                while ($row2 = mysql_fetch_object($result2)) {
-                    $temp_id = $row2->id;
-                    $temp_registrar_name = $row2->name;
-                }
-                ?>
-                <a class="subtlelink" href="edit/registrar.php?rid=<?=$temp_id?>"><?=$temp_registrar_name?></a>
-                </td>
-            	<td>
-				<?php
-				$sql3 = "select count(*) as total_domain_count
+				$sql2 = "select count(*) as total_domain_count
 						 from domains
-						 where account_id = '$row->id'
+						 where account_id = '$row->raid'
 						 and active not in ('0', '10')";
-				$result3 = mysql_query($sql3,$connection);
-				while ($row3 = mysql_fetch_object($result3)) {
-					if ($row3->total_domain_count != 0) {
-						echo "<a class=\"nobold\" href=\"domains.php?cid=$row->company_id&rid=$row->registrar_id&raid=$row->id\">" . number_format($row3->total_domain_count) . "</a>";
-					} else {
-						echo number_format($row3->total_domain_count);
-					}
-				}
-				?>
-                </td>
-            </tr>
-		</table>
-    </td>
-</tr>
-<?php 
+				$result2 = mysql_query($sql2,$connection);
+
+				while ($row2 = mysql_fetch_object($result2)) { 
+					echo "<a class=\"nobold\" href=\"domains.php?cid=$row->cid&rid=$row->rid&raid=$row->id\">" . number_format($row2->total_domain_count) . "</a>"; 
+				} ?>
+
+			</td>
+		</tr>
+		<?php 
+		$current_raid = $row->raid;
+	
+	} ?>
+
+	</table>
+    <?php 
+
 } ?>
-</table>
-<BR><font color="#DD0000"><strong>*</strong></font> = Reseller Account
-<?php } ?>
+
+<?php
+$exclude_account_string = substr($exclude_account_string_raw, 0, -2); 
+
+$sql = "select ra.id as raid, ra.username, ra.company_id, ra.registrar_id, ra.reseller, c.id as cid, c.name as cname, r.id as rid, r.name as rname
+		from registrar_accounts as ra, companies as c, registrars as r, domains as d
+		where ra.active = '1'
+		and ra.company_id = c.id
+		and ra.registrar_id = r.id
+		$rid_string
+		$cid_string
+		and ra.id not in ($exclude_account_string)
+		group by ra.username, cname, rname
+		order by rname";
+
+$result = mysql_query($sql,$connection) or die(mysql_error());
+?>
+<BR>
+<strong>Number of Inactive Accounts:</strong> <?=mysql_num_rows($result)?>
+<?php
+
+if (mysql_num_rows($result) > 0) { ?>
+
+    <BR><BR>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr height="30">
+        <td width="200">
+            <font class="subheadline">Registrar</font>
+        </td>
+        <td width="275">
+            <font class="subheadline">Account/Username</font>
+        </td>
+        <td width="200">
+            <font class="subheadline">Company</font>
+        </td>
+        <td>&nbsp;
+            
+        </td>
+    </tr>
+    <?php 
+
+	while ($row = mysql_fetch_object($result)) { ?>
+
+        <tr height="20">
+            <td width="200">
+                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a>
+            </td>
+            <td valign="top" width="275">
+                    <a class="subtlelink" href="edit/account.php?raid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+            </td>
+            <td width="200">
+                <a class="subtlelink" href="edit/company.php?cid=<?=$row->cid?>"><?=$row->cname?></a>
+            </td>
+            <td>&nbsp;
+                
+            </td>
+        </tr>
+        <?php 
+
+	} ?>
+
+    </table>
+
+	<BR><font color="#DD0000"><strong>*</strong></font> = Reseller Account
+	<?php 
+
+} ?>
+
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>
