@@ -1,4 +1,6 @@
 <?php
+// login-check.inc.php
+// 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
 // 
@@ -12,8 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License along with Domain Manager. If not, please 
 // see http://www.gnu.org/licenses/
-?>
-<?php
+?><?php
 session_start();
 
 if ($_SESSION['session_is_logged_in'] == 1) {
