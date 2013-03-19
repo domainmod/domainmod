@@ -43,7 +43,9 @@ NOTE: Whenever possible, we recommend that you use option #1, the git repository
 
 5. After a few seconds a message should appear letting you know that the installation was successful.
 
-6. If you have any problems during installation, please see the Support section below.
+6. Once the installation has completed you should delete the /installer/ folder.
+
+7. If you have any problems during installation, please see the Support section below.
 
 
 # Usage
