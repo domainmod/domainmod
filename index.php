@@ -110,7 +110,9 @@ $new_password = "";
 <form name="login_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Username:<strong><BR><input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
 <strong>Password:</strong><BR><input name="new_password" type="password" id="new_password" size="20" maxlength="20"><br>
+<?php if ($_SERVER['HTTP_HOST'] != "demos.aysmedia.com") { ?>
 <font size="1"><i>(<a href="reset-password.php"><i>Forgot your Password?</i></a>)</i></font><BR><BR>
+<?php } ?>
 <input type="submit" name="button" value="Login">
 </form>
 <?php } ?>
