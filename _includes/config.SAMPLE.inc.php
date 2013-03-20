@@ -16,13 +16,13 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php 
-// Path Settings
+// Path Settings (do not include trailing slashes)
 $web_root = "/dm";
 $full_server_path = "/home/user/public_html/dm";
 
 // Database Settings
 $dbhostname = "localhost";
-$dbname = "";
-$dbusername = "";
-$dbpassword = "";
+$dbname = "db_name";
+$dbusername = "db_username";
+$dbpassword = "dbPassword123!";
 ?>
