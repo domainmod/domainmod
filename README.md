@@ -5,7 +5,7 @@
 
 
 # About
-A web-based application written in PHP & MySQL used to manage a collection of domain names.  
+Domain Manager is a web-based application written in PHP & MySQL used to manage a collection of domain names.  
 
 
 # Live Demo
