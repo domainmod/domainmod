@@ -102,6 +102,10 @@ $new_password = "";
 <?php } ?>
 <?php include("_includes/header.inc.php"); ?>
 <?php if ($_SESSION['session_installation_mode'] != 1) { ?>
+<?php if ($_SERVER['HTTP_HOST'] == "demos.aysmedia.com") { ?>
+<strong>Demo Username:</strong> admin<BR>
+<strong>Demo Password:</strong> admin<BR>
+<?php } ?>
 <BR>
 <form name="login_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Username:<strong><BR><input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
