@@ -26,6 +26,7 @@ $dbname = "db_name";
 $dbusername = "db_username";
 $dbpassword = "dbPassword123";
 
-// Set default timezone - If this is commented out the server's timezone will be used
+// Set the default timezone - If this is commented out the server's timezone will be used
+// List of supported timezones: http://ca3.php.net/manual/en/timezones.php
 // date_default_timezone_set('America/Vancouver');
 ?>
