@@ -16,9 +16,9 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php 
-// Path Settings (don't include trailing slashes)
-$web_root = "/dm";
-$full_server_path = "/home/user/public_html/dm";
+// Path Settings
+$web_root = "/dm"; // don't include trailing slash
+$full_server_path = "/home/user/public_html/dm";  // don't include trailing slash
 
 // Database Settings
 $dbhostname = "localhost";
