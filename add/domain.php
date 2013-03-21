@@ -26,17 +26,17 @@ include("../_includes/timestamps/current-timestamp-plus-one-year-date-only.inc.p
 $software_section = "domains";
 
 // Form Variables
-$new_domain = $_POST['new_domain'];
+$new_domain = mysql_real_escape_string($_POST['new_domain']);
 $new_expiry_date = $_POST['new_expiry_date'];
-$new_function = $_POST['new_function'];
-$new_status = $_POST['new_status'];
-$new_status_notes = $_POST['new_status_notes'];
+$new_function = mysql_real_escape_string($_POST['new_function']);
+$new_status = mysql_real_escape_string($_POST['new_status']);
+$new_status_notes = mysql_real_escape_string($_POST['new_status_notes']);
 $new_cat_id = $_POST['new_cat_id'];
 $new_dns_id = $_POST['new_dns_id'];
 $new_account_id = $_POST['new_account_id'];
 $new_privacy = $_POST['new_privacy'];
 $new_active = $_POST['new_active'];
-$new_notes = $_POST['new_notes'];
+$new_notes = mysql_real_escape_string($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

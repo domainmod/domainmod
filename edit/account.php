@@ -29,9 +29,9 @@ $raid = $_GET['raid'];
 // Form Variables
 $new_company_id = $_POST['new_company_id'];
 $new_registrar_id = $_POST['new_registrar_id'];
-$new_username = $_POST['new_username'];
+$new_username = mysql_real_escape_string($_POST['new_username']);
 $new_reseller = $_POST['new_reseller'];
-$new_notes = $_POST['new_notes'];
+$new_notes = mysql_real_escape_string($_POST['new_notes']);
 $new_raid = $_POST['new_raid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

@@ -25,10 +25,10 @@ include("../_includes/timestamps/current-timestamp-basic.inc.php");
 $software_section = "segments";
 
 // Form Variables
-$new_name = $_POST['new_name'];
-$new_description = $_POST['new_description'];
-$new_segment = $_POST['new_segment'];
-$new_notes = $_POST['new_notes'];
+$new_name = mysql_real_escape_string($_POST['new_name']);
+$new_description = mysql_real_escape_string($_POST['new_description']);
+$new_segment = mysql_real_escape_string($_POST['new_segment']);
+$new_notes = mysql_real_escape_string($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_segment_formatted = preg_replace("/\r\n/", "','", $new_segment_formatted);
 		$new_segment_formatted = str_replace (" ", "", $new_segment_formatted);
 		$new_segment_formatted = trim($new_segment_formatted);
-		$new_segment_formatted = addslashes($new_segment_formatted);
+		$new_segment_formatted = mysql_real_escape_string($new_segment_formatted);
 
 		$sql = "insert into segments
 				(name, description, segment, number_of_domains, notes, insert_time)

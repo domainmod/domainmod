@@ -32,13 +32,13 @@ $really_del = $_GET['really_del'];
 
 // Form Variables
 $new_domain_id = $_POST['new_domain_id'];
-$new_name = $_POST['new_name'];
+$new_name = mysql_real_escape_string($_POST['new_name']);
 $new_type_id = $_POST['new_type_id'];
 $new_function_id = $_POST['new_function_id'];
 $new_expiry_date = $_POST['new_expiry_date'];
 $new_account_id = $_POST['new_account_id'];
 $new_active = $_POST['new_active'];
-$new_notes = $_POST['new_notes'];
+$new_notes = mysql_real_escape_string($_POST['new_notes']);
 $new_sslcid = $_POST['new_sslcid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

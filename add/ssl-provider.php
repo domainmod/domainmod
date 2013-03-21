@@ -25,9 +25,9 @@ include("../_includes/timestamps/current-timestamp-basic.inc.php");
 $software_section = "ssl-providers";
 
 // Form Variables
-$new_ssl_provider = $_POST['new_ssl_provider'];
-$new_url = $_POST['new_url'];
-$new_notes = $_POST['new_notes'];
+$new_ssl_provider = mysql_real_escape_string($_POST['new_ssl_provider']);
+$new_url = mysql_real_escape_string($_POST['new_url']);
+$new_notes = mysql_real_escape_string($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

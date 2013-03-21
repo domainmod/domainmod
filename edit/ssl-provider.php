@@ -27,9 +27,9 @@ $software_section = "ssl-providers";
 $sslpid = $_GET['sslpid'];
 
 // Form Variables
-$new_ssl_provider = $_POST['new_ssl_provider'];
-$new_url = $_POST['new_url'];
-$new_notes = $_POST['new_notes'];
+$new_ssl_provider = mysql_real_escape_string($_POST['new_ssl_provider']);
+$new_url = mysql_real_escape_string($_POST['new_url']);
+$new_notes = mysql_real_escape_string($_POST['new_notes']);
 $IS_SUBMITTED_SSL_PROVIDER = $_POST['IS_SUBMITTED_SSL_PROVIDER'];
 $new_type_id = $_POST['new_type_id'];
 $new_function_id = $_POST['new_function_id'];

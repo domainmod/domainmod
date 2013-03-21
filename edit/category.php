@@ -27,9 +27,9 @@ $software_section = "categories";
 $pcid = $_GET['pcid'];
 
 // Form Variables
-$new_category = $_REQUEST['new_category'];
-$new_owner = $_REQUEST['new_owner'];
-$new_notes = $_REQUEST['new_notes'];
+$new_category = mysql_real_escape_string($_REQUEST['new_category']);
+$new_owner = mysql_real_escape_string($_REQUEST['new_owner']);
+$new_notes = mysql_real_escape_string($_REQUEST['new_notes']);
 $new_default_category = $_REQUEST['new_default_category'];
 $new_pcid = $_REQUEST['new_pcid'];
 

@@ -27,19 +27,19 @@ $software_section = "dns";
 $dnsid = $_GET['dnsid'];
 
 // Form Variables
-$new_name = $_POST['new_name'];
-$new_dns1 = $_POST['new_dns1'];
-$new_dns2 = $_POST['new_dns2'];
-$new_dns3 = $_POST['new_dns3'];
-$new_dns4 = $_POST['new_dns4'];
-$new_dns5 = $_POST['new_dns5'];
-$new_dns6 = $_POST['new_dns6'];
-$new_dns7 = $_POST['new_dns7'];
-$new_dns8 = $_POST['new_dns8'];
-$new_dns9 = $_POST['new_dns9'];
-$new_dns10 = $_POST['new_dns10'];
-$new_dnsid = $_POST['new_dnsid'];
-$new_notes = $_POST['new_notes'];
+$new_name = mysql_real_escape_string($_POST['new_name']);
+$new_dns1 = mysql_real_escape_string($_POST['new_dns1']);
+$new_dns2 = mysql_real_escape_string($_POST['new_dns2']);
+$new_dns3 = mysql_real_escape_string($_POST['new_dns3']);
+$new_dns4 = mysql_real_escape_string($_POST['new_dns4']);
+$new_dns5 = mysql_real_escape_string($_POST['new_dns5']);
+$new_dns6 = mysql_real_escape_string($_POST['new_dns6']);
+$new_dns7 = mysql_real_escape_string($_POST['new_dns7']);
+$new_dns8 = mysql_real_escape_string($_POST['new_dns8']);
+$new_dns9 = mysql_real_escape_string($_POST['new_dns9']);
+$new_dns10 = mysql_real_escape_string($_POST['new_dns10']);
+$new_dnsid = mysql_real_escape_string($_POST['new_dnsid']);
+$new_notes = mysql_real_escape_string($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	

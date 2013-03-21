@@ -27,11 +27,11 @@ $software_section = "registrars";
 $rid = $_GET['rid'];
 
 // Form Variables
-$new_registrar = $_POST['new_registrar'];
-$new_url = $_POST['new_url'];
-$new_notes = $_POST['new_notes'];
+$new_registrar = mysql_real_escape_string($_POST['new_registrar']);
+$new_url = mysql_real_escape_string($_POST['new_url']);
+$new_notes = mysql_real_escape_string($_POST['new_notes']);
 $IS_SUBMITTED_REGISTRAR = $_POST['IS_SUBMITTED_REGISTRAR'];
-$new_tld = $_POST['new_tld'];
+$new_tld = mysql_real_escape_string($_POST['new_tld']);
 $new_initial_fee = $_POST['new_initial_fee'];
 $new_renewal_fee = $_POST['new_renewal_fee'];
 $new_currency_id = $_POST['new_currency_id'];

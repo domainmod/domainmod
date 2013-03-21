@@ -25,9 +25,9 @@ include("../_includes/timestamps/current-timestamp-basic.inc.php");
 $software_section = "registrars";
 
 // Form Variables
-$new_registrar = $_POST['new_registrar'];
-$new_url = $_POST['new_url'];
-$new_notes = $_POST['new_notes'];
+$new_registrar = mysql_real_escape_string($_POST['new_registrar']);
+$new_url = mysql_real_escape_string($_POST['new_url']);
+$new_notes = mysql_real_escape_string($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

@@ -25,11 +25,11 @@ include("../_includes/timestamps/current-timestamp-basic.inc.php");
 $software_section = "currencies";
 
 // Form Variables
-$new_name = $_POST['new_name'];
-$new_abbreviation = $_POST['new_abbreviation'];
+$new_name = mysql_real_escape_string($_POST['new_name']);
+$new_abbreviation = mysql_real_escape_string($_POST['new_abbreviation']);
 $new_conversion = $_POST['new_conversion'];
 $new_default_currency = $_POST['new_default_currency'];
-$new_notes = $_POST['new_notes'];
+$new_notes = mysql_real_escape_string($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

@@ -27,8 +27,8 @@ $software_section = "companies";
 $cid = $_GET['cid'];
 
 // Form Variables
-$new_company = $_POST['new_company'];
-$new_notes = $_POST['new_notes'];
+$new_company = mysql_real_escape_string($_POST['new_company']);
+$new_notes = mysql_real_escape_string($_POST['new_notes']);
 $new_cid = $_POST['new_cid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

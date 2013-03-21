@@ -25,9 +25,9 @@ include("../_includes/timestamps/current-timestamp-basic.inc.php");
 $software_section = "categories";
 
 // Form Variables
-$new_category = $_POST['new_category'];
-$new_owner = $_POST['new_owner'];
-$new_notes = $_POST['new_notes'];
+$new_category = mysql_real_escape_string($_POST['new_category']);
+$new_owner = mysql_real_escape_string($_POST['new_owner']);
+$new_notes = mysql_real_escape_string($_POST['new_notes']);
 $new_default_category = $_POST['new_default_category'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
