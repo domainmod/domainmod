@@ -21,7 +21,7 @@ session_start();
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
-include("../_includes/timestamps/current-timestamp-basic.inc.php");
+include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 $page_title = "Edit User";
 $software_section = "system";

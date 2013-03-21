@@ -21,7 +21,7 @@ include("../../config.inc.php");
 include("../../database.inc.php");
 include("../../software.inc.php");
 include("../../auth/auth-check.inc.php");
-include("../../timestamps/current-timestamp-basic.inc.php");
+include("../../timestamps/current-timestamp.inc.php");
 
 $_SESSION['session_running_login_checks'] = 1;
 

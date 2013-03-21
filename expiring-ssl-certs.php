@@ -21,7 +21,7 @@ include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
-include("_includes/timestamps/current-timestamp.inc.php");
+include("_includes/timestamps/current-timestamp-basic.inc.php");
 $page_title = "Expiring SSL Certificates";
 
 // Form Variables

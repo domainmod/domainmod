@@ -21,8 +21,8 @@ include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
-include("../_includes/timestamps/current-timestamp-basic.inc.php");
-include("../_includes/timestamps/current-timestamp-plus-one-year-date-only.inc.php");
+include("../_includes/timestamps/current-timestamp.inc.php");
+include("../_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
 $software_section = "ssl-certs";
 
 // Form Variables
@@ -158,7 +158,7 @@ echo "</select>";
 ?>
 <BR><BR>
 <strong>Expiry Date (YYYY-MM-DD):</strong><BR><BR>
-<input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_plus_one_year_date_only; } ?>">
+<input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
 <BR><BR>
 <strong>SSL Provider Account:</strong><BR><BR>
 <?php

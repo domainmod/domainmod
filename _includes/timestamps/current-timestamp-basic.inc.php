@@ -1,5 +1,5 @@
 <?php
-// current-timestamp-basic.inc.php
+// current-timestamp.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,5 +16,5 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-$current_timestamp = date("Y-m-d H:i:s",mktime(date("H")-0,date("i"),date("s")+3,date("m"),date("d"),date("Y")));
+$current_timestamp_basic = date("Y-m-d",mktime(date("H"),date("i"),date("s"),date("m"),date("d"),date("Y")));
 ?>

@@ -1,5 +1,5 @@
 <?php
-// fix-tlds.php
+// current-timestamp-basic-plus-one-year.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,31 +16,5 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-session_start();
-
-include("../config.inc.php");
-include("../database.inc.php");
-include("../software.inc.php");
-include("../auth/auth-check.inc.php");
-include("../timestamps/current-timestamp.inc.php");
-
-$sql = "select id, domain from domains order by domain asc";
-$result = mysql_query($sql,$connection);
-
-while ($row = mysql_fetch_object($result)) {
-	
-	$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $row->domain);
-	
-	$sql2 = "update domains
-			 set tld = '$tld',
-			 update_time = '$current_timestamp'
-			 where id = '$row->id'";
-	$result2 = mysql_query($sql2,$connection);
-
-}
-
-$_SESSION['session_result_message'] = "All TLDs Have Been Fixed<BR>";
-
-header("Location: ../../system/index.php");
-exit;
+$current_timestamp_basic_plus_one_year = date("Y-m-d",mktime(date("H"),date("i"),date("s"),date("m"),date("d"),date("Y")+1));
 ?>

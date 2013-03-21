@@ -21,9 +21,9 @@ include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
-include("_includes/timestamps/current-timestamp.inc.php");
 include("_includes/timestamps/current-timestamp-basic.inc.php");
-include("_includes/timestamps/current-timestamp-plus-one-year-date-only.inc.php");
+include("_includes/timestamps/current-timestamp.inc.php");
+include("_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
 $software_section == "bulkactions";
 
 // Form Variables
@@ -452,7 +452,7 @@ Enter the domains one per line.
     <BR><BR>
 <?php } elseif ($action == "AD") { ?>
     <strong>Expiry Date (YYYY-MM-DD):</strong><BR><BR>
-    <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_plus_one_year_date_only; } ?>">
+    <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
     <BR><BR>
     <strong>Function:</strong><BR><BR>
     <input name="new_function" type="text" size="50" maxlength="255" value="<?=stripslashes($new_function)?>">

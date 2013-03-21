@@ -22,7 +22,7 @@ include("../config.inc.php");
 include("../database.inc.php");
 include("../software.inc.php");
 include("../auth/auth-check.inc.php");
-include("../timestamps/current-timestamp-basic.inc.php");
+include("../timestamps/current-timestamp.inc.php");
 
 $sql = "update domains 
 		set fee_fixed = '0', 

@@ -22,8 +22,8 @@ include("../software.inc.php");
 include("../config.inc.php");
 include("../database.inc.php");
 // include("../auth/auth-check.inc.php");
-include("../timestamps/current-timestamp.inc.php");
 include("../timestamps/current-timestamp-basic.inc.php");
+include("../timestamps/current-timestamp.inc.php");
 
 $sql = "
 INSERT INTO `categories` (`name`, `owner`, `notes`, `test_data`, `insert_time`) VALUES

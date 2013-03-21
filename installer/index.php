@@ -23,7 +23,7 @@ $_SESSION['session_installation_mode'] = 1;
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
-include("../_includes/timestamps/current-timestamp-basic.inc.php");
+include("../_includes/timestamps/current-timestamp.inc.php");
 
 $sql = "
 CREATE TABLE IF NOT EXISTS `users` (
