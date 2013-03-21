@@ -39,7 +39,7 @@ session_start();
 	<tr>
         <td class="main-table" height="100%">
 <?php if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['session_running_login_checks'] != 1) { ?>
-<?php include($full_server_path . "_includes/layout/menu-main.inc.php"); ?><BR>
+<?php include($full_server_path . "/_includes/layout/menu-main.inc.php"); ?><BR>
 <hr width="100%" size="1" noshade><BR>
 <?php } ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -51,11 +51,11 @@ session_start();
 <font class="headline"><?=$page_title?></font>
 <BR><BR>
 <?php 
-	include($full_server_path . "_includes/layout/table-maintenance.inc.php"); 
+	include($full_server_path . "/_includes/layout/table-maintenance.inc.php"); 
 ?>
 <?php 
 if ($_SESSION['session_result_message'] != "") {
-	include($full_server_path . "_includes/layout/table-result-message.inc.php"); 
+	include($full_server_path . "/_includes/layout/table-result-message.inc.php"); 
 	unset($_SESSION['session_result_message']);
 }
 ?>

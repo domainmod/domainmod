@@ -61,7 +61,7 @@ $message .= "
 				
 			} else {
 
-				$message .= "URL: <a target=\"_blank\" href=\"" . $_SERVER["HTTP_ORIGIN"] . $web_root . "\">" . $_SERVER["HTTP_ORIGIN"] . $web_root . "</a><BR>";
+				$message .= "URL: <a target=\"_blank\" href=\"" . $_SERVER["HTTP_ORIGIN"] . $web_root . "/\">" . $_SERVER["HTTP_ORIGIN"] . $web_root . "/</a><BR>";
 
 			}
 

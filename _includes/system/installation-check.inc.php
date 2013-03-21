@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$full_install_path = $full_server_path . "installer/";
+$full_install_path = $full_server_path . "/installer/";
 
 if (is_dir($full_install_path)) {
 
@@ -33,7 +33,7 @@ if (is_dir($full_install_path)) {
 			$_SESSION['session_result_message'] .= "<a href=\"/installer/\">Please click here to install</a><BR>";
 
 		} else {
-			$_SESSION['session_result_message'] .= "<a href=\"" . $web_root . "installer/\">Please click here to install</a><BR>";
+			$_SESSION['session_result_message'] .= "<a href=\"" . $web_root . "/installer/\">Please click here to install</a><BR>";
 		}
 
 	} else {
