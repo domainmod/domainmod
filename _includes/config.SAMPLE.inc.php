@@ -24,5 +24,8 @@ $full_server_path = "/home/user/public_html/dm";  // don't include trailing slas
 $dbhostname = "localhost";
 $dbname = "db_name";
 $dbusername = "db_username";
-$dbpassword = "dbPassword123!";
+$dbpassword = "dbPassword123";
+
+// Set default timezone - If this is commented out the server's timezone will be used
+// date_default_timezone_set('America/Vancouver');
 ?>
