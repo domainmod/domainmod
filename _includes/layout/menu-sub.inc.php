@@ -17,29 +17,29 @@
 ?>
 <br><br>
 <?php if ($software_section == "domains") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/domain.php">Add A New Domain</a>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>add/domain.php">Add A New Domain</a>
 <?php } elseif ($software_section == "ssl-providers") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-provider.php">Add A New SSL Provider</a>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>add/ssl-provider.php">Add A New SSL Provider</a>
 <?php } elseif ($software_section == "ssl-accounts") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-account.php">Add A New SSL Account</a>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>add/ssl-account.php">Add A New SSL Account</a>
 <?php } elseif ($software_section == "ssl-certs") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-cert.php">Add A New SSL Certificate</a>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>add/ssl-cert.php">Add A New SSL Certificate</a>
 <?php } elseif ($software_section == "categories") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/category.php">Add A New Category</a>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>add/category.php">Add A New Category</a>
 <?php } elseif ($software_section == "dns") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/dns.php">Add A New DNS Profile</a>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>add/dns.php">Add A New DNS Profile</a>
 <?php } elseif ($software_section == "registrars") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/registrar.php">Add A New Registrar</a>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>add/registrar.php">Add A New Registrar</a>
 <?php } elseif ($software_section == "accounts") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/account.php">Add A New Registrar Account</a>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>add/account.php">Add A New Registrar Account</a>
 <?php } elseif ($software_section == "companies") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/company.php">Add A New Company</a>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>add/company.php">Add A New Company</a>
 <?php } elseif ($software_section == "segments") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/segment.php">Add A New Segment</a>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>add/segment.php">Add A New Segment</a>
 <?php } elseif ($software_section == "currencies") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/currency.php">Add A New Currency</a>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>add/currency.php">Add A New Currency</a>
 <?php } elseif ($software_section == "bulkactions") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/bulk-actions.php">Reset Bulk Action</a>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>system/bulk-actions.php">Reset Bulk Action</a>
 <?php } elseif ($software_section == "help") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/">Main</a>  /  <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/getting-started/">Getting Started</a>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>help/">Main</a>  /  <a href="<?php if ($web_root != "/") echo $web_root; ?>help/getting-started/">Getting Started</a>
 <?php } ?>

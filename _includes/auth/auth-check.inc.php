@@ -27,7 +27,7 @@ if ($_SESSION['session_is_logged_in'] != 1) {
 		if ($web_root == "/") {
 			header("Location: /index.php");
 		} else {
-			header("Location: " . $web_root . "/index.php");
+			header("Location: " . $web_root . "index.php");
 		}
 		exit;
 }

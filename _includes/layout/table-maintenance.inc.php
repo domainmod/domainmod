@@ -30,10 +30,10 @@ session_start();
                     <BR>
                     <strong>Maintenance Warning! (clear up the issues to make this table disappear)</strong><BR><BR>
 					<?php if ($_SESSION['session_missing_domain_fees'] == 1) { ?>
-                    <LI>Some of your Registrars/TLDs are missing domain fees. <a href="<?=$web_root?>/missing-domain-fees.php">Click here to fix this</a>.</LI>
+                    <LI>Some of your Registrars/TLDs are missing domain fees. <a href="<?=$web_root?>missing-domain-fees.php">Click here to fix this</a>.</LI>
                     <?php } ?>
 					<?php if ($_SESSION['session_missing_ssl_fees'] == 1) { ?>
-                    <LI>Some of your SSL Certificates are missing fees. <a href="<?=$web_root?>/missing-ssl-fees.php">Click here to fix this</a>.</LI>
+                    <LI>Some of your SSL Certificates are missing fees. <a href="<?=$web_root?>missing-ssl-fees.php">Click here to fix this</a>.</LI>
                     <?php } ?>
 					<BR>
                     </td>
