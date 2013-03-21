@@ -36,12 +36,12 @@ $software_section = "currencies";
 $sql = "select id, currency, name, conversion, default_currency
 		from currencies
 		where active = '1'
-		order by name asc";
+		order by default_currency desc, name asc";
 $result = mysql_query($sql,$connection);
 ?>
-The below currency rates are used for various reporting, and at the very least they should be updated before you export your expiring domains.<BR>
+The below exchange rates are used for various reporting, and at the very least they should be updated before you export your domains.<BR>
 <BR>
-<strong>NOTE:</strong> Currencies rates need to be updated MANUALLY, and they should be relative to your default currency.
+<strong>NOTE:</strong> Exchange rate conversions have now been automated! Simply set your default currency below and then <a href="system/update-exchange-rates.php">click here to update the exchange rates</a>.
 <BR><BR>
 <strong>Number of Active Currencies:</strong> <?=mysql_num_rows($result)?>
 
@@ -56,7 +56,7 @@ The below currency rates are used for various reporting, and at the very least t
     	<font class="subheadline">ABV</font>
     </td>
 	<td>
-    	<font class="subheadline">Conversion</font>
+    	<font class="subheadline">Exchange Rate</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -75,7 +75,7 @@ The below currency rates are used for various reporting, and at the very least t
 <?php } ?>
 </table>
 <BR>
-<font color="#DD0000"><strong>*</strong></font> = Default Currency (for reports, etc.)
+<font color="#DD0000"><strong>*</strong></font> = Default Currency (for rate conversions, reports, etc.)
 <?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
