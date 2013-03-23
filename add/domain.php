@@ -59,8 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
 
 		$sql = "insert into domains
-				(company_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, fee_id, function, status, status_notes, notes, privacy, insert_time)
-				values ('$new_company_id', '$new_registrar_id', '$new_account_id', '$new_domain', '$tld', '$new_expiry_date', '$new_cat_id', '$new_dns_id', '$new_fee_id', '$new_function', '$new_status', '$new_status_notes', '$new_notes', '$new_privacy', '$current_timestamp')";
+				(company_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, fee_id, function, status, status_notes, notes, privacy, active, insert_time)
+				values ('$new_company_id', '$new_registrar_id', '$new_account_id', '$new_domain', '$tld', '$new_expiry_date', '$new_cat_id', '$new_dns_id', '$new_fee_id', '$new_function', '$new_status', '$new_status_notes', '$new_notes', '$new_privacy', '$new_active', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
