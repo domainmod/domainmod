@@ -130,7 +130,7 @@ $sql = "
 CREATE TABLE IF NOT EXISTS `fees` (
   `id` int(10) NOT NULL auto_increment,
   `registrar_id` int(5) NOT NULL,
-  `tld` varchar(10) NOT NULL,
+  `tld` varchar(50) NOT NULL,
   `initial_fee` float NOT NULL,
   `renewal_fee` float NOT NULL,
   `currency_id` int(10) NOT NULL,
