@@ -110,7 +110,7 @@ if (mysql_num_rows($result) > 0) {
 				$result2 = mysql_query($sql2,$connection);
 
 				while ($row2 = mysql_fetch_object($result2)) { 
-					echo "<a class=\"nobold\" href=\"domains.php?cid=$row->cid&rid=$row->rid&raid=$row->id\">" . number_format($row2->total_domain_count) . "</a>"; 
+					echo "<a class=\"nobold\" href=\"domains.php?cid=$row->cid&rid=$row->rid&raid=$row->raid\">" . number_format($row2->total_domain_count) . "</a>"; 
 				} ?>
 
 			</td>
@@ -174,7 +174,7 @@ if (mysql_num_rows($result) > 0) {
                 <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a>
             </td>
             <td valign="top" width="275">
-                    <a class="subtlelink" href="edit/account.php?raid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+                    <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
             </td>
             <td width="200">
                 <a class="subtlelink" href="edit/company.php?cid=<?=$row->cid?>"><?=$row->cname?></a>
