@@ -74,6 +74,8 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 
 	} else {
 		
+		$new_tld = trim($new_tld, ". \t\n\r\0\x0B");
+		
 		if ($new_initial_fee == "0" && $new_renewal_fee == "0") {
 
 			$sql = "delete from fees
@@ -256,6 +258,7 @@ if (mysql_num_rows($result) > 0) {
     <?=$all_missing_fees?><BR><BR>
     <strong><font color="#DD0000">*</font> Please update the fees for these TLDs below in order to ensure proper domain accounting.</strong>
     <BR><BR><BR><BR>
+
 <?php
 }
 ?>
@@ -263,7 +266,7 @@ if (mysql_num_rows($result) > 0) {
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
-    	<td width="200" valign="top"><strong>TLD (no leading period)</strong><BR><BR>
+    	<td width="200" valign="top"><strong>TLD</strong><BR><BR>
    	    <input name="new_tld" type="text" value="" size="10"></td>
 		<td width="200" valign="top"><strong>Initial Fee</strong><BR><BR>
 	    <input name="new_initial_fee" type="text" value="" size="10"></td>
