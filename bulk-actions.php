@@ -143,12 +143,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 					$renewal_years_string = "$new_renewal_years Years";
 				}
 				
-				$new_notes = "$current_timestamp_date_only - Domain Renewed For $renewal_years_string";
+				$new_notes = "$current_timestamp_basic - Domain Renewed For $renewal_years_string";
 				
 				$sql2 = "update domains
 						 set expiry_date = '$new_expiry',
 						 active = '1',
-						 notes = concat(notes, '\r\n\r\n$new_notes'),
+						 notes = concat('$new_notes\r\n\r\n', notes),
 						 update_time = '$current_timestamp'
 						 where domain = '$row->domain'";
 
@@ -468,6 +468,7 @@ Enter the domains one per line.
                     from categories
                     where active = '1'
                     order by default_category desc, name asc";
+
     $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
     echo "<select name=\"new_pcid\">";
     while ($row_cat = mysql_fetch_object($result_cat)) {
