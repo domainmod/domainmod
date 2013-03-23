@@ -75,6 +75,6 @@ while ($row = mysql_fetch_object($result)) {
 
 $_SESSION['session_result_message'] .= "Exchange Rates Updated<BR>";
 
-header("Location: ../currencies.php");
+header("Location: " . $_SERVER['HTTP_REFERER']);
 exit;
 ?>
