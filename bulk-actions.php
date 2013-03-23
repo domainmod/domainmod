@@ -197,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 		} elseif ($action == "AN") { 
 		
 			$sql2 = "update domains
-					set notes = concat(notes, '\r\n\r\n$new_notes'),
+					set notes = concat('$new_notes\r\n\r\n', notes),
 					update_time = '$current_timestamp'
 					where domain in ($new_data_formatted)";
 
