@@ -312,8 +312,8 @@ while ($row = mysql_fetch_object($result)) {
 ?>
 	<tr>
     	<td height="18" valign="middle">.<?=$row->tld?></td>
-        <td>$<?=$row->initial_fee?></td>
-        <td>$<?=$row->renewal_fee?></td>
+        <td><?php echo number_format($row->initial_fee, 2, '.', ','); ?></td>
+        <td><?php echo number_format($row->renewal_fee, 2, '.', ','); ?></td>
         <td><?=$row->currency?></td>
 	</tr>
 <?php
