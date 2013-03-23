@@ -619,7 +619,7 @@ Enter the domains one per line.
 <textarea name="new_notes" cols="60" rows="5"><?php if ($new_notes != "") { echo stripslashes($new_notes); } else { echo "New Note"; } ?></textarea>
   <BR><BR>
 <?php } elseif ($action == "CED") { ?>
-<input name="new_expiry_date" type="text" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_date_only; } ?>" size="10" maxlength="10">
+<input name="new_expiry_date" type="text" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic; } ?>" size="10" maxlength="10">
     <BR><BR>
 <?php } ?>
 
