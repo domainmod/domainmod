@@ -206,13 +206,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 			$_SESSION['session_result_message'] = "Note Added<BR>";
 
 		} elseif ($action == "CRA") { 
-
-
+		
 			$sql = "select ra.id as ra_id, ra.username, r.id as r_id, r.name as r_name, c.id as c_id, c.name as c_name
-  				    from registrar_accounts as ra, registrars as r, companies as c, domains as d
+  				    from registrar_accounts as ra, registrars as r, companies as c
 				    where ra.registrar_id = r.id
 				    and ra.company_id = c.id
-				    and ra.id = d.account_id
 					and ra.id = '$new_raid'
 				    group by r.name, c.name, ra.username
 				    order by r.name asc, c.name asc, ra.username asc";
@@ -594,11 +592,10 @@ Enter the domains one per line.
     <BR><BR>
 <?php } elseif ($action == "CRA") { ?>
 	<?php
-    $sql_account = "select ra.id as ra_id, ra.username, r.name as r_name, c.name as c_name
-                      from registrar_accounts as ra, registrars as r, companies as c, domains as d
+   $sql_account = "select ra.id as ra_id, ra.username, r.name as r_name, c.name as c_name
+                      from registrar_accounts as ra, registrars as r, companies as c
                       where ra.registrar_id = r.id
                       and ra.company_id = c.id
-                      and ra.id = d.account_id
                       and ra.active = '1'
                       and r.active = '1'
                       and c.active = '1'
