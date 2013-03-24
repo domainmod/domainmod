@@ -33,14 +33,14 @@ $really_del = $_GET['really_del'];
 // Form Variables
 $new_name = mysql_real_escape_string($_POST['new_name']);
 $new_description = mysql_real_escape_string($_POST['new_description']);
-$new_segment = mysql_real_escape_string($_POST['new_segment']);
+$new_segment = $_POST['new_segment'];
 $new_notes = mysql_real_escape_string($_POST['new_notes']);
 $new_segid = $_POST['new_segid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != "" && $new_segment != "") {
-
+		
 		$lines = explode("\r\n", $new_segment);
 		$number_of_domains = count($lines);
 

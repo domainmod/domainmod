@@ -27,7 +27,7 @@ $software_section = "segments";
 // Form Variables
 $new_name = mysql_real_escape_string($_POST['new_name']);
 $new_description = mysql_real_escape_string($_POST['new_description']);
-$new_segment = mysql_real_escape_string($_POST['new_segment']);
+$new_segment = $_POST['new_segment'];
 $new_notes = mysql_real_escape_string($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
