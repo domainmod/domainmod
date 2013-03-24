@@ -46,8 +46,9 @@ CREATE TABLE IF NOT EXISTS `users` (
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "
-INSERT INTO `users` (`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `insert_time`) VALUES
-('Domain', 'Administrator', 'admin', 'admin@aysmedia.com', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '$current_timestamp');
+INSERT INTO `users`
+	(`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `insert_time`) VALUES
+	('Domain', 'Administrator', 'admin', 'admin@aysmedia.com', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -100,29 +101,30 @@ CREATE TABLE IF NOT EXISTS `currencies` (
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "
-INSERT INTO `currencies` (`id`, `currency`, `name`, `conversion`, `default_currency`, `insert_time`) VALUES
-(1, 'CAD', 'Canadian Dollars', 1.00059, 0, '$current_timestamp'),
-(2, 'EUR', 'Euros', 1.33693, 0, '$current_timestamp'),
-(3, 'AUD', 'Australian Dollars', 0.926664, 0, '$current_timestamp'),
-(4, 'CHF', 'Switzerland Francs', 0.932068, 0, '$current_timestamp'),
-(5, 'CNY', 'China Yuan Renminbi', 0.14637, 0, '$current_timestamp'),
-(6, 'DKK', 'Denmark Kroner', 0.179651, 0, '$current_timestamp'),
-(7, 'GBP', 'United Kingdom Pounds', 1.53832, 0, '$current_timestamp'),
-(8, 'HKD', 'Hong Kong Dollars', 0.128822, 0, '$current_timestamp'),
-(9, 'HUF', 'Hungary Forint', 0.00508413, 0, '$current_timestamp'),
-(10, 'INR', 'India Rupees', 0.0225657, 0, '$current_timestamp'),
-(11, 'JPY', 'Japan Yen', 0.010645, 0, '$current_timestamp'),
-(12, 'MXN', 'Mexico Pesos', 0.0819931, 0, '$current_timestamp'),
-(13, 'MYR', 'Malaysia Ringgits', 0.313411, 0, '$current_timestamp'),
-(14, 'NOK', 'Norway Kroner', 0.169632, 0, '$current_timestamp'),
-(15, 'NZD', 'New Zealand Dollars', 0.717594, 0, '$current_timestamp'),
-(16, 'RUB', 'Russia Rubles', 0.0342797, 0, '$current_timestamp'),
-(17, 'SEK', 'Sweden Kronor', 0.139414, 0, '$current_timestamp'),
-(18, 'SGD', 'Singapore Dollars', 0.729672, 0, '$current_timestamp'),
-(19, 'THB', 'Thailand Baht', 0.0310316, 0, '$current_timestamp'),
-(20, 'USD', 'United States Dollars', 1, 1, '$current_timestamp'),
-(21, 'ZAR', 'South Africa Rand', 0.134658, 0, '$current_timestamp'),
-(22, 'AED', 'United Arab Emirates Dirhams', 0.272297, 0, '$current_timestamp');
+INSERT INTO `currencies` 
+	(`id`, `currency`, `name`, `conversion`, `default_currency`, `insert_time`) VALUES
+	(1, 'CAD', 'Canadian Dollars', 1, 1, '$current_timestamp'),
+	(2, 'USD', 'United States Dollars', 0, 0, '$current_timestamp'),
+	(3, 'EUR', 'Euros', 0, 0, '$current_timestamp'),
+	(4, 'AUD', 'Australian Dollars', 0, 0, '$current_timestamp'),
+	(5, 'CHF', 'Switzerland Francs', 0, 0, '$current_timestamp'),
+	(6, 'CNY', 'China Yuan Renminbi', 0, 0, '$current_timestamp'),
+	(7, 'DKK', 'Denmark Kroner', 0, 0, '$current_timestamp'),
+	(8, 'GBP', 'United Kingdom Pounds', 0, 0, '$current_timestamp'),
+	(9, 'HKD', 'Hong Kong Dollars', 0, 0, '$current_timestamp'),
+	(10, 'HUF', 'Hungary Forint', 0, 0, '$current_timestamp'),
+	(11, 'INR', 'India Rupees', 0, 0, '$current_timestamp'),
+	(12, 'JPY', 'Japan Yen', 0, 0, '$current_timestamp'),
+	(13, 'MXN', 'Mexico Pesos', 0, 0, '$current_timestamp'),
+	(14, 'MYR', 'Malaysia Ringgits', 0, 0, '$current_timestamp'),
+	(15, 'NOK', 'Norway Kroner', 0, 0, '$current_timestamp'),
+	(16, 'NZD', 'New Zealand Dollars', 0, 0, '$current_timestamp'),
+	(17, 'RUB', 'Russia Rubles', 0, 0, '$current_timestamp'),
+	(18, 'SEK', 'Sweden Kronor', 0, 0, '$current_timestamp'),
+	(19, 'SGD', 'Singapore Dollars', 0, 0, '$current_timestamp'),
+	(20, 'THB', 'Thailand Baht', 0, 0, '$current_timestamp'),
+	(21, 'ZAR', 'South Africa Rand', 0, 0, '$current_timestamp'),
+	(22, 'AED', 'United Arab Emirates Dirhams', 0, 0, '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -371,6 +373,12 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `update_time` datetime NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+
+$sql = "
+INSERT INTO `settings` (`db_version`, `insert_time`) VALUES
+('1.1', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
