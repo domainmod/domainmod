@@ -27,17 +27,40 @@ $software_section = "currencies";
 // Form Variables
 $new_name = mysql_real_escape_string($_POST['new_name']);
 $new_abbreviation = mysql_real_escape_string($_POST['new_abbreviation']);
-$new_conversion = $_POST['new_conversion'];
 $new_default_currency = $_POST['new_default_currency'];
 $new_notes = mysql_real_escape_string($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_name != "" && $new_abbreviation != "" && $new_conversion != "") {
+	if ($new_name != "" && $new_abbreviation != "") {
+		
+		$sql = "select currency
+				from currencies
+				where default_currency = '1'";
+		$result = mysql_query($sql,$connection);
+		
+		while ($row = mysql_fetch_object($result)) {
+			$default_currency = $row->currency;
+		}
+		
+		$from = $new_abbreviation;
+		$to = $default_currency;
+		$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
+		$handle = @fopen($full_url, "r");
+			 
+		if ($handle) {
 
+			$handle_result = fgets($handle, 4096);
+			fclose($handle);
+
+		}
+			
+		$data = explode(",",$handle_result);
+		$value = $data[1];
+			
 		$sql = "insert into currencies
 				(currency, name, conversion, notes, default_currency, insert_time)
-				values ('$new_abbreviation', '$new_name', '$new_conversion', '$new_notes', '$new_default_currency', '$current_timestamp')";
+				values ('$new_abbreviation', '$new_name', '$value', '$new_notes', '$new_default_currency', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Currency Added<BR>";
@@ -49,7 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		if ($new_name == "") $_SESSION['session_result_message'] .= "Please Enter The Currency Name<BR>";
 		if ($new_abbreviation == "") $_SESSION['session_result_message'] .= "Please Enter The Currency Abbreviation<BR>";
-		if ($new_conversion == "") $_SESSION['session_result_message'] .= "Please Enter The Currency Conversion<BR>";
 
 	}
 
@@ -64,21 +86,29 @@ $page_title = "Adding A New Currency";
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
+<?php 
+$sql = "select currency, name
+		from currencies
+		where default_currency = '1'";
+$result = mysql_query($sql,$connection);
+
+while ($row = mysql_fetch_object($result)) {
+	$default_currency = $row->currency;
+	$default_name = $row->name;
+}
+?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
-<strong>Name:</strong><BR><BR>
+<strong>Name ("<em><?=$default_name?></em>"):</strong><BR><BR>
 <input name="new_name" type="text" value="<?=stripslashes($new_name)?>" size="50" maxlength="255">
 <BR><BR>
-<strong>Abbreviation:</strong><BR><BR>
+<strong>Abbreviation ("<em><?=$default_currency?></em>"):</strong><BR><BR>
 <input name="new_abbreviation" type="text" value="<?=stripslashes($new_abbreviation)?>" size="50" maxlength="3">
-<BR><BR>
-<strong>Conversion:</strong><BR><BR>
-<input name="new_conversion" type="text" value="<?=stripslashes($new_conversion)?>" size="50" maxlength="255">
-<BR><BR>
-<strong>Default Currency?:</strong>&nbsp;
-<input name="new_default_currency" type="checkbox" id="new_default_currency" value="1">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<BR><BR>
+<strong>Set as default currency?</strong>&nbsp;
+<input name="new_default_currency" type="checkbox" id="new_default_currency" value="1">
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This Currency &raquo;">
 </form>
