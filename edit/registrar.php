@@ -299,7 +299,7 @@ if (mysql_num_rows($result) > 0) {
 <font class="headline">TLD Fees</font><BR><BR>
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
-    	<td width="120" height="20" valign="top"><strong>TLD</strong></td>
+    	<td width="120" height="18" valign="top"><strong>TLD</strong></td>
         <td width="120"><strong>Initial Fee</strong></td>
         <td width="120"><strong>Renewal Fee</strong></td>
         <td><strong>Currency</strong></td>

@@ -333,7 +333,7 @@ if (mysql_num_rows($result) > 0) {
 <font class="headline">Fees</font><BR><BR>
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
-    	<td height="20" width="300" valign="top"><strong>Type/Function</strong></td>
+    	<td height="18" width="300" valign="top"><strong>Type/Function</strong></td>
         <td width="100"><strong>Initial Fee</strong></td>
         <td width="100"><strong>Renewal Fee</strong></td>
         <td width="100"><strong>Currency</strong></td>
