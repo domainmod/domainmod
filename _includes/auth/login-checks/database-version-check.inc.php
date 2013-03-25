@@ -17,7 +17,6 @@
 ?>
 <?php
 session_start();
-$current_db_version = "1.1";
 
 include("../../database.inc.php");
 
@@ -26,8 +25,6 @@ $sql = "select db_version
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
-	if ($row->db_version != $current_db_version) $_SESSION['session_result_message'] = "
-	You are running an older version of the Domain Manager database<BR><BR>
-	Click here to upgrade your database<BR>";
+	if ($row->db_version != $most_recent_db_version) $_SESSION['session_result_message'] = "You are running an older version of the Domain Manager database<BR><BR><a href=\"system/update-database.php\">Click here to upgrade your database</a><BR>";
 }
 ?>

@@ -25,4 +25,10 @@ $site_width = "96%";
 
 // Number of 'Test Data' domains to generate
 $number_of_temp_domains = 100;
+
+// This is the newest, most recent version of the Domain Manager database
+// 
+// DO NOT CHANGE THIS - CHANGING THIS LINE CAN MESS UP YOUR DATABASE
+//
+$most_recent_db_version = "1.1";
 ?>
