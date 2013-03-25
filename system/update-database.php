@@ -40,11 +40,11 @@ while ($row = mysql_fetch_object($result)) {
 
 if ($current_db_version < $most_recent_db_version) {
 
-/*
 	// upgrade database from 1.1 to 1.2
 	if ($current_db_version == 1.1) {
 
-		$sql = "SQL code to execute";
+		$sql = "ALTER TABLE `ssl_certs`  
+				ADD `ip` VARCHAR(50) NOT NULL AFTER `name`";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "update settings
@@ -55,8 +55,6 @@ if ($current_db_version < $most_recent_db_version) {
 		$current_db_version = 1.2;
 		
 	}
-
-*/
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 

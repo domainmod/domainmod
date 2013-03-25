@@ -25,7 +25,7 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/currencies.php">Currencies</a> ]
 <br><br>
 
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-certs.php">SSL Certs</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-certs.php">SSL Certificates</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-providers.php">SSL Providers</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-accounts.php">SSL Accounts</a> ]&nbsp;
 <br><br>

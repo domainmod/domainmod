@@ -68,9 +68,9 @@ while ($row = mysql_fetch_object($result)) { $registrar_id[2] = $row->id; }
 
 $sql = "
 INSERT INTO `fees` (`registrar_id`, `tld`, `initial_fee`, `renewal_fee`, `currency_id`, `test_data`, `fee_fixed`, `insert_time`) VALUES
-('" . $registrar_id[1] . "', 'com', '9.95', '9.95', '20', '1', '1', '$current_timestamp'),
-('" . $registrar_id[1] . "', 'ca', '9.95', '9.95', '20', '1', '1', '$current_timestamp'),
-('" . $registrar_id[2] . "', 'com', '9.95', '9.95', '20', '1', '1', '$current_timestamp');
+('" . $registrar_id[1] . "', 'com', '9.95', '9.95', '2', '1', '1', '$current_timestamp'),
+('" . $registrar_id[1] . "', 'ca', '9.95', '9.95', '2', '1', '1', '$current_timestamp'),
+('" . $registrar_id[2] . "', 'com', '9.95', '9.95', '2', '1', '1', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -97,9 +97,9 @@ while ($row = mysql_fetch_object($result)) { $ssl_provider_id[2] = $row->id; }
 
 $sql = "
 INSERT INTO `ssl_fees` (`ssl_provider_id`, `type_id`, `function_id`, `initial_fee`, `renewal_fee`, `currency_id`, `test_data`, `fee_fixed`, `insert_time`) VALUES
-('" . $ssl_provider_id[1] . "', '1', '1', '200', '200', '20', '1', '1', '$current_timestamp'),
-('" . $ssl_provider_id[1] . "', '1', '3', '50', '50', '20', '1', '1', '$current_timestamp'),
-('" . $ssl_provider_id[2] . "', '2', '1', '20', '20', '20', '1', '1', '$current_timestamp');
+('" . $ssl_provider_id[1] . "', '1', '1', '200', '200', '2', '1', '1', '$current_timestamp'),
+('" . $ssl_provider_id[1] . "', '1', '3', '50', '50', '2', '1', '1', '$current_timestamp'),
+('" . $ssl_provider_id[2] . "', '2', '1', '20', '20', '2', '1', '1', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -275,10 +275,10 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[3] = $row->id; }
 
 $sql = "
-INSERT INTO `ssl_certs` (`company_id`, `ssl_provider_id`, `account_id`, `domain_id`, `type_id`, `function_id`, `name`, `expiry_date`, `fee_id`, `notes`, `active`, `test_data`, `fee_fixed`, `insert_time`) VALUES
-('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', '" . $ssl_account_id[1] . "', '" . $domain_id[1] . "', '1', '1', '*.aysmedia.com', '2011-01-23', '" . $ssl_fee_id[1] . "', '$current_timestamp_basic - SSL Certificate ''*.aysmedia.com'' Added', '1', '1', '1', '$current_timestamp'),
-('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', '" . $ssl_account_id[1] . "', '" . $domain_id[2] . "', '1', '3', 'AYS Media', '2011-01-24', '" . $ssl_fee_id[2] . "', '$current_timestamp_basic - Code Signing Certificate ''AYS Media'' Added', '5', '1', '1', '$current_timestamp'),
-('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', '" . $ssl_account_id[1] . "', '" . $domain_id[3] . "', '1', '1', '*.aysprivacy.com', '2011-01-25', '" . $ssl_fee_id[1] . "', '$current_timestamp_basic - SSL Certificate ''*.aysprivacy.com'' Added', '4', '1', '1', '$current_timestamp');
+INSERT INTO `ssl_certs` (`company_id`, `ssl_provider_id`, `account_id`, `domain_id`, `type_id`, `function_id`, `name`, `ip`, `expiry_date`, `fee_id`, `notes`, `active`, `test_data`, `fee_fixed`, `insert_time`) VALUES
+('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', '" . $ssl_account_id[1] . "', '" . $domain_id[1] . "', '1', '1', '*.aysmedia.com', '69.167.168.205', '2011-01-23', '" . $ssl_fee_id[1] . "', '$current_timestamp_basic - SSL Certificate ''*.aysmedia.com'' Added', '1', '1', '1', '$current_timestamp'),
+('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', '" . $ssl_account_id[1] . "', '" . $domain_id[2] . "', '1', '3', 'AYS Media', '69.167.168.205', '2011-01-24', '" . $ssl_fee_id[2] . "', '$current_timestamp_basic - Code Signing Certificate ''AYS Media'' Added', '5', '1', '1', '$current_timestamp'),
+('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', '" . $ssl_account_id[1] . "', '" . $domain_id[3] . "', '1', '1', '*.aysprivacy.com', '69.167.168.206', '2011-01-25', '" . $ssl_fee_id[1] . "', '$current_timestamp_basic - SSL Certificate ''*.aysprivacy.com'' Added', '4', '1', '1', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -337,9 +337,9 @@ $count_secondary = 4;
 while ($count <= 5) {
 
 	$sql = "INSERT INTO `ssl_certs` 
-			(`company_id`, `ssl_provider_id`, `account_id`, `domain_id`, `type_id`, `function_id`, `name`, `expiry_date`, `fee_id`, `notes`, `test_data`, `fee_fixed`, `insert_time`) 
+			(`company_id`, `ssl_provider_id`, `account_id`, `domain_id`, `type_id`, `function_id`, `name`, `ip`, `expiry_date`, `fee_id`, `notes`, `test_data`, `fee_fixed`, `insert_time`) 
 			VALUES
-			('" . $company_id[2] . "', '" . $ssl_provider_id[2] . "', '" . $ssl_account_id[2] . "', '" . $domain_id[$count_secondary] . "', '2', '1', 'test" . $count . "-dm.com', '2011-01-26', '" . $ssl_fee_id[3] . "', '$current_timestamp_basic - SSL Certificate ''test" . $count . "-dm.com'' Added', '1', '1', '$current_timestamp');
+			('" . $company_id[2] . "', '" . $ssl_provider_id[2] . "', '" . $ssl_account_id[2] . "', '" . $domain_id[$count_secondary] . "', '2', '1', 'test" . $count . "-dm.com', '69.167.168.206', '2011-01-26', '" . $ssl_fee_id[3] . "', '$current_timestamp_basic - SSL Certificate ''test" . $count . "-dm.com'' Added', '1', '1', '$current_timestamp');
 	";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	

@@ -29,7 +29,7 @@ $new_company_id = $_POST['new_company_id'];
 $new_ssl_provider_id = $_POST['new_ssl_provider_id'];
 $new_username = mysql_real_escape_string($_POST['new_username']);
 $new_reseller = $_POST['new_reseller'];
-$new_notes = mysql_real_escape_string($_POST['new_notes'];
+$new_notes = mysql_real_escape_string($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

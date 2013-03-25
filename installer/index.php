@@ -201,6 +201,7 @@ CREATE TABLE IF NOT EXISTS `ssl_certs` (
   `type_id` int(10) NOT NULL,
   `function_id` int(10) NOT NULL,
   `name` varchar(255) NOT NULL,
+  `ip` varchar(50) NOT NULL,
   `expiry_date` date NOT NULL,
   `fee_id` int(10) NOT NULL,
   `notes` longtext NOT NULL,
