@@ -22,7 +22,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp-basic.inc.php");
-$page_title = "Expiring SSL Certificates";
+$page_title = "Export SSL Certificates";
 
 // Form Variables
 $export = $_GET['export'];
@@ -43,7 +43,7 @@ while ($row2 = mysql_fetch_object($result2)) {
 
 if ($export == "1") {
 
-	$sql = "select sslc.id, sslc.name, sslc.ip, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
+	$sql = "select sslc.id, sslc.domain_id, sslc.name, sslc.ip, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
 			from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
 			where sslc.account_id = sslpa.id
 			and sslc.type_id = sslct.id
@@ -60,7 +60,7 @@ if ($export == "1") {
 
 } else {
 
-	$sql = "select sslc.id, sslc.name, sslc.ip, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
+	$sql = "select sslc.id, sslc.domain_id, sslc.name, sslc.ip, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
 			from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
 			where sslc.account_id = sslpa.id
 			and sslc.type_id = sslct.id
@@ -87,7 +87,7 @@ if ($export == "1") {
 
 	$full_export .= "\"All prices are listed in $default_currency\"\n\n";
 
-	$full_export .= "\"SSL STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"IP Address\",\"Function\",\"Type\",\"Company\",\"Registrar\",\"Username\"\n";
+	$full_export .= "\"SSL STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"IP Address\",\"Function\",\"Type\",\"Company\",\"SSL Provider\",\"Username\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
@@ -107,8 +107,16 @@ if ($export == "1") {
 		} else { 
 			$ssl_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-SSL-CERTS.PHP"; 
 		} 
+		
+		$sql_domain = "select domain
+					   from domains where id = '$row->domain_id'";
+		$result_domain = mysql_query($sql_domain,$connection);
+		
+		while ($row_domain = mysql_fetch_object($result_domain)) {
+			$full_domain_name = $row_domain->domain;
+		}
 
-		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->name\",\"$row->ip\",\"$row->function\",\"$row->type\",\"$row->company_name\",\"$row->ssl_provider_name\",\"$row->username\"\n";
+		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->name\",\"$full_domain_name\",\"$row->ip\",\"$row->function\",\"$row->type\",\"$row->company_name\",\"$row->ssl_provider_name\",\"$row->username\"\n";
 	}
 	
 	$full_export .= "\n";
@@ -137,7 +145,7 @@ exit;
 <?php 
 $result = $result2;
 if (mysql_num_rows($result) > 0) { ?>
-<strong>Number of Expiring SSL Certificates:</strong> <?=number_format(mysql_num_rows($result))?><BR><BR>
+<strong>Number of SSL Certificates to Export:</strong> <?=number_format(mysql_num_rows($result))?><BR><BR>
 <?php } ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -179,13 +187,22 @@ Expiring Between
     	<font class="subheadline">Host / Label</font>
     </td>
 	<td>
+    	<font class="subheadline">Domain</font>
+    </td>
+	<td>
     	<font class="subheadline">IP Address</font>
+    </td>
+	<td>
+    	<font class="subheadline">Function</font>
+    </td>
+	<td>
+    	<font class="subheadline">Type</font>
     </td>
 	<td>
     	<font class="subheadline">Company/Account</font>
     </td>
 	<td>
-    	<font class="subheadline">Registrar (Username)</font>
+    	<font class="subheadline">SSL Provider (Username)</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -206,8 +223,26 @@ Expiring Between
 		<?=$row->name?>
 	</td>
 	<td valign="top">
+		<?php
+        $sql_domain = "select domain
+					   from domains where id = '$row->domain_id'";
+		$result_domain = mysql_query($sql_domain,$connection);
+		
+		while ($row_domain = mysql_fetch_object($result_domain)) {
+			$full_domain_name = $row_domain->domain;
+		}
+		?>		
+		<?=$full_domain_name?>
+	</td>
+	<td valign="top">
 		<?=$row->ip?>
 	</td>
+	<td valign="top">
+		<?=$row->function?>
+    </td>
+	<td valign="top">
+		<?=$row->type?>
+    </td>
 	<td valign="top">
 		<?=$row->company_name?>
     </td>
