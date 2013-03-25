@@ -48,7 +48,8 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "update settings
-				set db_version = '1.2'";
+				set db_version = '1.2', 
+					update_time = '$current_timestamp'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.2;
