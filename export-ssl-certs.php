@@ -1,5 +1,5 @@
 <?php
-// expiring-ssl-certs.php
+// export-ssl-certs.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -120,7 +120,7 @@ Expiring Between
 </td>
 <td class="search-table-inside" width="200" valign="middle" align="center">
 <?php if (mysql_num_rows($result) > 0) { ?>
-<a href="expiring-ssl-certs.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>">Export Results</a><BR>
+<a href="export-ssl-certs.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>">Export Results</a><BR>
 <?php } ?>
 </td>
 </tr>

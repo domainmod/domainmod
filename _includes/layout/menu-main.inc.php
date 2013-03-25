@@ -33,7 +33,7 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/segments.php">Segment Filters</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-actions.php">Perform Bulk Actions</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/export-domains.php">Export Domains</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/expiring-ssl-certs.php">Expiring SSL Certs</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/export-ssl-certs.php">Expiring SSL Certs</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">System</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/">Help!</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/logout.php">Logout</a> ]
