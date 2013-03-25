@@ -41,7 +41,7 @@ while ($row2 = mysql_fetch_object($result2)) {
 	$default_currency_conversion = $row2->conversion;
 }
 
-$sql = "select sslc.id, sslc.name, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
+$sql = "select sslc.id, sslc.name, sslc.ip, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
 		from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
 		where sslc.account_id = sslpa.id
 		and sslc.type_id = sslct.id
@@ -66,14 +66,14 @@ if ($export == "1") {
 
 	$full_export .= "\"All prices are listed in $default_currency\"\n\n";
 
-	$full_export .= "\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Function\",\"Type\",\"Company\",\"Registrar\",\"Username\"\n";
+	$full_export .= "\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"IP Address\",\"Function\",\"Type\",\"Company\",\"Registrar\",\"Username\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
 		$temp_renewal_fee = number_format($row->renewal_fee * $row->conversion, 2, '.', ',');
 		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
-		$full_export .= "\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->name\",\"$row->function\",\"$row->type\",\"$row->company_name\",\"$row->ssl_provider_name\",\"$row->username\"\n";
+		$full_export .= "\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->name\",\"$row->ip\",\"$row->function\",\"$row->type\",\"$row->company_name\",\"$row->ssl_provider_name\",\"$row->username\"\n";
 	}
 	
 	$full_export .= "\n";
@@ -144,6 +144,9 @@ Expiring Between
     	<font class="subheadline">Host / Label</font>
     </td>
 	<td>
+    	<font class="subheadline">IP Address</font>
+    </td>
+	<td>
     	<font class="subheadline">Company/Account</font>
     </td>
 	<td>
@@ -166,6 +169,9 @@ Expiring Between
 	</td>
 	<td valign="top">
 		<?=$row->name?>
+	</td>
+	<td valign="top">
+		<?=$row->ip?>
 	</td>
 	<td valign="top">
 		<?=$row->company_name?>
