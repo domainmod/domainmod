@@ -28,6 +28,9 @@ $_SESSION['session_running_login_checks'] = 1;
 // Check to see if it's a new password
 include("../../auth/login-checks/new-password-check.inc.php");
 
+// Check the database version
+include("../../auth/login-checks/database-version-check.inc.php");
+
 unset($_SESSION['session_running_login_checks']);
 
 $sql_user_update = "update users
