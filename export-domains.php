@@ -109,7 +109,7 @@ if ($export == "1") {
 		} elseif ($row->active == "10") { 
 			$domain_status = "SOLD";
 		} else { 
-			$domain_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-DOMAINS_PHP"; 
+			$domain_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-DOMAINS.PHP"; 
 		} 
 
 		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$row->dns_profile\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_owner\",\"$row->company_name\",\"$row->registrar_name\",\"$row->username\"\n";
@@ -122,7 +122,7 @@ if ($export == "1") {
 	$export = "0";
 	
 header('Content-Type: text/plain');
-$full_content_disposition = "Content-Disposition: attachment; filename=\"export_$new_expiry_start--$new_expiry_end.csv\"";
+$full_content_disposition = "Content-Disposition: attachment; filename=\"export_domains_$new_expiry_start--$new_expiry_end.csv\"";
 header("$full_content_disposition");
 header('Content-Transfer-Encoding: binary');
 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');

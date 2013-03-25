@@ -41,21 +41,42 @@ while ($row2 = mysql_fetch_object($result2)) {
 	$default_currency_conversion = $row2->conversion;
 }
 
-$sql = "select sslc.id, sslc.name, sslc.ip, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
-		from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
-		where sslc.account_id = sslpa.id
-		and sslc.type_id = sslct.id
-		and sslc.function_id = sslcf.id
-		and sslpa.ssl_provider_id = sslp.id
-		and sslpa.company_id = c.id
-		and sslc.ssl_provider_id = f.ssl_provider_id
-		and sslc.type_id = f.type_id
-		and sslc.function_id = f.function_id
-		and f.currency_id = cc.id
-		and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')
-		and sslc.expiry_date between '$new_expiry_start' and '$new_expiry_end'
-		order by sslc.expiry_date asc
-		";	
+if ($export == "1") {
+
+	$sql = "select sslc.id, sslc.name, sslc.ip, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
+			from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
+			where sslc.account_id = sslpa.id
+			and sslc.type_id = sslct.id
+			and sslc.function_id = sslcf.id
+			and sslpa.ssl_provider_id = sslp.id
+			and sslpa.company_id = c.id
+			and sslc.ssl_provider_id = f.ssl_provider_id
+			and sslc.type_id = f.type_id
+			and sslc.function_id = f.function_id
+			and f.currency_id = cc.id
+			and sslc.expiry_date between '$new_expiry_start' and '$new_expiry_end'
+			order by sslc.expiry_date asc
+			";	
+
+} else {
+
+	$sql = "select sslc.id, sslc.name, sslc.ip, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
+			from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
+			where sslc.account_id = sslpa.id
+			and sslc.type_id = sslct.id
+			and sslc.function_id = sslcf.id
+			and sslpa.ssl_provider_id = sslp.id
+			and sslpa.company_id = c.id
+			and sslc.ssl_provider_id = f.ssl_provider_id
+			and sslc.type_id = f.type_id
+			and sslc.function_id = f.function_id
+			and f.currency_id = cc.id
+			and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')
+			and sslc.expiry_date between '$new_expiry_start' and '$new_expiry_end'
+			order by sslc.expiry_date asc
+			";	
+
+}
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $result2 = mysql_query($sql,$connection) or die(mysql_error());
@@ -66,24 +87,38 @@ if ($export == "1") {
 
 	$full_export .= "\"All prices are listed in $default_currency\"\n\n";
 
-	$full_export .= "\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"IP Address\",\"Function\",\"Type\",\"Company\",\"Registrar\",\"Username\"\n";
+	$full_export .= "\"SSL STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"IP Address\",\"Function\",\"Type\",\"Company\",\"Registrar\",\"Username\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
 		$temp_renewal_fee = number_format($row->renewal_fee * $row->conversion, 2, '.', ',');
 		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
-		$full_export .= "\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->name\",\"$row->ip\",\"$row->function\",\"$row->type\",\"$row->company_name\",\"$row->ssl_provider_name\",\"$row->username\"\n";
+		if ($row->active == "0") { 
+			$ssl_status = "EXPIRED";
+		} elseif ($row->active == "1") { 
+			$ssl_status = "ACTIVE";
+		} elseif ($row->active == "2") { 
+			$ssl_status = "PENDING (REGISTRATION)";
+		} elseif ($row->active == "3") { 
+			$ssl_status = "PENDING (RENEWAL)";
+		} elseif ($row->active == "4") { 
+			$ssl_status = "PENDING (OTHER)";
+		} else { 
+			$ssl_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-SSL-CERTS.PHP"; 
+		} 
+
+		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->name\",\"$row->ip\",\"$row->function\",\"$row->type\",\"$row->company_name\",\"$row->ssl_provider_name\",\"$row->username\"\n";
 	}
 	
 	$full_export .= "\n";
 	
-	$full_export .= "\"\",\"Total Cost:\",\"\$" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"$default_currency\"\n";
+	$full_export .= "\"\",\"\",\"Total Cost:\",\"\$" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"$default_currency\"\n";
 	
 	$export = "0";
 	
 header('Content-Type: text/plain');
-$full_content_disposition = "Content-Disposition: attachment; filename=\"expiring_$new_expiry_start--$new_expiry_end.csv\"";
+$full_content_disposition = "Content-Disposition: attachment; filename=\"export_ssl_$new_expiry_start--$new_expiry_end.csv\"";
 header("$full_content_disposition");
 header('Content-Transfer-Encoding: binary');
 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
