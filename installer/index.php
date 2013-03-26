@@ -175,6 +175,7 @@ CREATE TABLE IF NOT EXISTS `domains` (
   `cat_id` int(10) NOT NULL default '1',
   `fee_id` int(10) NOT NULL default '0',
   `dns_id` int(10) NOT NULL default '0',
+  `ip_id` int(10) NOT NULL default '0',
   `function` varchar(255) NOT NULL,
   `status` varchar(255) NOT NULL,
   `status_notes` longtext NOT NULL,
@@ -392,7 +393,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "
 INSERT INTO `settings` (`db_version`, `insert_time`) VALUES
-('1.4', '$current_timestamp');
+('1.5', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 

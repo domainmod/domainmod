@@ -94,6 +94,23 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	// upgrade database from 1.4 to 1.5
+	if ($current_db_version == 1.4) {
+
+		$sql = "ALTER TABLE `domains`  
+				ADD `ip_id` int(10) NOT NULL default '0' 
+				AFTER `dns_id`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "update settings
+				set db_version = '1.5', 
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 1.5;
+		
+	}
+
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 
 } else {
