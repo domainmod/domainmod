@@ -28,6 +28,8 @@
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/category.php">Add A New Category</a>
 <?php } elseif ($software_section == "dns") { ?>
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/dns.php">Add A New DNS Profile</a>
+<?php } elseif ($software_section == "ip-addresses") { ?>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ip-address.php">Add A New IP Address</a>
 <?php } elseif ($software_section == "registrars") { ?>
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/registrar.php">Add A New Registrar</a>
 <?php } elseif ($software_section == "accounts") { ?>

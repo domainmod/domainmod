@@ -378,6 +378,18 @@ CREATE TABLE IF NOT EXISTS `settings` (
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "
+CREATE TABLE IF NOT EXISTS `ip_addresses` (
+  `id` int(10) NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL,
+  `ip` varchar(255) NOT NULL,
+  `insert_time` datetime NOT NULL,
+  `update_time` datetime NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+
+$sql = "
 INSERT INTO `settings` (`db_version`, `insert_time`) VALUES
 ('1.1', '$current_timestamp');
 ";

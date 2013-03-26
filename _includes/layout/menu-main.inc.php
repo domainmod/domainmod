@@ -18,7 +18,8 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/domains.php">Domains</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/categories.php">Categories</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/companies.php">Companies</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/dns.php">DNS</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/dns.php">DNS Profiles</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ip-addresses.php">IP Addresses</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/registrars.php">Registrars</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/registrar-accounts.php">Registrar Accounts</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/tlds.php">TLDs</a> ]&nbsp;
