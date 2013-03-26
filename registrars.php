@@ -38,7 +38,7 @@ $sql = "select r.id as rid, r.name as rname, r.url
 		where r.id = d.registrar_id
 		and r.active = '1'
 		and d.domain not in ('0', '10')
-		and (select count(*) from domains where registrar_id = r.id and active = '1') > 0
+		and (select count(*) from domains where registrar_id = r.id and active not in ('0','10')) > 0
 		group by r.name
 		order by r.name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
