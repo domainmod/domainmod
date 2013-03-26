@@ -25,6 +25,8 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 
+$most_recent_db_version = "1.7";
+
 $sql = "
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(10) NOT NULL auto_increment,
@@ -202,7 +204,6 @@ CREATE TABLE IF NOT EXISTS `ssl_certs` (
   `type_id` int(10) NOT NULL,
   `function_id` int(10) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `ip` varchar(50) NOT NULL,
   `expiry_date` date NOT NULL,
   `fee_id` int(10) NOT NULL,
   `notes` longtext NOT NULL,
@@ -396,7 +397,7 @@ $sql = "INSERT INTO `ip_addresses` (`id`, `name`, `ip`, `insert_time`) VALUES
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "INSERT INTO `settings` (`db_version`, `insert_time`) VALUES
-								('1.5', '$current_timestamp');";
+								('$most_recent_db_version', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 header("Location: ../_includes/system/test-data-generate.php");
