@@ -64,6 +64,9 @@ $result = mysql_query($sql,$connection);
 $sql = "delete from segments where test_data = '1'";
 $result = mysql_query($sql,$connection);
 
+$sql = "delete from ip_addresses where test_data = '1'";
+$result = mysql_query($sql,$connection);
+
 if ($generating_test_data == "1") {
 	header("Location: test-data-generate.php");
 } else {
