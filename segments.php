@@ -21,7 +21,7 @@ include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
-$page_title = "Segment List";
+$page_title = "Segment Filters";
 $software_section = "segments";
 
 function str_stop($string, $max_length){ 
@@ -52,7 +52,7 @@ $sql = "select id, name, description, segment
 		order by name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-Segments identify as specific subset of domains, which can be used to help filter and manage your <a href="domains.php">domain results</a>.
+Segments identify a specific subset of domains, which can be used to help filter and manage your <a href="domains.php">domain results</a>.
 <BR><BR>
 <strong>Number of Active Segments:</strong> <?=mysql_num_rows($result)?>
 
