@@ -43,7 +43,7 @@ while ($row2 = mysql_fetch_object($result2)) {
 
 if ($export == "1") {
 
-	$sql = "select sslc.id, sslc.domain_id, sslc.name, sslc.ip, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
+	$sql = "select sslc.id, sslc.domain_id, sslc.name, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
 			from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
 			where sslc.account_id = sslpa.id
 			and sslc.type_id = sslct.id
@@ -60,7 +60,7 @@ if ($export == "1") {
 
 } else {
 
-	$sql = "select sslc.id, sslc.domain_id, sslc.name, sslc.ip, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
+	$sql = "select sslc.id, sslc.domain_id, sslc.name, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
 			from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
 			where sslc.account_id = sslpa.id
 			and sslc.type_id = sslct.id
@@ -87,7 +87,7 @@ if ($export == "1") {
 
 	$full_export .= "\"All prices are listed in $default_currency\"\n\n";
 
-	$full_export .= "\"SSL STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"IP Address\",\"Function\",\"Type\",\"Company\",\"SSL Provider\",\"Username\"\n";
+	$full_export .= "\"SSL STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"IP Address Name\",\"IP Address\",\"Function\",\"Type\",\"Company\",\"SSL Provider\",\"Username\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
@@ -108,15 +108,19 @@ if ($export == "1") {
 			$ssl_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-SSL-CERTS.PHP"; 
 		} 
 		
-		$sql_domain = "select domain
-					   from domains where id = '$row->domain_id'";
+		$sql_domain = "select d.domain, ip.name, ip.ip
+					   from domains as d, ip_addresses as ip
+					   where d.ip_id = ip.id
+					   and d.id = '$row->domain_id'";
 		$result_domain = mysql_query($sql_domain,$connection);
 		
 		while ($row_domain = mysql_fetch_object($result_domain)) {
 			$full_domain_name = $row_domain->domain;
+			$full_ip_name = $row_domain->name;
+			$full_ip_address = $row_domain->ip;
 		}
 
-		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->name\",\"$full_domain_name\",\"$row->ip\",\"$row->function\",\"$row->type\",\"$row->company_name\",\"$row->ssl_provider_name\",\"$row->username\"\n";
+		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->name\",\"$full_domain_name\",\"$full_ip_name\",\"$full_ip_address\",\"$row->function\",\"$row->type\",\"$row->company_name\",\"$row->ssl_provider_name\",\"$row->username\"\n";
 	}
 	
 	$full_export .= "\n";
@@ -224,6 +228,7 @@ Expiring Between
 	</td>
 	<td valign="top">
 		<?php
+/*
         $sql_domain = "select domain
 					   from domains where id = '$row->domain_id'";
 		$result_domain = mysql_query($sql_domain,$connection);
@@ -231,11 +236,28 @@ Expiring Between
 		while ($row_domain = mysql_fetch_object($result_domain)) {
 			$full_domain_name = $row_domain->domain;
 		}
+*/
+
+
+		$sql_domain = "select d.domain, ip.name, ip.ip
+					   from domains as d, ip_addresses as ip
+					   where d.ip_id = ip.id
+					   and d.id = '$row->domain_id'";
+		$result_domain = mysql_query($sql_domain,$connection);
+		
+		while ($row_domain = mysql_fetch_object($result_domain)) {
+			$full_domain_name = $row_domain->domain;
+			$full_ip_name = $row_domain->name;
+			$full_ip_address = $row_domain->ip;
+		}
+
+
+
 		?>		
 		<?=$full_domain_name?>
 	</td>
 	<td valign="top">
-		<?=$row->ip?>
+		<?=$full_ip_name?> (<?=$full_ip_address?>)
 	</td>
 	<td valign="top">
 		<?=$row->function?>
