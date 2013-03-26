@@ -87,7 +87,7 @@ These are the SSL Providers that have active certificates.
 		<?php
         $sql3 = "select count(*) as total_count
                  from ssl_certs
-                 where active = '1'
+                 where active != '0'
                  and ssl_provider_id = '$row->id'";
         $result3 = mysql_query($sql3,$connection);
         while ($row3 = mysql_fetch_object($result3)) { $total_certs = $row3->total_count; }

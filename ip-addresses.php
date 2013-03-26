@@ -48,7 +48,7 @@ if (mysql_num_rows($result) > 0) { ?>
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="30">
-        <td width="275">
+        <td width="300">
             <font class="subheadline">IP Name</font>
         </td>
         <td width="200">
@@ -104,7 +104,7 @@ if (mysql_num_rows($result) > 0) { ?>
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="30">
-        <td width="275">
+        <td width="300">
             <font class="subheadline">IP Name</font>
         </td>
         <td>

@@ -68,10 +68,10 @@ if (mysql_num_rows($result) > 0) {
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="30">
-        <td width="200">
-            <font class="subheadline">Registrar</font>
+        <td width="250">
+            <font class="subheadline">Registrar Name</font>
         </td>
-        <td width="275">
+        <td width="200">
             <font class="subheadline">Account/Username</font>
         </td>
         <td width="200">
@@ -92,13 +92,13 @@ if (mysql_num_rows($result) > 0) {
 		} ?>
 
 		<tr height="20">
-			<td width="200">
+			<td>
 				<a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a>
 			</td>
-			<td valign="top" width="275">
+			<td valign="top">
 				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
 			</td>
-			<td width="200">
+			<td>
 				<a class="subtlelink" href="edit/company.php?cid=<?=$row->cid?>"><?=$row->cname?></a>
 			</td>
 			<td>
@@ -152,10 +152,10 @@ if (mysql_num_rows($result) > 0) {
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="30">
-        <td width="200">
-            <font class="subheadline">Registrar</font>
+        <td width="250">
+            <font class="subheadline">Registrar Name</font>
         </td>
-        <td width="275">
+        <td width="200">
             <font class="subheadline">Account/Username</font>
         </td>
         <td width="200">
@@ -173,7 +173,7 @@ if (mysql_num_rows($result) > 0) {
             <td width="200">
                 <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a>
             </td>
-            <td valign="top" width="275">
+            <td valign="top" width="200">
                     <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
             </td>
             <td width="200">
