@@ -38,6 +38,7 @@ $new_status = mysql_real_escape_string($_POST['new_status']);
 $new_status_notes = mysql_real_escape_string($_POST['new_status_notes']);
 $new_cat_id = $_POST['new_cat_id'];
 $new_dns_id = $_POST['new_dns_id'];
+$new_ip_id = $_POST['new_ip_id'];
 $new_account_id = $_POST['new_account_id'];
 $new_privacy = $_POST['new_privacy'];
 $new_active = $_POST['new_active'];
@@ -86,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					expiry_date = '$new_expiry_date',
 					cat_id = '$new_cat_id',
 					dns_id = '$new_dns_id',
+					ip_id = '$new_ip_id',
 					fee_id = '$temp_fee_id',
 					function = '$new_function',
 					status = '$new_status',
@@ -114,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select d.domain, d.expiry_date, d.cat_id, d.dns_id, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.id as account_id
+	$sql = "select d.domain, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.id as account_id
 			from domains as d, registrar_accounts as ra
 			where d.account_id = ra.id
 			and d.id = '$did'";
@@ -126,6 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_expiry_date = $row->expiry_date;
 		$new_cat_id = $row->cat_id;
 		$new_dns_id = $row->dns_id;
+		$new_ip_id = $row->ip_id;
 		$new_function = $row->function;
 		$new_status = $row->status;
 		$new_status_notes = $row->status_notes;
@@ -222,6 +225,29 @@ while ($row_dns = mysql_fetch_object($result_dns)) {
 	} else {
 
 		echo "<option value=\"$row_dns->id\">$row_dns->name</option>";
+	
+	}
+}
+echo "</select>";
+?>
+<BR><BR>
+<strong>IP Address:</strong><BR><BR>
+<?php
+$sql_ip = "select id, name, ip
+				from ip_addresses
+				order by name asc, ip asc";
+$result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
+echo "<select name=\"new_ip_id\">";
+
+while ($row_ip = mysql_fetch_object($result_ip)) {
+
+	if ($row_ip->id == $new_ip_id) {
+
+		echo "<option value=\"$row_ip->id\" selected>[ $row_ip->name ($row_ip->ip) ]</option>";
+	
+	} else {
+
+		echo "<option value=\"$row_ip->id\">$row_ip->name ($row_ip->ip)</option>";
 	
 	}
 }

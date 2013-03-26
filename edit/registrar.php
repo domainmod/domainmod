@@ -299,7 +299,7 @@ if (mysql_num_rows($result) > 0) {
 <font class="headline">TLD Fees</font><BR><BR>
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
-    	<td width="120" height="18" valign="top"><strong>TLD</strong></td>
+    	<td width="120" height="20" valign="top"><strong>TLD</strong></td>
         <td width="120"><strong>Initial Fee</strong></td>
         <td width="120"><strong>Renewal Fee</strong></td>
         <td><strong>Currency</strong></td>
@@ -315,7 +315,7 @@ $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 ?>
 	<tr>
-    	<td height="18" valign="middle">.<?=$row->tld?></td>
+    	<td height="20" valign="middle">.<?=$row->tld?></td>
         <td><?php echo number_format($row->initial_fee, 2, '.', ','); ?></td>
         <td><?php echo number_format($row->renewal_fee, 2, '.', ','); ?></td>
         <td><?=$row->currency?></td>

@@ -175,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `domains` (
   `cat_id` int(10) NOT NULL default '1',
   `fee_id` int(10) NOT NULL default '0',
   `dns_id` int(10) NOT NULL default '0',
-  `ip_id` int(10) NOT NULL default '0',
+  `ip_id` int(10) NOT NULL default '1',
   `function` varchar(255) NOT NULL,
   `status` varchar(255) NOT NULL,
   `status_notes` longtext NOT NULL,
@@ -391,10 +391,12 @@ CREATE TABLE IF NOT EXISTS `ip_addresses` (
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "
-INSERT INTO `settings` (`db_version`, `insert_time`) VALUES
-('1.5', '$current_timestamp');
-";
+$sql = "INSERT INTO `ip_addresses` (`id`, `name`, `ip`, `insert_time`) VALUES
+									('1', '[no ip address]', '-', '$current_timestamp');";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+
+$sql = "INSERT INTO `settings` (`db_version`, `insert_time`) VALUES
+								('1.5', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 header("Location: ../_includes/system/test-data-generate.php");

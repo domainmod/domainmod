@@ -37,6 +37,7 @@ $new_status = $_POST['new_status'];
 $new_status_notes = $_POST['new_status_notes'];
 $new_pcid = $_POST['new_pcid'];
 $new_dnsid = $_POST['new_dnsid'];
+$new_ipid = $_POST['new_ipid'];
 $new_raid = $_POST['new_raid'];
 $new_privacy = $_POST['new_privacy'];
 $new_active = $_POST['new_active'];
@@ -112,9 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 				if ($temp_fee_id == '0' || $temp_fee_id == "") { $temp_fee_fixed = 0; $temp_fee_id = 0; } else { $temp_fee_fixed = 1; }
 	
 				$sql = "insert into domains
-						(company_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, dns_id, function, status, status_notes, notes, privacy, active, fee_fixed, insert_time)
+						(company_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, dns_id, ip_id, function, status, status_notes, notes, privacy, active, fee_fixed, insert_time)
 						values
-						('$temp_company_id', '$temp_registrar_id', '$new_raid',  '$new_domain', '$new_tld', '$new_expiry_date', '$new_pcid', '$temp_fee_id', '$new_dnsid', '$new_function', '$new_status', '$new_status_notes', '$new_notes', '$new_privacy', '$new_active', '$temp_fee_fixed', '$current_timestamp')";
+						('$temp_company_id', '$temp_registrar_id', '$new_raid',  '$new_domain', '$new_tld', '$new_expiry_date', '$new_pcid', '$temp_fee_id', '$new_dnsid', '$new_ipid', '$new_function', '$new_status', '$new_status_notes', '$new_notes', '$new_privacy', '$new_active', '$temp_fee_fixed', '$current_timestamp')";
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				$temp_fee_id = 0;
 			
@@ -180,6 +181,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 
 			$sql = "update domains
 					set dns_id = '$new_dnsid',
+					update_time = '$current_timestamp'
+					where domain in ($new_data_formatted)";
+			$result = mysql_query($sql,$connection) or die(mysql_error());
+			
+			$sql = "select name
+					from dns
+					where id = '$new_dnsid'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) {
+				$new_dns_string = $row->name;
+			}
+
+			$_SESSION['session_result_message'] = "DNS Profile Updated<BR>";
+
+		} elseif ($action == "CIP") {
+
+			$sql = "update domains
+					set ip_id = '$new_ipid',
 					update_time = '$current_timestamp'
 					where domain in ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -364,6 +383,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 
     <?php if ($action == "CPC") { echo "<BR><strong>New Primary Category:</strong> " . $new_primary_category_string . "<BR><BR>"; } ?>
     <?php if ($action == "CDNS") { echo "<BR><strong>New DNS Profile:</strong> " . $new_dns_string . "<BR><BR>"; } ?>
+    <?php if ($action == "CIP") { echo "<BR><strong>New IP Address:</strong> " . $new_ip_string . "<BR><BR>"; } ?>
     <?php if ($action == "CRA") { echo "<BR><strong>New Account:</strong> " . $new_account_string . "<BR><BR>"; } ?>
     <?php if ($action == "AD") { ?>
     	<BR><strong>The Following Domains Were Added:</strong><BR>
@@ -395,6 +415,8 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
     	<BR><strong>The Following Domains Had Their Primary Category Changed:</strong><BR>
     <?php } elseif ($action == "CDNS") { ?>
     	<BR><strong>The Following Domains Had Their DNS Profile Changed:</strong><BR>
+    <?php } elseif ($action == "CIP") { ?>
+    	<BR><strong>The Following Domains Had Their IP Address Changed:</strong><BR>
     <?php } elseif ($action == "CRA") { ?>
     	<BR><strong>The Following Domains Had Their Account Changed:</strong><BR>
     <?php } elseif ($action == "AN") { ?>
@@ -418,6 +440,7 @@ Instead of having to waste time editting domains one-by-one, you can use the bel
     <option value="bulk-actions.php?action=S"<?php if ($action == "S") { echo " selected"; } ?>>Mark As 'Sold'</option>
     <option value="bulk-actions.php?action=CPC"<?php if ($action == "CPC") { echo " selected"; } ?>>Change Primary Category</option>
     <option value="bulk-actions.php?action=CDNS"<?php if ($action == "CDNS") { echo " selected"; } ?>>Change DNS Profile</option>
+    <option value="bulk-actions.php?action=CIP"<?php if ($action == "CIP") { echo " selected"; } ?>>Change IP Address</option>
     <option value="bulk-actions.php?action=CRA"<?php if ($action == "CRA") { echo " selected"; } ?>>Change Registrar Account</option>
     <option value="bulk-actions.php?action=PRVE"<?php if ($action == "PRVE") { echo " selected"; } ?>>Change To Private WHOIS</option>
     <option value="bulk-actions.php?action=PRVD"<?php if ($action == "PRVD") { echo " selected"; } ?>>Change To Public WHOIS</option>
@@ -509,6 +532,28 @@ Enter the domains one per line.
     echo "</select>";
     ?>
     <BR><BR>
+    <strong>IP Address:</strong><BR><BR>
+    <?php
+    $sql_dns = "select id, name, ip
+                    from ip_addresses
+                    order by name asc, ip asc";
+    $result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
+    echo "<select name=\"new_ipid\">";
+    while ($row_ip = mysql_fetch_object($result_ip)) {
+    
+        if ($row_ip->id == $new_ipid) {
+    
+            echo "<option value=\"$row_ip->id\" selected>[ $row_ip->name ($row_ip->ip) ]</option>";
+        
+        } else {
+    
+            echo "<option value=\"$row_ip->id\">$row_ip->name ($row_ip->ip)</option>";
+        
+        }
+    }
+    echo "</select>";
+    ?>
+    <BR><BR>
     <strong>Registrar Account:</strong><BR><BR>
     <?php
     $sql_account = "select ra.id, ra.username, c.name as c_name, r.name as r_name
@@ -591,6 +636,21 @@ Enter the domains one per line.
     echo "</select>";
     ?>
     <BR><BR>
+<?php } elseif ($action == "CIP") { ?>
+
+	<?php
+    $sql_ip = "select id, name, ip
+				from ip_addresses
+				order by name asc, ip asc";
+    $result_ip = mysql_query($sql_ip,$connection);
+    echo "<select name=\"new_ipid\">";
+    echo "<option value=\"\""; if ($new_ipid == "") echo " selected"; echo ">"; echo "$choose_text IP Address</option>";
+    while ($row_ip = mysql_fetch_object($result_ip)) { 
+    echo "<option value=\"$row_ip->id\""; if ($row_ip->id == $new_ipid) echo " selected"; echo ">"; echo "$row_ip->name ($row_ip->ip)</option>";
+    } 
+    echo "</select>";
+    ?>
+    <BR><BR>
 <?php } elseif ($action == "CRA") { ?>
 	<?php
    $sql_account = "select ra.id as ra_id, ra.username, r.name as r_name, c.name as c_name
@@ -627,6 +687,9 @@ Enter the domains one per line.
 <input type="hidden" name="action" value="<?=$action?>">
 <?php if ($action == "CDNS") { ?>
 <input type="hidden" name="dnsid" value="<?=$new_dnsid?>">
+<?php } ?>
+<?php if ($action == "CIP") { ?>
+<input type="hidden" name="ipid" value="<?=$new_ipid?>">
 <?php } ?>
 <?php if ($action == "CRA") { ?>
 <input type="hidden" name="raid" value="<?=$new_raid?>">

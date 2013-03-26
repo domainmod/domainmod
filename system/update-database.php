@@ -111,6 +111,32 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	// upgrade database from 1.5 to 1.6
+	if ($current_db_version == 1.5) {
+
+		$sql = "ALTER TABLE `domains` 
+				CHANGE `ip_id` `ip_id` INT(10) NOT NULL DEFAULT '1'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE `domains` SET ip_id = '1'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "TRUNCATE `ip_addresses`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "INSERT INTO `ip_addresses` (`id`, `name`, `ip`, `insert_time`) VALUES
+											('1', '[no ip address]', '-', '$current_timestamp')";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "update settings
+				set db_version = '1.6', 
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 1.6;
+		
+	}
+
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 
 } else {
