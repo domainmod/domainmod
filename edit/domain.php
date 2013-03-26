@@ -31,18 +31,18 @@ $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 // Form Variables
-$new_domain = mysql_real_escape_string($_POST['new_domain']);
+$new_domain = $_POST['new_domain'];
 $new_expiry_date = $_POST['new_expiry_date'];
-$new_function = mysql_real_escape_string($_POST['new_function']);
-$new_status = mysql_real_escape_string($_POST['new_status']);
-$new_status_notes = mysql_real_escape_string($_POST['new_status_notes']);
+$new_function = $_POST['new_function'];
+$new_status = $_POST['new_status'];
+$new_status_notes = $_POST['new_status_notes'];
 $new_cat_id = $_POST['new_cat_id'];
 $new_dns_id = $_POST['new_dns_id'];
 $new_ip_id = $_POST['new_ip_id'];
 $new_account_id = $_POST['new_account_id'];
 $new_privacy = $_POST['new_privacy'];
 $new_active = $_POST['new_active'];
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_notes = $_POST['new_notes'];
 $new_did = $_POST['new_did'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -82,17 +82,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				 set company_id = '$new_company_id',
 					registrar_id = '$new_registrar_id',
 					account_id = '$new_account_id',
-					domain = '$new_domain',
+					domain = '" . mysql_real_escape_string($new_domain) . "',
 					tld = '$tld',
 					expiry_date = '$new_expiry_date',
 					cat_id = '$new_cat_id',
 					dns_id = '$new_dns_id',
 					ip_id = '$new_ip_id',
 					fee_id = '$temp_fee_id',
-					function = '$new_function',
-					status = '$new_status',
-					status_notes = '$new_status_notes',
-					notes = '$new_notes',
+					function = '" . mysql_real_escape_string($new_function) . "',
+					status = '" . mysql_real_escape_string($new_status) . "',
+					status_notes = '" . mysql_real_escape_string($new_status_notes) . "',
+					notes = '" . mysql_real_escape_string($new_notes) . "',
 					privacy = '$new_privacy',
 					active = '$new_active',
 					fee_fixed = '$temp_fee_fixed',
@@ -170,19 +170,19 @@ $page_title = "Editting A Domain";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Domain:</strong><BR><BR>
-<input name="new_domain" type="text" size="50" maxlength="255" value="<?php if ($new_domain != "") echo stripslashes($new_domain); ?>">
+<input name="new_domain" type="text" size="50" maxlength="255" value="<?php if ($new_domain != "") echo $new_domain; ?>">
 <BR><BR>
 <strong>Expiry Date (YYYY-MM-DD):</strong><BR><BR>
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
 <BR><BR>
 <strong>Function:</strong><BR><BR>
-<input name="new_function" type="text" size="50" maxlength="255" value="<?php if ($new_function != "") echo stripslashes($new_function); ?>">
+<input name="new_function" type="text" size="50" maxlength="255" value="<?php if ($new_function != "") echo $new_function; ?>">
 <BR><BR>
 <strong>Status:</strong><BR><BR>
-<input name="new_status" type="text" size="50" maxlength="255" value="<?php if ($new_status != "") echo stripslashes($new_status); ?>">
+<input name="new_status" type="text" size="50" maxlength="255" value="<?php if ($new_status != "") echo $new_status; ?>">
 <BR><BR>
 <strong>Status Notes:</strong><BR><BR>
-<textarea name="new_status_notes" cols="60" rows="5"><?=stripslashes($new_status_notes)?>
+<textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?>
 </textarea>
 <BR><BR>
 <strong>Primary Category:</strong><BR><BR>
