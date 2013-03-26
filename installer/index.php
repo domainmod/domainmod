@@ -25,8 +25,6 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 
-$most_recent_db_version = "1.7";
-
 $sql = "
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(10) NOT NULL auto_increment,
@@ -385,6 +383,7 @@ CREATE TABLE IF NOT EXISTS `ip_addresses` (
   `name` varchar(255) NOT NULL,
   `ip` varchar(255) NOT NULL,
   `notes` longtext NOT NULL,
+  `test_data` int(1) NOT NULL default '0',
   `insert_time` datetime NOT NULL,
   `update_time` datetime NOT NULL,
   PRIMARY KEY  (`id`)
@@ -395,6 +394,8 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $sql = "INSERT INTO `ip_addresses` (`id`, `name`, `ip`, `insert_time`) VALUES
 									('1', '[no ip address]', '-', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
+
+$most_recent_db_version = "1.8";
 
 $sql = "INSERT INTO `settings` (`db_version`, `insert_time`) VALUES
 								('$most_recent_db_version', '$current_timestamp');";

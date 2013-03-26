@@ -152,6 +152,21 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	// upgrade database from 1.7 to 1.8
+	if ($current_db_version == 1.7) {
+
+		$sql = "ALTER TABLE `ip_addresses`  ADD `test_data` int(1) NOT NULL default '0' AFTER `notes`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "update settings
+				set db_version = '1.8', 
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 1.8;
+		
+	}
+
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 
 } else {
