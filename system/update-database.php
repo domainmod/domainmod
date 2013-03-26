@@ -78,6 +78,22 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	// upgrade database from 1.3 to 1.4
+	if ($current_db_version == 1.3) {
+
+		$sql = "ALTER TABLE `ip_addresses` 
+				ADD `notes` longtext NOT NULL AFTER `ip`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "update settings
+				set db_version = '1.4', 
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 1.4;
+		
+	}
+
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 
 } else {
