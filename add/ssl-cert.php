@@ -28,7 +28,6 @@ $software_section = "ssl-certs";
 // Form Variables
 $new_domain_id = $_POST['new_domain_id'];
 $new_name = mysql_real_escape_string($_POST['new_name']);
-$new_ip = mysql_real_escape_string($_POST['new_ip']);
 $new_type_id = $_POST['new_type_id'];
 $new_function_id = $_POST['new_function_id'];
 $new_expiry_date = $_POST['new_expiry_date'];
@@ -38,7 +37,7 @@ $new_notes = mysql_real_escape_string($_POST['new_notes']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "" && $new_ip != "" && $new_type_id != "" && $new_function_id != "" && $new_domain_id != "") {
+	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "" && $new_type_id != "" && $new_function_id != "" && $new_domain_id != "") {
 
 		$sql = "select ssl_provider_id, company_id
 				from ssl_accounts
@@ -57,8 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
 
 		$sql = "insert into ssl_certs
-				(company_id, ssl_provider_id, account_id, domain_id, name, ip, type_id, function_id, expiry_date, fee_id, notes, active, insert_time)
-				values ('$new_company_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '$new_name', '$new_ip', '$new_type_id', '$new_function_id', '$new_expiry_date', '$new_fee_id', '$new_notes', '$new_active', '$current_timestamp')";
+				(company_id, ssl_provider_id, account_id, domain_id, name, type_id, function_id, expiry_date, fee_id, notes, active, insert_time)
+				values ('$new_company_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '$new_name', '$new_type_id', '$new_function_id', '$new_expiry_date', '$new_fee_id', '$new_notes', '$new_active', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -69,8 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	} else {
 	
 		if ($new_name == "") { $_SESSION['session_result_message'] .= "Enter The SSL Certificate Name<BR>"; }
-
-		if ($new_ip == "") { $_SESSION['session_result_message'] .= "Enter The SSL Certificate's IP Address<BR>"; }
 
 		if (!preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date)) { $_SESSION['session_result_message'] .= "The Expiry Date Format Is Incorrect<BR>"; }
 
@@ -88,6 +85,9 @@ $page_title = "Adding A New SSL Certificate";
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
+<strong>Host / Label:</strong><BR><BR>
+<input name="new_name" type="text" size="50" maxlength="255" value="<?=stripslashes($new_name)?>">
+<BR><BR>
 <strong>Domain:</strong><BR><BR>
 <?php
 $sql_domain = "select id, domain
@@ -110,12 +110,6 @@ while ($row_domain = mysql_fetch_object($result_domain)) {
 }
 echo "</select>";
 ?>
-<BR><BR>
-<strong>Host / Label:</strong><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="255" value="<?=stripslashes($new_name)?>">
-<BR><BR>
-<strong>IP Address:</strong><BR><BR>
-<input name="new_ip" type="text" size="50" maxlength="255" value="<?=stripslashes($new_ip)?>">
 <BR><BR>
 <strong>Function:</strong><BR><BR>
 <?php

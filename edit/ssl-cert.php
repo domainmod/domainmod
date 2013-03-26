@@ -33,7 +33,6 @@ $really_del = $_GET['really_del'];
 // Form Variables
 $new_domain_id = $_POST['new_domain_id'];
 $new_name = mysql_real_escape_string($_POST['new_name']);
-$new_ip = mysql_real_escape_string($_POST['new_ip']);
 $new_type_id = $_POST['new_type_id'];
 $new_function_id = $_POST['new_function_id'];
 $new_expiry_date = $_POST['new_expiry_date'];
@@ -44,7 +43,7 @@ $new_sslcid = $_POST['new_sslcid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "" && $new_ip != "") {
+	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "") {
 
 		$sql = "select ssl_provider_id, company_id
 				from ssl_accounts
@@ -80,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					account_id = '$new_account_id',
 					domain_id = '$new_domain_id',
 					name = '$new_name',
-					ip = '$new_ip',
 					type_id = '$new_type_id',
 					function_id = '$new_function_id',
 					expiry_date = '$new_expiry_date',
@@ -102,15 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		if ($new_name == "") { $_SESSION['session_result_message'] .= "Enter The SSL Certificate Name<BR>"; }
 
-		if ($new_ip == "") { $_SESSION['session_result_message'] .= "Enter The SSL Certificate's IP Address<BR>"; }
-
 		if (!preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date)) { $_SESSION['session_result_message'] .= "The Expiry Date Format Is Incorrect<BR>"; }
 
 	}
 
 } else {
 
-	$sql = "select sslc.domain_id, sslc.name, sslc.ip, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id as account_id, sslct.id as type_id, sslct.type, sslcf.id as function_id, sslcf.function
+	$sql = "select sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id as account_id, sslct.id as type_id, sslct.type, sslcf.id as function_id, sslcf.function
 			from ssl_certs as sslc, ssl_accounts as sslpa, ssl_cert_types as sslct, ssl_cert_functions as sslcf
 			where sslc.account_id = sslpa.id
 			and sslc.type_id = sslct.id
@@ -122,7 +118,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		$new_domain_id = $row->domain_id;
 		$new_name = $row->name;
-		$new_ip = $row->ip;
 		$new_type_id = $row->type_id;
 		$new_function_id = $row->function_id;
 		$new_type = $row->type;
@@ -164,6 +159,9 @@ $page_title = "Editting An SSL Certificate";
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
+<strong>Host / Label:</strong><BR><BR>
+<input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo stripslashes($new_name); ?>">
+<BR><BR>
 <strong>Domain:</strong><BR><BR>
 <?php
 $sql_domain = "select id, domain
@@ -186,13 +184,6 @@ while ($row_domain = mysql_fetch_object($result_domain)) {
 }
 echo "</select>";
 ?>
-<BR><BR>
-
-<strong>Host / Label:</strong><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo stripslashes($new_name); ?>">
-<BR><BR>
-<strong>IP Address:</strong><BR><BR>
-<input name="new_ip" type="text" size="50" maxlength="255" value="<?php if ($new_ip != "") echo stripslashes($new_ip); ?>">
 <BR><BR>
 
 <strong>Function:</strong><BR><BR>

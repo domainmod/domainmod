@@ -176,7 +176,7 @@ if ($sslpid != "") { $sslpid_string = " and sslp.id = '$sslpid' "; } else { $ssl
 if ($sslpaid != "") { $sslpaid_string = " and sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
 if ($typeid != "") { $typeid_string = " and sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
 if ($functionid != "") { $functionid_string = " and sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or sslc.ip like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
 
 if ($sort_by == "") $sort_by = "ed_a";
 
@@ -192,10 +192,6 @@ if ($sort_by == "ed_a") {
 	$sort_by_string = " order by sslc.name asc ";
 } elseif ($sort_by == "sslc_d") {
 	$sort_by_string = " order by sslc.name desc ";
-} elseif ($sort_by == "ip_a") {
-	$sort_by_string = " order by sslc.ip asc ";
-} elseif ($sort_by == "ip_d") {
-	$sort_by_string = " order by sslc.ip desc ";
 } elseif ($sort_by == "sslf_a") {
 	$sort_by_string = " order by sslcf.function asc, sslc.name asc ";
 } elseif ($sort_by == "sslf_d") {
@@ -214,7 +210,7 @@ if ($sort_by == "ed_a") {
 	$sort_by_string = " order by sslp.name desc, sslc.name asc ";
 }
 
-$sql = "select sslc.id, sslc.domain_id, sslc.name, sslc.ip, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id as sslpa_id, sslpa.username, sslp.id as sslp_id, sslp.name as ssl_provider_name, c.id as c_id, c.name as company_name, f.renewal_fee, cc.conversion, d.domain, sslct.type, sslcf.function
+$sql = "select sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id as sslpa_id, sslpa.username, sslp.id as sslp_id, sslp.name as ssl_provider_name, c.id as c_id, c.name as company_name, f.renewal_fee, cc.conversion, d.domain, sslct.type, sslcf.function
 		from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, domains as d, ssl_cert_types as sslct, ssl_cert_functions as sslcf
 		where sslc.account_id = sslpa.id
 		and sslpa.ssl_provider_id = sslp.id
@@ -274,7 +270,7 @@ if ($sslpid != "") { $sslpid_string = " and sslc.ssl_provider_id = '$sslpid' "; 
 if ($sslpaid != "") { $sslpaid_string = " and sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
 if ($typeid != "") { $typeid_string = " and sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
 if ($functionid != "") { $functionid_string = " and sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or sslc.ip like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
 
 $sql_company = "select c.id, c.name 
 				from companies as c, ssl_certs as sslc, domains as d
@@ -322,7 +318,7 @@ if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_s
 if ($sslpaid != "") { $sslpaid_string = " and sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
 if ($typeid != "") { $typeid_string = " and sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
 if ($functionid != "") { $functionid_string = " and sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or sslc.ip like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
 
 $sql_ssl_provider = "select sslp.id, sslp.name 
 				  from ssl_providers as sslp, ssl_certs as sslc, domains as d
@@ -370,7 +366,7 @@ if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_s
 if ($sslpid != "") { $sslpid_string = " and sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
 if ($typeid != "") { $typeid_string = " and sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
 if ($functionid != "") { $functionid_string = " and sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or sslc.ip like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
 
 $sql_account = "select sslpa.id as sslpa_id, sslpa.username, sslp.name as sslp_name, c.name as c_name
 				  from ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_certs as sslc, domains as d
@@ -422,7 +418,7 @@ if ($sslpid != "") { $sslpid_string = " and sslc.ssl_provider_id = '$sslpid' "; 
 if ($sslpaid != "") { $sslpaid_string = " and sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
 if ($typeid != "") { $typeid_string = " and sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
 if ($functionid != "") { $functionid_string = " and sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or sslc.ip like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
 
 $sql_domain = "select d.id, d.domain 
 				from domains as d, ssl_certs as sslc
@@ -469,7 +465,7 @@ if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_s
 if ($sslpid != "") { $sslpid_string = " and sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
 if ($sslpaid != "") { $sslpaid_string = " and sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
 if ($typeid != "") { $typeid_string = " and sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or sslc.ip like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
 
 $sql_function = "select sslc.function_id, sslcf.function
 			from ssl_certs as sslc, domains as d, ssl_cert_functions as sslcf
@@ -516,7 +512,7 @@ if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_s
 if ($sslpid != "") { $sslpid_string = " and sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
 if ($sslpaid != "") { $sslpaid_string = " and sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
 if ($functionid != "") { $functionid_string = " and sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or sslc.ip like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
 
 $sql_type = "select sslc.type_id, sslct.type
 			from ssl_certs as sslc, domains as d, ssl_cert_types as sslct
@@ -665,9 +661,6 @@ echo "</select>";
 		<a href="ssl-certs.php?cid=<?=$cid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&typeid=<?=$typeid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Domain</font></a>
 	</td>
 	<td>
-		<a href="ssl-certs.php?cid=<?=$cid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&typeid=<?=$typeid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ip_a") { echo "ip_d"; } else { echo "ip_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">IP Address</font></a>
-	</td>
-	<td>
 		<a href="ssl-certs.php?cid=<?=$cid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&typeid=<?=$typeid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslf_a") { echo "sslf_d"; } else { echo "sslf_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Function</font></a>
 	</td>
 	<td>
@@ -706,9 +699,6 @@ echo "</select>";
 	</td>
 	<td valign="top">
 		<a class="subtlelink" href="edit/domain.php?did=<?=$row->domain_id?>"><?=$row->domain?></a>
-	</td>
-	<td valign="top">
-		<a class="subtlelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->ip?></a>
 	</td>
 	<td valign="top">
 		<a class="subtlelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->function?></a>
