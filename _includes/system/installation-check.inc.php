@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$full_install_path = $full_server_path . "/installer/";
+$full_install_path = $full_server_path . "/install/";
 
 if (is_dir($full_install_path)) {
 
@@ -30,18 +30,18 @@ if (is_dir($full_install_path)) {
 
 		if ($web_root == "/") {
 
-			$_SESSION['session_result_message'] .= "<a href=\"/installer/\">Please click here to install</a><BR>";
+			$_SESSION['session_result_message'] .= "<a href=\"/install/\">Please click here to install</a><BR>";
 
 		} else {
-			$_SESSION['session_result_message'] .= "<a href=\"" . $web_root . "/installer/\">Please click here to install</a><BR>";
+			$_SESSION['session_result_message'] .= "<a href=\"" . $web_root . "/install/\">Please click here to install</a><BR>";
 		}
 
 	} else {
 		
 		$_SESSION['session_installation_mode'] = 0;
 
-			// $_SESSION['session_result_message'] .= "<BR>The software has been installed, but the /installer/ directory still exists.<BR><BR>";
-			// $_SESSION['session_result_message'] .= "You should delete the /installer/ directory from your web server.<BR><BR>";
+			// $_SESSION['session_result_message'] .= "<BR>The software has been installed, but the /install/ directory still exists.<BR><BR>";
+			// $_SESSION['session_result_message'] .= "You should delete the /install/ directory from your web server.<BR><BR>";
 		
 	}
 	
