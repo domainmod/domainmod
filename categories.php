@@ -84,7 +84,6 @@ $number_of_categories = mysql_num_rows($result);
 </table>
 <?php } ?>
 
-<BR><BR>
 <?php
 $sql = "select id, name, owner, default_category
 		from categories
@@ -93,8 +92,9 @@ $sql = "select id, name, owner, default_category
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $number_of_categories = mysql_num_rows($result);
 ?>
-<strong>Number of Inactive Categories:</strong> <?=$number_of_categories?>
 <?php if (mysql_num_rows($result) > 0) { ?>
+<BR><BR>
+<strong>Number of Inactive Categories:</strong> <?=$number_of_categories?>
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="30">
@@ -114,8 +114,8 @@ $number_of_categories = mysql_num_rows($result);
 </tr>
 <?php } ?>
 </table>
-<BR><font color="#DD0000"><strong>*</strong></font> = Default Category
 <?php } ?>
+<BR><font color="#DD0000"><strong>*</strong></font> = Default Category
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

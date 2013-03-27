@@ -89,7 +89,6 @@ if (mysql_num_rows($result) > 0) { ?>
 	</table>
 	<?php 
 } ?>
-<BR><BR>
 <?php
 $sql = "select id, name, ip
 		from ip_addresses
@@ -97,9 +96,10 @@ $sql = "select id, name, ip
 		order by name asc";
 $result = mysql_query($sql,$connection);
 ?>
-<strong>Number of Inactive IP Addresses:</strong> <?=mysql_num_rows($result)?>
 <?php
 if (mysql_num_rows($result) > 0) { ?>
+<BR><BR>
+<strong>Number of Inactive IP Addresses:</strong> <?=mysql_num_rows($result)?>
 
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">

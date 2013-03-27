@@ -74,9 +74,9 @@ The below exchange rates are used for various reporting, and at the very least t
 </tr>
 <?php } ?>
 </table>
+<?php } ?>
 <BR>
 <font color="#DD0000"><strong>*</strong></font> = Default Currency (for rate conversions, reports, etc.)
-<?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

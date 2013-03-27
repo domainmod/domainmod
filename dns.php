@@ -81,7 +81,6 @@ $result = mysql_query($sql,$connection);
 </tr>
 <?php } ?>
 </table>
-<BR><BR>
 <?php } ?>
 
 <?php
@@ -91,8 +90,9 @@ $sql = "select id, name, number_of_servers
 		order by name asc";
 $result = mysql_query($sql,$connection);
 ?>
-<strong>Number of Inactive DNS Profiles:</strong> <?=mysql_num_rows($result)?>
 <?php if (mysql_num_rows($result) > 0) { ?>
+<BR><BR>
+<strong>Number of Inactive DNS Profiles:</strong> <?=mysql_num_rows($result)?>
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="30">

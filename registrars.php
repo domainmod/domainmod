@@ -147,12 +147,11 @@ $sql = "select r.id as rid, r.name as rname, r.url
 		order by r.name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-<BR><BR>
-<strong>Number of Inactive Registrars:</strong> <?=mysql_num_rows($result)?>
 <?php
 
 if (mysql_num_rows($result) > 0) { ?>
-
+<BR><BR>
+<strong>Number of Inactive Registrars:</strong> <?=mysql_num_rows($result)?>
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="30">
@@ -210,7 +209,6 @@ if (mysql_num_rows($result) > 0) { ?>
 	<?php
 
 } ?>
-
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>
