@@ -21,6 +21,8 @@ session_start();
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
+include("_includes/auth/auth-check.inc.php");
+include("_includes/system/installation-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 
 $sql = "select db_version
@@ -29,8 +31,6 @@ $result = mysql_query($sql,$connection);
 
 if (mysql_num_rows($result) > 0) {
 	
-	// $_SESSION['session_institallation_mode'] = 0;
-
 	$_SESSION['session_result_message'] = "$software_title is already installed<BR>";
 
 	header("Location: ../");
@@ -423,6 +423,9 @@ if (mysql_num_rows($result) > 0) {
 		('$most_recent_db_version', '$current_timestamp');
 	";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$_SESSION['session_institallation_mode'] = 0;
+	$_SESSION['session_result_message'] = "$software_title has been installed<BR>";
 	
 	header("Location: ../");
 	exit;

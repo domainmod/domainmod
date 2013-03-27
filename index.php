@@ -22,7 +22,6 @@ include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/login-check.inc.php");
-
 include("_includes/system/installation-check.inc.php");
 
 if ($_SESSION['session_installation_mode'] == 1) {
