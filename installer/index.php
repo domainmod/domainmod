@@ -229,9 +229,10 @@ CREATE TABLE IF NOT EXISTS `ssl_cert_types` (
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "
-INSERT INTO `ssl_cert_types` (`id`, `type`, `insert_time`) VALUES
-(1, 'Wildcard', '$current_timestamp'),
-(2, 'Single Host', '$current_timestamp');
+INSERT INTO `ssl_cert_types`
+	(`id`, `type`, `insert_time`) VALUES
+	(1, 'Wildcard', '$current_timestamp'),
+	(2, 'Single Host', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -249,11 +250,12 @@ CREATE TABLE IF NOT EXISTS `ssl_cert_functions` (
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "
-INSERT INTO `ssl_cert_functions` (`id`, `function`, `insert_time`) VALUES
-(1, 'Web Server SSL/TLS Certificate', '$current_timestamp'),
-(2, 'S/MIME and Authentication Certificate', '$current_timestamp'),
-(3, 'Object Code Signing Certificate', '$current_timestamp'),
-(4, 'Digital ID', '$current_timestamp');
+INSERT INTO `ssl_cert_functions` 
+	(`id`, `function`, `insert_time`) VALUES
+	(1, 'Web Server SSL/TLS Certificate', '$current_timestamp'),
+	(2, 'S/MIME and Authentication Certificate', '$current_timestamp'),
+	(3, 'Object Code Signing Certificate', '$current_timestamp'),
+	(4, 'Digital ID', '$current_timestamp');
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -391,14 +393,20 @@ CREATE TABLE IF NOT EXISTS `ip_addresses` (
 ";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "INSERT INTO `ip_addresses` (`id`, `name`, `ip`, `insert_time`) VALUES
-									('1', '[no ip address]', '-', '$current_timestamp');";
+$sql = "
+INSERT INTO `ip_addresses` 
+	(`id`, `name`, `ip`, `insert_time`) VALUES
+	('1', '[no ip address]', '-', '$current_timestamp');
+";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $most_recent_db_version = "1.8";
 
-$sql = "INSERT INTO `settings` (`db_version`, `insert_time`) VALUES
-								('$most_recent_db_version', '$current_timestamp');";
+$sql = "
+INSERT INTO `settings` 
+	(`db_version`, `insert_time`) VALUES
+	('$most_recent_db_version', '$current_timestamp');
+";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 header("Location: ../_includes/system/test-data-generate.php");

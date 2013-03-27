@@ -19,9 +19,10 @@
 session_start();
 
 $sql_missing_domain_fees = "select count(id) as total_count
-        from domains
-        where fee_id = '0'";
+							from domains
+							where fee_id = '0'";
 $result_missing_domain_fees = mysql_query($sql_missing_domain_fees,$connection);
+
 while ($row_missing_domain_fees = mysql_fetch_object($result_missing_domain_fees)) { $total_results = $row_missing_domain_fees->total_count; }
 
 if ($total_results != 0) { 

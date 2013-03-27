@@ -17,10 +17,12 @@
 ?>
 <?php
 session_start();
+
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
+
 $page_title = "System Tools";
 $software_section = "system";
 ?>
@@ -32,11 +34,10 @@ $software_section = "system";
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
- &raquo; <a href="edit-profile.php">Edit Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="change-password.php">Change Password</a><?php if ($_SESSION['session_is_admin'] == 1) { ?>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="add-user.php">Add User</a> (in progress)<?php } ?><BR><BR> 
- &raquo; <a href="update-exchange-rates.php">Update Exchange Rates</a> / <a href="update-database.php">Update Database</a><BR><BR> 
- &raquo; <a href="../_includes/system/fix-domain-fees.php">Fix Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-tlds.php">Fix TLDs</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-ssl-fees.php">Fix SSL Fees</a><BR><BR> 
- &raquo; <a href="../_includes/system/test-data-delete.php?generating_test_data=1">Regenerate Test Data</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/test-data-delete.php">Delete Test Data</a>
-
+&raquo; <a href="edit-profile.php">Edit Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="change-password.php">Change Password</a><?php if ($_SESSION['session_is_admin'] == 1) { ?>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="add-user.php">Add User</a> (in progress)<?php } ?><BR><BR> 
+&raquo; <a href="update-exchange-rates.php">Update Exchange Rates</a> / <a href="update-database.php">Update Database</a><BR><BR> 
+&raquo; <a href="../_includes/system/fix-domain-fees.php">Fix Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-tlds.php">Fix TLDs</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-ssl-fees.php">Fix SSL Fees</a><BR><BR> 
+&raquo; <a href="../_includes/system/test-data-delete.php?generating_test_data=1">Regenerate Test Data</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/test-data-delete.php">Delete Test Data</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

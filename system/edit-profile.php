@@ -23,6 +23,7 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
+
 $page_title = "Edit User";
 $software_section = "system";
 
@@ -65,8 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 				email_address = '$new_email_address',
 				update_time = '$current_timestamp'
 			where id = '" . $_SESSION['session_user_id'] . "'
-			  and username = '" . $_SESSION['session_username'] . "'
-			  and email_address = '" . $_SESSION['session_email_address'] . "'";
+			and username = '" . $_SESSION['session_username'] . "'
+			and email_address = '" . $_SESSION['session_email_address'] . "'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$_SESSION['session_first_name'] = $new_first_name;
@@ -92,8 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		$sql = "select first_name, last_name, username, email_address
 				from users
 				where id = '" . $_SESSION['session_user_id'] . "'
-				  and username = '" . $_SESSION['session_username'] . "'
-				  and email_address = '" . $_SESSION['session_email_address'] . "'";
+				and username = '" . $_SESSION['session_username'] . "'
+				and email_address = '" . $_SESSION['session_email_address'] . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		while ($row = mysql_fetch_object($result)) {

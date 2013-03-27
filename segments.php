@@ -17,10 +17,12 @@
 ?>
 <?php
 session_start();
+
 include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
+
 $page_title = "Segment Filters";
 $software_section = "segments";
 
@@ -56,42 +58,50 @@ Segments identify a specific subset of domains, which can be used to help filter
 <BR><BR>
 <strong>Number of Active Segments:</strong> <?=mysql_num_rows($result)?>
 
-<?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
-<table width="100%" border="0" cellspacing="0" cellpadding="5">
-<tr height="30">
-	<td width="250">
-    	<font class="subheadline">Segment Name</font>
-    </td>
-	<td width="350">
-    	<font class="subheadline">Segment Description</font>
-    </td>
-	<td>
-    	<font class="subheadline">Segment</font>
-    </td>
-</tr>
-<?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td valign="top">
-		<a class="subtlelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$row->name?></a>
-	</td>
-	<td valign="top">
-		<?php
-		$temp_description = preg_replace("/\r\n/", "<BR>", $row->description);
-        echo $temp_description;
-		?><BR><BR>
-    </td>
-	<td valign="top">
-    	<?php
-		$temp_segment = preg_replace("/','/", ", ", $row->segment);
-		$temp_segment = preg_replace("/'/", "", $temp_segment);
-        echo str_stop($temp_segment, 250);
-		?>
-    </td>
-</tr>
-<?php } ?>
-</table>
-<?php } ?>
+<?php 
+if (mysql_num_rows($result) > 0) { ?>
+
+    <BR><BR>
+    <table width="100%" border="0" cellspacing="0" cellpadding="5">
+    <tr height="30">
+        <td width="250">
+            <font class="subheadline">Segment Name</font>
+        </td>
+        <td width="350">
+            <font class="subheadline">Segment Description</font>
+        </td>
+        <td>
+            <font class="subheadline">Segment</font>
+        </td>
+    </tr>
+
+    <?php 
+	while ($row = mysql_fetch_object($result)) { ?>
+
+        <tr height="20">
+            <td valign="top">
+                <a class="subtlelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$row->name?></a>
+            </td>
+            <td valign="top">
+                <?php
+                $temp_description = preg_replace("/\r\n/", "<BR>", $row->description);
+                echo $temp_description;
+                ?><BR><BR>
+            </td>
+            <td valign="top">
+                <?php
+                $temp_segment = preg_replace("/','/", ", ", $row->segment);
+                $temp_segment = preg_replace("/'/", "", $temp_segment);
+                echo str_stop($temp_segment, 250);
+                ?>
+            </td>
+        </tr>
+
+    <?php 
+	} ?>
+    </table>
+<?php 
+} ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

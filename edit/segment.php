@@ -17,11 +17,14 @@
 ?>
 <?php
 session_start();
+
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+
+$page_title = "Editting A Segment";
 $software_section = "segments";
 
 $segid = $_GET['segid'];
@@ -110,7 +113,6 @@ if ($really_del == "1") {
 	exit;
 
 }
-$page_title = "Editting A Segment";
 ?>
 <html>
 <head>

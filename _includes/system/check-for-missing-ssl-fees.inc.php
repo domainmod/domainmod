@@ -19,9 +19,10 @@
 session_start();
 
 $sql_missing_ssl_fees = "select count(id) as total_count
-        from ssl_certs
-        where fee_id = '0'";
+						 from ssl_certs
+						 where fee_id = '0'";
 $result_missing_ssl_fees = mysql_query($sql_missing_ssl_fees,$connection);
+
 while ($row_missing_ssl_fees = mysql_fetch_object($result_missing_ssl_fees)) { $total_results = $row_missing_ssl_fees->total_count; }
 
 if ($total_results != 0) { 

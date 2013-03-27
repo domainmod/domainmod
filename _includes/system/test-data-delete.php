@@ -68,10 +68,14 @@ $sql = "delete from ip_addresses where test_data = '1'";
 $result = mysql_query($sql,$connection);
 
 if ($generating_test_data == "1") {
+
 	header("Location: test-data-generate.php");
+
 } else {
+
 	$_SESSION['session_result_message'] = "Test Data Has Been Deleted<BR>";
 	header("Location: ../../system/index.php");
+
 }
 exit;
 ?>

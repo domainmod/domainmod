@@ -17,6 +17,7 @@
 ?>
 <?php
 session_start();
+
 include("../../config.inc.php");
 include("../../database.inc.php");
 include("../../software.inc.php");

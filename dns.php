@@ -1,4 +1,4 @@
-<?php
+	<?php
 // dns.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
@@ -17,10 +17,12 @@
 ?>
 <?php
 session_start();
+
 include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
+
 $page_title = "DNS Profile Breakdown";
 $software_section = "dns";
 ?>
@@ -34,7 +36,6 @@ $software_section = "dns";
 <?php include("_includes/header.inc.php"); ?>
 This is a breakdown of the DNS Profiles that are currently in use.
 <BR><BR>
-
 <?php
 $sql = "select id, name, number_of_servers
 		from dns

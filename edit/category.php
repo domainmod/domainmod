@@ -17,11 +17,14 @@
 ?>
 <?php
 session_start();
+
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+
+$page_title = "Editting A Category";
 $software_section = "categories";
 
 $pcid = $_GET['pcid'];
@@ -41,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 			$sql = "update categories
 					set default_category = '0',
-					update_time = '$current_timestamp'";
+					    update_time = '$current_timestamp'";
 			$result = mysql_query($sql,$connection);
 			
 		} else { 
@@ -57,10 +60,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "update categories
 				set name = '" . mysql_real_escape_string($new_category) . "', 
-				owner = '" . mysql_real_escape_string($new_owner) . "',
-				notes = '" . mysql_real_escape_string($new_notes) . "',
-				default_category = '$new_default_category',
-				update_time = '$current_timestamp'
+					owner = '" . mysql_real_escape_string($new_owner) . "',
+					notes = '" . mysql_real_escape_string($new_notes) . "',
+					default_category = '$new_default_category',
+					update_time = '$current_timestamp'
 				where id = '$new_pcid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -95,7 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 
 }
-$page_title = "Editting A Category";
 ?>
 <html>
 <head>

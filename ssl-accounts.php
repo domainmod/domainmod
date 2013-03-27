@@ -17,10 +17,12 @@
 ?>
 <?php
 session_start();
+
 include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
+
 $page_title = "SSL Provider Accounts";
 $software_section = "ssl-accounts";
 
@@ -53,84 +55,87 @@ These are the SSL provider accounts that have active certificates.
 <BR><BR>
 <strong>Number of Active Accounts:</strong> <?=mysql_num_rows($result)?>
 
-<?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
-	<td width="200">
-    	<font class="subheadline">Account/Username</font>
-    </td>
-	<td width="250">
-    	<font class="subheadline">Company</font>
-    </td>
-	<td width="250">
-    	<font class="subheadline">SSL Provider</font>
-    </td>
-	<td>
-    	<font class="subheadline"># of Certs</font>
-    </td>
-</tr>
-
 <?php 
-while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td valign="top" width="200">
-			<a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
-	</td>
-	<td colspan="3">
-    	<table width="100%" border="0" cellspacing="3" cellpadding="0">
-            <tr>
-            	<td width="244">
-				<?php
-                $sql2 = "select id, name
-                         from companies
-                         where id = '$row->company_id'";
-                $result2 = mysql_query($sql2,$connection) or die(mysql_error());
-                while ($row2 = mysql_fetch_object($result2)) {
-                    $temp_id = $row2->id;
-                    $temp_company_name = $row2->name;
-                }
-                ?>
-				<a class="subtlelink" href="edit/company.php?cid=<?=$temp_id?>"><?=$temp_company_name?></a>
-                </td>
-            	<td width="250">
-				<?php
-                $sql2 = "select id, name
-                         from ssl_providers
-                         where id = '$row->ssl_provider_id'";
-                $result2 = mysql_query($sql2,$connection) or die(mysql_error());
-                while ($row2 = mysql_fetch_object($result2)) {
-                    $temp_id = $row2->id;
-                    $temp_ssl_provider_name = $row2->name;
-                }
-                ?>
-                <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$temp_id?>"><?=$temp_ssl_provider_name?></a>
-                </td>
-            	<td>
-				<?php
-				$sql3 = "select count(*) as total_ssl_count
-						 from ssl_certs
-						 where account_id = '$row->id'
-						 and active != '0'
-						 and active != '10'";
-				$result3 = mysql_query($sql3,$connection);
-				while ($row3 = mysql_fetch_object($result3)) {
-					if ($row3->total_ssl_count != 0) {
-						echo "<a class=\"nobold\" href=\"ssl-certs.php?cid=$row->company_id&sslpid=$row->ssl_provider_id&sslpaid=$row->id\">" . number_format($row3->total_ssl_count) . "</a>";
-					} else {
-						echo number_format($row3->total_ssl_count);
-					}
-				}
-				?>
-                </td>
-            </tr>
-		</table>
-    </td>
-</tr>
+if (mysql_num_rows($result) > 0) { ?>
+
+    <BR><BR>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr height="30">
+        <td width="200">
+            <font class="subheadline">Account/Username</font>
+        </td>
+        <td width="250">
+            <font class="subheadline">Company</font>
+        </td>
+        <td width="250">
+            <font class="subheadline">SSL Provider</font>
+        </td>
+        <td>
+            <font class="subheadline"># of Certs</font>
+        </td>
+    </tr>
+
+	<?php 
+    while ($row = mysql_fetch_object($result)) { ?>
+    <tr height="20">
+        <td valign="top" width="200">
+                <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+        </td>
+        <td colspan="3">
+            <table width="100%" border="0" cellspacing="3" cellpadding="0">
+                <tr>
+                    <td width="244">
+                    <?php
+                    $sql2 = "select id, name
+                             from companies
+                             where id = '$row->company_id'";
+                    $result2 = mysql_query($sql2,$connection) or die(mysql_error());
+                    while ($row2 = mysql_fetch_object($result2)) {
+                        $temp_id = $row2->id;
+                        $temp_company_name = $row2->name;
+                    }
+                    ?>
+                    <a class="subtlelink" href="edit/company.php?cid=<?=$temp_id?>"><?=$temp_company_name?></a>
+                    </td>
+                    <td width="250">
+                    <?php
+                    $sql2 = "select id, name
+                             from ssl_providers
+                             where id = '$row->ssl_provider_id'";
+                    $result2 = mysql_query($sql2,$connection) or die(mysql_error());
+                    while ($row2 = mysql_fetch_object($result2)) {
+                        $temp_id = $row2->id;
+                        $temp_ssl_provider_name = $row2->name;
+                    }
+                    ?>
+                    <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$temp_id?>"><?=$temp_ssl_provider_name?></a>
+                    </td>
+                    <td>
+                    <?php
+                    $sql3 = "select count(*) as total_ssl_count
+                             from ssl_certs
+                             where account_id = '$row->id'
+                             and active != '0'
+                             and active != '10'";
+                    $result3 = mysql_query($sql3,$connection);
+                    while ($row3 = mysql_fetch_object($result3)) {
+                        if ($row3->total_ssl_count != 0) {
+                            echo "<a class=\"nobold\" href=\"ssl-certs.php?cid=$row->company_id&sslpid=$row->ssl_provider_id&sslpaid=$row->id\">" . number_format($row3->total_ssl_count) . "</a>";
+                        } else {
+                            echo number_format($row3->total_ssl_count);
+                        }
+                    }
+                    ?>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <?php 
+    } ?>
+	</table>
 <?php 
 } ?>
-</table>
-<?php } ?>
 <?php
 $sql = "select id, username, company_id, ssl_provider_id, reseller
 		from ssl_accounts
@@ -140,72 +145,78 @@ $sql = "select id, username, company_id, ssl_provider_id, reseller
 		order by username asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-<?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
-<strong>Number of Inactive Accounts:</strong> <?=mysql_num_rows($result)?>
-<BR><BR>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
-	<td width="200">
-    	<font class="subheadline">Account/Username</font>
-    </td>
-	<td width="250">
-    	<font class="subheadline">Company</font>
-    </td>
-	<td width="250">
-    	<font class="subheadline">SSL Provider</font>
-    </td>
-	<td>&nbsp;
-    	
-    </td>
-</tr>
-
 <?php 
-while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td valign="top" width="200">
-			<a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
-	</td>
-	<td colspan="3">
-    	<table width="100%" border="0" cellspacing="3" cellpadding="0">
-            <tr>
-            	<td width="246">
-				<?php
-                $sql2 = "select id, name
-                         from companies
-                         where id = '$row->company_id'";
-                $result2 = mysql_query($sql2,$connection) or die(mysql_error());
-                while ($row2 = mysql_fetch_object($result2)) {
-                    $temp_id = $row2->id;
-                    $temp_company_name = $row2->name;
-                }
-                ?>
-				<a class="subtlelink" href="edit/company.php?cid=<?=$temp_id?>"><?=$temp_company_name?></a>
-                </td>
-            	<td width="250">
-				<?php
-                $sql2 = "select id, name
-                         from ssl_providers
-                         where id = '$row->ssl_provider_id'";
-                $result2 = mysql_query($sql2,$connection) or die(mysql_error());
-                while ($row2 = mysql_fetch_object($result2)) {
-                    $temp_id = $row2->id;
-                    $temp_ssl_provider_name = $row2->name;
-                }
-                ?>
-                <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$temp_id?>"><?=$temp_ssl_provider_name?></a>
-                </td>
-            	<td>&nbsp;
-					
-                </td>
-            </tr>
-		</table>
-    </td>
-</tr>
+if (mysql_num_rows($result) > 0) { ?>
+
+    <BR><BR>
+    <strong>Number of Inactive Accounts:</strong> <?=mysql_num_rows($result)?>
+    <BR><BR>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr height="30">
+            <td width="200">
+                <font class="subheadline">Account/Username</font>
+            </td>
+            <td width="250">
+                <font class="subheadline">Company</font>
+            </td>
+            <td width="250">
+                <font class="subheadline">SSL Provider</font>
+            </td>
+            <td>&nbsp;
+                
+            </td>
+        </tr>
+
+	<?php 
+    while ($row = mysql_fetch_object($result)) { ?>
+    
+        <tr height="20">
+            <td valign="top" width="200">
+                    <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+            </td>
+            <td colspan="3">
+    
+                <table width="100%" border="0" cellspacing="3" cellpadding="0">
+                    <tr>
+                        <td width="246">
+                        <?php
+                        $sql2 = "select id, name
+                                 from companies
+                                 where id = '$row->company_id'";
+                        $result2 = mysql_query($sql2,$connection) or die(mysql_error());
+                        while ($row2 = mysql_fetch_object($result2)) {
+                            $temp_id = $row2->id;
+                            $temp_company_name = $row2->name;
+                        }
+                        ?>
+                        <a class="subtlelink" href="edit/company.php?cid=<?=$temp_id?>"><?=$temp_company_name?></a>
+                        </td>
+                        <td width="250">
+                        <?php
+                        $sql2 = "select id, name
+                                 from ssl_providers
+                                 where id = '$row->ssl_provider_id'";
+                        $result2 = mysql_query($sql2,$connection) or die(mysql_error());
+                        while ($row2 = mysql_fetch_object($result2)) {
+                            $temp_id = $row2->id;
+                            $temp_ssl_provider_name = $row2->name;
+                        }
+                        ?>
+                        <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$temp_id?>"><?=$temp_ssl_provider_name?></a>
+                        </td>
+                        <td>&nbsp;
+                            
+                        </td>
+                    </tr>
+                </table>
+    
+            </td>
+        </tr>
+    <?php 
+    } ?>
+</table>
 <?php 
 } ?>
-</table>
-<?php } ?>
 <BR><font color="#DD0000"><strong>*</strong></font> = Reseller Account
 <?php include("_includes/footer.inc.php"); ?>
 </body>

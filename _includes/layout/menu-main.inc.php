@@ -24,13 +24,11 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/registrar-accounts.php">Registrar Accounts</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/tlds.php">TLDs</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/currencies.php">Currencies</a> ]
-<br><br>
-
+<BR><BR>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-certs.php">SSL Certificates</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-providers.php">SSL Providers</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-accounts.php">SSL Accounts</a> ]&nbsp;
-<br><br>
-
+<BR><BR>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/segments.php">Segment Filters</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-actions.php">Perform Bulk Actions</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/export-domains.php">Export Domains</a> ]&nbsp;

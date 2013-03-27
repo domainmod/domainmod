@@ -17,11 +17,14 @@
 ?>
 <?php
 session_start();
+
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+
+$page_title = "Adding A New DNS Profile";
 $software_section = "dns";
 
 // Form Variables
@@ -44,36 +47,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$new_number_of_servers = 10;
 		
-		if ($new_dns10 == '') {
-			$new_number_of_servers = '9';
-		}
-		if ($new_dns9 == '') {
-			$new_number_of_servers = '8';
-		}
-		if ($new_dns8 == '') {
-			$new_number_of_servers = '7';
-		}
-		if ($new_dns7 == '') {
-			$new_number_of_servers = '6';
-		}
-		if ($new_dns6 == '') {
-			$new_number_of_servers = '5';
-		}
-		if ($new_dns5 == '') {
-			$new_number_of_servers = '4';
-		}
-		if ($new_dns4 == '') {
-			$new_number_of_servers = '3';
-		}
-		if ($new_dns3 == '') {
-			$new_number_of_servers = '2';
-		}
-		if ($new_dns2 == '') {
-			$new_number_of_servers = '1';
-		}
-		if ($new_dns1 == '') {
-			$new_number_of_servers = '0';
-		}
+		if ($new_dns10 == '') { $new_number_of_servers = '9'; }
+		if ($new_dns9 == '') { $new_number_of_servers = '8'; }
+		if ($new_dns8 == '') { $new_number_of_servers = '7'; }
+		if ($new_dns7 == '') { $new_number_of_servers = '6'; }
+		if ($new_dns6 == '') { $new_number_of_servers = '5'; }
+		if ($new_dns5 == '') { $new_number_of_servers = '4'; }
+		if ($new_dns4 == '') { $new_number_of_servers = '3'; }
+		if ($new_dns3 == '') { $new_number_of_servers = '2'; }
+		if ($new_dns2 == '') { $new_number_of_servers = '1'; }
+		if ($new_dns1 == '') { $new_number_of_servers = '0'; }
 
 		$sql = "insert into dns
 				(name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, notes, number_of_servers, insert_time)
@@ -90,7 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 
 }
-$page_title = "Adding A New DNS Profile";
 ?>
 <html>
 <head>

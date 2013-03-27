@@ -17,11 +17,14 @@
 ?>
 <?php
 session_start();
+
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+
+$page_title = "Editting A Registrar";
 $software_section = "registrars";
 
 $rid = $_GET['rid'];
@@ -44,9 +47,9 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 
 		$sql = "update registrars
 				set name = '" . mysql_real_escape_string($new_registrar) . "', 
-				url = '" . mysql_real_escape_string($new_url) . "', 
-				notes = '" . mysql_real_escape_string($new_notes) . "',
-				update_time = '$current_timestamp'
+					url = '" . mysql_real_escape_string($new_url) . "', 
+					notes = '" . mysql_real_escape_string($new_notes) . "',
+					update_time = '$current_timestamp'
 				where id = '$new_rid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -195,7 +198,6 @@ while ($row = mysql_fetch_object($result)) {
 	$new_notes = $row->notes;
 
 }
-$page_title = "Editting A Registrar";
 ?>
 <html>
 <head>
@@ -251,13 +253,11 @@ if (mysql_num_rows($result) > 0) {
     while ($row = mysql_fetch_object($result)) {
         $temp_all_missing_fees = $temp_all_missing_fees .= "$row->tld, ";
     }
-        $all_missing_fees = substr($temp_all_missing_fees, 0, -2); 
+	$all_missing_fees = substr($temp_all_missing_fees, 0, -2); 
     ?>
     <?=$all_missing_fees?><BR><BR>
     <strong><font color="#DD0000">*</font> Please update the fees for these TLDs below in order to ensure proper domain accounting.</strong>
     <BR><BR><BR><BR>
-
-
 <?php
 }
 ?>
@@ -271,7 +271,7 @@ if (mysql_num_rows($result) > 0) {
 	    <input name="new_initial_fee" type="text" value="" size="10"></td>
 		<td width="200" valign="top"><strong>Renewal Fee</strong><BR><BR>
 	    <input name="new_renewal_fee" type="text" value="" size="10"></td>
-	  <td valign="top"><strong>Currency</strong><BR><BR>
+	  	<td valign="top"><strong>Currency</strong><BR><BR>
 		  <select name="new_currency_id" id="new_currency">
 		  	<?php
 			$sql = "select id, currency, name 
@@ -281,7 +281,7 @@ if (mysql_num_rows($result) > 0) {
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) {
 			?>
-		    <option value="<?=$row->id?>"><?php echo "$row->currency - $row->name"; ?></option>
+			    <option value="<?=$row->id?>"><?php echo "$row->currency - $row->name"; ?></option>
 			<?php
 			}
 			?>

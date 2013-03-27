@@ -17,10 +17,12 @@
 ?>
 <?php
 session_start();
+
 include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
+
 $page_title = "Currencies";
 $software_section = "currencies";
 ?>
@@ -44,7 +46,6 @@ The below exchange rates are used for various reporting, and at the very least t
 <strong>NOTE:</strong> Exchange rate conversions have now been automated! Simply set your default currency below and then <a href="system/update-exchange-rates.php">click here to update the exchange rates</a>.
 <BR><BR>
 <strong>Number of Active Currencies:</strong> <?=mysql_num_rows($result)?>
-
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">

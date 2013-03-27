@@ -17,11 +17,13 @@
 ?>
 <?php
 session_start();
+
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
+
 $page_title = "Change Password";
 $software_section = "system";
 
@@ -41,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
 		$sql2 = "update users 
 				 set password = password('$new_password'), 
-				 new_password = '0', 
-				 update_time = '$current_timestamp'
+				 	 new_password = '0', 
+				 	 update_time = '$current_timestamp'
 				 where id = '" . $_SESSION['session_user_id'] . "' 
 				 and email_address = '" . $_SESSION['session_email_address'] . "'";
 		$result2 = mysql_query($sql2,$connection) or die("Your password could not be updated. Please try again later.");

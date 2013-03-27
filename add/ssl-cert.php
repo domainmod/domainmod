@@ -17,12 +17,15 @@
 ?>
 <?php
 session_start();
+
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
+
+$page_title = "Adding A New SSL Certificate";
 $software_section = "ssl-certs";
 
 // Form Variables
@@ -74,7 +77,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 
 }
-$page_title = "Adding A New SSL Certificate";
 ?>
 <html>
 <head>
@@ -137,9 +139,9 @@ echo "</select>";
 <strong>Type:</strong><BR><BR>
 <?php
 $sql_type = "select id, type
-				from ssl_cert_types
-				where active = '1'
-				order by type asc";
+			 from ssl_cert_types
+			 where active = '1'
+			 order by type asc";
 $result_type = mysql_query($sql_type,$connection) or die(mysql_error());
 echo "<select name=\"new_type_id\">";
 while ($row_type = mysql_fetch_object($result_type)) {

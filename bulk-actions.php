@@ -17,6 +17,7 @@
 ?>
 <?php
 session_start();
+
 include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
@@ -24,6 +25,8 @@ include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp-basic.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
 include("_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
+
+$page_title = "Bulk Actions";
 $software_section == "bulkactions";
 
 // Form Variables
@@ -361,7 +364,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 		$new_data_unformatted = strtolower(preg_replace("/\r\n/", ", ", $new_data));
 
 }
-$page_title = "Bulk Actions";
 ?>
 <html>
 <head>
@@ -654,23 +656,23 @@ Enter the domains one per line.
 <?php } elseif ($action == "CRA") { ?>
 	<?php
    $sql_account = "select ra.id as ra_id, ra.username, r.name as r_name, c.name as c_name
-                      from registrar_accounts as ra, registrars as r, companies as c
-                      where ra.registrar_id = r.id
-                      and ra.company_id = c.id
-                      and ra.active = '1'
-                      and r.active = '1'
-                      and c.active = '1'
-                      $is_active_string
-                      $cid_string
-                      $rid_string
-                      $tld_string
-                      group by r.name, c.name, ra.username
-                      order by r.name asc, c.name asc, ra.username asc";
+   				   from registrar_accounts as ra, registrars as r, companies as c
+				   where ra.registrar_id = r.id
+				   and ra.company_id = c.id
+                   and ra.active = '1'
+                   and r.active = '1'
+                   and c.active = '1'
+                   $is_active_string
+                   $cid_string
+                   $rid_string
+                   $tld_string
+                   group by r.name, c.name, ra.username
+                   order by r.name asc, c.name asc, ra.username asc";
     $result_account = mysql_query($sql_account,$connection);
     echo "<select name=\"new_raid\">";
     echo "<option value=\"\""; if ($new_raid == "") echo " selected"; echo ">"; echo "$choose_text Registrar Account</option>";
 	while ($row_account = mysql_fetch_object($result_account)) { 
-    echo "<option value=\"$row_account->ra_id\""; if ($row_account->ra_id == $new_raid) echo " selected"; echo ">"; echo "$row_account->r_name :: $row_account->c_name ($row_account->username)</option>";
+	    echo "<option value=\"$row_account->ra_id\""; if ($row_account->ra_id == $new_raid) echo " selected"; echo ">"; echo "$row_account->r_name :: $row_account->c_name ($row_account->username)</option>";
     } 
     echo "</select>";
     ?>

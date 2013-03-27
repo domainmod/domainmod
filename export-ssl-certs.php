@@ -17,11 +17,13 @@
 ?>
 <?php
 session_start();
+
 include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp-basic.inc.php");
+
 $page_title = "Export SSL Certificates";
 
 // Form Variables
@@ -30,9 +32,9 @@ $new_expiry_start = $_REQUEST['new_expiry_start'];
 $new_expiry_end = $_REQUEST['new_expiry_end'];
 
 $sql2 = "select currency, name, conversion
-		from currencies
-		where default_currency = '1'
-		and active = '1'";
+		 from currencies
+		 where default_currency = '1'
+		 and active = '1'";
 $result2 = mysql_query($sql2,$connection) or die(mysql_error());
 
 while ($row2 = mysql_fetch_object($result2)) {
@@ -94,19 +96,12 @@ if ($export == "1") {
 		$temp_renewal_fee = number_format($row->renewal_fee * $row->conversion, 2, '.', ',');
 		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
-		if ($row->active == "0") { 
-			$ssl_status = "EXPIRED";
-		} elseif ($row->active == "1") { 
-			$ssl_status = "ACTIVE";
-		} elseif ($row->active == "2") { 
-			$ssl_status = "PENDING (REGISTRATION)";
-		} elseif ($row->active == "3") { 
-			$ssl_status = "PENDING (RENEWAL)";
-		} elseif ($row->active == "4") { 
-			$ssl_status = "PENDING (OTHER)";
-		} else { 
-			$ssl_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-SSL-CERTS.PHP"; 
-		} 
+		if ($row->active == "0") { $ssl_status = "EXPIRED"; } 
+		elseif ($row->active == "1") { $ssl_status = "ACTIVE"; } 
+		elseif ($row->active == "2") { $ssl_status = "PENDING (REGISTRATION)"; } 
+		elseif ($row->active == "3") { $ssl_status = "PENDING (RENEWAL)"; } 
+		elseif ($row->active == "4") { $ssl_status = "PENDING (OTHER)"; } 
+		else { $ssl_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-SSL-CERTS.PHP"; } 
 		
 		$sql_domain = "select d.domain, ip.name, ip.ip
 					   from domains as d, ip_addresses as ip
@@ -169,7 +164,7 @@ Expiring Between
 </td>
 <td class="search-table-inside" width="200" valign="middle" align="center">
 <?php if (mysql_num_rows($result) > 0) { ?>
-<a href="export-ssl-certs.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>">Export Results</a><BR>
+		<a href="export-ssl-certs.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>">Export Results</a><BR>
 <?php } ?>
 </td>
 </tr>
@@ -230,17 +225,6 @@ Expiring Between
 	</td>
 	<td valign="top">
 		<?php
-/*
-        $sql_domain = "select domain
-					   from domains where id = '$row->domain_id'";
-		$result_domain = mysql_query($sql_domain,$connection);
-		
-		while ($row_domain = mysql_fetch_object($result_domain)) {
-			$full_domain_name = $row_domain->domain;
-		}
-*/
-
-
 		$sql_domain = "select d.domain, ip.name, ip.ip
 					   from domains as d, ip_addresses as ip
 					   where d.ip_id = ip.id
@@ -252,9 +236,6 @@ Expiring Between
 			$full_ip_name = $row_domain->name;
 			$full_ip_address = $row_domain->ip;
 		}
-
-
-
 		?>		
 		<?=$full_domain_name?>
 	</td>

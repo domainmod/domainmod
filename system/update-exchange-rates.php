@@ -27,6 +27,7 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
+
 $page_title = "Update Exchange Rates";
 $software_section = "system";
 
@@ -40,7 +41,8 @@ while ($row = mysql_fetch_object($result)) {
 }
 
 $sql = "update currencies
-		set conversion = '1', update_time = '$current_timestamp'
+		set conversion = '1', 
+			update_time = '$current_timestamp'
 		where currency = '$default_currency'";
 $result = mysql_query($sql,$connection);
 
@@ -67,7 +69,8 @@ while ($row = mysql_fetch_object($result)) {
 	$value = $data[1];
 	
 	$sql2 = "update currencies
-			 set conversion = '$value', update_time = '$current_timestamp'
+			 set conversion = '$value', 
+			 	 update_time = '$current_timestamp'
 			 where currency = '$row->currency'";
 	$result2 = mysql_query($sql2,$connection);
 

@@ -17,11 +17,13 @@
 ?>
 <?php
 session_start();
+
 include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp-basic.inc.php");
+
 $page_title = "Export Domains";
 
 // Form Variables
@@ -96,23 +98,14 @@ if ($export == "1") {
 		$temp_renewal_fee = number_format($row->renewal_fee * $row->conversion, 2, '.', ',');
 		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
-		if ($row->active == "0") { 
-			$domain_status = "EXPIRED";
-		} elseif ($row->active == "1") { 
-			$domain_status = "ACTIVE";
-		} elseif ($row->active == "2") { 
-			$domain_status = "IN TRANSFER";
-		} elseif ($row->active == "3") { 
-			$domain_status = "PENDING (RENEWAL)";
-		} elseif ($row->active == "4") { 
-			$domain_status = "PENDING (OTHER)";
-		} elseif ($row->active == "5") { 
-			$domain_status = "PENDING (REGISTRATION)";
-		} elseif ($row->active == "10") { 
-			$domain_status = "SOLD";
-		} else { 
-			$domain_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-DOMAINS.PHP"; 
-		} 
+		if ($row->active == "0") { $domain_status = "EXPIRED"; } 
+		elseif ($row->active == "1") { $domain_status = "ACTIVE"; } 
+		elseif ($row->active == "2") { $domain_status = "IN TRANSFER"; } 
+		elseif ($row->active == "3") { $domain_status = "PENDING (RENEWAL)"; } 
+		elseif ($row->active == "4") { $domain_status = "PENDING (OTHER)"; } 
+		elseif ($row->active == "5") { $domain_status = "PENDING (REGISTRATION)"; } 
+		elseif ($row->active == "10") { $domain_status = "SOLD"; } 
+		else { $domain_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-DOMAINS.PHP"; } 
 
 		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$row->name\",\"$row->ip\",\"$row->dns_profile\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_owner\",\"$row->company_name\",\"$row->registrar_name\",\"$row->username\"\n";
 	}

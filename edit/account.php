@@ -17,11 +17,14 @@
 ?>
 <?php
 session_start();
+
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+
+$page_title = "Editting A Registrar Account";
 $software_section = "accounts";
 
 $raid = $_GET['raid'];
@@ -76,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 
 }
-$page_title = "Editting A Registrar Account";
 ?>
 <html>
 <head>
@@ -113,9 +115,9 @@ echo "</select>";
 <strong>Registrar:</strong><BR><BR>
 <?php
 $sql_registrar = "select id, name
-				from registrars
-				where active = '1'
-				order by name asc";
+				  from registrars
+				  where active = '1'
+				  order by name asc";
 $result_registrar = mysql_query($sql_registrar,$connection) or die(mysql_error());
 echo "<select name=\"new_registrar_id\">";
 while ($row_registrar = mysql_fetch_object($result_registrar)) {

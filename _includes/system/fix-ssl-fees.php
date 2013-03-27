@@ -44,8 +44,8 @@ while ($row = mysql_fetch_object($result)) {
 
 	$sql2 = "update ssl_certs
 			 set fee_id = '$row->id',
-			 fee_fixed = '1',
-			 update_time = '$current_timestamp'
+			 	 fee_fixed = '1',
+			 	 update_time = '$current_timestamp'
 			 where ssl_provider_id = '$row->ssl_provider_id' 
 			 and type_id = '$row->type_id'
 			 and function_id = '$row->function_id'
@@ -54,7 +54,7 @@ while ($row = mysql_fetch_object($result)) {
 	
 	$sql3 = "update ssl_fees
 			 set fee_fixed = '1',
-	 		 update_time = '$current_timestamp'
+	 		 	 update_time = '$current_timestamp'
 			 where ssl_provider_id = '$row->ssl_provider_id'
 			 and type_id = '$row->type_id'
 			 and function_id = '$row->function_id'";

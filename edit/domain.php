@@ -17,11 +17,14 @@
 ?>
 <?php
 session_start();
+
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+
+$page_title = "Editting A Domain";
 $software_section = "domains";
 
 $did = $_GET['did'];
@@ -149,7 +152,8 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-	$sql = "delete from domains where id = '$did'";
+	$sql = "delete from domains 
+			where id = '$did'";
 	$result = mysql_query($sql,$connection);
 	
 	$_SESSION['session_result_message'] = "Domain Deleted ($new_domain)<BR>";
@@ -158,7 +162,6 @@ if ($really_del == "1") {
 	exit;
 
 }
-$page_title = "Editting A Domain";
 ?>
 <html>
 <head>
@@ -188,9 +191,9 @@ $page_title = "Editting A Domain";
 <strong>Primary Category:</strong><BR><BR>
 <?php
 $sql_cat = "select id, name
-				from categories
-				where active = '1'
-				order by name asc";
+			from categories
+			where active = '1'
+			order by name asc";
 $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
 echo "<select name=\"new_cat_id\">";
 while ($row_cat = mysql_fetch_object($result_cat)) {
@@ -211,9 +214,9 @@ echo "</select>";
 <strong>DNS Profile:</strong><BR><BR>
 <?php
 $sql_dns = "select id, name
-				from dns
-				where active = '1'
-				order by name asc";
+			from dns
+			where active = '1'
+			order by name asc";
 $result_dns = mysql_query($sql_dns,$connection) or die(mysql_error());
 echo "<select name=\"new_dns_id\">";
 while ($row_dns = mysql_fetch_object($result_dns)) {
@@ -234,8 +237,8 @@ echo "</select>";
 <strong>IP Address:</strong><BR><BR>
 <?php
 $sql_ip = "select id, name, ip
-				from ip_addresses
-				order by name asc, ip asc";
+		   from ip_addresses
+		   order by name asc, ip asc";
 $result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
 echo "<select name=\"new_ip_id\">";
 

@@ -27,6 +27,7 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
+
 $page_title = "Add User";
 $software_section = "system";
 
@@ -42,9 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 	$new_password = substr(md5(time()),0,8);
 	
 	$sql = "insert into users
-			(first_name, last_name, username, email_address, password, new_password, admin, insert_time)
-			values
-			('$new_first_name', '$new_last_name', '$new_username', '$new_email_address', password('$new_password'), '1', '$new_admin', '$current_timestamp')";
+				(first_name, last_name, username, email_address, password, new_password, admin, insert_time) VALUES
+				('$new_first_name', '$new_last_name', '$new_username', '$new_email_address', password('$new_password'), '1', '$new_admin', '$current_timestamp')";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$_SESSION['session_result_message'] .= "The user '" . $new_first_name . " " . $new_last_name . "' (" . $new_username . " / " . $new_password . ") was created.<BR>";

@@ -16,6 +16,7 @@
 // see http://www.gnu.org/licenses/
 ?><?php
 session_start();
+
 if ($_SESSION['session_is_logged_in'] != 1) {
 	
 		$_SESSION['session_user_redirect'] = $_SERVER["REQUEST_URI"];

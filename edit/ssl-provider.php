@@ -17,11 +17,14 @@
 ?>
 <?php
 session_start();
+
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+
+$page_title = "Editting An SSL Provider";
 $software_section = "ssl-providers";
 
 $sslpid = $_GET['sslpid'];
@@ -187,7 +190,6 @@ while ($row = mysql_fetch_object($result)) {
 	$new_notes = $row->notes;
 
 }
-$page_title = "Editting An SSL Provider";
 ?>
 <html>
 <head>
@@ -273,7 +275,7 @@ if (mysql_num_rows($result) > 0) {
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) {
 			?>
-		    <option value="<?=$row->id?>"><?=$row->function?></option>
+			    <option value="<?=$row->id?>"><?=$row->function?></option>
 			<?php
 			}
 			?>
@@ -290,7 +292,7 @@ if (mysql_num_rows($result) > 0) {
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) {
 			?>
-		    <option value="<?=$row->id?>"><?=$row->type?></option>
+			    <option value="<?=$row->id?>"><?=$row->type?></option>
 			<?php
 			}
 			?>
@@ -315,7 +317,7 @@ if (mysql_num_rows($result) > 0) {
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) {
 			?>
-		    <option value="<?=$row->id?>"><?php echo "$row->currency - $row->name"; ?></option>
+			    <option value="<?=$row->id?>"><?php echo "$row->currency - $row->name"; ?></option>
 			<?php
 			}
 			?>

@@ -17,11 +17,14 @@
 ?>
 <?php
 session_start();
+
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+
+$page_title = "Adding A New SSL Provider Account";
 $software_section = "ssl-accounts";
 
 // Form Variables
@@ -52,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 
 }
-$page_title = "Adding A New SSL Provider Account";
 ?>
 <html>
 <head>
@@ -89,9 +91,9 @@ echo "</select>";
 <strong>SSL Provider:</strong><BR><BR>
 <?php
 $sql_ssl_provider = "select id, name
-				from ssl_providers
-				where active = '1'
-				order by name asc";
+					 from ssl_providers
+					 where active = '1'
+					 order by name asc";
 $result_ssl_provider = mysql_query($sql_ssl_provider,$connection) or die(mysql_error());
 echo "<select name=\"new_ssl_provider_id\">";
 while ($row_ssl_provider = mysql_fetch_object($result_ssl_provider)) {

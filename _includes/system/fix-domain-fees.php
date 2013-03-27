@@ -26,13 +26,13 @@ include("../timestamps/current-timestamp.inc.php");
 
 $sql = "update domains 
 		set fee_fixed = '0', 
-		update_time = '$current_timestamp',
+			update_time = '$current_timestamp',
 		fee_id = '0'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "update fees 
 		set fee_fixed = '0',
-		update_time = '$current_timestamp'";
+			update_time = '$current_timestamp'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "select id, registrar_id, tld
@@ -44,8 +44,8 @@ while ($row = mysql_fetch_object($result)) {
 
 	$sql2 = "update domains
 			 set fee_id = '$row->id',
-			 fee_fixed = '1',
-			 update_time = '$current_timestamp'
+			 	 fee_fixed = '1',
+			 	 update_time = '$current_timestamp'
 			 where registrar_id = '$row->registrar_id' 
 			 and tld = '$row->tld'
 			 and fee_fixed = '0'";
@@ -53,7 +53,7 @@ while ($row = mysql_fetch_object($result)) {
 	
 	$sql3 = "update fees
 			 set fee_fixed = '1',
-	 		 update_time = '$current_timestamp'
+	 		 	 update_time = '$current_timestamp'
 			 where registrar_id = '$row->registrar_id'
 			 and tld = '$row->tld'";
 	$result3 = mysql_query($sql3,$connection);

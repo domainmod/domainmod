@@ -78,11 +78,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 	
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
 		if ($new_username == "" && $new_password == "") {
+
 			$_SESSION['session_result_message'] .= "Enter your username & password<BR>";
+
 		} elseif ($new_username == "" || $new_password == "") {
+
 			if ($new_username == "") $_SESSION['session_result_message'] .= "Enter your username<BR>";
 			if ($new_password == "") $_SESSION['session_result_message'] .= "Enter your password<BR>";
+
 		}
 	}
 
@@ -94,29 +99,37 @@ $new_password = "";
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title><?=$software_title?> :: <?=$page_title?></title>
 <?php include("_includes/head-tags.inc.php"); ?>
-</head>
-<?php if ($new_username == "") { ?>
-<body onLoad="document.forms[0].elements[0].focus()";>
-<?php } else { ?>
-<body onLoad="document.forms[0].elements[1].focus()";>
-<?php } ?>
+</head> <?php 
+if ($new_username == "") { ?>
+	<body onLoad="document.forms[0].elements[0].focus()";><?php 
+} else { ?>
+	<body onLoad="document.forms[0].elements[1].focus()";><?php 
+} ?>
 <?php include("_includes/header.inc.php"); ?>
-<?php if ($_SESSION['session_installation_mode'] != 1) { ?>
-<?php if ($_SERVER['HTTP_HOST'] == "demos.aysmedia.com") { ?>
-<strong>Demo Username:</strong> admin<BR>
-<strong>Demo Password:</strong> admin<BR>
-<?php } ?>
-<BR>
-<form name="login_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Username:<strong><BR><input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
-<strong>Password:</strong><BR><input name="new_password" type="password" id="new_password" size="20" maxlength="20"><br>
-<?php if ($_SERVER['HTTP_HOST'] != "demos.aysmedia.com") { ?>
-<font size="1"><i>(<a href="reset-password.php"><i>Forgot your Password?</i></a>)</i></font><BR>
-<?php } ?>
-<BR>
-<input type="submit" name="button" value="Login">
-</form>
-<?php } ?>
+<?php 
+if ($_SESSION['session_installation_mode'] != 1) {
+
+	if ($_SERVER['HTTP_HOST'] == "demos.aysmedia.com") { ?>
+		<strong>Demo Username:</strong> admin<BR>
+		<strong>Demo Password:</strong> admin<BR><?php 
+	} ?>
+
+    <BR>
+    <form name="login_form" method="post" action="<?=$PHP_SELF?>">
+        <strong>Username:<strong><BR>
+        <input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
+        <strong>Password:</strong><BR>
+        <input name="new_password" type="password" id="new_password" size="20" maxlength="20"><br><?php 
+
+        if ($_SERVER['HTTP_HOST'] != "demos.aysmedia.com") { ?>
+            <font size="1"><i>(<a href="reset-password.php"><i>Forgot your Password?</i></a>)</i></font><BR><?php 
+        } ?>
+
+        <BR>
+        <input type="submit" name="button" value="Login">
+    </form>
+<?php 
+} ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

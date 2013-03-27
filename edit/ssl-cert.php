@@ -17,11 +17,14 @@
 ?>
 <?php
 session_start();
+
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+
+$page_title = "Editting An SSL Certificate";
 $software_section = "ssl-certs";
 
 $sslcid = $_GET['sslcid'];
@@ -148,7 +151,6 @@ if ($really_del == "1") {
 	exit;
 
 }
-$page_title = "Editting An SSL Certificate";
 ?>
 <html>
 <head>
@@ -189,9 +191,9 @@ echo "</select>";
 <strong>Function:</strong><BR><BR>
 <?php
 $sql_function = "select id, function
-				from ssl_cert_functions
-				where active = '1'
-				order by function asc";
+				 from ssl_cert_functions
+				 where active = '1'
+				 order by function asc";
 $result_function = mysql_query($sql_function,$connection) or die(mysql_error());
 echo "<select name=\"new_function_id\">";
 while ($row_function = mysql_fetch_object($result_function)) {
@@ -213,9 +215,9 @@ echo "</select>";
 <strong>Type:</strong><BR><BR>
 <?php
 $sql_type = "select id, type
-				from ssl_cert_types
-				where active = '1'
-				order by type asc";
+			 from ssl_cert_types
+			 where active = '1'
+			 order by type asc";
 $result_type = mysql_query($sql_type,$connection) or die(mysql_error());
 echo "<select name=\"new_type_id\">";
 while ($row_type = mysql_fetch_object($result_type)) {

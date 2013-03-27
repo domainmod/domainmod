@@ -17,10 +17,12 @@
 ?>
 <?php
 session_start();
+
 include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
+
 $page_title = "Missing SSL Fees";
 ?>
 <html>
@@ -43,51 +45,57 @@ $result = mysql_query($sql,$connection);
 The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these fees.
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="20">
-	<td width="250">
-    	<font class="subheadline">SSL Provider</font>
-    </td>
-	<td>
-    	<font class="subheadline">Missing Fees</font>
-    </td>
-</tr>
-<?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td>
-		<?=$row->ssl_provider_name;?>
-	</td>
-	<td>
-    	<?php
-		$sql2 = "select sslct.type
-				 from ssl_cert_types as sslct, ssl_certs as sslc
-				 where sslct.id = sslc.type_id
-				 and sslc.ssl_provider_id = '$row->ssl_provider_id'
-				 and sslc.fee_id = '0'
-				 group by sslct.type
-				 order by sslct.type asc";
-				 
-$sql2 = "select concat(sslcf.function, ' (', sslct.type, ')') as full_tf_string
-		from ssl_certs as sslc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
-		where sslc.type_id = sslct.id
-		and sslc.function_id = sslcf.id
-		and sslc.active = '1'
-		and sslc.ssl_provider_id = '$row->ssl_provider_id'
-		and sslc.fee_id = '0'
-		group by full_tf_string
-		order by full_tf_string asc";
+    <tr height="20">
+        <td width="250">
+            <font class="subheadline">SSL Provider</font>
+        </td>
+        <td>
+            <font class="subheadline">Missing Fees</font>
+        </td>
+    </tr>
 
+	<?php 
+    while ($row = mysql_fetch_object($result)) { ?>
 
-		$result2 = mysql_query($sql2,$connection);
-		$full_type_list = "";
-		while ($row2 = mysql_fetch_object($result2)) {
-			$full_type_list .= $row2->full_tf_string . " / ";
-		}
-		$full_type_list_formatted = substr($full_type_list, 0, -2); 
-		?>
-        <a class="nobold" href="edit/ssl-provider.php?sslpid=<?=$row->ssl_provider_id?>#missingfees"><?=$full_type_list_formatted?></a>
-    </td>
-</tr>
-<?php } ?>
+        <tr height="20">
+            <td>
+                <?=$row->ssl_provider_name;?>
+            </td>
+            <td>
+                <?php
+                $sql2 = "select sslct.type
+                         from ssl_cert_types as sslct, ssl_certs as sslc
+                         where sslct.id = sslc.type_id
+                         and sslc.ssl_provider_id = '$row->ssl_provider_id'
+                         and sslc.fee_id = '0'
+                         group by sslct.type
+                         order by sslct.type asc";
+                         
+				$sql2 = "select concat(sslcf.function, ' (', sslct.type, ')') as full_tf_string
+						from ssl_certs as sslc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
+						where sslc.type_id = sslct.id
+						and sslc.function_id = sslcf.id
+						and sslc.active = '1'
+						and sslc.ssl_provider_id = '$row->ssl_provider_id'
+						and sslc.fee_id = '0'
+						group by full_tf_string
+						order by full_tf_string asc";
+        
+        
+                $result2 = mysql_query($sql2,$connection);
+                $full_type_list = "";
+
+                while ($row2 = mysql_fetch_object($result2)) {
+                    $full_type_list .= $row2->full_tf_string . " / ";
+                }
+
+                $full_type_list_formatted = substr($full_type_list, 0, -2); 
+                ?>
+                <a class="nobold" href="edit/ssl-provider.php?sslpid=<?=$row->ssl_provider_id?>#missingfees"><?=$full_type_list_formatted?></a>
+            </td>
+        </tr>
+    <?php 
+	} ?>
 </table>
 <BR><BR>
 <a href="_includes/system/fix-ssl-fees.php">Fix All SSL Fees (this may take a while, depending on how many SSL Certificates you have)</a>

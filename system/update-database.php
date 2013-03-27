@@ -27,6 +27,7 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
+
 $page_title = "Update Database";
 $software_section = "system";
 
@@ -125,7 +126,7 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "INSERT INTO `ip_addresses` (`id`, `name`, `ip`, `insert_time`) VALUES
-											('1', '[no ip address]', '-', '$current_timestamp')";
+										   ('1', '[no ip address]', '-', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "update settings
@@ -155,7 +156,8 @@ if ($current_db_version < $most_recent_db_version) {
 	// upgrade database from 1.7 to 1.8
 	if ($current_db_version == 1.7) {
 
-		$sql = "ALTER TABLE `ip_addresses`  ADD `test_data` int(1) NOT NULL default '0' AFTER `notes`";
+		$sql = "ALTER TABLE `ip_addresses`  
+				ADD `test_data` int(1) NOT NULL default '0' AFTER `notes`";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "update settings

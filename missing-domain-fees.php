@@ -17,10 +17,12 @@
 ?>
 <?php
 session_start();
+
 include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
+
 $page_title = "Missing Domain Fees";
 ?>
 <html>
@@ -43,38 +45,44 @@ $result = mysql_query($sql,$connection);
 The following Registrars/TLDs are missing Domain fees. In order to ensure your Domain reporting is accurate please update these fees.
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="20">
-	<td width="250">
-    	<font class="subheadline">Registrar</font>
-    </td>
-	<td>
-    	<font class="subheadline">Missing TLD Fees</font>
-    </td>
-</tr>
-<?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td>
-		<?=$row->registrar_name;?>
-	</td>
-	<td>
-    	<?php
-		$sql2 = "select tld
-				 from domains
-				 where registrar_id = '$row->registrar_id'
-				 and fee_id = '0'
-				 group by tld
-				 order by tld asc";
-		$result2 = mysql_query($sql2,$connection);
-		$full_tld_list = "";
-		while ($row2 = mysql_fetch_object($result2)) {
-			$full_tld_list .= $row2->tld . ", ";
-		}
-		$full_tld_list_formatted = substr($full_tld_list, 0, -2); 
-		?>
-        <a class="nobold" href="edit/registrar.php?rid=<?=$row->registrar_id?>#missingfees"><?=$full_tld_list_formatted?></a>
-    </td>
-</tr>
-<?php } ?>
+    <tr height="20">
+        <td width="250">
+            <font class="subheadline">Registrar</font>
+        </td>
+        <td>
+            <font class="subheadline">Missing TLD Fees</font>
+        </td>
+    </tr>
+
+	<?php 
+    while ($row = mysql_fetch_object($result)) { ?>
+
+        <tr height="20">
+            <td>
+                <?=$row->registrar_name;?>
+            </td>
+            <td>
+                <?php
+                $sql2 = "select tld
+                         from domains
+                         where registrar_id = '$row->registrar_id'
+                         and fee_id = '0'
+                         group by tld
+                         order by tld asc";
+                $result2 = mysql_query($sql2,$connection);
+                $full_tld_list = "";
+                while ($row2 = mysql_fetch_object($result2)) {
+                    $full_tld_list .= $row2->tld . ", ";
+                }
+                $full_tld_list_formatted = substr($full_tld_list, 0, -2); 
+                ?>
+                <a class="nobold" href="edit/registrar.php?rid=<?=$row->registrar_id?>#missingfees"><?=$full_tld_list_formatted?></a>
+            </td>
+        </tr>
+
+    <?php 
+	} ?>
+
 </table>
 <BR><BR>
 <a href="_includes/system/fix-domain-fees.php">Fix All Domain Fees (this may take a while, depending on how many domains you have)</a>

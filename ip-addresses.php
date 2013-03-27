@@ -17,10 +17,12 @@
 ?>
 <?php
 session_start();
+
 include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
+
 $page_title = "IP Address Breakdown";
 $software_section = "ip-addresses";
 ?>
@@ -47,44 +49,44 @@ if (mysql_num_rows($result) > 0) { ?>
 
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="30">
-        <td width="300">
-            <font class="subheadline">IP Name</font>
-        </td>
-        <td width="200">
-            <font class="subheadline">IP Address</font>
-        </td>
-        <td>
-            <font class="subheadline"># of Domains</font>
-        </td>
-    </tr>
-
-	<?php
-    while ($row = mysql_fetch_object($result)) { ?>
-
-        <tr height="20">
-            <td>
-                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
+        <tr height="30">
+            <td width="300">
+                <font class="subheadline">IP Name</font>
+            </td>
+            <td width="200">
+                <font class="subheadline">IP Address</font>
             </td>
             <td>
-                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
-            </td>
-            <td>
-                <?php
-                $sql2 = "select count(*) as total_count
-                         from domains
-                         where ip_id = '$row->id'
-						 and active not in ('0', '10')";
-                $result2 = mysql_query($sql2,$connection);
-                while ($row2 = mysql_fetch_object($result2)) {
-                    $total_ip_count = $row2->total_count;
-                }
-                ?>
-                <a class="nobold" href="domains.php?ipid=<?=$row->id?>"><?=number_format($total_ip_count)?></a>
+                <font class="subheadline"># of Domains</font>
             </td>
         </tr>
 
-    <?php } ?>
+		<?php
+        while ($row = mysql_fetch_object($result)) { ?>
+    
+            <tr height="20">
+                <td>
+                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
+                </td>
+                <td>
+                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
+                </td>
+                <td>
+                    <?php
+                    $sql2 = "select count(*) as total_count
+                             from domains
+                             where ip_id = '$row->id'
+                             and active not in ('0', '10')";
+                    $result2 = mysql_query($sql2,$connection);
+                    while ($row2 = mysql_fetch_object($result2)) {
+                        $total_ip_count = $row2->total_count;
+                    }
+                    ?>
+                    <a class="nobold" href="domains.php?ipid=<?=$row->id?>"><?=number_format($total_ip_count)?></a>
+                </td>
+            </tr>
+        <?php 
+        } ?>
 
 	</table>
 	<?php 
@@ -98,36 +100,36 @@ $result = mysql_query($sql,$connection);
 ?>
 <?php
 if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
-<strong>Number of Inactive IP Addresses:</strong> <?=mysql_num_rows($result)?>
 
     <BR><BR>
+    <strong>Number of Inactive IP Addresses:</strong> <?=mysql_num_rows($result)?>
+    <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="30">
-        <td width="300">
-            <font class="subheadline">IP Name</font>
-        </td>
-        <td>
-            <font class="subheadline">IP Address</font>
-        </td>
-    </tr>
-
-	<?php
-    while ($row = mysql_fetch_object($result)) { ?>
-
-        <tr height="20">
-            <td>
-                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
+        <tr height="30">
+            <td width="300">
+                <font class="subheadline">IP Name</font>
             </td>
             <td>
-                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
+                <font class="subheadline">IP Address</font>
             </td>
         </tr>
 
-    <?php } ?>
+		<?php
+        while ($row = mysql_fetch_object($result)) { ?>
+    
+            <tr height="20">
+                <td>
+                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
+                </td>
+                <td>
+                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
+                </td>
+            </tr>
+		<?php 
+		} ?>
 
 	</table>
-	<?php 
+<?php 
 } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
