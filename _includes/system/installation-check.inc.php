@@ -40,8 +40,8 @@ if (is_dir($full_install_path)) {
 		
 		$_SESSION['session_installation_mode'] = 0;
 
-			$_SESSION['session_result_message'] .= "<BR>The software has been installed, but the /installer/ directory still exists.<BR><BR>";
-			$_SESSION['session_result_message'] .= "You should delete the /installer/ directory from your web server.<BR><BR>";
+			// $_SESSION['session_result_message'] .= "<BR>The software has been installed, but the /installer/ directory still exists.<BR><BR>";
+			// $_SESSION['session_result_message'] .= "You should delete the /installer/ directory from your web server.<BR><BR>";
 		
 	}
 	
