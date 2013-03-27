@@ -37,13 +37,11 @@ NOTE: Whenever possible we recommend that you use option #1, the git repository 
 
 3. In the '_includes' folder, copy config.SAMPLE.inc.php to config.inc.php and then update config.inc.php to reflect your server's settings  
 
-4. In a web browser, visit the URL where you just installed the Domain Manager, followed by /installer/. So if you installed to http://aysmedia.com/dm/, point your web browser to http://aysmedia.com/dm/installer/.  
+4. In a web browser, visit the URL where you just installed the Domain Manager, followed by /install/. So if you installed to http://aysmedia.com/dm/, point your web browser to http://aysmedia.com/dm/install/.  
 
 5. After a few seconds a message should appear letting you know that the installation was successful.
 
-6. Once the installation has completed you should delete the /installer/ folder.
-
-7. If you have any problems during installation please see the Support section below.
+6. If you have any problems during installation please see the Support section below.
 
 
 # Usage
