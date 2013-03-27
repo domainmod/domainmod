@@ -21,7 +21,7 @@ session_start();
 include("../software.inc.php");
 include("../config.inc.php");
 include("../database.inc.php");
-// include("../auth/auth-check.inc.php");
+include("../auth/auth-check.inc.php");
 include("../timestamps/current-timestamp-basic.inc.php");
 include("../timestamps/current-timestamp.inc.php");
 
