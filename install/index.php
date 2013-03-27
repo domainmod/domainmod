@@ -25,7 +25,7 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 
 $sql = "select db_version
 		from settings";
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$result = mysql_query($sql,$connection);
 
 if (mysql_num_rows($result) > 0) {
 	
@@ -384,17 +384,6 @@ if (mysql_num_rows($result) > 0) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "
-	CREATE TABLE IF NOT EXISTS `settings` (
-	  `id` int(10) NOT NULL auto_increment,
-	  `db_version` float NOT NULL,
-	  `insert_time` datetime NOT NULL,
-	  `update_time` datetime NOT NULL,
-	  PRIMARY KEY  (`id`)
-	) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-	";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
-	
-	$sql = "
 	CREATE TABLE IF NOT EXISTS `ip_addresses` (
 	  `id` int(10) NOT NULL auto_increment,
 	  `name` varchar(255) NOT NULL,
@@ -415,6 +404,17 @@ if (mysql_num_rows($result) > 0) {
 	";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
+	$sql = "
+	CREATE TABLE IF NOT EXISTS `settings` (
+	  `id` int(10) NOT NULL auto_increment,
+	  `db_version` float NOT NULL,
+	  `insert_time` datetime NOT NULL,
+	  `update_time` datetime NOT NULL,
+	  PRIMARY KEY  (`id`)
+	) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+	";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
 	$most_recent_db_version = "1.8";
 	
 	$sql = "
