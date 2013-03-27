@@ -29,7 +29,7 @@
 <table align="center" width="<?=$site_width?>" border="0" cellspacing="0" cellpadding="0">
 	<tr>
         <td class="footer-table" height="100%">
-&copy; 2013 AYS Media. Domain Manager is Free Software released under the GNU/GPL License.<br>
+&copy; <?=date("Y")?> AYS Media. Domain Manager is Free Software released under the GNU/GPL License.<br>
 For more information on the GNU/GPL License, please <a class="subtlelink" href="http://www.gnu.org/licenses/">click here</a>.
 		</td>
         <td class="footer-table" height="100%" width="90">
