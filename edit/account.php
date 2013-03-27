@@ -29,9 +29,9 @@ $raid = $_GET['raid'];
 // Form Variables
 $new_company_id = $_POST['new_company_id'];
 $new_registrar_id = $_POST['new_registrar_id'];
-$new_username = mysql_real_escape_string($_POST['new_username']);
+$new_username = $_POST['new_username'];
 $new_reseller = $_POST['new_reseller'];
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_notes = $_POST['new_notes'];
 $new_raid = $_POST['new_raid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -41,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "update registrar_accounts
 				set company_id = '$new_company_id',
 					registrar_id = '$new_registrar_id',
-					username = '$new_username',
-					notes = '$new_notes',
+					username = '" . mysql_real_escape_string($new_username) . "',
+					notes = '" . mysql_real_escape_string($new_notes) . "',
 					reseller = '$new_reseller',
 					update_time = '$current_timestamp'
 				where id = '$new_raid'";
@@ -134,7 +134,7 @@ echo "</select>";
 ?>
 <BR><BR>
 <strong>Username:</strong><BR><BR>
-<input name="new_username" type="text" size="50" maxlength="255" value="<?=stripslashes($new_username)?>">
+<input name="new_username" type="text" size="50" maxlength="255" value="$new_username?>">
 <BR><BR>
 <strong>Reseller Account?</strong><BR><BR>
 <select name="new_reseller">";
@@ -143,7 +143,7 @@ echo "</select>";
 </select>
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_raid" value="<?=$raid?>">
 <input type="submit" name="button" value="Update This Account &raquo;">

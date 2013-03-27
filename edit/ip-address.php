@@ -27,17 +27,17 @@ $software_section = "ip-addresses";
 $ipid = $_GET['ipid'];
 
 // Form Variables
-$new_name = mysql_real_escape_string($_POST['new_name']);
-$new_ip = mysql_real_escape_string($_POST['new_ip']);
-$new_ipid = mysql_real_escape_string($_POST['new_ipid']);
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_name = $_POST['new_name'];
+$new_ip = $_POST['new_ip'];
+$new_ipid = $_POST['new_ipid'];
+$new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql2 = "update ip_addresses
-				 set name = '$new_name',
-				 	ip = '$new_ip',
-					notes = '$new_notes',
+				 set name = '" . mysql_real_escape_string($new_name) . "',
+				 	ip = '" . mysql_real_escape_string($new_ip) . "',
+					notes = '" . mysql_real_escape_string($new_notes) . "',
 					update_time = '$current_timestamp'
 				 where id = '$new_ipid'";
 		$result2 = mysql_query($sql2,$connection) or die(mysql_error());
@@ -75,13 +75,13 @@ $page_title = "Editting An IP Address";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>IP Address Name:</strong><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo stripslashes($new_name); ?>">
+<input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo $new_name; ?>">
 <BR><BR>
 <strong>IP Address:</strong><BR><BR>
-<input name="new_ip" type="text" size="50" maxlength="255" value="<?php if ($new_ip != "") echo stripslashes($new_ip); ?>">
+<input name="new_ip" type="text" size="50" maxlength="255" value="<?php if ($new_ip != "") echo $new_ip; ?>">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_ipid" value="<?=$ipid?>">
 <input type="submit" name="button" value="Update This IP Address &raquo;">

@@ -27,19 +27,19 @@ $software_section = "dns";
 $dnsid = $_GET['dnsid'];
 
 // Form Variables
-$new_name = mysql_real_escape_string($_POST['new_name']);
-$new_dns1 = mysql_real_escape_string($_POST['new_dns1']);
-$new_dns2 = mysql_real_escape_string($_POST['new_dns2']);
-$new_dns3 = mysql_real_escape_string($_POST['new_dns3']);
-$new_dns4 = mysql_real_escape_string($_POST['new_dns4']);
-$new_dns5 = mysql_real_escape_string($_POST['new_dns5']);
-$new_dns6 = mysql_real_escape_string($_POST['new_dns6']);
-$new_dns7 = mysql_real_escape_string($_POST['new_dns7']);
-$new_dns8 = mysql_real_escape_string($_POST['new_dns8']);
-$new_dns9 = mysql_real_escape_string($_POST['new_dns9']);
-$new_dns10 = mysql_real_escape_string($_POST['new_dns10']);
-$new_dnsid = mysql_real_escape_string($_POST['new_dnsid']);
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_name = $_POST['new_name'];
+$new_dns1 = $_POST['new_dns1'];
+$new_dns2 = $_POST['new_dns2'];
+$new_dns3 = $_POST['new_dns3'];
+$new_dns4 = $_POST['new_dns4'];
+$new_dns5 = $_POST['new_dns5'];
+$new_dns6 = $_POST['new_dns6'];
+$new_dns7 = $_POST['new_dns7'];
+$new_dns8 = $_POST['new_dns8'];
+$new_dns9 = $_POST['new_dns9'];
+$new_dns10 = $_POST['new_dns10'];
+$new_dnsid = $_POST['new_dnsid'];
+$new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
@@ -77,18 +77,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 
 		$sql2 = "update dns
-				 set name = '$new_name',
-				 	dns1 = '$new_dns1',
-					dns2 = '$new_dns2',
-					dns3 = '$new_dns3',
-					dns4 = '$new_dns4',
-					dns5 = '$new_dns5',
-					dns6 = '$new_dns6',
-					dns7 = '$new_dns7',
-					dns8 = '$new_dns8',
-					dns9 = '$new_dns9',
-					dns10 = '$new_dns10',
-					notes = '$new_notes',
+				 set name = '" . mysql_real_escape_string($new_name) . "',
+				 	dns1 = '" . mysql_real_escape_string($new_dns1) . "',
+					dns2 = '" . mysql_real_escape_string($new_dns2) . "',
+					dns3 = '" . mysql_real_escape_string($new_dns3) . "',
+					dns4 = '" . mysql_real_escape_string($new_dns4) . "',
+					dns5 = '" . mysql_real_escape_string($new_dns5) . "',
+					dns6 = '" . mysql_real_escape_string($new_dns6) . "',
+					dns7 = '" . mysql_real_escape_string($new_dns7) . "',
+					dns8 = '" . mysql_real_escape_string($new_dns8) . "',
+					dns9 = '" . mysql_real_escape_string($new_dns9) . "',
+					dns10 = '" . mysql_real_escape_string($new_dns10) . "',
+					notes = '" . mysql_real_escape_string($new_notes) . "',
 					number_of_servers = '$new_number_of_servers',
 					update_time = '$current_timestamp'
 				 where id = '$new_dnsid'";
@@ -136,40 +136,40 @@ $page_title = "Editting A DNS Profile";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Profile Name:</strong><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo stripslashes($new_name); ?>">
+<input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo $new_name; ?>">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
 <strong>DNS 1:</strong><BR><BR>
-<input name="new_dns1" type="text" size="50" maxlength="255" value="<?php if ($new_dns1 != "") echo stripslashes($new_dns1); ?>">
+<input name="new_dns1" type="text" size="50" maxlength="255" value="<?php if ($new_dns1 != "") echo $new_dns1; ?>">
 <BR><BR>
 <strong>DNS 2:</strong><BR><BR>
-<input name="new_dns2" type="text" size="50" maxlength="255" value="<?php if ($new_dns2 != "") echo stripslashes($new_dns2); ?>">
+<input name="new_dns2" type="text" size="50" maxlength="255" value="<?php if ($new_dns2 != "") echo $new_dns2; ?>">
 <BR><BR>
 <strong>DNS 3:</strong><BR><BR>
-<input name="new_dns3" type="text" size="50" maxlength="255" value="<?php if ($new_dns3 != "") echo stripslashes($new_dns3); ?>">
+<input name="new_dns3" type="text" size="50" maxlength="255" value="<?php if ($new_dns3 != "") echo $new_dns3; ?>">
 <BR><BR>
 <strong>DNS 4:</strong><BR><BR>
-<input name="new_dns4" type="text" size="50" maxlength="255" value="<?php if ($new_dns4 != "") echo stripslashes($new_dns4); ?>">
+<input name="new_dns4" type="text" size="50" maxlength="255" value="<?php if ($new_dns4 != "") echo $new_dns4; ?>">
 <BR><BR>
 <strong>DNS 5:</strong><BR><BR>
-<input name="new_dns5" type="text" size="50" maxlength="255" value="<?php if ($new_dns5 != "") echo stripslashes($new_dns5); ?>">
+<input name="new_dns5" type="text" size="50" maxlength="255" value="<?php if ($new_dns5 != "") echo $new_dns5; ?>">
 <BR><BR>
 <strong>DNS 6:</strong><BR><BR>
-<input name="new_dns6" type="text" size="50" maxlength="255" value="<?php if ($new_dns6 != "") echo stripslashes($new_dns6); ?>">
+<input name="new_dns6" type="text" size="50" maxlength="255" value="<?php if ($new_dns6 != "") echo $new_dns6; ?>">
 <BR><BR>
 <strong>DNS 7:</strong><BR><BR>
-<input name="new_dns7" type="text" size="50" maxlength="255" value="<?php if ($new_dns7 != "") echo stripslashes($new_dns7); ?>">
+<input name="new_dns7" type="text" size="50" maxlength="255" value="<?php if ($new_dns7 != "") echo $new_dns7; ?>">
 <BR><BR>
 <strong>DNS 8:</strong><BR><BR>
-<input name="new_dns8" type="text" size="50" maxlength="255" value="<?php if ($new_dns8 != "") echo stripslashes($new_dns8); ?>">
+<input name="new_dns8" type="text" size="50" maxlength="255" value="<?php if ($new_dns8 != "") echo $new_dns8; ?>">
 <BR><BR>
 <strong>DNS 9:</strong><BR><BR>
-<input name="new_dns9" type="text" size="50" maxlength="255" value="<?php if ($new_dns9 != "") echo stripslashes($new_dns9); ?>">
+<input name="new_dns9" type="text" size="50" maxlength="255" value="<?php if ($new_dns9 != "") echo $new_dns9; ?>">
 <BR><BR>
 <strong>DNS 10:</strong><BR><BR>
-<input name="new_dns10" type="text" size="50" maxlength="255" value="<?php if ($new_dns10 != "") echo stripslashes($new_dns10); ?>">
+<input name="new_dns10" type="text" size="50" maxlength="255" value="<?php if ($new_dns10 != "") echo $new_dns10; ?>">
 <BR><BR><BR>
 <input type="hidden" name="new_dnsid" value="<?=$dnsid?>">
 <input type="submit" name="button" value="Update This DNS Profile &raquo;">

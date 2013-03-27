@@ -27,11 +27,11 @@ $software_section = "registrars";
 $rid = $_GET['rid'];
 
 // Form Variables
-$new_registrar = mysql_real_escape_string($_POST['new_registrar']);
-$new_url = mysql_real_escape_string($_POST['new_url']);
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_registrar = $_POST['new_registrar'];
+$new_url = $_POST['new_url'];
+$new_notes = $_POST['new_notes'];
 $IS_SUBMITTED_REGISTRAR = $_POST['IS_SUBMITTED_REGISTRAR'];
-$new_tld = mysql_real_escape_string($_POST['new_tld']);
+$new_tld = $_POST['new_tld'];
 $new_initial_fee = $_POST['new_initial_fee'];
 $new_renewal_fee = $_POST['new_renewal_fee'];
 $new_currency_id = $_POST['new_currency_id'];
@@ -43,15 +43,13 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 	if ($new_registrar != "" && $new_url != "") {
 
 		$sql = "update registrars
-				set name = '$new_registrar', 
-				url = '$new_url', 
-				notes = '$new_notes',
+				set name = '" . mysql_real_escape_string($new_registrar) . "', 
+				url = '" . mysql_real_escape_string($new_url) . "', 
+				notes = '" . mysql_real_escape_string($new_notes) . "',
 				update_time = '$current_timestamp'
 				where id = '$new_rid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$new_registrar = stripslashes($new_registrar);
-
 		$rid = $new_rid;
 
 		$_SESSION['session_result_message'] = "Registrar Updated<BR>";
@@ -145,7 +143,7 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 			
 			$sql = "insert into fees
 					(registrar_id, tld, initial_fee, renewal_fee, currency_id, insert_time)
-					values ('$new_rid', '$new_tld', '$new_initial_fee', '$new_renewal_fee', '$new_currency_id', '$current_timestamp')";
+					values ('$new_rid', '" . mysql_real_escape_string($new_tld) . "', '$new_initial_fee', '$new_renewal_fee', '$new_currency_id', '$current_timestamp')";
 			$result = mysql_query($sql,$connection);
 
 			$sql = "select id
@@ -209,13 +207,13 @@ $page_title = "Editting A Registrar";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Registrar Name:</strong><BR><BR>
-<input name="new_registrar" type="text" value="<?php if ($new_registrar != "") echo stripslashes($new_registrar); ?>" size="50" maxlength="255">
+<input name="new_registrar" type="text" value="<?php if ($new_registrar != "") echo $new_registrar; ?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Registrar's URL:</strong><BR><BR>
-<input name="new_url" type="text" value="<?php if ($new_url != "") echo stripslashes($new_url); ?>" size="50" maxlength="255">
+<input name="new_url" type="text" value="<?php if ($new_url != "") echo $new_url; ?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_rid" value="<?=$rid?>">
 <input type="hidden" name="IS_SUBMITTED_REGISTRAR" value="1">

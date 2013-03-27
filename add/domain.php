@@ -26,18 +26,18 @@ include("../_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php")
 $software_section = "domains";
 
 // Form Variables
-$new_domain = mysql_real_escape_string($_POST['new_domain']);
+$new_domain = $_POST['new_domain'];
 $new_expiry_date = $_POST['new_expiry_date'];
-$new_function = mysql_real_escape_string($_POST['new_function']);
-$new_status = mysql_real_escape_string($_POST['new_status']);
-$new_status_notes = mysql_real_escape_string($_POST['new_status_notes']);
+$new_function = $_POST['new_function'];
+$new_status = $_POST['new_status'];
+$new_status_notes = $_POST['new_status_notes'];
 $new_cat_id = $_POST['new_cat_id'];
 $new_dns_id = $_POST['new_dns_id'];
 $new_ip_id = $_POST['new_ip_id'];
 $new_account_id = $_POST['new_account_id'];
 $new_privacy = $_POST['new_privacy'];
 $new_active = $_POST['new_active'];
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "insert into domains
 				(company_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, fee_id, function, status, status_notes, notes, privacy, active, insert_time)
-				values ('$new_company_id', '$new_registrar_id', '$new_account_id', '$new_domain', '$tld', '$new_expiry_date', '$new_cat_id', '$new_dns_id', '$new_ip_id', '$new_fee_id', '$new_function', '$new_status', '$new_status_notes', '$new_notes', '$new_privacy', '$new_active', '$current_timestamp')";
+				values ('$new_company_id', '$new_registrar_id', '$new_account_id', '" . mysql_real_escape_string($new_domain) . "', '$tld', '$new_expiry_date', '$new_cat_id', '$new_dns_id', '$new_ip_id', '$new_fee_id', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_status) . "', '" . mysql_real_escape_string($new_status_notes) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_privacy', '$new_active', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -91,19 +91,19 @@ $page_title = "Adding A New Domain";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Domain:</strong><BR><BR>
-<input name="new_domain" type="text" size="50" maxlength="255" value="<?=stripslashes($new_domain)?>">
+<input name="new_domain" type="text" size="50" maxlength="255" value="<?=$new_domain?>">
 <BR><BR>
 <strong>Expiry Date (YYYY-MM-DD):</strong><BR><BR>
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
 <BR><BR>
 <strong>Function:</strong><BR><BR>
-<input name="new_function" type="text" size="50" maxlength="255" value="<?=stripslashes($new_function)?>">
+<input name="new_function" type="text" size="50" maxlength="255" value="<?=$new_function?>">
 <BR><BR>
 <strong>Status:</strong><BR><BR>
-<input name="new_status" type="text" size="50" maxlength="255" value="<?=stripslashes($new_status)?>">
+<input name="new_status" type="text" size="50" maxlength="255" value="<?=$new_status?>">
 <BR><BR>
 <strong>Status Notes:</strong><BR><BR>
-<textarea name="new_status_notes" cols="60" rows="5"><?=stripslashes($new_status_notes)?>
+<textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?>
 </textarea>
 <BR><BR>
 <strong>Primary Category:</strong><BR><BR>
@@ -222,7 +222,7 @@ echo "</select>";
 ?>
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This Domain &raquo;">
 </form>

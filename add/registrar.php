@@ -25,9 +25,9 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $software_section = "registrars";
 
 // Form Variables
-$new_registrar = mysql_real_escape_string($_POST['new_registrar']);
-$new_url = mysql_real_escape_string($_POST['new_url']);
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_registrar = $_POST['new_registrar'];
+$new_url = $_POST['new_url'];
+$new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "insert into registrars
 				(name, url, notes, insert_time)
-				values ('$new_registrar', '$new_url', '$new_notes', '$current_timestamp')";
+				values ('" . mysql_real_escape_string($new_registrar) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Registrar Added<BR>";
@@ -63,13 +63,13 @@ $page_title = "Adding A New Registrar";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Registrar Name:</strong><BR><BR>
-<input name="new_registrar" type="text" value="<?=stripslashes($new_registrar)?>" size="50" maxlength="255">
+<input name="new_registrar" type="text" value="<?=$new_registrar?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Registrar's URL:</strong><BR><BR>
-<input name="new_url" type="text" value="<?=stripslashes($new_url)?>" size="50" maxlength="255">
+<input name="new_url" type="text" value="<?=$new_url?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This Registrar &raquo;">
 </form>

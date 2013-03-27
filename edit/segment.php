@@ -31,10 +31,10 @@ $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 // Form Variables
-$new_name = mysql_real_escape_string($_POST['new_name']);
-$new_description = mysql_real_escape_string($_POST['new_description']);
+$new_name = $_POST['new_name'];
+$new_description = $_POST['new_description'];
 $new_segment = $_POST['new_segment'];
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_notes = $_POST['new_notes'];
 $new_segid = $_POST['new_segid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -52,20 +52,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_segment_formatted = mysql_real_escape_string($new_segment_formatted);
 
 		$sql = "update segments
-				set name = '$new_name',
-					description = '$new_description',
+				set name = '" . mysql_real_escape_string($new_name) . "',
+					description = '" . mysql_real_escape_string($new_description) . "',
 					segment = '$new_segment_formatted',
 					number_of_domains = '$number_of_domains',
-					notes = '$new_notes',
+					notes = '" . mysql_real_escape_string($new_notes) . "',
 					update_time = '$current_timestamp'
 				where id = '$new_segid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$new_name = stripslashes($new_name);
-		$new_description = stripslashes($new_description);
-		$new_segment = stripslashes($new_segment);
-		$new_notes = stripslashes($new_notes);
-
 		$segid = $new_segid;
 		
 		$_SESSION['session_result_message'] = "Segment Updated<BR>";
@@ -128,17 +123,17 @@ $page_title = "Editting A Segment";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Segment Name:</strong><BR><BR>
-<input name="new_name" type="text" value="<?php if ($new_name != "") echo stripslashes($new_name); ?>" size="50" maxlength="255">
+<input name="new_name" type="text" value="<?php if ($new_name != "") echo $new_name; ?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Description:</strong><BR><BR>
-<textarea name="new_description" cols="60" rows="5"><?php if ($new_description != "") echo stripslashes($new_description); ?></textarea>
+<textarea name="new_description" cols="60" rows="5"><?php if ($new_description != "") echo $new_description; ?></textarea>
 <BR><BR>
 <strong>Segment:</strong><BR><BR>
 Enter the domains one per line.<BR><BR>
-<textarea name="new_segment" cols="60" rows="5"><?php if ($new_segment != "") echo stripslashes($new_segment); ?></textarea>
+<textarea name="new_segment" cols="60" rows="5"><?php if ($new_segment != "") echo $new_segment; ?></textarea>
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_segid" value="<?=$segid?>">
 <input type="submit" name="button" value="Update This Segment &raquo;">

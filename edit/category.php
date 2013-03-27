@@ -27,9 +27,9 @@ $software_section = "categories";
 $pcid = $_GET['pcid'];
 
 // Form Variables
-$new_category = mysql_real_escape_string($_REQUEST['new_category']);
-$new_owner = mysql_real_escape_string($_REQUEST['new_owner']);
-$new_notes = mysql_real_escape_string($_REQUEST['new_notes']);
+$new_category = $_REQUEST['new_category'];
+$new_owner = $_REQUEST['new_owner'];
+$new_notes = $_REQUEST['new_notes'];
 $new_default_category = $_REQUEST['new_default_category'];
 $new_pcid = $_REQUEST['new_pcid'];
 
@@ -56,18 +56,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 
 		$sql = "update categories
-				set name = '$new_category', 
-				owner = '$new_owner',
-				notes = '$new_notes',
+				set name = '" . mysql_real_escape_string($new_category) . "', 
+				owner = '" . mysql_real_escape_string($new_owner) . "',
+				notes = '" . mysql_real_escape_string($new_notes) . "',
 				default_category = '$new_default_category',
 				update_time = '$current_timestamp'
 				where id = '$new_pcid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$new_category = stripslashes($new_category);
-		$new_owner = stripslashes($new_owner);
-		$new_default_category = stripslashes($new_default_category);
-		$new_notes = stripslashes($new_notes);
+		$new_category = $new_category;
+		$new_owner = $new_owner;
+		$new_default_category = $new_default_category;
+		$new_notes = $new_notes;
 
 		$pcid = $new_pcid;
 		
@@ -107,15 +107,15 @@ $page_title = "Editting A Category";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Category Name:</strong><BR><BR>
-<input name="new_category" type="text" value="<?php if ($new_category != "") echo stripslashes($new_category); ?>
+<input name="new_category" type="text" value="<?php if ($new_category != "") echo $new_category; ?>
 " size="50" maxlength="255">
 <BR><BR>
 <strong>Owner/Stakeholder:</strong><BR><BR>
-<input name="new_owner" type="text" value="<?php if ($new_owner != "") echo stripslashes($new_owner); ?>
+<input name="new_owner" type="text" value="<?php if ($new_owner != "") echo $new_owner; ?>
 " size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
 <strong>Default Category?:</strong>&nbsp;
 <input name="new_default_category" type="checkbox" value="1"<?php if ($new_default_category == "1") echo " checked"; ?>>

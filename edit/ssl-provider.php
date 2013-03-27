@@ -27,9 +27,9 @@ $software_section = "ssl-providers";
 $sslpid = $_GET['sslpid'];
 
 // Form Variables
-$new_ssl_provider = mysql_real_escape_string($_POST['new_ssl_provider']);
-$new_url = mysql_real_escape_string($_POST['new_url']);
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_ssl_provider = $_POST['new_ssl_provider'];
+$new_url = $_POST['new_url'];
+$new_notes = $_POST['new_notes'];
 $IS_SUBMITTED_SSL_PROVIDER = $_POST['IS_SUBMITTED_SSL_PROVIDER'];
 $new_type_id = $_POST['new_type_id'];
 $new_function_id = $_POST['new_function_id'];
@@ -44,15 +44,13 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 	if ($new_ssl_provider != "" && $new_url != "") {
 
 		$sql = "update ssl_providers
-				set name = '$new_ssl_provider', 
-				url = '$new_url', 
-				notes = '$new_notes',
+				set name = '" . mysql_real_escape_string($new_ssl_provider) . "', 
+				url = '" . mysql_real_escape_string($new_url) . "', 
+				notes = '" . mysql_real_escape_string($new_notes) . "',
 				update_time = '$current_timestamp'
 				where id = '$new_sslpid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$new_ssl_provider = stripslashes($new_ssl_provider);
-
 		$sslpid = $new_sslpid;
 		
 		$_SESSION['session_result_message'] = "SSL Provider Updated<BR>";
@@ -201,13 +199,13 @@ $page_title = "Editting An SSL Provider";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>SSL Provider Name:</strong><BR><BR>
-<input name="new_ssl_provider" type="text" value="<?php if ($new_ssl_provider != "") echo stripslashes($new_ssl_provider); ?>" size="50" maxlength="255">
+<input name="new_ssl_provider" type="text" value="<?php if ($new_ssl_provider != "") echo $new_ssl_provider; ?>" size="50" maxlength="255">
 <BR><BR>
 <strong>SSL Provider's URL:</strong><BR><BR>
-<input name="new_url" type="text" value="<?php if ($new_url != "") echo stripslashes($new_url); ?>" size="50" maxlength="255">
+<input name="new_url" type="text" value="<?php if ($new_url != "") echo $new_url; ?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_sslpid" value="<?=$sslpid?>">
 <input type="hidden" name="IS_SUBMITTED_SSL_PROVIDER" value="1">

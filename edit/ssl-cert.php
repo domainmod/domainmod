@@ -32,13 +32,13 @@ $really_del = $_GET['really_del'];
 
 // Form Variables
 $new_domain_id = $_POST['new_domain_id'];
-$new_name = mysql_real_escape_string($_POST['new_name']);
+$new_name = $_POST['new_name'];
 $new_type_id = $_POST['new_type_id'];
 $new_function_id = $_POST['new_function_id'];
 $new_expiry_date = $_POST['new_expiry_date'];
 $new_account_id = $_POST['new_account_id'];
 $new_active = $_POST['new_active'];
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_notes = $_POST['new_notes'];
 $new_sslcid = $_POST['new_sslcid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -78,12 +78,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					ssl_provider_id = '$new_ssl_provider_id',
 					account_id = '$new_account_id',
 					domain_id = '$new_domain_id',
-					name = '$new_name',
+					name = '" . mysql_real_escape_string($new_name) . "',
 					type_id = '$new_type_id',
 					function_id = '$new_function_id',
 					expiry_date = '$new_expiry_date',
 					fee_id = '$temp_fee_id',
-					notes = '$new_notes',
+					notes = '" . mysql_real_escape_string($new_notes) . "',
 					active = '$new_active',
 					fee_fixed = '$temp_fee_fixed',
 					update_time = '$current_timestamp'
@@ -160,7 +160,7 @@ $page_title = "Editting An SSL Certificate";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Host / Label:</strong><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo stripslashes($new_name); ?>">
+<input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo $new_name; ?>">
 <BR><BR>
 <strong>Domain:</strong><BR><BR>
 <?php
@@ -273,7 +273,7 @@ echo "</select>";
 ?>
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_sslcid" value="<?=$sslcid?>">
 <input type="submit" name="button" value="Update This SSL Certificate &raquo;">

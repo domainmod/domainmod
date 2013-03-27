@@ -25,10 +25,10 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $software_section = "segments";
 
 // Form Variables
-$new_name = mysql_real_escape_string($_POST['new_name']);
-$new_description = mysql_real_escape_string($_POST['new_description']);
+$new_name = $_POST['new_name'];
+$new_description = $_POST['new_description'];
 $new_segment = $_POST['new_segment'];
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "insert into segments
 				(name, description, segment, number_of_domains, notes, insert_time)
-				values ('$new_name', '$new_description', '$new_segment_formatted', '$number_of_domains', '$new_notes', '$current_timestamp')";
+				values ('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_description) . "', '$new_segment_formatted', '$number_of_domains', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$_SESSION['session_result_message'] = "Segment Added<BR>";
@@ -75,17 +75,17 @@ $page_title = "Adding A New Segment";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Segment Name:</strong><BR><BR>
-<input name="new_name" type="text" value="<?=stripslashes($new_name)?>" size="50" maxlength="255">
+<input name="new_name" type="text" value="<?=$new_name?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Description:</strong><BR><BR>
-<textarea name="new_description" cols="60" rows="5"><?=stripslashes($new_description)?></textarea>
+<textarea name="new_description" cols="60" rows="5"><?=$new_description?></textarea>
 <BR><BR>
 <strong>Segment:</strong><BR><BR>
 Enter the domains one per line.<BR><BR>
-<textarea name="new_segment" cols="60" rows="5"><?=stripslashes($new_segment)?></textarea>
+<textarea name="new_segment" cols="60" rows="5"><?=$new_segment?></textarea>
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This Segment &raquo;">
 </form>

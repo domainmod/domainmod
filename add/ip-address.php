@@ -25,9 +25,9 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $software_section = "ip-addresses";
 
 // Form Variables
-$new_name = mysql_real_escape_string($_POST['new_name']);
-$new_ip = mysql_real_escape_string($_POST['new_ip']);
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_name = $_POST['new_name'];
+$new_ip = $_POST['new_ip'];
+$new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$sql = "insert into ip_addresses
 				(name, ip, notes, insert_time)
-				values ('$new_name', '$new_ip', '$new_notes', '$current_timestamp')";
+				values ('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_ip) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -61,13 +61,13 @@ $page_title = "Adding A New IP Address";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>IP Address Name:</strong><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="255" value="<?=stripslashes($new_name)?>">
+<input name="new_name" type="text" size="50" maxlength="255" value="<?=$new_name?>">
 <BR><BR>
 <strong>IP Address:</strong><BR><BR>
-<input name="new_ip" type="text" size="50" maxlength="255" value="<?=stripslashes($new_ip)?>">
+<input name="new_ip" type="text" size="50" maxlength="255" value="<?=$new_ip?>">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This IP Address &raquo;">
 </form>

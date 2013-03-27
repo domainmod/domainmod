@@ -27,10 +27,10 @@ $software_section = "currencies";
 $curid = $_GET['curid'];
 
 // Form Variables
-$new_name = mysql_real_escape_string($_POST['new_name']);
-$new_abbreviation = mysql_real_escape_string($_POST['new_abbreviation']);
+$new_name = $_POST['new_name'];
+$new_abbreviation = $_POST['new_abbreviation'];
 $new_default_currency = $_POST['new_default_currency'];
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_notes = $_POST['new_notes'];
 $new_curid = $_POST['new_curid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -62,9 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 		
 		$sql = "update currencies
-				set currency = '$new_abbreviation',
-					name = '$new_name',
-					notes = '$new_notes',
+				set currency = '" . mysql_real_escape_string($new_abbreviation) . "',
+					name = '" . mysql_real_escape_string($new_name) . "',
+					notes = '" . mysql_real_escape_string($new_notes) . "',
 					default_currency = '$new_default_currency',
 					update_time = '$current_timestamp'
 				where id = '$new_curid'";
@@ -110,13 +110,13 @@ $page_title = "Editting A Currency";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Name:</strong><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="255" value="<?=stripslashes($new_name)?>">
+<input name="new_name" type="text" size="50" maxlength="255" value="<?=$new_name?>">
 <BR><BR>
 <strong>Abbreviation:</strong><BR><BR>
-<input name="new_abbreviation" type="text" size="50" maxlength="3" value="<?=stripslashes($new_abbreviation)?>">
+<input name="new_abbreviation" type="text" size="50" maxlength="3" value="<?=$new_abbreviation?>">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
 <?php if ($new_default_currency != 1) { ?>
 <strong>Set as default currency?</strong>&nbsp;

@@ -25,10 +25,10 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $software_section = "currencies";
 
 // Form Variables
-$new_name = mysql_real_escape_string($_POST['new_name']);
-$new_abbreviation = mysql_real_escape_string($_POST['new_abbreviation']);
+$new_name = $_POST['new_name'];
+$new_abbreviation = $_POST['new_abbreviation'];
 $new_default_currency = $_POST['new_default_currency'];
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 		$sql = "insert into currencies
 				(currency, name, conversion, notes, default_currency, insert_time)
-				values ('$new_abbreviation', '$new_name', '$value', '$new_notes', '$new_default_currency', '$current_timestamp')";
+				values ('" . mysql_real_escape_string($new_abbreviation) . "', '" . mysql_real_escape_string($new_name) . "', '$value', '" . mysql_real_escape_string($new_notes) . "', '$new_default_currency', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Currency Added<BR>";
@@ -99,13 +99,13 @@ while ($row = mysql_fetch_object($result)) {
 ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Name ("<em><?=$default_name?></em>"):</strong><BR><BR>
-<input name="new_name" type="text" value="<?=stripslashes($new_name)?>" size="50" maxlength="255">
+<input name="new_name" type="text" value="<?=$new_name?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Abbreviation ("<em><?=$default_currency?></em>"):</strong><BR><BR>
-<input name="new_abbreviation" type="text" value="<?=stripslashes($new_abbreviation)?>" size="50" maxlength="3">
+<input name="new_abbreviation" type="text" value="<?=$new_abbreviation?>" size="50" maxlength="3">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
 <strong>Set as default currency?</strong>&nbsp;
 <input name="new_default_currency" type="checkbox" id="new_default_currency" value="1">

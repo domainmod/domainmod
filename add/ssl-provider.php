@@ -25,9 +25,9 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $software_section = "ssl-providers";
 
 // Form Variables
-$new_ssl_provider = mysql_real_escape_string($_POST['new_ssl_provider']);
-$new_url = mysql_real_escape_string($_POST['new_url']);
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_ssl_provider = $_POST['new_ssl_provider'];
+$new_url = $_POST['new_url'];
+$new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "insert into ssl_providers
 				(name, url, notes, insert_time)
-				values ('$new_ssl_provider', '$new_url', '$new_notes', '$current_timestamp')";
+				values ('" . mysql_real_escape_string($new_ssl_provider) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "SSL Provider Added<BR>";
@@ -63,13 +63,13 @@ $page_title = "Adding A New SSL Provider";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>SSL Provider Name:</strong><BR><BR>
-<input name="new_ssl_provider" type="text" value="<?=stripslashes($new_ssl_provider)?>" size="50" maxlength="255">
+<input name="new_ssl_provider" type="text" value="<?=$new_ssl_provider?>" size="50" maxlength="255">
 <BR><BR>
 <strong>SSL Provider's URL:</strong><BR><BR>
-<input name="new_url" type="text" value="<?=stripslashes($new_url)?>" size="50" maxlength="255">
+<input name="new_url" type="text" value="<?=$new_url?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This SSL Provider &raquo;">
 </form>

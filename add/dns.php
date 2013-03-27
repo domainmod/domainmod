@@ -25,18 +25,18 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $software_section = "dns";
 
 // Form Variables
-$new_name = mysql_real_escape_string($_POST['new_name']);
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
-$new_dns1 = mysql_real_escape_string($_POST['new_dns1']);
-$new_dns2 = mysql_real_escape_string($_POST['new_dns2']);
-$new_dns3 = mysql_real_escape_string($_POST['new_dns3']);
-$new_dns4 = mysql_real_escape_string($_POST['new_dns4']);
-$new_dns5 = mysql_real_escape_string($_POST['new_dns5']);
-$new_dns6 = mysql_real_escape_string($_POST['new_dns6']);
-$new_dns7 = mysql_real_escape_string($_POST['new_dns7']);
-$new_dns8 = mysql_real_escape_string($_POST['new_dns8']);
-$new_dns9 = mysql_real_escape_string($_POST['new_dns9']);
-$new_dns10 = mysql_real_escape_string($_POST['new_dns10']);
+$new_name = $_POST['new_name'];
+$new_notes = $_POST['new_notes'];
+$new_dns1 = $_POST['new_dns1'];
+$new_dns2 = $_POST['new_dns2'];
+$new_dns3 = $_POST['new_dns3'];
+$new_dns4 = $_POST['new_dns4'];
+$new_dns5 = $_POST['new_dns5'];
+$new_dns6 = $_POST['new_dns6'];
+$new_dns7 = $_POST['new_dns7'];
+$new_dns8 = $_POST['new_dns8'];
+$new_dns9 = $_POST['new_dns9'];
+$new_dns10 = $_POST['new_dns10'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "insert into dns
 				(name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, notes, number_of_servers, insert_time)
-				values ('$new_name', '$new_dns1', '$new_dns2', '$new_dns3', '$new_dns4', '$new_dns5', '$new_dns6', '$new_dns7', '$new_dns8', '$new_dns9', '$new_dns10', '$new_notes', '$new_number_of_servers', '$current_timestamp')";
+				values ('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_dns1) . "', '" . mysql_real_escape_string($new_dns2) . "', '" . mysql_real_escape_string($new_dns3) . "', '" . mysql_real_escape_string($new_dns4) . "', '" . mysql_real_escape_string($new_dns5) . "', '" . mysql_real_escape_string($new_dns6) . "', '" . mysql_real_escape_string($new_dns7) . "', '" . mysql_real_escape_string($new_dns8) . "', '" . mysql_real_escape_string($new_dns9) . "', '" . mysql_real_escape_string($new_dns10) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_number_of_servers', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -102,40 +102,40 @@ $page_title = "Adding A New DNS Profile";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Profile Name:</strong><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="255" value="<?=stripslashes($new_name)?>">
+<input name="new_name" type="text" size="50" maxlength="255" value="<?=$new_name?>">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
 <strong>DNS 1:</strong><BR><BR>
-<input name="new_dns1" type="text" size="50" maxlength="255" value="<?=stripslashes($new_dns1)?>">
+<input name="new_dns1" type="text" size="50" maxlength="255" value="<?=$new_dns1?>">
 <BR><BR>
 <strong>DNS 2:</strong><BR><BR>
-<input name="new_dns2" type="text" size="50" maxlength="255" value="<?=stripslashes($new_dns2)?>">
+<input name="new_dns2" type="text" size="50" maxlength="255" value="<?=$new_dns2?>">
 <BR><BR>
 <strong>DNS 3:</strong><BR><BR>
-<input name="new_dns3" type="text" size="50" maxlength="255" value="<?=stripslashes($new_dns3)?>">
+<input name="new_dns3" type="text" size="50" maxlength="255" value="<?=$new_dns3?>">
 <BR><BR>
 <strong>DNS 4:</strong><BR><BR>
-<input name="new_dns4" type="text" size="50" maxlength="255" value="<?=stripslashes($new_dns4)?>">
+<input name="new_dns4" type="text" size="50" maxlength="255" value="<?=$new_dns4?>">
 <BR><BR>
 <strong>DNS 5:</strong><BR><BR>
-<input name="new_dns5" type="text" size="50" maxlength="255" value="<?=stripslashes($new_dns5)?>">
+<input name="new_dns5" type="text" size="50" maxlength="255" value="<?=$new_dns5?>">
 <BR><BR>
 <strong>DNS 6:</strong><BR><BR>
-<input name="new_dns6" type="text" size="50" maxlength="255" value="<?=stripslashes($new_dns6)?>">
+<input name="new_dns6" type="text" size="50" maxlength="255" value="<?=$new_dns6?>">
 <BR><BR>
 <strong>DNS 7:</strong><BR><BR>
-<input name="new_dns7" type="text" size="50" maxlength="255" value="<?=stripslashes($new_dns7)?>">
+<input name="new_dns7" type="text" size="50" maxlength="255" value="<?=$new_dns7?>">
 <BR><BR>
 <strong>DNS 8:</strong><BR><BR>
-<input name="new_dns8" type="text" size="50" maxlength="255" value="<?=stripslashes($new_dns8)?>">
+<input name="new_dns8" type="text" size="50" maxlength="255" value="<?=$new_dns8?>">
 <BR><BR>
 <strong>DNS 9:</strong><BR><BR>
-<input name="new_dns9" type="text" size="50" maxlength="255" value="<?=stripslashes($new_dns9)?>">
+<input name="new_dns9" type="text" size="50" maxlength="255" value="<?=$new_dns9?>">
 <BR><BR>
 <strong>DNS 10:</strong><BR><BR>
-<input name="new_dns10" type="text" size="50" maxlength="255" value="<?=stripslashes($new_dns10)?>">
+<input name="new_dns10" type="text" size="50" maxlength="255" value="<?=$new_dns10?>">
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This DNS Profile &raquo;">
 </form>

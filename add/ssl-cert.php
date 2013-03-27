@@ -27,13 +27,13 @@ $software_section = "ssl-certs";
 
 // Form Variables
 $new_domain_id = $_POST['new_domain_id'];
-$new_name = mysql_real_escape_string($_POST['new_name']);
+$new_name = $_POST['new_name'];
 $new_type_id = $_POST['new_type_id'];
 $new_function_id = $_POST['new_function_id'];
 $new_expiry_date = $_POST['new_expiry_date'];
 $new_account_id = $_POST['new_account_id'];
 $new_active = $_POST['new_active'];
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "insert into ssl_certs
 				(company_id, ssl_provider_id, account_id, domain_id, name, type_id, function_id, expiry_date, fee_id, notes, active, insert_time)
-				values ('$new_company_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '$new_name', '$new_type_id', '$new_function_id', '$new_expiry_date', '$new_fee_id', '$new_notes', '$new_active', '$current_timestamp')";
+				values ('$new_company_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '" . mysql_real_escape_string($new_name) . "', '$new_type_id', '$new_function_id', '$new_expiry_date', '$new_fee_id', '" . mysql_real_escape_string($new_notes) . "', '$new_active', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -86,7 +86,7 @@ $page_title = "Adding A New SSL Certificate";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Host / Label:</strong><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="255" value="<?=stripslashes($new_name)?>">
+<input name="new_name" type="text" size="50" maxlength="255" value="<?=$new_name?>">
 <BR><BR>
 <strong>Domain:</strong><BR><BR>
 <?php
@@ -197,7 +197,7 @@ echo "</select>";
 ?>
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This SSL Certificate &raquo;">
 </form>

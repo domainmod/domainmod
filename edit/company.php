@@ -27,8 +27,8 @@ $software_section = "companies";
 $cid = $_GET['cid'];
 
 // Form Variables
-$new_company = mysql_real_escape_string($_POST['new_company']);
-$new_notes = mysql_real_escape_string($_POST['new_notes']);
+$new_company = $_POST['new_company'];
+$new_notes = $_POST['new_notes'];
 $new_cid = $_POST['new_cid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -36,13 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_company != "") {
 
 		$sql = "update companies
-				set name = '$new_company',
-					notes = '$new_notes',
+				set name = '" . mysql_real_escape_string($new_company) . "',
+					notes = '" . mysql_real_escape_string($new_notes) . "',
 					update_time = '$current_timestamp'
 				where id = '$new_cid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$new_company = stripslashes($new_company);
+		$new_company = $new_company;
 
 		$cid = $new_cid;
 		
@@ -81,11 +81,11 @@ $page_title = "Editting A Company";
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Company Name:</strong><BR><BR>
-<input name="new_company" type="text" value="<?php if ($new_company != "") echo stripslashes($new_company); ?>
+<input name="new_company" type="text" value="<?php if ($new_company != "") echo $new_company; ?>
 " size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_cid" value="<?=$cid?>">
 <input type="submit" name="button" value="Update This Company &raquo;">
