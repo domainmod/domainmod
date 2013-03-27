@@ -33,7 +33,7 @@
 For more information on the GNU/GPL License, please <a class="subtlelink" href="http://www.gnu.org/licenses/">click here</a>.
 		</td>
         <td class="footer-table" height="100%" width="90">
-        <a href="http://www.gnu.org/licenses/"><img border="0" width="88" height="31" src="http://www.gnu.org/graphics/gplv3-88x31.png" /></a>
+        <a href="http://www.gnu.org/licenses/"><img border="0" width="88" height="31" src="https://www.gnu.org/graphics/gplv3-88x31.png" /></a>
 		</td>
 	</tr>
 </table>
