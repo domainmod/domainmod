@@ -25,11 +25,11 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 
 $sql = "select db_version
 		from settings";
-$result = mysql_query($sql,$connection);
+$result = mysql_query($sql,$connection) or die(mysql_error());
 
 if (mysql_num_rows($result) > 0) {
 	
-	$_SESSION['session_installation_mode'] = 0;
+	// $_SESSION['session_institallation_mode'] = 0;
 
 	$_SESSION['session_result_message'] = "$software_title is already installed<BR>";
 
@@ -424,7 +424,7 @@ if (mysql_num_rows($result) > 0) {
 	";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-	header("Location: ../_includes/system/test-data-generate.php");
+	header("Location: ../");
 	exit;
 
 }
