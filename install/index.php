@@ -18,8 +18,6 @@
 <?php
 session_start();
 
-$_SESSION['session_installation_mode'] = 1;
-
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
@@ -39,6 +37,8 @@ if (mysql_num_rows($result) > 0) {
 	exit;
 
 } else {
+
+	$_SESSION['session_installation_mode'] = 1;
 
 	$sql = "
 	CREATE TABLE IF NOT EXISTS `users` (
