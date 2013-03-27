@@ -44,6 +44,8 @@ if ($cid != "") { $cid_string = " and company_id = '$cid' "; } else { $cid_strin
 $sql = "select id, username, company_id, ssl_provider_id, reseller
 		from ssl_accounts
 		where id in (select account_id from ssl_certs where account_id != '0' and active = '1' group by account_id)
+		$sslpid_string
+		$cid_string
 		order by username asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
@@ -58,10 +60,10 @@ These are the SSL provider accounts that have active certificates.
 	<td width="200">
     	<font class="subheadline">Account/Username</font>
     </td>
-	<td width="275">
+	<td width="250">
     	<font class="subheadline">Company</font>
     </td>
-	<td width="275">
+	<td width="250">
     	<font class="subheadline">SSL Provider</font>
     </td>
 	<td>
@@ -78,7 +80,7 @@ while ($row = mysql_fetch_object($result)) { ?>
 	<td colspan="3">
     	<table width="100%" border="0" cellspacing="3" cellpadding="0">
             <tr>
-            	<td width="270">
+            	<td width="244">
 				<?php
                 $sql2 = "select id, name
                          from companies
@@ -91,7 +93,7 @@ while ($row = mysql_fetch_object($result)) { ?>
                 ?>
 				<a class="subtlelink" href="edit/company.php?cid=<?=$temp_id?>"><?=$temp_company_name?></a>
                 </td>
-            	<td width="271">
+            	<td width="250">
 				<?php
                 $sql2 = "select id, name
                          from ssl_providers
@@ -133,6 +135,8 @@ while ($row = mysql_fetch_object($result)) { ?>
 $sql = "select id, username, company_id, ssl_provider_id, reseller
 		from ssl_accounts
 		where id not in (select account_id from ssl_certs where account_id != '0' and active = '1' group by account_id)
+		$sslpid_string
+		$cid_string
 		order by username asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
@@ -146,14 +150,14 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 	<td width="200">
     	<font class="subheadline">Account/Username</font>
     </td>
-	<td width="275">
+	<td width="250">
     	<font class="subheadline">Company</font>
     </td>
-	<td width="275">
+	<td width="250">
     	<font class="subheadline">SSL Provider</font>
     </td>
-	<td>
-    	<font class="subheadline"># of Certs</font>
+	<td>&nbsp;
+    	
     </td>
 </tr>
 
@@ -166,7 +170,7 @@ while ($row = mysql_fetch_object($result)) { ?>
 	<td colspan="3">
     	<table width="100%" border="0" cellspacing="3" cellpadding="0">
             <tr>
-            	<td width="270">
+            	<td width="246">
 				<?php
                 $sql2 = "select id, name
                          from companies
@@ -179,7 +183,7 @@ while ($row = mysql_fetch_object($result)) { ?>
                 ?>
 				<a class="subtlelink" href="edit/company.php?cid=<?=$temp_id?>"><?=$temp_company_name?></a>
                 </td>
-            	<td width="271">
+            	<td width="250">
 				<?php
                 $sql2 = "select id, name
                          from ssl_providers
@@ -192,22 +196,8 @@ while ($row = mysql_fetch_object($result)) { ?>
                 ?>
                 <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$temp_id?>"><?=$temp_ssl_provider_name?></a>
                 </td>
-            	<td>
-				<?php
-				$sql3 = "select count(*) as total_ssl_count
-						 from ssl_certs
-						 where account_id = '$row->id'
-						 and active != '0'
-						 and active != '10'";
-				$result3 = mysql_query($sql3,$connection);
-				while ($row3 = mysql_fetch_object($result3)) {
-					if ($row3->total_ssl_count != 0) {
-						echo "<a class=\"nobold\" href=\"ssl-certs.php?cid=$row->company_id&sslpid=$row->ssl_provider_id&sslpaid=$row->id\">" . number_format($row3->total_ssl_count) . "</a>";
-					} else {
-						echo number_format($row3->total_ssl_count);
-					}
-				}
-				?>
+            	<td>&nbsp;
+					
                 </td>
             </tr>
 		</table>

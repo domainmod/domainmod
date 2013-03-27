@@ -534,7 +534,7 @@ Enter the domains one per line.
     <BR><BR>
     <strong>IP Address:</strong><BR><BR>
     <?php
-    $sql_dns = "select id, name, ip
+    $sql_ip = "select id, name, ip
                     from ip_addresses
                     order by name asc, ip asc";
     $result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());

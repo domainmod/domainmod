@@ -134,7 +134,7 @@ echo "</select>";
 ?>
 <BR><BR>
 <strong>Username:</strong><BR><BR>
-<input name="new_username" type="text" size="50" maxlength="255" value="$new_username?>">
+<input name="new_username" type="text" size="50" maxlength="255" value="<?=$new_username?>">
 <BR><BR>
 <strong>Reseller Account?</strong><BR><BR>
 <select name="new_reseller">";

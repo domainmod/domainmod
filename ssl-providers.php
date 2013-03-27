@@ -75,7 +75,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 
     	<?php if ($total_accounts >= 1) { ?>
 
-	        <a class="nobold" href="ssl-accounts.php?rid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
+	        <a class="nobold" href="ssl-accounts.php?sslpid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
 
         <?php } else { ?>
 
@@ -147,7 +147,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 
     	<?php if ($total_accounts >= 1) { ?>
 
-	        <a class="nobold" href="ssl-accounts.php?rid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
+	        <a class="nobold" href="ssl-accounts.php?sslpid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
 
         <?php } else { ?>
 
