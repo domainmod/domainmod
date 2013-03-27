@@ -32,28 +32,20 @@ $software_section = "companies";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
+
 <?php
-$sql = "select c.id, c.name, count(distinct d.account_id) as total_registrar_accounts, count(distinct d.id) as total_domain_count
-		from companies as c, domains as d
-		where c.id = d.company_id
-		and c.active = '1'
-		and d.active not in ('0', '10')
-		group by c.name
-		order by c.name asc";
 $sql = "select id, name
 		from companies
-		where active = '1'
+		where id in (select company_id from domains where company_id not in ('0') group by company_id)
 		order by name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-fix all these writeups
-<BR><BR>
 <strong>Number of Active Companies:</strong> <?=mysql_num_rows($result)?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="30">
-	<td width="300">
+	<td width="225">
     	<font class="subheadline">Company Name</font>
     </td>
 	<td width="150">
@@ -107,6 +99,54 @@ fix all these writeups
         
         <?php } ?>
 
+    </td>
+</tr>
+<?php } ?>
+</table>
+<?php } ?>
+<BR><BR>
+<?php
+$sql = "select id, name
+		from companies
+		where id not in (select company_id from domains where company_id not in ('0') group by company_id)
+		order by name asc";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+?>
+<strong>Number of Inactive Companies:</strong> <?=mysql_num_rows($result)?>
+<?php if (mysql_num_rows($result) > 0) { ?>
+<BR><BR>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr height="30">
+	<td width="225">
+    	<font class="subheadline">Company Name</font>
+    </td>
+	<td>
+    	<font class="subheadline"># of Accounts</font>
+    </td>
+</tr>
+<?php while ($row = mysql_fetch_object($result)) { ?>
+<tr height="20">
+    <td>
+		<a class="subtlelink" href="edit/company.php?cid=<?=$row->id?>"><?=$row->name?></a>
+	</td>
+	<td>
+    <?php
+	$sql2 = "select count(*) as total_count
+			 from registrar_accounts
+			 where active = '1'
+			 and company_id = '$row->id'";
+	$result2 = mysql_query($sql2,$connection);
+	while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
+	?>
+    	<?php if ($total_accounts >= 1) { ?>
+
+	        <a class="nobold" href="registrar-accounts.php?cid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
+
+        <?php } else { ?>
+
+	        <?=number_format($total_accounts)?>
+        
+        <?php } ?>
     </td>
 </tr>
 <?php } ?>

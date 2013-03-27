@@ -23,7 +23,7 @@
             	<tr>
                 	<td class="cell-result-message">
                     <BR><strong>
-						<?=stripslashes($_SESSION['session_result_message'])?>
+						<?=$_SESSION['session_result_message']?>
 					</strong><BR>
                     </td>
 				</tr>

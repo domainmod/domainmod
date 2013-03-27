@@ -32,22 +32,24 @@ $software_section = "dns";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
+This is a breakdown of the DNS Profiles that are currently in use.
+<BR><BR>
+
 <?php
 $sql = "select id, name, number_of_servers
 		from dns
 		where active = '1'
+		and id in (select dns_id from domains where dns_id != '0' and active not in ('0','10') group by dns_id)
+		group by name asc
 		order by name asc";
 $result = mysql_query($sql,$connection);
 ?>
-This is a breakdown of the DNS Profiles that are currently in use.
-<BR><BR>
 <strong>Number of Active DNS Profiles:</strong> <?=mysql_num_rows($result)?>
-
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="30">
-	<td width="300">
+	<td width="325">
     	<font class="subheadline">Profile Name</font>
     </td>
 	<td width="150">
@@ -78,6 +80,41 @@ This is a breakdown of the DNS Profiles that are currently in use.
 		?>
         <a class="nobold" href="domains.php?dnsid=<?=$row->id?>"><?=number_format($total_dns_count)?></a>
     </td>
+</tr>
+<?php } ?>
+</table>
+<BR><BR>
+<?php } ?>
+
+<?php
+$sql = "select id, name, number_of_servers
+		from dns
+		where active = '1'
+		and id not in (select dns_id from domains where dns_id != '0' and active not in ('0','10') group by dns_id)
+		group by name asc
+		order by name asc";
+$result = mysql_query($sql,$connection);
+?>
+<strong>Number of Inactive DNS Profiles:</strong> <?=mysql_num_rows($result)?>
+<?php if (mysql_num_rows($result) > 0) { ?>
+<BR><BR>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr height="30">
+	<td width="325">
+    	<font class="subheadline">Profile Name</font>
+    </td>
+	<td>
+    	<font class="subheadline"># of Servers</font>
+    </td>
+</tr>
+<?php while ($row = mysql_fetch_object($result)) { ?>
+<tr height="20">
+    <td>
+		<a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a>
+	</td>
+    <td>
+        <a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->number_of_servers?></a>
+	</td>
 </tr>
 <?php } ?>
 </table>

@@ -730,14 +730,14 @@ echo "</select>";
 <input type="hidden" name="sort_by" value="<?=$sort_by?>">
 </td>
 <td class="search-table-inside">
-<input name="search_for" type="text" value="<?=stripslashes($search_for)?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" value="Search Results &raquo;">
+<input name="search_for" type="text" value="<?=$search_for?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" value="Search Results &raquo;">
 <BR><BR>
 <?php
 $quick_search = preg_replace("/', '/", "\r\n", $quick_search);
 $quick_search = preg_replace("/','/", "\r\n", $quick_search);
 $quick_search = preg_replace("/'/", "", $quick_search);
 ?>
-<textarea name="quick_search" cols="40" rows="11"><?=stripslashes($quick_search)?>
+<textarea name="quick_search" cols="40" rows="11"><?=$quick_search?>
 </textarea>&nbsp;&nbsp;
 <BR>
 <BR>

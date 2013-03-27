@@ -452,7 +452,7 @@ Instead of having to waste time editting domains one-by-one, you can use the bel
 <?php if ($action != "") { ?>
 Enter the domains one per line.
 <BR><BR>
-<textarea name="new_data" cols="60" rows="5"><?php if ($new_data != "") { echo stripslashes($new_data); } else { echo "List of Domains"; } ?></textarea>
+<textarea name="new_data" cols="60" rows="5"><?php if ($new_data != "") { echo $new_data; } else { echo "List of Domains"; } ?></textarea>
 <BR><BR>
 <?php } ?>
 
@@ -476,13 +476,13 @@ Enter the domains one per line.
     <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
     <BR><BR>
     <strong>Function:</strong><BR><BR>
-    <input name="new_function" type="text" size="50" maxlength="255" value="<?=stripslashes($new_function)?>">
+    <input name="new_function" type="text" size="50" maxlength="255" value="<?=$new_function?>">
     <BR><BR>
     <strong>Status:</strong><BR><BR>
-    <input name="new_status" type="text" size="50" maxlength="255" value="<?=stripslashes($new_status)?>">
+    <input name="new_status" type="text" size="50" maxlength="255" value="<?=$new_status?>">
     <BR><BR>
     <strong>Status Notes:</strong><BR><BR>
-    <textarea name="new_status_notes" cols="60" rows="5"><?=stripslashes($new_status_notes)?>
+    <textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?>
     </textarea>
     <BR><BR>
     <strong>Primary Category:</strong><BR><BR>
@@ -601,7 +601,7 @@ Enter the domains one per line.
     ?>
     <BR><BR>
     <strong>Notes:</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?=stripslashes($new_notes)?></textarea>
+    <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
     <BR><BR>
 
 <?php } elseif ($action == "CPC") { ?>
@@ -676,7 +676,7 @@ Enter the domains one per line.
     ?>
     <BR><BR>
 <?php } elseif ($action == "AN") { ?>
-<textarea name="new_notes" cols="60" rows="5"><?php if ($new_notes != "") { echo stripslashes($new_notes); } else { echo "New Note"; } ?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?php if ($new_notes != "") { echo $new_notes; } else { echo "New Note"; } ?></textarea>
   <BR><BR>
 <?php } elseif ($action == "CED") { ?>
 <input name="new_expiry_date" type="text" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic; } ?>" size="10" maxlength="10">
