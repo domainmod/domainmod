@@ -32,14 +32,15 @@ $software_section = "ssl-providers";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
+These are the SSL Providers that have active certificates.
+
 <?php
 $sql = "select id, name, url
 		from ssl_providers
-		where active = '1'
+		where id in (select ssl_provider_id from ssl_certs where ssl_provider_id != '0' and active != '0' group by ssl_provider_id)
 		order by name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-These are the SSL Providers that have active certificates.
 <BR><BR>
 <strong>Number of Active SSL Providers:</strong> <?=mysql_num_rows($result)?>
 
@@ -47,7 +48,7 @@ These are the SSL Providers that have active certificates.
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="30">
-	<td width="300">
+	<td width="250">
     	<font class="subheadline">Provider Name</font>
     </td>
 	<td width="150">
@@ -100,6 +101,57 @@ These are the SSL Providers that have active certificates.
         <?php } else { ?>
 
 	        <?=number_format($total_certs)?>
+        
+        <?php } ?>
+
+    </td>
+</tr>
+<?php } ?>
+</table>
+<?php } ?>
+<BR><BR>
+<?php
+$sql = "select id, name, url
+		from ssl_providers
+		where id not in (select ssl_provider_id from ssl_certs where ssl_provider_id != '0' and active != '0' group by ssl_provider_id)
+		order by name asc";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+?>
+<strong>Number of Inactive SSL Providers:</strong> <?=mysql_num_rows($result)?>
+
+<?php if (mysql_num_rows($result) > 0) { ?>
+<BR><BR>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr height="30">
+	<td width="250">
+    	<font class="subheadline">Provider Name</font>
+    </td>
+	<td>
+    	<font class="subheadline"># of Accounts</font>
+    </td>
+</tr>
+<?php while ($row = mysql_fetch_object($result)) { ?>
+<tr height="20">
+    <td>
+		<a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
+	</td>
+	<td>
+		<?php
+        $sql2 = "select count(*) as total_count
+                 from ssl_accounts
+                 where active = '1'
+                 and ssl_provider_id = '$row->id'";
+        $result2 = mysql_query($sql2,$connection);
+        while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
+        ?>
+
+    	<?php if ($total_accounts >= 1) { ?>
+
+	        <a class="nobold" href="ssl-accounts.php?rid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
+
+        <?php } else { ?>
+
+	        <?=number_format($total_accounts)?>
         
         <?php } ?>
 

@@ -36,7 +36,7 @@ $software_section = "companies";
 <?php
 $sql = "select id, name
 		from companies
-		where id in (select company_id from domains where company_id not in ('0') group by company_id)
+		where id in (select company_id from domains where company_id != '0' and active not in ('0','10') group by company_id)
 		order by name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
@@ -108,7 +108,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php
 $sql = "select id, name
 		from companies
-		where id not in (select company_id from domains where company_id not in ('0') group by company_id)
+		where id not in (select company_id from domains where company_id != '0' and active not in ('0','10') group by company_id)
 		order by name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>

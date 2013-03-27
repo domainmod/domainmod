@@ -38,9 +38,7 @@ This is a breakdown of the DNS Profiles that are currently in use.
 <?php
 $sql = "select id, name, number_of_servers
 		from dns
-		where active = '1'
-		and id in (select dns_id from domains where dns_id != '0' and active not in ('0','10') group by dns_id)
-		group by name asc
+		where id in (select dns_id from domains where dns_id != '0' and active not in ('0','10') group by dns_id)
 		order by name asc";
 $result = mysql_query($sql,$connection);
 ?>
@@ -89,9 +87,7 @@ $result = mysql_query($sql,$connection);
 <?php
 $sql = "select id, name, number_of_servers
 		from dns
-		where active = '1'
-		and id not in (select dns_id from domains where dns_id != '0' and active not in ('0','10') group by dns_id)
-		group by name asc
+		where id not in (select dns_id from domains where dns_id != '0' and active not in ('0','10') group by dns_id)
 		order by name asc";
 $result = mysql_query($sql,$connection);
 ?>

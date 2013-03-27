@@ -32,24 +32,25 @@ $software_section = "categories";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
+Here you can create categories that you can use to help organize your domains.
+<BR><BR>
+
 <?php
 $sql = "select id, name, owner, default_category
 		from categories
-		where active = '1'
+		where id in (select cat_id from domains where cat_id != '0' and active not in ('0','10') group by cat_id)
 		order by name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $number_of_categories = mysql_num_rows($result);
 ?>
-Here you can create categories that you can use to help organize your domains.
-<BR><BR>
 <strong>Number of Active Categories:</strong> <?=$number_of_categories?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="30">
-	<td width="300">
+	<td width="325">
    	<font class="subheadline">Category</font></td>
-	<td width="250">
+	<td width="200">
    	<font class="subheadline">Owner</font></td>
 	<td>
     	<font class="subheadline"># of Domains</font>
@@ -78,6 +79,38 @@ Here you can create categories that you can use to help organize your domains.
 	        <a class="nobold" href="domains.php?pcid=<?=$row->id?>"><?=number_format($active_domains)?></a>
         <?php } ?>
     </td>
+</tr>
+<?php } ?>
+</table>
+<?php } ?>
+
+<BR><BR>
+<?php
+$sql = "select id, name, owner, default_category
+		from categories
+		where id not in (select cat_id from domains where cat_id != '0' and active not in ('0','10') group by cat_id)
+		order by name asc";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+$number_of_categories = mysql_num_rows($result);
+?>
+<strong>Number of Inactive Categories:</strong> <?=$number_of_categories?>
+<?php if (mysql_num_rows($result) > 0) { ?>
+<BR><BR>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr height="30">
+	<td width="325">
+   	<font class="subheadline">Category</font></td>
+	<td>
+   	<font class="subheadline">Owner</font></td>
+</tr>
+<?php while ($row = mysql_fetch_object($result)) { ?>
+<tr height="20">
+    <td>
+		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+	</td>
+    <td>
+		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->owner?></a>
+	</td>
 </tr>
 <?php } ?>
 </table>

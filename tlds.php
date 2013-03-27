@@ -31,6 +31,10 @@ $page_title = "Top Level Domain Breakdown";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
+
+This is a breakdown of the Top Level Domains that are currently in use.
+
+<BR><BR>
 <?php
 $sql = "select tld, count(*) as total_tld_count
 		from domains
@@ -39,8 +43,6 @@ $sql = "select tld, count(*) as total_tld_count
 		order by total_tld_count desc, tld asc";
 $result = mysql_query($sql,$connection);
 ?>
-This is a breakdown of the Top Level Domains that are currently in use.
-<BR><BR>
 <strong>Number of Active TLDs:</strong> <?=mysql_num_rows($result)?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>

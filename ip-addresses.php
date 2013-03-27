@@ -37,7 +37,7 @@ This is a breakdown of the IP Addresses that are currently in use.
 <?php
 $sql = "select id, name, ip
 		from ip_addresses
-		where id in (select ip_id from domains where ip_id not in ('0') group by ip_id)
+		where id in (select ip_id from domains where ip_id != '0' and active not in ('0','10') group by ip_id)
 		order by name asc";
 $result = mysql_query($sql,$connection);
 ?>
@@ -93,7 +93,7 @@ if (mysql_num_rows($result) > 0) { ?>
 <?php
 $sql = "select id, name, ip
 		from ip_addresses
-		where id not in (select ip_id from domains where ip_id != '0' group by ip_id)
+		where id not in (select ip_id from domains where ip_id != '0' and active not in ('0','10') group by ip_id)
 		order by name asc";
 $result = mysql_query($sql,$connection);
 ?>

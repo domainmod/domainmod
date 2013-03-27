@@ -151,6 +151,8 @@ $result = $result2;
 if (mysql_num_rows($result) > 0) { ?>
 <strong>Number of SSL Certificates to Export:</strong> <?=number_format(mysql_num_rows($result))?><BR><BR>
 <?php } ?>
+Before exporting your SSL Certificates you should <a href="system/update-exchange-rates.php">update the exchange rates</a>.
+<BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td class="search-table"><BR>
