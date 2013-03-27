@@ -30,6 +30,8 @@ $sql = "select db_version
 $result = mysql_query($sql,$connection);
 
 if (mysql_num_rows($result) > 0) {
+	
+	$_SESSION['session_installation_mode'] = 0;
 
 	$_SESSION['session_result_message'] = "$software_title is already installed<BR>";
 
