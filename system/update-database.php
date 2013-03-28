@@ -165,6 +165,23 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	// upgrade database from 1.8 to 1.9
+	if ($current_db_version == 1.8) {
+
+		$sql = "ALTER TABLE `settings`  
+				ADD `email_address` VARCHAR(255) NOT NULL AFTER `db_version`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "update settings
+				set db_version = '1.9', 
+					email_address = 'code@aysmedia.com',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 1.9;
+		
+	}
+
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 
 } else {
