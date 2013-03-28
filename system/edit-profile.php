@@ -24,7 +24,7 @@ include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
-$page_title = "Edit User";
+$page_title = "Edit Profile";
 $software_section = "system";
 
 // Form Variables
