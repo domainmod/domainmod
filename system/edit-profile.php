@@ -18,6 +18,10 @@
 <?php
 session_start();
 
+// If the user isn't an administrator, redirect them to $full_redirect
+$full_redirect = "index.php";
+include("../_includes/auth/admin-user-check.inc.php");
+
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
@@ -26,6 +30,8 @@ include("../_includes/auth/auth-check.inc.php");
 
 $page_title = "Edit Profile";
 $software_section = "system";
+
+$uid = $_GET['uid'];
 
 // Form Variables
 $new_first_name = $_POST['new_first_name'];
@@ -92,9 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		
 		$sql = "select first_name, last_name, username, email_address
 				from users
-				where id = '" . $_SESSION['session_user_id'] . "'
-				and username = '" . $_SESSION['session_username'] . "'
-				and email_address = '" . $_SESSION['session_email_address'] . "'";
+				where id = '$uid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		while ($row = mysql_fetch_object($result)) {

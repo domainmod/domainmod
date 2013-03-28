@@ -40,6 +40,13 @@
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/segment.php">Add A New Segment</a>
 <?php } elseif ($software_section == "currencies") { ?>
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/currency.php">Add A New Currency</a>
+<?php } elseif ($software_section == "system") { ?>
+
+			<?php if ($_SESSION['session_is_admin'] == 1) { ?>
+             &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/list-users.php">User List</a>
+             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/add-user.php">Add New User</a>
+            <?php } ?>
+
 <?php } elseif ($software_section == "bulkactions") { ?>
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/bulk-actions.php">Reset Bulk Action</a>
 <?php } elseif ($software_section == "help") { ?>
