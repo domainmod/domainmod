@@ -18,6 +18,10 @@
 <?php
 session_start();
 
+// If the user isn't an administrator, redirect them to $full_redirect
+$full_redirect = "index.php";
+include("../_includes/auth/admin-user-check.inc.php");
+
 $generating_test_data = $_GET['generating_test_data'];
 
 include("../config.inc.php");

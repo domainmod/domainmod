@@ -35,13 +35,14 @@ $software_section = "system";
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 &raquo; <a href="change-password.php">Change Password</a><BR><BR> 
-&raquo; <a href="update-exchange-rates.php">Update Exchange Rates</a> / <a href="update-database.php">Update Database</a><BR><BR> 
-&raquo; <a href="../_includes/system/fix-domain-fees.php">Fix Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-tlds.php">Fix TLDs</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-ssl-fees.php">Fix SSL Fees</a><BR><BR> 
-&raquo; <a href="../_includes/system/test-data-delete.php?generating_test_data=1">Regenerate Test Data</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/test-data-delete.php">Delete Test Data</a>
+&raquo; <a href="update-exchange-rates.php">Update Exchange Rates</a><BR><BR>
+&raquo; <a href="../_includes/system/fix-domain-fees.php">Fix Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-tlds.php">Fix TLDs</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-ssl-fees.php">Fix SSL Fees</a>
 <BR>
 <?php if ($_SESSION['session_is_admin'] == 1) { ?>
 	<BR><h3>Admin Tools</h3>
-	&raquo; <a href="admin/list-users.php">User List</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/add/user.php">Add New User</a>
+	&raquo; <a href="admin/list-users.php">User List</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/add/user.php">Add New User</a><BR><BR>
+	&raquo; <a href="update-database.php">Check For Database  Updates</a><BR><BR> 
+	&raquo; <a href="../_includes/system/test-data-delete.php?generating_test_data=1">Regenerate Test Data</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/test-data-delete.php">Delete Test Data</a>
 <?php } ?>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
