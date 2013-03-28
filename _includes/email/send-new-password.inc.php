@@ -55,13 +55,23 @@ $message .= "
 			$message .= "else to guess.<BR>";
 			$message .= "<BR>";
 
+			if ($_SERVER['HTTPS'] == "on") {
+
+				$prefix = "https://";
+
+			} else {
+
+				$prefix = "http://";
+
+			}
+			
 			if ($web_root == "/") {
 
-				$message .= "URL: <a target=\"_blank\" href=\"" . $_SERVER["HTTP_ORIGIN"] . "\">" . $_SERVER["HTTP_ORIGIN"] . "</a><BR>";
+				$message .= "URL: <a target=\"_blank\" href=\"" . $prefix . $_SERVER["HTTP_HOST"] . "\">" . $prefix . $_SERVER["HTTP_HOST"] . "</a><BR>";
 				
 			} else {
 
-				$message .= "URL: <a target=\"_blank\" href=\"" . $_SERVER["HTTP_ORIGIN"] . $web_root . "/\">" . $_SERVER["HTTP_ORIGIN"] . $web_root . "/</a><BR>";
+				$message .= "URL: <a target=\"_blank\" href=\"" . $prefix . $_SERVER["HTTP_HOST"] . $web_root . "/\">" . $prefix . $_SERVER["HTTP_HOST"] . $web_root . "/</a><BR>";
 
 			}
 
@@ -91,7 +101,7 @@ $message .= "
 			$message .= "<BR>";
 			$message .= "If you did not request this yourself, it sounds like somebody might be trying to gain access ";
 			$message .= "to your account. This might be a good time to reset your password again just to be safe. <BR>";
-			$message .= "<a target=\"_blank\" href=\"" . $_SERVER["HTTP_REFERER"] . "\">" . $_SERVER["HTTP_REFERER"] . "</a>";
+			$message .= "<a target=\"_blank\" href=\"" . $prefix . $_SERVER["HTTP_HOST"] . $web_root . "/reset-password.php\">" . $prefix . $_SERVER["HTTP_HOST"] . $web_root . "/reset-password.php</a>";
 			
 			$message .= "<BR></font></td>
 

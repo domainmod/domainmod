@@ -18,19 +18,23 @@
 <?php
 session_start();
 
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/login-check.inc.php");
+// If the user isn't an administrator, redirect them to $full_redirect
+$full_redirect = "index.php";
+include("../../_includes/auth/admin-user-check.inc.php");
+
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
 
 $page_title = "Reset Password";
-$software_section = "resetpassword";
+$software_section = "system";
 
-$new_username = $_REQUEST['new_username'];
+$new_username = $_GET['new_username'];
 
 if ($new_username != "") {
 
-   $sql = "select username, email_address
+   $sql = "select id, username, email_address
            from users
 		   where username = '$new_username'
 		   and active = '1'";
@@ -52,11 +56,11 @@ if ($new_username != "") {
 					 and email_address = '$row->email_address'";
 			$result2 = mysql_query($sql2,$connection);
 			
-			include("_includes/email/send-new-password.inc.php");
+			include("../../_includes/email/send-new-password.inc.php");
 					
-			$_SESSION['session_result_message'] .= "Your new password has been emailed to you.<BR>";
+			$_SESSION['session_result_message'] .= "The password has been reset and emailed to the account holder.<BR>";
 			
-			header("Location: index.php");
+			header("Location: edit/user.php?uid=$row->id");
 			exit;
 			
 		}
@@ -64,31 +68,22 @@ if ($new_username != "") {
 	} else {
 
 		$_SESSION['session_result_message'] .= "You have entered an invalid username.<BR>";
+
+		header("Location: list-users.php");
+		exit;
 		
 	}
 
 } else {
 
-	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-		if ($new_username == "") $_SESSION['session_result_message'] .= "Enter your username<BR>";
+		if ($new_username == "") $_SESSION['session_result_message'] .= "Enter the username.<BR>";
+
+		header("Location: list-users.php");
+		exit;
+
 	}
 
 }
 ?>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
-</head>
-<body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("_includes/header.inc.php"); ?>
-<BR>
-<form name="login_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Username:<strong><BR><BR><input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR><BR>
-<input type="submit" name="button" value="Reset Password &raquo;">
-</form>
-<?php include("_includes/footer.inc.php"); ?>
-</body>
-</html>

@@ -39,7 +39,7 @@ $software_section = "system";
 <body>
 <?php include("../../_includes/header.inc.php"); ?>
 <?php
-$sql = "select id, first_name, last_name, username, email_address
+$sql = "select id, first_name, last_name, username, email_address, admin
 		from users
 		where active = '1'
 		order by first_name asc, last_name asc";
@@ -68,7 +68,7 @@ if (mysql_num_rows($result) > 0) { ?>
     
             <tr height="20">
                 <td>
-                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a>
+                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a>
                 </td>
                 <td>
                     <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
@@ -114,7 +114,7 @@ if (mysql_num_rows($result) > 0) { ?>
     
             <tr height="20">
                 <td>
-                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a>
+                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a>
                 </td>
                 <td>
                     <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
@@ -129,6 +129,7 @@ if (mysql_num_rows($result) > 0) { ?>
 	</table>
 	<?php 
 } ?>
+<BR><font color="#DD0000"><strong>*</strong></font> = Admin Account
 <?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>
