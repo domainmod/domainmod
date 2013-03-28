@@ -33,11 +33,11 @@ NOTE: Whenever possible we recommend that you use option #1, the git repository 
 
     If you downloaded the source code in the previous step, you will now need to upload the archive to your server and then unpack it into the folder where you wish to install.  
 
-2. Create a MySQL database that will be used to store the Domain Manager information  
+2. Create a MySQL database that will be used to store the Domain Manager information.  
 
-3. In the '_includes' folder, copy config.SAMPLE.inc.php to config.inc.php and then update config.inc.php to reflect your server's settings  
+3. In the '_includes' folder, copy config.SAMPLE.inc.php to config.inc.php and then update config.inc.php to reflect your server's settings.  
 
-4. In a web browser, visit the URL where you just installed the Domain Manager, followed by /install/. So if you installed to http://aysmedia.com/dm/, point your web browser to http://aysmedia.com/dm/install/.  
+4. In a web browser, visit the URL where you just installed the Domain Manager. For Example, http://aysmedia.com/dm/ or http://aysmedia.com/domainmanager/.  
 
 5. After a few seconds a message should appear letting you know that the installation was successful.
 
