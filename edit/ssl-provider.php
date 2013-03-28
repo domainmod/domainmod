@@ -220,7 +220,6 @@ $sql = "select concat(sslcf.function, ' (', sslct.type, ')') as full_tf_string
 		from ssl_certs as sslc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
 		where sslc.type_id = sslct.id
 		and sslc.function_id = sslcf.id
-		and sslc.active = '1'
 		and sslc.ssl_provider_id = '$sslpid'
 		group by full_tf_string
 		order by full_tf_string asc";
@@ -238,7 +237,6 @@ $sql = "select concat(sslcf.function, ' (', sslct.type, ')') as full_tf_string
 		from ssl_certs as sslc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
 		where sslc.type_id = sslct.id
 		and sslc.function_id = sslcf.id
-		and sslc.active = '1'
 		and sslc.ssl_provider_id = '$sslpid'
 		and sslc.fee_id = '0'
 		group by full_tf_string
