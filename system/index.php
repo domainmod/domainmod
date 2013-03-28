@@ -41,7 +41,7 @@ $software_section = "system";
 <BR>
 <?php if ($_SESSION['session_is_admin'] == 1) { ?>
 	<BR><h3>Admin Tools</h3>
-	&raquo; <a href="admin/list-users.php">User List</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/add-user.php">Add New User</a>
+	&raquo; <a href="admin/list-users.php">User List</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/add/user.php">Add New User</a>
 <?php } ?>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>

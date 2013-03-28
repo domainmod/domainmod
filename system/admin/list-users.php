@@ -52,7 +52,7 @@ if (mysql_num_rows($result) > 0) { ?>
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr height="30">
-            <td width="250">
+            <td width="200">
                 <font class="subheadline">Name</font>
             </td>
             <td width="150">
@@ -68,13 +68,13 @@ if (mysql_num_rows($result) > 0) { ?>
     
             <tr height="20">
                 <td>
-                    <a class="subtlelink" href="edit-profile.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a>
+                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a>
                 </td>
                 <td>
-                    <a class="subtlelink" href="edit-profile.php?uid=<?=$row->id?>"><?=$row->username?></a>
+                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
                 </td>
                 <td>
-                    <a class="subtlelink" href="edit-profile.php?uid=<?=$row->id?>"><?=$row->email_address?></a>
+                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->email_address?></a>
                 </td>
             </tr>
         <?php 
@@ -98,7 +98,7 @@ if (mysql_num_rows($result) > 0) { ?>
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr height="30">
-            <td width="250">
+            <td width="200">
                 <font class="subheadline">Name</font>
             </td>
             <td width="150">
@@ -114,13 +114,13 @@ if (mysql_num_rows($result) > 0) { ?>
     
             <tr height="20">
                 <td>
-                    <a class="subtlelink" href="edit-profile.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a>
+                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a>
                 </td>
                 <td>
-                    <a class="subtlelink" href="edit-profile.php?uid=<?=$row->id?>"><?=$row->username?></a>
+                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
                 </td>
                 <td>
-                    <a class="subtlelink" href="edit-profile.php?uid=<?=$row->id?>"><?=$row->email_address?></a>
+                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->email_address?></a>
                 </td>
             </tr>
         <?php 
