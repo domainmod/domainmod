@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <title><?=$software_title?> :: <?=$page_title?></title>
 <?php include("../_includes/head-tags.inc.php"); ?>
 </head>
-<body>
+<body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="form1" method="post" action="<?=$PHP_SELF?>">
 <strong>Host / Label:</strong><BR><BR>
@@ -94,7 +94,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 $sql_domain = "select id, domain
 				from domains
-				where active not in ('0', '10')
 				order by domain asc";
 $result_domain = mysql_query($sql_domain,$connection) or die(mysql_error());
 echo "<select name=\"new_domain_id\">";

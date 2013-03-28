@@ -168,7 +168,6 @@ if ($really_del == "1") {
 <?php
 $sql_domain = "select id, domain
 				from domains
-				where active not in ('0', '10')
 				order by domain asc";
 $result_domain = mysql_query($sql_domain,$connection) or die(mysql_error());
 echo "<select name=\"new_domain_id\">";
