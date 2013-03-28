@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$curid = $new_curid;
 		
-		$_SESSION['session_result_message'] = "Currency Updated<BR><BR><a href=\"https://code.aysmedia.com/prod/domainmanager/system/update-exchange-rates.php\">You should click here to update the exchange rates</a><BR>";
+		$_SESSION['session_result_message'] = "Currency Updated<BR><BR><a href=\"../system/update-exchange-rates.php\">You should click here to update the exchange rates</a><BR>";
 
 	} else {
 	
