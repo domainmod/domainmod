@@ -20,13 +20,13 @@ session_start();
 
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "index.php";
-include("../_includes/auth/admin-user-check.inc.php");
+include("../../_includes/auth/admin-user-check.inc.php");
 
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
-include("../_includes/auth/auth-check.inc.php");
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
 
 $page_title = "Edit Profile";
 $software_section = "system";
@@ -117,10 +117,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../../_includes/header.inc.php"); ?>
 <form name="change_password_form" method="post" action="<?=$PHP_SELF?>">
 <strong>First Name:</strong><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") echo $new_first_name; ?>"><BR><BR>
 <strong>Last Name:</strong><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") echo $new_last_name; ?>"><BR><BR>
@@ -128,6 +128,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <strong>Email Address:</strong><BR><input name="new_email_address" type="text" size="50" maxlength="255" value="<?php if ($new_email_address != "") echo $new_email_address; ?>"><BR><BR>
 <input type="submit" name="button" value="Update Profile &raquo;">
 </form>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>

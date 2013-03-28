@@ -20,12 +20,12 @@ session_start();
 
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "index.php";
-include("../_includes/auth/admin-user-check.inc.php");
+include("../../_includes/auth/admin-user-check.inc.php");
 
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
 
 $page_title = "User List";
 $software_section = "system";
@@ -34,10 +34,10 @@ $software_section = "system";
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../../_includes/header.inc.php"); ?>
 <?php
 $sql = "select id, first_name, last_name, username, email_address
 		from users
@@ -129,6 +129,6 @@ if (mysql_num_rows($result) > 0) { ?>
 	</table>
 	<?php 
 } ?>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>
