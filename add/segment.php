@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_segment_formatted = preg_replace("/\r\n/", "','", $new_segment_formatted);
 		$new_segment_formatted = str_replace (" ", "", $new_segment_formatted);
 		$new_segment_formatted = trim($new_segment_formatted);
-		$new_segment_formatted = $new_segment_formatted;
+		$new_segment_formatted = mysql_real_escape_string($new_segment_formatted);
 
 		$sql = "insert into segments
 				(name, description, segment, number_of_domains, notes, insert_time)
