@@ -474,7 +474,7 @@ $result_ip = mysql_query($sql_ip,$connection);
 echo "<select name=\"ipid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&cid=$cid&dnsid=$dnsid&ipid=&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">IP Address - ALL</option>";
 while ($row_ip = mysql_fetch_object($result_ip)) { 
-	echo "<option value=\"$PHP_SELF?pcid=$pcid&cid=$cid&dnsid=$dnsid&ipid=$row_ip->id&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_ip->id == $ipid) echo " selected"; echo ">"; echo "$row_ip->name</option>";
+	echo "<option value=\"$PHP_SELF?pcid=$pcid&cid=$cid&dnsid=$dnsid&ipid=$row_ip->id&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_ip->id == $ipid) echo " selected"; echo ">"; echo "$row_ip->name ($row_ip->ip)</option>";
 } 
 echo "</select>";
 ?>
