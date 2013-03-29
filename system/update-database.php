@@ -28,8 +28,7 @@ $page_title = "Update Database";
 $software_section = "system";
 
 $sql = "SELECT db_version
-		FROM settings
-		WHERE type = 'system'";
+		FROM settings";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
