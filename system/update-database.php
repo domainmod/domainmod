@@ -182,6 +182,22 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	// upgrade database from 1.9 to 1.91
+	if ($current_db_version == 1.9) {
+
+		$sql = "ALTER TABLE `ip_addresses` 
+				ADD `rdns` VARCHAR(255) NOT NULL AFTER `ip`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "update settings
+				set db_version = '1.91',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 1.91;
+		
+	}
+
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 
 } else {

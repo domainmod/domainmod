@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "1.9";
+$most_recent_db_version = "1.91";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -390,6 +390,7 @@ if (mysql_num_rows($result) > 0) {
 	  `id` int(10) NOT NULL auto_increment,
 	  `name` varchar(255) NOT NULL,
 	  `ip` varchar(255) NOT NULL,
+	  `rdns` varchar(255) NOT NULL,
 	  `notes` longtext NOT NULL,
 	  `test_data` int(1) NOT NULL default '0',
 	  `insert_time` datetime NOT NULL,
@@ -401,8 +402,8 @@ if (mysql_num_rows($result) > 0) {
 	
 	$sql = "
 	INSERT INTO `ip_addresses` 
-		(`id`, `name`, `ip`, `insert_time`) VALUES
-		('1', '[no ip address]', '-', '$current_timestamp');
+		(`id`, `name`, `ip`, `rdns`, `insert_time`) VALUES
+		('1', '[no ip address]', '-', '-', '$current_timestamp');
 	";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
