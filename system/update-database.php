@@ -27,8 +27,9 @@ include("../_includes/auth/auth-check.inc.php");
 $page_title = "Update Database";
 $software_section = "system";
 
-$sql = "select db_version
-		from settings";
+$sql = "SELECT db_version
+		FROM settings
+		WHERE type = 'system'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
@@ -44,8 +45,8 @@ if ($current_db_version < $most_recent_db_version) {
 				ADD `ip` VARCHAR(50) NOT NULL AFTER `name`";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$sql = "update settings
-				set db_version = '1.2', 
+		$sql = "UPDATE settings
+				SET db_version = '1.2', 
 					update_time = '$current_timestamp'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -66,8 +67,8 @@ if ($current_db_version < $most_recent_db_version) {
 				) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$sql = "update settings
-				set db_version = '1.3', 
+		$sql = "UPDATE settings
+				SET db_version = '1.3', 
 					update_time = '$current_timestamp'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -82,8 +83,8 @@ if ($current_db_version < $most_recent_db_version) {
 				ADD `notes` longtext NOT NULL AFTER `ip`";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$sql = "update settings
-				set db_version = '1.4', 
+		$sql = "UPDATE settings
+				SET db_version = '1.4', 
 					update_time = '$current_timestamp'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -99,8 +100,8 @@ if ($current_db_version < $most_recent_db_version) {
 				AFTER `dns_id`";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$sql = "update settings
-				set db_version = '1.5', 
+		$sql = "UPDATE settings
+				SET db_version = '1.5', 
 					update_time = '$current_timestamp'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -125,8 +126,8 @@ if ($current_db_version < $most_recent_db_version) {
 										   ('1', '[no ip address]', '-', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$sql = "update settings
-				set db_version = '1.6', 
+		$sql = "UPDATE settings
+				SET db_version = '1.6', 
 					update_time = '$current_timestamp'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -140,8 +141,8 @@ if ($current_db_version < $most_recent_db_version) {
 		$sql = "ALTER TABLE `ssl_certs` DROP `ip`;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$sql = "update settings
-				set db_version = '1.7', 
+		$sql = "UPDATE settings
+				SET db_version = '1.7', 
 					update_time = '$current_timestamp'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -156,8 +157,8 @@ if ($current_db_version < $most_recent_db_version) {
 				ADD `test_data` int(1) NOT NULL default '0' AFTER `notes`";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$sql = "update settings
-				set db_version = '1.8', 
+		$sql = "UPDATE settings
+				SET db_version = '1.8', 
 					update_time = '$current_timestamp'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -172,8 +173,8 @@ if ($current_db_version < $most_recent_db_version) {
 				ADD `email_address` VARCHAR(255) NOT NULL AFTER `db_version`";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$sql = "update settings
-				set db_version = '1.9', 
+		$sql = "UPDATE settings
+				SET db_version = '1.9', 
 					email_address = 'code@aysmedia.com',
 					update_time = '$current_timestamp'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -189,12 +190,33 @@ if ($current_db_version < $most_recent_db_version) {
 				ADD `rdns` VARCHAR(255) NOT NULL DEFAULT '-' AFTER `ip`;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$sql = "update settings
-				set db_version = '1.91',
+		$sql = "UPDATE settings
+				SET db_version = '1.91',
 					update_time = '$current_timestamp'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.91;
+		
+	}
+
+	// upgrade database from 1.91 to 1.92
+	if ($current_db_version == 1.91) {
+
+		$sql = "ALTER TABLE `settings` 
+				ADD `type` VARCHAR(50) NOT NULL AFTER `id`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE settings 
+				SET type =  'system'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "UPDATE settings
+				SET db_version = '1.92',
+					update_time = '$current_timestamp'
+				WHERE type = 'system'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 1.92;
 		
 	}
 
