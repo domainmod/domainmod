@@ -29,385 +29,357 @@ include("../auth/auth-check.inc.php");
 include("../timestamps/current-timestamp-basic.inc.php");
 include("../timestamps/current-timestamp.inc.php");
 
-$sql = "
-INSERT INTO `categories` 
-	(`name`, `owner`, `notes`, `test_data`, `insert_time`) VALUES
-	('AYS Media Domains', 'AYS Media Domain Administrator', '$current_timestamp_basic - Category ''AYS Media Domains'' Added', '1', '$current_timestamp'),
-	('Dummy Domains', 'Dummy Domain Administrator', '$current_timestamp_basic - Category ''Dummy Domains'' Added', '1', '$current_timestamp');
-";
+$sql = "INSERT INTO `categories` 
+		(`name`, `owner`, `notes`, `test_data`, `insert_time`) VALUES
+		('AYS Media Domains', 'AYS Media Domain Administrator', '$current_timestamp_basic - Category ''AYS Media Domains'' Added', '1', '$current_timestamp'),
+		('Dummy Domains', 'Dummy Domain Administrator', '$current_timestamp_basic - Category ''Dummy Domains'' Added', '1', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "
-INSERT INTO `companies` 
-	(`name`, `notes`, `test_data`, `insert_time`) VALUES
-	('AYS Media', '$current_timestamp_basic - Company ''AYS Media'' Added', '1', '$current_timestamp'),
-	('Dummy Media', '$current_timestamp_basic - Company ''Dummy Media'' Added', '1', '$current_timestamp');
-";
+$sql = "INSERT INTO `companies` 
+		(`name`, `notes`, `test_data`, `insert_time`) VALUES
+		('AYS Media', '$current_timestamp_basic - Company ''AYS Media'' Added', '1', '$current_timestamp'),
+		('Dummy Media', '$current_timestamp_basic - Company ''Dummy Media'' Added', '1', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "
-INSERT INTO `dns` 
-	(`name`, `dns1`, `dns2`, `dns3`, `dns4`, `notes`, `number_of_servers`, `test_data`, `insert_time`) VALUES
-	('AYS Media DNS', 'ns1o.aysmedia.com', 'ns2o.aysmedia.com', '', '', '$current_timestamp_basic - DNS Profile ''AYS Media DNS'' Added', '2', '1', '$current_timestamp'),
-	('Dummy DNS', 'ns1d.aysmedia.com', 'ns2d.aysmedia.com', 'ns3d.aysmedia.com', 'ns4d.aysmedia.com', '$current_timestamp_basic - DNS Profile ''Dummy DNS'' Added', '4', '1', '$current_timestamp');
-";
+$sql = "INSERT INTO `dns` 
+		(`name`, `dns1`, `dns2`, `dns3`, `dns4`, `notes`, `number_of_servers`, `test_data`, `insert_time`) VALUES
+		('AYS Media DNS', 'ns1o.aysmedia.com', 'ns2o.aysmedia.com', '', '', '$current_timestamp_basic - DNS Profile ''AYS Media DNS'' Added', '2', '1', '$current_timestamp'),
+		('Dummy DNS', 'ns1d.aysmedia.com', 'ns2d.aysmedia.com', 'ns3d.aysmedia.com', 'ns4d.aysmedia.com', '$current_timestamp_basic - DNS Profile ''Dummy DNS'' Added', '4', '1', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "
-INSERT INTO `registrars` 
-	(`name`, `url`, `notes`, `test_data`, `insert_time`) VALUES
-	('AYS Media Registrar', 'http://aysmedia.com', '$current_timestamp_basic - Registrar Account ''AYS Media Registrar'' Added', '1', '$current_timestamp'),
-	('Dummy Registrar', 'http://aysmedia.ca', '$current_timestamp_basic - Registrar Account ''Dummy Registrar'' Added', '1', '$current_timestamp');
-";
+$sql = "INSERT INTO `registrars` 
+		(`name`, `url`, `notes`, `test_data`, `insert_time`) VALUES
+		('AYS Media Registrar', 'http://aysmedia.com', '$current_timestamp_basic - Registrar Account ''AYS Media Registrar'' Added', '1', '$current_timestamp'),
+		('Dummy Registrar', 'http://aysmedia.ca', '$current_timestamp_basic - Registrar Account ''Dummy Registrar'' Added', '1', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "select id
-		from registrars
-		where name = 'AYS Media Registrar'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM registrars
+		WHERE name = 'AYS Media Registrar'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $registrar_id[1] = $row->id; }
 
-$sql = "select id
-		from registrars
-		where name = 'Dummy Registrar'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM registrars
+		WHERE name = 'Dummy Registrar'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $registrar_id[2] = $row->id; }
 
-$sql = "
-INSERT INTO `fees` 
-	(`registrar_id`, `tld`, `initial_fee`, `renewal_fee`, `currency_id`, `test_data`, `fee_fixed`, `insert_time`) VALUES
-	('" . $registrar_id[1] . "', 'com', '9.95', '9.95', '2', '1', '1', '$current_timestamp'),
-	('" . $registrar_id[1] . "', 'ca', '9.95', '9.95', '2', '1', '1', '$current_timestamp'),
-	('" . $registrar_id[2] . "', 'com', '9.95', '9.95', '2', '1', '1', '$current_timestamp');
-";
+$sql = "INSERT INTO `fees` 
+		(`registrar_id`, `tld`, `initial_fee`, `renewal_fee`, `currency_id`, `test_data`, `fee_fixed`, `insert_time`) VALUES
+		('" . $registrar_id[1] . "', 'com', '9.95', '9.95', '2', '1', '1', '$current_timestamp'),
+		('" . $registrar_id[1] . "', 'ca', '9.95', '9.95', '2', '1', '1', '$current_timestamp'),
+		('" . $registrar_id[2] . "', 'com', '9.95', '9.95', '2', '1', '1', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "
-INSERT INTO `ssl_providers` 
-	(`name`, `url`, `notes`, `test_data`, `insert_time`) VALUES
-	('AYS Media SSL', 'http://aysmedia.com', '$current_timestamp_basic - SSL Provider ''AYS Media SSL'' Added', '1', '$current_timestamp'),
-	('Dummy SSL', 'http://aysmedia.com', '$current_timestamp_basic - SSL Provider ''Dummy SSL'' Added', '1', '$current_timestamp');
-";
+$sql = "INSERT INTO `ssl_providers` 
+		(`name`, `url`, `notes`, `test_data`, `insert_time`) VALUES
+		('AYS Media SSL', 'http://aysmedia.com', '$current_timestamp_basic - SSL Provider ''AYS Media SSL'' Added', '1', '$current_timestamp'),
+		('Dummy SSL', 'http://aysmedia.com', '$current_timestamp_basic - SSL Provider ''Dummy SSL'' Added', '1', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "select id
-		from ssl_providers
-		where name = 'AYS Media SSL'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM ssl_providers
+		WHERE name = 'AYS Media SSL'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_provider_id[1] = $row->id; }
 
-$sql = "select id
-		from ssl_providers
-		where name = 'Dummy SSL'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM ssl_providers
+		WHERE name = 'Dummy SSL'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_provider_id[2] = $row->id; }
 
-$sql = "
-INSERT INTO `ssl_fees` 
-	(`ssl_provider_id`, `type_id`, `function_id`, `initial_fee`, `renewal_fee`, `currency_id`, `test_data`, `fee_fixed`, `insert_time`) VALUES
-	('" . $ssl_provider_id[1] . "', '1', '1', '200', '200', '2', '1', '1', '$current_timestamp'),
-	('" . $ssl_provider_id[1] . "', '1', '3', '50', '50', '2', '1', '1', '$current_timestamp'),
-	('" . $ssl_provider_id[2] . "', '2', '1', '20', '20', '2', '1', '1', '$current_timestamp');
-";
+$sql = "INSERT INTO `ssl_fees` 
+		(`ssl_provider_id`, `type_id`, `function_id`, `initial_fee`, `renewal_fee`, `currency_id`, `test_data`, `fee_fixed`, `insert_time`) VALUES
+		('" . $ssl_provider_id[1] . "', '1', '1', '200', '200', '2', '1', '1', '$current_timestamp'),
+		('" . $ssl_provider_id[1] . "', '1', '3', '50', '50', '2', '1', '1', '$current_timestamp'),
+		('" . $ssl_provider_id[2] . "', '2', '1', '20', '20', '2', '1', '1', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "select id
-		from companies
-		where name = 'AYS Media'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM companies
+		WHERE name = 'AYS Media'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) { $company_id[1] = $row->id; }
 
-$sql = "select id
-		from companies
-		where name = 'Dummy Media'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM companies
+		WHERE name = 'Dummy Media'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) { $company_id[2] = $row->id; }
 
-$sql = "
-INSERT INTO `registrar_accounts` 
-	(`company_id`, `registrar_id`, `username`, `notes`, `reseller`, `test_data`, `insert_time`) VALUES
-	('" . $company_id[1] . "', '" . $registrar_id[1] . "', 'aysmedia', '$current_timestamp_basic - Registrar Account ''aysmedia'' Added', '0', '1', '$current_timestamp'),
-	('" . $company_id[2] . "', '" . $registrar_id[2] . "', 'dummy', '$current_timestamp_basic - Registrar Account ''dummy'' Added', '1', '1', '$current_timestamp');
-";
+$sql = "INSERT INTO `registrar_accounts` 
+		(`company_id`, `registrar_id`, `username`, `notes`, `reseller`, `test_data`, `insert_time`) VALUES
+		('" . $company_id[1] . "', '" . $registrar_id[1] . "', 'aysmedia', '$current_timestamp_basic - Registrar Account ''aysmedia'' Added', '0', '1', '$current_timestamp'),
+		('" . $company_id[2] . "', '" . $registrar_id[2] . "', 'dummy', '$current_timestamp_basic - Registrar Account ''dummy'' Added', '1', '1', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "
-INSERT INTO `ssl_accounts` 
-	(`company_id`, `ssl_provider_id`, `username`, `notes`, `reseller`, `test_data`, `insert_time`) VALUES
-	('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', 'aysmedia', '$current_timestamp_basic - SSL Account ''aysmedia'' Added', '0', '1', '$current_timestamp'),
-	('" . $company_id[2] . "', '" . $ssl_provider_id[2] . "', 'dummy', '$current_timestamp_basic - Registrar Account ''dummy'' Added', '1', '1', '$current_timestamp');
-";
+$sql = "INSERT INTO `ssl_accounts` 
+		(`company_id`, `ssl_provider_id`, `username`, `notes`, `reseller`, `test_data`, `insert_time`) VALUES
+		('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', 'aysmedia', '$current_timestamp_basic - SSL Account ''aysmedia'' Added', '0', '1', '$current_timestamp'),
+		('" . $company_id[2] . "', '" . $ssl_provider_id[2] . "', 'dummy', '$current_timestamp_basic - Registrar Account ''dummy'' Added', '1', '1', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "
-INSERT INTO `segments` 
-	(`name`, `description`, `segment`, `number_of_domains`, `notes`, `test_data`, `insert_time`) VALUES 
-	('AYS Media Segment', 'This is a test segment that includes some AYS Media domains.', '''aysmedia.com'',''aysmedia.ca'',''aysprivacy.com''', '3', '$current_timestamp_basic - Segment ''AYS Media Segment'' Added', '1', '$current_timestamp'),
-	('Dummy Segment', 'This is a test segment that includes some AYS Media dummy domains.', '''test1-dm.com'',''test2-dm.com'',''test3-dm.com'',''test4-dm.com'',''test5-dm.com''', '5', '$current_timestamp_basic - Segment ''Dummy Segment'' Added', '1', '$current_timestamp');
-";
+$sql = "INSERT INTO `segments` 
+		(`name`, `description`, `segment`, `number_of_domains`, `notes`, `test_data`, `insert_time`) VALUES 
+		('AYS Media Segment', 'This is a test segment that includes some AYS Media domains.', '''aysmedia.com'',''aysmedia.ca'',''aysprivacy.com''', '3', '$current_timestamp_basic - Segment ''AYS Media Segment'' Added', '1', '$current_timestamp'),
+		('Dummy Segment', 'This is a test segment that includes some AYS Media dummy domains.', '''test1-dm.com'',''test2-dm.com'',''test3-dm.com'',''test4-dm.com'',''test5-dm.com''', '5', '$current_timestamp_basic - Segment ''Dummy Segment'' Added', '1', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "select id
-		from registrar_accounts
-		where username = 'aysmedia'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM registrar_accounts
+		WHERE username = 'aysmedia'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $registrar_account_id[1] = $row->id; }
 
-$sql = "select id
-		from registrar_accounts
-		where username = 'dummy'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM registrar_accounts
+		WHERE username = 'dummy'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $registrar_account_id[2] = $row->id; }
 
-$sql = "select id
-		from ssl_accounts
-		where username = 'aysmedia'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM ssl_accounts
+		WHERE username = 'aysmedia'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_account_id[1] = $row->id; }
 
-$sql = "select id
-		from ssl_accounts
-		where username = 'dummy'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM ssl_accounts
+		WHERE username = 'dummy'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_account_id[2] = $row->id; }
 
-$sql = "select id
-		from categories
-		where name = 'AYS Media Domains'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM categories
+		WHERE name = 'AYS Media Domains'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $category_id[1] = $row->id; }
 
-$sql = "select id
-		from categories
-		where name = 'Dummy Domains'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM categories
+		WHERE name = 'Dummy Domains'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $category_id[2] = $row->id; }
 
-$sql = "select id
-		from fees
-		where registrar_id = '" . $registrar_id[1] . "'
-		and tld = 'com'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM fees
+		WHERE registrar_id = '" . $registrar_id[1] . "'
+		AND tld = 'com'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $fee_id[1] = $row->id; }
 
-$sql = "select id
-		from fees
-		where registrar_id = '" . $registrar_id[1] . "'
-		and tld = 'ca'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM fees
+		WHERE registrar_id = '" . $registrar_id[1] . "'
+		AND tld = 'ca'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $fee_id[2] = $row->id; }
 
-$sql = "select id
-		from fees
-		where registrar_id = '" . $registrar_id[2] . "'
-		and tld = 'com'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM fees
+		WHERE registrar_id = '" . $registrar_id[2] . "'
+		AND tld = 'com'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $fee_id[3] = $row->id; }
 
-$sql = "select id
-		from ssl_fees
-		where ssl_provider_id = '" . $ssl_provider_id[1] . "'
-		and type_id = '1'
-		and function_id = '1'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM ssl_fees
+		WHERE ssl_provider_id = '" . $ssl_provider_id[1] . "'
+		AND type_id = '1'
+		AND function_id = '1'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_fee_id[1] = $row->id; }
 
-$sql = "select id
-		from ssl_fees
-		where ssl_provider_id = '" . $ssl_provider_id[1] . "'
-		and type_id = '1'
-		and function_id = '3'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM ssl_fees
+		WHERE ssl_provider_id = '" . $ssl_provider_id[1] . "'
+		AND type_id = '1'
+		AND function_id = '3'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_fee_id[2] = $row->id; }
 
-$sql = "select id
-		from ssl_fees
-		where ssl_provider_id = '" . $ssl_provider_id[2] . "'
-		and type_id = '2'
-		and function_id = '1'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM ssl_fees
+		WHERE ssl_provider_id = '" . $ssl_provider_id[2] . "'
+		AND type_id = '2'
+		AND function_id = '1'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_fee_id[3] = $row->id; }
 
-$sql = "select id
-		from dns
-		where name = 'AYS Media DNS'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM dns
+		WHERE name = 'AYS Media DNS'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $dns_id[1] = $row->id; }
 
-$sql = "select id
-		from dns
-		where name = 'Dummy DNS'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM dns
+		WHERE name = 'Dummy DNS'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $dns_id[2] = $row->id; }
 
-$sql = "
-INSERT INTO `domains`
-	(`company_id`, `registrar_id`, `account_id`, `domain`, `tld`, `expiry_date`, `cat_id`, `fee_id`, `dns_id`, `function`, `status`, `status_notes`, `notes`, `privacy`, `active`, `test_data`, `fee_fixed`, `insert_time`) VALUES 
-	('" . $company_id[1] . "', '" . $registrar_id[1] . "', '" . $registrar_account_id[1] . "', 'aysmedia.com', 'com', '2011-01-23', '" . $category_id[1] . "', '" . $fee_id[1] . "', '" . $dns_id[1] . "', 'Live Site', 'Active', '$current_timestamp_basic - ''aysmedia.com'' Went Live', '$current_timestamp_basic - Domain ''aysmedia.com'' Added', '1', '1', '1', '1', '$current_timestamp'),
-	('" . $company_id[1] . "', '" . $registrar_id[1] . "', '" . $registrar_account_id[1] . "', 'aysmedia.ca', 'ca', '2011-01-24', '" . $category_id[1] . "', '" . $fee_id[2] . "', '" . $dns_id[1] . "', 'Redirect', 'Active (aysmedia.com)', '$current_timestamp_basic - ''aysmedia.ca'' Went Live', '$current_timestamp_basic - Domain ''aysmedia.ca'' Added', '1', '5', '1', '1', '$current_timestamp'),
-	('" . $company_id[1] . "', '" . $registrar_id[1] . "', '" . $registrar_account_id[1] . "', 'aysprivacy.com', 'com', '2011-01-25', '" . $category_id[1] . "', '" . $fee_id[1] . "', '" . $dns_id[1] . "', 'Redirect', 'Active (aysmedia.com)', '$current_timestamp_basic - ''aysprivacy.com'' Went Live', '$current_timestamp_basic - Domain ''aysprivacy.com'' Added', '1', '4', '1', '1', '$current_timestamp')
-	";
+$sql = "INSERT INTO `domains`
+		(`company_id`, `registrar_id`, `account_id`, `domain`, `tld`, `expiry_date`, `cat_id`, `fee_id`, `dns_id`, `function`, `status`, `status_notes`, `notes`, `privacy`, `active`, `test_data`, `fee_fixed`, `insert_time`) VALUES 
+		('" . $company_id[1] . "', '" . $registrar_id[1] . "', '" . $registrar_account_id[1] . "', 'aysmedia.com', 'com', '2011-01-23', '" . $category_id[1] . "', '" . $fee_id[1] . "', '" . $dns_id[1] . "', 'Live Site', 'Active', '$current_timestamp_basic - ''aysmedia.com'' Went Live', '$current_timestamp_basic - Domain ''aysmedia.com'' Added', '1', '1', '1', '1', '$current_timestamp'),
+		('" . $company_id[1] . "', '" . $registrar_id[1] . "', '" . $registrar_account_id[1] . "', 'aysmedia.ca', 'ca', '2011-01-24', '" . $category_id[1] . "', '" . $fee_id[2] . "', '" . $dns_id[1] . "', 'Redirect', 'Active (aysmedia.com)', '$current_timestamp_basic - ''aysmedia.ca'' Went Live', '$current_timestamp_basic - Domain ''aysmedia.ca'' Added', '1', '5', '1', '1', '$current_timestamp'),
+		('" . $company_id[1] . "', '" . $registrar_id[1] . "', '" . $registrar_account_id[1] . "', 'aysprivacy.com', 'com', '2011-01-25', '" . $category_id[1] . "', '" . $fee_id[1] . "', '" . $dns_id[1] . "', 'Redirect', 'Active (aysmedia.com)', '$current_timestamp_basic - ''aysprivacy.com'' Went Live', '$current_timestamp_basic - Domain ''aysprivacy.com'' Added', '1', '4', '1', '1', '$current_timestamp')";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "select id
-		from domains
-		where domain = 'aysmedia.com'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM domains
+		WHERE domain = 'aysmedia.com'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[1] = $row->id; }
 
-$sql = "select id
-		from domains
-		where domain = 'aysmedia.ca'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM domains
+		WHERE domain = 'aysmedia.ca'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[2] = $row->id; }
 
-$sql = "select id
-		from domains
-		where domain = 'aysprivacy.com'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM domains
+		WHERE domain = 'aysprivacy.com'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[3] = $row->id; }
 
-$sql = "
-INSERT INTO `ssl_certs` 
-	(`company_id`, `ssl_provider_id`, `account_id`, `domain_id`, `type_id`, `function_id`, `name`, `expiry_date`, `fee_id`, `notes`, `active`, `test_data`, `fee_fixed`, `insert_time`) VALUES
-	('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', '" . $ssl_account_id[1] . "', '" . $domain_id[1] . "', '1', '1', '*.aysmedia.com', '2011-01-23', '" . $ssl_fee_id[1] . "', '$current_timestamp_basic - SSL Certificate ''*.aysmedia.com'' Added', '1', '1', '1', '$current_timestamp'),
-	('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', '" . $ssl_account_id[1] . "', '" . $domain_id[2] . "', '1', '3', 'AYS Media', '2011-01-24', '" . $ssl_fee_id[2] . "', '$current_timestamp_basic - Code Signing Certificate ''AYS Media'' Added', '5', '1', '1', '$current_timestamp'),
-	('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', '" . $ssl_account_id[1] . "', '" . $domain_id[3] . "', '1', '1', '*.aysprivacy.com', '2011-01-25', '" . $ssl_fee_id[1] . "', '$current_timestamp_basic - SSL Certificate ''*.aysprivacy.com'' Added', '4', '1', '1', '$current_timestamp');
-";
+$sql = "INSERT INTO `ssl_certs` 
+		(`company_id`, `ssl_provider_id`, `account_id`, `domain_id`, `type_id`, `function_id`, `name`, `expiry_date`, `fee_id`, `notes`, `active`, `test_data`, `fee_fixed`, `insert_time`) VALUES
+		('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', '" . $ssl_account_id[1] . "', '" . $domain_id[1] . "', '1', '1', '*.aysmedia.com', '2011-01-23', '" . $ssl_fee_id[1] . "', '$current_timestamp_basic - SSL Certificate ''*.aysmedia.com'' Added', '1', '1', '1', '$current_timestamp'),
+		('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', '" . $ssl_account_id[1] . "', '" . $domain_id[2] . "', '1', '3', 'AYS Media', '2011-01-24', '" . $ssl_fee_id[2] . "', '$current_timestamp_basic - Code Signing Certificate ''AYS Media'' Added', '5', '1', '1', '$current_timestamp'),
+		('" . $company_id[1] . "', '" . $ssl_provider_id[1] . "', '" . $ssl_account_id[1] . "', '" . $domain_id[3] . "', '1', '1', '*.aysprivacy.com', '2011-01-25', '" . $ssl_fee_id[1] . "', '$current_timestamp_basic - SSL Certificate ''*.aysprivacy.com'' Added', '4', '1', '1', '$current_timestamp');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "
-INSERT INTO `ip_addresses` 
-	(`name`, `ip`, `notes`, `test_data`, `insert_time`, `update_time`) VALUES
-	('AYS, SITE - aysmedia.com', '69.167.168.205', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
-	('AYS, SITE - aysmedia.ca', '69.167.168.206', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
-	('AYS, SITE - aysprivacy.com', '69.167.168.207', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
-	('UNASSIGNED', '69.167.181.138', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
-	('UNASSIGNED', '69.167.181.139', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00');
-";
+$sql = "INSERT INTO `ip_addresses` 
+		(`name`, `ip`, `notes`, `test_data`, `insert_time`, `update_time`) VALUES
+		('AYS, SITE - aysmedia.com', '69.167.168.205', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
+		('AYS, SITE - aysmedia.ca', '69.167.168.206', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
+		('AYS, SITE - aysprivacy.com', '69.167.168.207', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
+		('UNASSIGNED', '69.167.181.138', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
+		('UNASSIGNED', '69.167.181.139', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "select id 
-		from ip_addresses 
-		where name = 'AYS, SITE - aysmedia.com' 
-		and insert_time = '2013-03-26 03:07:48'
-		and test_data = '1';";
+$sql = "SELECT id 
+		FROM ip_addresses 
+		WHERE name = 'AYS, SITE - aysmedia.com' 
+		AND insert_time = '2013-03-26 03:07:48'
+		AND test_data = '1';";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
 	$temp_ip_id = $row->id;
 }
 
-$sql = "update domains
+$sql = "UPDATE domains
 		set ip_id = '$temp_ip_id'
-		where domain = 'aysmedia.com'
-		and test_data = '1'";
+		WHERE domain = 'aysmedia.com'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "select id 
-		from ip_addresses 
-		where name = 'AYS, SITE - aysmedia.ca' 
-		and insert_time = '2013-03-26 03:07:48'
-		and test_data = '1';";
+$sql = "SELECT id 
+		FROM ip_addresses 
+		WHERE name = 'AYS, SITE - aysmedia.ca' 
+		AND insert_time = '2013-03-26 03:07:48'
+		AND test_data = '1';";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
 	$temp_ip_id = $row->id;
 }
 
-$sql = "update domains
+$sql = "UPDATE domains
 		set ip_id = '$temp_ip_id'
-		where domain = 'aysmedia.ca'
-		and test_data = '1'";
+		WHERE domain = 'aysmedia.ca'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "select id 
-		from ip_addresses 
-		where name = 'AYS, SITE - aysprivacy.com' 
-		and insert_time = '2013-03-26 03:07:48'
-		and test_data = '1';";
+$sql = "SELECT id 
+		FROM ip_addresses 
+		WHERE name = 'AYS, SITE - aysprivacy.com' 
+		AND insert_time = '2013-03-26 03:07:48'
+		AND test_data = '1';";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
 	$temp_ip_id = $row->id;
 }
 
-$sql = "update domains
+$sql = "UPDATE domains
 		set ip_id = '$temp_ip_id'
-		where domain = 'aysprivacy.com'
-		and test_data = '1'";
+		WHERE domain = 'aysprivacy.com'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $count = 1;
 
 while ($count <= $number_of_temp_domains) {
 	
-	$sql = "
-	INSERT INTO domains 
-		(`company_id`, `registrar_id`, `account_id`, `domain`, `tld`, `expiry_date`, `cat_id`, `fee_id`, `dns_id`, `function`, `status`, `status_notes`, `notes`, `privacy`, `test_data`, `fee_fixed`, `insert_time`) VALUES 
-		('" . $company_id[2] . "', '" . $registrar_id[2] . "', '" . $registrar_account_id[2] . "', 'test" . $count . "-dm.com', 'com', '2011-01-26', '" . $category_id[2] . "', '" . $fee_id[3] . "', '" . $dns_id[2] . "', 'Live Site', 'Inactive', '$current_timestamp_basic - ''test" . $count . "-dm.com'' Went Live', '$current_timestamp_basic - Domain ''test" . $count . "-dm.com'' Added', '0', '1', '1', '$current_timestamp')
-	";
+	$sql = "INSERT INTO domains 
+			(`company_id`, `registrar_id`, `account_id`, `domain`, `tld`, `expiry_date`, `cat_id`, `fee_id`, `dns_id`, `function`, `status`, `status_notes`, `notes`, `privacy`, `test_data`, `fee_fixed`, `insert_time`) VALUES 
+			('" . $company_id[2] . "', '" . $registrar_id[2] . "', '" . $registrar_account_id[2] . "', 'test" . $count . "-dm.com', 'com', '2011-01-26', '" . $category_id[2] . "', '" . $fee_id[3] . "', '" . $dns_id[2] . "', 'Live Site', 'Inactive', '$current_timestamp_basic - ''test" . $count . "-dm.com'' Went Live', '$current_timestamp_basic - Domain ''test" . $count . "-dm.com'' Added', '0', '1', '1', '$current_timestamp')";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$count++;
 
 }
 
-$sql = "select id
-		from domains
-		where domain = 'test1-dm.com'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM domains
+		WHERE domain = 'test1-dm.com'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[4] = $row->id; }
 
-$sql = "select id
-		from domains
-		where domain = 'test2-dm.com'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM domains
+		WHERE domain = 'test2-dm.com'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[5] = $row->id; }
 
-$sql = "select id
-		from domains
-		where domain = 'test3-dm.com'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM domains
+		WHERE domain = 'test3-dm.com'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[6] = $row->id; }
 
-$sql = "select id
-		from domains
-		where domain = 'test4-dm.com'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM domains
+		WHERE domain = 'test4-dm.com'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[7] = $row->id; }
 
-$sql = "select id
-		from domains
-		where domain = 'test5-dm.com'
-		and test_data = '1'";
+$sql = "SELECT id
+		FROM domains
+		WHERE domain = 'test5-dm.com'
+		AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[8] = $row->id; }
 
@@ -416,11 +388,9 @@ $count_secondary = 4;
 
 while ($count <= 5) {
 
-	$sql = "
-	INSERT INTO `ssl_certs` 
-		(`company_id`, `ssl_provider_id`, `account_id`, `domain_id`, `type_id`, `function_id`, `name`, `expiry_date`, `fee_id`, `notes`, `test_data`, `fee_fixed`, `insert_time`) VALUES 
-		('" . $company_id[2] . "', '" . $ssl_provider_id[2] . "', '" . $ssl_account_id[2] . "', '" . $domain_id[$count_secondary] . "', '2', '1', 'test" . $count . "-dm.com', '2011-01-26', '" . $ssl_fee_id[3] . "', '$current_timestamp_basic - SSL Certificate ''test" . $count . "-dm.com'' Added', '1', '1', '$current_timestamp');
-	";
+	$sql = "INSERT INTO `ssl_certs` 
+			(`company_id`, `ssl_provider_id`, `account_id`, `domain_id`, `type_id`, `function_id`, `name`, `expiry_date`, `fee_id`, `notes`, `test_data`, `fee_fixed`, `insert_time`) VALUES 
+			('" . $company_id[2] . "', '" . $ssl_provider_id[2] . "', '" . $ssl_account_id[2] . "', '" . $domain_id[$count_secondary] . "', '2', '1', 'test" . $count . "-dm.com', '2011-01-26', '" . $ssl_fee_id[3] . "', '$current_timestamp_basic - SSL Certificate ''test" . $count . "-dm.com'' Added', '1', '1', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$count++;

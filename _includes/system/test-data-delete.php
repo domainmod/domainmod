@@ -29,46 +29,46 @@ include("../database.inc.php");
 include("../software.inc.php");
 include("../auth/auth-check.inc.php");
 
-$sql = "delete from categories where test_data = '1'";
+$sql = "DELETE FROM categories WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "delete from companies where test_data = '1'";
+$sql = "DELETE FROM companies WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "delete from currencies where test_data = '1'";
+$sql = "DELETE FROM currencies WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "delete from dns where test_data = '1'";
+$sql = "DELETE FROM dns WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "delete from domains where test_data = '1'";
+$sql = "DELETE FROM domains WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "delete from ssl_certs where test_data = '1'";
+$sql = "DELETE FROM ssl_certs WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "delete from fees where test_data = '1'";
+$sql = "DELETE FROM fees WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "delete from ssl_fees where test_data = '1'";
+$sql = "DELETE FROM ssl_fees WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "delete from registrars where test_data = '1'";
+$sql = "DELETE FROM registrars WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "delete from registrar_accounts where test_data = '1'";
+$sql = "DELETE FROM registrar_accounts WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "delete from ssl_providers where test_data = '1'";
+$sql = "DELETE FROM ssl_providers WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "delete from ssl_accounts where test_data = '1'";
+$sql = "DELETE FROM ssl_accounts WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "delete from segments where test_data = '1'";
+$sql = "DELETE FROM segments WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "delete from ip_addresses where test_data = '1'";
+$sql = "DELETE FROM ip_addresses WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
 if ($generating_test_data == "1") {
