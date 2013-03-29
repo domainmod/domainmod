@@ -390,7 +390,7 @@ if (mysql_num_rows($result) > 0) {
 	  `id` int(10) NOT NULL auto_increment,
 	  `name` varchar(255) NOT NULL,
 	  `ip` varchar(255) NOT NULL,
-	  `rdns` varchar(255) NOT NULL,
+	  `rdns` varchar(255) NOT NULL default '-',
 	  `notes` longtext NOT NULL,
 	  `test_data` int(1) NOT NULL default '0',
 	  `insert_time` datetime NOT NULL,

@@ -30,6 +30,7 @@ $software_section = "ip-addresses";
 // Form Variables
 $new_name = $_POST['new_name'];
 $new_ip = $_POST['new_ip'];
+$new_rdns = $_POST['new_rdns'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -37,8 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_name != '' && $new_ip != '') {
 		
 		$sql = "insert into ip_addresses
-				(name, ip, notes, insert_time)
-				values ('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_ip) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
+				(name, ip, rdns, notes, insert_time)
+				values ('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_ip) . "', '" . mysql_real_escape_string($new_rdns) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -67,6 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR><BR>
 <strong>IP Address:</strong><BR><BR>
 <input name="new_ip" type="text" size="50" maxlength="255" value="<?=$new_ip?>">
+<BR><BR>
+<strong>rDNS:</strong><BR><BR>
+<input name="new_rdns" type="text" size="50" maxlength="255" value="<?=$new_rdns?>">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>

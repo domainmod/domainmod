@@ -37,7 +37,7 @@ $software_section = "ip-addresses";
 This is a breakdown of the IP Addresses that are currently in use.
 <BR><BR>
 <?php
-$sql = "select id, name, ip
+$sql = "select id, name, ip, rdns
 		from ip_addresses
 		where id in (select ip_id from domains where ip_id != '0' and active not in ('0','10') group by ip_id)
 		order by name asc";
@@ -53,8 +53,11 @@ if (mysql_num_rows($result) > 0) { ?>
             <td width="300">
                 <font class="subheadline">IP Name</font>
             </td>
-            <td width="200">
+            <td width="190">
                 <font class="subheadline">IP Address</font>
+            </td>
+            <td width="210">
+                <font class="subheadline">rDNS</font>
             </td>
             <td>
                 <font class="subheadline"># of Domains</font>
@@ -70,6 +73,9 @@ if (mysql_num_rows($result) > 0) { ?>
                 </td>
                 <td>
                     <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
+                </td>
+                <td>
+                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
                 </td>
                 <td>
                     <?php
@@ -92,7 +98,7 @@ if (mysql_num_rows($result) > 0) { ?>
 	<?php 
 } ?>
 <?php
-$sql = "select id, name, ip
+$sql = "select id, name, ip, rdns
 		from ip_addresses
 		where id not in (select ip_id from domains where ip_id != '0' and active not in ('0','10') group by ip_id)
 		order by name asc";
@@ -109,8 +115,11 @@ if (mysql_num_rows($result) > 0) { ?>
             <td width="300">
                 <font class="subheadline">IP Name</font>
             </td>
-            <td>
+            <td width="190">
                 <font class="subheadline">IP Address</font>
+            </td>
+            <td>
+                <font class="subheadline">rDNS</font>
             </td>
         </tr>
 
@@ -123,6 +132,9 @@ if (mysql_num_rows($result) > 0) { ?>
                 </td>
                 <td>
                     <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
+                </td>
+                <td>
+                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
                 </td>
             </tr>
 		<?php 

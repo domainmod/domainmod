@@ -186,7 +186,7 @@ if ($current_db_version < $most_recent_db_version) {
 	if ($current_db_version == 1.9) {
 
 		$sql = "ALTER TABLE `ip_addresses` 
-				ADD `rdns` VARCHAR(255) NOT NULL AFTER `ip`";
+				ADD `rdns` VARCHAR(255) NOT NULL DEFAULT '-' AFTER `ip`;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "update settings

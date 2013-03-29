@@ -32,6 +32,7 @@ $ipid = $_GET['ipid'];
 // Form Variables
 $new_name = $_POST['new_name'];
 $new_ip = $_POST['new_ip'];
+$new_rdns = $_POST['new_rdns'];
 $new_ipid = $_POST['new_ipid'];
 $new_notes = $_POST['new_notes'];
 
@@ -40,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql2 = "update ip_addresses
 				 set name = '" . mysql_real_escape_string($new_name) . "',
 				 	ip = '" . mysql_real_escape_string($new_ip) . "',
+				 	rdns = '" . mysql_real_escape_string($new_rdns) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					update_time = '$current_timestamp'
 				 where id = '$new_ipid'";
@@ -51,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select name, ip, notes
+	$sql = "select name, ip, rdns, notes
 			from ip_addresses
 			where id = '$ipid'";
 	$result = mysql_query($sql,$connection);
@@ -60,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		$new_name = $row->name;
 		$new_ip = $row->ip;
+		$new_rdns = $row->rdns;
 		$new_notes = $row->notes;
 	
 	}
@@ -80,6 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR><BR>
 <strong>IP Address:</strong><BR><BR>
 <input name="new_ip" type="text" size="50" maxlength="255" value="<?php if ($new_ip != "") echo $new_ip; ?>">
+<BR><BR>
+<strong>rDNS:</strong><BR><BR>
+<input name="new_rdns" type="text" size="50" maxlength="255" value="<?php if ($new_rdns != "") echo $new_rdns; ?>">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
