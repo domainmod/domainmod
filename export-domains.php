@@ -45,7 +45,7 @@ while ($row2 = mysql_fetch_object($result2)) {
 
 if ($export == "1") {
 
-	$sql = "select d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name as registrar_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion, cat.name as category_name, cat.owner as category_owner, dns.name as dns_profile, ip.name, ip.ip
+	$sql = "select d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name as registrar_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion, cat.name as category_name, cat.owner as category_owner, dns.name as dns_profile, ip.name, ip.ip, ip.rdns
 			from domains as d, registrar_accounts as ra, registrars as r, companies as c, fees as f, currencies as cc, categories as cat, dns, ip_addresses as ip
 			where d.account_id = ra.id
 			and ra.registrar_id = r.id
@@ -63,7 +63,7 @@ if ($export == "1") {
 
 } else {
 
-	$sql = "select d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name as registrar_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion, cat.name as category_name, cat.owner as category_owner, dns.name as dns_profile, ip.name, ip.ip
+	$sql = "select d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name as registrar_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion, cat.name as category_name, cat.owner as category_owner, dns.name as dns_profile, ip.name, ip.ip, ip.rdns
 			from domains as d, registrar_accounts as ra, registrars as r, companies as c, fees as f, currencies as cc, categories as cat, dns, ip_addresses as ip
 			where d.account_id = ra.id
 			and ra.registrar_id = r.id
@@ -91,7 +91,7 @@ if ($export == "1") {
 
 	$full_export .= "\"All prices are listed in $default_currency\"\n\n";
 
-	$full_export .= "\"DOMAIN STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"IP Address Name\",\"IP Address\",\"DNS Profile\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Owner\",\"Company\",\"Registrar\",\"Username\"\n";
+	$full_export .= "\"DOMAIN STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Owner\",\"Company\",\"Registrar\",\"Username\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
@@ -107,7 +107,7 @@ if ($export == "1") {
 		elseif ($row->active == "10") { $domain_status = "SOLD"; } 
 		else { $domain_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-DOMAINS.PHP"; } 
 
-		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$row->name\",\"$row->ip\",\"$row->dns_profile\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_owner\",\"$row->company_name\",\"$row->registrar_name\",\"$row->username\"\n";
+		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_owner\",\"$row->company_name\",\"$row->registrar_name\",\"$row->username\"\n";
 	}
 	
 	$full_export .= "\n";
