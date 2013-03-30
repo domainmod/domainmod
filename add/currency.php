@@ -99,7 +99,7 @@ while ($row = mysql_fetch_object($result)) {
 	$default_name = $row->name;
 }
 ?>
-<form name="form1" method="post" action="<?=$PHP_SELF?>">
+<form name="add_currency_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Name ("<em><?=$default_name?></em>"):</strong><BR><BR>
 <input name="new_name" type="text" value="<?=$new_name?>" size="50" maxlength="255">
 <BR><BR>

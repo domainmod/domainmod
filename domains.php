@@ -280,7 +280,7 @@ if ($segid != "") {
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="100%" class="search-table"><BR>
-<form name="form1" method="post" action="<?=$PHP_SELF?>">
+<form name="domain_search_form" method="post" action="<?=$PHP_SELF?>">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td class="search-table-inside" width="640">

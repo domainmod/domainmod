@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../../../_includes/header.inc.php"); ?>
-<form name="change_password_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_user_form" method="post" action="<?=$PHP_SELF?>">
 <strong>First Name:</strong><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") echo $new_first_name; ?>"><BR><BR>
 <strong>Last Name:</strong><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") echo $new_last_name; ?>"><BR><BR>
 <?php if ($new_username == "admin" || $new_username == "administrator") { ?>

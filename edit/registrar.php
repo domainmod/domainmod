@@ -207,7 +207,7 @@ while ($row = mysql_fetch_object($result)) {
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
-<form name="form1" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_registrar_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Registrar Name:</strong><BR><BR>
 <input name="new_registrar" type="text" value="<?php if ($new_registrar != "") echo $new_registrar; ?>" size="50" maxlength="255">
 <BR><BR>
@@ -262,7 +262,7 @@ if (mysql_num_rows($result) > 0) {
 }
 ?>
 <font class="headline">Add/Update TLD Fee</font><BR><BR>
-<form name="form1" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_registrar_fee_form" method="post" action="<?=$PHP_SELF?>">
 <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
     	<td width="200" valign="top"><strong>TLD</strong><BR><BR>

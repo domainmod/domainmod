@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
-<form name="form1" method="post" action="<?=$PHP_SELF?>">
+<form name="add_registrar_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Registrar Name:</strong><BR><BR>
 <input name="new_registrar" type="text" value="<?=$new_registrar?>" size="50" maxlength="255">
 <BR><BR>

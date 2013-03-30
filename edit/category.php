@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
-<form name="form1" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_category_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Category Name:</strong><BR><BR>
 <input name="new_category" type="text" value="<?php if ($new_category != "") echo $new_category; ?>
 " size="50" maxlength="255">

@@ -146,7 +146,7 @@ Before exporting your domains you should <a href="system/update-exchange-rates.p
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td class="search-table-inside">
-<form name="form1" method="post" action="<?=$PHP_SELF?>">
+<form name="export_domains_form" method="post" action="<?=$PHP_SELF?>">
 Expiring Between 
   <input name="new_expiry_start" type="text" size="10" maxlength="10" <?php if ($new_expiry_start == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_start\""; } ?>> 
   and 

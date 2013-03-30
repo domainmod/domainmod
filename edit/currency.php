@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
-<form name="form1" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_currency_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Name:</strong><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?=$new_name?>">
 <BR><BR>

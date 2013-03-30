@@ -171,7 +171,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
-<form name="form1" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_domain_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Domain:</strong><BR><BR>
 <input name="new_domain" type="text" size="50" maxlength="255" value="<?php if ($new_domain != "") echo $new_domain; ?>">
 <BR><BR>

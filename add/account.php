@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
-<form name="form1" method="post" action="<?=$PHP_SELF?>">
+<form name="add_account_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Company:</strong><BR><BR>
 <?php
 $sql_company = "select id, name

@@ -123,7 +123,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
-<form name="form1" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_segment_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Segment Name:</strong><BR><BR>
 <input name="new_name" type="text" value="<?php if ($new_name != "") echo $new_name; ?>" size="50" maxlength="255">
 <BR><BR>

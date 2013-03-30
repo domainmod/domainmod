@@ -85,7 +85,7 @@ if ($new_username != "") {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("_includes/header.inc.php"); ?>
 <BR>
-<form name="login_form" method="post" action="<?=$PHP_SELF?>">
+<form name="reset_password_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Username:<strong><BR><BR><input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR><BR>
 <input type="submit" name="button" value="Reset Password &raquo;">
 </form>
