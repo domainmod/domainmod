@@ -276,12 +276,12 @@ $sql = "INSERT INTO `ssl_certs`
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "INSERT INTO `ip_addresses` 
-		(`name`, `ip`, `notes`, `test_data`, `insert_time`, `update_time`) VALUES
-		('AYS, SITE - aysmedia.com', '69.167.168.205', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
-		('AYS, SITE - aysmedia.ca', '69.167.168.206', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
-		('AYS, SITE - aysprivacy.com', '69.167.168.207', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
-		('UNASSIGNED', '69.167.181.138', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
-		('UNASSIGNED', '69.167.181.139', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00');";
+		(`name`, `ip`, `rdns`, `notes`, `test_data`, `insert_time`, `update_time`) VALUES
+		('AYS, SITE - aysmedia.com', '69.167.168.205', 'box.aysmedia.com', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
+		('AYS, SITE - aysmedia.ca', '69.167.168.206', 'aysmedia.com', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
+		('AYS, SITE - aysprivacy.com', '69.167.168.207', 'aysprivacy.com', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
+		('UNASSIGNED', '69.167.181.138', '-', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00'),
+		('UNASSIGNED', '69.167.181.139', '-', '', 1, '2013-03-26 03:07:48', '0000-00-00 00:00:00');";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "SELECT id 
