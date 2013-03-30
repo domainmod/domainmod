@@ -54,7 +54,6 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 These are the SSL provider accounts that have active certificates.
 <BR><BR>
 <strong>Number of Active Accounts:</strong> <?=mysql_num_rows($result)?>
-
 <?php 
 if (mysql_num_rows($result) > 0) { ?>
 

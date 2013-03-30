@@ -45,7 +45,6 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <BR><BR>
 <strong>Number of Active SSL Providers:</strong> <?=mysql_num_rows($result)?>
-
 <?php 
 if (mysql_num_rows($result) > 0) { ?>
 
