@@ -40,18 +40,33 @@ $new_admin = $_POST['new_admin'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != "" && $new_email_address != "") {
 	
-	$new_password = substr(md5(time()),0,8);
-	
-	$sql = "insert into users
-				(first_name, last_name, username, email_address, password, new_password, admin, insert_time) VALUES
-				('$new_first_name', '$new_last_name', '$new_username', '$new_email_address', password('$new_password'), '1', '$new_admin', '$current_timestamp')";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$sql = "SELECT username
+			FROM users
+			WHERE username = '$new_username'";
+	$result = mysql_query($sql,$connection);
 
-	$_SESSION['session_result_message'] .= "The user '" . $new_first_name . " " . $new_last_name . "' (" . $new_username . " / " . $new_password . ") was created.<BR><BR>
-	You can either manually email the above credentials to the user, or you can <a href=\"reset-password.php?new_username=$new_username\">click here</a> to have $software_title email them for you.<BR>";
+	if (mysql_num_rows($result) > 0) { $existing_username = 1; }
 	
-	header("Location: ../list-users.php");
-	exit;
+	if ($existing_username == 1) {
+
+		$_SESSION['session_result_message'] .= "You have entered an invalid username.<BR>";
+		
+	} else {
+
+		$new_password = substr(md5(time()),0,8);
+
+		$sql = "insert into users
+					(first_name, last_name, username, email_address, password, new_password, admin, insert_time) VALUES
+					('$new_first_name', '$new_last_name', '$new_username', '$new_email_address', password('$new_password'), '1', '$new_admin', '$current_timestamp')";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+		$_SESSION['session_result_message'] .= "The user '" . $new_first_name . " " . $new_last_name . "' (" . $new_username . " / " . $new_password . ") was created.<BR><BR>
+		You can either manually email the above credentials to the user, or you can <a href=\"reset-password.php?new_username=$new_username\">click here</a> to have $software_title email them for you.<BR>";
+		
+		header("Location: ../list-users.php");
+		exit;
+		
+	}
 
 } else {
 
@@ -64,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		if ($new_email_address == "") $_SESSION['session_result_message'] .= "Enter the new user's email address.<BR>";
 		
 	}
+
 }
 ?>
 <html>
@@ -75,12 +91,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../../../_includes/header.inc.php"); ?>
 <form name="add_user_form" method="post" action="<?=$PHP_SELF?>">
-<strong>First Name:</strong><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50"><BR><BR>
-<strong>Last Name:</strong><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50"><BR><BR>
-<strong>Username:</strong><BR><BR><input name="new_username" type="text" size="50" maxlength="20"><BR><BR>
-<strong>Email Address:</strong><BR><BR><input name="new_email_address" type="text" size="50" maxlength="255"><BR><BR>
+<strong>First Name:</strong><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?=$new_first_name?>"><BR><BR>
+<strong>Last Name:</strong><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?=$new_last_name?>"><BR><BR>
+<strong>Username:</strong><BR><BR><input name="new_username" type="text" size="50" maxlength="20" value="<?=$new_username?>"><BR><BR>
+<strong>Email Address:</strong><BR><BR><input name="new_email_address" type="text" size="50" maxlength="255" value="<?=$new_email_address?>"><BR><BR>
 <strong>Admin Privileges?</strong>&nbsp;
-<select name="new_admin"><option value="0">No</option><option value="1">Yes</option></select>
+<select name="new_admin">
+<option value="0"<?php if ($new_admin == 0) echo " selected"; ?>>No</option>
+<option value="1"<?php if ($new_admin == 1) echo " selected"; ?>>Yes</option>
+</select>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add User &raquo;">
 </form>

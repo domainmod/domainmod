@@ -33,6 +33,8 @@ $software_section = "system";
 
 $uid = $_GET['uid'];
 
+if ($new_uid == "") $new_uid = $uid;
+
 // Form Variables
 $new_first_name = $_POST['new_first_name'];
 $new_last_name = $_POST['new_last_name'];
@@ -42,55 +44,36 @@ $new_is_admin = $_POST['new_is_admin'];
 $new_is_active = $_POST['new_is_active'];
 $new_uid = $_POST['new_uid'];
 
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != "" && $new_email_address != "") {
 
-	// Check to see if another user already has the new username
-	$sql = "select username
-			from users
-			where username = '" . $new_username . "'
-			and id != '$new_uid'";
+	// Check to see if another user already has the username
+	$sql = "SELECT username
+			FROM users
+			WHERE username = '$new_username'
+			AND id != '$new_uid'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
-	
 	$is_username_taken = mysql_num_rows($result);
-
-//	if ($is_username_taken > 0 || $new_username == "admin" || $new_username == "administrator") {
-	if ($is_username_taken > 0) {
-		
-		$invalid_username = 1;
-
-	}
+	if ($is_username_taken > 0) { $invalid_username = 1; }
+	
+	// Make sure they aren't trying to assign a reserved username
+	if ($new_username == "admin" || $new_username == "administrator") { $invalid_username = 1; }
 
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != "" && $new_email_address != "" && $invalid_username != 1) {
-	
 
-	if ($new_username == "admin" || $new_username == "administrator") {
-
-		$sql = "update users
-				set first_name = '$new_first_name',
-					last_name = '$new_last_name',
-					email_address = '$new_email_address',
-					update_time = '$current_timestamp'
-				where id = '$new_uid'"; echo $sql; exit;
-
-	} else {
-
-		$sql = "update users
-				set first_name = '$new_first_name',
-					last_name = '$new_last_name',
-					username = '$new_username',
-					email_address = '$new_email_address',
-					admin = '$new_is_admin',
-					active = '$new_is_active',
-					update_time = '$current_timestamp'
-				where id = '$new_uid'";
-
-	}
+	$sql = "update users
+			set first_name = '$new_first_name',
+				last_name = '$new_last_name',
+				username = '$new_username',
+				email_address = '$new_email_address',
+				admin = '$new_is_admin',
+				active = '$new_is_active',
+				update_time = '$current_timestamp'
+			where id = '$new_uid'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-	$_SESSION['session_result_message'] .= "The user was updated.<BR>";
+	$_SESSION['session_result_message'] .= "The user has been updated.<BR>";
 	
 	header("Location: ../list-users.php");
 	exit;
@@ -101,16 +84,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		if ($invalid_username == 1) $_SESSION['session_result_message'] .= "You have entered an invalid username.<BR>";
-		if ($new_first_name == "") $_SESSION['session_result_message'] .= "Enter your first name.<BR>";
-		if ($new_last_name == "") $_SESSION['session_result_message'] .= "Enter your last name.<BR>";
-		if ($new_username == "") $_SESSION['session_result_message'] .= "Enter your username.<BR>";
-		if ($new_email_address == "") $_SESSION['session_result_message'] .= "Enter your email address.<BR>";
+		if ($new_first_name == "") $_SESSION['session_result_message'] .= "Enter the user's first name.<BR>";
+		if ($new_last_name == "") $_SESSION['session_result_message'] .= "Enter the user's last name.<BR>";
+		if ($new_username == "") $_SESSION['session_result_message'] .= "Enter the new username.<BR>";
+		if ($new_email_address == "") $_SESSION['session_result_message'] .= "Enter the user's email address.<BR>";
 		
 	} else {
 		
-		$sql = "select first_name, last_name, username, email_address, admin, active
-				from users
-				where id = '$uid'";
+		$sql = "SELECT first_name, last_name, username, email_address, admin, active
+				FROM users
+				WHERE id = '$uid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		while ($row = mysql_fetch_object($result)) {
