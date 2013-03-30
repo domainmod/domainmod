@@ -18,10 +18,18 @@
 <?php
 session_start();
 
+$sql_email = "SELECT email_address
+			  FROM settings
+			  WHERE type = 'system'";
+$result_email = mysql_query($sql_email,$connection);
+
+while ($row_email = mysql_fetch_object($result_email)) {
+	$from_address = $row_email->email_address;
+	$return_path = $row_email->email_address;
+}
+
 $to = $row->email_address;
 $from_name = $software_title;
-$from_address = $row->email_address;
-$return_path = $row->email_address;
 
 $headers = "";
 $headers .= "MIME-Version: 1.0" . "\r\n";
