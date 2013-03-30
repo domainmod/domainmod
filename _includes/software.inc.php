@@ -17,7 +17,7 @@
 ?>
 <?php
 // Software Settings
-$software_title = "Domain Manager"; 
+$software_title = "Domain Manager v1.0"; 
 
 // $site_width = "1024";
 $site_width = "96%";
@@ -29,5 +29,5 @@ $number_of_temp_domains = 100;
 // 
 // DO NOT CHANGE THIS - CHANGING THIS LINE CAN MESS UP YOUR DATABASE
 //
-$most_recent_db_version = "1.92";
+$most_recent_db_version = "1.93";
 ?>

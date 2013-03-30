@@ -34,6 +34,8 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/export-domains.php">Export Domains</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/export-ssl-certs.php">Export SSL Certs</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">System</a> ]&nbsp;
+<?php /* ?>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/">Help!</a> ]&nbsp;
+<?php */ ?>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/logout.php">Logout</a> ]
 <?php include($full_server_path . "/_includes/layout/menu-sub.inc.php"); ?>

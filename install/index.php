@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "1.92";
+$most_recent_db_version = "1.93";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -410,7 +410,6 @@ if (mysql_num_rows($result) > 0) {
 	$sql = "
 	CREATE TABLE IF NOT EXISTS `settings` (
 	  `id` int(10) NOT NULL auto_increment,
-	  `type` varchar(50) NOT NULL,
 	  `db_version` float NOT NULL,
 	  `email_address` varchar(255) NOT NULL,
 	  `insert_time` datetime NOT NULL,
@@ -422,8 +421,8 @@ if (mysql_num_rows($result) > 0) {
 
 	$sql = "
 	INSERT INTO `settings` 
-		(`type`, `db_version`, `email_address`, `insert_time`) VALUES
-		('system', '$most_recent_db_version', 'code@aysmedia.com', '$current_timestamp');
+		(`db_version`, `email_address`, `insert_time`) VALUES
+		('$most_recent_db_version', 'code@aysmedia.com', '$current_timestamp');
 	";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 

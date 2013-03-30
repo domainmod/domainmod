@@ -219,6 +219,22 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	// upgrade database from 1.92 to 1.93
+	if ($current_db_version == 1.92) {
+
+		$sql = "ALTER TABLE `settings` 
+				DROP `type`;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE settings
+				SET db_version = '1.93',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 1.93;
+		
+	}
+
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 
 } else {
