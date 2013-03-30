@@ -428,7 +428,7 @@ if (mysql_num_rows($result) > 0) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$_SESSION['session_institallation_mode'] = 0;
-	$_SESSION['session_result_message'] = "$software_title has been installed.<BR><BR>The default username and password are both set to \"admin\".<BR>";
+	$_SESSION['session_result_message'] = "$software_title has been installed<BR><BR>The default username and password are both set to \"admin\"<BR>";
 	
 	header("Location: ../");
 	exit;
