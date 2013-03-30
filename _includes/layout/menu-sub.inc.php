@@ -42,7 +42,8 @@
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/currency.php">Add A New Currency</a>
 <?php } elseif ($software_section == "system") { ?>
 			<?php if ($_SESSION['session_is_admin'] == 1) { ?>
-             &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/list-users.php">User List</a>
+             &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>
+             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/list-users.php">User List</a>
              &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/add/user.php">Add New User</a>
             <?php } ?>
 <?php } elseif ($software_section == "bulkactions") { ?>

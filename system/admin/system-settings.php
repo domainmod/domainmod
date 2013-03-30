@@ -37,8 +37,7 @@ $new_email_address = $_POST['new_email_address'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
 
 	$sql = "UPDATE settings
-			SET email_address = '$new_email_address'
-			WHERE type = 'system'";
+			SET email_address = '$new_email_address'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$_SESSION['session_result_message'] .= "The System Settings were updated.<BR>";
@@ -56,8 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
 	} else {
 		
 		$sql = "SELECT email_address
-				FROM settings
-				WHERE type = 'system'";
+				FROM settings";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		while ($row = mysql_fetch_object($result)) {

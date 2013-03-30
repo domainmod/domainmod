@@ -23,7 +23,7 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
-$page_title = "System Tools";
+$page_title = "Control Panel";
 $software_section = "system";
 ?>
 <html>
