@@ -28,7 +28,7 @@ session_start();
         <td align="right" valign="bottom" height="100%">
         <?php if ($_SESSION['session_is_logged_in'] == 1) { ?>
         [ <a href="<?=$web_root?>/system/">Control Panel</a> ]&nbsp;&nbsp;[ <a href="<?=$web_root?>/logout.php">Logout</a> ]&nbsp;&nbsp;<BR><BR>
-        <em>logged in as <?=$_SESSION['session_username']?> (<?=$_SESSION['session_first_name']?> <?=$_SESSION['session_last_name']?>)</em>&nbsp;&nbsp;<BR><BR>
+        <em>logged in as <strong><?=$_SESSION['session_username']?></strong> (<?=$_SESSION['session_first_name']?> <?=$_SESSION['session_last_name']?>)</em>&nbsp;&nbsp;<BR><BR>
         <?php } ?>
 		</td>
 	</tr>

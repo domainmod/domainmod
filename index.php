@@ -31,7 +31,7 @@ if ($_SESSION['session_installation_mode'] == 1) {
 
 } else {
 
-	$page_title = "Login";
+	$page_title = "Please Login";
 	$software_section = "login";
 
 }
@@ -115,17 +115,17 @@ if ($_SESSION['session_installation_mode'] != 1) {
 
     <BR>
     <form name="login_form" method="post" action="<?=$PHP_SELF?>">
-        <strong>Username:<strong><BR>
+        <strong>Username:<strong><BR><BR>
         <input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
-        <strong>Password:</strong><BR>
+        <strong>Password:</strong><BR><BR>
         <input name="new_password" type="password" id="new_password" size="20" maxlength="20"><br><?php 
 
         if ($_SERVER['HTTP_HOST'] != "demos.aysmedia.com") { ?>
-            <font size="1"><i>(<a href="reset-password.php"><i>Forgot your Password?</i></a>)</i></font><BR><?php 
+            <BR><font size="1"><i>(<a href="reset-password.php"><i>Forgot your Password?</i></a>)</i></font><BR><?php 
         } ?>
 
-        <BR>
-        <input type="submit" name="button" value="Login">
+        <BR><BR>
+        <input type="submit" name="button" value="Manage Domains &raquo;">
     </form>
 <?php 
 } ?>
