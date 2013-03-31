@@ -39,7 +39,7 @@ $software_section = "system";
 &raquo; <a href="../_includes/system/fix-domain-fees.php">Fix Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-tlds.php">Fix TLDs</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-ssl-fees.php">Fix SSL Fees</a>
 <BR>
 <?php if ($_SESSION['session_is_admin'] == 1) { ?>
-	<BR><h3>Admin Tools</h3>
+	<BR><BR><font class="headline">Admin Tools</font><BR><BR>
 	&raquo; <a href="admin/system-settings.php">System Settings</a><BR><BR>
 	&raquo; <a href="admin/list-users.php">User List</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/add/user.php">Add New User</a><BR><BR>
 	&raquo; <a href="update-database.php">Check For Database  Updates</a><BR><BR> 
