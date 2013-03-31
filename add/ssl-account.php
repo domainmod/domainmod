@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <title><?=$software_title?> :: <?=$page_title?></title>
 <?php include("../_includes/head-tags.inc.php"); ?>
 </head>
-<body>
+<body onLoad="document.forms[0].elements[2].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="add_ssl_account_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Company:</strong><BR><BR>

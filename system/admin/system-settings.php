@@ -73,10 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
 <title><?=$software_title?> :: <?=$page_title?></title>
 <?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body>
 <?php include("../../_includes/header.inc.php"); ?>
 <form name="system_settings_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Email Address:</strong><BR><BR><input name="new_email_address" type="text" size="50" maxlength="255" value="<?php if ($new_email_address != "") echo $new_email_address; ?>">
+<strong>Email Address:</strong><BR><BR>
+This should be a valid email address that is able to receive mail. It will be used in various system locations, such as the FROM address for emails sent by <?=$software_title?>.<BR><BR>
+<input name="new_email_address" type="text" size="50" maxlength="255" value="<?php if ($new_email_address != "") echo $new_email_address; ?>">
 <BR><BR><BR>
 <input type="submit" name="button" value="Update System Settings&raquo;">
 </form>

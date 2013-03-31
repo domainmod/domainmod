@@ -17,7 +17,8 @@
 ?>
 <?php
 // Software Settings
-$software_title = "Domain Manager v1.0"; 
+$software_title = "Domain Manager"; 
+$software_version = "1.0"; 
 
 // $site_width = "1024";
 $site_width = "96%";
