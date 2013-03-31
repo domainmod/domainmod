@@ -83,14 +83,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 <body>
 <?php include("../../_includes/header.inc.php"); ?>
 <form name="display_settings_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Default # of Domains to Display:</strong><BR><BR>
-This is the default number of domains to display on the <a href="../../domains.php">main page</a>.<BR><BR>
-<input name="new_number_of_domains" type="text" size="50" maxlength="255" value="<?php if ($new_number_of_domains != "") echo $new_number_of_domains; ?>">
+<strong>Default # of Domains to Display:</strong> <input name="new_number_of_domains" type="text" size="3" maxlength="5" value="<?php if ($new_number_of_domains != "") echo $new_number_of_domains; ?>"><BR><BR>
+This is the default number of domains to display on the <a href="../../domains.php">main domain page</a>.
 <BR><BR><BR>
-<strong>Default # of SSL Certificates to Display:</strong><BR><BR>
-This is the default number of SSL Certificates to display on the <a href="../../ssl-certs.php">main page</a>.<BR><BR>
-<input name="new_number_of_ssl_certs" type="text" size="50" maxlength="255" value="<?php if ($new_number_of_ssl_certs != "") echo $new_number_of_ssl_certs; ?>">
-
+<strong>Default # of SSL Certificates to Display:</strong> <input name="new_number_of_ssl_certs" type="text" size="3" maxlength="5" value="<?php if ($new_number_of_ssl_certs != "") echo $new_number_of_ssl_certs; ?>"><BR><BR>
+This is the default number of SSL Certificates to display on the <a href="../../ssl-certs.php">main SSL page</a>.
 <BR><BR><BR>
 <input type="submit" name="button" value="Update Display Settings&raquo;">
 </form>
