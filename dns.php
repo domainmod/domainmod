@@ -1,4 +1,4 @@
-	<?php
+<?php
 // dns.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
