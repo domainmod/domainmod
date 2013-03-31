@@ -20,8 +20,8 @@ session_start();
 
 include("../../database.inc.php");
 
-$sql = "select db_version
-		from settings";
+$sql = "SELECT db_version
+		FROM settings";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {

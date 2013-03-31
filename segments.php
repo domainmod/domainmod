@@ -48,10 +48,10 @@ function str_stop($string, $max_length){
 <body>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-$sql = "select id, name, description, segment
-		from segments
-		where active = '1'
-		order by name asc";
+$sql = "SELECT id, name, description, segment
+		FROM segments
+		WHERE active = '1'
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 Segments identify a specific subset of domains, which can be used to help filter and manage your <a href="domains.php">domain results</a>.

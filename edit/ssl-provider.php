@@ -46,12 +46,12 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 
 	if ($new_ssl_provider != "" && $new_url != "") {
 
-		$sql = "update ssl_providers
-				set name = '" . mysql_real_escape_string($new_ssl_provider) . "', 
-				url = '" . mysql_real_escape_string($new_url) . "', 
-				notes = '" . mysql_real_escape_string($new_notes) . "',
-				update_time = '$current_timestamp'
-				where id = '$new_sslpid'";
+		$sql = "UPDATE ssl_providers
+				SET name = '" . mysql_real_escape_string($new_ssl_provider) . "', 
+					url = '" . mysql_real_escape_string($new_url) . "', 
+					notes = '" . mysql_real_escape_string($new_notes) . "',
+					update_time = '$current_timestamp'
+				WHERE id = '$new_sslpid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sslpid = $new_sslpid;
@@ -75,50 +75,51 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 		
 		if ($new_initial_fee == "0" && $new_renewal_fee == "0") {
 
-			$sql = "delete from ssl_fees
-					where ssl_provider_id = '$new_sslpid'
-					and type_id = '$new_type_id'
-					and function_id = '$new_function_id'";
+			$sql = "DELETE FROM ssl_fees
+					WHERE ssl_provider_id = '$new_sslpid'
+					  AND type_id = '$new_type_id'
+					  AND function_id = '$new_function_id'";
 			mysql_query($sql,$connection);
 			
-			$sql = "update ssl_certs
-					set fee_id = '0',
-					update_time = '$current_timestamp'
-					where ssl_provider_id = '$new_sslpid'
-					and type_id = '$new_type_id'
-					and function_id = '$new_function_id'";
+			$sql = "UPDATE ssl_certs
+					SET fee_id = '0',
+						update_time = '$current_timestamp'
+					WHERE ssl_provider_id = '$new_sslpid'
+					  AND type_id = '$new_type_id'
+					  AND function_id = '$new_function_id'";
 			mysql_query($sql,$connection);
 			
 			header("Location: ssl-provider.php?sslpid=$new_sslpid");
 			exit;
+
 		}
 		
-		$sql = "select *
-				from ssl_fees
-				where ssl_provider_id = '$new_sslpid'
-				and type_id = '$new_type_id'
-				and function_id = '$new_function_id'";
+		$sql = "SELECT *
+				FROM ssl_fees
+				WHERE ssl_provider_id = '$new_sslpid'
+				  AND type_id = '$new_type_id'
+				  AND function_id = '$new_function_id'";
 		$result = mysql_query($sql,$connection);
 
 		if (mysql_num_rows($result) > 0) {
 			
-			$sql = "update ssl_fees
-					set initial_fee = '$new_initial_fee',
-					renewal_fee = '$new_renewal_fee',
-					currency_id = '$new_currency_id',
-					update_time = '$current_timestamp'
-					where ssl_provider_id = '$new_sslpid'
-					and type_id = '$new_type_id'
-					and function_id = '$new_function_id'";
+			$sql = "UPDATE ssl_fees
+					SET initial_fee = '$new_initial_fee',
+						renewal_fee = '$new_renewal_fee',
+						currency_id = '$new_currency_id',
+						update_time = '$current_timestamp'
+					WHERE ssl_provider_id = '$new_sslpid'
+					  AND type_id = '$new_type_id'
+					  AND function_id = '$new_function_id'";
 			mysql_query($sql,$connection);
 
-			$sql = "select id
-					from ssl_fees
-					where ssl_provider_id = '$new_sslpid'
-					and type_id = '$new_type_id'
-					and function_id = '$new_function_id'
-					and currency_id = '$new_currency_id'
-					limit 1";
+			$sql = "SELECT id
+					FROM ssl_fees
+					WHERE ssl_provider_id = '$new_sslpid'
+					  AND type_id = '$new_type_id'
+					  AND function_id = '$new_function_id'
+					  AND currency_id = '$new_currency_id'
+					LIMIT 1";
 	
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -126,12 +127,12 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 				$new_fee_id = $row->id;
 			}
 
-			$sql = "update ssl_certs
-					set fee_id = '$new_fee_id',
-					update_time = '$current_timestamp'
-					where ssl_provider_id = '$new_sslpid'
-					and type_id = '$new_type_id'
-					and function_id = '$new_function_id'";
+			$sql = "UPDATE ssl_certs
+					SET fee_id = '$new_fee_id',
+						update_time = '$current_timestamp'
+					WHERE ssl_provider_id = '$new_sslpid'
+					  AND type_id = '$new_type_id'
+					  AND function_id = '$new_function_id'";
 			$result = mysql_query($sql,$connection);
 	
 			$sslpid = $new_sslpid;
@@ -140,19 +141,19 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 
 		} else {
 			
-			$sql = "insert into ssl_fees
-					(ssl_provider_id, type_id, function_id, initial_fee, renewal_fee, currency_id, insert_time)
-					values ('$new_sslpid', '$new_type_id', '$new_function_id', '$new_initial_fee', '$new_renewal_fee', '$new_currency_id', '$current_timestamp')";
+			$sql = "INSERT INTO ssl_fees
+					(ssl_provider_id, type_id, function_id, initial_fee, renewal_fee, currency_id, insert_time) VALUES 
+					('$new_sslpid', '$new_type_id', '$new_function_id', '$new_initial_fee', '$new_renewal_fee', '$new_currency_id', '$current_timestamp')";
 			$result = mysql_query($sql,$connection);
 
-			$sql = "select id
-					from ssl_fees
-					where ssl_provider_id = '$new_sslpid'
-					and type_id = '$new_type_id'
-					and function_id = '$new_function_id'
-					and currency_id = '$new_currency_id'
-					order by id desc
-					limit 1";
+			$sql = "SELECT id
+					FROM ssl_fees
+					WHERE ssl_provider_id = '$new_sslpid'
+					  AND type_id = '$new_type_id'
+					  AND function_id = '$new_function_id'
+					  AND currency_id = '$new_currency_id'
+					ORDER BY id desc
+					LIMIT 1";
 	
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
@@ -160,12 +161,12 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 				$new_fee_id = $row->id;
 			}
 
-			$sql = "update ssl_certs
-					set fee_id = '$new_fee_id',
-					update_time = '$current_timestamp'
-					where ssl_provider_id = '$new_sslpid'
-					and type_id = '$new_type_id'
-					and function_id = '$new_function_id'";
+			$sql = "UPDATE ssl_certs
+					SET fee_id = '$new_fee_id',
+						update_time = '$current_timestamp'
+					WHERE ssl_provider_id = '$new_sslpid'
+					  AND type_id = '$new_type_id'
+					  AND function_id = '$new_function_id'";
 			$result = mysql_query($sql,$connection);
 	
 			$_SESSION['session_result_message'] = "Fee Submitted Successfully<BR>";
@@ -178,9 +179,9 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 
 include("../_includes/system/check-for-missing-ssl-fees.inc.php");
 
-$sql = "select name, url, notes
-		from ssl_providers
-		where id = '$sslpid'";
+$sql = "SELECT name, url, notes
+		FROM ssl_providers
+		WHERE id = '$sslpid'";
 $result = mysql_query($sql,$connection);
 
 while ($row = mysql_fetch_object($result)) { 
@@ -216,13 +217,13 @@ while ($row = mysql_fetch_object($result)) {
 <BR><BR>
 <font class="headline">Active Types</font><BR><BR>
 <?php
-$sql = "select concat(sslcf.function, ' (', sslct.type, ')') as full_tf_string
-		from ssl_certs as sslc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
-		where sslc.type_id = sslct.id
-		and sslc.function_id = sslcf.id
-		and sslc.ssl_provider_id = '$sslpid'
-		group by full_tf_string
-		order by full_tf_string asc";
+$sql = "SELECT CONCAT(sslcf.function, ' (', sslct.type, ')') AS full_tf_string
+		FROM ssl_certs AS sslc, ssl_cert_types AS sslct, ssl_cert_functions AS sslcf
+		WHERE sslc.type_id = sslct.id
+		  AND sslc.function_id = sslcf.id
+		  AND sslc.ssl_provider_id = '$sslpid'
+		GROUP BY full_tf_string
+		ORDER BY full_tf_string asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
@@ -233,15 +234,14 @@ while ($row = mysql_fetch_object($result)) {
 <?=$all_types?>
 <BR><BR><BR><BR>
 <?php
-$sql = "select concat(sslcf.function, ' (', sslct.type, ')') as full_tf_string
-		from ssl_certs as sslc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
-		where sslc.type_id = sslct.id
-		and sslc.function_id = sslcf.id
-		and sslc.ssl_provider_id = '$sslpid'
-		and sslc.fee_id = '0'
-		group by full_tf_string
-		order by full_tf_string asc";
-
+$sql = "SELECT CONCAT(sslcf.function, ' (', sslct.type, ')') AS full_tf_string
+		FROM ssl_certs AS sslc, ssl_cert_types AS sslct, ssl_cert_functions AS sslcf
+		WHERE sslc.type_id = sslct.id
+		  AND sslc.function_id = sslcf.id
+		  AND sslc.ssl_provider_id = '$sslpid'
+		  AND sslc.fee_id = '0'
+		GROUP BY full_tf_string
+		ORDER BY full_tf_string asc";
 $result = mysql_query($sql,$connection);
 if (mysql_num_rows($result) > 0) {
 ?>
@@ -266,10 +266,10 @@ if (mysql_num_rows($result) > 0) {
         	<strong>Function</strong><BR><BR>
 		  <select name="new_function_id">
 		  	<?php
-			$sql = "select id, function
-					from ssl_cert_functions
-					where active = '1'
-					order by function asc";
+			$sql = "SELECT id, function
+					FROM ssl_cert_functions
+					WHERE active = '1'
+					ORDER BY function asc";
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) {
 			?>
@@ -283,10 +283,10 @@ if (mysql_num_rows($result) > 0) {
         	<strong>Type</strong><BR><BR>
 		  <select name="new_type_id">
 		  	<?php
-			$sql = "select id, type
-					from ssl_cert_types
-					where active = '1'
-					order by type asc";
+			$sql = "SELECT id, type
+					FROM ssl_cert_types
+					WHERE active = '1'
+					ORDER BY type asc";
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) {
 			?>
@@ -308,10 +308,10 @@ if (mysql_num_rows($result) > 0) {
         	<strong>Currency</strong><BR><BR>
 		  <select name="new_currency_id">
 		  	<?php
-			$sql = "select id, currency, name 
-					from currencies
-					where active = '1'
-					order by currency asc";
+			$sql = "SELECT id, currency, name 
+					FROM currencies
+					WHERE active = '1'
+					ORDER BY currency asc";
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) {
 			?>
@@ -337,14 +337,14 @@ if (mysql_num_rows($result) > 0) {
         <td width="100"><strong>Currency</strong></td>
 	</tr>
 <?php
-$sql = "select f.initial_fee, f.renewal_fee, c.currency, sslct.type, sslcf.function
-		from ssl_fees as f, currencies as c, ssl_cert_types as sslct, ssl_cert_functions as sslcf
-		where f.currency_id = c.id
-		and f.type_id = sslct.id
-		and f.function_id = sslcf.id
-		and f.ssl_provider_id = '$sslpid'
-		and c.active = '1'
-		order by sslcf.function asc, sslct.type asc";
+$sql = "SELECT f.initial_fee, f.renewal_fee, c.currency, sslct.type, sslcf.function
+		FROM ssl_fees AS f, currencies AS c, ssl_cert_types AS sslct, ssl_cert_functions AS sslcf
+		WHERE f.currency_id = c.id
+		  AND f.type_id = sslct.id
+		  AND f.function_id = sslcf.id
+		  AND f.ssl_provider_id = '$sslpid'
+		  AND c.active = '1'
+		ORDER BY sslcf.function asc, sslct.type asc";
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 ?>

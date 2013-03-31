@@ -36,10 +36,10 @@ $software_section = "companies";
 <?php include("_includes/header.inc.php"); ?>
 
 <?php
-$sql = "select id, name
-		from companies
-		where id in (select company_id from domains where company_id != '0' and active not in ('0','10') group by company_id)
-		order by name asc";
+$sql = "SELECT id, name
+		FROM companies
+		WHERE id IN (SELECT company_id FROM domains WHERE company_id != '0' AND active NOT IN ('0','10') GROUP BY company_id)
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <strong>Number of Active Companies:</strong> <?=mysql_num_rows($result)?>
@@ -64,10 +64,10 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 	</td>
 	<td>
     <?php
-	$sql2 = "select count(*) as total_count
-			 from registrar_accounts
-			 where active = '1'
-			 and company_id = '$row->id'";
+	$sql2 = "SELECT count(*) AS total_count
+			 FROM registrar_accounts
+			 WHERE active = '1'
+			   AND company_id = '$row->id'";
 	$result2 = mysql_query($sql2,$connection);
 	while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
 	?>
@@ -83,10 +83,10 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
     </td>
 	<td>
     <?php
-	$sql3 = "select count(*) as total_count
-			 from domains
-			 where active not in ('0', '10')
-			 and company_id = '$row->id'";
+	$sql3 = "SELECT count(*) AS total_count
+			 FROM domains
+			 WHERE active NOT IN ('0', '10')
+			   AND company_id = '$row->id'";
 	$result3 = mysql_query($sql3,$connection);
 	while ($row3 = mysql_fetch_object($result3)) { $total_domains = $row3->total_count; }
 	?>
@@ -107,10 +107,10 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 </table>
 <?php } ?>
 <?php
-$sql = "select id, name
-		from companies
-		where id not in (select company_id from domains where company_id != '0' and active not in ('0','10') group by company_id)
-		order by name asc";
+$sql = "SELECT id, name
+		FROm companies
+		WHERE id NOT IN (SELECT company_id FROM domains WHERE company_id != '0' AND active NOT IN ('0','10') GROUP BY company_id)
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
@@ -133,10 +133,10 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 	</td>
 	<td>
     <?php
-	$sql2 = "select count(*) as total_count
-			 from registrar_accounts
-			 where active = '1'
-			 and company_id = '$row->id'";
+	$sql2 = "SELECT count(*) AS total_count
+			 FROM registrar_accounts
+			 WHERE active = '1'
+			   AND company_id = '$row->id'";
 	$result2 = mysql_query($sql2,$connection);
 	while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
 	?>

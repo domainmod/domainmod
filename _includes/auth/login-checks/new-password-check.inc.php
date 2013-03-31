@@ -20,10 +20,10 @@ session_start();
 
 include("../../database.inc.php");
 
-$sql = "select new_password 
-		from users
-		where id = '" . $_SESSION['session_user_id'] . "' 
-		and email_address = '" . $_SESSION['session_email_address'] . "'";
+$sql = "SELECT new_password 
+		FROM users
+		WHERE id = '" . $_SESSION['session_user_id'] . "' 
+		  AND email_address = '" . $_SESSION['session_email_address'] . "'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) { $is_it_a_new_password = $row->new_password; }

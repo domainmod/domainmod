@@ -38,13 +38,13 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-		$sql2 = "update ip_addresses
-				 set name = '" . mysql_real_escape_string($new_name) . "',
+		$sql2 = "UPDATE ip_addresses
+				 SET name = '" . mysql_real_escape_string($new_name) . "',
 				 	ip = '" . mysql_real_escape_string($new_ip) . "',
 				 	rdns = '" . mysql_real_escape_string($new_rdns) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					update_time = '$current_timestamp'
-				 where id = '$new_ipid'";
+				 WHERE id = '$new_ipid'";
 		$result2 = mysql_query($sql2,$connection) or die(mysql_error());
 		
 		$ipid = $new_ipid;
@@ -53,9 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select name, ip, rdns, notes
-			from ip_addresses
-			where id = '$ipid'";
+	$sql = "SELECT name, ip, rdns, notes
+			FROM ip_addresses
+			WHERE id = '$ipid'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 

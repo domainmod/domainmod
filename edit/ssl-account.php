@@ -41,14 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_username != "") {
 
-		$sql = "update ssl_accounts
-				set company_id = '$new_company_id',
+		$sql = "UPDATE ssl_accounts
+				SET company_id = '$new_company_id',
 					ssl_provider_id = '$new_ssl_provider_id',
 					username = '" . mysql_real_escape_string($new_username) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					reseller = '$new_reseller',
 					update_time = '$current_timestamp'
-				where id = '$new_sslpaid'";
+				WHERE id = '$new_sslpaid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sslpaid = $new_sslpaid; 
@@ -63,9 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select company_id, ssl_provider_id, username, notes, reseller
-			from ssl_accounts
-			where id = '$sslpaid'";
+	$sql = "SELECT company_id, ssl_provider_id, username, notes, reseller
+			FROM ssl_accounts
+			WHERE id = '$sslpaid'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
@@ -91,10 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <form name="edit_ssl_account_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Company:</strong><BR><BR>
 <?php
-$sql_company = "select id, name
-				from companies
-				where active = '1'
-				order by name asc";
+$sql_company = "SELECT id, name
+				FROM companies
+				WHERE active = '1'
+				ORDER BY name asc";
 $result_company = mysql_query($sql_company,$connection) or die(mysql_error());
 echo "<select name=\"new_company_id\">";
 while ($row_company = mysql_fetch_object($result_company)) {
@@ -114,10 +114,10 @@ echo "</select>";
 <BR><BR>
 <strong>SSL Provider:</strong><BR><BR>
 <?php
-$sql_ssl_provider = "select id, name
-					 from ssl_providers
-					 where active = '1'
-					 order by name asc";
+$sql_ssl_provider = "SELECT id, name
+					 FROM ssl_providers
+					 WHERE active = '1'
+					 ORDER BY name asc";
 $result_ssl_provider = mysql_query($sql_ssl_provider,$connection) or die(mysql_error());
 echo "<select name=\"new_ssl_provider_id\">";
 while ($row_ssl_provider = mysql_fetch_object($result_ssl_provider)) {

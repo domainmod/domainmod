@@ -54,14 +54,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_segment_formatted = trim($new_segment_formatted);
 		$new_segment_formatted = mysql_real_escape_string($new_segment_formatted);
 
-		$sql = "update segments
-				set name = '" . mysql_real_escape_string($new_name) . "',
+		$sql = "UPDATE segments
+				SET name = '" . mysql_real_escape_string($new_name) . "',
 					description = '" . mysql_real_escape_string($new_description) . "',
 					segment = '$new_segment_formatted',
 					number_of_domains = '$number_of_domains',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					update_time = '$current_timestamp'
-				where id = '$new_segid'";
+				WHERE id = '$new_segid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$segid = $new_segid;
@@ -77,9 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select name, description, segment, notes
-			from segments
-			where id = '$segid'";
+	$sql = "SELECT name, description, segment, notes
+			FROM segments
+			WHERE id = '$segid'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
@@ -105,7 +105,8 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-	$sql = "delete from segments where id = '$segid'";
+	$sql = "DELETE FROM segments 
+			WHERE id = '$segid'";
 	$result = mysql_query($sql,$connection);
 	
 	$_SESSION['session_result_message'] = "Segment Deleted<BR>";

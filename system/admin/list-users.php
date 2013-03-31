@@ -39,10 +39,10 @@ $software_section = "system";
 <body>
 <?php include("../../_includes/header.inc.php"); ?>
 <?php
-$sql = "select id, first_name, last_name, username, email_address, admin
-		from users
-		where active = '1'
-		order by first_name asc, last_name asc";
+$sql = "SELECT id, first_name, last_name, username, email_address, admin
+		FROM users
+		WHERE active = '1'
+		ORDER BY first_name asc, last_name asc";
 $result = mysql_query($sql,$connection);
 ?>
 <strong>Number of Active User Accounts:</strong> <?=mysql_num_rows($result)?>
@@ -84,10 +84,10 @@ if (mysql_num_rows($result) > 0) { ?>
 	<?php 
 } ?>
 <?php
-$sql = "select id, first_name, last_name, username, email_address, admin
-		from users
-		where active = '0'
-		order by first_name asc, last_name asc";
+$sql = "SELECT id, first_name, last_name, username, email_address, admin
+		FROM users
+		WHERE active = '0'
+		ORDER BY first_name asc, last_name asc";
 $result = mysql_query($sql,$connection);
 ?>
 <?php

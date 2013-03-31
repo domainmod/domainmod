@@ -36,11 +36,11 @@ $page_title = "Top Level Domain Breakdown";
 This is a breakdown of the Top Level Domains that are currently in use.
 <BR><BR>
 <?php
-$sql = "select tld, count(*) as total_tld_count
-		from domains
-		where active not in ('0', '10')
-		group by tld
-		order by total_tld_count desc, tld asc";
+$sql = "SELECT tld, count(*) AS total_tld_count
+		FROM domains
+		WHERE active NOT IN ('0', '10')
+		GROUP BY tld
+		ORDER BY total_tld_count desc, tld asc";
 $result = mysql_query($sql,$connection);
 ?>
 <strong>Number of Active TLDs:</strong> <?=mysql_num_rows($result)?>

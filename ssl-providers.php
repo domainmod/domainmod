@@ -37,10 +37,10 @@ $software_section = "ssl-providers";
 These are the SSL Providers that have active certificates.
 
 <?php
-$sql = "select id, name, url
-		from ssl_providers
-		where id in (select ssl_provider_id from ssl_certs where ssl_provider_id != '0' and active != '0' group by ssl_provider_id)
-		order by name asc";
+$sql = "SELECT id, name, url
+		FROM ssl_providers
+		WHERE id IN (SELECT ssl_provider_id FROM ssl_certs WHERE ssl_provider_id != '0' AND active != '0' GROUP BY ssl_provider_id)
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <BR><BR>
@@ -71,10 +71,10 @@ if (mysql_num_rows($result) > 0) { ?>
             </td>
             <td>
                 <?php
-                $sql2 = "select count(*) as total_count
-                         from ssl_accounts
-                         where active = '1'
-                         and ssl_provider_id = '$row->id'";
+                $sql2 = "SELECT count(*) AS total_count
+                         FROM ssl_accounts
+                         WHERE active = '1'
+                           AND ssl_provider_id = '$row->id'";
                 $result2 = mysql_query($sql2,$connection);
                 while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
                 ?>
@@ -92,10 +92,10 @@ if (mysql_num_rows($result) > 0) { ?>
             </td>
             <td>
                 <?php
-                $sql3 = "select count(*) as total_count
-                         from ssl_certs
-                         where active != '0'
-                         and ssl_provider_id = '$row->id'";
+                $sql3 = "SELECT count(*) AS total_count
+                         FROM ssl_certs
+                         WHERE active != '0'
+                           AND ssl_provider_id = '$row->id'";
                 $result3 = mysql_query($sql3,$connection);
                 while ($row3 = mysql_fetch_object($result3)) { $total_certs = $row3->total_count; }
                 ?>
@@ -120,10 +120,10 @@ if (mysql_num_rows($result) > 0) { ?>
 } ?>
 
 <?php
-$sql = "select id, name, url
-		from ssl_providers
-		where id not in (select ssl_provider_id from ssl_certs where ssl_provider_id != '0' and active != '0' group by ssl_provider_id)
-		order by name asc";
+$sql = "SELECT id, name, url
+		FROM ssl_providers
+		WHERE id NOT IN (SELECT ssl_provider_id FROM ssl_certs WHERE ssl_provider_id != '0' AND active != '0' GROUP BY ssl_provider_id)
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <?php 
@@ -151,10 +151,10 @@ if (mysql_num_rows($result) > 0) { ?>
                 </td>
                 <td>
                     <?php
-                    $sql2 = "select count(*) as total_count
-                             from ssl_accounts
-                             where active = '1'
-                             and ssl_provider_id = '$row->id'";
+                    $sql2 = "SELECT count(*) AS total_count
+                             FROM ssl_accounts
+                             WHERE active = '1'
+                               AND ssl_provider_id = '$row->id'";
                     $result2 = mysql_query($sql2,$connection);
                     while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
                     ?>

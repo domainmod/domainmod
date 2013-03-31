@@ -34,12 +34,12 @@ $page_title = "Missing SSL Fees";
 <body>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-$sql = "select sp.id as ssl_provider_id, sp.name as ssl_provider_name
-		from ssl_providers sp, ssl_certs sc
-		where sp.id = sc.ssl_provider_id
-		and sc.fee_id = '0'
-		group by sp.name
-		order by sp.name asc";
+$sql = "SELECT sp.id AS ssl_provider_id, sp.name AS ssl_provider_name
+		FROM ssl_providers sp, ssl_certs sc
+		WHERE sp.id = sc.ssl_provider_id
+		  AND sc.fee_id = '0'
+		GROUP BY sp.name
+		ORDER BY sp.name asc";
 $result = mysql_query($sql,$connection);
 ?>
 The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these fees.
@@ -63,14 +63,14 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
             </td>
             <td>
                 <?php
-				$sql2 = "select concat(sslcf.function, ' (', sslct.type, ')') as full_tf_string
-						from ssl_certs as sslc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
-						where sslc.type_id = sslct.id
-						and sslc.function_id = sslcf.id
-						and sslc.ssl_provider_id = '$row->ssl_provider_id'
-						and sslc.fee_id = '0'
-						group by full_tf_string
-						order by full_tf_string asc";
+				$sql2 = "SELECT CONCAT(sslcf.function, ' (', sslct.type, ')') AS full_tf_string
+						FROM ssl_certs AS sslc, ssl_cert_types AS sslct, ssl_cert_functions AS sslcf
+						WHERE sslc.type_id = sslct.id
+						  AND sslc.function_id = sslcf.id
+						  AND sslc.ssl_provider_id = '$row->ssl_provider_id'
+						  AND sslc.fee_id = '0'
+						GROUP BY full_tf_string
+						ORDER BY full_tf_string asc";
                 $result2 = mysql_query($sql2,$connection);
                 $full_type_list = "";
 

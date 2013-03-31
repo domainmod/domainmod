@@ -42,25 +42,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "" && $new_type_id != "" && $new_function_id != "" && $new_domain_id != "") {
 
-		$sql = "select ssl_provider_id, company_id
-				from ssl_accounts
-				where id = '$new_account_id'";
+		$sql = "SELECT ssl_provider_id, company_id
+				FROM ssl_accounts
+				WHERE id = '$new_account_id'";
 		$result = mysql_query($sql,$connection);
 		
 		while ($row = mysql_fetch_object($result)) { $new_ssl_provider_id = $row->ssl_provider_id; $new_company_id = $row->company_id; }
 
-		$sql = "select id
-				from ssl_fees
-				where ssl_provider_id = '$new_ssl_provider_id' 
-				and type_id = '$new_type_id'
-				and function_id = '$new_function_id'";
+		$sql = "SELECT id
+				FROM ssl_fees
+				WHERE ssl_provider_id = '$new_ssl_provider_id' 
+				  AND type_id = '$new_type_id'
+				  AND function_id = '$new_function_id'";
 		$result = mysql_query($sql,$connection);
 		
 		while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
 
-		$sql = "insert into ssl_certs
-				(company_id, ssl_provider_id, account_id, domain_id, name, type_id, function_id, expiry_date, fee_id, notes, active, insert_time)
-				values ('$new_company_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '" . mysql_real_escape_string($new_name) . "', '$new_type_id', '$new_function_id', '$new_expiry_date', '$new_fee_id', '" . mysql_real_escape_string($new_notes) . "', '$new_active', '$current_timestamp')";
+		$sql = "INSERT INTO ssl_certs
+				(company_id, ssl_provider_id, account_id, domain_id, name, type_id, function_id, expiry_date, fee_id, notes, active, insert_time) VALUES 
+				('$new_company_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '" . mysql_real_escape_string($new_name) . "', '$new_type_id', '$new_function_id', '$new_expiry_date', '$new_fee_id', '" . mysql_real_escape_string($new_notes) . "', '$new_active', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -92,9 +92,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR><BR>
 <strong>Domain:</strong><BR><BR>
 <?php
-$sql_domain = "select id, domain
-				from domains
-				order by domain asc";
+$sql_domain = "SELECT id, domain
+			   FROM domains
+			   ORDER BY domain asc";
 $result_domain = mysql_query($sql_domain,$connection) or die(mysql_error());
 echo "<select name=\"new_domain_id\">";
 while ($row_domain = mysql_fetch_object($result_domain)) {
@@ -114,10 +114,10 @@ echo "</select>";
 <BR><BR>
 <strong>Function:</strong><BR><BR>
 <?php
-$sql_function = "select id, function
-				from ssl_cert_functions
-				where active = '1'
-				order by function asc";
+$sql_function = "SELECT id, function
+				 FROM ssl_cert_functions
+				 WHERE active = '1'
+				 ORDER BY function asc";
 $result_function = mysql_query($sql_function,$connection) or die(mysql_error());
 echo "<select name=\"new_function_id\">";
 while ($row_function = mysql_fetch_object($result_function)) {
@@ -137,10 +137,10 @@ echo "</select>";
 <BR><BR>
 <strong>Type:</strong><BR><BR>
 <?php
-$sql_type = "select id, type
-			 from ssl_cert_types
-			 where active = '1'
-			 order by type asc";
+$sql_type = "SELECT id, type
+			 FROM ssl_cert_types
+			 WHERE active = '1'
+			 ORDER BY type asc";
 $result_type = mysql_query($sql_type,$connection) or die(mysql_error());
 echo "<select name=\"new_type_id\">";
 while ($row_type = mysql_fetch_object($result_type)) {
@@ -163,12 +163,12 @@ echo "</select>";
 <BR><BR>
 <strong>SSL Provider Account:</strong><BR><BR>
 <?php
-$sql_account = "select sslpa.id, sslpa.username, c.name as c_name, sslp.name as sslp_name
-				from ssl_accounts as sslpa, companies as c, ssl_providers as sslp
-				where sslpa.company_id = c.id
-				and sslpa.ssl_provider_id = sslp.id
-				and sslpa.active = '1'
-				order by sslp_name asc, c_name asc, sslpa.username asc";
+$sql_account = "SELECT sslpa.id, sslpa.username, c.name as c_name, sslp.name as sslp_name
+				FROM ssl_accounts as sslpa, companies as c, ssl_providers as sslp
+				WHERE sslpa.company_id = c.id
+				  AND sslpa.ssl_provider_id = sslp.id
+				  AND sslpa.active = '1'
+				ORDER BY sslp_name asc, c_name asc, sslpa.username asc";
 $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysql_fetch_object($result_account)) {

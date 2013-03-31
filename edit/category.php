@@ -42,29 +42,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		if ($new_default_category == "1") {
 			
-			$sql = "update categories
-					set default_category = '0',
+			$sql = "UPDATE categories
+					SET default_category = '0',
 					    update_time = '$current_timestamp'";
 			$result = mysql_query($sql,$connection);
 			
 		} else { 
 		
-			$sql = "select count(*) as total_count
-					from categories
-					where default_category = '1'";
+			$sql = "SELECT count(*) AS total_count
+					FROM categories
+					WHERE default_category = '1'";
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) { $temp_total = $row->total_count; }
 			if ($temp_total == "0") $new_default_category = "1";
 		
 		}
 
-		$sql = "update categories
-				set name = '" . mysql_real_escape_string($new_category) . "', 
+		$sql = "UPDATE categories
+				SET name = '" . mysql_real_escape_string($new_category) . "', 
 					owner = '" . mysql_real_escape_string($new_owner) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					default_category = '$new_default_category',
 					update_time = '$current_timestamp'
-				where id = '$new_pcid'";
+				WHERE id = '$new_pcid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$new_category = $new_category;
@@ -84,9 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select name, owner, notes, default_category
-			from categories
-			where id = '$pcid'";
+	$sql = "SELECT name, owner, notes, default_category
+			FROM categories
+			WHERE id = '$pcid'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 

@@ -34,7 +34,6 @@ session_start();
 	</tr>
 </table>
 
-
 <table align="center" width="<?=$site_width?>" border="0" cellspacing="0" cellpadding="0">
 	<tr>
         <td class="main-table" height="100%">

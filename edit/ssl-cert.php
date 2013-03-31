@@ -48,18 +48,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "") {
 
-		$sql = "select ssl_provider_id, company_id
-				from ssl_accounts
-				where id = '$new_account_id'";
+		$sql = "SELECT ssl_provider_id, company_id
+				FROM ssl_accounts
+				WHERE id = '$new_account_id'";
 		$result = mysql_query($sql,$connection);
 		
 		while ($row = mysql_fetch_object($result)) { $new_ssl_provider_id = $row->ssl_provider_id; $new_company_id = $row->company_id; }
 
-		$sql2 = "select id
-				from ssl_fees
-				where ssl_provider_id = '$new_ssl_provider_id'
-				and type_id = '$new_type_id'
-				and function_id = '$new_function_id'";
+		$sql2 = "SELECT id
+				 FROM ssl_fees
+				 WHERE ssl_provider_id = '$new_ssl_provider_id'
+				   AND type_id = '$new_type_id'
+				   AND function_id = '$new_function_id'";
 		$result2 = mysql_query($sql2,$connection);
 		
 		if (mysql_num_rows($result2) >= 1) { 
@@ -76,8 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		}
 
-		$sql2 = "update ssl_certs
-				 set company_id = '$new_company_id',
+		$sql2 = "UPDATE ssl_certs
+				 SET company_id = '$new_company_id',
 					ssl_provider_id = '$new_ssl_provider_id',
 					account_id = '$new_account_id',
 					domain_id = '$new_domain_id',
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					active = '$new_active',
 					fee_fixed = '$temp_fee_fixed',
 					update_time = '$current_timestamp'
-				where id = '$new_sslcid'";
+				WHERE id = '$new_sslcid'";
 		$result2 = mysql_query($sql2,$connection) or die(mysql_error());
 		
 		$sslcid = $new_sslcid;
@@ -109,12 +109,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id as account_id, sslct.id as type_id, sslct.type, sslcf.id as function_id, sslcf.function
-			from ssl_certs as sslc, ssl_accounts as sslpa, ssl_cert_types as sslct, ssl_cert_functions as sslcf
-			where sslc.account_id = sslpa.id
-			and sslc.type_id = sslct.id
-			and sslc.function_id = sslcf.id
-			and sslc.id = '$sslcid'";
+	$sql = "SELECT sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS account_id, sslct.id AS type_id, sslct.type, sslcf.id AS function_id, sslcf.function
+			FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_cert_types AS sslct, ssl_cert_functions AS sslcf
+			WHERE sslc.account_id = sslpa.id
+			  AND sslc.type_id = sslct.id
+			  AND sslc.function_id = sslcf.id
+			  AND sslc.id = '$sslcid'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
@@ -142,7 +142,8 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-	$sql = "delete from ssl_certs where id = '$sslcid'";
+	$sql = "DELETE FROM ssl_certs 
+			WHERE id = '$sslcid'";
 	$result = mysql_query($sql,$connection);
 	
 	$_SESSION['session_result_message'] = "SSL Certificate Deleted ($new_name)<BR>";
@@ -166,9 +167,9 @@ if ($really_del == "1") {
 <BR><BR>
 <strong>Domain:</strong><BR><BR>
 <?php
-$sql_domain = "select id, domain
-				from domains
-				order by domain asc";
+$sql_domain = "SELECT id, domain
+			   FROM domains
+			   ORDER BY domain asc";
 $result_domain = mysql_query($sql_domain,$connection) or die(mysql_error());
 echo "<select name=\"new_domain_id\">";
 while ($row_domain = mysql_fetch_object($result_domain)) {
@@ -189,10 +190,10 @@ echo "</select>";
 
 <strong>Function:</strong><BR><BR>
 <?php
-$sql_function = "select id, function
-				 from ssl_cert_functions
-				 where active = '1'
-				 order by function asc";
+$sql_function = "SELECT id, function
+				 FROM ssl_cert_functions
+				 WHERE active = '1'
+				 ORDER BY function asc";
 $result_function = mysql_query($sql_function,$connection) or die(mysql_error());
 echo "<select name=\"new_function_id\">";
 while ($row_function = mysql_fetch_object($result_function)) {
@@ -213,10 +214,10 @@ echo "</select>";
 
 <strong>Type:</strong><BR><BR>
 <?php
-$sql_type = "select id, type
-			 from ssl_cert_types
-			 where active = '1'
-			 order by type asc";
+$sql_type = "SELECT id, type
+			 FROM ssl_cert_types
+			 WHERE active = '1'
+			 ORDER BY type asc";
 $result_type = mysql_query($sql_type,$connection) or die(mysql_error());
 echo "<select name=\"new_type_id\">";
 while ($row_type = mysql_fetch_object($result_type)) {
@@ -240,11 +241,11 @@ echo "</select>";
 <BR><BR>
 <strong>SSL Provider Account:</strong><BR><BR>
 <?php
-$sql_account = "select sslpa.id, sslpa.username, c.name as c_name, sslp.name as sslp_name
-				from ssl_accounts as sslpa, companies as c, ssl_providers as sslp
-				where sslpa.company_id = c.id
-				and sslpa.ssl_provider_id = sslp.id
-				order by sslp_name asc, c_name asc, sslpa.username asc";
+$sql_account = "SELECT sslpa.id, sslpa.username, c.name AS c_name, sslp.name AS sslp_name
+				FROM ssl_accounts AS sslpa, companies AS c, ssl_providers AS sslp
+				WHERE sslpa.company_id = c.id
+				  AND sslpa.ssl_provider_id = sslp.id
+				ORDER BY sslp_name asc, c_name asc, sslpa.username asc";
 $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysql_fetch_object($result_account)) {

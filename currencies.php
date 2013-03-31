@@ -35,10 +35,10 @@ $software_section = "currencies";
 <body>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-$sql = "select id, currency, name, conversion, default_currency
-		from currencies
-		where active = '1'
-		order by default_currency desc, name asc";
+$sql = "SELECT id, currency, name, conversion, default_currency
+		FROM currencies
+		WHERE active = '1'
+		ORDER BY default_currency desc, name asc";
 $result = mysql_query($sql,$connection);
 ?>
 The below exchange rates are used for various reporting, and at the very least they should be updated before you export your domains.<BR>

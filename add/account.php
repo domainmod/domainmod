@@ -38,9 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_username != "") {
 
-		$sql = "insert into registrar_accounts
-				(company_id, registrar_id, username, notes, reseller, insert_time)
-				values ('$new_company_id', '$new_registrar_id', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_reseller', '$current_timestamp')";
+		$sql = "INSERT INTO registrar_accounts 
+				(company_id, registrar_id, username, notes, reseller, insert_time) VALUES 
+				('$new_company_id', '$new_registrar_id', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_reseller', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Account Added<BR>";
@@ -67,10 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <form name="add_account_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Company:</strong><BR><BR>
 <?php
-$sql_company = "select id, name
-				from companies
-				where active = '1'
-				order by name asc";
+$sql_company = "SELECT id, name
+				FROM companies
+				WHERE active = '1'
+				ORDER BY name asc";
 $result_company = mysql_query($sql_company,$connection) or die(mysql_error());
 echo "<select name=\"new_company_id\">";
 while ($row_company = mysql_fetch_object($result_company)) {
@@ -90,10 +90,10 @@ echo "</select>";
 <BR><BR>
 <strong>Registrar:</strong><BR><BR>
 <?php
-$sql_registrar = "select id, name
-				  from registrars
-				  where active = '1'
-				  order by name asc";
+$sql_registrar = "SELECT id, name
+				  FROM registrars
+				  WHERE active = '1'
+				  ORDER BY name asc";
 $result_registrar = mysql_query($sql_registrar,$connection) or die(mysql_error());
 echo "<select name=\"new_registrar_id\">";
 while ($row_registrar = mysql_fetch_object($result_registrar)) {

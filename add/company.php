@@ -35,9 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_company != "") {
 
-		$sql = "insert into companies
-				(name, notes, insert_time)
-				values ('" . mysql_real_escape_string($new_company) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
+		$sql = "INSERT INTO companies 
+				(name, notes, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_company) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Company Added<BR>";

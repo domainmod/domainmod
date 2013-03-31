@@ -41,11 +41,11 @@ $new_password = $_POST['new_password'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
 	
-	$sql = "select id, first_name, last_name, username, email_address, password, admin
-			from users
-			where username = '$new_username'
-			and password = password('$new_password')
-			and active = '1'";
+	$sql = "SELECT id, first_name, last_name, username, email_address, password, admin
+			FROM users
+			WHERE username = '$new_username'
+			  AND password = password('$new_password')
+			  AND active = '1'";
 	$result = mysql_query($sql,$connection) or die('Login Failed'); 
 	
    if (mysql_num_rows($result) == 1) {

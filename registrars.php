@@ -35,14 +35,14 @@ $software_section = "registrars";
 <body>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-$sql = "select r.id as rid, r.name as rname, r.url
-		from registrars as r, domains as d
-		where r.id = d.registrar_id
-		and r.active = '1'
-		and d.domain not in ('0', '10')
-		and (select count(*) from domains where registrar_id = r.id and active not in ('0','10')) > 0
-		group by r.name
-		order by r.name asc";
+$sql = "SELECT r.id AS rid, r.name AS rname, r.url
+		FROM registrars AS r, domains AS d
+		WHERE r.id = d.registrar_id
+		  AND r.active = '1'
+		  AND d.domain NOT IN ('0', '10')
+		  AND (SELECT count(*) FROM domains WHERE registrar_id = r.id AND active NOT IN ('0','10')) > 0
+		GROUP BY r.name
+		ORDER BY r.name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <strong>Number of Active Registrars:</strong> <?=mysql_num_rows($result)?>
@@ -79,10 +79,10 @@ if (mysql_num_rows($result) > 0) { ?>
             </td>
             <td>
                 <?php
-                $sql2 = "select count(*) as total_count
-                         from registrar_accounts
-                         where active = '1'
-                         and registrar_id = '$row->rid'";
+                $sql2 = "SELECT count(*) AS total_count
+                         FROM registrar_accounts
+                         WHERE active = '1'
+                           AND registrar_id = '$row->rid'";
                 $result2 = mysql_query($sql2,$connection);
         
                 while ($row2 = mysql_fetch_object($result2)) { 
@@ -103,10 +103,10 @@ if (mysql_num_rows($result) > 0) { ?>
             </td>
             <td>
                 <?php
-                $sql3 = "select count(*) as total_count
-                         from domains
-                         where active not in ('0', '10')
-                         and registrar_id = '$row->rid'";
+                $sql3 = "SELECT count(*) AS total_count
+                         FROM domains
+                         WHERE active NOT IN ('0', '10')
+                           AND registrar_id = '$row->rid'";
                 $result3 = mysql_query($sql3,$connection);
         
                 while ($row3 = mysql_fetch_object($result3)) { 
@@ -142,22 +142,22 @@ $exclude_registrar_string = substr($exclude_registrar_string_raw, 0, -2);
 
 if ($exclude_registrar_string == "") {
 
-	$sql = "select r.id as rid, r.name as rname, r.url
-			from registrars as r
-			where r.id
-			and r.active = '1'
-			group by r.name
-			order by r.name asc";
+	$sql = "SELECT r.id AS rid, r.name AS rname, r.url
+			FROM registrars AS r
+			WHERE r.id
+			  AND r.active = '1'
+			GROUP BY r.name
+			ORDER BY r.name asc";
 
 } else {
 	
-	$sql = "select r.id as rid, r.name as rname, r.url
-		from registrars as r
-		where r.id
-		and r.active = '1'
-		and r.id not in ($exclude_registrar_string)
-		group by r.name
-		order by r.name asc";
+	$sql = "SELECT r.id AS rid, r.name AS rname, r.url
+			FROM registrars AS r
+			WHERE r.id
+			  AND r.active = '1'
+			  AND r.id NOT IN ($exclude_registrar_string)
+			GROUP BY r.name
+			ORDER BY r.name asc";
 
 }
 $result = mysql_query($sql,$connection) or die(mysql_error());
@@ -189,10 +189,10 @@ if (mysql_num_rows($result) > 0) { ?>
             </td>
             <td>
                 <?php
-                $sql2 = "select count(*) as total_count
-                         from registrar_accounts
-                         where active = '1'
-                         and registrar_id = '$row->rid'";
+                $sql2 = "SELECT count(*) AS total_count
+                         FROM registrar_accounts
+                         WHERE active = '1'
+                           AND registrar_id = '$row->rid'";
                 $result2 = mysql_query($sql2,$connection);
         
                 while ($row2 = mysql_fetch_object($result2)) { 

@@ -56,14 +56,14 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $sql = "SELECT id
 		FROM registrars
 		WHERE name = 'AYS Media Registrar'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $registrar_id[1] = $row->id; }
 
 $sql = "SELECT id
 		FROM registrars
 		WHERE name = 'Dummy Registrar'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $registrar_id[2] = $row->id; }
 
@@ -83,14 +83,14 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $sql = "SELECT id
 		FROM ssl_providers
 		WHERE name = 'AYS Media SSL'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_provider_id[1] = $row->id; }
 
 $sql = "SELECT id
 		FROM ssl_providers
 		WHERE name = 'Dummy SSL'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_provider_id[2] = $row->id; }
 
@@ -104,14 +104,14 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $sql = "SELECT id
 		FROM companies
 		WHERE name = 'AYS Media'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) { $company_id[1] = $row->id; }
 
 $sql = "SELECT id
 		FROM companies
 		WHERE name = 'Dummy Media'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) { $company_id[2] = $row->id; }
 
@@ -136,107 +136,107 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $sql = "SELECT id
 		FROM registrar_accounts
 		WHERE username = 'aysmedia'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $registrar_account_id[1] = $row->id; }
 
 $sql = "SELECT id
 		FROM registrar_accounts
 		WHERE username = 'dummy'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $registrar_account_id[2] = $row->id; }
 
 $sql = "SELECT id
 		FROM ssl_accounts
 		WHERE username = 'aysmedia'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_account_id[1] = $row->id; }
 
 $sql = "SELECT id
 		FROM ssl_accounts
 		WHERE username = 'dummy'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_account_id[2] = $row->id; }
 
 $sql = "SELECT id
 		FROM categories
 		WHERE name = 'AYS Media Domains'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $category_id[1] = $row->id; }
 
 $sql = "SELECT id
 		FROM categories
 		WHERE name = 'Dummy Domains'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $category_id[2] = $row->id; }
 
 $sql = "SELECT id
 		FROM fees
 		WHERE registrar_id = '" . $registrar_id[1] . "'
-		AND tld = 'com'
-		AND test_data = '1'";
+		  AND tld = 'com'
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $fee_id[1] = $row->id; }
 
 $sql = "SELECT id
 		FROM fees
 		WHERE registrar_id = '" . $registrar_id[1] . "'
-		AND tld = 'ca'
-		AND test_data = '1'";
+		  AND tld = 'ca'
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $fee_id[2] = $row->id; }
 
 $sql = "SELECT id
 		FROM fees
 		WHERE registrar_id = '" . $registrar_id[2] . "'
-		AND tld = 'com'
-		AND test_data = '1'";
+		  AND tld = 'com'
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $fee_id[3] = $row->id; }
 
 $sql = "SELECT id
 		FROM ssl_fees
 		WHERE ssl_provider_id = '" . $ssl_provider_id[1] . "'
-		AND type_id = '1'
-		AND function_id = '1'
-		AND test_data = '1'";
+		  AND type_id = '1'
+		  AND function_id = '1'
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_fee_id[1] = $row->id; }
 
 $sql = "SELECT id
 		FROM ssl_fees
 		WHERE ssl_provider_id = '" . $ssl_provider_id[1] . "'
-		AND type_id = '1'
-		AND function_id = '3'
-		AND test_data = '1'";
+		  AND type_id = '1'
+		  AND function_id = '3'
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_fee_id[2] = $row->id; }
 
 $sql = "SELECT id
 		FROM ssl_fees
 		WHERE ssl_provider_id = '" . $ssl_provider_id[2] . "'
-		AND type_id = '2'
-		AND function_id = '1'
-		AND test_data = '1'";
+		  AND type_id = '2'
+		  AND function_id = '1'
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $ssl_fee_id[3] = $row->id; }
 
 $sql = "SELECT id
 		FROM dns
 		WHERE name = 'AYS Media DNS'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $dns_id[1] = $row->id; }
 
 $sql = "SELECT id
 		FROM dns
 		WHERE name = 'Dummy DNS'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $dns_id[2] = $row->id; }
 
@@ -250,21 +250,21 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $sql = "SELECT id
 		FROM domains
 		WHERE domain = 'aysmedia.com'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[1] = $row->id; }
 
 $sql = "SELECT id
 		FROM domains
 		WHERE domain = 'aysmedia.ca'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[2] = $row->id; }
 
 $sql = "SELECT id
 		FROM domains
 		WHERE domain = 'aysprivacy.com'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[3] = $row->id; }
 
@@ -287,8 +287,8 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $sql = "SELECT id 
 		FROM ip_addresses 
 		WHERE name = 'AYS, SITE - aysmedia.com' 
-		AND insert_time = '2013-03-26 03:07:48'
-		AND test_data = '1';";
+		  AND insert_time = '2013-03-26 03:07:48'
+		  AND test_data = '1';";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
@@ -296,16 +296,16 @@ while ($row = mysql_fetch_object($result)) {
 }
 
 $sql = "UPDATE domains
-		set ip_id = '$temp_ip_id'
+		SET ip_id = '$temp_ip_id'
 		WHERE domain = 'aysmedia.com'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "SELECT id 
 		FROM ip_addresses 
 		WHERE name = 'AYS, SITE - aysmedia.ca' 
-		AND insert_time = '2013-03-26 03:07:48'
-		AND test_data = '1';";
+		  AND insert_time = '2013-03-26 03:07:48'
+		  AND test_data = '1';";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
@@ -313,16 +313,16 @@ while ($row = mysql_fetch_object($result)) {
 }
 
 $sql = "UPDATE domains
-		set ip_id = '$temp_ip_id'
+		SET ip_id = '$temp_ip_id'
 		WHERE domain = 'aysmedia.ca'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $sql = "SELECT id 
 		FROM ip_addresses 
 		WHERE name = 'AYS, SITE - aysprivacy.com' 
-		AND insert_time = '2013-03-26 03:07:48'
-		AND test_data = '1';";
+		  AND insert_time = '2013-03-26 03:07:48'
+		  AND test_data = '1';";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
@@ -330,9 +330,9 @@ while ($row = mysql_fetch_object($result)) {
 }
 
 $sql = "UPDATE domains
-		set ip_id = '$temp_ip_id'
+		SET ip_id = '$temp_ip_id'
 		WHERE domain = 'aysprivacy.com'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 $count = 1;
@@ -351,35 +351,35 @@ while ($count <= $number_of_temp_domains) {
 $sql = "SELECT id
 		FROM domains
 		WHERE domain = 'test1-dm.com'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[4] = $row->id; }
 
 $sql = "SELECT id
 		FROM domains
 		WHERE domain = 'test2-dm.com'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[5] = $row->id; }
 
 $sql = "SELECT id
 		FROM domains
 		WHERE domain = 'test3-dm.com'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[6] = $row->id; }
 
 $sql = "SELECT id
 		FROM domains
 		WHERE domain = 'test4-dm.com'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[7] = $row->id; }
 
 $sql = "SELECT id
 		FROM domains
 		WHERE domain = 'test5-dm.com'
-		AND test_data = '1'";
+		  AND test_data = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $domain_id[8] = $row->id; }
 

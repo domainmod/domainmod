@@ -62,15 +62,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != "" && $new_email_address != "" && $invalid_username != 1) {
 
-	$sql = "update users
-			set first_name = '$new_first_name',
+	$sql = "UPDATE users
+			SET first_name = '$new_first_name',
 				last_name = '$new_last_name',
 				username = '$new_username',
 				email_address = '$new_email_address',
 				admin = '$new_is_admin',
 				active = '$new_is_active',
 				update_time = '$current_timestamp'
-			where id = '$new_uid'";
+			WHERE id = '$new_uid'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$_SESSION['session_result_message'] .= "The user has been updated.<BR>";
@@ -79,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 	exit;
 
 } else {
-
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	

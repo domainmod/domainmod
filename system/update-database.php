@@ -95,8 +95,7 @@ if ($current_db_version < $most_recent_db_version) {
 	if ($current_db_version == 1.4) {
 
 		$sql = "ALTER TABLE `domains`  
-				ADD `ip_id` int(10) NOT NULL default '0' 
-				AFTER `dns_id`";
+				ADD `ip_id` int(10) NOT NULL default '0' AFTER `dns_id`";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "UPDATE settings
@@ -115,14 +114,16 @@ if ($current_db_version < $most_recent_db_version) {
 				CHANGE `ip_id` `ip_id` INT(10) NOT NULL DEFAULT '1'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
-		$sql = "UPDATE `domains` SET ip_id = '1'";
+		$sql = "UPDATE `domains` 
+				SET ip_id = '1'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "TRUNCATE `ip_addresses`";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
-		$sql = "INSERT INTO `ip_addresses` (`id`, `name`, `ip`, `insert_time`) VALUES
-										   ('1', '[no ip address]', '-', '$current_timestamp')";
+		$sql = "INSERT INTO `ip_addresses` 
+				(`id`, `name`, `ip`, `insert_time`) VALUES 
+				('1', '[no ip address]', '-', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "UPDATE settings
@@ -222,8 +223,7 @@ if ($current_db_version < $most_recent_db_version) {
 	// upgrade database from 1.92 to 1.93
 	if ($current_db_version == 1.92) {
 
-		$sql = "ALTER TABLE `settings` 
-				DROP `type`;";
+		$sql = "ALTER TABLE `settings` DROP `type`;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings

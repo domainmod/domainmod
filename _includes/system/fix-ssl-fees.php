@@ -24,40 +24,40 @@ include("../software.inc.php");
 include("../auth/auth-check.inc.php");
 include("../timestamps/current-timestamp.inc.php");
 
-$sql = "update ssl_certs 
-		set fee_fixed = '0', 
-		update_time = '$current_timestamp',
-		fee_id = '0'";
+$sql = "UPDATE ssl_certs 
+		SET fee_fixed = '0', 
+			update_time = '$current_timestamp',
+			fee_id = '0'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "update ssl_fees 
-		set fee_fixed = '0',
-		update_time = '$current_timestamp'";
+$sql = "UPDATE ssl_fees 
+		SET fee_fixed = '0',
+			update_time = '$current_timestamp'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "select id, ssl_provider_id, type_id, function_id
-		from ssl_fees
-		where fee_fixed = '0'";
+$sql = "SELECT id, ssl_provider_id, type_id, function_id
+		FROM ssl_fees
+		WHERE fee_fixed = '0'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
 
-	$sql2 = "update ssl_certs
-			 set fee_id = '$row->id',
+	$sql2 = "UPDATE ssl_certs
+			 SET fee_id = '$row->id',
 			 	 fee_fixed = '1',
 			 	 update_time = '$current_timestamp'
-			 where ssl_provider_id = '$row->ssl_provider_id' 
-			 and type_id = '$row->type_id'
-			 and function_id = '$row->function_id'
-			 and fee_fixed = '0'";
+			 WHERE ssl_provider_id = '$row->ssl_provider_id' 
+			   AND type_id = '$row->type_id'
+			   AND function_id = '$row->function_id'
+			   AND fee_fixed = '0'";
 	$result2 = mysql_query($sql2,$connection);
 	
-	$sql3 = "update ssl_fees
-			 set fee_fixed = '1',
+	$sql3 = "UPDATE ssl_fees
+			 SET fee_fixed = '1',
 	 		 	 update_time = '$current_timestamp'
-			 where ssl_provider_id = '$row->ssl_provider_id'
-			 and type_id = '$row->type_id'
-			 and function_id = '$row->function_id'";
+			 WHERE ssl_provider_id = '$row->ssl_provider_id'
+			   AND type_id = '$row->type_id'
+			   AND function_id = '$row->function_id'";
 	$result3 = mysql_query($sql3,$connection);
 	
 }

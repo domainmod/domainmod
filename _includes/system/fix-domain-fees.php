@@ -24,38 +24,38 @@ include("../software.inc.php");
 include("../auth/auth-check.inc.php");
 include("../timestamps/current-timestamp.inc.php");
 
-$sql = "update domains 
-		set fee_fixed = '0', 
+$sql = "UPDATE domains 
+		SET fee_fixed = '0', 
 			update_time = '$current_timestamp',
-		fee_id = '0'";
+			fee_id = '0'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "update fees 
-		set fee_fixed = '0',
+$sql = "UPDATE fees 
+		SET fee_fixed = '0',
 			update_time = '$current_timestamp'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "select id, registrar_id, tld
-		from fees
-		where fee_fixed = '0'";
+$sql = "SELECT id, registrar_id, tld
+		FROM fees
+		WHERE fee_fixed = '0'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
 
-	$sql2 = "update domains
-			 set fee_id = '$row->id',
+	$sql2 = "UPDATE domains
+			 SET fee_id = '$row->id',
 			 	 fee_fixed = '1',
 			 	 update_time = '$current_timestamp'
-			 where registrar_id = '$row->registrar_id' 
-			 and tld = '$row->tld'
-			 and fee_fixed = '0'";
+			 WHERE registrar_id = '$row->registrar_id' 
+			   AND tld = '$row->tld'
+			   AND fee_fixed = '0'";
 	$result2 = mysql_query($sql2,$connection);
 	
-	$sql3 = "update fees
-			 set fee_fixed = '1',
+	$sql3 = "UPDATE fees
+			 SET fee_fixed = '1',
 	 		 	 update_time = '$current_timestamp'
-			 where registrar_id = '$row->registrar_id'
-			 and tld = '$row->tld'";
+			 WHERE registrar_id = '$row->registrar_id'
+			   AND tld = '$row->tld'";
 	$result3 = mysql_query($sql3,$connection);
 	
 }

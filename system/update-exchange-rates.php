@@ -27,24 +27,24 @@ include("../_includes/auth/auth-check.inc.php");
 $page_title = "Update Exchange Rates";
 $software_section = "system";
 
-$sql = "select currency
-		from currencies
-		where default_currency = '1'";
+$sql = "SELECT currency
+		FROM currencies
+		WHERE default_currency = '1'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
 	$default_currency = $row->currency;
 }
 
-$sql = "update currencies
-		set conversion = '1', 
+$sql = "UPDATE currencies
+		SET conversion = '1', 
 			update_time = '$current_timestamp'
-		where currency = '$default_currency'";
+		WHERE currency = '$default_currency'";
 $result = mysql_query($sql,$connection);
 
-$sql = "select currency
-		from currencies
-		where currency != '$default_currency'";
+$sql = "SELECT currency
+		FROM currencies
+		WHERE currency != '$default_currency'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
@@ -64,10 +64,10 @@ while ($row = mysql_fetch_object($result)) {
 	$data = explode(",",$handle_result);
 	$value = $data[1];
 	
-	$sql2 = "update currencies
-			 set conversion = '$value', 
+	$sql2 = "UPDATE currencies
+			 SET conversion = '$value', 
 			 	 update_time = '$current_timestamp'
-			 where currency = '$row->currency'";
+			 WHERE currency = '$row->currency'";
 	$result2 = mysql_query($sql2,$connection);
 
 }

@@ -37,9 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != "" && $new_abbreviation != "") {
 		
-		$sql = "select currency
-				from currencies
-				where default_currency = '1'";
+		$sql = "SELECT currency
+				FROM currencies
+				WHERE default_currency = '1'";
 		$result = mysql_query($sql,$connection);
 		
 		while ($row = mysql_fetch_object($result)) {
@@ -61,9 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$data = explode(",",$handle_result);
 		$value = $data[1];
 			
-		$sql = "insert into currencies
-				(currency, name, conversion, notes, default_currency, insert_time)
-				values ('" . mysql_real_escape_string($new_abbreviation) . "', '" . mysql_real_escape_string($new_name) . "', '$value', '" . mysql_real_escape_string($new_notes) . "', '$new_default_currency', '$current_timestamp')";
+		$sql = "INSERT INTO currencies
+				(currency, name, conversion, notes, default_currency, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_abbreviation) . "', '" . mysql_real_escape_string($new_name) . "', '$value', '" . mysql_real_escape_string($new_notes) . "', '$new_default_currency', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Currency Added<BR>";
@@ -89,9 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
 <?php 
-$sql = "select currency, name
-		from currencies
-		where default_currency = '1'";
+$sql = "SELECT currency, name
+		FROM currencies
+		WHERE default_currency = '1'";
 $result = mysql_query($sql,$connection);
 
 while ($row = mysql_fetch_object($result)) {

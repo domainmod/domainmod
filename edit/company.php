@@ -38,11 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_company != "") {
 
-		$sql = "update companies
-				set name = '" . mysql_real_escape_string($new_company) . "',
+		$sql = "UPDATE companies
+				SET name = '" . mysql_real_escape_string($new_company) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					update_time = '$current_timestamp'
-				where id = '$new_cid'";
+				WHERE id = '$new_cid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$new_company = $new_company;
@@ -59,9 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select name, notes
-			from companies
-			where id = '$cid'";
+	$sql = "SELECT name, notes
+			FROM companies
+			WHERE id = '$cid'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 

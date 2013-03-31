@@ -41,14 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_username != "") {
 
-		$sql = "update registrar_accounts
-				set company_id = '$new_company_id',
+		$sql = "UPDATE registrar_accounts
+				SET company_id = '$new_company_id',
 					registrar_id = '$new_registrar_id',
 					username = '" . mysql_real_escape_string($new_username) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					reseller = '$new_reseller',
 					update_time = '$current_timestamp'
-				where id = '$new_raid'";
+				WHERE id = '$new_raid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$raid = $new_raid; 
@@ -63,9 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select company_id, registrar_id, username, notes, reseller
-			from registrar_accounts
-			where id = '$raid'";
+	$sql = "SELECT company_id, registrar_id, username, notes, reseller
+			FROM registrar_accounts
+			WHERE id = '$raid'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
@@ -91,10 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <form name="edit_account_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Company:</strong><BR><BR>
 <?php
-$sql_company = "select id, name
-				from companies
-				where active = '1'
-				order by name asc";
+$sql_company = "SELECT id, name
+				FROM companies
+				WHERE active = '1'
+				ORDER BY name asc";
 $result_company = mysql_query($sql_company,$connection) or die(mysql_error());
 echo "<select name=\"new_company_id\">";
 while ($row_company = mysql_fetch_object($result_company)) {
@@ -114,10 +114,10 @@ echo "</select>";
 <BR><BR>
 <strong>Registrar:</strong><BR><BR>
 <?php
-$sql_registrar = "select id, name
-				  from registrars
-				  where active = '1'
-				  order by name asc";
+$sql_registrar = "SELECT id, name
+				  FROM registrars
+				  WHERE active = '1'
+				  ORDER BY name asc";
 $result_registrar = mysql_query($sql_registrar,$connection) or die(mysql_error());
 echo "<select name=\"new_registrar_id\">";
 while ($row_registrar = mysql_fetch_object($result_registrar)) {

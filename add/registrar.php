@@ -36,9 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_registrar != "" && $new_url != "") {
 
-		$sql = "insert into registrars
-				(name, url, notes, insert_time)
-				values ('" . mysql_real_escape_string($new_registrar) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
+		$sql = "INSERT INTO registrars
+				(name, url, notes, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_registrar) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Registrar Added<BR>";

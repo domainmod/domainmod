@@ -34,12 +34,12 @@ include("../../auth/login-checks/database-version-check.inc.php");
 
 unset($_SESSION['session_running_login_checks']);
 
-$sql_user_update = "update users
-					set last_login = '$current_timestamp',
-					number_of_logins = number_of_logins+1,
-					update_time = '$current_timestamp'
-					where id = '" . $_SESSION['session_user_id'] . "'
-					and email_address = '" . $_SESSION['session_email_address'] . "'";
+$sql_user_update = "UPDATE users
+					SET last_login = '$current_timestamp',
+						number_of_logins = number_of_logins + 1,
+						update_time = '$current_timestamp'
+					WHERE id = '" . $_SESSION['session_user_id'] . "'
+					  AND email_address = '" . $_SESSION['session_email_address'] . "'";
 $result_user_update = mysql_query($sql_user_update,$connection);
 
 if (isset($_SESSION['session_user_redirect'])) {
@@ -51,7 +51,6 @@ if (isset($_SESSION['session_user_redirect'])) {
 	exit;
 
 } else {
-
 
  	header("Location: ../../../domains.php");
 	exit;

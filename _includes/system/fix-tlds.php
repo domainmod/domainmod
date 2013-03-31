@@ -24,17 +24,19 @@ include("../software.inc.php");
 include("../auth/auth-check.inc.php");
 include("../timestamps/current-timestamp.inc.php");
 
-$sql = "select id, domain from domains order by domain asc";
+$sql = "SELECT id, domain 
+		FROM domains 
+		ORDER BY domain asc";
 $result = mysql_query($sql,$connection);
 
 while ($row = mysql_fetch_object($result)) {
 	
 	$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $row->domain);
 	
-	$sql2 = "update domains
-			 set tld = '$tld',
-			 update_time = '$current_timestamp'
-			 where id = '$row->id'";
+	$sql2 = "UPDATE domains
+			 SET tld = '$tld',
+			 	 update_time = '$current_timestamp'
+			 WHERE id = '$row->id'";
 	$result2 = mysql_query($sql2,$connection);
 
 }

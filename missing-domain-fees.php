@@ -34,12 +34,12 @@ $page_title = "Missing Domain Fees";
 <body>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-$sql = "select r.id as registrar_id, r.name as registrar_name
-		from registrars r, domains d
-		where r.id = d.registrar_id
-		and d.fee_id = '0'
-		group by r.name
-		order by r.name asc";
+$sql = "SELECT r.id AS registrar_id, r.name AS registrar_name
+		FROM registrars r, domains d
+		WHERE r.id = d.registrar_id
+		  AND d.fee_id = '0'
+		GROUP BY r.name
+		ORDER BY r.name asc";
 $result = mysql_query($sql,$connection);
 ?>
 The following Registrars/TLDs are missing Domain fees. In order to ensure your Domain reporting is accurate please update these fees.
@@ -63,12 +63,12 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your D
             </td>
             <td>
                 <?php
-                $sql2 = "select tld
-                         from domains
-                         where registrar_id = '$row->registrar_id'
-                         and fee_id = '0'
-                         group by tld
-                         order by tld asc";
+                $sql2 = "SELECT tld
+                         FROM domains
+                         WHERE registrar_id = '$row->registrar_id'
+                           AND fee_id = '0'
+                         GROUP BY tld
+                         ORDER BY tld asc";
                 $result2 = mysql_query($sql2,$connection);
                 $full_tld_list = "";
                 while ($row2 = mysql_fetch_object($result2)) {

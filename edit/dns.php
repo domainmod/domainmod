@@ -59,22 +59,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ($new_dns2 == '') { $new_number_of_servers = '1'; }
 		if ($new_dns1 == '') { $new_number_of_servers = '0'; }
 
-		$sql2 = "update dns
-				 set name = '" . mysql_real_escape_string($new_name) . "',
-				 	dns1 = '" . mysql_real_escape_string($new_dns1) . "',
-					dns2 = '" . mysql_real_escape_string($new_dns2) . "',
-					dns3 = '" . mysql_real_escape_string($new_dns3) . "',
-					dns4 = '" . mysql_real_escape_string($new_dns4) . "',
-					dns5 = '" . mysql_real_escape_string($new_dns5) . "',
-					dns6 = '" . mysql_real_escape_string($new_dns6) . "',
-					dns7 = '" . mysql_real_escape_string($new_dns7) . "',
-					dns8 = '" . mysql_real_escape_string($new_dns8) . "',
-					dns9 = '" . mysql_real_escape_string($new_dns9) . "',
-					dns10 = '" . mysql_real_escape_string($new_dns10) . "',
-					notes = '" . mysql_real_escape_string($new_notes) . "',
-					number_of_servers = '$new_number_of_servers',
-					update_time = '$current_timestamp'
-				 where id = '$new_dnsid'";
+		$sql2 = "UPDATE dns
+				 SET name = '" . mysql_real_escape_string($new_name) . "',
+				 	 dns1 = '" . mysql_real_escape_string($new_dns1) . "',
+					 dns2 = '" . mysql_real_escape_string($new_dns2) . "',
+					 dns3 = '" . mysql_real_escape_string($new_dns3) . "',
+					 dns4 = '" . mysql_real_escape_string($new_dns4) . "',
+					 dns5 = '" . mysql_real_escape_string($new_dns5) . "',
+					 dns6 = '" . mysql_real_escape_string($new_dns6) . "',
+					 dns7 = '" . mysql_real_escape_string($new_dns7) . "',
+					 dns8 = '" . mysql_real_escape_string($new_dns8) . "',
+					 dns9 = '" . mysql_real_escape_string($new_dns9) . "',
+					 dns10 = '" . mysql_real_escape_string($new_dns10) . "',
+					 notes = '" . mysql_real_escape_string($new_notes) . "',
+					 number_of_servers = '$new_number_of_servers',
+					 update_time = '$current_timestamp'
+				 WHERE id = '$new_dnsid'";
 		$result2 = mysql_query($sql2,$connection) or die(mysql_error());
 		
 		$dnsid = $new_dnsid;
@@ -83,9 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, notes
-			from dns
-			where id = '$dnsid'";
+	$sql = "SELECT name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, notes
+			FROM dns
+			WHERE id = '$dnsid'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 

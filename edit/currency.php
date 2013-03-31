@@ -42,9 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		if ($new_default_currency != 1) {
 			
-			$sql = "select currency
-					from currencies
-					where default_currency = '1'";
+			$sql = "SELECT currency
+					FROM currencies
+					WHERE default_currency = '1'";
 			$result = mysql_query($sql,$connection);
 			
 			while ($row = mysql_fetch_object($result)) {
@@ -57,20 +57,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 		} elseif ($new_default_currency == "1") {
 			
-			$sql = "update currencies
-					set default_currency = '0',
-					update_time = '$current_timestamp'";
+			$sql = "UPDATE currencies
+					SET default_currency = '0',
+						update_time = '$current_timestamp'";
 			$result = mysql_query($sql,$connection);
 			
 		}
 		
-		$sql = "update currencies
-				set currency = '" . mysql_real_escape_string($new_abbreviation) . "',
+		$sql = "UPDATE currencies
+				SET currency = '" . mysql_real_escape_string($new_abbreviation) . "',
 					name = '" . mysql_real_escape_string($new_name) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					default_currency = '$new_default_currency',
 					update_time = '$current_timestamp'
-				where id = '$new_curid'";
+				WHERE id = '$new_curid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$curid = $new_curid;
@@ -86,9 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select currency, name, notes, default_currency
-			from currencies
-			where id = '$curid'";
+	$sql = "SELECT currency, name, notes, default_currency
+			FROM currencies
+			WHERE id = '$curid'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 

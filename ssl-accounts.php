@@ -43,12 +43,12 @@ $cid = $_GET['cid'];
 if ($sslpid != "") { $sslpid_string = " and ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
 if ($cid != "") { $cid_string = " and company_id = '$cid' "; } else { $cid_string = ""; }
 
-$sql = "select id, username, company_id, ssl_provider_id, reseller
-		from ssl_accounts
-		where id in (select account_id from ssl_certs where account_id != '0' and active = '1' group by account_id)
-		$sslpid_string
-		$cid_string
-		order by username asc";
+$sql = "SELECT id, username, company_id, ssl_provider_id, reseller
+		FROM ssl_accounts
+		WHERE id IN (SELECT account_id FROM ssl_certs WHERE account_id != '0' AND active = '1' GROUP BY account_id)
+		  $sslpid_string
+		  $cid_string
+		ORDER BY username asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 These are the SSL provider accounts that have active certificates.
@@ -85,9 +85,9 @@ if (mysql_num_rows($result) > 0) { ?>
                 <tr>
                     <td width="244">
                     <?php
-                    $sql2 = "select id, name
-                             from companies
-                             where id = '$row->company_id'";
+                    $sql2 = "SELECT id, name
+                             FROM companies
+                             WHERE id = '$row->company_id'";
                     $result2 = mysql_query($sql2,$connection) or die(mysql_error());
                     while ($row2 = mysql_fetch_object($result2)) {
                         $temp_id = $row2->id;
@@ -98,9 +98,9 @@ if (mysql_num_rows($result) > 0) { ?>
                     </td>
                     <td width="250">
                     <?php
-                    $sql2 = "select id, name
-                             from ssl_providers
-                             where id = '$row->ssl_provider_id'";
+                    $sql2 = "SELECT id, name
+                             FROM ssl_providers
+                             WHERE id = '$row->ssl_provider_id'";
                     $result2 = mysql_query($sql2,$connection) or die(mysql_error());
                     while ($row2 = mysql_fetch_object($result2)) {
                         $temp_id = $row2->id;
@@ -111,11 +111,11 @@ if (mysql_num_rows($result) > 0) { ?>
                     </td>
                     <td>
                     <?php
-                    $sql3 = "select count(*) as total_ssl_count
-                             from ssl_certs
-                             where account_id = '$row->id'
-                             and active != '0'
-                             and active != '10'";
+                    $sql3 = "SELECT count(*) AS total_ssl_count
+                             FROM ssl_certs
+                             WHERE account_id = '$row->id'
+                               AND active != '0'
+                               AND active != '10'";
                     $result3 = mysql_query($sql3,$connection);
                     while ($row3 = mysql_fetch_object($result3)) {
                         if ($row3->total_ssl_count != 0) {
@@ -136,12 +136,12 @@ if (mysql_num_rows($result) > 0) { ?>
 <?php 
 } ?>
 <?php
-$sql = "select id, username, company_id, ssl_provider_id, reseller
-		from ssl_accounts
-		where id not in (select account_id from ssl_certs where account_id != '0' and active = '1' group by account_id)
-		$sslpid_string
-		$cid_string
-		order by username asc";
+$sql = "SELECT id, username, company_id, ssl_provider_id, reseller
+		FROM ssl_accounts
+		WHERE id NOT IN (SELECT account_id FROM ssl_certs WHERE account_id != '0' AND active = '1' GROUP BY account_id)
+		  $sslpid_string
+		  $cid_string
+		ORDER BY username asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <?php 
@@ -179,9 +179,9 @@ if (mysql_num_rows($result) > 0) { ?>
                     <tr>
                         <td width="246">
                         <?php
-                        $sql2 = "select id, name
-                                 from companies
-                                 where id = '$row->company_id'";
+                        $sql2 = "SELECT id, name
+                                 FROM companies
+                                 WHERE id = '$row->company_id'";
                         $result2 = mysql_query($sql2,$connection) or die(mysql_error());
                         while ($row2 = mysql_fetch_object($result2)) {
                             $temp_id = $row2->id;
@@ -192,9 +192,9 @@ if (mysql_num_rows($result) > 0) { ?>
                         </td>
                         <td width="250">
                         <?php
-                        $sql2 = "select id, name
-                                 from ssl_providers
-                                 where id = '$row->ssl_provider_id'";
+                        $sql2 = "SELECT id, name
+                                 FROM ssl_providers
+                                 WHERE id = '$row->ssl_provider_id'";
                         $result2 = mysql_query($sql2,$connection) or die(mysql_error());
                         while ($row2 = mysql_fetch_object($result2)) {
                             $temp_id = $row2->id;

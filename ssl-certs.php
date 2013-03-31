@@ -158,69 +158,68 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 <body onLoad="document.forms[0].elements[8].focus()";>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-if ($is_active == "0") { $is_active_string = " and sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " and sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " and sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " and sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " and sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " and sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
-if ($cid != "") { $cid_string = " and c.id = '$cid' "; } else { $cid_string = ""; }
-if ($did != "") { $did_string = " and d.id = '$did' "; } else { $did_string = ""; }
-if ($sslpid != "") { $sslpid_string = " and sslp.id = '$sslpid' "; } else { $sslpid_string = ""; }
-if ($sslpaid != "") { $sslpaid_string = " and sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
-if ($typeid != "") { $typeid_string = " and sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
-if ($functionid != "") { $functionid_string = " and sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($cid != "") { $cid_string = " AND c.id = '$cid' "; } else { $cid_string = ""; }
+if ($did != "") { $did_string = " AND d.id = '$did' "; } else { $did_string = ""; }
+if ($sslpid != "") { $sslpid_string = " AND sslp.id = '$sslpid' "; } else { $sslpid_string = ""; }
+if ($sslpaid != "") { $sslpaid_string = " AND sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
+if ($typeid != "") { $typeid_string = " AND sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
+if ($functionid != "") { $functionid_string = " AND sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
+if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
 
 if ($sort_by == "") $sort_by = "ed_a";
 
-if ($sort_by == "ed_a") { $sort_by_string = " order by sslc.expiry_date asc, sslc.name asc "; } 
-elseif ($sort_by == "ed_d") { $sort_by_string = " order by sslc.expiry_date desc, sslc.name asc "; } 
-elseif ($sort_by == "dn_a") { $sort_by_string = " order by d.domain asc "; } 
-elseif ($sort_by == "dn_d") {  $sort_by_string = " order by d.domain desc "; } 
-elseif ($sort_by == "sslc_a") { $sort_by_string = " order by sslc.name asc "; } 
-elseif ($sort_by == "sslc_d") { $sort_by_string = " order by sslc.name desc "; } 
-elseif ($sort_by == "sslf_a") { $sort_by_string = " order by sslcf.function asc, sslc.name asc "; } 
-elseif ($sort_by == "sslf_d") { $sort_by_string = " order by sslcf.function desc, sslc.name asc "; } 
-elseif ($sort_by == "sslt_a") { $sort_by_string = " order by sslct.type asc, sslc.name asc "; } 
-elseif ($sort_by == "sslt_d") { $sort_by_string = " order by sslct.type desc, sslc.name asc "; } 
-elseif ($sort_by == "ca_a") { $sort_by_string = " order by c.name asc, sslc.name asc "; } 
-elseif ($sort_by == "ca_d") { $sort_by_string = " order by c.name desc, sslc.name asc "; } 
-elseif ($sort_by == "sslp_a") { $sort_by_string = " order by sslp.name asc, sslc.name asc "; } 
-elseif ($sort_by == "sslp_d") { $sort_by_string = " order by sslp.name desc, sslc.name asc "; }
+if ($sort_by == "ed_a") { $sort_by_string = " ORDER BY sslc.expiry_date asc, sslc.name asc "; } 
+elseif ($sort_by == "ed_d") { $sort_by_string = " ORDER BY sslc.expiry_date desc, sslc.name asc "; } 
+elseif ($sort_by == "dn_a") { $sort_by_string = " ORDER BY d.domain asc "; } 
+elseif ($sort_by == "dn_d") {  $sort_by_string = " ORDER BY d.domain desc "; } 
+elseif ($sort_by == "sslc_a") { $sort_by_string = " ORDER BY sslc.name asc "; } 
+elseif ($sort_by == "sslc_d") { $sort_by_string = " ORDER BY sslc.name desc "; } 
+elseif ($sort_by == "sslf_a") { $sort_by_string = " ORDER BY sslcf.function asc, sslc.name asc "; } 
+elseif ($sort_by == "sslf_d") { $sort_by_string = " ORDER BY sslcf.function desc, sslc.name asc "; } 
+elseif ($sort_by == "sslt_a") { $sort_by_string = " ORDER BY sslct.type asc, sslc.name asc "; } 
+elseif ($sort_by == "sslt_d") { $sort_by_string = " ORDER BY sslct.type desc, sslc.name asc "; } 
+elseif ($sort_by == "ca_a") { $sort_by_string = " ORDER BY c.name asc, sslc.name asc "; } 
+elseif ($sort_by == "ca_d") { $sort_by_string = " ORDER BY c.name desc, sslc.name asc "; } 
+elseif ($sort_by == "sslp_a") { $sort_by_string = " ORDER BY sslp.name asc, sslc.name asc "; } 
+elseif ($sort_by == "sslp_d") { $sort_by_string = " ORDER BY sslp.name desc, sslc.name asc "; }
 
-$sql = "select sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id as sslpa_id, sslpa.username, sslp.id as sslp_id, sslp.name as ssl_provider_name, c.id as c_id, c.name as company_name, f.renewal_fee, cc.conversion, d.domain, sslct.type, sslcf.function
-		from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, domains as d, ssl_cert_types as sslct, ssl_cert_functions as sslcf
-		where sslc.account_id = sslpa.id
-		and sslpa.ssl_provider_id = sslp.id
-		and sslpa.company_id = c.id
-		and sslc.fee_id = f.id
-		and f.currency_id = cc.id
-		and sslc.domain_id = d.id
-		and sslc.type_id = sslct.id
-		and sslc.function_id = sslcf.id
-		$is_active_string
-		and sslpa.active = '1'
-		and sslp.active = '1'
-		and c.active = '1'
-		and cc.active = '1'
-		$cid_string
-		$did_string
-		$sslpid_string
-		$sslpaid_string
-		$typeid_string
-		$functionid_string
-		$search_string
-		$sort_by_string
-";	
+$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, c.id AS c_id, c.name AS company_name, f.renewal_fee, cc.conversion, d.domain, sslct.type, sslcf.function
+		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, companies AS c, ssl_fees AS f, currencies AS cc, domains AS d, ssl_cert_types AS sslct, ssl_cert_functions AS sslcf
+		WHERE sslc.account_id = sslpa.id
+		  AND sslpa.ssl_provider_id = sslp.id
+		  AND sslpa.company_id = c.id
+		  AND sslc.fee_id = f.id
+		  AND f.currency_id = cc.id
+		  AND sslc.domain_id = d.id
+		  AND sslc.type_id = sslct.id
+		  AND sslc.function_id = sslcf.id
+		  $is_active_string
+		  AND sslpa.active = '1'
+		  AND sslp.active = '1'
+		  AND c.active = '1'
+		  AND cc.active = '1'
+		  $cid_string
+		  $did_string
+		  $sslpid_string
+		  $sslpaid_string
+		  $typeid_string
+		  $functionid_string
+		  $search_string
+		  $sort_by_string";	
 
 $totalrows = mysql_num_rows(mysql_query($sql));
 $navigate = pageBrowser($totalrows,15,$result_limit, "&cid=$cid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&typeid=$typeid&functionid=$functionid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for",$_GET[numBegin],$_GET[begin],$_GET[num]);
@@ -237,41 +236,41 @@ $result = mysql_query($sql,$connection);
 &nbsp;&nbsp;
 <?php 
 // COMPANY
-if ($is_active == "0") { $is_active_string = " and sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " and sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " and sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " and sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " and sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " and sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
-if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_string = ""; }
-if ($sslpid != "") { $sslpid_string = " and sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
-if ($sslpaid != "") { $sslpaid_string = " and sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
-if ($typeid != "") { $typeid_string = " and sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
-if ($functionid != "") { $functionid_string = " and sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
+if ($sslpid != "") { $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
+if ($sslpaid != "") { $sslpaid_string = " AND sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
+if ($typeid != "") { $typeid_string = " AND sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
+if ($functionid != "") { $functionid_string = " AND sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
+if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
 
-$sql_company = "select c.id, c.name 
-				from companies as c, ssl_certs as sslc, domains as d
-				where c.id = sslc.company_id
-				and c.id = d.company_id
-				and c.active = '1'
-				$is_active_string
-				$did_string
-				$sslpid_string
-				$sslpaid_string
-				$typeid_string
-				$functionid_string
-				$search_string
-				group by c.name
-				order by c.name asc";
+$sql_company = "SELECT c.id, c.name 
+				FROM companies AS c, ssl_certs AS sslc, domains AS d
+				WHERE c.id = sslc.company_id
+				  AND c.id = d.company_id
+				  AND c.active = '1'
+				  $is_active_string
+				  $did_string
+				  $sslpid_string
+				  $sslpaid_string
+				  $typeid_string
+				  $functionid_string
+				  $search_string
+				GROUP BY c.name
+				ORDER BY c.name asc";
 $result_company = mysql_query($sql_company,$connection);
 echo "<select name=\"cid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?cid=&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&typeid=$typeid&functionid=$functionid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Company - ALL</option>";
@@ -285,41 +284,41 @@ echo "</select>";
 &nbsp;&nbsp;
 <?php 
 // SSL PROVIDER
-if ($is_active == "0") { $is_active_string = " and sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " and sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " and sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " and sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " and sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " and sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
-if ($cid != "") { $cid_string = " and sslc.company_id = '$cid' "; } else { $cid_string = ""; }
-if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_string = ""; }
-if ($sslpaid != "") { $sslpaid_string = " and sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
-if ($typeid != "") { $typeid_string = " and sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
-if ($functionid != "") { $functionid_string = " and sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($cid != "") { $cid_string = " AND sslc.company_id = '$cid' "; } else { $cid_string = ""; }
+if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
+if ($sslpaid != "") { $sslpaid_string = " AND sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
+if ($typeid != "") { $typeid_string = " AND sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
+if ($functionid != "") { $functionid_string = " AND sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
+if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
 
-$sql_ssl_provider = "select sslp.id, sslp.name 
-					 from ssl_providers as sslp, ssl_certs as sslc, domains as d
-					 where sslp.id = sslc.ssl_provider_id
-					 and sslc.domain_id = d.id
-					 and sslp.active = '1' 
-					 $is_active_string
-					 $cid_string
-					 $did_string
-					 $sslpaid_string
-					 $typeid_string
-					 $functionid_string
-					 $search_string
-					 group by sslp.name
-					 order by sslp.name asc";
+$sql_ssl_provider = "SELECT sslp.id, sslp.name 
+					 FROM ssl_providers AS sslp, ssl_certs AS sslc, domains AS d
+					 WHERE sslp.id = sslc.ssl_provider_id
+					   AND sslc.domain_id = d.id
+					   AND sslp.active = '1' 
+					   $is_active_string
+					   $cid_string
+					   $did_string
+					   $sslpaid_string
+					   $typeid_string
+					   $functionid_string
+					   $search_string
+					 GROUP BY sslp.name
+					 ORDER BY sslp.name asc";
 $result_ssl_provider = mysql_query($sql_ssl_provider,$connection);
 echo "<select name=\"sslpid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?cid=$cid&did=$did&sslpid=&sslpaid=$sslpaid&typeid=$typeid&functionid=$functionid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">SSL Provider - ALL</option>";
@@ -333,45 +332,45 @@ echo "</select>";
 &nbsp;&nbsp;
 <?php 
 // SSL PROVIDER ACCOUNT
-if ($is_active == "0") { $is_active_string = " and sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " and sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " and sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " and sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " and sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " and sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
-if ($cid != "") { $cid_string = " and sslc.company_id = '$cid' "; } else { $cid_string = ""; }
-if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_string = ""; }
-if ($sslpid != "") { $sslpid_string = " and sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
-if ($typeid != "") { $typeid_string = " and sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
-if ($functionid != "") { $functionid_string = " and sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($cid != "") { $cid_string = " AND sslc.company_id = '$cid' "; } else { $cid_string = ""; }
+if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
+if ($sslpid != "") { $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
+if ($typeid != "") { $typeid_string = " AND sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
+if ($functionid != "") { $functionid_string = " AND sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
+if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
 
-$sql_account = "select sslpa.id as sslpa_id, sslpa.username, sslp.name as sslp_name, c.name as c_name
-				from ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_certs as sslc, domains as d
-				where sslpa.ssl_provider_id = sslp.id
-				and sslpa.company_id = c.id
-				and sslpa.id = sslc.account_id
-				and sslc.domain_id = d.id
-				and sslpa.active = '1'
-				and sslp.active = '1'
-				and c.active = '1'
-				$is_active_string
-				$cid_string
-				$did_string
-				$sslpid_string
-				$typeid_string
-				$functionid_string
-				$search_string
-				group by sslp.name, c.name, sslpa.username
-				order by sslp.name asc, c.name asc, sslpa.username asc";
+$sql_account = "SELECT sslpa.id AS sslpa_id, sslpa.username, sslp.name AS sslp_name, c.name AS c_name
+				FROM ssl_accounts AS sslpa, ssl_providers AS sslp, companies AS c, ssl_certs AS sslc, domains AS d
+				WHERE sslpa.ssl_provider_id = sslp.id
+				  AND sslpa.company_id = c.id
+				  AND sslpa.id = sslc.account_id
+				  AND sslc.domain_id = d.id
+				  AND sslpa.active = '1'
+				  AND sslp.active = '1'
+				  AND c.active = '1'
+				  $is_active_string
+				  $cid_string
+				  $did_string
+				  $sslpid_string
+				  $typeid_string
+				  $functionid_string
+				  $search_string
+				GROUP BY sslp.name, c.name, sslpa.username
+				ORDER BY sslp.name asc, c.name asc, sslpa.username asc";
 $result_account = mysql_query($sql_account,$connection);
 echo "<select name=\"sslpaid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?sslpaid=&sort_by=$sort_by&cid=$cid&did=$did&sslpid=$sslpid&typeid=$typeid&functionid=$functionid&is_active=$is_active&result_limit=$result_limit&search_for=$search_for\">SSL Provider Account - ALL</option>";
@@ -385,40 +384,40 @@ echo "</select>";
 &nbsp;&nbsp;
 <?php 
 // DOMAIN
-if ($is_active == "0") { $is_active_string = " and sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " and sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " and sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " and sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " and sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " and sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
-if ($cid != "") { $cid_string = " and sslc.company_id = '$cid' "; } else { $cid_string = ""; }
-if ($sslpid != "") { $sslpid_string = " and sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
-if ($sslpaid != "") { $sslpaid_string = " and sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
-if ($typeid != "") { $typeid_string = " and sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
-if ($functionid != "") { $functionid_string = " and sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($cid != "") { $cid_string = " AND sslc.company_id = '$cid' "; } else { $cid_string = ""; }
+if ($sslpid != "") { $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
+if ($sslpaid != "") { $sslpaid_string = " AND sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
+if ($typeid != "") { $typeid_string = " AND sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
+if ($functionid != "") { $functionid_string = " AND sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
+if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
 
-$sql_domain = "select d.id, d.domain 
-			   from domains as d, ssl_certs as sslc
-			   where d.id = sslc.domain_id
-			   and d.active not in ('0', '10')
-			   $is_active_string
-			   $cid_string
-			   $sslpid_string
-			   $sslpaid_string
-			   $typeid_string
-			   $functionid_string
-			   $search_string
-			   group by d.domain
-			   order by d.domain asc"; 
+$sql_domain = "SELECT d.id, d.domain 
+			   FROM domains AS d, ssl_certs AS sslc
+			   WHERE d.id = sslc.domain_id
+			     AND d.active not in ('0', '10')
+			     $is_active_string
+			     $cid_string
+			     $sslpid_string
+			     $sslpaid_string
+			     $typeid_string
+			     $functionid_string
+			     $search_string
+			   GROUP BY d.domain
+			   ORDER BY d.domain asc"; 
 $result_domain = mysql_query($sql_domain,$connection);
 echo "<select name=\"did\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?did=&cid=$cid&sslpid=$sslpid&sslpaid=$sslpaid&typeid=$typeid&functionid=$functionid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Domain - ALL</option>";
@@ -432,40 +431,40 @@ echo "</select>";
 &nbsp;&nbsp;
 <?php 
 // FUNCTION
-if ($is_active == "0") { $is_active_string = " and sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " and sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " and sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " and sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " and sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " and sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
-if ($cid != "") { $cid_string = " and sslc.company_id = '$cid' "; } else { $cid_string = ""; }
-if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_string = ""; }
-if ($sslpid != "") { $sslpid_string = " and sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
-if ($sslpaid != "") { $sslpaid_string = " and sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
-if ($typeid != "") { $typeid_string = " and sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($cid != "") { $cid_string = " AND sslc.company_id = '$cid' "; } else { $cid_string = ""; }
+if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
+if ($sslpid != "") { $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
+if ($sslpaid != "") { $sslpaid_string = " AND sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
+if ($typeid != "") { $typeid_string = " AND sslc.type_id = '$typeid' "; } else { $typeid_string = ""; }
+if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
 
-$sql_function = "select sslc.function_id, sslcf.function
-				 from ssl_certs as sslc, domains as d, ssl_cert_functions as sslcf
-				 where sslc.domain_id = d.id
-				 and sslc.function_id = sslcf.id
-				 $is_active_string
-				 $cid_string
-				 $did_string
-				 $sslpid_string
-				 $sslpaid_string
-				 $typeid_string
-				 $search_string
-				 group by sslcf.function
-				 order by sslcf.function asc";
+$sql_function = "SELECT sslc.function_id, sslcf.function
+				 FROM ssl_certs AS sslc, domains AS d, ssl_cert_functions AS sslcf
+				 WHERE sslc.domain_id = d.id
+				   AND sslc.function_id = sslcf.id
+				   $is_active_string
+				   $cid_string
+				   $did_string
+				   $sslpid_string
+				   $sslpaid_string
+				   $typeid_string
+				   $search_string
+				 GROUP BY sslcf.function
+				 ORDER BY sslcf.function asc";
 $result_function = mysql_query($sql_function,$connection);
 echo "<select name=\"functionid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?cid=$cid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&typeid=$typeid&functionid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Function - ALL</option>";
@@ -479,40 +478,40 @@ echo "</select>";
 &nbsp;&nbsp;
 <?php 
 // TYPE
-if ($is_active == "0") { $is_active_string = " and sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " and sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " and sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " and sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " and sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " and sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " and sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " and sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " and sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " and sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " and sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and sslc.active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
-if ($cid != "") { $cid_string = " and sslc.company_id = '$cid' "; } else { $cid_string = ""; }
-if ($did != "") { $did_string = " and sslc.domain_id = '$did' "; } else { $did_string = ""; }
-if ($sslpid != "") { $sslpid_string = " and sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
-if ($sslpaid != "") { $sslpaid_string = " and sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
-if ($functionid != "") { $functionid_string = " and sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
-if ($search_for != "") { $search_string = " and (sslc.name like '%$search_for%' or d.domain like '%$search_for%')"; } else { $search_string = ""; }
+if ($cid != "") { $cid_string = " AND sslc.company_id = '$cid' "; } else { $cid_string = ""; }
+if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
+if ($sslpid != "") { $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
+if ($sslpaid != "") { $sslpaid_string = " AND sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
+if ($functionid != "") { $functionid_string = " AND sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
+if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
 
-$sql_type = "select sslc.type_id, sslct.type
-			 from ssl_certs as sslc, domains as d, ssl_cert_types as sslct
-			 where sslc.domain_id = d.id
-			 and sslc.type_id = sslct.id
-			 $is_active_string
-			 $cid_string
-			 $did_string
-			 $sslpid_string
-			 $sslpaid_string
-			 $functionid_string
-			 $search_string
-			 group by sslct.type
-			 order by sslct.type asc";
+$sql_type = "SELECT sslc.type_id, sslct.type
+			 FROM ssl_certs AS sslc, domains AS d, ssl_cert_types AS sslct
+			 WHERE sslc.domain_id = d.id
+			   AND sslc.type_id = sslct.id
+			   $is_active_string
+			   $cid_string
+			   $did_string
+			   $sslpid_string
+			   $sslpaid_string
+			   $functionid_string
+			   $search_string
+			 GROUP BY sslct.type
+			 ORDER BY sslct.type asc";
 $result_type = mysql_query($sql_type,$connection);
 echo "<select name=\"typeid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?cid=$cid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&typeid=&functionid=$functionid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Type - ALL</option>";
@@ -525,38 +524,38 @@ echo "</select>";
 &nbsp;&nbsp;
 <?php 
 // STATUS
-if ($is_active == "0") { $is_active_string = " and active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " and active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " and active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " and active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " and active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " and active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " and active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " and active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " and active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " and active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " and active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " and active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " and active in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND active = '0' "; } 
+elseif ($is_active == "1") { $is_active_string = " AND active = '1' "; } 
+elseif ($is_active == "2") { $is_active_string = " AND active = '2' "; } 
+elseif ($is_active == "3") { $is_active_string = " AND active = '3' "; } 
+elseif ($is_active == "4") { $is_active_string = " AND active = '4' "; } 
+elseif ($is_active == "5") { $is_active_string = " AND active = '5' "; } 
+elseif ($is_active == "6") { $is_active_string = " AND active = '6' "; } 
+elseif ($is_active == "7") { $is_active_string = " AND active = '7' "; } 
+elseif ($is_active == "8") { $is_active_string = " AND active = '8' "; } 
+elseif ($is_active == "9") { $is_active_string = " AND active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " AND active = '10' "; } 
+elseif ($is_active == "LIVE") { $is_active_string = " AND active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " AND active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
 
-if ($cid != "") { $cid_string = " and company_id = '$cid' "; } else { $cid_string = ""; }
-if ($did != "") { $did_string = " and domain_id = '$did' "; } else { $did_string = ""; }
-if ($sslpid != "") { $sslp_string = " and ssl_provider_id = '$sslp' "; } else { $sslp_string = ""; }
-if ($sslpaid != "") { $sslpaid_string = " and account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
-if ($typeid != "") { $typeid_string = " and type_id = '$typeid' "; } else { $typeid_string = ""; }
-if ($functionid != "") { $functionid_string = " and function_id = '$functionid' "; } else { $functionid_string = ""; }
+if ($cid != "") { $cid_string = " AND company_id = '$cid' "; } else { $cid_string = ""; }
+if ($did != "") { $did_string = " AND domain_id = '$did' "; } else { $did_string = ""; }
+if ($sslpid != "") { $sslp_string = " AND ssl_provider_id = '$sslp' "; } else { $sslp_string = ""; }
+if ($sslpaid != "") { $sslpaid_string = " AND account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
+if ($typeid != "") { $typeid_string = " AND type_id = '$typeid' "; } else { $typeid_string = ""; }
+if ($functionid != "") { $functionid_string = " AND function_id = '$functionid' "; } else { $functionid_string = ""; }
 
-$sql_active = "select active, count(*) as total_count
-			   from ssl_certs
-			   where id != '0'
-			   $cid_string
-			   $did_string
-			   $sslpid_string
-			   $sslpaid_string
-			   $typeid_string
-			   $functionid_string
-			   group by active
-			   order by active asc";
+$sql_active = "SELECT active, count(*) AS total_count
+			   FROM ssl_certs
+			   WHERE id != '0'
+			     $cid_string
+			     $did_string
+			     $sslpid_string
+			     $sslpaid_string
+			     $typeid_string
+			     $functionid_string
+			   GROUP BY active
+			   ORDER BY active asc";
 $result_active = mysql_query($sql_active,$connection);
 echo "<select name=\"is_active\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?cid=$cid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&typeid=$typeid&functionid=$functionid&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Pending)</option>";

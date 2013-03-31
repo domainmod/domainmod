@@ -31,10 +31,10 @@ $export = $_GET['export'];
 $new_expiry_start = $_REQUEST['new_expiry_start'];
 $new_expiry_end = $_REQUEST['new_expiry_end'];
 
-$sql2 = "select currency, name, conversion
-		from currencies
-		where default_currency = '1'
-		and active = '1'";
+$sql2 = "SELECT currency, name, conversion
+		 FROM currencies
+		 WHERE default_currency = '1'
+		   AND active = '1'";
 $result2 = mysql_query($sql2,$connection) or die(mysql_error());
 
 while ($row2 = mysql_fetch_object($result2)) {
@@ -45,40 +45,38 @@ while ($row2 = mysql_fetch_object($result2)) {
 
 if ($export == "1") {
 
-	$sql = "select d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name as registrar_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion, cat.name as category_name, cat.owner as category_owner, dns.name as dns_profile, ip.name, ip.ip, ip.rdns
-			from domains as d, registrar_accounts as ra, registrars as r, companies as c, fees as f, currencies as cc, categories as cat, dns, ip_addresses as ip
-			where d.account_id = ra.id
-			and ra.registrar_id = r.id
-			and ra.company_id = c.id
-			and d.registrar_id = f.registrar_id
-			and d.tld = f.tld
-			and f.currency_id = cc.id
-			and d.cat_id = cat.id
-			and d.dns_id = dns.id
-			and d.ip_id = ip.id
-			and cat.active = '1'
-			and d.expiry_date between '$new_expiry_start' and '$new_expiry_end'
-			order by d.expiry_date asc
-			";	
+	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name AS registrar_name, c.name AS company_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.owner AS category_owner, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
+			FROM domains AS d, registrar_accounts AS ra, registrars AS r, companies AS c, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip
+			WHERE d.account_id = ra.id
+			  AND ra.registrar_id = r.id
+			  AND ra.company_id = c.id
+			  AND d.registrar_id = f.registrar_id
+			  AND d.tld = f.tld
+			  AND f.currency_id = cc.id
+			  AND d.cat_id = cat.id
+			  AND d.dns_id = dns.id
+			  AND d.ip_id = ip.id
+			  AND cat.active = '1'
+			  AND d.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
+			ORDER BY d.expiry_date asc";	
 
 } else {
 
-	$sql = "select d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name as registrar_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion, cat.name as category_name, cat.owner as category_owner, dns.name as dns_profile, ip.name, ip.ip, ip.rdns
-			from domains as d, registrar_accounts as ra, registrars as r, companies as c, fees as f, currencies as cc, categories as cat, dns, ip_addresses as ip
-			where d.account_id = ra.id
-			and ra.registrar_id = r.id
-			and ra.company_id = c.id
-			and d.registrar_id = f.registrar_id
-			and d.tld = f.tld
-			and f.currency_id = cc.id
-			and d.cat_id = cat.id
-			and d.dns_id = dns.id
-			and d.ip_id = ip.id
-			and cat.active = '1'
-			and d.active not in ('0', '10')
-			and d.expiry_date between '$new_expiry_start' and '$new_expiry_end'
-			order by d.expiry_date asc
-			";	
+	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name AS registrar_name, c.name AS company_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.owner AS category_owner, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
+			FROM domains AS d, registrar_accounts AS ra, registrars AS r, companies AS c, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip
+			WHERE d.account_id = ra.id
+			  AND ra.registrar_id = r.id
+			  AND ra.company_id = c.id
+			  AND d.registrar_id = f.registrar_id
+			  AND d.tld = f.tld
+			  AND f.currency_id = cc.id
+			  AND d.cat_id = cat.id
+			  AND d.dns_id = dns.id
+			  AND d.ip_id = ip.id
+			  AND cat.active = '1'
+			  AND d.active NOT IN ('0', '10')
+			  AND d.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
+			ORDER BY d.expiry_date asc";	
 
 }
 

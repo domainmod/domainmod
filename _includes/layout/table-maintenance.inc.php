@@ -18,7 +18,6 @@
 <?php
 session_start();
 ?>
-
 <?php if ($_SESSION['session_missing_domain_fees'] == 1 || $_SESSION['session_missing_ssl_fees'] == 1) { ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" bordercolor="#000000">
 	<tr>

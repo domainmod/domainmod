@@ -47,9 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_segment_formatted = trim($new_segment_formatted);
 		$new_segment_formatted = mysql_real_escape_string($new_segment_formatted);
 
-		$sql = "insert into segments
-				(name, description, segment, number_of_domains, notes, insert_time)
-				values ('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_description) . "', '$new_segment_formatted', '$number_of_domains', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
+		$sql = "INSERT into segments
+				(name, description, segment, number_of_domains, notes, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_description) . "', '$new_segment_formatted', '$number_of_domains', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$_SESSION['session_result_message'] = "Segment Added<BR>";

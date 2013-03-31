@@ -19,9 +19,7 @@
 session_start();
 
 if ($_SESSION['session_is_admin'] != 1) { 
-
 	header("Location: $full_redirect"); 
 	exit; 
-
 }
 ?>

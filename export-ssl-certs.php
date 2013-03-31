@@ -31,10 +31,10 @@ $export = $_GET['export'];
 $new_expiry_start = $_REQUEST['new_expiry_start'];
 $new_expiry_end = $_REQUEST['new_expiry_end'];
 
-$sql2 = "select currency, name, conversion
-		 from currencies
-		 where default_currency = '1'
-		 and active = '1'";
+$sql2 = "SELECT currency, name, conversion
+		 FROM currencies
+		 WHERE default_currency = '1'
+		   AND active = '1'";
 $result2 = mysql_query($sql2,$connection) or die(mysql_error());
 
 while ($row2 = mysql_fetch_object($result2)) {
@@ -45,38 +45,36 @@ while ($row2 = mysql_fetch_object($result2)) {
 
 if ($export == "1") {
 
-	$sql = "select sslc.id, sslc.domain_id, sslc.name, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
-			from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
-			where sslc.account_id = sslpa.id
-			and sslc.type_id = sslct.id
-			and sslc.function_id = sslcf.id
-			and sslpa.ssl_provider_id = sslp.id
-			and sslpa.company_id = c.id
-			and sslc.ssl_provider_id = f.ssl_provider_id
-			and sslc.type_id = f.type_id
-			and sslc.function_id = f.function_id
-			and f.currency_id = cc.id
-			and sslc.expiry_date between '$new_expiry_start' and '$new_expiry_end'
-			order by sslc.expiry_date asc
-			";	
+	$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name AS ssl_provider_name, c.name AS company_name, f.renewal_fee AS renewal_fee, cc.conversion
+			FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, companies AS c, ssl_fees AS f, currencies AS cc, ssl_cert_types AS sslct, ssl_cert_functions AS sslcf
+			WHERE sslc.account_id = sslpa.id
+			  AND sslc.type_id = sslct.id
+			  AND sslc.function_id = sslcf.id
+			  AND sslpa.ssl_provider_id = sslp.id
+			  AND sslpa.company_id = c.id
+			  AND sslc.ssl_provider_id = f.ssl_provider_id
+			  AND sslc.type_id = f.type_id
+			  AND sslc.function_id = f.function_id
+			  AND f.currency_id = cc.id
+			  AND sslc.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
+			ORDER BY sslc.expiry_date asc";	
 
 } else {
 
-	$sql = "select sslc.id, sslc.domain_id, sslc.name, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name as ssl_provider_name, c.name as company_name, f.renewal_fee as renewal_fee, cc.conversion
-			from ssl_certs as sslc, ssl_accounts as sslpa, ssl_providers as sslp, companies as c, ssl_fees as f, currencies as cc, ssl_cert_types as sslct, ssl_cert_functions as sslcf
-			where sslc.account_id = sslpa.id
-			and sslc.type_id = sslct.id
-			and sslc.function_id = sslcf.id
-			and sslpa.ssl_provider_id = sslp.id
-			and sslpa.company_id = c.id
-			and sslc.ssl_provider_id = f.ssl_provider_id
-			and sslc.type_id = f.type_id
-			and sslc.function_id = f.function_id
-			and f.currency_id = cc.id
-			and sslc.active in ('1', '2', '3', '4', '5', '6', '7', '8', '9')
-			and sslc.expiry_date between '$new_expiry_start' and '$new_expiry_end'
-			order by sslc.expiry_date asc
-			";	
+	$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslct.type, sslcf.function, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name AS ssl_provider_name, c.name AS company_name, f.renewal_fee AS renewal_fee, cc.conversion
+			FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, companies AS c, ssl_fees AS f, currencies AS cc, ssl_cert_types AS sslct, ssl_cert_functions AS sslcf
+			WHERE sslc.account_id = sslpa.id
+			  AND sslc.type_id = sslct.id
+			  AND sslc.function_id = sslcf.id
+			  AND sslpa.ssl_provider_id = sslp.id
+			  AND sslpa.company_id = c.id
+			  AND sslc.ssl_provider_id = f.ssl_provider_id
+			  AND sslc.type_id = f.type_id
+			  AND sslc.function_id = f.function_id
+			  AND f.currency_id = cc.id
+			  AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')
+			  AND sslc.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
+			ORDER BY sslc.expiry_date asc";	
 
 }
 
@@ -103,10 +101,10 @@ if ($export == "1") {
 		elseif ($row->active == "4") { $ssl_status = "PENDING (OTHER)"; } 
 		else { $ssl_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-SSL-CERTS.PHP"; } 
 		
-		$sql_domain = "select d.domain, ip.name, ip.ip
-					   from domains as d, ip_addresses as ip
-					   where d.ip_id = ip.id
-					   and d.id = '$row->domain_id'";
+		$sql_domain = "SELECT d.domain, ip.name, ip.ip
+					   FROM domains AS d, ip_addresses AS ip
+					   WHERE d.ip_id = ip.id
+					     AND d.id = '$row->domain_id'";
 		$result_domain = mysql_query($sql_domain,$connection);
 		
 		while ($row_domain = mysql_fetch_object($result_domain)) {
@@ -225,10 +223,10 @@ Expiring Between
 	</td>
 	<td valign="top">
 		<?php
-		$sql_domain = "select d.domain, ip.name, ip.ip
-					   from domains as d, ip_addresses as ip
-					   where d.ip_id = ip.id
-					   and d.id = '$row->domain_id'";
+		$sql_domain = "SELECT d.domain, ip.name, ip.ip
+					   FROM domains AS d, ip_addresses AS ip
+					   WHERE d.ip_id = ip.id
+					     AND d.id = '$row->domain_id'";
 		$result_domain = mysql_query($sql_domain,$connection);
 		
 		while ($row_domain = mysql_fetch_object($result_domain)) {

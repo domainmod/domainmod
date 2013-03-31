@@ -62,9 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 
 		if ($action == "R") { 
 		
-			$sql = "select domain, expiry_date
-					from domains
-					where domain in ($new_data_formatted)";
+			$sql = "SELECT domain, expiry_date
+					FROM domains
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			while ($row = mysql_fetch_object($result)) {
@@ -73,10 +73,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 				$old_expiry = $lines[0] . "-" . $lines[1] . "-" . $lines[2];
 				$new_expiry = $lines[0]+$new_renewal_years . "-" . $lines[1] . "-" . $lines[2];
 				
-				$sql2 = "update domains
-						 set expiry_date = '$new_expiry',
-						 update_time = '$current_timestamp'
-						 where domain = '$row->domain'";
+				$sql2 = "UPDATE domains
+						 SET expiry_date = '$new_expiry',
+						 	 update_time = '$current_timestamp'
+						 WHERE domain = '$row->domain'";
 				$result2 = mysql_query($sql2,$connection);
 			
 			}
@@ -85,9 +85,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 
 		} elseif ($action == "AD") { 
 		
-			$sql = "select company_id, registrar_id
-					from registrar_accounts
-					where id = '$new_raid'";
+			$sql = "SELECT company_id, registrar_id
+					FROM registrar_accounts
+					WHERE id = '$new_raid'";
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) {
 				$temp_company_id = $row->company_id;
@@ -104,10 +104,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 			
 				$new_tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 
-				$sql = "select id
-						from fees
-						where registrar_id = '$temp_registrar_id'
-						and tld = '$new_tld'";
+				$sql = "SELECT id
+						FROM fees
+						WHERE registrar_id = '$temp_registrar_id'
+						  AND tld = '$new_tld'";
 				$result = mysql_query($sql,$connection);
 				while ($row = mysql_fetch_object($result)) {
 					$temp_fee_id = $row->id;
@@ -115,9 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 
 				if ($temp_fee_id == '0' || $temp_fee_id == "") { $temp_fee_fixed = 0; $temp_fee_id = 0; } else { $temp_fee_fixed = 1; }
 	
-				$sql = "insert into domains
-						(company_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, dns_id, ip_id, function, status, status_notes, notes, privacy, active, fee_fixed, insert_time)
-						values
+				$sql = "INSERT INTO domains 
+						(company_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, dns_id, ip_id, function, status, status_notes, notes, privacy, active, fee_fixed, insert_time) VALUES 
 						('$temp_company_id', '$temp_registrar_id', '$new_raid',  '$new_domain', '$new_tld', '$new_expiry_date', '$new_pcid', '$temp_fee_id', '$new_dnsid', '$new_ipid', '$new_function', '$new_status', '$new_status_notes', '$new_notes', '$new_privacy', '$new_active', '$temp_fee_fixed', '$current_timestamp')";
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				$temp_fee_id = 0;
@@ -130,9 +129,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 			
 		} elseif ($action == "FR") { 
 		
-			$sql = "select domain, expiry_date
-					from domains
-					where domain in ($new_data_formatted)";
+			$sql = "SELECT domain, expiry_date
+					FROM domains
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			while ($row = mysql_fetch_object($result)) {
@@ -149,12 +148,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 				
 				$new_notes = "$current_timestamp_basic - Domain Renewed For $renewal_years_string";
 				
-				$sql2 = "update domains
-						 set expiry_date = '$new_expiry',
-						 active = '1',
-						 notes = concat('$new_notes\r\n\r\n', notes),
-						 update_time = '$current_timestamp'
-						 where domain = '$row->domain'";
+				$sql2 = "UPDATE domains
+						 SET expiry_date = '$new_expiry',
+						 	 active = '1',
+						 	 notes = CONCAT('$new_notes\r\n\r\n', notes),
+						 	 update_time = '$current_timestamp'
+						 WHERE domain = '$row->domain'";
 
 				$result2 = mysql_query($sql2,$connection);
 			
@@ -164,15 +163,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 			
 		} elseif ($action == "CPC") { 
 
-			$sql = "update domains
-					set cat_id = '$new_pcid',
-				    update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET cat_id = '$new_pcid',
+				    	update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$sql = "select name
-					from categories
-					where id = '$new_pcid'";
+			$sql = "SELECT name
+					FROM categories
+					WHERE id = '$new_pcid'";
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) {
 				$new_primary_category_string = $row->name;
@@ -182,15 +181,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 
 		} elseif ($action == "CDNS") { 
 
-			$sql = "update domains
-					set dns_id = '$new_dnsid',
-					update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET dns_id = '$new_dnsid',
+						update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$sql = "select name
-					from dns
-					where id = '$new_dnsid'";
+			$sql = "SELECT name
+					FROM dns
+					WHERE id = '$new_dnsid'";
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) {
 				$new_dns_string = $row->name;
@@ -200,15 +199,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 
 		} elseif ($action == "CIP") {
 
-			$sql = "update domains
-					set ip_id = '$new_ipid',
-					update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET ip_id = '$new_ipid',
+						update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$sql = "select name
-					from dns
-					where id = '$new_dnsid'";
+			$sql = "SELECT name
+					FROM dns
+					WHERE id = '$new_dnsid'";
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) {
 				$new_dns_string = $row->name;
@@ -218,10 +217,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 
 		} elseif ($action == "AN") { 
 		
-			$sql2 = "update domains
-					set notes = concat('$new_notes\r\n\r\n', notes),
-					update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql2 = "UPDATE domains
+					SET notes = CONCAT('$new_notes\r\n\r\n', notes),
+						update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 
 			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
 			
@@ -229,13 +228,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 
 		} elseif ($action == "CRA") { 
 		
-			$sql = "select ra.id as ra_id, ra.username, r.id as r_id, r.name as r_name, c.id as c_id, c.name as c_name
-  				    from registrar_accounts as ra, registrars as r, companies as c
-				    where ra.registrar_id = r.id
-				    and ra.company_id = c.id
-					and ra.id = '$new_raid'
-				    group by r.name, c.name, ra.username
-				    order by r.name asc, c.name asc, ra.username asc";
+			$sql = "SELECT ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS r_name, c.id AS c_id, c.name AS c_name
+  				    FROM registrar_accounts AS ra, registrars AS r, companies AS c
+				    WHERE ra.registrar_id = r.id
+				      AND ra.company_id = c.id
+					  AND ra.id = '$new_raid'
+					GROUP BY r.name, c.name, ra.username
+				    ORDER BY r.name asc, c.name asc, ra.username asc";
 			$result = mysql_query($sql,$connection);
 
 			while ($row = mysql_fetch_object($result)) {
@@ -247,12 +246,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 				$new_username = $row->username;
 			}
 			
-			$sql = "update domains
-					set company_id = '$new_company_id', 
-					registrar_id = '$new_registrar_id', 
-					account_id = '$new_registrar_account_id',
-					update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET company_id = '$new_company_id', 
+						registrar_id = '$new_registrar_id', 
+						account_id = '$new_registrar_account_id',
+						update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			$new_account_string = "$new_registrar_name :: $new_company_name ($new_username)";
@@ -260,100 +259,100 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 
 		} elseif ($action == "E") { 
 		
-			$sql = "update domains
-					set active = '0',
-				    update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET active = '0',
+				    	update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			$_SESSION['session_result_message'] = "Domains Marked As Expired<BR>";
 
 		} elseif ($action == "S") { 
 		
-			$sql = "update domains
-					set active = '10',
-				    update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET active = '10',
+				    	update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			$_SESSION['session_result_message'] = "Domains Marked As Sold<BR>";
 
 		} elseif ($action == "A") { 
 		
-			$sql = "update domains
-					set active = '1',
-					update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET active = '1',
+						update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			$_SESSION['session_result_message'] = "Domains Marked As Active<BR>";
 
 		} elseif ($action == "T") { 
 		
-			$sql = "update domains
-					set active = '2',
-					update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET active = '2',
+						update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			$_SESSION['session_result_message'] = "Domains Marked As 'In Transfer'<BR>";
 
 		} elseif ($action == "PRg") { 
 		
-			$sql = "update domains
-					set active = '5',
-					update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET active = '5',
+						update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			$_SESSION['session_result_message'] = "Domains Marked As 'Pending (Registration)'<BR>";
 
 		} elseif ($action == "PRn") { 
 		
-			$sql = "update domains
-					set active = '3',
-					update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET active = '3',
+						update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			$_SESSION['session_result_message'] = "Domains Marked As 'Pending (Renewal)'<BR>";
 
 		} elseif ($action == "PO") { 
 		
-			$sql = "update domains
-					set active = '4',
-					update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET active = '4',
+						update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			$_SESSION['session_result_message'] = "Domains Marked As 'Pending (Other)'<BR>";
 
 		} elseif ($action == "PRVE") { 
 		
-			$sql = "update domains
-					set privacy = '1',
-					update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET privacy = '1',
+						update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			$_SESSION['session_result_message'] = "Domains Marked As 'Private WHOIS'<BR>";
 
 		} elseif ($action == "PRVD") { 
 		
-			$sql = "update domains
-					set privacy = '0',
-					update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET privacy = '0',
+						update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			$_SESSION['session_result_message'] = "Domains Marked As 'Public WHOIS'<BR>";
 
 		} elseif ($action == "CED") { 
 		
-			$sql = "update domains
-					set expiry_date = '$new_expiry_date',
-					update_time = '$current_timestamp'
-					where domain in ($new_data_formatted)";
+			$sql = "UPDATE domains
+					SET expiry_date = '$new_expiry_date',
+						update_time = '$current_timestamp'
+					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			$_SESSION['session_result_message'] = "Expiry Date Updated ($new_expiry_date)<BR>";
@@ -489,10 +488,10 @@ Enter the domains one per line.
     <BR><BR>
     <strong>Primary Category:</strong><BR><BR>
     <?php
-    $sql_cat = "select id, name
-                    from categories
-                    where active = '1'
-                    order by default_category desc, name asc";
+    $sql_cat = "SELECT id, name
+				FROM categories
+				WHERE active = '1'
+				ORDER BY default_category desc, name asc";
 
     $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
     echo "<select name=\"new_pcid\">";
@@ -513,10 +512,10 @@ Enter the domains one per line.
     <BR><BR>
     <strong>DNS Profile:</strong><BR><BR>
     <?php
-    $sql_dns = "select id, name
-                    from dns
-                    where active = '1'
-                    order by name asc";
+    $sql_dns = "SELECT id, name
+				FROM dns
+				WHERE active = '1'
+				ORDER BY name asc";
     $result_dns = mysql_query($sql_dns,$connection) or die(mysql_error());
     echo "<select name=\"new_dnsid\">";
     while ($row_dns = mysql_fetch_object($result_dns)) {
@@ -536,9 +535,9 @@ Enter the domains one per line.
     <BR><BR>
     <strong>IP Address:</strong><BR><BR>
     <?php
-    $sql_ip = "select id, name, ip
-                    from ip_addresses
-                    order by name asc, ip asc";
+    $sql_ip = "SELECT id, name, ip
+			   FROM ip_addresses
+			   ORDER BY name asc, ip asc";
     $result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
     echo "<select name=\"new_ipid\">";
     while ($row_ip = mysql_fetch_object($result_ip)) {
@@ -558,12 +557,12 @@ Enter the domains one per line.
     <BR><BR>
     <strong>Registrar Account:</strong><BR><BR>
     <?php
-    $sql_account = "select ra.id, ra.username, c.name as c_name, r.name as r_name
-                    from registrar_accounts as ra, companies as c, registrars as r
-                    where ra.company_id = c.id
-                    and ra.registrar_id = r.id
-                    and ra.active = '1'
-                    order by r_name asc, c_name asc, ra.username asc";
+    $sql_account = "SELECT ra.id, ra.username, c.name AS c_name, r.name AS r_name
+                    FROM registrar_accounts AS ra, companies AS c, registrars AS r
+                    WHERE ra.company_id = c.id
+                      AND ra.registrar_id = r.id
+                      AND ra.active = '1'
+                    ORDER BY r_name asc, c_name asc, ra.username asc";
     $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
     echo "<select name=\"new_raid\">";
     while ($row_account = mysql_fetch_object($result_account)) {
@@ -609,10 +608,10 @@ Enter the domains one per line.
 <?php } elseif ($action == "CPC") { ?>
 
 	<?php
-    $sql_cat = "select id, name
-				from categories
-				where active = '1'
-				order by default_category desc, name asc";
+    $sql_cat = "SELECT id, name
+				FROM categories
+				WHERE active = '1'
+				ORDER BY default_category desc, name asc";
     $result_cat = mysql_query($sql_cat,$connection);
     echo "<select name=\"new_pcid\">";
     echo "<option value=\"\""; if ($new_pcid == "") echo " selected"; echo ">"; echo "$choose_text Primary Category</option>";
@@ -625,10 +624,10 @@ Enter the domains one per line.
 <?php } elseif ($action == "CDNS") { ?>
 
 	<?php
-    $sql_dns = "select id, name
-				from dns
-				where active = '1'
-				order by name asc";
+    $sql_dns = "SELECT id, name
+				FROM dns
+				WHERE active = '1'
+				ORDER BY name asc";
     $result_dns = mysql_query($sql_dns,$connection);
     echo "<select name=\"new_dnsid\">";
     echo "<option value=\"\""; if ($new_dnsid == "") echo " selected"; echo ">"; echo "$choose_text DNS Profile</option>";
@@ -641,9 +640,9 @@ Enter the domains one per line.
 <?php } elseif ($action == "CIP") { ?>
 
 	<?php
-    $sql_ip = "select id, name, ip
-				from ip_addresses
-				order by name asc, ip asc";
+    $sql_ip = "SELECT id, name, ip
+			   FROM ip_addresses
+			   ORDER BY name asc, ip asc";
     $result_ip = mysql_query($sql_ip,$connection);
     echo "<select name=\"new_ipid\">";
     echo "<option value=\"\""; if ($new_ipid == "") echo " selected"; echo ">"; echo "$choose_text IP Address</option>";
@@ -655,19 +654,19 @@ Enter the domains one per line.
     <BR><BR>
 <?php } elseif ($action == "CRA") { ?>
 	<?php
-   $sql_account = "select ra.id as ra_id, ra.username, r.name as r_name, c.name as c_name
-   				   from registrar_accounts as ra, registrars as r, companies as c
-				   where ra.registrar_id = r.id
-				   and ra.company_id = c.id
-                   and ra.active = '1'
-                   and r.active = '1'
-                   and c.active = '1'
-                   $is_active_string
-                   $cid_string
-                   $rid_string
-                   $tld_string
-                   group by r.name, c.name, ra.username
-                   order by r.name asc, c.name asc, ra.username asc";
+   $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, c.name AS c_name
+   				   FROM registrar_accounts AS ra, registrars AS r, companies AS c
+				   WHERE ra.registrar_id = r.id
+				     AND ra.company_id = c.id
+                     AND ra.active = '1'
+                     AND r.active = '1'
+                     AND c.active = '1'
+                     $is_active_string
+                     $cid_string
+                     $rid_string
+                     $tld_string
+                   GROUP BY r.name, c.name, ra.username
+                   ORDER BY r.name asc, c.name asc, ra.username asc";
     $result_account = mysql_query($sql_account,$connection);
     echo "<select name=\"new_raid\">";
     echo "<option value=\"\""; if ($new_raid == "") echo " selected"; echo ">"; echo "$choose_text Registrar Account</option>";

@@ -38,10 +38,10 @@ Here you can create categories that you can use to help organize your domains.
 <BR><BR>
 
 <?php
-$sql = "select id, name, owner, default_category
-		from categories
-		where id in (select cat_id from domains where cat_id != '0' and active not in ('0','10') group by cat_id)
-		order by name asc";
+$sql = "SELECT id, name, owner, default_category
+		FROM categories
+		WHERE id IN (SELECT cat_id FROM domains WHERE cat_id != '0' AND active NOT IN ('0','10') GROUP BY cat_id)
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $number_of_categories = mysql_num_rows($result);
 ?>
@@ -68,10 +68,10 @@ $number_of_categories = mysql_num_rows($result);
 	</td>
 	<td>
     <?php
-	$sql2 = "select count(*) as total_count
-			 from domains
-			 where cat_id = '$row->id'
-			 and active not in ('0', '10')";
+	$sql2 = "SELECT count(*) AS total_count
+			 FROM domains
+			 WHERE cat_id = '$row->id'
+			   AND active NOT IN ('0', '10')";
 	$result2 = mysql_query($sql2,$connection);
 	while ($row2 = mysql_fetch_object($result2)) { $active_domains = $row2->total_count; }
 	?>
@@ -87,10 +87,10 @@ $number_of_categories = mysql_num_rows($result);
 <?php } ?>
 
 <?php
-$sql = "select id, name, owner, default_category
-		from categories
-		where id not in (select cat_id from domains where cat_id != '0' and active not in ('0','10') group by cat_id)
-		order by name asc";
+$sql = "SELECT id, name, owner, default_category
+		FROM categories
+		WHERE id NOT IN (SELECT cat_id FROM domains WHERE cat_id != '0' AND active NOT IN ('0','10') GROUP BY cat_id)
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $number_of_categories = mysql_num_rows($result);
 ?>

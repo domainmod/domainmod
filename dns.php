@@ -37,10 +37,10 @@ $software_section = "dns";
 This is a breakdown of the DNS Profiles that are currently in use.
 <BR><BR>
 <?php
-$sql = "select id, name, number_of_servers
-		from dns
-		where id in (select dns_id from domains where dns_id != '0' and active not in ('0','10') group by dns_id)
-		order by name asc";
+$sql = "SELECT id, name, number_of_servers
+		FROM dns
+		WHERE id IN (SELECT dns_id FROM domains WHERE dns_id != '0' AND active NOT IN ('0','10') GROUP BY dns_id)
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection);
 ?>
 <strong>Number of Active DNS Profiles:</strong> <?=mysql_num_rows($result)?>
@@ -68,10 +68,10 @@ $result = mysql_query($sql,$connection);
 	</td>
 	<td>
     	<?php
-		$sql2 = "select count(*) as total_count
-				 from domains
-				 where dns_id = '$row->id'
-				 and active not in ('0', '10')";
+		$sql2 = "SELECT count(*) AS total_count
+				 FROM domains
+				 WHERE dns_id = '$row->id'
+				   AND active NOT IN ('0', '10')";
 		$result2 = mysql_query($sql2,$connection);
 		while ($row2 = mysql_fetch_object($result2)) {
 			$total_dns_count = $row2->total_count;
@@ -85,10 +85,10 @@ $result = mysql_query($sql,$connection);
 <?php } ?>
 
 <?php
-$sql = "select id, name, number_of_servers
-		from dns
-		where id not in (select dns_id from domains where dns_id != '0' and active not in ('0','10') group by dns_id)
-		order by name asc";
+$sql = "SELECT id, name, number_of_servers
+		FROM dns
+		WHERE id NOT IN (SELECT dns_id FROM domains WHERE dns_id != '0' AND active NOT IN ('0','10') GROUP BY dns_id)
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection);
 ?>
 <?php if (mysql_num_rows($result) > 0) { ?>

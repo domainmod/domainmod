@@ -54,17 +54,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 
-		$sql = "select registrar_id, company_id
-				from registrar_accounts
-				where id = '$new_account_id'";
+		$sql = "SELECT registrar_id, company_id
+				FROM registrar_accounts
+				WHERE id = '$new_account_id'";
 		$result = mysql_query($sql,$connection);
 		
 		while ($row = mysql_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_company_id = $row->company_id; }
 
-		$sql2 = "select id
-				from fees
-				where registrar_id = '$new_registrar_id'
-				and tld = '$tld'";
+		$sql2 = "SELECT id
+				 FROM fees
+				 WHERE registrar_id = '$new_registrar_id'
+				   AND tld = '$tld'";
 		$result2 = mysql_query($sql2,$connection);
 		
 		if (mysql_num_rows($result2) >= 1) { 
@@ -81,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		}
 
-		$sql2 = "update domains
-				 set company_id = '$new_company_id',
+		$sql2 = "UPDATE domains
+				 SET company_id = '$new_company_id',
 					registrar_id = '$new_registrar_id',
 					account_id = '$new_account_id',
 					domain = '" . mysql_real_escape_string($new_domain) . "',
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					active = '$new_active',
 					fee_fixed = '$temp_fee_fixed',
 					update_time = '$current_timestamp'
-				where id = '$new_did'";
+				WHERE id = '$new_did'";
 		$result2 = mysql_query($sql2,$connection) or die(mysql_error());
 		
 		$did = $new_did;
@@ -119,10 +119,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "select d.domain, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.id as account_id
-			from domains as d, registrar_accounts as ra
-			where d.account_id = ra.id
-			and d.id = '$did'";
+	$sql = "SELECT d.domain, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.id as account_id
+			FROM domains as d, registrar_accounts as ra
+			WHERE d.account_id = ra.id
+			  AND d.id = '$did'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
@@ -152,8 +152,8 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-	$sql = "delete from domains 
-			where id = '$did'";
+	$sql = "DELET EFROM domains 
+			WHERE id = '$did'";
 	$result = mysql_query($sql,$connection);
 	
 	$_SESSION['session_result_message'] = "Domain Deleted ($new_domain)<BR>";
@@ -190,10 +190,10 @@ if ($really_del == "1") {
 <BR><BR>
 <strong>Primary Category:</strong><BR><BR>
 <?php
-$sql_cat = "select id, name
-			from categories
-			where active = '1'
-			order by name asc";
+$sql_cat = "SELECT id, name
+			FROM categories
+			WHERE active = '1'
+			ORDER BY name asc";
 $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
 echo "<select name=\"new_cat_id\">";
 while ($row_cat = mysql_fetch_object($result_cat)) {
@@ -213,10 +213,10 @@ echo "</select>";
 <BR><BR>
 <strong>DNS Profile:</strong><BR><BR>
 <?php
-$sql_dns = "select id, name
-			from dns
-			where active = '1'
-			order by name asc";
+$sql_dns = "SELECT id, name
+			FROM dns
+			WHERE active = '1'
+			ORDER BY name asc";
 $result_dns = mysql_query($sql_dns,$connection) or die(mysql_error());
 echo "<select name=\"new_dns_id\">";
 while ($row_dns = mysql_fetch_object($result_dns)) {
@@ -236,9 +236,9 @@ echo "</select>";
 <BR><BR>
 <strong>IP Address:</strong><BR><BR>
 <?php
-$sql_ip = "select id, name, ip
-		   from ip_addresses
-		   order by name asc, ip asc";
+$sql_ip = "SELECT id, name, ip
+		   FROM ip_addresses
+		   ORDER BY name asc, ip asc";
 $result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
 echo "<select name=\"new_ip_id\">";
 
@@ -259,11 +259,11 @@ echo "</select>";
 <BR><BR>
 <strong>Registrar Account:</strong><BR><BR>
 <?php
-$sql_account = "select ra.id, ra.username, c.name as c_name, r.name as r_name
-				from registrar_accounts as ra, companies as c, registrars as r
-				where ra.company_id = c.id
-				and ra.registrar_id = r.id
-				order by r_name asc, c_name asc, ra.username asc";
+$sql_account = "SELECT ra.id, ra.username, c.name AS c_name, r.name AS r_name
+				FROM registrar_accounts AS ra, companies AS c, registrars AS r
+				WHERE ra.company_id = c.id
+				  AND ra.registrar_id = r.id
+				ORDER BY r_name asc, c_name asc, ra.username asc";
 $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysql_fetch_object($result_account)) {

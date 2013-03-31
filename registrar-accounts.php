@@ -41,23 +41,23 @@ $cid = $_GET['cid'];
 <?php include("_includes/header.inc.php"); ?>
 <?php
 
-if ($rid != "") { $rid_string = " and ra.registrar_id = '$rid' "; } else { $rid_string = ""; }
-if ($raid != "") { $raid_string = " and ra.id = '$raid' "; } else { $raid_string = ""; }
-if ($cid != "") { $cid_string = " and ra.company_id = '$cid' "; } else { $cid_string = ""; }
+if ($rid != "") { $rid_string = " AND ra.registrar_id = '$rid' "; } else { $rid_string = ""; }
+if ($raid != "") { $raid_string = " AND ra.id = '$raid' "; } else { $raid_string = ""; }
+if ($cid != "") { $cid_string = " AND ra.company_id = '$cid' "; } else { $cid_string = ""; }
 
-$sql = "select ra.id as raid, ra.username, ra.company_id, ra.registrar_id, ra.reseller, c.id as cid, c.name as cname, r.id as rid, r.name as rname
-		from registrar_accounts as ra, companies as c, registrars as r, domains as d
-		where ra.active = '1'
-		and ra.company_id = c.id
-		and ra.registrar_id = r.id
-		and ra.id = d.account_id
-		and d.active not in ('0', '10')
-		$rid_string
-		$raid_string
-		$cid_string
-		and (select count(*) from domains where account_id = ra.id and active not in ('0', '10')) > 0
-		group by ra.username, cname, rname
-		order by rname asc";
+$sql = "SELECT ra.id AS raid, ra.username, ra.company_id, ra.registrar_id, ra.reseller, c.id AS cid, c.name AS cname, r.id AS rid, r.name AS rname
+		FROM registrar_accounts AS ra, companies AS c, registrars AS r, domains AS d
+		WHERE ra.active = '1'
+		  AND ra.company_id = c.id
+		  AND ra.registrar_id = r.id
+		  AND ra.id = d.account_id
+		  AND d.active not in ('0', '10')
+		  $rid_string
+		  $raid_string
+		  $cid_string
+		  AND (SELECT count(*) FROM domains WHERE account_id = ra.id AND active NOT IN ('0', '10')) > 0
+		GROUP BY ra.username, cname, rname
+		ORDER BY rname asc";
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
@@ -105,10 +105,10 @@ if (mysql_num_rows($result) > 0) {
 			</td>
 			<td>
 				<?php
-				$sql2 = "select count(*) as total_domain_count
-						 from domains
-						 where account_id = '$row->raid'
-						 and active not in ('0', '10')";
+				$sql2 = "SELECT count(*) AS total_domain_count
+						 FROM domains
+						 WHERE account_id = '$row->raid'
+						   AND active NOT IN ('0', '10')";
 				$result2 = mysql_query($sql2,$connection);
 
 				while ($row2 = mysql_fetch_object($result2)) { 
@@ -130,18 +130,18 @@ if (mysql_num_rows($result) > 0) {
 <?php
 $exclude_account_string = substr($exclude_account_string_raw, 0, -2); 
 
-if ($exclude_account_string != "") { $raid_string = " and ra.id not in ($exclude_account_string) "; } else { $raid_string = ""; }
+if ($exclude_account_string != "") { $raid_string = " AND ra.id not in ($exclude_account_string) "; } else { $raid_string = ""; }
 
-$sql = "select ra.id as raid, ra.username, ra.company_id, ra.registrar_id, ra.reseller, c.id as cid, c.name as cname, r.id as rid, r.name as rname
-		from registrar_accounts as ra, companies as c, registrars as r, domains as d
-		where ra.active = '1'
-		and ra.company_id = c.id
-		and ra.registrar_id = r.id
-		$rid_string
-		$raid_string
-		$cid_string
-		group by ra.username, cname, rname
-		order by rname";
+$sql = "SELECT ra.id AS raid, ra.username, ra.company_id, ra.registrar_id, ra.reseller, c.id AS cid, c.name AS cname, r.id AS rid, r.name AS rname
+		FROM registrar_accounts AS ra, companies AS c, registrars AS r, domains AS d
+		WHERE ra.active = '1'
+		  AND ra.company_id = c.id
+		  AND ra.registrar_id = r.id
+		  $rid_string
+		  $raid_string
+		  $cid_string
+		GROUP BY ra.username, cname, rname
+		ORDER BY rname";
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 

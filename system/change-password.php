@@ -33,20 +33,20 @@ $new_password_confirmation = $_POST['new_password_confirmation'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password_confirmation != "" && $new_password == $new_password_confirmation) {
 
-	$sql = "select id 
-			from users 
-			where id = '" . $_SESSION['session_user_id'] . "' 
-			and email_address = '" . $_SESSION['session_email_address'] . "'";
+	$sql = "SELECT id 
+			FROM users 
+			WHERE id = '" . $_SESSION['session_user_id'] . "' 
+			  AND email_address = '" . $_SESSION['session_email_address'] . "'";
 	$result = mysql_query($sql,$connection);
 
    if (mysql_num_rows($result) == 1) {
 
-		$sql2 = "update users 
-				 set password = password('$new_password'), 
+		$sql2 = "UPDATE users 
+				 SET password = password('$new_password'), 
 				 	 new_password = '0', 
 				 	 update_time = '$current_timestamp'
-				 where id = '" . $_SESSION['session_user_id'] . "' 
-				 and email_address = '" . $_SESSION['session_email_address'] . "'";
+				 WHERE id = '" . $_SESSION['session_user_id'] . "' 
+				   AND email_address = '" . $_SESSION['session_email_address'] . "'";
 		$result2 = mysql_query($sql2,$connection) or die("Your password could not be updated. Please try again later.");
 
 		if ($_SESSION['session_running_login_checks'] == 1) {

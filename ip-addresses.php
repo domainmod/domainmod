@@ -37,10 +37,10 @@ $software_section = "ip-addresses";
 This is a breakdown of the IP Addresses that are currently in use.
 <BR><BR>
 <?php
-$sql = "select id, name, ip, rdns
-		from ip_addresses
-		where id in (select ip_id from domains where ip_id != '0' and active not in ('0','10') group by ip_id)
-		order by name asc";
+$sql = "SELECT id, name, ip, rdns
+		FROM ip_addresses
+		WHERE id IN (SELECT ip_id FROM domains WHERE ip_id != '0' AND active NOT IN ('0','10') GROUP BY ip_id)
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection);
 ?>
 <strong>Number of Active IP Addresses:</strong> <?=mysql_num_rows($result)?>
@@ -79,10 +79,10 @@ if (mysql_num_rows($result) > 0) { ?>
                 </td>
                 <td>
                     <?php
-                    $sql2 = "select count(*) as total_count
-                             from domains
-                             where ip_id = '$row->id'
-                             and active not in ('0', '10')";
+                    $sql2 = "SELECT count(*) AS total_count
+                             FROM domains
+                             WHERE ip_id = '$row->id'
+                               AND active NOT IN ('0', '10')";
                     $result2 = mysql_query($sql2,$connection);
                     while ($row2 = mysql_fetch_object($result2)) {
                         $total_ip_count = $row2->total_count;
@@ -98,10 +98,10 @@ if (mysql_num_rows($result) > 0) { ?>
 	<?php 
 } ?>
 <?php
-$sql = "select id, name, ip, rdns
-		from ip_addresses
-		where id not in (select ip_id from domains where ip_id != '0' and active not in ('0','10') group by ip_id)
-		order by name asc";
+$sql = "SELECT id, name, ip, rdns
+		FROM ip_addresses
+		WHERE id NOT IN (SELECT ip_id FROM domains WHERE ip_id != '0' AND active NOT IN ('0','10') GROUP BY ip_id)
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection);
 ?>
 <?php
