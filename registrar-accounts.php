@@ -62,12 +62,12 @@ $sql = "select ra.id as raid, ra.username, ra.company_id, ra.registrar_id, ra.re
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <strong>Number of Active Accounts:</strong> <?=mysql_num_rows($result)?>
+<BR><BR>
 <?php
 if (mysql_num_rows($result) > 0) { 
 	
     $has_active_accounts = 1; ?>
 
-    <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="30">
         <td width="250">

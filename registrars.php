@@ -140,17 +140,29 @@ if (mysql_num_rows($result) > 0) { ?>
 <?php
 $exclude_registrar_string = substr($exclude_registrar_string_raw, 0, -2); 
 
-$sql = "select r.id as rid, r.name as rname, r.url
+if ($exclude_registrar_string == "") {
+
+	$sql = "select r.id as rid, r.name as rname, r.url
+			from registrars as r
+			where r.id
+			and r.active = '1'
+			group by r.name
+			order by r.name asc";
+
+} else {
+	
+	$sql = "select r.id as rid, r.name as rname, r.url
 		from registrars as r
 		where r.id
 		and r.active = '1'
 		and r.id not in ($exclude_registrar_string)
 		group by r.name
 		order by r.name asc";
+
+}
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <?php
-
 if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>
 <strong>Number of Inactive Registrars:</strong> <?=mysql_num_rows($result)?>
