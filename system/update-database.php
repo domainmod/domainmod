@@ -255,6 +255,26 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	// upgrade database from 1.94 to 1.95
+	if ($current_db_version == 1.94) {
+
+		$sql = "ALTER TABLE `currencies` 
+				DROP `default_currency`;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `settings` 
+				ADD `default_currency` VARCHAR(5) NOT NULL DEFAULT 'CAD' AFTER `email_address`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE settings
+				SET db_version = '1.95',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 1.95;
+		
+	}
+
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 
 } else {
