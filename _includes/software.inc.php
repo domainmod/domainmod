@@ -16,11 +16,13 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-// Software Settings
+// Software Title
 $software_title = "Domain Manager"; 
+
+// Software Version
 $software_version = "1.0"; 
 
-// $site_width = "1024";
+// Site Width
 $site_width = "96%";
 
 // Number of 'Test Data' domains to generate
