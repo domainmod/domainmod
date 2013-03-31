@@ -35,9 +35,6 @@ $result = mysql_query($sql,$connection);
 $sql = "DELETE FROM companies WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "DELETE FROM currencies WHERE test_data = '1'";
-$result = mysql_query($sql,$connection);
-
 $sql = "DELETE FROM dns WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
