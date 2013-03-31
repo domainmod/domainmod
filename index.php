@@ -125,7 +125,7 @@ if ($_SESSION['session_installation_mode'] != 1) {
         } ?>
 
         <BR><BR>
-        <input type="submit" name="button" value="Manage Domains &raquo;">
+        <input type="submit" name="button" value="Login &raquo;">
     </form>
 <?php 
 } ?>
