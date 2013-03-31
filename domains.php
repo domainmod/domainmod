@@ -705,7 +705,11 @@ echo "</select>";
 <?php 
 // NUMBER OF DOMAINS TO DISPLAY
 echo "<select name=\"result_limit\" onChange=\"MM_jumpMenu('parent',this,0)\">"; 
-echo "<option value=\"$PHP_SELF?pcid=$pcid&cid=$cid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=" . $_SESSION['session_number_of_domains'] . "&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == $_SESSION['session_number_of_domains']) echo " selected"; echo ">"; echo "" . $_SESSION['session_number_of_domains'] . "</option>";
+
+if ($_SESSION['session_number_of_domains'] != "10" && $_SESSION['session_number_of_domains'] != "50" && $_SESSION['session_number_of_domains'] != "100" && $_SESSION['session_number_of_domains'] != "500" && $_SESSION['session_number_of_domains'] != "1000" && $_SESSION['session_number_of_domains'] != "1000000") {
+	echo "<option value=\"$PHP_SELF?pcid=$pcid&cid=$cid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=" . $_SESSION['session_number_of_domains'] . "&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == $_SESSION['session_number_of_domains']) echo " selected"; echo ">"; echo "" . $_SESSION['session_number_of_domains'] . "</option>";
+}
+
 echo "<option value=\"$PHP_SELF?pcid=$pcid&cid=$cid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=10&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "10") echo " selected"; echo ">"; echo "10</option>";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&cid=$cid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=50&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "50") echo " selected"; echo ">"; echo "50</option>";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&cid=$cid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=100&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "100") echo " selected"; echo ">"; echo "100</option>";
