@@ -129,7 +129,7 @@ exit;
 <title><?=$software_title?> :: <?=$page_title?></title>
 <?php include("_includes/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body>
 <?php include("_includes/header.inc.php"); ?>
 <?php 
 $result = $result2;
