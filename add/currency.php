@@ -30,24 +30,14 @@ $software_section = "currencies";
 // Form Variables
 $new_name = $_POST['new_name'];
 $new_abbreviation = $_POST['new_abbreviation'];
-$new_default_currency = $_POST['new_default_currency'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != "" && $new_abbreviation != "") {
 		
-		$sql = "SELECT currency
-				FROM currencies
-				WHERE default_currency = '1'";
-		$result = mysql_query($sql,$connection);
-		
-		while ($row = mysql_fetch_object($result)) {
-			$default_currency = $row->currency;
-		}
-		
 		$from = $new_abbreviation;
-		$to = $default_currency;
+		$to = $_SESSION['session_default_currency'];
 		$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
 		$handle = @fopen($full_url, "r");
 			 
@@ -62,8 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$value = $data[1];
 			
 		$sql = "INSERT INTO currencies
-				(currency, name, conversion, notes, default_currency, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_abbreviation) . "', '" . mysql_real_escape_string($new_name) . "', '$value', '" . mysql_real_escape_string($new_notes) . "', '$new_default_currency', '$current_timestamp')";
+				(currency, name, conversion, notes, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_abbreviation) . "', '" . mysql_real_escape_string($new_name) . "', '$value', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Currency Added<BR>";
@@ -91,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php 
 $sql = "SELECT currency, name
 		FROM currencies
-		WHERE default_currency = '1'";
+		WHERE currency = '" . $_SESSION['session_default_currency'] . "'";
 $result = mysql_query($sql,$connection);
 
 while ($row = mysql_fetch_object($result)) {
@@ -108,9 +98,6 @@ while ($row = mysql_fetch_object($result)) {
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR>
-<strong>Set as default currency?</strong>&nbsp;
-<input name="new_default_currency" type="checkbox" id="new_default_currency" value="1">
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This Currency &raquo;">
 </form>

@@ -35,10 +35,11 @@ $software_section = "currencies";
 <body>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT id, currency, name, conversion, default_currency
+$sql = "SELECT id, currency, name, conversion
 		FROM currencies
 		WHERE active = '1'
-		ORDER BY default_currency desc, name asc";
+		AND currency != '" . $_SESSION['session_default_currency'] . "'
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection);
 ?>
 The below exchange rates are used for various reporting, and at the very least they should be updated before you export your domains or SSL certificates.<BR>
@@ -60,11 +61,34 @@ The below exchange rates are used for various reporting, and at the very least t
     	<font class="subheadline">Exchange Rate</font>
     </td>
 </tr>
-<?php while ($row = mysql_fetch_object($result)) { ?>
+<?php
+$sql_default = "SELECT id, currency, name, conversion
+				FROM currencies
+				WHERE active = '1'
+				  AND currency = '" . $_SESSION['session_default_currency'] . "'
+				ORDER BY name asc";
+$result_default = mysql_query($sql_default,$connection);
+while ($row_default = mysql_fetch_object($result_default)) {
+?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/currency.php?curid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_currency == "1") echo "<a title=\"Default Currency\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
-<?php if ($row->default_category == "1") echo ""; ?>
+		<a class="subtlelink" href="edit/currency.php?curid=<?=$row_default->id?>"><?=$row_default->name?></a><?php if ($row_default->currency == $_SESSION['session_default_currency']) echo "<a title=\"Default Currency\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+<?php if ($row_default->currency == $_SESSION['session_default_currency']) echo ""; ?>
+	</td>
+    <td>
+		<?php echo "$row_default->currency"; ?>
+	</td>
+    <td>
+		<?php echo "$row_default->conversion"; ?>
+	</td>
+</tr>
+<?php 
+}
+while ($row = mysql_fetch_object($result)) { ?>
+<tr height="20">
+    <td>
+		<a class="subtlelink" href="edit/currency.php?curid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->currency == $_SESSION['session_default_currency']) echo "<a title=\"Default Currency\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+<?php if ($row->currency == $_SESSION['session_default_currency']) echo ""; ?>
 	</td>
     <td>
 		<?php echo "$row->currency"; ?>

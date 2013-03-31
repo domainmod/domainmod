@@ -33,14 +33,19 @@ $software_section = "system";
 
 // Form Variables
 $new_email_address = $_POST['new_email_address'];
+$new_default_currency = $_POST['new_default_currency'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
 
 	$sql = "UPDATE settings
-			SET email_address = '$new_email_address'";
+			SET email_address = '$new_email_address',
+				default_currency = '$new_default_currency'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+	$_SESSION['session_default_currency'] = $new_default_currency;
 
-	$_SESSION['session_result_message'] .= "The System Settings were updated.<BR>";
+	$_SESSION['session_result_message'] .= "The System Settings were updated.<BR><BR>";
+	$_SESSION['session_result_message'] .= "If you changed the system's default currency you should <a href=\"update-exchange-rates.php\">click here to update the exchange rates</a>.<BR>";
 	
 	header("Location: ../index.php");
 	exit;
@@ -54,13 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
 		
 	} else {
 		
-		$sql = "SELECT email_address
+		$sql = "SELECT email_address, default_currency
 				FROM settings";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		while ($row = mysql_fetch_object($result)) {
 			
 			$new_email_address = $row->email_address;
+			$new_default_currency = $row->default_currency;
 
 		}
 
@@ -79,6 +85,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
 <strong>Email Address:</strong><BR><BR>
 This should be a valid email address that is able to receive mail. It will be used in various system locations, such as the FROM address for emails sent by <?=$software_title?>.<BR><BR>
 <input name="new_email_address" type="text" size="50" maxlength="255" value="<?php if ($new_email_address != "") echo $new_email_address; ?>">
+<BR><BR><BR>
+<strong>Default Currency:</strong><BR><BR>
+<?php
+$sql = "SELECT id, currency, name
+			FROM currencies
+			WHERE active = '1'
+			ORDER BY currency asc";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+echo "<select name=\"new_default_currency\">";
+while ($row = mysql_fetch_object($result)) {
+
+	if ($row->currency == $_SESSION['session_default_currency']) {
+
+		echo "<option value=\"$row->currency\" selected>[ $row->currency ($row->name) ]</option>";
+	
+	} else {
+
+		echo "<option value=\"$row->currency\">$row->currency ($row->name)</option>";
+	
+	}
+}
+echo "</select>";
+?>
 <BR><BR><BR>
 <input type="submit" name="button" value="Update System Settings&raquo;">
 </form>

@@ -31,18 +31,6 @@ $export = $_GET['export'];
 $new_expiry_start = $_REQUEST['new_expiry_start'];
 $new_expiry_end = $_REQUEST['new_expiry_end'];
 
-$sql2 = "SELECT currency, name, conversion
-		 FROM currencies
-		 WHERE default_currency = '1'
-		   AND active = '1'";
-$result2 = mysql_query($sql2,$connection) or die(mysql_error());
-
-while ($row2 = mysql_fetch_object($result2)) {
-	$default_currency = $row2->currency;
-	$default_currency_name = $row2->name;
-	$default_currency_conversion = $row2->conversion;
-}
-
 if ($export == "1") {
 
 	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name AS registrar_name, c.name AS company_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.owner AS category_owner, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
@@ -87,7 +75,7 @@ $full_export = "";
 
 if ($export == "1") {
 
-	$full_export .= "\"All prices are listed in $default_currency\"\n\n";
+	$full_export .= "\"All prices are listed in " . $_SESSION['session_default_currency'] . "\"\n\n";
 
 	$full_export .= "\"DOMAIN STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Owner\",\"Company\",\"Registrar\",\"Username\"\n";
 
@@ -110,7 +98,7 @@ if ($export == "1") {
 	
 	$full_export .= "\n";
 	
-	$full_export .= "\"\",\"\",\"Total Cost:\",\"\$" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"$default_currency\"\n";
+	$full_export .= "\"\",\"\",\"Total Cost:\",\"\$" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"" . $_SESSION['session_default_currency'] . "\"\n";
 	
 	$export = "0";
 	
@@ -222,7 +210,7 @@ Expiring Between
 </tr>
 <?php } ?>
 </table>
-<BR><strong>Total Cost:</strong> $<?=number_format($total_renewal_cost,2)?> <?=$default_currency?><BR>
+<BR><strong>Total Cost:</strong> $<?=number_format($total_renewal_cost,2)?> <?=$_SESSION['session_default_currency']?><BR>
 <?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
