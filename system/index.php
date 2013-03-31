@@ -40,7 +40,7 @@ $software_section = "system";
 <BR>
 <?php if ($_SESSION['session_is_admin'] == 1) { ?>
 	<BR><BR><font class="headline">Admin Tools</font><BR><BR>
-	&raquo; <a href="admin/system-settings.php">System Settings</a><BR><BR>
+	&raquo; <a href="admin/system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/display-settings.php">Display Settings</a><BR><BR>
 	&raquo; <a href="admin/list-users.php">User List</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/add/user.php">Add New User</a><BR><BR>
 	&raquo; <a href="update-database.php">Check For Database  Updates</a><BR><BR> 
 	&raquo; <a href="../_includes/system/test-data-delete.php?generating_test_data=1">Regenerate Test Data</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/test-data-delete.php">Delete Test Data</a>

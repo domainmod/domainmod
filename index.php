@@ -63,6 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			if ($row->admin == 1) $_SESSION['session_is_admin'] = 1;
 			$_SESSION['session_is_logged_in'] = 1;
 			
+			$sql_settings = "SELECT number_of_domains, number_of_ssl_certs
+							 FROM settings";
+			$result_settings = mysql_query($sql_settings,$connection);
+			while ($row_settings = mysql_fetch_object($result_settings)) {
+				$_SESSION['session_number_of_domains'] = $row_settings->number_of_domains;
+				$_SESSION['session_number_of_ssl_certs'] = $row_settings->number_of_ssl_certs;
+			}
+			
 			header("Location: _includes/auth/login-checks/main.inc.php");
 			exit;
 	   }
