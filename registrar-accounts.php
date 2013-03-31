@@ -61,6 +61,7 @@ $sql = "SELECT ra.id AS raid, ra.username, ra.company_id, ra.registrar_id, ra.re
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
+Below is a list of all the Domain Registrar Accounts that are stored in the <?=$software_title?>.<BR><BR>
 <strong>Number of Active Accounts:</strong> <?=mysql_num_rows($result)?>
 <BR><BR>
 <?php

@@ -34,8 +34,7 @@ $software_section = "ip-addresses";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-This is a breakdown of the IP Addresses that are currently in use.
-<BR><BR>
+Below is a list of all the IP Addresses that are stored in the <?=$software_title?>.<BR><BR>
 <?php
 $sql = "SELECT id, name, ip, rdns
 		FROM ip_addresses

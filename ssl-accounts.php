@@ -51,8 +51,7 @@ $sql = "SELECT id, username, company_id, ssl_provider_id, reseller
 		ORDER BY username asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-These are the SSL provider accounts that have active certificates.
-<BR><BR>
+Below is a list of all the SSL Certificate Accounts that are stored in the <?=$software_title?>.<BR><BR>
 <strong>Number of Active Accounts:</strong> <?=mysql_num_rows($result)?>
 <?php 
 if (mysql_num_rows($result) > 0) { ?>

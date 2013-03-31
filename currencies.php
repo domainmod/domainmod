@@ -41,7 +41,7 @@ $sql = "SELECT id, currency, name, conversion, default_currency
 		ORDER BY default_currency desc, name asc";
 $result = mysql_query($sql,$connection);
 ?>
-The below exchange rates are used for various reporting, and at the very least they should be updated before you export your domains.<BR>
+The below exchange rates are used for various reporting, and at the very least they should be updated before you export your domains or SSL certificates.<BR>
 <BR>
 <strong>NOTE:</strong> Exchange rate conversions have now been automated! Simply set your default currency below and then <a href="system/update-exchange-rates.php">click here to update the exchange rates</a>.
 <BR><BR>

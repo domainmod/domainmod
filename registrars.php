@@ -45,6 +45,7 @@ $sql = "SELECT r.id AS rid, r.name AS rname, r.url
 		ORDER BY r.name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
+Below is a list of all the Domain Registrars that are stored in the <?=$software_title?>.<BR><BR>
 <strong>Number of Active Registrars:</strong> <?=mysql_num_rows($result)?>
 <?php
 

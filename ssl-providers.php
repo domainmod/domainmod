@@ -34,8 +34,7 @@ $software_section = "ssl-providers";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-These are the SSL Providers that have active certificates.
-
+Below is a list of all the SSL Certificate Providers that are stored in the <?=$software_title?>.
 <?php
 $sql = "SELECT id, name, url
 		FROM ssl_providers

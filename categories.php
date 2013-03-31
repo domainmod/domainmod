@@ -34,8 +34,7 @@ $software_section = "categories";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-Here you can create categories that you can use to help organize your domains.
-<BR><BR>
+Below is a list of all the Domain Categories that are stored in the <?=$software_title?>.<BR><BR>
 
 <?php
 $sql = "SELECT id, name, owner, default_category

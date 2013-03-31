@@ -34,8 +34,7 @@ $software_section = "dns";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-This is a breakdown of the DNS Profiles that are currently in use.
-<BR><BR>
+Below is a list of all the DNS Profiles that are stored in the <?=$software_title?>.<BR><BR>
 <?php
 $sql = "SELECT id, name, number_of_servers
 		FROM dns

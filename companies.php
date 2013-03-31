@@ -42,6 +42,7 @@ $sql = "SELECT id, name
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
+Below is a list of all the Companies that are stored in the <?=$software_title?>.<BR><BR>
 <strong>Number of Active Companies:</strong> <?=mysql_num_rows($result)?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>
