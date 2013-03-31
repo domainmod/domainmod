@@ -235,6 +235,26 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	// upgrade database from 1.93 to 1.94
+	if ($current_db_version == 1.93) {
+
+		$sql = "ALTER TABLE `settings` 
+				ADD `number_of_domains` INT(5) NOT NULL DEFAULT '50' AFTER `email_address`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `settings` 
+				ADD `number_of_ssl_certs` INT(5) NOT NULL DEFAULT '50' AFTER `number_of_domains`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE settings
+				SET db_version = '1.94',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 1.94;
+		
+	}
+
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 
 } else {
