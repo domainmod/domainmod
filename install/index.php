@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "1.98";
+$most_recent_db_version = "1.99";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -68,7 +68,7 @@ if (mysql_num_rows($result) > 0) {
 	$sql = "CREATE TABLE IF NOT EXISTS `categories` ( 
 				`id` int(10) NOT NULL auto_increment,
 				`name` varchar(255) NOT NULL,
-				`owner` varchar(255) NOT NULL,
+				`stakeholder` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_category` int(1) NOT NULL default '0',
 				`active` int(1) NOT NULL default '1',
@@ -80,8 +80,8 @@ if (mysql_num_rows($result) > 0) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "INSERT INTO `categories` 
-			(`name`, `owner`, `default_category`, `insert_time`) VALUES 
-			('[no category]', '[no category owner]', 1, '$current_timestamp');";
+			(`name`, `stakeholder`, `default_category`, `insert_time`) VALUES 
+			('[no category]', '[no stakeholder]', 1, '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `owners` ( 

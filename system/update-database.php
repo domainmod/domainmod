@@ -341,7 +341,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `categories` 
 					(`name`, `owner`, `insert_time`) VALUES 
-					('[no category]', '[no category owner]', '$current_timestamp');";
+					('[no category]', '[no stakeholder]', '$current_timestamp');";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "SELECT id
@@ -420,6 +420,27 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.98;
+		
+	}
+
+	// upgrade database from 1.98 to 1.99
+	if ($current_db_version == 1.98) {
+
+		$sql = "ALTER TABLE `categories` 
+					CHANGE `owner` `stakeholder` VARCHAR(255) NOT NULL;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE `categories`
+					SET `stakeholder` = '[no stakeholder]' 
+				WHERE `stakeholder` = '[no category owner]';";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '1.99',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 1.99;
 		
 	}
 
