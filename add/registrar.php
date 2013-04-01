@@ -43,7 +43,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$_SESSION['session_result_message'] = "Registrar Added<BR>";
 
-		header("Location: ../registrars.php");
+		if ($_SESSION['session_first_run'] == "1") {
+
+			header("Location: ../domains.php");
+
+		} else {
+
+			header("Location: ../registrars.php");
+			
+		}
+
 		exit;
 
 	} else {

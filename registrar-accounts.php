@@ -30,6 +30,11 @@ $software_section = "accounts";
 $rid = $_GET['rid'];
 $raid = $_GET['raid'];
 $oid = $_GET['oid'];
+
+if ($_SESSION['session_first_run'] == "1") {
+	header("Location: domains.php");
+	exit;
+}
 ?>
 <html>
 <head>
@@ -58,7 +63,6 @@ $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.rese
 		  AND (SELECT count(*) FROM domains WHERE account_id = ra.id AND active NOT IN ('0', '10')) > 0
 		GROUP BY ra.username, oname, rname
 		ORDER BY rname asc";
-
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 Below is a list of all the Domain Registrar Accounts that are stored in the <?=$software_title?>.<BR><BR>
@@ -124,7 +128,6 @@ if (mysql_num_rows($result) > 0) {
 	} ?>
 
 	</table>
-    <BR>
 	<?php 
 
 } ?>
@@ -144,13 +147,12 @@ $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.rese
 		  $oid_string
 		GROUP BY ra.username, oname, rname
 		ORDER BY rname";
-
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 if (mysql_num_rows($result) > 0) {
 
-    if ($has_active_accounts == 1) { echo "<BR><BR>"; } ?>
-    
+    if ($has_active_accounts == 1) { echo "<BR>"; } ?>
+	<BR>    
     <strong>Number of Inactive Accounts:</strong> <?=mysql_num_rows($result)?>
 
     <BR><BR>
@@ -195,7 +197,7 @@ if (mysql_num_rows($result) > 0) {
 	<?php 
 
 } ?>
-<font color="#DD0000"><strong>*</strong></font> = Reseller Account
+<BR><font color="#DD0000"><strong>*</strong></font> = Reseller Account
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

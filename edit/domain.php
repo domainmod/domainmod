@@ -152,7 +152,7 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-	$sql = "DELET EFROM domains 
+	$sql = "DELETE FROM domains 
 			WHERE id = '$did'";
 	$result = mysql_query($sql,$connection);
 	

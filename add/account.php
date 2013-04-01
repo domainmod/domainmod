@@ -44,8 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Account Added<BR>";
-		
-		header("Location: ../registrar-accounts.php");
+
+		if ($_SESSION['session_first_run'] == "1") {
+
+			header("Location: ../domains.php");
+
+		} else {
+
+			header("Location: ../registrar-accounts.php");
+			
+		}
 		exit;
 
 	} else {

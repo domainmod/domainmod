@@ -25,6 +25,11 @@ include("_includes/auth/auth-check.inc.php");
 
 $page_title = "Registrar Breakdown";
 $software_section = "registrars";
+
+if ($_SESSION['session_first_run'] == "1") {
+	header("Location: domains.php");
+	exit;
+}
 ?>
 <html>
 <head>
