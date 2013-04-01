@@ -1,5 +1,5 @@
 <?php
-// company.php
+// owner.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -24,49 +24,49 @@ include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "Editting A Company";
-$software_section = "companies";
+$page_title = "Editting An Owner";
+$software_section = "owners";
 
-$cid = $_GET['cid'];
+$oid = $_GET['oid'];
 
 // Form Variables
-$new_company = $_POST['new_company'];
+$new_owner = $_POST['new_owner'];
 $new_notes = $_POST['new_notes'];
-$new_cid = $_POST['new_cid'];
+$new_oid = $_POST['new_oid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_company != "") {
+	if ($new_owner != "") {
 
-		$sql = "UPDATE companies
-				SET name = '" . mysql_real_escape_string($new_company) . "',
+		$sql = "UPDATE owner
+				SET name = '" . mysql_real_escape_string($new_owner) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					update_time = '$current_timestamp'
-				WHERE id = '$new_cid'";
+				WHERE id = '$new_oid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$new_company = $new_company;
+		$new_owner = $new_owner;
 
-		$cid = $new_cid;
+		$oid = $new_oid;
 		
-		$_SESSION['session_result_message'] = "Company Updated<BR>";
+		$_SESSION['session_result_message'] = "Owner Updated<BR>";
 
 	} else {
 	
-		$_SESSION['session_result_message'] = "Please Enter The Company Name<BR>";
+		$_SESSION['session_result_message'] = "Please Enter The Owner's Name<BR>";
 
 	}
 
 } else {
 
 	$sql = "SELECT name, notes
-			FROM companies
-			WHERE id = '$cid'";
+			FROM owner
+			WHERE id = '$oid'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
 	
-		$new_company = $row->name;
+		$new_owner = $row->name;
 		$new_notes = $row->notes;
 	
 	}
@@ -81,16 +81,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
-<form name="edit_company_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Company Name:</strong><BR><BR>
-<input name="new_company" type="text" value="<?php if ($new_company != "") echo $new_company; ?>
+<form name="edit_owner_form" method="post" action="<?=$PHP_SELF?>">
+<strong>Owner Name:</strong><BR><BR>
+<input name="new_owner" type="text" value="<?php if ($new_owner != "") echo $new_owner; ?>
 " size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
-<input type="hidden" name="new_cid" value="<?=$cid?>">
-<input type="submit" name="button" value="Update This Company &raquo;">
+<input type="hidden" name="new_oid" value="<?=$oid?>">
+<input type="submit" name="button" value="Update This Owner &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>

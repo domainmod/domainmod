@@ -34,8 +34,8 @@
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/registrar.php">Add A New Registrar</a>
 <?php } elseif ($software_section == "accounts") { ?>
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/account.php">Add A New Registrar Account</a>
-<?php } elseif ($software_section == "companies") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/company.php">Add A New Company</a>
+<?php } elseif ($software_section == "owners") { ?>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/owner.php">Add A New Owner</a>
 <?php } elseif ($software_section == "segments") { ?>
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/segment.php">Add A New Segment</a>
 <?php } elseif ($software_section == "currencies") { ?>
