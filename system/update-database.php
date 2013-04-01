@@ -336,6 +336,93 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	// upgrade database from 1.97 to 1.98
+	if ($current_db_version == 1.97) {
+
+		$sql = "INSERT INTO `categories` 
+					(`name`, `owner`, `insert_time`) VALUES 
+					('[no category]', '[no owner]', '$current_timestamp');";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "SELECT id
+				FROM categories
+				WHERE default_category = '1';";
+		$result = mysql_query($sql,$connection);
+
+		if (mysql_num_rows($result) == 0) {
+			$sql2 = "UPDATE categories
+					 SET default_category = '1'
+					 WHERE name = '[no category]'";
+			$result2 = mysql_query($sql2,$connection);
+		}
+
+		$sql = "ALTER TABLE `dns` 
+					ADD `default_dns` INT(1) NOT NULL DEFAULT '0' AFTER `number_of_servers`;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "INSERT INTO `dns` 
+					(`name`, `dns1`, `dns2`, `number_of_servers`, `insert_time`) VALUES 
+					('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '$current_timestamp');";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "SELECT id
+				FROM dns
+				WHERE default_dns = '1';";
+		$result = mysql_query($sql,$connection);
+
+		if (mysql_num_rows($result) == 0) {
+			$sql2 = "UPDATE dns
+					 SET default_dns = '1'
+					 WHERE name = '[no dns]'";
+			$result2 = mysql_query($sql2,$connection);
+		}
+
+		$sql = "ALTER TABLE `owners`  
+					ADD `default_owner` INT(1) NOT NULL DEFAULT '0' AFTER `notes`;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "INSERT INTO `owners` 
+					(`name`, `insert_time`) VALUES 
+					('[no owner]', '$current_timestamp');";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "SELECT id
+				FROM owners
+				WHERE default_owner = '1';";
+		$result = mysql_query($sql,$connection);
+
+		if (mysql_num_rows($result) == 0) {
+			$sql2 = "UPDATE owners
+					 SET default_owner = '1'
+					 WHERE name = '[no owner]'";
+			$result2 = mysql_query($sql2,$connection);
+		}
+
+		$sql = "ALTER TABLE `ip_addresses` 
+					ADD `default_ip_address` INT(1) NOT NULL DEFAULT '0' AFTER `notes`;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "SELECT id
+				FROM ip_addresses
+				WHERE default_ip_address = '1';";
+		$result = mysql_query($sql,$connection);
+
+		if (mysql_num_rows($result) == 0) {
+			$sql2 = "UPDATE ip_addresses
+					 SET default_ip_address = '1'
+					 WHERE name = '[no ip address]'";
+			$result2 = mysql_query($sql2,$connection);
+		}
+
+		$sql = "UPDATE settings
+				SET db_version = '1.98',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 1.98;
+		
+	}
+
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 
 } else {

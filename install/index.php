@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "1.97";
+$most_recent_db_version = "1.98";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -78,11 +78,17 @@ if (mysql_num_rows($result) > 0) {
 				PRIMARY KEY  (`id`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$sql = "INSERT INTO `categories` 
+			(`name`, `owner`, `default_category`, `insert_time`) VALUES 
+			('[no category]', '[no owner]', 1, '$current_timestamp');";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `owners` ( 
 				`id` int(5) NOT NULL auto_increment,
 				`name` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
+				`default_owner` int(1) NOT NULL default '0',
 				`active` int(1) NOT NULL default '1',
 				`test_data` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
@@ -90,6 +96,11 @@ if (mysql_num_rows($result) > 0) {
 				PRIMARY KEY  (`id`),
 				KEY `name` (`name`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$sql = "INSERT INTO `owners` 
+			(`name`, `default_owner`, `insert_time`) VALUES 
+			('[no owner]', 1, '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "CREATE TABLE IF NOT EXISTS `currencies` ( 
@@ -261,12 +272,18 @@ if (mysql_num_rows($result) > 0) {
 				`dns10` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
 				`number_of_servers` int(2) NOT NULL default '0',
+				`default_dns` int(1) NOT NULL default '0',
 				`active` int(1) NOT NULL default '1',
 				`test_data` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$sql = "INSERT INTO `dns` 
+			(`name`, `dns1`, `dns2`, `number_of_servers`, `default_dns`, `insert_time`) VALUES 
+			('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', 1, '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `registrars` ( 
@@ -349,6 +366,7 @@ if (mysql_num_rows($result) > 0) {
 				`ip` varchar(255) NOT NULL,
 				`rdns` varchar(255) NOT NULL default '-',
 				`notes` longtext NOT NULL,
+				`default_ip_address` int(1) NOT NULL default '0',
 				`test_data` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -357,8 +375,8 @@ if (mysql_num_rows($result) > 0) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "INSERT INTO `ip_addresses` 
-			(`id`, `name`, `ip`, `rdns`, `insert_time`) VALUES 
-			('1', '[no ip address]', '-', '-', '$current_timestamp');";
+			(`id`, `name`, `ip`, `rdns`, `default_ip_address`, `insert_time`) VALUES 
+			('1', '[no ip address]', '-', '-', 1, '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `settings` ( 
