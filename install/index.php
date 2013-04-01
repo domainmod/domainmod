@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "1.99";
+$most_recent_db_version = "1.98";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -81,7 +81,7 @@ if (mysql_num_rows($result) > 0) {
 
 	$sql = "INSERT INTO `categories` 
 			(`name`, `owner`, `default_category`, `insert_time`) VALUES 
-			('[default category]', '[default category owner]', 1, '$current_timestamp');";
+			('[no category]', '[no category owner]', 1, '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `owners` ( 
@@ -100,7 +100,7 @@ if (mysql_num_rows($result) > 0) {
 
 	$sql = "INSERT INTO `owners` 
 			(`name`, `default_owner`, `insert_time`) VALUES 
-			('[default owner]', 1, '$current_timestamp');";
+			('[no owner]', 1, '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "CREATE TABLE IF NOT EXISTS `currencies` ( 
@@ -283,7 +283,7 @@ if (mysql_num_rows($result) > 0) {
 
 	$sql = "INSERT INTO `dns` 
 			(`name`, `dns1`, `dns2`, `number_of_servers`, `default_dns`, `insert_time`) VALUES 
-			('[default dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', 1, '$current_timestamp');";
+			('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', 1, '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `registrars` ( 
@@ -376,7 +376,7 @@ if (mysql_num_rows($result) > 0) {
 	
 	$sql = "INSERT INTO `ip_addresses` 
 			(`id`, `name`, `ip`, `rdns`, `default_ip_address`, `insert_time`) VALUES 
-			('1', '[default ip address]', '-', '-', 1, '$current_timestamp');";
+			('1', '[no ip address]', '-', '-', 1, '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `settings` ( 

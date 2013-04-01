@@ -123,7 +123,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `ip_addresses` 
 				(`id`, `name`, `ip`, `insert_time`) VALUES 
-				('1', '[default ip address]', '-', '$current_timestamp')";
+				('1', '[no ip address]', '-', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "UPDATE settings
@@ -341,7 +341,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `categories` 
 					(`name`, `owner`, `insert_time`) VALUES 
-					('[default category]', '[default category owner]', '$current_timestamp');";
+					('[no category]', '[no category owner]', '$current_timestamp');";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "SELECT id
@@ -352,7 +352,7 @@ if ($current_db_version < $most_recent_db_version) {
 		if (mysql_num_rows($result) == 0) {
 			$sql2 = "UPDATE categories
 					 SET default_category = '1'
-					 WHERE name = '[default category]'";
+					 WHERE name = '[no category]'";
 			$result2 = mysql_query($sql2,$connection);
 		}
 
@@ -362,7 +362,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `dns` 
 					(`name`, `dns1`, `dns2`, `number_of_servers`, `insert_time`) VALUES 
-					('[default dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '$current_timestamp');";
+					('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '$current_timestamp');";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "SELECT id
@@ -373,7 +373,7 @@ if ($current_db_version < $most_recent_db_version) {
 		if (mysql_num_rows($result) == 0) {
 			$sql2 = "UPDATE dns
 					 SET default_dns = '1'
-					 WHERE name = '[default dns]'";
+					 WHERE name = '[no dns]'";
 			$result2 = mysql_query($sql2,$connection);
 		}
 
@@ -383,7 +383,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `owners` 
 					(`name`, `insert_time`) VALUES 
-					('[default owner]', '$current_timestamp');";
+					('[no owner]', '$current_timestamp');";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "SELECT id
@@ -394,7 +394,7 @@ if ($current_db_version < $most_recent_db_version) {
 		if (mysql_num_rows($result) == 0) {
 			$sql2 = "UPDATE owners
 					 SET default_owner = '1'
-					 WHERE name = '[default owner]'";
+					 WHERE name = '[no owner]'";
 			$result2 = mysql_query($sql2,$connection);
 		}
 
@@ -410,7 +410,7 @@ if ($current_db_version < $most_recent_db_version) {
 		if (mysql_num_rows($result) == 0) {
 			$sql2 = "UPDATE ip_addresses
 					 SET default_ip_address = '1'
-					 WHERE name = '[default ip address]'";
+					 WHERE name = '[no ip address]'";
 			$result2 = mysql_query($sql2,$connection);
 		}
 
@@ -420,39 +420,6 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.98;
-		
-	}
-
-	// upgrade database from 1.98 to 1.99
-	if ($current_db_version == 1.98) {
-
-		$sql = "UPDATE categories 
-					SET name = '[default category]', 
-						owner = '[default category owner]' 
-					WHERE name = '[no category]';";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-
-		$sql = "UPDATE dns
-					SET name = '[default dns]' 
-				WHERE name = '[no dns]';";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-
-		$sql = "UPDATE ip_addresses
-					SET name = '[default ip address]' 
-				WHERE name = '[no ip address]';";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-
-		$sql = "UPDATE owners
-					SET name = '[default owner]' 
-				WHERE name = '[no owner]';";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-
-		$sql = "UPDATE settings
-				SET db_version = '1.99',
-					update_time = '$current_timestamp'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-		
-		$current_db_version = 1.99;
 		
 	}
 
