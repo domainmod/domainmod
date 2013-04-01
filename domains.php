@@ -233,8 +233,8 @@ elseif ($sort_by == "dn_a") { $sort_by_string = " ORDER BY d.domain asc "; }
 elseif ($sort_by == "dn_d") { $sort_by_string = " ORDER BY d.domain desc "; } 
 elseif ($sort_by == "ip_a") { $sort_by_string = " ORDER BY ip.name asc, ip.ip asc"; } 
 elseif ($sort_by == "ip_d") { $sort_by_string = " ORDER BY ip.name desc, ip.ip desc"; } 
-elseif ($sort_by == "o_a") { $sort_by_string = " ORDER BY c.name asc, d.domain asc "; } 
-elseif ($sort_by == "o_d") { $sort_by_string = " ORDER BY c.name desc, d.domain asc "; } 
+elseif ($sort_by == "o_a") { $sort_by_string = " ORDER BY o.name asc, d.domain asc "; } 
+elseif ($sort_by == "o_d") { $sort_by_string = " ORDER BY o.name desc, d.domain asc "; } 
 elseif ($sort_by == "r_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc "; } 
 elseif ($sort_by == "r_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
 
@@ -577,7 +577,7 @@ $result_account = mysql_query($sql_account,$connection);
 echo "<select name=\"raid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?segid=$segid&raid=&sort_by=$sort_by&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&tld=$tld&is_active=$is_active&result_limit=$result_limit&search_for=$search_for\">Registrar Account - ALL</option>";
 while ($row_account = mysql_fetch_object($result_account)) { 
-	echo "<option value=\"$PHP_SELF?segid=$segid&raid=$row_account->ra_id&sort_by=$sort_by&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&tld=$tld&is_active=$is_active&result_limit=$result_limit&search_for=$search_for\""; if ($row_account->ra_id == $raid) echo " selected"; echo ">"; echo "$row_account->r_name :: $row_account->c_name ($row_account->username)</option>";
+	echo "<option value=\"$PHP_SELF?segid=$segid&raid=$row_account->ra_id&sort_by=$sort_by&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&tld=$tld&is_active=$is_active&result_limit=$result_limit&search_for=$search_for\""; if ($row_account->ra_id == $raid) echo " selected"; echo ">"; echo "$row_account->r_name :: $row_account->o_name ($row_account->username)</option>";
 } 
 echo "</select>";
 ?>
