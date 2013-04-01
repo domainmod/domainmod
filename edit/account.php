@@ -51,6 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				WHERE id = '$new_raid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
+		$sql = "UPDATE domains
+				SET owner_id = '$new_owner_id'
+				WHERE account_id = '$new_raid'";
+		$result = mysql_query($sql,$connection);
+		
 		$raid = $new_raid; 
 		
 		$_SESSION['session_result_message'] = "Account Updated<BR>";
