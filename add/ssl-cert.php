@@ -175,11 +175,11 @@ while ($row_account = mysql_fetch_object($result_account)) {
 
 	if ($row_account->id == $new_account_id) {
 
-		echo "<option value=\"$row_account->id\" selected>[ $row_account->sslp_name :: $row_account->c_name :: $row_account->username ]</option>";
+		echo "<option value=\"$row_account->id\" selected>[ $row_account->sslp_name :: $row_account->o_name :: $row_account->username ]</option>";
 	
 	} else {
 
-		echo "<option value=\"$row_account->id\">$row_account->sslp_name :: $row_account->c_name :: $row_account->username</option>";
+		echo "<option value=\"$row_account->id\">$row_account->sslp_name :: $row_account->o_name :: $row_account->username</option>";
 	
 	}
 }

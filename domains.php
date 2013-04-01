@@ -836,7 +836,7 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->pcid?>"><?=$row->category_name?></a>
 	</td>
 	<td valign="top">
-		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->c_id?>"><?=$row->owner_name?></a>
+		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
 	</td>
 	<td valign="top">
 		<a class="subtlelink" href="edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a> (<a class="subtlelink" href="edit/account.php?raid=<?=$row->ra_id?>"><?=substr($row->username, 0, 10);?><?php if (strlen($row->username) >= 11) echo "..."; ?></a>)

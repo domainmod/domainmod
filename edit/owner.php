@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_owner != "") {
 
-		$sql = "UPDATE owner
+		$sql = "UPDATE owners
 				SET name = '" . mysql_real_escape_string($new_owner) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					update_time = '$current_timestamp'
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
 
 	$sql = "SELECT name, notes
-			FROM owner
+			FROM owners
 			WHERE id = '$oid'";
 	$result = mysql_query($sql,$connection);
 	

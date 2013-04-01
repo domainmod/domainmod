@@ -61,7 +61,7 @@ Below is a list of all the Owners that are stored in the <?=$software_title?>.<B
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/owner.php?cid=<?=$row->id?>"><?=$row->name?></a>
+		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
 	<td>
     <?php
@@ -74,7 +74,7 @@ Below is a list of all the Owners that are stored in the <?=$software_title?>.<B
 	?>
     	<?php if ($total_accounts >= 1) { ?>
 
-	        <a class="nobold" href="registrar-accounts.php?cid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
+	        <a class="nobold" href="registrar-accounts.php?oid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
 
         <?php } else { ?>
 
@@ -94,7 +94,7 @@ Below is a list of all the Owners that are stored in the <?=$software_title?>.<B
 
     	<?php if ($total_domains >= 1) { ?>
 
-	    	<a class="nobold" href="domains.php?cid=<?=$row->id?>"><?=number_format($total_domains)?></a>
+	    	<a class="nobold" href="domains.php?oid=<?=$row->id?>"><?=number_format($total_domains)?></a>
 
         <?php } else { ?>
 
@@ -130,7 +130,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/owner.php?cid=<?=$row->id?>"><?=$row->name?></a>
+		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
 	<td>
     <?php
@@ -143,7 +143,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 	?>
     	<?php if ($total_accounts >= 1) { ?>
 
-	        <a class="nobold" href="registrar-accounts.php?cid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
+	        <a class="nobold" href="registrar-accounts.php?oid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
 
         <?php } else { ?>
 

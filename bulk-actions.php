@@ -238,7 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 			$result = mysql_query($sql,$connection);
 
 			while ($row = mysql_fetch_object($result)) {
-				$new_owner_id = $row->c_id;
+				$new_owner_id = $row->o_id;
 				$new_registrar_id = $row->r_id;
 				$new_registrar_account_id = $row->ra_id;
 				$new_owner_name = $row->o_name;
@@ -662,7 +662,7 @@ Enter the domains one per line.
                      AND r.active = '1'
                      AND o.active = '1'
                      $is_active_string
-                     $cid_string
+                     $oid_string
                      $rid_string
                      $tld_string
                    GROUP BY r.name, o.name, ra.username
