@@ -100,13 +100,13 @@ if (mysql_num_rows($result) > 0) {
 
 		<tr height="20">
 			<td>
-				<a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a>
+				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
 			</td>
 			<td valign="top">
 				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
 			</td>
 			<td>
-				<a class="subtlelink" href="edit/owner.php?oid=<?=$row->oid?>"><?=$row->oname?></a>
+				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
 			</td>
 			<td>
 				<?php
@@ -177,13 +177,13 @@ if (mysql_num_rows($result) > 0) {
 
         <tr height="20">
             <td width="200">
-                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a>
+                <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
             </td>
             <td valign="top" width="200">
                     <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
             </td>
             <td width="200">
-                <a class="subtlelink" href="edit/owner.php?oid=<?=$row->oid?>"><?=$row->oname?></a>
+                <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
             </td>
             <td>&nbsp;
                 
