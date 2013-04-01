@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "1.96";
+$most_recent_db_version = "1.97";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -79,7 +79,7 @@ if (mysql_num_rows($result) > 0) {
 			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-	$sql = "CREATE TABLE IF NOT EXISTS `companies` ( 
+	$sql = "CREATE TABLE IF NOT EXISTS `owners` ( 
 				`id` int(5) NOT NULL auto_increment,
 				`name` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
@@ -164,7 +164,7 @@ if (mysql_num_rows($result) > 0) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `domains` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`company_id` int(5) NOT NULL,
+				`owner_id` int(5) NOT NULL,
 				`registrar_id` int(5) NOT NULL,
 				`account_id` int(5) NOT NULL,
 				`domain` varchar(255) NOT NULL,
@@ -191,7 +191,7 @@ if (mysql_num_rows($result) > 0) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_certs` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`company_id` int(5) NOT NULL,
+				`owner_id` int(5) NOT NULL,
 				`ssl_provider_id` int(5) NOT NULL,
 				`account_id` int(5) NOT NULL,
 				`domain_id` int(10) NOT NULL,
@@ -298,7 +298,7 @@ if (mysql_num_rows($result) > 0) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `registrar_accounts` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`company_id` int(5) NOT NULL,
+				`owner_id` int(5) NOT NULL,
 				`registrar_id` int(10) NOT NULL,
 				`username` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
@@ -314,7 +314,7 @@ if (mysql_num_rows($result) > 0) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_accounts` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`company_id` int(5) NOT NULL,
+				`owner_id` int(5) NOT NULL,
 				`ssl_provider_id` int(10) NOT NULL,
 				`username` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,

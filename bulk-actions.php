@@ -85,12 +85,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 
 		} elseif ($action == "AD") { 
 		
-			$sql = "SELECT company_id, registrar_id
+			$sql = "SELECT owner_id, registrar_id
 					FROM registrar_accounts
 					WHERE id = '$new_raid'";
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) {
-				$temp_company_id = $row->company_id;
+				$temp_owner_id = $row->owner_id;
 				$temp_registrar_id = $row->registrar_id;
 			}
 
@@ -116,8 +116,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 				if ($temp_fee_id == '0' || $temp_fee_id == "") { $temp_fee_fixed = 0; $temp_fee_id = 0; } else { $temp_fee_fixed = 1; }
 	
 				$sql = "INSERT INTO domains 
-						(company_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, dns_id, ip_id, function, status, status_notes, notes, privacy, active, fee_fixed, insert_time) VALUES 
-						('$temp_company_id', '$temp_registrar_id', '$new_raid',  '$new_domain', '$new_tld', '$new_expiry_date', '$new_pcid', '$temp_fee_id', '$new_dnsid', '$new_ipid', '$new_function', '$new_status', '$new_status_notes', '$new_notes', '$new_privacy', '$new_active', '$temp_fee_fixed', '$current_timestamp')";
+						(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, dns_id, ip_id, function, status, status_notes, notes, privacy, active, fee_fixed, insert_time) VALUES 
+						('$temp_owner_id', '$temp_registrar_id', '$new_raid',  '$new_domain', '$new_tld', '$new_expiry_date', '$new_pcid', '$temp_fee_id', '$new_dnsid', '$new_ipid', '$new_function', '$new_status', '$new_status_notes', '$new_notes', '$new_privacy', '$new_active', '$temp_fee_fixed', '$current_timestamp')";
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				$temp_fee_id = 0;
 			
@@ -228,33 +228,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 
 		} elseif ($action == "CRA") { 
 		
-			$sql = "SELECT ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS r_name, c.id AS c_id, c.name AS c_name
-  				    FROM registrar_accounts AS ra, registrars AS r, companies AS c
+			$sql = "SELECT ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS r_name, o.id AS o_id, o.name AS o_name
+  				    FROM registrar_accounts AS ra, registrars AS r, owners AS o
 				    WHERE ra.registrar_id = r.id
-				      AND ra.company_id = c.id
+				      AND ra.owner_id = o.id
 					  AND ra.id = '$new_raid'
-					GROUP BY r.name, c.name, ra.username
-				    ORDER BY r.name asc, c.name asc, ra.username asc";
+					GROUP BY r.name, o.name, ra.username
+				    ORDER BY r.name asc, o.name asc, ra.username asc";
 			$result = mysql_query($sql,$connection);
 
 			while ($row = mysql_fetch_object($result)) {
-				$new_company_id = $row->c_id;
+				$new_owner_id = $row->c_id;
 				$new_registrar_id = $row->r_id;
 				$new_registrar_account_id = $row->ra_id;
-				$new_company_name = $row->c_name;
+				$new_owner_name = $row->o_name;
 				$new_registrar_name = $row->r_name;
 				$new_username = $row->username;
 			}
 			
 			$sql = "UPDATE domains
-					SET company_id = '$new_company_id', 
+					SET owner_id = '$new_owner_id', 
 						registrar_id = '$new_registrar_id', 
 						account_id = '$new_registrar_account_id',
 						update_time = '$current_timestamp'
 					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$new_account_string = "$new_registrar_name :: $new_company_name ($new_username)";
+			$new_account_string = "$new_registrar_name :: $new_owner_name ($new_username)";
 			$_SESSION['session_result_message'] = "Registrar Account Changed<BR>";
 
 		} elseif ($action == "E") { 
@@ -557,23 +557,23 @@ Enter the domains one per line.
     <BR><BR>
     <strong>Registrar Account:</strong><BR><BR>
     <?php
-    $sql_account = "SELECT ra.id, ra.username, c.name AS c_name, r.name AS r_name
-                    FROM registrar_accounts AS ra, companies AS c, registrars AS r
-                    WHERE ra.company_id = c.id
+    $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
+                    FROM registrar_accounts AS ra, owners AS o, registrars AS r
+                    WHERE ra.owner_id = o.id
                       AND ra.registrar_id = r.id
                       AND ra.active = '1'
-                    ORDER BY r_name asc, c_name asc, ra.username asc";
+                    ORDER BY r_name asc, o_name asc, ra.username asc";
     $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
     echo "<select name=\"new_raid\">";
     while ($row_account = mysql_fetch_object($result_account)) {
     
         if ($row_account->id == $new_raid) {
     
-            echo "<option value=\"$row_account->id\" selected>[ $row_account->r_name :: $row_account->c_name :: $row_account->username ]</option>";
+            echo "<option value=\"$row_account->id\" selected>[ $row_account->r_name :: $row_account->o_name :: $row_account->username ]</option>";
         
         } else {
     
-            echo "<option value=\"$row_account->id\">$row_account->r_name :: $row_account->c_name :: $row_account->username</option>";
+            echo "<option value=\"$row_account->id\">$row_account->r_name :: $row_account->o_name :: $row_account->username</option>";
         
         }
     }
@@ -654,24 +654,24 @@ Enter the domains one per line.
     <BR><BR>
 <?php } elseif ($action == "CRA") { ?>
 	<?php
-   $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, c.name AS c_name
-   				   FROM registrar_accounts AS ra, registrars AS r, companies AS c
+   $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS o_name
+   				   FROM registrar_accounts AS ra, registrars AS r, owners AS o
 				   WHERE ra.registrar_id = r.id
-				     AND ra.company_id = c.id
+				     AND ra.owner_id = o.id
                      AND ra.active = '1'
                      AND r.active = '1'
-                     AND c.active = '1'
+                     AND o.active = '1'
                      $is_active_string
                      $cid_string
                      $rid_string
                      $tld_string
-                   GROUP BY r.name, c.name, ra.username
-                   ORDER BY r.name asc, c.name asc, ra.username asc";
+                   GROUP BY r.name, o.name, ra.username
+                   ORDER BY r.name asc, o.name asc, ra.username asc";
     $result_account = mysql_query($sql_account,$connection);
     echo "<select name=\"new_raid\">";
     echo "<option value=\"\""; if ($new_raid == "") echo " selected"; echo ">"; echo "$choose_text Registrar Account</option>";
 	while ($row_account = mysql_fetch_object($result_account)) { 
-	    echo "<option value=\"$row_account->ra_id\""; if ($row_account->ra_id == $new_raid) echo " selected"; echo ">"; echo "$row_account->r_name :: $row_account->c_name ($row_account->username)</option>";
+	    echo "<option value=\"$row_account->ra_id\""; if ($row_account->ra_id == $new_raid) echo " selected"; echo ">"; echo "$row_account->r_name :: $row_account->o_name ($row_account->username)</option>";
     } 
     echo "</select>";
     ?>

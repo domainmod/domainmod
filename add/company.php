@@ -1,5 +1,5 @@
 <?php
-// company.php
+// owner.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -24,30 +24,30 @@ include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "Adding A New Company";
-$software_section = "companies";
+$page_title = "Adding A New Owner";
+$software_section = "owners";
 
 // Form Variables
-$new_company = $_POST['new_company'];
+$new_owner = $_POST['new_owner'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_company != "") {
+	if ($new_owner != "") {
 
-		$sql = "INSERT INTO companies 
+		$sql = "INSERT INTO owners 
 				(name, notes, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_company) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
+				('" . mysql_real_escape_string($new_owner) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "Company Added<BR>";
+		$_SESSION['session_result_message'] = "Owner Added<BR>";
 		
-		header("Location: ../companies.php");
+		header("Location: ../owners.php");
 		exit;
 
 	} else {
 	
-		$_SESSION['session_result_message'] .= "Please Enter The Company Name<BR>";
+		$_SESSION['session_result_message'] .= "Please Enter The Owner Name<BR>";
 
 	}
 
@@ -61,14 +61,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
-<form name="add_company_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Company Name:</strong><BR><BR>
-<input name="new_company" type="text" value="<?=$new_company?>" size="50" maxlength="255">
+<form name="add_owner_form" method="post" action="<?=$PHP_SELF?>">
+<strong>Owner Name:</strong><BR><BR>
+<input name="new_owner" type="text" value="<?=$new_owner?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
-<input type="submit" name="button" value="Add This Company &raquo;">
+<input type="submit" name="button" value="Add This Owner &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>

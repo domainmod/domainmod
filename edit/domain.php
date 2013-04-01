@@ -54,12 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 
-		$sql = "SELECT registrar_id, company_id
+		$sql = "SELECT registrar_id, owner_id
 				FROM registrar_accounts
 				WHERE id = '$new_account_id'";
 		$result = mysql_query($sql,$connection);
 		
-		while ($row = mysql_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_company_id = $row->company_id; }
+		while ($row = mysql_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
 
 		$sql2 = "SELECT id
 				 FROM fees
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 
 		$sql2 = "UPDATE domains
-				 SET company_id = '$new_company_id',
+				 SET owner_id = '$new_owner_id',
 					registrar_id = '$new_registrar_id',
 					account_id = '$new_account_id',
 					domain = '" . mysql_real_escape_string($new_domain) . "',
@@ -258,23 +258,23 @@ echo "</select>";
 ?>
 <BR><BR>
 <strong>Registrar Account:</strong><BR><BR>
-<?php
-$sql_account = "SELECT ra.id, ra.username, c.name AS c_name, r.name AS r_name
-				FROM registrar_accounts AS ra, companies AS c, registrars AS r
-				WHERE ra.company_id = c.id
+<?php 
+$sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
+				FROM registrar_accounts AS ra, owners AS o, registrars AS r
+				WHERE ra.owner_id = o.id
 				  AND ra.registrar_id = r.id
-				ORDER BY r_name asc, c_name asc, ra.username asc";
+				ORDER BY r_name asc, o_name asc, ra.username asc";
 $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysql_fetch_object($result_account)) {
 
 	if ($row_account->id == $new_account_id) {
 
-		echo "<option value=\"$row_account->id\" selected>[ $row_account->r_name :: $row_account->c_name :: $row_account->username ]</option>";
+		echo "<option value=\"$row_account->id\" selected>[ $row_account->r_name :: $row_account->o_name :: $row_account->username ]</option>";
 	
 	} else {
 
-		echo "<option value=\"$row_account->id\">$row_account->r_name :: $row_account->c_name :: $row_account->username</option>";
+		echo "<option value=\"$row_account->id\">$row_account->r_name :: $row_account->o_name :: $row_account->username</option>";
 	
 	}
 }

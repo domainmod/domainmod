@@ -29,7 +29,7 @@ $software_section = "accounts";
 // Form Variables
 $rid = $_GET['rid'];
 $raid = $_GET['raid'];
-$cid = $_GET['cid'];
+$oid = $_GET['oid'];
 ?>
 <html>
 <head>
@@ -43,20 +43,20 @@ $cid = $_GET['cid'];
 
 if ($rid != "") { $rid_string = " AND ra.registrar_id = '$rid' "; } else { $rid_string = ""; }
 if ($raid != "") { $raid_string = " AND ra.id = '$raid' "; } else { $raid_string = ""; }
-if ($cid != "") { $cid_string = " AND ra.company_id = '$cid' "; } else { $cid_string = ""; }
+if ($oid != "") { $oid_string = " AND ra.owner_id = '$oid' "; } else { $oid_string = ""; }
 
-$sql = "SELECT ra.id AS raid, ra.username, ra.company_id, ra.registrar_id, ra.reseller, c.id AS cid, c.name AS cname, r.id AS rid, r.name AS rname
-		FROM registrar_accounts AS ra, companies AS c, registrars AS r, domains AS d
+$sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
+		FROM registrar_accounts AS ra, owners AS o, registrars AS r, domains AS d
 		WHERE ra.active = '1'
-		  AND ra.company_id = c.id
+		  AND ra.owner_id = o.id
 		  AND ra.registrar_id = r.id
 		  AND ra.id = d.account_id
 		  AND d.active not in ('0', '10')
 		  $rid_string
 		  $raid_string
-		  $cid_string
+		  $oid_string
 		  AND (SELECT count(*) FROM domains WHERE account_id = ra.id AND active NOT IN ('0', '10')) > 0
-		GROUP BY ra.username, cname, rname
+		GROUP BY ra.username, oname, rname
 		ORDER BY rname asc";
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
@@ -78,7 +78,7 @@ if (mysql_num_rows($result) > 0) {
             <font class="subheadline">Account/Username</font>
         </td>
         <td width="200">
-            <font class="subheadline">Company</font>
+            <font class="subheadline">Owner</font>
         </td>
         <td>
             <font class="subheadline"># of Domains</font>
@@ -102,7 +102,7 @@ if (mysql_num_rows($result) > 0) {
 				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
 			</td>
 			<td>
-				<a class="subtlelink" href="edit/company.php?cid=<?=$row->cid?>"><?=$row->cname?></a>
+				<a class="subtlelink" href="edit/owner.php?oid=<?=$row->oid?>"><?=$row->oname?></a>
 			</td>
 			<td>
 				<?php
@@ -113,7 +113,7 @@ if (mysql_num_rows($result) > 0) {
 				$result2 = mysql_query($sql2,$connection);
 
 				while ($row2 = mysql_fetch_object($result2)) { 
-					echo "<a class=\"nobold\" href=\"domains.php?cid=$row->cid&rid=$row->rid&raid=$row->raid\">" . number_format($row2->total_domain_count) . "</a>"; 
+					echo "<a class=\"nobold\" href=\"domains.php?oid=$row->oid&rid=$row->rid&raid=$row->raid\">" . number_format($row2->total_domain_count) . "</a>"; 
 				} ?>
 
 			</td>
@@ -133,15 +133,15 @@ $exclude_account_string = substr($exclude_account_string_raw, 0, -2);
 
 if ($exclude_account_string != "") { $raid_string = " AND ra.id not in ($exclude_account_string) "; } else { $raid_string = ""; }
 
-$sql = "SELECT ra.id AS raid, ra.username, ra.company_id, ra.registrar_id, ra.reseller, c.id AS cid, c.name AS cname, r.id AS rid, r.name AS rname
-		FROM registrar_accounts AS ra, companies AS c, registrars AS r, domains AS d
+$sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
+		FROM registrar_accounts AS ra, owners AS o, registrars AS r, domains AS d
 		WHERE ra.active = '1'
-		  AND ra.company_id = c.id
+		  AND ra.owner_id = o.id
 		  AND ra.registrar_id = r.id
 		  $rid_string
 		  $raid_string
-		  $cid_string
-		GROUP BY ra.username, cname, rname
+		  $oid_string
+		GROUP BY ra.username, oname, rname
 		ORDER BY rname";
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
@@ -162,7 +162,7 @@ if (mysql_num_rows($result) > 0) {
             <font class="subheadline">Account/Username</font>
         </td>
         <td width="200">
-            <font class="subheadline">Company</font>
+            <font class="subheadline">Owner</font>
         </td>
         <td>&nbsp;
             
@@ -180,7 +180,7 @@ if (mysql_num_rows($result) > 0) {
                     <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
             </td>
             <td width="200">
-                <a class="subtlelink" href="edit/company.php?cid=<?=$row->cid?>"><?=$row->cname?></a>
+                <a class="subtlelink" href="edit/owner.php?oid=<?=$row->oid?>"><?=$row->oname?></a>
             </td>
             <td>&nbsp;
                 

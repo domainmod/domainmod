@@ -28,7 +28,7 @@ $software_section = "ssl-accounts";
 
 // Form Variables
 $sslpid = $_GET['sslpid'];
-$cid = $_GET['cid'];
+$oid = $_GET['oid'];
 ?>
 <html>
 <head>
@@ -41,13 +41,13 @@ $cid = $_GET['cid'];
 <?php
 
 if ($sslpid != "") { $sslpid_string = " and ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
-if ($cid != "") { $cid_string = " and company_id = '$cid' "; } else { $cid_string = ""; }
+if ($oid != "") { $oid_string = " and owner_id = '$oid' "; } else { $oid_string = ""; }
 
-$sql = "SELECT id, username, company_id, ssl_provider_id, reseller
+$sql = "SELECT id, username, owner_id, ssl_provider_id, reseller
 		FROM ssl_accounts
 		WHERE id IN (SELECT account_id FROM ssl_certs WHERE account_id != '0' AND active = '1' GROUP BY account_id)
 		  $sslpid_string
-		  $cid_string
+		  $oid_string
 		ORDER BY username asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
@@ -63,7 +63,7 @@ if (mysql_num_rows($result) > 0) { ?>
             <font class="subheadline">Account/Username</font>
         </td>
         <td width="250">
-            <font class="subheadline">Company</font>
+            <font class="subheadline">Owner</font>
         </td>
         <td width="250">
             <font class="subheadline">SSL Provider</font>
@@ -85,15 +85,15 @@ if (mysql_num_rows($result) > 0) { ?>
                     <td width="244">
                     <?php
                     $sql2 = "SELECT id, name
-                             FROM companies
-                             WHERE id = '$row->company_id'";
+                             FROM owners
+                             WHERE id = '$row->owner_id'";
                     $result2 = mysql_query($sql2,$connection) or die(mysql_error());
                     while ($row2 = mysql_fetch_object($result2)) {
                         $temp_id = $row2->id;
-                        $temp_company_name = $row2->name;
+                        $temp_owner_name = $row2->name;
                     }
                     ?>
-                    <a class="subtlelink" href="edit/company.php?cid=<?=$temp_id?>"><?=$temp_company_name?></a>
+                    <a class="subtlelink" href="edit/owner.php?oid=<?=$temp_id?>"><?=$temp_owner_name?></a>
                     </td>
                     <td width="250">
                     <?php
@@ -118,7 +118,7 @@ if (mysql_num_rows($result) > 0) { ?>
                     $result3 = mysql_query($sql3,$connection);
                     while ($row3 = mysql_fetch_object($result3)) {
                         if ($row3->total_ssl_count != 0) {
-                            echo "<a class=\"nobold\" href=\"ssl-certs.php?cid=$row->company_id&sslpid=$row->ssl_provider_id&sslpaid=$row->id\">" . number_format($row3->total_ssl_count) . "</a>";
+                            echo "<a class=\"nobold\" href=\"ssl-certs.php?oid=$row->owner_id&sslpid=$row->ssl_provider_id&sslpaid=$row->id\">" . number_format($row3->total_ssl_count) . "</a>";
                         } else {
                             echo number_format($row3->total_ssl_count);
                         }
@@ -135,11 +135,11 @@ if (mysql_num_rows($result) > 0) { ?>
 <?php 
 } ?>
 <?php
-$sql = "SELECT id, username, company_id, ssl_provider_id, reseller
+$sql = "SELECT id, username, owner_id, ssl_provider_id, reseller
 		FROM ssl_accounts
 		WHERE id NOT IN (SELECT account_id FROM ssl_certs WHERE account_id != '0' AND active = '1' GROUP BY account_id)
 		  $sslpid_string
-		  $cid_string
+		  $oid_string
 		ORDER BY username asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
@@ -155,7 +155,7 @@ if (mysql_num_rows($result) > 0) { ?>
                 <font class="subheadline">Account/Username</font>
             </td>
             <td width="250">
-                <font class="subheadline">Company</font>
+                <font class="subheadline">Owner</font>
             </td>
             <td width="250">
                 <font class="subheadline">SSL Provider</font>
@@ -179,15 +179,15 @@ if (mysql_num_rows($result) > 0) { ?>
                         <td width="246">
                         <?php
                         $sql2 = "SELECT id, name
-                                 FROM companies
-                                 WHERE id = '$row->company_id'";
+                                 FROM owners
+                                 WHERE id = '$row->owner_id'";
                         $result2 = mysql_query($sql2,$connection) or die(mysql_error());
                         while ($row2 = mysql_fetch_object($result2)) {
                             $temp_id = $row2->id;
-                            $temp_company_name = $row2->name;
+                            $temp_owner_name = $row2->name;
                         }
                         ?>
-                        <a class="subtlelink" href="edit/company.php?cid=<?=$temp_id?>"><?=$temp_company_name?></a>
+                        <a class="subtlelink" href="edit/owner.php?oid=<?=$temp_id?>"><?=$temp_owner_name?></a>
                         </td>
                         <td width="250">
                         <?php

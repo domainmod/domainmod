@@ -32,7 +32,7 @@ include("../auth/auth-check.inc.php");
 $sql = "DELETE FROM categories WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
-$sql = "DELETE FROM companies WHERE test_data = '1'";
+$sql = "DELETE FROM owners WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
 $sql = "DELETE FROM dns WHERE test_data = '1'";

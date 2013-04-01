@@ -42,12 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "" && $new_type_id != "" && $new_function_id != "" && $new_domain_id != "") {
 
-		$sql = "SELECT ssl_provider_id, company_id
+		$sql = "SELECT ssl_provider_id, owner_id
 				FROM ssl_accounts
 				WHERE id = '$new_account_id'";
 		$result = mysql_query($sql,$connection);
 		
-		while ($row = mysql_fetch_object($result)) { $new_ssl_provider_id = $row->ssl_provider_id; $new_company_id = $row->company_id; }
+		while ($row = mysql_fetch_object($result)) { $new_ssl_provider_id = $row->ssl_provider_id; $new_owner_id = $row->owner_id; }
 
 		$sql = "SELECT id
 				FROM ssl_fees
@@ -59,8 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
 
 		$sql = "INSERT INTO ssl_certs
-				(company_id, ssl_provider_id, account_id, domain_id, name, type_id, function_id, expiry_date, fee_id, notes, active, insert_time) VALUES 
-				('$new_company_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '" . mysql_real_escape_string($new_name) . "', '$new_type_id', '$new_function_id', '$new_expiry_date', '$new_fee_id', '" . mysql_real_escape_string($new_notes) . "', '$new_active', '$current_timestamp')";
+				(owner_id, ssl_provider_id, account_id, domain_id, name, type_id, function_id, expiry_date, fee_id, notes, active, insert_time) VALUES 
+				('$new_owner_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '" . mysql_real_escape_string($new_name) . "', '$new_type_id', '$new_function_id', '$new_expiry_date', '$new_fee_id', '" . mysql_real_escape_string($new_notes) . "', '$new_active', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -163,12 +163,12 @@ echo "</select>";
 <BR><BR>
 <strong>SSL Provider Account:</strong><BR><BR>
 <?php
-$sql_account = "SELECT sslpa.id, sslpa.username, c.name as c_name, sslp.name as sslp_name
-				FROM ssl_accounts as sslpa, companies as c, ssl_providers as sslp
-				WHERE sslpa.company_id = c.id
+$sql_account = "SELECT sslpa.id, sslpa.username, o.name as o_name, sslp.name as sslp_name
+				FROM ssl_accounts as sslpa, owners as o, ssl_providers as sslp
+				WHERE sslpa.owner_id = o.id
 				  AND sslpa.ssl_provider_id = sslp.id
 				  AND sslpa.active = '1'
-				ORDER BY sslp_name asc, c_name asc, sslpa.username asc";
+				ORDER BY sslp_name asc, o_name asc, sslpa.username asc";
 $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysql_fetch_object($result_account)) {

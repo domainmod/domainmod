@@ -30,7 +30,7 @@ $software_section = "ssl-accounts";
 $sslpaid = $_GET['sslpaid'];
 
 // Form Variables
-$new_company_id = $_POST['new_company_id'];
+$new_owner_id = $_POST['new_owner_id'];
 $new_ssl_provider_id = $_POST['new_ssl_provider_id'];
 $new_username = $_POST['new_username'];
 $new_reseller = $_POST['new_reseller'];
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_username != "") {
 
 		$sql = "UPDATE ssl_accounts
-				SET company_id = '$new_company_id',
+				SET owner_id = '$new_owner_id',
 					ssl_provider_id = '$new_ssl_provider_id',
 					username = '" . mysql_real_escape_string($new_username) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
@@ -63,14 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT company_id, ssl_provider_id, username, notes, reseller
+	$sql = "SELECT owner_id, ssl_provider_id, username, notes, reseller
 			FROM ssl_accounts
 			WHERE id = '$sslpaid'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
 	
-		$new_company_id = $row->company_id;
+		$new_owner_id = $row->owner_id;
 		$new_ssl_provider_id = $row->ssl_provider_id;
 		$new_username = $row->username;
 		$new_notes = $row->notes;
@@ -89,23 +89,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_ssl_account_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Company:</strong><BR><BR>
+<strong>Owner:</strong><BR><BR>
 <?php
-$sql_company = "SELECT id, name
-				FROM companies
-				WHERE active = '1'
-				ORDER BY name asc";
-$result_company = mysql_query($sql_company,$connection) or die(mysql_error());
-echo "<select name=\"new_company_id\">";
-while ($row_company = mysql_fetch_object($result_company)) {
+$sql_owner = "SELECT id, name
+			  FROM owners
+			  WHERE active = '1'
+			  ORDER BY name asc";
+$result_owner = mysql_query($sql_owner,$connection) or die(mysql_error());
+echo "<select name=\"new_owner_id\">";
+while ($row_owner = mysql_fetch_object($result_owner)) {
 
-	if ($row_company->id == $new_company_id) {
+	if ($row_owner->id == $new_owner_id) {
 
-		echo "<option value=\"$row_company->id\" selected>$row_company->name</option>";
+		echo "<option value=\"$row_owner->id\" selected>$row_owner->name</option>";
 	
 	} else {
 
-		echo "<option value=\"$row_company->id\">$row_company->name</option>";
+		echo "<option value=\"$row_owner->id\">$row_owner->name</option>";
 	
 	}
 }

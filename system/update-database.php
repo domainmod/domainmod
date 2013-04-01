@@ -291,6 +291,51 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	// upgrade database from 1.96 to 1.97
+	if ($current_db_version == 1.96) {
+
+		$sql = "CREATE TABLE IF NOT EXISTS `owners` ( 
+					`id` int(5) NOT NULL auto_increment,
+					`name` varchar(255) NOT NULL,
+					`notes` longtext NOT NULL,
+					`active` int(1) NOT NULL default '1',
+					`test_data` int(1) NOT NULL default '0',
+					`insert_time` datetime NOT NULL,
+					`update_time` datetime NOT NULL,
+					PRIMARY KEY  (`id`),
+					KEY `name` (`name`)
+				) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "INSERT INTO owners 
+					(id, name, notes, active, test_data, insert_time, update_time) 
+					SELECT id, name, notes, active, test_data, insert_time, update_time FROM companies ORDER BY id;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "DROP TABLE `companies`;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `domains` CHANGE `company_id` `owner_id` INT(5) NOT NULL;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `registrar_accounts` CHANGE `company_id` `owner_id` INT(5) NOT NULL;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `ssl_accounts` CHANGE `company_id` `owner_id` INT(5) NOT NULL;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `ssl_certs` CHANGE `company_id` `owner_id` INT(5) NOT NULL;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE settings
+				SET db_version = '1.97',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 1.97;
+		
+	}
+
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 
 } else {

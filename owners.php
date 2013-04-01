@@ -1,5 +1,5 @@
 <?php
-// companies.php
+// owners.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -23,8 +23,8 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 
-$page_title = "Company Breakdown";
-$software_section = "companies";
+$page_title = "Owner Breakdown";
+$software_section = "owners";
 ?>
 <html>
 <head>	
@@ -37,19 +37,19 @@ $software_section = "companies";
 
 <?php
 $sql = "SELECT id, name
-		FROM companies
-		WHERE id IN (SELECT company_id FROM domains WHERE company_id != '0' AND active NOT IN ('0','10') GROUP BY company_id)
+		FROM owners
+		WHERE id IN (SELECT owner_id FROM domains WHERE owner_id != '0' AND active NOT IN ('0','10') GROUP BY owner_id)
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-Below is a list of all the Companies that are stored in the <?=$software_title?>.<BR><BR>
-<strong>Number of Active Companies:</strong> <?=mysql_num_rows($result)?>
+Below is a list of all the Owners that are stored in the <?=$software_title?>.<BR><BR>
+<strong>Number of Active Owners:</strong> <?=mysql_num_rows($result)?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="30">
 	<td width="225">
-    	<font class="subheadline">Company Name</font>
+    	<font class="subheadline">Owner Name</font>
     </td>
 	<td width="150">
     	<font class="subheadline"># of Accounts</font>
@@ -61,14 +61,14 @@ Below is a list of all the Companies that are stored in the <?=$software_title?>
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/company.php?cid=<?=$row->id?>"><?=$row->name?></a>
+		<a class="subtlelink" href="edit/owner.php?cid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
 	<td>
     <?php
 	$sql2 = "SELECT count(*) AS total_count
 			 FROM registrar_accounts
 			 WHERE active = '1'
-			   AND company_id = '$row->id'";
+			   AND owner_id = '$row->id'";
 	$result2 = mysql_query($sql2,$connection);
 	while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
 	?>
@@ -87,7 +87,7 @@ Below is a list of all the Companies that are stored in the <?=$software_title?>
 	$sql3 = "SELECT count(*) AS total_count
 			 FROM domains
 			 WHERE active NOT IN ('0', '10')
-			   AND company_id = '$row->id'";
+			   AND owner_id = '$row->id'";
 	$result3 = mysql_query($sql3,$connection);
 	while ($row3 = mysql_fetch_object($result3)) { $total_domains = $row3->total_count; }
 	?>
@@ -109,19 +109,19 @@ Below is a list of all the Companies that are stored in the <?=$software_title?>
 <?php } ?>
 <?php
 $sql = "SELECT id, name
-		FROm companies
-		WHERE id NOT IN (SELECT company_id FROM domains WHERE company_id != '0' AND active NOT IN ('0','10') GROUP BY company_id)
+		FROm owners
+		WHERE id NOT IN (SELECT owner_id FROM domains WHERE owner_id != '0' AND active NOT IN ('0','10') GROUP BY owner_id)
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>
-<strong>Number of Inactive Companies:</strong> <?=mysql_num_rows($result)?>
+<strong>Number of Inactive Owners:</strong> <?=mysql_num_rows($result)?>
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="30">
 	<td width="225">
-    	<font class="subheadline">Company Name</font>
+    	<font class="subheadline">Owner Name</font>
     </td>
 	<td>
     	<font class="subheadline"># of Accounts</font>
@@ -130,14 +130,14 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/company.php?cid=<?=$row->id?>"><?=$row->name?></a>
+		<a class="subtlelink" href="edit/owner.php?cid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
 	<td>
     <?php
 	$sql2 = "SELECT count(*) AS total_count
 			 FROM registrar_accounts
 			 WHERE active = '1'
-			   AND company_id = '$row->id'";
+			   AND owner_id = '$row->id'";
 	$result2 = mysql_query($sql2,$connection);
 	while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
 	?>

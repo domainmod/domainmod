@@ -28,7 +28,7 @@ $page_title = "Adding A New Registrar Account";
 $software_section = "accounts";
 
 // Form Variables
-$new_company_id = $_POST['new_company_id'];
+$new_owner_id = $_POST['new_owner_id'];
 $new_registrar_id = $_POST['new_registrar_id'];
 $new_username = $_POST['new_username'];
 $new_reseller = $_POST['new_reseller'];
@@ -39,8 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_username != "") {
 
 		$sql = "INSERT INTO registrar_accounts 
-				(company_id, registrar_id, username, notes, reseller, insert_time) VALUES 
-				('$new_company_id', '$new_registrar_id', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_reseller', '$current_timestamp')";
+				(owner_id, registrar_id, username, notes, reseller, insert_time) VALUES 
+				('$new_owner_id', '$new_registrar_id', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_reseller', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Account Added<BR>";
@@ -65,23 +65,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[2].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="add_account_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Company:</strong><BR><BR>
+<strong>Owner:</strong><BR><BR>
 <?php
-$sql_company = "SELECT id, name
-				FROM companies
-				WHERE active = '1'
-				ORDER BY name asc";
-$result_company = mysql_query($sql_company,$connection) or die(mysql_error());
-echo "<select name=\"new_company_id\">";
-while ($row_company = mysql_fetch_object($result_company)) {
+$sql_owner = "SELECT id, name
+			  FROM owners
+			  WHERE active = '1'
+			  ORDER BY name asc";
+$result_owner = mysql_query($sql_owner,$connection) or die(mysql_error());
+echo "<select name=\"new_owner_id\">";
+while ($row_owner = mysql_fetch_object($result_owner)) {
 
-	if ($row_company->id == $new_company_id) {
+	if ($row_owner->id == $new_owner_id) {
 
-		echo "<option value=\"$row_company->id\" selected>$row_company->name</option>";
+		echo "<option value=\"$row_owner->id\" selected>$row_owner->name</option>";
 	
 	} else {
 
-		echo "<option value=\"$row_company->id\">$row_company->name</option>";
+		echo "<option value=\"$row_owner->id\">$row_owner->name</option>";
 	
 	}
 }

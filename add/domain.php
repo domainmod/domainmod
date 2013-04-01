@@ -48,12 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 		
-		$sql = "SELECT registrar_id, company_id
+		$sql = "SELECT registrar_id, owner_id
 				FROM registrar_accounts
 				WHERE id = '$new_account_id'";
 		$result = mysql_query($sql,$connection);
 		
-		while ($row = mysql_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_company_id = $row->company_id; }
+		while ($row = mysql_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
 
 		$sql = "SELECT id
 				FROM fees
@@ -64,8 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
 
 		$sql = "INSERT INTO domains
-				(company_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, fee_id, function, status, status_notes, notes, privacy, active, insert_time) VALUES 
-				('$new_company_id', '$new_registrar_id', '$new_account_id', '" . mysql_real_escape_string($new_domain) . "', '$tld', '$new_expiry_date', '$new_cat_id', '$new_dns_id', '$new_ip_id', '$new_fee_id', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_status) . "', '" . mysql_real_escape_string($new_status_notes) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_privacy', '$new_active', '$current_timestamp')";
+				(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, fee_id, function, status, status_notes, notes, privacy, active, insert_time) VALUES 
+				('$new_owner_id', '$new_registrar_id', '$new_account_id', '" . mysql_real_escape_string($new_domain) . "', '$tld', '$new_expiry_date', '$new_cat_id', '$new_dns_id', '$new_ip_id', '$new_fee_id', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_status) . "', '" . mysql_real_escape_string($new_status_notes) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_privacy', '$new_active', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -179,13 +179,13 @@ echo "</select>";
 ?>
 <BR><BR>
 <strong>Registrar Account:</strong><BR><BR>
-<?php
-$sql_account = "SELECT ra.id, ra.username, c.name as c_name, r.name as r_name
-				FROM registrar_accounts as ra, companies as c, registrars as r
-				WHERE ra.company_id = c.id
+<?php 
+$sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
+				FROM registrar_accounts AS ra, owners AS o, registrars AS r
+				WHERE ra.owner_id = o.id
 				  AND ra.registrar_id = r.id
 				  AND ra.active = '1'
-				ORDER BY r_name asc, c_name asc, ra.username asc";
+				ORDER BY r_name asc, o_name asc, ra.username asc";
 $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysql_fetch_object($result_account)) {
