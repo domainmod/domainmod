@@ -433,17 +433,17 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE dns
-					SET name = '[default dns]', 
+					SET name = '[default dns]' 
 				WHERE name = '[no dns]';";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE ip_addresses
-					SET name = '[default ip address]', 
+					SET name = '[default ip address]' 
 				WHERE name = '[no ip address]';";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE owners
-					SET name = '[default owner]', 
+					SET name = '[default owner]' 
 				WHERE name = '[no owner]';";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
