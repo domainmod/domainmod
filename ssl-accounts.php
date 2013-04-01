@@ -215,7 +215,7 @@ if (mysql_num_rows($result) > 0) { ?>
 </table>
 <?php 
 } ?>
-<BR><font color="#DD0000"><strong>*</strong></font> = Reseller Account
+<BR><BR><font color="#DD0000"><strong>*</strong></font> = Reseller Account
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

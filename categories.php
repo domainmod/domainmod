@@ -40,7 +40,7 @@ Below is a list of all the Domain Categories that are stored in the <?=$software
 $sql = "SELECT id, name, owner, default_category
 		FROM categories
 		WHERE id IN (SELECT cat_id FROM domains WHERE cat_id != '0' AND active NOT IN ('0','10') GROUP BY cat_id)
-		ORDER BY name asc";
+		ORDER BY default_category desc, name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $number_of_categories = mysql_num_rows($result);
 ?>
@@ -89,7 +89,7 @@ $number_of_categories = mysql_num_rows($result);
 $sql = "SELECT id, name, owner, default_category
 		FROM categories
 		WHERE id NOT IN (SELECT cat_id FROM domains WHERE cat_id != '0' AND active NOT IN ('0','10') GROUP BY cat_id)
-		ORDER BY name asc";
+		ORDER BY default_category desc, name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $number_of_categories = mysql_num_rows($result);
 ?>

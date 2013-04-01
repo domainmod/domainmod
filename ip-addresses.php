@@ -36,10 +36,10 @@ $software_section = "ip-addresses";
 <?php include("_includes/header.inc.php"); ?>
 Below is a list of all the IP Addresses that are stored in the <?=$software_title?>.<BR><BR>
 <?php
-$sql = "SELECT id, name, ip, rdns
+$sql = "SELECT id, name, ip, rdns, default_ip_address
 		FROM ip_addresses
 		WHERE id IN (SELECT ip_id FROM domains WHERE ip_id != '0' AND active NOT IN ('0','10') GROUP BY ip_id)
-		ORDER BY name asc";
+		ORDER BY default_ip_address desc, name asc";
 $result = mysql_query($sql,$connection);
 ?>
 <strong>Number of Active IP Addresses:</strong> <?=mysql_num_rows($result)?>
@@ -68,7 +68,7 @@ if (mysql_num_rows($result) > 0) { ?>
     
             <tr height="20">
                 <td>
-                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
+                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a>
                 </td>
                 <td>
                     <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
@@ -97,10 +97,10 @@ if (mysql_num_rows($result) > 0) { ?>
 	<?php 
 } ?>
 <?php
-$sql = "SELECT id, name, ip, rdns
+$sql = "SELECT id, name, ip, rdns, default_ip_address
 		FROM ip_addresses
 		WHERE id NOT IN (SELECT ip_id FROM domains WHERE ip_id != '0' AND active NOT IN ('0','10') GROUP BY ip_id)
-		ORDER BY name asc";
+		ORDER BY default_ip_address desc, name asc";
 $result = mysql_query($sql,$connection);
 ?>
 <?php
@@ -127,7 +127,7 @@ if (mysql_num_rows($result) > 0) { ?>
     
             <tr height="20">
                 <td>
-                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
+                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a></a>
                 </td>
                 <td>
                     <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
@@ -142,6 +142,7 @@ if (mysql_num_rows($result) > 0) { ?>
 	</table>
 <?php 
 } ?>
+<BR><font color="#DD0000"><strong>*</strong></font> = Default IP Address
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

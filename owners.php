@@ -36,10 +36,10 @@ $software_section = "owners";
 <?php include("_includes/header.inc.php"); ?>
 
 <?php
-$sql = "SELECT id, name
+$sql = "SELECT id, name, default_owner
 		FROM owners
 		WHERE id IN (SELECT owner_id FROM domains WHERE owner_id != '0' AND active NOT IN ('0','10') GROUP BY owner_id)
-		ORDER BY name asc";
+		ORDER BY default_owner desc, name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 Below is a list of all the Domain Registrar and SSL Provider Account Owners that are stored in the <?=$software_title?>.<BR><BR>
@@ -61,7 +61,7 @@ Below is a list of all the Domain Registrar and SSL Provider Account Owners that
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?></a>
+		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a>
 	</td>
 	<td>
     <?php
@@ -108,10 +108,10 @@ Below is a list of all the Domain Registrar and SSL Provider Account Owners that
 </table>
 <?php } ?>
 <?php
-$sql = "SELECT id, name
+$sql = "SELECT id, name, default_owner
 		FROm owners
 		WHERE id NOT IN (SELECT owner_id FROM domains WHERE owner_id != '0' AND active NOT IN ('0','10') GROUP BY owner_id)
-		ORDER BY name asc";
+		ORDER BY default_owner desc, name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
@@ -130,7 +130,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?></a>
+		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a></a>
 	</td>
 	<td>
     <?php
@@ -155,6 +155,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php } ?>
 </table>
 <?php } ?>
+<BR><font color="#DD0000"><strong>*</strong></font> = Default Owner
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

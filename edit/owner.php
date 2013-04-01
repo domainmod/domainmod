@@ -32,20 +32,42 @@ $oid = $_GET['oid'];
 // Form Variables
 $new_owner = $_POST['new_owner'];
 $new_notes = $_POST['new_notes'];
+$new_default_owner = $_REQUEST['new_default_owner'];
 $new_oid = $_POST['new_oid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_owner != "") {
 
+		if ($new_default_owner == "1") {
+			
+			$sql = "UPDATE owners
+					SET default_owner = '0',
+					    update_time = '$current_timestamp'";
+			$result = mysql_query($sql,$connection);
+			
+		} else { 
+		
+			$sql = "SELECT count(*) AS total_count
+					FROM owners
+					WHERE default_owner = '1'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) { $temp_total = $row->total_count; }
+			if ($temp_total == "0") $new_default_owner = "1";
+		
+		}
+
 		$sql = "UPDATE owners
 				SET name = '" . mysql_real_escape_string($new_owner) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
+					default_owner = '$new_default_owner',
 					update_time = '$current_timestamp'
 				WHERE id = '$new_oid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$new_owner = $new_owner;
+		$new_default_owner = $new_default_owner;
+		$new_notes = $new_notes;
 
 		$oid = $new_oid;
 		
@@ -59,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT name, notes
+	$sql = "SELECT name, notes, default_owner
 			FROM owners
 			WHERE id = '$oid'";
 	$result = mysql_query($sql,$connection);
@@ -67,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	while ($row = mysql_fetch_object($result)) { 
 	
 		$new_owner = $row->name;
+		$new_default_owner = $row->default_owner;
 		$new_notes = $row->notes;
 	
 	}
@@ -88,6 +111,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+<BR><BR>
+<strong>Default Owner?:</strong>&nbsp;
+<input name="new_default_owner" type="checkbox" value="1"<?php if ($new_default_owner == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_oid" value="<?=$oid?>">
 <input type="submit" name="button" value="Update This Owner &raquo;">

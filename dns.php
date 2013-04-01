@@ -36,10 +36,10 @@ $software_section = "dns";
 <?php include("_includes/header.inc.php"); ?>
 Below is a list of all the DNS Profiles that are stored in the <?=$software_title?>.<BR><BR>
 <?php
-$sql = "SELECT id, name, number_of_servers
+$sql = "SELECT id, name, number_of_servers, default_dns
 		FROM dns
 		WHERE id IN (SELECT dns_id FROM domains WHERE dns_id != '0' AND active NOT IN ('0','10') GROUP BY dns_id)
-		ORDER BY name asc";
+		ORDER BY default_dns desc, name asc";
 $result = mysql_query($sql,$connection);
 ?>
 <strong>Number of Active DNS Profiles:</strong> <?=mysql_num_rows($result)?>
@@ -60,7 +60,7 @@ $result = mysql_query($sql,$connection);
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a>
+		<a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_dns == "1") echo "<a title=\"Default DNS Profile\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a></a>
 	</td>
     <td>
         <a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->number_of_servers?></a>
@@ -84,10 +84,10 @@ $result = mysql_query($sql,$connection);
 <?php } ?>
 
 <?php
-$sql = "SELECT id, name, number_of_servers
+$sql = "SELECT id, name, number_of_servers, default_dns
 		FROM dns
 		WHERE id NOT IN (SELECT dns_id FROM domains WHERE dns_id != '0' AND active NOT IN ('0','10') GROUP BY dns_id)
-		ORDER BY name asc";
+		ORDER BY default_dns desc, name asc";
 $result = mysql_query($sql,$connection);
 ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
@@ -106,7 +106,7 @@ $result = mysql_query($sql,$connection);
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a>
+		<a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_dns == "1") echo "<a title=\"Default DNS Profile\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a></a>
 	</td>
     <td>
         <a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->number_of_servers?></a>
@@ -115,6 +115,7 @@ $result = mysql_query($sql,$connection);
 <?php } ?>
 </table>
 <?php } ?>
+<BR><font color="#DD0000"><strong>*</strong></font> = Default DNS Profile
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>
