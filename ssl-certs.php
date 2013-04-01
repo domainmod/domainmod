@@ -197,7 +197,7 @@ elseif ($sort_by == "o_d") { $sort_by_string = " ORDER BY o.name desc, sslc.name
 elseif ($sort_by == "sslp_a") { $sort_by_string = " ORDER BY sslp.name asc, sslc.name asc "; } 
 elseif ($sort_by == "sslp_d") { $sort_by_string = " ORDER BY sslp.name desc, sslc.name asc "; }
  
-$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, o.id AS o_id, o.name AS i_name, f.renewal_fee, cc.conversion, d.domain, sslct.type, sslcf.function
+$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, o.id AS o_id, o.name AS owner_name, f.renewal_fee, cc.conversion, d.domain, sslct.type, sslcf.function
 		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS cc, domains AS d, ssl_cert_types AS sslct, ssl_cert_functions AS sslcf
 		WHERE sslc.account_id = sslpa.id
 		  AND sslpa.ssl_provider_id = sslp.id
@@ -353,7 +353,7 @@ if ($typeid != "") { $typeid_string = " AND sslc.type_id = '$typeid' "; } else {
 if ($functionid != "") { $functionid_string = " AND sslc.function_id = '$functionid' "; } else { $functionid_string = ""; }
 if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
 
-$sql_account = "SELECT sslpa.id AS sslpa_id, sslpa.username, sslp.name AS sslp_name, o.name AS o_name
+$sql_account = "SELECT sslpa.id AS sslpa_id, sslpa.username, sslp.name AS sslp_name, o.name AS owner_name
 				FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_certs AS sslc, domains AS d
 				WHERE sslpa.ssl_provider_id = sslp.id
 				  AND sslpa.owner_id = o.id
@@ -375,7 +375,7 @@ $result_account = mysql_query($sql_account,$connection);
 echo "<select name=\"sslpaid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?sslpaid=&sort_by=$sort_by&oid=$oid&did=$did&sslpid=$sslpid&typeid=$typeid&functionid=$functionid&is_active=$is_active&result_limit=$result_limit&search_for=$search_for\">SSL Provider Account - ALL</option>";
 while ($row_account = mysql_fetch_object($result_account)) { 
-	echo "<option value=\"$PHP_SELF?sslpaid=$row_account->sslpa_id&sort_by=$sort_by&oid=$oid&did=$did&sslpid=$sslpid&typeid=$typeid&functionid=$functionid&is_active=$is_active&result_limit=$result_limit&search_for=$search_for\""; if ($row_account->sslpa_id == $sslpaid) echo " selected"; echo ">"; echo "$row_account->sslp_name :: $row_account->o_name ($row_account->username)</option>";
+	echo "<option value=\"$PHP_SELF?sslpaid=$row_account->sslpa_id&sort_by=$sort_by&oid=$oid&did=$did&sslpid=$sslpid&typeid=$typeid&functionid=$functionid&is_active=$is_active&result_limit=$result_limit&search_for=$search_for\""; if ($row_account->sslpa_id == $sslpaid) echo " selected"; echo ">"; echo "$row_account->sslp_name :: $row_account->owner_name ($row_account->username)</option>";
 } 
 echo "</select>";
 ?>
