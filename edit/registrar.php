@@ -79,7 +79,7 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 		
 		if ($new_initial_fee == "0" && $new_renewal_fee == "0") {
 
-			$sql = "DELET EFROM fees
+			$sql = "DELETE FROM fees
 					WHERE registrar_id = '$new_rid'
 					  AND tld = '$new_tld'";
 			mysql_query($sql,$connection);
