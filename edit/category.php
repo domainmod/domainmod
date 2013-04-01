@@ -31,7 +31,7 @@ $pcid = $_GET['pcid'];
 
 // Form Variables
 $new_category = $_REQUEST['new_category'];
-$new_owner = $_REQUEST['new_owner'];
+$new_stakeholder = $_REQUEST['new_stakeholder'];
 $new_notes = $_REQUEST['new_notes'];
 $new_default_category = $_REQUEST['new_default_category'];
 $new_pcid = $_REQUEST['new_pcid'];
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "UPDATE categories
 				SET name = '" . mysql_real_escape_string($new_category) . "', 
-					owner = '" . mysql_real_escape_string($new_owner) . "',
+					stakeholder = '" . mysql_real_escape_string($new_stakeholder) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					default_category = '$new_default_category',
 					update_time = '$current_timestamp'
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$new_category = $new_category;
-		$new_owner = $new_owner;
+		$new_stakeholder = $new_stakeholder;
 		$new_default_category = $new_default_category;
 		$new_notes = $new_notes;
 
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT name, owner, notes, default_category
+	$sql = "SELECT name, stakeholder, notes, default_category
 			FROM categories
 			WHERE id = '$pcid'";
 	$result = mysql_query($sql,$connection);
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	while ($row = mysql_fetch_object($result)) { 
 	
 		$new_category = $row->name;
-		$new_owner = $row->owner;
+		$new_stakeholder = $row->stakeholder;
 		$new_default_category = $row->default_category;
 		$new_notes = $row->notes;
 	}
@@ -112,8 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <input name="new_category" type="text" value="<?php if ($new_category != "") echo $new_category; ?>
 " size="50" maxlength="255">
 <BR><BR>
-<strong>Owner/Stakeholder:</strong><BR><BR>
-<input name="new_owner" type="text" value="<?php if ($new_owner != "") echo $new_owner; ?>
+<strong>Stakeholder:</strong><BR><BR>
+<input name="new_stakeholder" type="text" value="<?php if ($new_stakeholder != "") echo $new_stakeholder; ?>
 " size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>

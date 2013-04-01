@@ -29,7 +29,7 @@ $software_section = "categories";
 
 // Form Variables
 $new_category = $_POST['new_category'];
-$new_owner = $_POST['new_owner'];
+$new_stakeholder = $_POST['new_stakeholder'];
 $new_notes = $_POST['new_notes'];
 $new_default_category = $_POST['new_default_category'];
 
@@ -56,8 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 
 		$sql = "INSERT INTO categories 
-				(name, owner, notes, default_category, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_category) . "', '" . mysql_real_escape_string($new_owner) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_category', '$current_timestamp')";
+				(name, stakeholder, notes, default_category, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_category) . "', '" . mysql_real_escape_string($new_stakeholder) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_category', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Category Added<BR>";
@@ -85,8 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <strong>Category Name:</strong><BR><BR>
 <input name="new_category" type="text" value="<?=$new_category?>" size="50" maxlength="255">
 <BR><BR>
-<strong>Owner/Stakeholder:</strong><BR><BR>
-<input name="new_owner" type="text" value="<?=$new_owner?>" size="50" maxlength="255">
+<strong>Stakeholder:</strong><BR><BR>
+<input name="new_stakeholder" type="text" value="<?=$new_stakeholder?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>

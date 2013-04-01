@@ -37,7 +37,7 @@ $software_section = "categories";
 Below is a list of all the Domain Categories that are stored in the <?=$software_title?>.<BR><BR>
 
 <?php
-$sql = "SELECT id, name, owner, default_category
+$sql = "SELECT id, name, stakeholder, default_category
 		FROM categories
 		WHERE id IN (SELECT cat_id FROM domains WHERE cat_id != '0' AND active NOT IN ('0','10') GROUP BY cat_id)
 		ORDER BY default_category desc, name asc";
@@ -52,7 +52,7 @@ $number_of_categories = mysql_num_rows($result);
 	<td width="325">
    	<font class="subheadline">Category</font></td>
 	<td width="200">
-   	<font class="subheadline">Owner</font></td>
+   	<font class="subheadline">Stakeholder</font></td>
 	<td>
     	<font class="subheadline"># of Domains</font>
     </td>
@@ -63,7 +63,7 @@ $number_of_categories = mysql_num_rows($result);
 		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
 	</td>
     <td>
-		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->owner?></a>
+		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
 	</td>
 	<td>
     <?php
@@ -86,7 +86,7 @@ $number_of_categories = mysql_num_rows($result);
 <?php } ?>
 
 <?php
-$sql = "SELECT id, name, owner, default_category
+$sql = "SELECT id, name, stakeholder, default_category
 		FROM categories
 		WHERE id NOT IN (SELECT cat_id FROM domains WHERE cat_id != '0' AND active NOT IN ('0','10') GROUP BY cat_id)
 		ORDER BY default_category desc, name asc";
@@ -102,7 +102,7 @@ $number_of_categories = mysql_num_rows($result);
 	<td width="325">
    	<font class="subheadline">Category</font></td>
 	<td>
-   	<font class="subheadline">Owner</font></td>
+   	<font class="subheadline">Stakeholder</font></td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
@@ -110,7 +110,7 @@ $number_of_categories = mysql_num_rows($result);
 		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
 	</td>
     <td>
-		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->owner?></a>
+		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
 	</td>
 </tr>
 <?php } ?>

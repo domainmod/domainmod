@@ -33,7 +33,7 @@ $new_expiry_end = $_REQUEST['new_expiry_end'];
 
 if ($export == "1") {
 
-	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.owner AS category_owner, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
+	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
 			FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip
 			WHERE d.account_id = ra.id
 			  AND ra.registrar_id = r.id
@@ -50,7 +50,7 @@ if ($export == "1") {
 
 } else {
 
-	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.owner AS category_owner, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
+	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
 			FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip
 			WHERE d.account_id = ra.id
 			  AND ra.registrar_id = r.id
@@ -77,7 +77,7 @@ if ($export == "1") {
 
 	$full_export .= "\"All prices are listed in " . $_SESSION['session_default_currency'] . "\"\n\n";
 
-	$full_export .= "\"DOMAIN STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Owner\",\"Owner\",\"Registrar\",\"Username\"\n";
+	$full_export .= "\"DOMAIN STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Registrar\",\"Username\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
@@ -93,7 +93,7 @@ if ($export == "1") {
 		elseif ($row->active == "10") { $domain_status = "SOLD"; } 
 		else { $domain_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-DOMAINS.PHP"; } 
 
-		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_owner\",\"$row->owner_name\",\"$row->registrar_name\",\"$row->username\"\n";
+		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->registrar_name\",\"$row->username\"\n";
 	}
 	
 	$full_export .= "\n";
@@ -172,7 +172,7 @@ Expiring Between
     	<font class="subheadline">Category</font>
     </td>
 	<td>
-    	<font class="subheadline">Owner</font>
+    	<font class="subheadline">Stakeholder</font>
     </td>
 	<td>
     	<font class="subheadline">Registrar (Username)</font>
