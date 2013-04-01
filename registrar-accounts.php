@@ -124,6 +124,7 @@ if (mysql_num_rows($result) > 0) {
 	} ?>
 
 	</table>
+    <BR>
 	<?php 
 
 } ?>

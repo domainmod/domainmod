@@ -71,9 +71,14 @@ if (mysql_num_rows($result) > 0) { ?>
     <?php 
 	} ?>
 
-    </table>
-<?php 
-} ?>
+    </table><?php 
+
+} else {
+
+	echo "<BR><BR>You must add some domains before your TLD breakdown will show up here."; 	
+
+}
+?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>
