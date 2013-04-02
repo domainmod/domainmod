@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('" . mysql_real_escape_string($new_abbreviation) . "', '" . mysql_real_escape_string($new_name) . "', '$value', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "Currency Added<BR><BR><a href=\"system/update-conversion-rates.php\">You should click here to update the exchange rates</a><BR>";
+		$_SESSION['session_result_message'] = "Currency Added<BR><BR><a href=\"system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
 		
 		header("Location: ../currencies.php");
 		exit;

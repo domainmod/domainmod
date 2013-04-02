@@ -24,7 +24,7 @@ include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
-$page_title = "Update Exchange Rates";
+$page_title = "Update Conversion Rates";
 $software_section = "system";
 
 $sql = "UPDATE currencies
@@ -63,7 +63,7 @@ while ($row = mysql_fetch_object($result)) {
 
 }
 
-$_SESSION['session_result_message'] .= "Exchange Rates Updated<BR>";
+$_SESSION['session_result_message'] .= "Conversion Rates Updated<BR>";
 
 header("Location: " . $_SERVER['HTTP_REFERER']);
 exit;
