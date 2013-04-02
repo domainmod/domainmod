@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
    } else {
 
 		$_SESSION['session_result_message'] .= "Your password could not be updated.<BR>";
-		$_SESSION['session_result_message'] .= "If the problem persists, please contact your administrator.<BR>";
+		$_SESSION['session_result_message'] .= "If the problem persists please contact your administrator.<BR>";
 
    }
 

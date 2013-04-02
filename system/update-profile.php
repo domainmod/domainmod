@@ -24,13 +24,15 @@ include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
-$page_title = "Change Email Address";
+$page_title = "Update Profile";
 $software_section = "system";
 
 // Form Variables
+$new_first_name = $_POST['new_first_name'];
+$new_last_name = $_POST['new_last_name'];
 $new_email_address = $_POST['new_email_address'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_first_name != "" && $new_last_name != "") {
 
 	$sql = "SELECT id 
 			FROM users 
@@ -41,23 +43,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
    if (mysql_num_rows($result) == 1) {
 
 		$sql2 = "UPDATE users 
-				 SET email_address = '$new_email_address', 
+				 SET first_name = '" . mysql_real_escape_string($new_first_name) . "',
+				 	 last_name = '" . mysql_real_escape_string($new_last_name) . "',
+					 email_address = '$new_email_address', 
 				 	 update_time = '$current_timestamp'
 				 WHERE id = '" . $_SESSION['session_user_id'] . "' 
 				   AND email_address = '" . $_SESSION['session_email_address'] . "'";
-		$result2 = mysql_query($sql2,$connection) or die("Your email address could not be updated. Please try again later.");
+		$result2 = mysql_query($sql2,$connection) or die("Your profile could not be updated. Please try again later.");
 		
 		$_SESSION['session_email_address'] = $new_email_address;
+		$_SESSION['session_first_name'] = $new_first_name;
+		$_SESSION['session_last_name'] = $new_last_name;
 
-		$_SESSION['session_result_message'] .= "Your email address was updated.<BR>";
+		$_SESSION['session_result_message'] .= "Your profile was updated.<BR>";
 
 		header("Location: index.php");
 		exit;
 
    } else {
-
-		$_SESSION['session_result_message'] .= "Your email address could not be updated.<BR>";
-		$_SESSION['session_result_message'] .= "If the problem persists, please contact your administrator.<BR>";
+	   
+		$_SESSION['session_result_message'] .= "Your profile could not be updated.<BR>";
+		$_SESSION['session_result_message'] .= "If the problem persists please contact your administrator.<BR>";
 
    }
 
@@ -66,12 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
-		if ($new_email_address == "") {
-		
-			$_SESSION['session_result_message'] .= "Your email address was left blank.<BR>";
+	   if ($new_email_address == "") $_SESSION['session_result_message'] .= "Your Email Address could not be updated.<BR>";
+	   if ($new_first_name == "") $_SESSION['session_result_message'] .= "Your First Name could not be updated.<BR>";
+	   if ($new_last_name == "") $_SESSION['session_result_message'] .= "Your Last Name could not be updated.<BR>";
 
-		}
-		
 	}
 
 }
@@ -82,13 +86,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
 <title><?=$software_title?> :: <?=$page_title?></title>
 <?php include("../_includes/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="change_email_address_form" method="post" action="<?=$PHP_SELF?>">
+<strong>First Name:</strong><BR><BR>
+<input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") { echo $new_first_name; } else { echo $_SESSION['session_first_name']; }?>">
+<BR><BR>
+<strong>Last Name:</strong><BR><BR>
+<input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") { echo $new_last_name; } else { echo $_SESSION['session_last_name']; }?>">
+<BR><BR>
 <strong>Email Address:</strong><BR><BR>
 <input name="new_email_address" type="text" size="50" maxlength="255" value="<?php if ($new_email_address != "") { echo $new_email_address; } else { echo $_SESSION['session_email_address']; }?>">
-<BR><BR>
-<input type="submit" name="button" value="Change Email Address &raquo;">
+<BR><BR><BR>
+<input type="submit" name="button" value="Update Profile &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
