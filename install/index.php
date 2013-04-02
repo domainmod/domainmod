@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "1.99";
+$most_recent_db_version = "2.0001";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -109,6 +109,7 @@ if (mysql_num_rows($result) > 0) {
 				`name` varchar(75) NOT NULL,
 				`conversion` float NOT NULL,
 				`notes` longtext NOT NULL,
+				`default_currency` int(1) NOT NULL default '0',
 				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -117,29 +118,29 @@ if (mysql_num_rows($result) > 0) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "INSERT INTO `currencies` 
-			(`id`, `currency`, `name`, `conversion`, `insert_time`) VALUES 
-			(1, 'CAD', 'Canadian Dollars', 1, '$current_timestamp'),
-			(2, 'USD', 'United States Dollars', 0, '$current_timestamp'),
-			(3, 'EUR', 'Euros', 0, '$current_timestamp'),
-			(4, 'AUD', 'Australian Dollars', 0, '$current_timestamp'),
-			(5, 'CHF', 'Switzerland Francs', 0, '$current_timestamp'),
-			(6, 'CNY', 'China Yuan Renminbi', 0, '$current_timestamp'),
-			(7, 'DKK', 'Denmark Kroner', 0, '$current_timestamp'),
-			(8, 'GBP', 'United Kingdom Pounds', 0, '$current_timestamp'),
-			(9, 'HKD', 'Hong Kong Dollars', 0, '$current_timestamp'),
-			(10, 'HUF', 'Hungary Forint', 0, '$current_timestamp'),
-			(11, 'INR', 'India Rupees', 0, '$current_timestamp'),
-			(12, 'JPY', 'Japan Yen', 0, '$current_timestamp'),
-			(13, 'MXN', 'Mexico Pesos', 0, '$current_timestamp'),
-			(14, 'MYR', 'Malaysia Ringgits', 0, '$current_timestamp'),
-			(15, 'NOK', 'Norway Kroner', 0, '$current_timestamp'),
-			(16, 'NZD', 'New Zealand Dollars', 0, '$current_timestamp'),
-			(17, 'RUB', 'Russia Rubles', 0, '$current_timestamp'),
-			(18, 'SEK', 'Sweden Kronor', 0, '$current_timestamp'),
-			(19, 'SGD', 'Singapore Dollars', 0, '$current_timestamp'),
-			(20, 'THB', 'Thailand Baht', 0, '$current_timestamp'),
-			(21, 'ZAR', 'South Africa Rand', 0, '$current_timestamp'),
-			(22, 'AED', 'United Arab Emirates Dirhams', 0, '$current_timestamp');";
+			(`id`, `currency`, `name`, `conversion`, `default_currency`, `insert_time`) VALUES 
+			(1, 'CAD', 'Canadian Dollars', 1, 1, '$current_timestamp'),
+			(2, 'USD', 'United States Dollars', 0, 0, '$current_timestamp'),
+			(3, 'EUR', 'Euros', 0, 0, '$current_timestamp'),
+			(4, 'AUD', 'Australian Dollars', 0, 0, '$current_timestamp'),
+			(5, 'CHF', 'Switzerland Francs', 0, 0, '$current_timestamp'),
+			(6, 'CNY', 'China Yuan Renminbi', 0, 0, '$current_timestamp'),
+			(7, 'DKK', 'Denmark Kroner', 0, 0, '$current_timestamp'),
+			(8, 'GBP', 'United Kingdom Pounds', 0, 0, '$current_timestamp'),
+			(9, 'HKD', 'Hong Kong Dollars', 0, 0, '$current_timestamp'),
+			(10, 'HUF', 'Hungary Forint', 0, 0, '$current_timestamp'),
+			(11, 'INR', 'India Rupees', 0, 0, '$current_timestamp'),
+			(12, 'JPY', 'Japan Yen', 0, 0, '$current_timestamp'),
+			(13, 'MXN', 'Mexico Pesos', 0, 0, '$current_timestamp'),
+			(14, 'MYR', 'Malaysia Ringgits', 0, 0, '$current_timestamp'),
+			(15, 'NOK', 'Norway Kroner', 0, 0, '$current_timestamp'),
+			(16, 'NZD', 'New Zealand Dollars', 0, 0, '$current_timestamp'),
+			(17, 'RUB', 'Russia Rubles', 0, 0, '$current_timestamp'),
+			(18, 'SEK', 'Sweden Kronor', 0, 0, '$current_timestamp'),
+			(19, 'SGD', 'Singapore Dollars', 0, 0, '$current_timestamp'),
+			(20, 'THB', 'Thailand Baht', 0, 0, '$current_timestamp'),
+			(21, 'ZAR', 'South Africa Rand', 0, 0, '$current_timestamp'),
+			(22, 'AED', 'United Arab Emirates Dirhams', 0, 0, '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `fees` ( 
@@ -383,7 +384,6 @@ if (mysql_num_rows($result) > 0) {
 				`id` int(10) NOT NULL auto_increment,
 				`db_version` float NOT NULL,
 				`email_address` varchar(255) NOT NULL,
-				`default_currency` varchar(5) NOT NULL default 'CAD',
 				`number_of_domains` int(5) NOT NULL default '50',
 				`number_of_ssl_certs` int(5) NOT NULL default '50',
 				`insert_time` datetime NOT NULL,
@@ -393,8 +393,8 @@ if (mysql_num_rows($result) > 0) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "INSERT INTO `settings` 
-			(`db_version`, `email_address`, `default_currency`, `number_of_domains`, `number_of_ssl_certs`, `insert_time`) VALUES 
-			('$most_recent_db_version', 'code@aysmedia.com', 'CAD', '50', '50', '$current_timestamp');";
+			(`db_version`, `email_address`, `number_of_domains`, `number_of_ssl_certs`, `insert_time`) VALUES 
+			('$most_recent_db_version', 'code@aysmedia.com', '50', '50', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$_SESSION['session_institallation_mode'] = 0;

@@ -444,6 +444,42 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	// upgrade database from 1.99 to 2.0001
+	if ($current_db_version == 1.99) {
+
+		$sql = "ALTER TABLE `currencies` 
+					ADD `default_currency` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "SELECT default_currency
+				FROM settings";
+		$result = mysql_query($sql,$connection);
+		
+		while ($row = mysql_fetch_object($result)) {
+			$default_currency = $row->default_currency;
+		}
+		
+		$sql = "UPDATE currencies
+				SET default_currency = '0'";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE currencies
+				SET default_currency = '1'
+				WHERE currency = '" . $default_currency . "'";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `settings` DROP `default_currency`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0001',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0001;
+		
+	}
+
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 
 } else {
