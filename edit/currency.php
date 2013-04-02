@@ -36,16 +36,18 @@ $curid = $_GET['curid'];
 // Form Variables
 $new_name = $_POST['new_name'];
 $new_abbreviation = $_POST['new_abbreviation'];
+$new_conversion = $_POST['new_conversion'];
 $new_notes = $_POST['new_notes'];
 $new_curid = $_POST['new_curid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_name != "" && $new_abbreviation != "") {
+	if ($new_name != "" && $new_abbreviation != "" && $new_conversion != "") {
 
 		$sql = "UPDATE currencies
-				SET currency = '" . mysql_real_escape_string($new_abbreviation) . "',
-					name = '" . mysql_real_escape_string($new_name) . "',
+				SET name = '" . mysql_real_escape_string($new_name) . "',
+					currency = '" . mysql_real_escape_string($new_abbreviation) . "',
+					conversion = '" . mysql_real_escape_string($new_conversion) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					update_time = '$current_timestamp'
 				WHERE id = '$new_curid'";
@@ -59,12 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		if ($new_name == "") { $_SESSION['session_result_message'] .= "Please Enter The Currency Name<BR>"; }
 		if ($new_abbreviation == "") { $_SESSION['session_result_message'] .= "Please Enter The Abbreviation<BR>"; }
+		if ($new_conversion == "") { $_SESSION['session_result_message'] .= "Please Enter The Conversion Rate<BR>"; }
 
 	}
 
 } else {
 
-	$sql = "SELECT currency, name, notes
+	$sql = "SELECT currency, name, conversion, notes
 			FROM currencies
 			WHERE id = '$curid'";
 	$result = mysql_query($sql,$connection);
@@ -73,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		$new_name = $row->name;
 		$new_abbreviation = $row->currency;
+		$new_conversion = $row->conversion;
 		$new_notes = $row->notes;
 	
 	}
@@ -133,7 +137,7 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <?php 
-$sql = "SELECT currency, name
+$sql = "SELECT currency, name, conversion
 		FROM currencies
 		WHERE currency = '" . $_SESSION['session_default_currency'] . "'";
 $result = mysql_query($sql,$connection);
@@ -141,6 +145,7 @@ $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	$default_currency = $row->currency;
 	$default_name = $row->name;
+	$default_conversion = $row->conversion;
 }
 ?>
 <form name="edit_currency_form" method="post" action="<?=$PHP_SELF?>">
@@ -149,6 +154,9 @@ while ($row = mysql_fetch_object($result)) {
 <BR><BR>
 <strong>Abbreviation ("<em><?=$default_currency?></em>"):</strong><BR><BR>
 <input name="new_abbreviation" type="text" size="50" maxlength="3" value="<?=$new_abbreviation?>">
+<BR><BR>
+<strong>Conversion Rate:</strong><BR><BR>
+<input name="new_conversion" type="text" size="50" maxlength="10" value="<?=$new_conversion?>">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
