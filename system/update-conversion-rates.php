@@ -30,18 +30,24 @@ $software_section = "system";
 $sql = "UPDATE currencies
 		SET conversion = '1', 
 			update_time = '$current_timestamp'
-		WHERE currency = '" . $_SESSION['session_default_currency'] . "'";
+		WHERE default_currency = '1'";
 $result = mysql_query($sql,$connection);
 
 $sql = "SELECT currency
 		FROM currencies
-		WHERE currency != '" . $_SESSION['session_default_currency'] . "'";
+		WHERE default_currency = '1'";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) { $default_currency = $row->currency; }
+
+$sql = "SELECT currency
+		FROM currencies
+		WHERE default_currency = '0'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
 	
 	$from = $row->currency;
-	$to = $_SESSION['session_default_currency'];
+	$to = $default_currency;
 	$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
 	$handle = @fopen($full_url, "r");
 	 

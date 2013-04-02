@@ -39,23 +39,47 @@ $new_abbreviation = $_POST['new_abbreviation'];
 $new_conversion = $_POST['new_conversion'];
 $new_notes = $_POST['new_notes'];
 $new_curid = $_POST['new_curid'];
+$new_default_currency = $_POST['new_default_currency'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != "" && $new_abbreviation != "" && $new_conversion != "") {
+
+		if ($new_default_currency == "1") {
+
+			$sql = "UPDATE currencies
+					SET default_currency = '0'
+					WHERE currency != '$new_abbreviation'";
+			$result = mysql_query($sql,$connection);
+			
+		} else {
+			
+			$sql = "SELECT default_currency
+					FROM currencies
+					WHERE default_currency = '1'
+					  AND currency != '$new_abbreviation'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) { $temp_default_currency = $row->default_currency; }
+			if ($temp_default_currency == "") { $new_default_currency = "1"; }
+			
+		}
 
 		$sql = "UPDATE currencies
 				SET name = '" . mysql_real_escape_string($new_name) . "',
 					currency = '" . mysql_real_escape_string($new_abbreviation) . "',
 					conversion = '" . mysql_real_escape_string($new_conversion) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
+					default_currency = '" . $new_default_currency . "',
 					update_time = '$current_timestamp'
 				WHERE id = '$new_curid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$curid = $new_curid;
 		
-		$_SESSION['session_result_message'] = "Currency Updated<BR><BR><a href=\"../system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
+		$_SESSION['session_result_message'] = "Currency \"$new_name ($new_abbreviation)\" Updated<BR><BR><a href=\"system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
+		
+		header("Location: ../currencies.php");
+		exit;
 
 	} else {
 	
@@ -67,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT currency, name, conversion, notes
+	$sql = "SELECT currency, name, conversion, notes, default_currency
 			FROM currencies
 			WHERE id = '$curid'";
 	$result = mysql_query($sql,$connection);
@@ -78,6 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_abbreviation = $row->currency;
 		$new_conversion = $row->conversion;
 		$new_notes = $row->notes;
+		$new_default_currency = $row->default_currency;
 	
 	}
 
@@ -136,16 +161,14 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
-<?php 
-$sql = "SELECT currency, name, conversion
+<?php
+$sql = "SELECT name, currency
 		FROM currencies
-		WHERE currency = '" . $_SESSION['session_default_currency'] . "'";
+		WHERE default_currency = '1'";
 $result = mysql_query($sql,$connection);
-
 while ($row = mysql_fetch_object($result)) {
-	$default_currency = $row->currency;
 	$default_name = $row->name;
-	$default_conversion = $row->conversion;
+	$default_currency = $row->currency;
 }
 ?>
 <form name="edit_currency_form" method="post" action="<?=$PHP_SELF?>">
@@ -160,6 +183,9 @@ while ($row = mysql_fetch_object($result)) {
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+<BR><BR>
+<strong>Default Currency?:</strong>&nbsp;
+<input name="new_default_currency" type="checkbox" value="1"<?php if ($new_default_currency == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_curid" value="<?=$curid?>">
 <input type="submit" name="button" value="Update This Currency &raquo;">

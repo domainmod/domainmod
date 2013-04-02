@@ -31,11 +31,30 @@ $software_section = "currencies";
 $new_name = $_POST['new_name'];
 $new_abbreviation = $_POST['new_abbreviation'];
 $new_notes = $_POST['new_notes'];
+$new_default_currency = $_POST['new_default_currency'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != "" && $new_abbreviation != "") {
 		
+		if ($new_default_currency == "1") {
+			
+			$sql = "UPDATE currencies
+					SET default_currency = '0',
+						update_time = '$current_timestamp'";
+			$result = mysql_query($sql,$connection);
+			
+		} else { 
+		
+			$sql = "SELECT count(*) as total_count
+					FROM currencies
+					WHERE default_currency = '1'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) { $temp_total = $row->total_count; }
+			if ($temp_total == "0") $new_default_currency = "1";
+		
+		}
+
 		$from = $new_abbreviation;
 		$to = $_SESSION['session_default_currency'];
 		$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
@@ -52,11 +71,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$value = $data[1];
 			
 		$sql = "INSERT INTO currencies
-				(currency, name, conversion, notes, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_abbreviation) . "', '" . mysql_real_escape_string($new_name) . "', '$value', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
+				(currency, name, conversion, notes, default_currency, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_abbreviation) . "', '" . mysql_real_escape_string($new_name) . "', '$value', '" . mysql_real_escape_string($new_notes) . "', '$new_default_currency', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "Currency Added<BR><BR><a href=\"system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
+		$_SESSION['session_result_message'] = "Currency \"$new_name ($new_abbreviation)\" Added<BR><BR><a href=\"system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
 		
 		header("Location: ../currencies.php");
 		exit;
@@ -81,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php 
 $sql = "SELECT currency, name
 		FROM currencies
-		WHERE currency = '" . $_SESSION['session_default_currency'] . "'";
+		WHERE default_currency  = '1'";
 $result = mysql_query($sql,$connection);
 
 while ($row = mysql_fetch_object($result)) {
@@ -98,6 +117,9 @@ while ($row = mysql_fetch_object($result)) {
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+<BR><BR>
+<strong>Default Currency?:</strong>&nbsp;
+<input name="new_default_currency" type="checkbox" id="new_default_currency" value="1">
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This Currency &raquo;">
 </form>
