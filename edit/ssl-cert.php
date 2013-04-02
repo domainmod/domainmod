@@ -27,11 +27,11 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $page_title = "Editting An SSL Certificate";
 $software_section = "ssl-certs";
 
-$sslcid = $_GET['sslcid'];
-
 // 'Delete Cert' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
+
+$sslcid = $_GET['sslcid'];
 
 // Form Variables
 $new_domain_id = $_POST['new_domain_id'];
@@ -136,13 +136,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del == "1") {
 
-	$_SESSION['session_result_message'] = "Are you sure you want to delete this SSL Certificate?<BR><BR><a href=\"$PHP_SELF?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE</a><BR>";
+	$_SESSION['session_result_message'] = "Are you sure you want to delete this SSL Certificate?<BR><BR><a href=\"$PHP_SELF?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE ACCOUNT</a><BR>";
 
 }
 
 if ($really_del == "1") {
 
-	$sql = "DELETE FROM ssl_certs 
+	$sql = "DELETE FROM ssl_certs
 			WHERE id = '$sslcid'";
 	$result = mysql_query($sql,$connection);
 	

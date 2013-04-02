@@ -146,7 +146,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del == "1") {
 
-	$_SESSION['session_result_message'] = "Are you sure you want to delete this Domain?<BR><BR><a href=\"$PHP_SELF?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
+	$sql = "SELECT domain_id
+			FROM ssl_certs
+			WHERE domain_id = '$did'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_ssl_certs = 1;
+	}
+	
+	if ($existing_ssl_certs > 0) {
+
+		$_SESSION['session_result_message'] = "This Domain has SSL Certificates associated with it and cannot be deleted.<BR>";
+
+	} else {
+
+		$_SESSION['session_result_message'] = "Are you sure you want to delete this Domain?<BR><BR><a href=\"$PHP_SELF?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN ACCOUNT</a><BR>";
+
+	}
 
 }
 
@@ -308,7 +325,7 @@ echo "</select>";
 <input type="hidden" name="new_did" value="<?=$did?>">
 <input type="submit" name="button" value="Update This Domain &raquo;">
 </form>
-<BR><BR>
+<BR>
 <a href="<?=$PHP_SELF?>?did=<?=$did?>&del=1">DELETE THIS DOMAIN</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
