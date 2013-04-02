@@ -619,7 +619,7 @@ $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS 
 				  AND ra.id = d.account_id
 				  AND ra.active = '1'
 				  AND r.active = '1'
-				  AND c.active = '1'
+				  AND o.active = '1'
 				  $is_active_string
 				  $oid_string
 				  $dnsid_string
