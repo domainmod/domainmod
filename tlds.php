@@ -33,7 +33,7 @@ $page_title = "Top Level Domain Breakdown";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-This is a breakdown of the Top Level Domains that are currently in use.
+This is a breakdown of the Top Level Domains that are currently active in the system.
 <BR><BR>
 <?php
 $sql = "SELECT tld, count(*) AS total_tld_count
