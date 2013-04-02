@@ -48,6 +48,23 @@ $new_is_admin = $_POST['new_is_admin'];
 $new_is_active = $_POST['new_is_active'];
 $new_uid = $_POST['new_uid'];
 
+$sql = "SELECT username
+		FROM users
+		WHERE id = '$uid'";
+$result = mysql_query($sql,$connection);
+
+while ($row = mysql_fetch_object($result)) {
+	
+	if ($row->username == "admin" && $_SESSION['session_username'] != "admin") {
+
+		$_SESSION['session_result_message'] .= "You're trying to edit an invalid user.<BR>";
+		header("Location: ../list-users.php");
+		exit;
+		
+	}
+
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != "" && $new_email_address != "") {
 
 	// Check to see if another user already has the username
@@ -95,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 	
 	$_SESSION['session_result_message'] .= "The user has been updated.<BR>";
 	
-	if ($new_username == "admin") {
+	if ($_SESSION['session_username'] == $new_username) {
 	
 		$_SESSION['session_first_name'] = $new_first_name;
 		$_SESSION['session_last_name'] = $new_last_name;

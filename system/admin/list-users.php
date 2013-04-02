@@ -39,11 +39,23 @@ $software_section = "system";
 <body>
 <?php include("../../_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT id, first_name, last_name, username, email_address, admin
-		FROM users
-		WHERE active = '1'
-		ORDER BY first_name asc, last_name asc";
-$result = mysql_query($sql,$connection);
+if ($_SESSION['session_username'] == "admin") {
+	$sql = "SELECT id, first_name, last_name, username, email_address, admin
+			FROM users
+			WHERE active = '1'
+			ORDER BY first_name asc, last_name asc";
+	$result = mysql_query($sql,$connection);
+
+} else {
+	
+	$sql = "SELECT id, first_name, last_name, username, email_address, admin
+			FROM users
+			WHERE active = '1'
+			  AND username != 'admin'
+			ORDER BY first_name asc, last_name asc";
+	$result = mysql_query($sql,$connection);
+
+}
 ?>
 <strong>Number of Active User Accounts:</strong> <?=mysql_num_rows($result)?>
 <?php
