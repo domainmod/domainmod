@@ -84,6 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "DNS Profile Added ($new_name)<BR>";
+		header("Location: ../dns.php");
+		exit;
 		
 	} else {
 	

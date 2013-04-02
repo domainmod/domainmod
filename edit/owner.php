@@ -27,6 +27,10 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $page_title = "Editting An Owner";
 $software_section = "owners";
 
+// 'Delete Owner' Confirmation Variables
+$del = $_GET['del'];
+$really_del = $_GET['really_del'];
+
 $oid = $_GET['oid'];
 
 // Form Variables
@@ -95,6 +99,72 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 
 }
+
+if ($del == "1") {
+
+	$sql = "SELECT owner_id
+			FROM registrar_accounts
+			WHERE owner_id = '$oid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_registrar_accounts = 1;
+	}
+
+	$sql = "SELECT owner_id
+			FROM ssl_accounts
+			WHERE owner_id = '$oid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_ssl_accounts = 1;
+	}
+
+	$sql = "SELECT owner_id
+			FROM domains
+			WHERE owner_id = '$oid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_domains = 1;
+	}
+
+	$sql = "SELECT owner_id
+			FROM ssl_certs
+			WHERE owner_id = '$oid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_ssl_certs = 1;
+	}
+	
+	if ($existing_registrar_accounts > 0 || $existing_ssl_accounts > 0 || $existing_domains > 0 || $existing_ssl_certs > 0) {
+		
+		if ($existing_registrar_accounts > 0) $_SESSION['session_result_message'] .= "This Owner has registrar accounts associated with it and cannot be deleted.<BR>";
+		if ($existing_domains > 0) $_SESSION['session_result_message'] .= "This Owner has domains associated with it and cannot be deleted.<BR>";
+		if ($existing_ssl_accounts > 0) $_SESSION['session_result_message'] .= "This Owner has SSL accounts associated with it and cannot be deleted.<BR>";
+		if ($existing_ssl_certs > 0) $_SESSION['session_result_message'] .= "This Owner has SSL certificates associated with it and cannot be deleted.<BR>";
+
+	} else {
+
+		$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This Owner?<BR><BR><a href=\"$PHP_SELF?oid=$oid&really_del=1\">YES, REALLY DELETE THIS OWNER</a><BR>";
+
+	}
+
+}
+
+if ($really_del == "1") {
+
+	$sql = "DELETE FROM owners 
+			WHERE id = '$oid'";
+	$result = mysql_query($sql,$connection);
+	
+	$_SESSION['session_result_message'] = "Owner Deleted ($new_owner)<BR>";
+	
+	header("Location: ../owners.php");
+	exit;
+
+}
 ?>
 <html>
 <head>
@@ -118,6 +188,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <input type="hidden" name="new_oid" value="<?=$oid?>">
 <input type="submit" name="button" value="Update This Owner &raquo;">
 </form>
+<BR>
+<a href="<?=$PHP_SELF?>?oid=<?=$oid?>&del=1">DELETE THIS OWNER</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

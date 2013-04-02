@@ -27,6 +27,10 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $page_title = "Editting A Registrar Account";
 $software_section = "accounts";
 
+// 'Delete Registrar Account' Confirmation Variables
+$del = $_GET['del'];
+$really_del = $_GET['really_del'];
+
 $raid = $_GET['raid'];
 
 // Form Variables
@@ -82,6 +86,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_reseller = $row->reseller;
 	
 	}
+
+}
+if ($del == "1") {
+
+	$sql = "SELECT account_id
+			FROM domains
+			WHERE account_id = '$raid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_domains = 1;
+	}
+	
+	if ($existing_domains > 0) {
+
+		$_SESSION['session_result_message'] = "This Domain Registrar Account has domains associated with it and cannot be deleted.<BR>";
+
+	} else {
+
+		$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This Domain Registrar Account?<BR><BR><a href=\"$PHP_SELF?raid=$raid&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR ACCOUNT</a><BR>";
+
+	}
+
+}
+
+if ($really_del == "1") {
+
+	$sql = "DELETE FROM registrar_accounts 
+			WHERE id = '$raid'";
+	$result = mysql_query($sql,$connection);
+	
+	$_SESSION['session_result_message'] = "Domain Registrar Account Deleted ($new_username)<BR>";
+	
+	header("Location: ../registrar-accounts.php");
+	exit;
 
 }
 ?>
@@ -155,6 +194,7 @@ echo "</select>";
 <input type="hidden" name="new_raid" value="<?=$raid?>">
 <input type="submit" name="button" value="Update This Account &raquo;">
 </form>
+<BR><a href="<?=$PHP_SELF?>?raid=<?=$raid?>&del=1">DELETE THIS DOMAIN REGISTRAR ACCOUNT</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

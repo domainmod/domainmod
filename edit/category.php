@@ -27,6 +27,10 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $page_title = "Editting A Category";
 $software_section = "categories";
 
+// 'Delete Category' Confirmation Variables
+$del = $_GET['del'];
+$really_del = $_GET['really_del'];
+
 $pcid = $_GET['pcid'];
 
 // Form Variables
@@ -98,6 +102,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 
 }
+if ($del == "1") {
+
+	$sql = "SELECT cat_id
+			FROM domains
+			WHERE cat_id = '$pcid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_domains = 1;
+	}
+	
+	if ($existing_domains > 0) {
+
+		$_SESSION['session_result_message'] = "This Category has domains associated with it and cannot be deleted.<BR>";
+
+	} else {
+
+		$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This Category?<BR><BR><a href=\"$PHP_SELF?pcid=$pcid&really_del=1\">YES, REALLY DELETE THIS CATEGORY</a><BR>";
+
+	}
+
+}
+
+if ($really_del == "1") {
+
+	$sql = "DELETE FROM categories 
+			WHERE id = '$pcid'";
+	$result = mysql_query($sql,$connection);
+	
+	$_SESSION['session_result_message'] = "Category Deleted ($new_category)<BR>";
+	
+	header("Location: ../categories.php");
+	exit;
+
+}
 ?>
 <html>
 <head>
@@ -125,6 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <input type="hidden" name="new_pcid" value="<?=$pcid?>">
 <input type="submit" name="button" value="Update This Category &raquo;">
 </form>
+<BR><a href="<?=$PHP_SELF?>?pcid=<?=$pcid?>&del=1">DELETE THIS CATEGORY</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

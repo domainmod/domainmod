@@ -27,6 +27,10 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $page_title = "Editting A Registrar";
 $software_section = "registrars";
 
+// 'Delete Registrar' Confirmation Variables
+$del = $_GET['del'];
+$really_del = $_GET['really_del'];
+
 $rid = $_GET['rid'];
 
 // Form Variables
@@ -198,6 +202,59 @@ while ($row = mysql_fetch_object($result)) {
 	$new_notes = $row->notes;
 
 }
+if ($del == "1") {
+
+	$sql = "SELECT registrar_id
+			FROM registrar_accounts
+			WHERE registrar_id = '$rid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_registrar_accounts = 1;
+	}
+
+	$sql = "SELECT registrar_id
+			FROM domains
+			WHERE registrar_id = '$rid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_domains = 1;
+	}
+
+	if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
+		
+		if ($existing_registrar_accounts > 0) $_SESSION['session_result_message'] .= "This Registrar has Registrar Accounts associated with it and cannot be deleted.<BR>";
+		if ($existing_domains > 0) $_SESSION['session_result_message'] .= "This Registrar has domains associated with it and cannot be deleted.<BR>";
+
+	} else {
+
+		$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This Registrar?<BR><BR><a href=\"$PHP_SELF?rid=$rid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
+
+	}
+
+}
+
+if ($really_del == "1") {
+
+	$sql = "DELETE FROM fees
+			WHERE registrar_id = '$rid'";
+	$result = mysql_query($sql,$connection);
+
+	$sql = "DELETE FROM registrar_accounts
+			WHERE registrar_id = '$rid'";
+	$result = mysql_query($sql,$connection);
+
+	$sql = "DELETE FROM registrars 
+			WHERE id = '$rid'";
+	$result = mysql_query($sql,$connection);
+
+	$_SESSION['session_result_message'] = "Registrar Deleted ($new_registrar)<BR>";
+	
+	header("Location: ../registrars.php");
+	exit;
+
+}
 ?>
 <html>
 <head>
@@ -322,6 +379,7 @@ while ($row = mysql_fetch_object($result)) {
 }
 ?>
 </table>
+<BR><BR><a href="<?=$PHP_SELF?>?rid=<?=$rid?>&del=1">DELETE THIS REGISTRAR</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

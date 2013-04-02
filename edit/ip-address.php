@@ -27,6 +27,10 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $page_title = "Editting An IP Address";
 $software_section = "ip-addresses";
 
+// 'Delete IP Address' Confirmation Variables
+$del = $_GET['del'];
+$really_del = $_GET['really_del'];
+
 $ipid = $_GET['ipid'];
 
 // Form Variables
@@ -104,6 +108,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 
 }
+if ($del == "1") {
+
+	$sql = "SELECT ip_id
+			FROM domains
+			WHERE ip_id = '$ipid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_domains = 1;
+	}
+	
+	if ($existing_domains > 0) {
+
+		$_SESSION['session_result_message'] = "This IP Address has domains associated with it and cannot be deleted.<BR>";
+
+	} else {
+
+		$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This IP Address?<BR><BR><a href=\"$PHP_SELF?ipid=$ipid&really_del=1\">YES, REALLY DELETE THIS IP ADDRESS</a><BR>";
+
+	}
+
+}
+
+if ($really_del == "1") {
+
+	$sql = "DELETE FROM ip_addresses 
+			WHERE id = '$ipid'";
+	$result = mysql_query($sql,$connection);
+	
+	$_SESSION['session_result_message'] = "IP Address Deleted ($new_ip)<BR>";
+	
+	header("Location: ../ip-addresses.php");
+	exit;
+
+}
 ?>
 <html>
 <head>
@@ -132,6 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <input type="hidden" name="new_ipid" value="<?=$ipid?>">
 <input type="submit" name="button" value="Update This IP Address &raquo;">
 </form>
+<BR><a href="<?=$PHP_SELF?>?ipid=<?=$ipid?>&del=1">DELETE THIS IP ADDRESS</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>
