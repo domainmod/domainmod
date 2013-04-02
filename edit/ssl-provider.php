@@ -27,6 +27,10 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $page_title = "Editting An SSL Provider";
 $software_section = "ssl-providers";
 
+// 'Delete SSL Provider' Confirmation Variables
+$del = $_GET['del'];
+$really_del = $_GET['really_del'];
+
 $sslpid = $_GET['sslpid'];
 
 // Form Variables
@@ -189,6 +193,59 @@ while ($row = mysql_fetch_object($result)) {
 	$new_ssl_provider = $row->name;
 	$new_url = $row->url;
 	$new_notes = $row->notes;
+
+}
+if ($del == "1") {
+
+	$sql = "SELECT ssl_provider_id
+			FROM ssl_accounts
+			WHERE ssl_provider_id = '$sslpid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_ssl_accounts = 1;
+	}
+
+	$sql = "SELECT ssl_provider_id
+			FROM ssl_certs
+			WHERE ssl_provider_id = '$sslpid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_ssl_certs = 1;
+	}
+
+	if ($existing_ssl_accounts > 0 || $existing_ssl_certs > 0) {
+		
+		if ($existing_ssl_accounts > 0) $_SESSION['session_result_message'] .= "This SSL Provider has SSL Accounts associated with it and cannot be deleted.<BR>";
+		if ($existing_ssl_certs > 0) $_SESSION['session_result_message'] .= "This SSL provider has SSL Certificates associated with it and cannot be deleted.<BR>";
+
+	} else {
+
+		$_SESSION['session_result_message'] = "Are you sure you want to delete this SSL Provider?<BR><BR><a href=\"$PHP_SELF?sslpid=$sslpid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER</a><BR>";
+
+	}
+
+}
+
+if ($really_del == "1") {
+
+	$sql = "DELETE FROM ssl_fees
+			WHERE ssl_provider_id = '$sslpid'";
+	$result = mysql_query($sql,$connection);
+
+	$sql = "DELETE FROM ssl_accounts
+			WHERE ssl_provider_id = '$sslpid'";
+	$result = mysql_query($sql,$connection);
+
+	$sql = "DELETE FROM ssl_providers
+			WHERE id = '$sslpid'";
+	$result = mysql_query($sql,$connection);
+
+	$_SESSION['session_result_message'] = "SSL Provider Deleted ($new_ssl_provider)<BR>";
+	
+	header("Location: ../ssl-providers.php");
+	exit;
 
 }
 ?>
@@ -358,6 +415,7 @@ while ($row = mysql_fetch_object($result)) {
 }
 ?>
 </table>
+<BR><BR><a href="<?=$PHP_SELF?>?sslpid=<?=$sslpid?>&del=1">DELETE THIS SSL PROVIDER</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

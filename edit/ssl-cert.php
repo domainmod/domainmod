@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del == "1") {
 
-	$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This SSL Certificate?<BR><BR><a href=\"$PHP_SELF?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE</a><BR>";
+	$_SESSION['session_result_message'] = "Are you sure you want to delete this SSL Certificate?<BR><BR><a href=\"$PHP_SELF?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE</a><BR>";
 
 }
 

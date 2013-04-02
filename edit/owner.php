@@ -147,7 +147,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This Owner?<BR><BR><a href=\"$PHP_SELF?oid=$oid&really_del=1\">YES, REALLY DELETE THIS OWNER</a><BR>";
+		$_SESSION['session_result_message'] = "Are you sure you want to delete this Owner?<BR><BR><a href=\"$PHP_SELF?oid=$oid&really_del=1\">YES, REALLY DELETE THIS OWNER</a><BR>";
 
 	}
 

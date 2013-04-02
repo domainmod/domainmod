@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 }
 if ($del == "1") {
 
-	$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This User?<BR><BR><a href=\"$PHP_SELF?uid=$uid&really_del=1\">YES, REALLY DELETE THIS USER</a><BR>";
+	$_SESSION['session_result_message'] = "Are you sure you want to delete this User?<BR><BR><a href=\"$PHP_SELF?uid=$uid&really_del=1\">YES, REALLY DELETE THIS USER</a><BR>";
 
 }
 

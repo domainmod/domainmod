@@ -229,7 +229,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This Registrar?<BR><BR><a href=\"$PHP_SELF?rid=$rid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
+		$_SESSION['session_result_message'] = "Are you sure you want to delete this Registrar?<BR><BR><a href=\"$PHP_SELF?rid=$rid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
 
 	}
 

@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del == "1") {
 
-	$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This Domain?<BR><BR><a href=\"$PHP_SELF?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
+	$_SESSION['session_result_message'] = "Are you sure you want to delete this Domain?<BR><BR><a href=\"$PHP_SELF?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
 
 }
 

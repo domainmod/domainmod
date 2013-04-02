@@ -125,7 +125,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This IP Address?<BR><BR><a href=\"$PHP_SELF?ipid=$ipid&really_del=1\">YES, REALLY DELETE THIS IP ADDRESS</a><BR>";
+		$_SESSION['session_result_message'] = "Are you sure you want to delete this IP Address?<BR><BR><a href=\"$PHP_SELF?ipid=$ipid&really_del=1\">YES, REALLY DELETE THIS IP ADDRESS</a><BR>";
 
 	}
 

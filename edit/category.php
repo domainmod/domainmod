@@ -119,7 +119,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This Category?<BR><BR><a href=\"$PHP_SELF?pcid=$pcid&really_del=1\">YES, REALLY DELETE THIS CATEGORY</a><BR>";
+		$_SESSION['session_result_message'] = "Are you sure you want to delete this Category?<BR><BR><a href=\"$PHP_SELF?pcid=$pcid&really_del=1\">YES, REALLY DELETE THIS CATEGORY</a><BR>";
 
 	}
 

@@ -27,6 +27,10 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $page_title = "Editting An SSL Provider Account";
 $software_section = "ssl-accounts";
 
+// 'Delete SSL Provider Account' Confirmation Variables
+$del = $_GET['del'];
+$really_del = $_GET['really_del'];
+
 $sslpaid = $_GET['sslpaid'];
 
 // Form Variables
@@ -77,6 +81,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_reseller = $row->reseller;
 	
 	}
+
+}
+if ($del == "1") {
+
+	$sql = "SELECT account_id
+			FROM ssl_certs
+			WHERE account_id = '$sslpaid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_ssl_certs = 1;
+	}
+	
+	if ($existing_ssl_certs > 0) {
+
+		$_SESSION['session_result_message'] = "This SSL Provider Account has SSL certificates associated with it and cannot be deleted.<BR>";
+
+	} else {
+
+		$_SESSION['session_result_message'] = "Are you sure you want to delete this SSL Provider Account?<BR><BR><a href=\"$PHP_SELF?sslpaid=$sslpaid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER ACCOUNT</a><BR>";
+
+	}
+
+}
+
+if ($really_del == "1") {
+
+	$sql = "DELETE FROM ssl_accounts 
+			WHERE id = '$sslpaid'";
+	$result = mysql_query($sql,$connection);
+	
+	$_SESSION['session_result_message'] = "SSL Provider Account Deleted ($new_username)<BR>";
+	
+	header("Location: ../ssl-accounts.php");
+	exit;
 
 }
 ?>
@@ -150,6 +189,7 @@ echo "</select>";
 <input type="hidden" name="new_sslpaid" value="<?=$sslpaid?>">
 <input type="submit" name="button" value="Update This SSL Provider Account &raquo;">
 </form>
+<BR><a href="<?=$PHP_SELF?>?sslpaid=<?=$sslpaid?>&del=1">DELETE THIS SSL PROVIDER ACCOUNT</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

@@ -93,7 +93,7 @@ if (mysql_num_rows($result) > 0) { ?>
                         $temp_owner_name = $row2->name;
                     }
                     ?>
-                    <a class="subtlelink" href="edit/owner.php?oid=<?=$temp_id?>"><?=$temp_owner_name?></a>
+                    <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_owner_name?></a>
                     </td>
                     <td width="250">
                     <?php
@@ -106,7 +106,7 @@ if (mysql_num_rows($result) > 0) { ?>
                         $temp_ssl_provider_name = $row2->name;
                     }
                     ?>
-                    <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$temp_id?>"><?=$temp_ssl_provider_name?></a>
+                    <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_ssl_provider_name?></a>
                     </td>
                     <td>
                     <?php

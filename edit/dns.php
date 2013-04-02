@@ -164,7 +164,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This DNS Profile?<BR><BR><a href=\"$PHP_SELF?dnsid=$dnsid&really_del=1\">YES, REALLY DELETE THIS DNS PROFILE</a><BR>";
+		$_SESSION['session_result_message'] = "Are you sure you want to delete this DNS Profile?<BR><BR><a href=\"$PHP_SELF?dnsid=$dnsid&really_del=1\">YES, REALLY DELETE THIS DNS PROFILE</a><BR>";
 
 	}
 

@@ -105,7 +105,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This Currency?<BR><BR><a href=\"$PHP_SELF?curid=$curid&really_del=1\">YES, REALLY DELETE THIS CURRENCY</a><BR>";
+		$_SESSION['session_result_message'] = "Are you sure you want to delete this Currency?<BR><BR><a href=\"$PHP_SELF?curid=$curid&really_del=1\">YES, REALLY DELETE THIS CURRENCY</a><BR>";
 
 	}
 

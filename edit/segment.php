@@ -99,7 +99,7 @@ $new_segment = preg_replace("/'/", "", $new_segment);
 
 if ($del == "1") {
 
-	$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This Segment?<BR><BR><a href=\"$PHP_SELF?segid=$segid&really_del=1\">YES, REALLY DELETE THIS SEGMENT</a><BR>";
+	$_SESSION['session_result_message'] = "Are you sure you want to delete this Segment?<BR><BR><a href=\"$PHP_SELF?segid=$segid&really_del=1\">YES, REALLY DELETE THIS SEGMENT</a><BR>";
 
 }
 
