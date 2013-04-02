@@ -27,6 +27,10 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $page_title = "Editting A Currency";
 $software_section = "currencies";
 
+// 'Delete Currency' Confirmation Variables
+$del = $_GET['del'];
+$really_del = $_GET['really_del'];
+
 $curid = $_GET['curid'];
 
 // Form Variables
@@ -74,6 +78,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 
 }
+if ($del == "1") {
+
+	$sql = "SELECT currency_id
+			FROM fees
+			WHERE currency_id = '$curid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_domain_fees = 1;
+	}
+
+	$sql = "SELECT currency_id
+			FROM ssl_fees
+			WHERE currency_id = '$curid'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) {
+		$existing_ssl_fees = 1;
+	}
+	
+	if ($existing_domain_fees > 0 || $existing_ssl_fees > 0) {
+
+		if ($existing_domain_fees > 0) $_SESSION['session_result_message'] .= "This Currency has domain fees associated with it and cannot be deleted.<BR>";
+		if ($existing_ssl_fees > 0) $_SESSION['session_result_message'] .= "This Currency has SSL fees associated with it and cannot be deleted.<BR>";
+
+	} else {
+
+		$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This Currency?<BR><BR><a href=\"$PHP_SELF?curid=$curid&really_del=1\">YES, REALLY DELETE THIS CURRENCY</a><BR>";
+
+	}
+
+}
+
+if ($really_del == "1") {
+
+	$sql = "DELETE FROM currencies 
+			WHERE id = '$curid'";
+	$result = mysql_query($sql,$connection);
+	
+	$_SESSION['session_result_message'] = "Currency Deleted ($new_name)<BR>";
+	
+	header("Location: ../currencies.php");
+	exit;
+
+}
 ?>
 <html>
 <head>
@@ -107,6 +156,7 @@ while ($row = mysql_fetch_object($result)) {
 <input type="hidden" name="new_curid" value="<?=$curid?>">
 <input type="submit" name="button" value="Update This Currency &raquo;">
 </form>
+<BR><a href="<?=$PHP_SELF?>?curid=<?=$curid?>&del=1">DELETE THIS CURRENCY</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

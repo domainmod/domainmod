@@ -18,21 +18,22 @@
 <?php
 session_start();
 
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
+include("../_includes/config.inc.php");
+include("../_includes/database.inc.php");
+include("../_includes/software.inc.php");
+include("../_includes/auth/auth-check.inc.php");
 
 $page_title = "Top Level Domain Breakdown";
+$software_section = "system";
 ?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/header.inc.php"); ?>
+<?php include("../_includes/header.inc.php"); ?>
 This is a breakdown of the Top Level Domains that are currently active in the system.
 <BR><BR>
 <?php
@@ -65,7 +66,7 @@ if (mysql_num_rows($result) > 0) { ?>
                 <?php echo ".$row->tld"; ?>
             </td>
             <td>
-                <a class="nobold" href="domains.php?tld=<?=$row->tld?>"><?=number_format($row->total_tld_count)?></a>
+                <a class="nobold" href="../domains.php?tld=<?=$row->tld?>"><?=number_format($row->total_tld_count)?></a>
             </td>
         </tr>
     <?php 
@@ -79,6 +80,6 @@ if (mysql_num_rows($result) > 0) { ?>
 
 }
 ?>
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

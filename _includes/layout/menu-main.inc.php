@@ -22,8 +22,7 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ip-addresses.php">IP Addresses</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/categories.php">Categories</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/owners.php">Owners</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/tlds.php">TLDs</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/currencies.php">Currencies</a> ]
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/currencies.php">Currencies</a> ]&nbsp;
 <BR><BR>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-certs.php">SSL Certificates</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-providers.php">SSL Providers</a> ]&nbsp;
@@ -33,6 +32,7 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-actions.php">Perform Bulk Actions</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/export-domains.php">Export Domains</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/export-ssl-certs.php">Export SSL Certs</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a> ]&nbsp;
 <?php /* ?>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/">Help!</a> ]&nbsp;
 <?php */ ?>

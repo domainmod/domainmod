@@ -31,6 +31,10 @@ include("../../../_includes/auth/auth-check.inc.php");
 $page_title = "Edit User";
 $software_section = "system";
 
+// 'Delete User' Confirmation Variables
+$del = $_GET['del'];
+$really_del = $_GET['really_del'];
+
 $uid = $_GET['uid'];
 
 if ($new_uid == "") $new_uid = $uid;
@@ -108,6 +112,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 	}
 }
+if ($del == "1") {
+
+	$_SESSION['session_result_message'] = "Are You Sure You Want To Delete This User?<BR><BR><a href=\"$PHP_SELF?uid=$uid&really_del=1\">YES, REALLY DELETE THIS USER</a><BR>";
+
+}
+
+if ($really_del == "1") {
+
+	$sql = "DELETE FROM users 
+			WHERE id = '$uid'";
+	$result = mysql_query($sql,$connection);
+	
+	$_SESSION['session_result_message'] = "User Deleted ($new_first_name $new_last_name)<BR>";
+	
+	header("Location: ../list-users.php");
+	exit;
+
+}
 ?>
 <html>
 <head>
@@ -167,7 +189,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <input type="hidden" name="new_uid" value="<?=$uid?>">
 <input type="submit" name="button" value="Update User &raquo;">
 </form>
-<BR><a href="../reset-password.php?new_username=<?=$new_username?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR><BR>
+<BR><a href="../reset-password.php?new_username=<?=$new_username?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
+<BR><a href="<?=$PHP_SELF?>?uid=<?=$uid?>&del=1">DELETE THIS USER</a>
 <?php include("../../../_includes/footer.inc.php"); ?>
 </body>
 </html>
