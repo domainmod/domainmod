@@ -57,10 +57,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 			AND id != '$new_uid'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	$is_username_taken = mysql_num_rows($result);
-	if ($is_username_taken > 0) { $invalid_username = 1; }
+	if ($is_username_taken > 0) { $invalid_username = 1; $new_username = ""; }
 	
 	// Make sure they aren't trying to assign a reserved username
-	if ($new_username == "admin" || $new_username == "administrator") { $invalid_username = 1; }
+	if ($new_username == "admin" || $new_username == "administrator") { 
+
+		$sql = "SELECT username
+				FROM users
+				WHERE username = '$new_username'
+				AND id = '$new_uid'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$is_it_my_username = mysql_num_rows($result);
+		
+		if ($is_it_my_username == 0) {
+
+			$invalid_username = 1; 
+			$new_username = "";
+			
+		}
+
+	}
 
 }
 
@@ -79,17 +95,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 	
 	$_SESSION['session_result_message'] .= "The user has been updated.<BR>";
 	
-	header("Location: ../list-users.php");
-	exit;
-
+	if ($new_username == "admin") {
+	
+		$_SESSION['session_first_name'] = $new_first_name;
+		$_SESSION['session_last_name'] = $new_last_name;
+		$_SESSION['session_email_address'] = $new_email_address;
+		
+	}
+	
 } else {
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
-		if ($invalid_username == 1) $_SESSION['session_result_message'] .= "You have entered an invalid username.<BR>";
+		if ($invalid_username == 1 || $new_username == "") $_SESSION['session_result_message'] .= "You have entered an invalid username.<BR>";
 		if ($new_first_name == "") $_SESSION['session_result_message'] .= "Enter the user's first name.<BR>";
 		if ($new_last_name == "") $_SESSION['session_result_message'] .= "Enter the user's last name.<BR>";
-		if ($new_username == "") $_SESSION['session_result_message'] .= "Enter the new username.<BR>";
 		if ($new_email_address == "") $_SESSION['session_result_message'] .= "Enter the user's email address.<BR>";
 		
 	} else {

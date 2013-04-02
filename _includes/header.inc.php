@@ -27,7 +27,7 @@ session_start();
 		</td>
         <td align="right" valign="bottom" height="100%">
         <?php if ($_SESSION['session_is_logged_in'] == 1) { ?>
-        <em>logged in as <strong><?=$_SESSION['session_username']?></strong> (<?=$_SESSION['session_first_name']?> <?=$_SESSION['session_last_name']?>)</em>&nbsp;&nbsp;[ <a href="<?=$web_root?>/logout.php">Logout</a> ]<BR><BR>
+        <em>logged in as <strong><?=$_SESSION['session_username']?></strong> (<a class="subtlelink" href="<?=$web_root?>/system/update-profile.php"><?=$_SESSION['session_first_name']?> <?=$_SESSION['session_last_name']?></a>)</em>&nbsp;&nbsp;[ <a href="<?=$web_root?>/logout.php">Logout</a> ]<BR><BR>
         <?php } ?>
 		</td>
 	</tr>
