@@ -141,7 +141,7 @@ Enter the domains one per line.<BR><BR>
 <input type="hidden" name="new_segid" value="<?=$segid?>">
 <input type="submit" name="button" value="Update This Segment &raquo;">
 </form>
-<BR><BR>
+<BR>
 <a href="<?=$PHP_SELF?>?segid=<?=$segid?>&del=1">DELETE THIS SEGMENT</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
