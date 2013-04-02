@@ -44,12 +44,14 @@
 			<?php if ($_SESSION['session_is_admin'] == 1) { ?>
              &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>
              &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/tlds.php">TLD Breakdown</a>
+             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/change-email-address.php">Change Email Address</a>
              &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/change-password.php">Change Password</a>
              &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/list-users.php">User List</a>
              &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/add/user.php">Add New User</a>
 			<?php } else { ?>
              &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>
              &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/tlds.php">TLD Breakdown</a>
+             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/change-email-address.php">Change Email Address</a>
              &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/change-password.php">Change Password</a>
             <?php } ?>
 <?php } elseif ($software_section == "bulkactions") { ?>
