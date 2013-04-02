@@ -16,6 +16,6 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-header("Location: ../../index.php");
+header("Location: ../");
 exit;
 ?>
