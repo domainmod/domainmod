@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
 	$_SESSION['session_default_currency'] = $new_default_currency;
 
 	$_SESSION['session_result_message'] .= "The System Settings were updated.<BR><BR>";
-	$_SESSION['session_result_message'] .= "If you changed the system's default currency you should <a href=\"update-exchange-rates.php\">click here to update the exchange rates</a>.<BR>";
+	$_SESSION['session_result_message'] .= "If you changed the system's default currency you should <a href=\"update-conversion-rates.php\">click here to update the exchange rates</a>.<BR>";
 	
 	header("Location: ../index.php");
 	exit;

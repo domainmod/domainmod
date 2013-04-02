@@ -42,9 +42,9 @@ $sql = "SELECT id, currency, name, conversion
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection);
 ?>
-The below exchange rates are used for various reporting, and at the very least they should be updated before you export your domains or SSL certificates.<BR>
+The below conversion rates are used for various reporting, and at the very least they should be updated before you export your domains or SSL certificates.<BR>
 <BR>
-<strong>NOTE:</strong> Exchange rate conversions have now been automated! Simply <a href="system/update-exchange-rates.php">click here to update the exchange rates</a>.
+<strong>NOTE:</strong> Exchange rate conversions have now been automated! Simply <a href="system/update-conversion-rates.php">click here to update the conversion rates</a>.
 <BR><BR>
 <strong>Number of Active Currencies:</strong> <?=mysql_num_rows($result)?>
 <?php if (mysql_num_rows($result) > 0) { ?>
@@ -58,7 +58,7 @@ The below exchange rates are used for various reporting, and at the very least t
     	<font class="subheadline">ABV</font>
     </td>
 	<td>
-    	<font class="subheadline">Exchange Rate</font>
+    	<font class="subheadline">Conversion Rates</font>
     </td>
 </tr>
 <?php
@@ -101,7 +101,7 @@ while ($row = mysql_fetch_object($result)) { ?>
 </table>
 <?php } ?>
 <BR>
-<font color="#DD0000"><strong>*</strong></font> = Default Currency (for rate conversions, reports, etc.)
+<font color="#DD0000"><strong>*</strong></font> = Default Currency (for rate conversions, reporting, etc.)
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>
