@@ -18,12 +18,12 @@
 <?php
 session_start();
 
-$sql = "SELECT db_version
-		FROM settings";
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$sql_db_check = "SELECT db_version
+				FROM settings";
+$result_db_check = mysql_query($sql_db_check,$connection) or die(mysql_error());
 
-while ($row = mysql_fetch_object($result)) {
-	if ($row->db_version != $most_recent_db_version) { 
+while ($row_db_check = mysql_fetch_object($result_db_check)) {
+	if ($row_db_check->db_version != $most_recent_db_version) { 
 		$_SESSION['session_needs_database_upgrade'] = "1";
 	} else {
 		$_SESSION['session_needs_database_upgrade'] = "0";
