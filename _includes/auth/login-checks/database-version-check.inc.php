@@ -18,13 +18,15 @@
 <?php
 session_start();
 
-include("../../database.inc.php");
-
 $sql = "SELECT db_version
 		FROM settings";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
-	if ($row->db_version != $most_recent_db_version) $_SESSION['session_result_message'] = "You are running an older version of the $software_title database<BR><BR><a href=\"system/update-database.php\">Click here to upgrade your database</a><BR>";
+	if ($row->db_version != $most_recent_db_version) { 
+		$_SESSION['session_needs_database_upgrade'] = "1";
+	} else {
+		$_SESSION['session_needs_database_upgrade'] = "0";
+	}
 }
 ?>

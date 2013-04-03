@@ -480,6 +480,8 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	include("../_includes/auth/login-checks/database-version-check.inc.php");
+
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
 
 } else {

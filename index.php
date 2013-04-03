@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 	   
 	   while ($row = mysql_fetch_object($result)) {
 
+			include("_includes/auth/login-checks/database-version-check.inc.php");
 			include("_includes/system/check-for-missing-domain-fees.inc.php");
 			include("_includes/system/check-for-missing-ssl-fees.inc.php");
 
