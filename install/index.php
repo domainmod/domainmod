@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "2.0002";
+$most_recent_db_version = "2.0003";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -161,7 +161,6 @@ if (mysql_num_rows($result) > 0) {
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_fees` ( 
 				`id` int(10) NOT NULL auto_increment,
 				`ssl_provider_id` int(5) NOT NULL,
-				`type_id` int(5) NOT NULL,
 				`function_id` int(5) NOT NULL,
 				`initial_fee` float NOT NULL,
 				`renewal_fee` float NOT NULL,
@@ -207,7 +206,6 @@ if (mysql_num_rows($result) > 0) {
 				`ssl_provider_id` int(5) NOT NULL,
 				`account_id` int(5) NOT NULL,
 				`domain_id` int(10) NOT NULL,
-				`type_id` int(10) NOT NULL,
 				`function_id` int(10) NOT NULL,
 				`name` varchar(255) NOT NULL,
 				`expiry_date` date NOT NULL,
@@ -220,24 +218,6 @@ if (mysql_num_rows($result) > 0) {
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
-	
-	$sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_types` ( 
-				`id` int(10) NOT NULL auto_increment,
-				`type` varchar(255) NOT NULL,
-				`notes` longtext NOT NULL,
-				`default_type` int(1) NOT NULL default '0',
-				`active` int(1) NOT NULL default '1',
-				`insert_time` datetime NOT NULL,
-				`update_time` datetime NOT NULL,
-				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
-	
-	$sql = "INSERT INTO `ssl_cert_types` 
-			(`id`, `type`, `default_type`, `insert_time`) VALUES 
-			(1, 'Wildcard', 1, '$current_timestamp'),
-			(2, 'Single Host', 0, '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_functions` ( 
