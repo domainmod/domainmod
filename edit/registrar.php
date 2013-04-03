@@ -59,12 +59,12 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 		
 		$rid = $new_rid;
 
-		$_SESSION['session_result_message'] = "Registrar Updated<BR>";
+		$_SESSION['session_result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Updated<BR>";
 		
 	} else {
 
-		if ($new_registrar == "") $_SESSION['session_result_message'] .= "Please Enter The Registrar's Name<BR>";
-		if ($new_url == "") $_SESSION['session_result_message'] .= "Please Enter The Registrar's URL<BR>";
+		if ($new_registrar == "") $_SESSION['session_result_message'] .= "Please enter the registrar name<BR>";
+		if ($new_url == "") $_SESSION['session_result_message'] .= "Please enter the registrar's URL<BR>";
 
 	}
 
@@ -75,7 +75,7 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 
 	if ($new_rid == "" || $new_tld == "" || $new_initial_fee == "" || $new_renewal_fee == "") { 
 
-		$_SESSION['session_result_message'] = "Please Enter All Fields Before Submitting The New Fee<BR>";
+		$_SESSION['session_result_message'] = "Please enter all fields before submitting the new fee<BR>";
 
 	} else {
 		
@@ -95,7 +95,7 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 					  AND tld = '$new_tld'";
 			mysql_query($sql,$connection);
 			
-			$_SESSION['session_result_message'] = "Fee Deleted<BR>";
+			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been deleted<BR>";
 
 			header("Location: registrar.php?rid=$new_rid");
 			exit;
@@ -141,7 +141,7 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 	
 			$rid = $new_rid;
 
-			$_SESSION['session_result_message'] = "Fee Updated Successfully<BR>";
+			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been updated<BR>";
 			
 			header("Location: registrar.php?rid=$new_rid");
 			exit;
@@ -174,7 +174,7 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 					  AND tld = '$new_tld'";
 			$result = mysql_query($sql,$connection);
 	
-			$_SESSION['session_result_message'] = "Fee Submitted Successfully<BR>";
+			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
 			
 			header("Location: registrar.php?rid=$new_rid");
 			exit;
@@ -224,8 +224,8 @@ if ($del == "1") {
 
 	if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
 		
-		if ($existing_registrar_accounts > 0) $_SESSION['session_result_message'] .= "This Registrar has Registrar Accounts associated with it and cannot be deleted.<BR>";
-		if ($existing_domains > 0) $_SESSION['session_result_message'] .= "This Registrar has domains associated with it and cannot be deleted.<BR>";
+		if ($existing_registrar_accounts > 0) $_SESSION['session_result_message'] .= "This Registrar has Registrar Accounts associated with it and cannot be deleted<BR>";
+		if ($existing_domains > 0) $_SESSION['session_result_message'] .= "This Registrar has domains associated with it and cannot be deleted<BR>";
 
 	} else {
 
@@ -249,7 +249,7 @@ if ($really_del == "1") {
 			WHERE id = '$rid'";
 	$result = mysql_query($sql,$connection);
 
-	$_SESSION['session_result_message'] = "Registrar Deleted ($new_registrar)<BR>";
+	$_SESSION['session_result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Deleted<BR>";
 	
 	header("Location: ../registrars.php");
 	exit;

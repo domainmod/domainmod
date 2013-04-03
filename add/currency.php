@@ -75,15 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('" . mysql_real_escape_string($new_abbreviation) . "', '" . mysql_real_escape_string($new_name) . "', '$value', '" . mysql_real_escape_string($new_notes) . "', '$new_default_currency', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "Currency \"$new_name ($new_abbreviation)\" Added<BR><BR><a href=\"system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
+		$_SESSION['session_result_message'] = "Currency <font class=\"highlight\">$new_name ($new_abbreviation)</font> Added<BR><BR><a href=\"system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
 		
 		header("Location: ../currencies.php");
 		exit;
 
 	} else {
 	
-		if ($new_name == "") $_SESSION['session_result_message'] .= "Please Enter The Currency Name<BR>";
-		if ($new_abbreviation == "") $_SESSION['session_result_message'] .= "Please Enter The Currency Abbreviation<BR>";
+		if ($new_name == "") $_SESSION['session_result_message'] .= "Please enter the currency name<BR>";
+		if ($new_abbreviation == "") $_SESSION['session_result_message'] .= "Please enter the currency abbreviation<BR>";
 
 	}
 

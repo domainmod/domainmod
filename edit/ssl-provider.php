@@ -60,12 +60,12 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 		
 		$sslpid = $new_sslpid;
 		
-		$_SESSION['session_result_message'] = "SSL Provider Updated<BR>";
+		$_SESSION['session_result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Updated<BR>";
 
 	} else {
 
-		if ($new_ssl_provider == "") $_SESSION['session_result_message'] .= "Please Enter The SSL Provider's Name<BR>";
-		if ($new_url == "") $_SESSION['session_result_message'] .= "Please Enter The SSL Provider's URL<BR>";
+		if ($new_ssl_provider == "") $_SESSION['session_result_message'] .= "Please enter the SSL provider's name<BR>";
+		if ($new_url == "") $_SESSION['session_result_message'] .= "Please enter the SSL provider's URL<BR>";
 
 	}
 
@@ -73,7 +73,7 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 
 	if ($new_sslpid == "" || $new_initial_fee == "" || $new_renewal_fee == "") { 
 
-		$_SESSION['session_result_message'] = "Please Enter All Fields Before Submitting The New Fee<BR>";
+		$_SESSION['session_result_message'] = "Please enter all fields before submitting the new fee<BR>";
 
 	} else {
 		
@@ -92,7 +92,25 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 					  AND type_id = '$new_type_id'
 					  AND function_id = '$new_function_id'";
 			mysql_query($sql,$connection);
-			
+
+			$sql = "SELECT function
+					FROM ssl_cert_functions
+					WHERE id = '$new_function_id'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) {
+					$temp_function = $row->function;
+			}
+
+			$sql = "SELECT type
+					FROM ssl_cert_types
+					WHERE id = '$new_type_id'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) {
+					$temp_type = $row->type;
+			}
+
+			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_function ($temp_type)</font> has been deleted<BR>";
+
 			header("Location: ssl-provider.php?sslpid=$new_sslpid");
 			exit;
 
@@ -140,8 +158,24 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 			$result = mysql_query($sql,$connection);
 	
 			$sslpid = $new_sslpid;
+			
+			$sql = "SELECT function
+					FROM ssl_cert_functions
+					WHERE id = '$new_function_id'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) {
+					$temp_function = $row->function;
+			}
 
-		$_SESSION['session_result_message'] = "Fee Updated Successfully<BR>";
+			$sql = "SELECT type
+					FROM ssl_cert_types
+					WHERE id = '$new_type_id'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) {
+					$temp_type = $row->type;
+			}
+
+			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_function ($temp_type)</font> has been updated<BR>";
 
 		} else {
 			
@@ -172,8 +206,24 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 					  AND type_id = '$new_type_id'
 					  AND function_id = '$new_function_id'";
 			$result = mysql_query($sql,$connection);
+
+			$sql = "SELECT function
+					FROM ssl_cert_functions
+					WHERE id = '$new_function_id'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) {
+					$temp_function = $row->function;
+			}
+
+			$sql = "SELECT type
+					FROM ssl_cert_types
+					WHERE id = '$new_type_id'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) {
+					$temp_type = $row->type;
+			}
 	
-			$_SESSION['session_result_message'] = "Fee Submitted Successfully<BR>";
+			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_function ($temp_type)</font> has been submitted<BR>";
 	
 		}
 
@@ -217,8 +267,8 @@ if ($del == "1") {
 
 	if ($existing_ssl_accounts > 0 || $existing_ssl_certs > 0) {
 		
-		if ($existing_ssl_accounts > 0) $_SESSION['session_result_message'] .= "This SSL Provider has SSL Accounts associated with it and cannot be deleted.<BR>";
-		if ($existing_ssl_certs > 0) $_SESSION['session_result_message'] .= "This SSL provider has SSL Certificates associated with it and cannot be deleted.<BR>";
+		if ($existing_ssl_accounts > 0) $_SESSION['session_result_message'] .= "This SSL Provider has SSL Accounts associated with it and cannot be deleted<BR>";
+		if ($existing_ssl_certs > 0) $_SESSION['session_result_message'] .= "This SSL Provider has SSL Certificates associated with it and cannot be deleted<BR>";
 
 	} else {
 
@@ -242,7 +292,7 @@ if ($really_del == "1") {
 			WHERE id = '$sslpid'";
 	$result = mysql_query($sql,$connection);
 
-	$_SESSION['session_result_message'] = "SSL Provider Deleted ($new_ssl_provider)<BR>";
+	$_SESSION['session_result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Deleted<BR>";
 	
 	header("Location: ../ssl-providers.php");
 	exit;

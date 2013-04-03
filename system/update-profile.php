@@ -55,15 +55,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 		$_SESSION['session_first_name'] = $new_first_name;
 		$_SESSION['session_last_name'] = $new_last_name;
 
-		$_SESSION['session_result_message'] .= "Your profile was updated.<BR>";
+		$_SESSION['session_result_message'] .= "Your profile was updated<BR>";
 
 		header("Location: index.php");
 		exit;
 
    } else {
 	   
-		$_SESSION['session_result_message'] .= "Your profile could not be updated.<BR>";
-		$_SESSION['session_result_message'] .= "If the problem persists please contact your administrator.<BR>";
+		$_SESSION['session_result_message'] .= "Your profile could not be updated<BR>";
+		$_SESSION['session_result_message'] .= "If the problem persists please contact your administrator<BR>";
 
    }
 
@@ -72,9 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
-	   if ($new_email_address == "") $_SESSION['session_result_message'] .= "Your Email Address could not be updated.<BR>";
-	   if ($new_first_name == "") $_SESSION['session_result_message'] .= "Your First Name could not be updated.<BR>";
-	   if ($new_last_name == "") $_SESSION['session_result_message'] .= "Your Last Name could not be updated.<BR>";
+	   if ($new_email_address == "") $_SESSION['session_result_message'] .= "Your email address could not be updated<BR>";
+	   if ($new_first_name == "") $_SESSION['session_result_message'] .= "Your first name could not be updated<BR>";
+	   if ($new_last_name == "") $_SESSION['session_result_message'] .= "Your last name could not be updated<BR>";
 
 	}
 

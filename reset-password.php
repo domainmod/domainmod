@@ -54,7 +54,7 @@ if ($new_username != "") {
 			
 			include("_includes/email/send-new-password.inc.php");
 					
-			$_SESSION['session_result_message'] .= "Your new password has been emailed to you.<BR>";
+			$_SESSION['session_result_message'] .= "Your new password has been emailed to you<BR>";
 			
 			header("Location: index.php");
 			exit;
@@ -63,7 +63,7 @@ if ($new_username != "") {
 
 	} else {
 
-		$_SESSION['session_result_message'] .= "You have entered an invalid username.<BR>";
+		$_SESSION['session_result_message'] .= "You have entered an invalid username<BR>";
 		
 	}
 

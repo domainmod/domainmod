@@ -205,15 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$sql = "SELECT name
-					FROM dns
-					WHERE id = '$new_dnsid'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) {
-				$new_dns_string = $row->name;
-			}
-
-			$_SESSION['session_result_message'] = "DNS Profile Updated<BR>";
+			$_SESSION['session_result_message'] = "IP Address Updated<BR>";
 
 		} elseif ($action == "AN") { 
 		

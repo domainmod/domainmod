@@ -64,7 +64,7 @@ while ($row = mysql_fetch_object($result)) {
 
 include("check-for-missing-ssl-fees.inc.php");
 
-$_SESSION['session_result_message'] = "All SSL Fees Have Been Fixed<BR>";
+$_SESSION['session_result_message'] .= "All SSL fees have been fixed<BR>";
 
 header("Location: ../../system/index.php");
 exit;

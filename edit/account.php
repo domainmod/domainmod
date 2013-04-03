@@ -61,12 +61,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result = mysql_query($sql,$connection);
 		
 		$raid = $new_raid; 
+
+		$sql = "SELECT name
+				FROM registrars
+				WHERE id = '$new_registrar_id'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $temp_registrar = $row->name; }
+
+		$sql = "SELECT name
+				FROM owners
+				WHERE id = '$new_owner_id'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
 		
-		$_SESSION['session_result_message'] = "Account Updated<BR>";
+		$_SESSION['session_result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar, $temp_owner)</font> Updated<BR>";
 
 	} else {
 	
-		if ($username == "") { $_SESSION['session_result_message'] .= "Please Enter A Username<BR>"; }
+		if ($username == "") { $_SESSION['session_result_message'] .= "Please enter the username<BR>"; }
 
 	}
 
@@ -101,11 +113,11 @@ if ($del == "1") {
 	
 	if ($existing_domains > 0) {
 
-		$_SESSION['session_result_message'] = "This Domain Registrar Account has domains associated with it and cannot be deleted.<BR>";
+		$_SESSION['session_result_message'] = "This Registrar Account has domains associated with it and cannot be deleted<BR>";
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are you sure you want to delete this Domain Registrar Account?<BR><BR><a href=\"$PHP_SELF?raid=$raid&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR ACCOUNT</a><BR>";
+		$_SESSION['session_result_message'] = "Are you sure you want to delete this Registrar Account?<BR><BR><a href=\"$PHP_SELF?raid=$raid&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR ACCOUNT</a><BR>";
 
 	}
 
@@ -113,11 +125,24 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
+	$sql = "SELECT ra.username as username, o.name as owner_name, r.name as registrar_name
+			FROM registrar_accounts as ra, owners as o, registrars as r
+			WHERE ra.owner_id = o.id
+			  AND ra.registrar_id = r.id
+			  AND ra.id = '$raid'";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	while ($row = mysql_fetch_object($result)) { 
+		$temp_username = $row->username; 
+		$temp_owner_name = $row->owner_name; 
+		$temp_registrar_name = $row->registrar_name;
+	}
+
 	$sql = "DELETE FROM registrar_accounts 
 			WHERE id = '$raid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "Domain Registrar Account Deleted ($new_username)<BR>";
+	$_SESSION['session_result_message'] = "Registrar Account <font class=\"highlight\">$temp_username ($temp_registrar_name, $temp_owner_name)</font> Deleted<BR>";
 	
 	header("Location: ../registrar-accounts.php");
 	exit;

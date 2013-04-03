@@ -97,13 +97,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		include("../_includes/system/check-for-missing-ssl-fees.inc.php");
 
-		$_SESSION['session_result_message'] = "SSL Cert Updated<BR>";
+		$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Updated<BR>";
 
 	} else {
 	
-		if ($new_name == "") { $_SESSION['session_result_message'] .= "Enter The SSL Certificate Name<BR>"; }
+		if ($new_name == "") { $_SESSION['session_result_message'] .= "Enter the SSL certificate name<BR>"; }
 
-		if (!preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date)) { $_SESSION['session_result_message'] .= "The Expiry Date Format Is Incorrect<BR>"; }
+		if (!preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date)) { $_SESSION['session_result_message'] .= "The expiry date format is incorrect<BR>"; }
 
 	}
 
@@ -146,7 +146,7 @@ if ($really_del == "1") {
 			WHERE id = '$sslcid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "SSL Certificate Deleted ($new_name)<BR>";
+	$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Deleted<BR>";
 	
 	header("Location: ../ssl-certs.php");
 	exit;

@@ -76,16 +76,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$curid = $new_curid;
 		
-		$_SESSION['session_result_message'] = "Currency \"$new_name ($new_abbreviation)\" Updated<BR><BR><a href=\"system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
+		$_SESSION['session_result_message'] = "Currency <font class=\"highlight\">$new_name ($new_abbreviation)</font> Updated<BR><BR><a href=\"system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
 		
 		header("Location: ../currencies.php");
 		exit;
 
 	} else {
 	
-		if ($new_name == "") { $_SESSION['session_result_message'] .= "Please Enter The Currency Name<BR>"; }
-		if ($new_abbreviation == "") { $_SESSION['session_result_message'] .= "Please Enter The Abbreviation<BR>"; }
-		if ($new_conversion == "") { $_SESSION['session_result_message'] .= "Please Enter The Conversion Rate<BR>"; }
+		if ($new_name == "") { $_SESSION['session_result_message'] .= "Please enter the currency name<BR>"; }
+		if ($new_abbreviation == "") { $_SESSION['session_result_message'] .= "Please enter the currency abbreviation<BR>"; }
+		if ($new_conversion == "") { $_SESSION['session_result_message'] .= "Please enter the conversion rate<BR>"; }
 
 	}
 
@@ -129,8 +129,8 @@ if ($del == "1") {
 	
 	if ($existing_domain_fees > 0 || $existing_ssl_fees > 0) {
 
-		if ($existing_domain_fees > 0) $_SESSION['session_result_message'] .= "This Currency has domain fees associated with it and cannot be deleted.<BR>";
-		if ($existing_ssl_fees > 0) $_SESSION['session_result_message'] .= "This Currency has SSL fees associated with it and cannot be deleted.<BR>";
+		if ($existing_domain_fees > 0) $_SESSION['session_result_message'] .= "This Currency has domain fees associated with it and cannot be deleted<BR>";
+		if ($existing_ssl_fees > 0) $_SESSION['session_result_message'] .= "This Currency has SSL fees associated with it and cannot be deleted<BR>";
 
 	} else {
 
@@ -146,7 +146,7 @@ if ($really_del == "1") {
 			WHERE id = '$curid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "Currency Deleted ($new_name)<BR>";
+	$_SESSION['session_result_message'] = "Currency <font class=\"highlight\">$new_name</font> Deleted<BR>";
 	
 	header("Location: ../currencies.php");
 	exit;

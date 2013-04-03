@@ -58,7 +58,7 @@ if ($new_username != "") {
 			
 			include("../../_includes/email/send-new-password.inc.php");
 					
-			$_SESSION['session_result_message'] .= "The password has been reset and emailed to the account holder.<BR>";
+			$_SESSION['session_result_message'] .= "The password has been reset and emailed to the account holder<BR>";
 			
 			header("Location: edit/user.php?uid=$row->id");
 			exit;
@@ -67,7 +67,7 @@ if ($new_username != "") {
 
 	} else {
 
-		$_SESSION['session_result_message'] .= "You have entered an invalid username.<BR>";
+		$_SESSION['session_result_message'] .= "You have entered an invalid username<BR>";
 
 		header("Location: list-users.php");
 		exit;
@@ -78,7 +78,7 @@ if ($new_username != "") {
 
 	if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-		if ($new_username == "") $_SESSION['session_result_message'] .= "Enter the username.<BR>";
+		if ($new_username == "") $_SESSION['session_result_message'] .= "Enter the username<BR>";
 
 		header("Location: list-users.php");
 		exit;

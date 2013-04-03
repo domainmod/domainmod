@@ -41,7 +41,7 @@ while ($row = mysql_fetch_object($result)) {
 
 }
 
-$_SESSION['session_result_message'] = "All TLDs Have Been Fixed<BR>";
+$_SESSION['session_result_message'] .= "All TLDs have been fixed<BR>";
 
 header("Location: ../../system/index.php");
 exit;

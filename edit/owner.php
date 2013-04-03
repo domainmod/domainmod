@@ -75,11 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$oid = $new_oid;
 		
-		$_SESSION['session_result_message'] = "Owner Updated<BR>";
+		$_SESSION['session_result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Updated<BR>";
 
 	} else {
 	
-		$_SESSION['session_result_message'] = "Please Enter The Owner's Name<BR>";
+		$_SESSION['session_result_message'] = "Please enter the owner's name<BR>";
 
 	}
 
@@ -140,10 +140,10 @@ if ($del == "1") {
 	
 	if ($existing_registrar_accounts > 0 || $existing_ssl_accounts > 0 || $existing_domains > 0 || $existing_ssl_certs > 0) {
 		
-		if ($existing_registrar_accounts > 0) $_SESSION['session_result_message'] .= "This Owner has registrar accounts associated with it and cannot be deleted.<BR>";
-		if ($existing_domains > 0) $_SESSION['session_result_message'] .= "This Owner has domains associated with it and cannot be deleted.<BR>";
-		if ($existing_ssl_accounts > 0) $_SESSION['session_result_message'] .= "This Owner has SSL accounts associated with it and cannot be deleted.<BR>";
-		if ($existing_ssl_certs > 0) $_SESSION['session_result_message'] .= "This Owner has SSL certificates associated with it and cannot be deleted.<BR>";
+		if ($existing_registrar_accounts > 0) $_SESSION['session_result_message'] .= "This Owner has registrar accounts associated with it and cannot be deleted<BR>";
+		if ($existing_domains > 0) $_SESSION['session_result_message'] .= "This Owner has domains associated with it and cannot be deleted<BR>";
+		if ($existing_ssl_accounts > 0) $_SESSION['session_result_message'] .= "This Owner has SSL accounts associated with it and cannot be deleted<BR>";
+		if ($existing_ssl_certs > 0) $_SESSION['session_result_message'] .= "This Owner has SSL certificates associated with it and cannot be deleted<BR>";
 
 	} else {
 
@@ -159,7 +159,7 @@ if ($really_del == "1") {
 			WHERE id = '$oid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "Owner Deleted ($new_owner)<BR>";
+	$_SESSION['session_result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Deleted<BR>";
 	
 	header("Location: ../owners.php");
 	exit;

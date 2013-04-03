@@ -52,15 +52,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_description) . "', '$new_segment_formatted', '$number_of_domains', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
-		$_SESSION['session_result_message'] = "Segment Added<BR>";
+		$_SESSION['session_result_message'] = "Segment <font class=\"highlight\">$new_name</font> Added<BR>";
 		
 		header("Location: ../segments.php");
 		exit;
 
 	} else {
 	
-		if ($new_name == "") { $_SESSION['session_result_message'] .= "Please Enter The Segment Name<BR>"; }
-		if ($new_segment == "") { $_SESSION['session_result_message'] .= "Please Enter The Segment<BR>"; }
+		if ($new_name == "") { $_SESSION['session_result_message'] .= "Please enter the segment name<BR>"; }
+		if ($new_segment == "") { $_SESSION['session_result_message'] .= "Please enter the segment<BR>"; }
 
 	}
 

@@ -60,14 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('" . mysql_real_escape_string($new_category) . "', '" . mysql_real_escape_string($new_stakeholder) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_category', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "Category Added<BR>";
+		$_SESSION['session_result_message'] = "Category <font class=\"highlight\">$new_category</font> Added<BR>";
 		
 		header("Location: ../categories.php");
 		exit;
 
 	} else {
 	
-		$_SESSION['session_result_message'] .= "Please Enter The Category Name<BR>";
+		$_SESSION['session_result_message'] .= "Please enter the category name<BR>";
 
 	}
 

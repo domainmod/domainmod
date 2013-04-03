@@ -57,7 +57,8 @@ while ($row = mysql_fetch_object($result)) {
 	
 	if ($row->username == "admin" && $_SESSION['session_username'] != "admin") {
 
-		$_SESSION['session_result_message'] .= "You're trying to edit an invalid user.<BR>";
+		$_SESSION['session_result_message'] .= "You're trying to edit an invalid user<BR>";
+
 		header("Location: ../list-users.php");
 		exit;
 		
@@ -110,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 			WHERE id = '$new_uid'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-	$_SESSION['session_result_message'] .= "The user has been updated.<BR>";
+	$_SESSION['session_result_message'] .= "User <font class=\"highlight\">$new_first_name $new_last_name ($new_username)</font> Updated<BR>";
 	
 	if ($_SESSION['session_username'] == $new_username) {
 	
@@ -124,10 +125,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
-		if ($invalid_username == 1 || $new_username == "") $_SESSION['session_result_message'] .= "You have entered an invalid username.<BR>";
-		if ($new_first_name == "") $_SESSION['session_result_message'] .= "Enter the user's first name.<BR>";
-		if ($new_last_name == "") $_SESSION['session_result_message'] .= "Enter the user's last name.<BR>";
-		if ($new_email_address == "") $_SESSION['session_result_message'] .= "Enter the user's email address.<BR>";
+		if ($invalid_username == 1 || $new_username == "") $_SESSION['session_result_message'] .= "You have entered an invalid username<BR>";
+		if ($new_first_name == "") $_SESSION['session_result_message'] .= "Enter the user's first name<BR>";
+		if ($new_last_name == "") $_SESSION['session_result_message'] .= "Enter the user's last name<BR>";
+		if ($new_email_address == "") $_SESSION['session_result_message'] .= "Enter the user's email address<BR>";
 		
 	} else {
 		
@@ -161,7 +162,7 @@ if ($really_del == "1") {
 			WHERE id = '$uid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "User Deleted ($new_first_name $new_last_name)<BR>";
+	$_SESSION['session_result_message'] = "User <font class=\"highlight\">$new_first_name $new_last_name ($new_username)</font> Deleted<BR>";
 	
 	header("Location: ../list-users.php");
 	exit;

@@ -62,14 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "IP Address Added ($new_name)<BR>";
+		$_SESSION['session_result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Added<BR>";
 		header("Location: ../ip-addresses.php");
 		exit;
 		
 	} else {
 	
-		if ($new_name == '') { $_SESSION['session_result_message'] .= "Please Enter A Name For The IP Address<BR>"; }
-		if ($new_ip == '') { $_SESSION['session_result_message'] .= "Please Enter The IP Address<BR>"; }
+		if ($new_name == '') { $_SESSION['session_result_message'] .= "Please enter a name for the IP address<BR>"; }
+		if ($new_ip == '') { $_SESSION['session_result_message'] .= "Please enter the IP address<BR>"; }
 
 	}
 

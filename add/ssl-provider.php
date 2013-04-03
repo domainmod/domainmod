@@ -41,15 +41,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('" . mysql_real_escape_string($new_ssl_provider) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "SSL Provider Added<BR>";
+		$_SESSION['session_result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Added<BR>";
 		
 		header("Location: ../ssl-providers.php");
 		exit;
 
 	} else {
 	
-		if ($new_ssl_provider == "") $_SESSION['session_result_message'] .= "Please Enter The SSL Provider Name<BR>";
-		if ($new_url == "") $_SESSION['session_result_message'] .= "Please Enter The SSL Provider's URL<BR>";
+		if ($new_ssl_provider == "") $_SESSION['session_result_message'] .= "Please enter the SSL provider's name<BR>";
+		if ($new_url == "") $_SESSION['session_result_message'] .= "Please enter the SSL provider's URL<BR>";
 
 	}
 

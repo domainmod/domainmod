@@ -407,7 +407,7 @@ if ($_SESSION['session_installation_mode'] == 1 || $_SESSION['session_first_logi
 	
 } else {
 
-	$_SESSION['session_result_message'] = "Test Data Has Been Regenerated<BR>";
+	$_SESSION['session_result_message'] = "The test data has been generated<BR>";
 
 	header("Location: ../../system/index.php");
 	exit;

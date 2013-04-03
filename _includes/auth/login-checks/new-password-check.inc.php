@@ -30,7 +30,7 @@ while ($row = mysql_fetch_object($result)) { $is_it_a_new_password = $row->new_p
 
 if ($is_it_a_new_password == 1) {
 
-	$_SESSION['session_result_message'] = "Since your password was recently generated, you are required to change it for security purposes.<BR>";
+	$_SESSION['session_result_message'] = "Since your password was recently generated you are required to change it for security purposes.<BR>";
 
 	header("Location: ../../../system/change-password.php");
 	exit;

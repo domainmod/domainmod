@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	$_SESSION['session_number_of_domains'] = $new_number_of_domains;
 	$_SESSION['session_number_of_ssl_certs'] = $new_number_of_ssl_certs;
 
-	$_SESSION['session_result_message'] .= "The Display Settings were updated.<BR>";
+	$_SESSION['session_result_message'] .= "The Display Settings were updated<BR>";
 	
 	header("Location: ../index.php");
 	exit;
@@ -55,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
-		if ($new_number_of_domains == "") $_SESSION['session_result_message'] .= "Enter the default number of domains to display.<BR>";
-		if ($new_number_of_ssl_certs == "") $_SESSION['session_result_message'] .= "Enter the default number of SSL certficates to display.<BR>";
+		if ($new_number_of_domains == "") $_SESSION['session_result_message'] .= "Enter the default number of domains to display<BR>";
+		if ($new_number_of_ssl_certs == "") $_SESSION['session_result_message'] .= "Enter the default number of SSL certficates to display<BR>";
 		
 	} else {
 		

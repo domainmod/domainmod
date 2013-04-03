@@ -72,13 +72,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		include("../_includes/system/check-for-missing-domain-fees.inc.php");
 
-		$_SESSION['session_result_message'] = "Domain Added ($new_domain)<BR>";
+		$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
 		
 	} else {
 	
-		if (!preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) { $_SESSION['session_result_message'] .= "The Domain Format Is Incorrect<BR>"; }
+		if (!preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) { $_SESSION['session_result_message'] .= "The domain format is incorrect<BR>"; }
 
-		if (!preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date)) { $_SESSION['session_result_message'] .= "The Expiry Date Format Is Incorrect<BR>"; }
+		if (!preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date)) { $_SESSION['session_result_message'] .= "The expiry date format is incorrect<BR>"; }
 
 	}
 

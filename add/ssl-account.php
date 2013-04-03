@@ -42,15 +42,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				(owner_id, ssl_provider_id, username, notes, reseller, insert_time) VALUES 
 				('$new_owner_id', '$new_ssl_provider_id', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_reseller', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "SELECT name
+				FROM ssl_providers
+				WHERE id = '$new_ssl_provider_id'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $temp_ssl_provider = $row->name; }
+
+		$sql = "SELECT name
+				FROM owners
+				WHERE id = '$new_owner_id'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
 		
-		$_SESSION['session_result_message'] = "SSL Account Added<BR>";
+		$_SESSION['session_result_message'] = "SSL Account <font class=\"highlight\">$new_username ($temp_ssl_provider, $temp_owner)</font> Added<BR>";
 		
 		header("Location: ../ssl-accounts.php");
 		exit;
 
 	} else {
 	
-		if ($username == "") { $_SESSION['session_result_message'] .= "Please Enter A Username<BR>"; }
+		if ($username == "") { $_SESSION['session_result_message'] .= "Please enter a username<BR>"; }
 
 	}
 

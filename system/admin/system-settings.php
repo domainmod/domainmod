@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
 			SET email_address = '$new_email_address'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-	$_SESSION['session_result_message'] = "The System Settings were updated.<BR><BR>";
+	$_SESSION['session_result_message'] = "The System Settings were updated<BR><BR>";
 	
 	header("Location: ../index.php");
 	exit;
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
-		if ($new_email_address == "") $_SESSION['session_result_message'] .= "Enter the system email address.<BR>";
+		if ($new_email_address == "") $_SESSION['session_result_message'] .= "Enter the system email address<BR>";
 		
 	} else {
 		

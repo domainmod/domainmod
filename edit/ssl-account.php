@@ -56,12 +56,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sslpaid = $new_sslpaid; 
+
+		$sql = "SELECT name
+				FROM ssl_providers
+				WHERE id = '$new_ssl_provider_id'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $temp_ssl_provider = $row->name; }
+
+		$sql = "SELECT name
+				FROM owners
+				WHERE id = '$new_owner_id'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
 		
-		$_SESSION['session_result_message'] = "SSL Provider Account Updated<BR>";
+		$_SESSION['session_result_message'] = "SSL Account <font class=\"highlight\">$new_username ($temp_ssl_provider, $temp_owner)</font> Updated<BR>";
 
 	} else {
 	
-		if ($username == "") { $_SESSION['session_result_message'] .= "Please Enter A Username<BR>"; }
+		if ($username == "") { $_SESSION['session_result_message'] .= "Please enter a username<BR>"; }
 
 	}
 
@@ -96,11 +108,11 @@ if ($del == "1") {
 	
 	if ($existing_ssl_certs > 0) {
 
-		$_SESSION['session_result_message'] = "This SSL Provider Account has SSL certificates associated with it and cannot be deleted.<BR>";
+		$_SESSION['session_result_message'] = "This SSL Account has SSL certificates associated with it and cannot be deleted<BR>";
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are you sure you want to delete this SSL Provider Account?<BR><BR><a href=\"$PHP_SELF?sslpaid=$sslpaid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER ACCOUNT</a><BR>";
+		$_SESSION['session_result_message'] = "Are you sure you want to delete this SSL Account?<BR><BR><a href=\"$PHP_SELF?sslpaid=$sslpaid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER ACCOUNT</a><BR>";
 
 	}
 
@@ -108,11 +120,24 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
+	$sql = "SELECT a.username as username, o.name as owner_name, p.name as ssl_provider_name
+			FROM ssl_accounts as a, owners as o, ssl_providers as p
+			WHERE a.owner_id = o.id
+			  AND a.ssl_provider_id = p.id
+			  AND a.id = '$sslpaid'";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	while ($row = mysql_fetch_object($result)) { 
+		$temp_username = $row->username; 
+		$temp_owner_name = $row->owner_name; 
+		$temp_ssl_provider_name = $row->ssl_provider_name;
+	}
+
 	$sql = "DELETE FROM ssl_accounts 
 			WHERE id = '$sslpaid'";
-	$result = mysql_query($sql,$connection);
-	
-	$_SESSION['session_result_message'] = "SSL Provider Account Deleted ($new_username)<BR>";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$_SESSION['session_result_message'] = "SSL Account <font class=\"highlight\">$temp_username ($temp_ssl_provider_name, $temp_owner_name)</font> Deleted<BR>";
 	
 	header("Location: ../ssl-accounts.php");
 	exit;

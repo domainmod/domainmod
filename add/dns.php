@@ -83,13 +83,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "DNS Profile Added ($new_name)<BR>";
+		$_SESSION['session_result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Added<BR>";
 		header("Location: ../dns.php");
 		exit;
 		
 	} else {
 	
-		if ($new_name == '') { $_SESSION['session_result_message'] .= "Please Enter A Name For The DNS Profile<BR>"; }
+		if ($new_name == '') { $_SESSION['session_result_message'] .= "Please enter a name for the DNS profile<BR>"; }
 
 	}
 

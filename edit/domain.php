@@ -107,13 +107,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		include("../_includes/system/check-for-missing-domain-fees.inc.php");
 
-		$_SESSION['session_result_message'] = "Domain Updated<BR>";
+		$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Updated<BR>";
 
 	} else {
 	
-		if (!preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) { $_SESSION['session_result_message'] .= "The Domain Format Is Incorrect<BR>"; }
+		if (!preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) { $_SESSION['session_result_message'] .= "The domain format is incorrect<BR>"; }
 
-		if (!preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date)) { $_SESSION['session_result_message'] .= "The Expiry Date Format Is Incorrect<BR>"; }
+		if (!preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date)) { $_SESSION['session_result_message'] .= "The expiry date format is incorrect<BR>"; }
 
 	}
 
@@ -157,7 +157,7 @@ if ($del == "1") {
 	
 	if ($existing_ssl_certs > 0) {
 
-		$_SESSION['session_result_message'] = "This Domain has SSL Certificates associated with it and cannot be deleted.<BR>";
+		$_SESSION['session_result_message'] = "This Domain has SSL Certificates associated with it and cannot be deleted<BR>";
 
 	} else {
 
@@ -173,7 +173,7 @@ if ($really_del == "1") {
 			WHERE id = '$did'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "Domain Deleted ($new_domain)<BR>";
+	$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Deleted<BR>";
 	
 	header("Location: ../domains.php");
 	exit;

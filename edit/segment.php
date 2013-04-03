@@ -66,12 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$segid = $new_segid;
 		
-		$_SESSION['session_result_message'] = "Segment Updated<BR>";
+		$_SESSION['session_result_message'] = "Segment <font class=\"highlight\">$new_name</font> Updated<BR>";
 
 	} else {
 	
-		if ($new_name == "") $_SESSION['session_result_message'] .= "Please Enter The Segment Name<BR>";
-		if ($new_segment == "") $_SESSION['session_result_message'] .= "Please Enter The Segment<BR>";
+		if ($new_name == "") $_SESSION['session_result_message'] .= "Please enter the segment name<BR>";
+		if ($new_segment == "") $_SESSION['session_result_message'] .= "Please enter the segment<BR>";
 
 	}
 
@@ -104,12 +104,20 @@ if ($del == "1") {
 }
 
 if ($really_del == "1") {
+	
+	$sql = "SELECT name
+			FROM segments
+			WHERE id = '$segid'";
+	$result = mysql_query($sql,$connection);
+	while ($row = mysql_fetch_object($result)) {
+		$temp_segment_name = $row->name;
+	}
 
 	$sql = "DELETE FROM segments 
 			WHERE id = '$segid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "Segment Deleted<BR>";
+	$_SESSION['session_result_message'] = "Segment <font class=\"highlight\">$temp_segment_name</font> Deleted<BR>";
 	
 	header("Location: ../segments.php");
 	exit;

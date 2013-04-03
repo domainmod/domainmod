@@ -74,7 +74,7 @@ if ($generating_test_data == "1") {
 
 } else {
 
-	$_SESSION['session_result_message'] = "Test Data Has Been Deleted<BR>";
+	$_SESSION['session_result_message'] = "The test data has been deleted<BR>";
 	header("Location: ../../system/index.php");
 
 }

@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('" . mysql_real_escape_string($new_registrar) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "Registrar Added<BR>";
+		$_SESSION['session_result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Added<BR>";
 
 		if ($_SESSION['session_first_run'] == "1") {
 
@@ -57,8 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	} else {
 	
-		if ($new_registrar == "") $_SESSION['session_result_message'] .= "Please Enter The Registrar Name<BR>";
-		if ($new_url == "") $_SESSION['session_result_message'] .= "Please Enter The Registrar's URL<BR>";
+		if ($new_registrar == "") $_SESSION['session_result_message'] .= "Please enter the registrar name<BR>";
+		if ($new_url == "") $_SESSION['session_result_message'] .= "Please enter the registrar's URL<BR>";
 
 	}
 

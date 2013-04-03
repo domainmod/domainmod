@@ -43,7 +43,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('$new_owner_id', '$new_registrar_id', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_reseller', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "Account Added<BR>";
+		$sql = "SELECT name
+				FROM registrars
+				WHERE id = '$new_registrar_id'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $temp_registrar = $row->name; }
+
+		$sql = "SELECT name
+				FROM owners
+				WHERE id = '$new_owner_id'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
+
+		$_SESSION['session_result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar, $temp_owner)</font> Added<BR>";
 
 		if ($_SESSION['session_first_run'] == "1") {
 
@@ -58,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	} else {
 	
-		if ($username == "") { $_SESSION['session_result_message'] .= "Please Enter A Username<BR>"; }
+		if ($username == "") { $_SESSION['session_result_message'] .= "Please enter a username<BR>"; }
 
 	}
 

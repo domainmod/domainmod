@@ -81,12 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$ipid = $new_ipid;
 		
-		$_SESSION['session_result_message'] = "IP Address Updated<BR>";
+		$_SESSION['session_result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Updated<BR>";
 
 	} else {
 	
-		if ($new_name == "") $_SESSION['session_result_message'] .= "Please Enter The IP Address Name<BR>";
-		if ($new_ip == "") $_SESSION['session_result_message'] .= "Please Enter The IP Address<BR>";
+		if ($new_name == "") $_SESSION['session_result_message'] .= "Please enter a name for the IP Address<BR>";
+		if ($new_ip == "") $_SESSION['session_result_message'] .= "Please enter the IP Address<BR>";
 
 	}
 
@@ -121,7 +121,7 @@ if ($del == "1") {
 	
 	if ($existing_domains > 0) {
 
-		$_SESSION['session_result_message'] = "This IP Address has domains associated with it and cannot be deleted.<BR>";
+		$_SESSION['session_result_message'] = "This IP Address has domains associated with it and cannot be deleted<BR>";
 
 	} else {
 
@@ -137,7 +137,7 @@ if ($really_del == "1") {
 			WHERE id = '$ipid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "IP Address Deleted ($new_ip)<BR>";
+	$_SESSION['session_result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Deleted<BR>";
 	
 	header("Location: ../ip-addresses.php");
 	exit;

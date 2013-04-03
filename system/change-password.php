@@ -51,22 +51,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
 		if ($_SESSION['session_running_login_checks'] == 1) {
 
-		$_SESSION['session_result_message'] .= "Your password was changed.<BR>";
+		$_SESSION['session_result_message'] .= "Your password has been changed<BR>";
 
 			header("Location: ../_includes/auth/login-checks/main.inc.php");
 			exit;
 
 		}
 
-		$_SESSION['session_result_message'] .= "Your password was changed.<BR>";
+		$_SESSION['session_result_message'] .= "Your password has been changed<BR>";
 
 		header("Location: index.php");
 		exit;
 
    } else {
 
-		$_SESSION['session_result_message'] .= "Your password could not be updated.<BR>";
-		$_SESSION['session_result_message'] .= "If the problem persists please contact your administrator.<BR>";
+		$_SESSION['session_result_message'] .= "Your password could not be updated<BR>";
+		$_SESSION['session_result_message'] .= "If the problem persists please contact your administrator<BR>";
 
    }
 
@@ -78,11 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 	
 		if ($new_password == "" && $new_password_confirmation == "") {
 		
-			$_SESSION['session_result_message'] .= "Your passwords were blank.<BR>";
+			$_SESSION['session_result_message'] .= "Your passwords were left blank<BR>";
 
 		} else {
 
-			$_SESSION['session_result_message'] .= "Your passwords didn't match.<BR>";
+			$_SESSION['session_result_message'] .= "Your passwords didn't match<BR>";
 		
 		}
 		

@@ -141,6 +141,9 @@ font.subheadline {
 	font-size: 12;
 	color: #DD0000;
 }
+font.highlight {
+	color: #DD0000;
+}
 a:link {
 	font-weight: bold;
 	color: #0066FF;
