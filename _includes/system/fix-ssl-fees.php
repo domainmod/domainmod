@@ -35,7 +35,7 @@ $sql = "UPDATE ssl_fees
 			update_time = '$current_timestamp'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-$sql = "SELECT id, ssl_provider_id, type_id, function_id
+$sql = "SELECT id, ssl_provider_id, function_id
 		FROM ssl_fees
 		WHERE fee_fixed = '0'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
@@ -47,7 +47,6 @@ while ($row = mysql_fetch_object($result)) {
 			 	 fee_fixed = '1',
 			 	 update_time = '$current_timestamp'
 			 WHERE ssl_provider_id = '$row->ssl_provider_id' 
-			   AND type_id = '$row->type_id'
 			   AND function_id = '$row->function_id'
 			   AND fee_fixed = '0'";
 	$result2 = mysql_query($sql2,$connection);
@@ -56,7 +55,6 @@ while ($row = mysql_fetch_object($result)) {
 			 SET fee_fixed = '1',
 	 		 	 update_time = '$current_timestamp'
 			 WHERE ssl_provider_id = '$row->ssl_provider_id'
-			   AND type_id = '$row->type_id'
 			   AND function_id = '$row->function_id'";
 	$result3 = mysql_query($sql3,$connection);
 	
