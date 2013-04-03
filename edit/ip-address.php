@@ -54,12 +54,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 		} else { 
 		
-			$sql = "SELECT count(*) AS total_count
+			$sql = "SELECT default_ip
 					FROM ip_addresses
-					WHERE default_ip_address = '1'";
+					WHERE default_ip = '1'
+					  AND id != '$new_ipid'";
 			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_total = $row->total_count; }
-			if ($temp_total == "0") $new_default_ip_address = "1";
+			while ($row = mysql_fetch_object($result)) { $temp_default_ip = $row->default_ip; }
+			if ($temp_default_ip == "") { $new_default_ip_address = "1"; }
 		
 		}
 

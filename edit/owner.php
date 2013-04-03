@@ -52,12 +52,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 		} else { 
 		
-			$sql = "SELECT count(*) AS total_count
+			$sql = "SELECT default_owner
 					FROM owners
-					WHERE default_owner = '1'";
+					WHERE default_owner = '1'
+					  AND id != '$new_oid'";
 			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_total = $row->total_count; }
-			if ($temp_total == "0") $new_default_owner = "1";
+			while ($row = mysql_fetch_object($result)) { $temp_default_owner = $row->default_owner; }
+			if ($temp_default_owner == "") { $new_default_owner = "1"; }
 		
 		}
 

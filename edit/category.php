@@ -53,12 +53,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 		} else { 
 		
-			$sql = "SELECT count(*) AS total_count
+			$sql = "SELECT default_category
 					FROM categories
-					WHERE default_category = '1'";
+					WHERE default_category = '1'
+					  AND id != '$new_pcid'";
 			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_total = $row->total_count; }
-			if ($temp_total == "0") $new_default_category = "1";
+			while ($row = mysql_fetch_object($result)) { $temp_default_category = $row->default_category; }
+			if ($temp_default_category == "") { $new_default_category = "1"; }
 		
 		}
 

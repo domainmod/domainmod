@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$sql = "SELECT default_currency
 					FROM currencies
 					WHERE default_currency = '1'
-					  AND currency != '$new_abbreviation'";
+					  AND id != '$new_curid'";
 			$result = mysql_query($sql,$connection);
 			while ($row = mysql_fetch_object($result)) { $temp_default_currency = $row->default_currency; }
 			if ($temp_default_currency == "") { $new_default_currency = "1"; }
@@ -76,11 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$curid = $new_curid;
 		
-		$_SESSION['session_result_message'] = "Currency <font class=\"highlight\">$new_name ($new_abbreviation)</font> Updated<BR><BR><a href=\"system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
+		$_SESSION['session_result_message'] = "Currency <font class=\"highlight\">$new_name ($new_abbreviation)</font> Updated<BR><BR><a href=\"../system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
 		
-		header("Location: ../currencies.php");
-		exit;
-
 	} else {
 	
 		if ($new_name == "") { $_SESSION['session_result_message'] .= "Please enter the currency name<BR>"; }
@@ -146,7 +143,7 @@ if ($really_del == "1") {
 			WHERE id = '$curid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "Currency <font class=\"highlight\">$new_name</font> Deleted<BR>";
+	$_SESSION['session_result_message'] = "Currency <font class=\"highlight\">$new_name ($new_abbreviation)</font> Deleted<BR>";
 	
 	header("Location: ../currencies.php");
 	exit;

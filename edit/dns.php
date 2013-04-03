@@ -62,12 +62,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 		} else { 
 		
-			$sql = "SELECT count(*) AS total_count
+			$sql = "SELECT default_dns
 					FROM dns
-					WHERE default_dns = '1'";
+					WHERE default_dns = '1'
+					  AND id != '$new_dnsid'";
 			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_total = $row->total_count; }
-			if ($temp_total == "0") $new_default_dns = "1";
+			while ($row = mysql_fetch_object($result)) { $temp_default_dns = $row->default_dns; }
+			if ($temp_default_dns == "") { $new_default_dns = "1"; }
 		
 		}
 	
