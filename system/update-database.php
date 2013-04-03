@@ -531,6 +531,46 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0003 to 2.0004
+	if ($current_db_version == 2.0003) {
+
+		$sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_types` ( 
+					`id` int(10) NOT NULL auto_increment,
+					`type` varchar(255) NOT NULL,
+					`notes` longtext NOT NULL,
+					`default_type` int(1) NOT NULL default '0',
+					`active` int(1) NOT NULL default '1',
+					`insert_time` datetime NOT NULL,
+					`update_time` datetime NOT NULL,
+					PRIMARY KEY  (`id`)
+				) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "INSERT INTO ssl_cert_types 
+					(id, type, notes, default_type, active, insert_time, update_time) 
+					SELECT id, function, notes, default_function, active, insert_time, update_time FROM ssl_cert_functions ORDER BY id;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "DROP TABLE `ssl_cert_functions`;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `ssl_certs` 
+					CHANGE `function_id` `type_id` INT(10) NOT NULL";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `ssl_fees` 
+					CHANGE `function_id` `type_id` INT(5) NOT NULL";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0004',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0004;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";

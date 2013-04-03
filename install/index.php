@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "2.0003";
+$most_recent_db_version = "2.0004";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -161,7 +161,7 @@ if (mysql_num_rows($result) > 0) {
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_fees` ( 
 				`id` int(10) NOT NULL auto_increment,
 				`ssl_provider_id` int(5) NOT NULL,
-				`function_id` int(5) NOT NULL,
+				`type_id` int(5) NOT NULL,
 				`initial_fee` float NOT NULL,
 				`renewal_fee` float NOT NULL,
 				`currency_id` int(10) NOT NULL,
@@ -206,7 +206,7 @@ if (mysql_num_rows($result) > 0) {
 				`ssl_provider_id` int(5) NOT NULL,
 				`account_id` int(5) NOT NULL,
 				`domain_id` int(10) NOT NULL,
-				`function_id` int(10) NOT NULL,
+				`type_id` int(10) NOT NULL,
 				`name` varchar(255) NOT NULL,
 				`expiry_date` date NOT NULL,
 				`fee_id` int(10) NOT NULL,
@@ -220,11 +220,11 @@ if (mysql_num_rows($result) > 0) {
 			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-	$sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_functions` ( 
+	$sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_types` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`function` varchar(255) NOT NULL,
+				`type` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
-				`default_function` int(1) NOT NULL default '0',
+				`default_type` int(1) NOT NULL default '0',
 				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -232,8 +232,8 @@ if (mysql_num_rows($result) > 0) {
 			) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-	$sql = "INSERT INTO `ssl_cert_functions` 
-			(`id`, `function`, `default_function`, `insert_time`) VALUES 
+	$sql = "INSERT INTO `ssl_cert_types` 
+			(`id`, `type`, `default_type`, `insert_time`) VALUES 
 			(1, 'Web Server SSL/TLS Certificate', 1, '$current_timestamp'),
 			(2, 'S/MIME and Authentication Certificate', 0, '$current_timestamp'),
 			(3, 'Object Code Signing Certificate', 0, '$current_timestamp'),
