@@ -24,6 +24,8 @@
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-account.php">Add A New SSL Account</a>
 <?php } elseif ($software_section == "ssl-certs") { ?>
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-cert.php">Add A New SSL Certificate</a>
+<?php } elseif ($software_section == "ssl-functions") { ?>
+ &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-function.php">Add A New SSL Function</a>
 <?php } elseif ($software_section == "categories") { ?>
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/category.php">Add A New Category</a>
 <?php } elseif ($software_section == "dns") { ?>
