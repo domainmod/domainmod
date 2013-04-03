@@ -480,6 +480,36 @@ if ($current_db_version < $most_recent_db_version) {
 		
 	}
 
+	// upgrade database from 2.0001 to 2.0002
+	if ($current_db_version == 2.0001) {
+
+		$sql = "ALTER TABLE `ssl_cert_functions` 
+					ADD `default_function` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `ssl_cert_types` 
+					ADD `default_type` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE ssl_cert_functions
+				SET default_function = '1'
+				WHERE function = 'Web Server SSL/TLS Certificate'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE ssl_cert_types
+				SET default_type = '1'
+				WHERE type = 'Wildcard'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0002',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0002;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";

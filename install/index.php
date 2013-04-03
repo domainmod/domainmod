@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "2.0001";
+$most_recent_db_version = "2.0002";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -226,6 +226,7 @@ if (mysql_num_rows($result) > 0) {
 				`id` int(10) NOT NULL auto_increment,
 				`type` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
+				`default_type` int(1) NOT NULL default '0',
 				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -234,15 +235,16 @@ if (mysql_num_rows($result) > 0) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "INSERT INTO `ssl_cert_types` 
-			(`id`, `type`, `insert_time`) VALUES 
-			(1, 'Wildcard', '$current_timestamp'),
-			(2, 'Single Host', '$current_timestamp');";
+			(`id`, `type`, `default_type`, `insert_time`) VALUES 
+			(1, 'Wildcard', 1, '$current_timestamp'),
+			(2, 'Single Host', 0, '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_functions` ( 
 				`id` int(10) NOT NULL auto_increment,
 				`function` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
+				`default_function` int(1) NOT NULL default '0',
 				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -251,11 +253,11 @@ if (mysql_num_rows($result) > 0) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "INSERT INTO `ssl_cert_functions` 
-			(`id`, `function`, `insert_time`) VALUES 
-			(1, 'Web Server SSL/TLS Certificate', '$current_timestamp'),
-			(2, 'S/MIME and Authentication Certificate', '$current_timestamp'),
-			(3, 'Object Code Signing Certificate', '$current_timestamp'),
-			(4, 'Digital ID', '$current_timestamp');";
+			(`id`, `function`, `default_function`, `insert_time`) VALUES 
+			(1, 'Web Server SSL/TLS Certificate', 1, '$current_timestamp'),
+			(2, 'S/MIME and Authentication Certificate', 0, '$current_timestamp'),
+			(3, 'Object Code Signing Certificate', 0, '$current_timestamp'),
+			(4, 'Digital ID', 0, '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `dns` ( 
