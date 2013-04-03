@@ -58,7 +58,7 @@ $number_of_functions = mysql_num_rows($result);
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/ssl-function.php?functionid=<?=$row->id?>"><?=$row->function?></a><?php if ($row->default_function == "1") echo "<a title=\"Default Function\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+		<a class="subtlelink" href="edit/ssl-function.php?sslfid=<?=$row->id?>"><?=$row->function?></a><?php if ($row->default_function == "1") echo "<a title=\"Default Function\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
 	</td>
 	<td>
     <?php
@@ -72,7 +72,7 @@ $number_of_functions = mysql_num_rows($result);
     	<?php if ($active_certs == "0") { ?>
 	        <?=number_format($active_certs)?>
         <?php } else { ?>
-	        <a class="nobold" href="ssl-certs.php?functionid=<?=$row->id?>"><?=number_format($active_certs)?></a>
+	        <a class="nobold" href="ssl-certs.php?sslfid=<?=$row->id?>"><?=number_format($active_certs)?></a>
         <?php } ?>
     </td>
 </tr>
@@ -99,13 +99,13 @@ $number_of_functions = mysql_num_rows($result);
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/ssl-function.php?pcid=<?=$row->id?>"><?=$row->function?></a><?php if ($row->default_function == "1") echo "<a title=\"Default Function\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+		<a class="subtlelink" href="edit/ssl-function.php?sslfid=<?=$row->id?>"><?=$row->function?></a><?php if ($row->default_function == "1") echo "<a title=\"Default Function\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
 	</td>
 </tr>
 <?php } ?>
 </table>
 <?php } ?>
-<BR><font color="#DD0000"><strong>*</strong></font> = Default Category
+<BR><font color="#DD0000"><strong>*</strong></font> = Default Function
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>
