@@ -1,5 +1,5 @@
 <?php
-// ssl-functions.php
+// ssl-types.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -23,8 +23,8 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 
-$page_title = "SSL Certificate Functions";
-$software_section = "ssl-functions";
+$page_title = "SSL Certificate Types";
+$software_section = "ssl-types";
 ?>
 <html>
 <head>
@@ -34,23 +34,23 @@ $software_section = "ssl-functions";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-Below is a list of all the functions of SSL certificates that are stored in the <?=$software_title?>.<BR><BR>
+Below is a list of all the types of SSL certificates that are stored in the <?=$software_title?>.<BR><BR>
 
 <?php
-$sql = "SELECT id, function, default_function
-		FROM ssl_cert_functions
-		WHERE id IN (SELECT function_id FROM ssl_certs WHERE function_id != '0' AND active NOT IN ('0') GROUP BY function_id)
-		ORDER BY default_function desc, function asc";
+$sql = "SELECT id, type, default_type
+		FROM ssl_cert_types
+		WHERE id IN (SELECT type_id FROM ssl_certs WHERE type_id != '0' AND active NOT IN ('0') GROUP BY type_id)
+		ORDER BY default_type desc, type asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
-$number_of_functions = mysql_num_rows($result);
+$number_of_types = mysql_num_rows($result);
 ?>
-<strong>Number of Active Functions:</strong> <?=$number_of_functions?>
+<strong>Number of Active Types:</strong> <?=$number_of_types?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="30">
 	<td width="325">
-   	<font class="subheadline">Function</font></td>
+   	<font class="subheadline">Type</font></td>
 	<td>
     	<font class="subheadline"># of SSL Certs</font>
     </td>
@@ -58,13 +58,13 @@ $number_of_functions = mysql_num_rows($result);
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/ssl-function.php?sslfid=<?=$row->id?>"><?=$row->function?></a><?php if ($row->default_function == "1") echo "<a title=\"Default Function\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+		<a class="subtlelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
 	</td>
 	<td>
     <?php
 	$sql2 = "SELECT count(*) AS total_count
 			 FROM ssl_certs
-			 WHERE function_id = '$row->id'
+			 WHERE type_id = '$row->id'
 			   AND active NOT IN ('0')";
 	$result2 = mysql_query($sql2,$connection);
 	while ($row2 = mysql_fetch_object($result2)) { $active_certs = $row2->total_count; }
@@ -72,7 +72,7 @@ $number_of_functions = mysql_num_rows($result);
     	<?php if ($active_certs == "0") { ?>
 	        <?=number_format($active_certs)?>
         <?php } else { ?>
-	        <a class="nobold" href="ssl-certs.php?sslfid=<?=$row->id?>"><?=number_format($active_certs)?></a>
+	        <a class="nobold" href="ssl-certs.php?ssltid=<?=$row->id?>"><?=number_format($active_certs)?></a>
         <?php } ?>
     </td>
 </tr>
@@ -81,31 +81,31 @@ $number_of_functions = mysql_num_rows($result);
 <?php } ?>
 <BR><BR>
 <?php
-$sql = "SELECT id, function, default_function
-		FROM ssl_cert_functions
-		WHERE id NOT IN (SELECT function_id FROM ssl_certs WHERE function_id != '0' AND active NOT IN ('0') GROUP BY function_id)
-		ORDER BY default_function desc, function asc";
+$sql = "SELECT id, type, default_type
+		FROM ssl_cert_types
+		WHERE id NOT IN (SELECT type_id FROM ssl_certs WHERE type_id != '0' AND active NOT IN ('0') GROUP BY type_id)
+		ORDER BY default_type desc, type asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
-$number_of_functions = mysql_num_rows($result);
+$number_of_types = mysql_num_rows($result);
 ?>
-<strong>Number of Inactive Functions:</strong> <?=$number_of_functions?>
+<strong>Number of Inactive Types:</strong> <?=$number_of_types?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="30">
 	<td width="325">
-   	<font class="subheadline">Function</font></td>
+   	<font class="subheadline">Type</font></td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/ssl-function.php?sslfid=<?=$row->id?>"><?=$row->function?></a><?php if ($row->default_function == "1") echo "<a title=\"Default Function\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+		<a class="subtlelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
 	</td>
 </tr>
 <?php } ?>
 </table>
 <?php } ?>
-<BR><font color="#DD0000"><strong>*</strong></font> = Default Function
+<BR><font color="#DD0000"><strong>*</strong></font> = Default SSL Type
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

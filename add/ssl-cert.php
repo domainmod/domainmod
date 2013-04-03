@@ -31,7 +31,7 @@ $software_section = "ssl-certs";
 // Form Variables
 $new_domain_id = $_POST['new_domain_id'];
 $new_name = $_POST['new_name'];
-$new_function_id = $_POST['new_function_id'];
+$new_type_id = $_POST['new_type_id'];
 $new_expiry_date = $_POST['new_expiry_date'];
 $new_account_id = $_POST['new_account_id'];
 $new_active = $_POST['new_active'];
@@ -39,7 +39,7 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "" && $new_function_id != "" && $new_domain_id != "") {
+	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "" && $new_type_id != "" && $new_domain_id != "") {
 
 		$sql = "SELECT ssl_provider_id, owner_id
 				FROM ssl_accounts
@@ -51,14 +51,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "SELECT id
 				FROM ssl_fees
 				WHERE ssl_provider_id = '$new_ssl_provider_id' 
-				  AND function_id = '$new_function_id'";
+				  AND type_id = '$new_type_id'";
 		$result = mysql_query($sql,$connection);
 		
 		while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
 
 		$sql = "INSERT INTO ssl_certs
-				(owner_id, ssl_provider_id, account_id, domain_id, name, function_id, expiry_date, fee_id, notes, active, insert_time) VALUES 
-				('$new_owner_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '" . mysql_real_escape_string($new_name) . "', '$new_function_id', '$new_expiry_date', '$new_fee_id', '" . mysql_real_escape_string($new_notes) . "', '$new_active', '$current_timestamp')";
+				(owner_id, ssl_provider_id, account_id, domain_id, name, type_id, expiry_date, fee_id, notes, active, insert_time) VALUES 
+				('$new_owner_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '" . mysql_real_escape_string($new_name) . "', '$new_type_id', '$new_expiry_date', '$new_fee_id', '" . mysql_real_escape_string($new_notes) . "', '$new_active', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -110,23 +110,23 @@ while ($row_domain = mysql_fetch_object($result_domain)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Function:</strong><BR><BR>
+<strong>Type:</strong><BR><BR>
 <?php
-$sql_function = "SELECT id, function
-				 FROM ssl_cert_functions
-				 WHERE active = '1'
-				 ORDER BY function asc";
-$result_function = mysql_query($sql_function,$connection) or die(mysql_error());
-echo "<select name=\"new_function_id\">";
-while ($row_function = mysql_fetch_object($result_function)) {
+$sql_type = "SELECT id, type
+			 FROM ssl_cert_types
+			 WHERE active = '1'
+			 ORDER BY type asc";
+$result_type = mysql_query($sql_type,$connection) or die(mysql_error());
+echo "<select name=\"new_type_id\">";
+while ($row_type = mysql_fetch_object($result_type)) {
 
-	if ($row_function->id == $new_function_id) {
+	if ($row_type->id == $new_type_id) {
 
-		echo "<option value=\"$row_function->id\" selected>$row_function->function</option>";
+		echo "<option value=\"$row_type->id\" selected>$row_type->type</option>";
 	
 	} else {
 
-		echo "<option value=\"$row_function->id\">$row_function->function</option>";
+		echo "<option value=\"$row_type->id\">$row_type->type</option>";
 	
 	}
 }

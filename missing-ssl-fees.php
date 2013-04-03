@@ -63,9 +63,9 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
             </td>
             <td>
                 <?php
-				$sql2 = "SELECT sslcf.function AS full_tf_string
-						FROM ssl_certs AS sslc, ssl_cert_functions AS sslcf
-						WHERE sslc.function_id = sslcf.id
+				$sql2 = "SELECT sslcf.type AS full_tf_string
+						FROM ssl_certs AS sslc, ssl_cert_types AS sslcf
+						WHERE sslc.type_id = sslcf.id
 						  AND sslc.ssl_provider_id = '$row->ssl_provider_id'
 						  AND sslc.fee_id = '0'
 						GROUP BY full_tf_string
