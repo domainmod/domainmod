@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "2.0004";
+$most_recent_db_version = "2.0005";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -226,6 +226,7 @@ if (mysql_num_rows($result) > 0) {
 				`notes` longtext NOT NULL,
 				`default_type` int(1) NOT NULL default '0',
 				`active` int(1) NOT NULL default '1',
+				`test_data` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
