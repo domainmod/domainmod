@@ -100,10 +100,10 @@ td.cell-result-message {
 td.cell-maintenance-table {
 	text-align: left;
 	vertical-align: center; 
-	border-top: 1px #DD0000 ridge;
-	border-bottom: 1px #DD0000 ridge;
-	border-right: 1px #DD0000 ridge;
-	border-left: 1px #DD0000 ridge;
+	border-top: 1px #CC0000 ridge;
+	border-bottom: 1px #CC0000 ridge;
+	border-right: 1px #CC0000 ridge;
+	border-left: 1px #CC0000 ridge;
 	font-family: Verdana, sans-serif, Arial;
 	font-weight: normal;
 	font-size: .7em;
@@ -133,19 +133,20 @@ font.headline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	font-size: 15;
-	color: #DD0000;
+	color: #CC0000;
 }
 font.subheadline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	font-size: 12;
-	color: #DD0000;
+	color: #CC0000;
+	color: #000000;
 }
 font.highlight {
-	color: #DD0000;
+	color: #CC0000;
 }
 font.default_highlight {
-	color: #DD0000;
+	color: #CC0000;
 }
 font.reseller_highlight {
 	color: #0040FF;
@@ -162,7 +163,7 @@ a:visited {
 }
 a:hover {
 	font-weight: bold;
-	color: #DD0000;
+	color: #CC0000;
 	text-decoration: none;
 }
 a:active {
@@ -183,7 +184,7 @@ a.nobold:visited {
 }
 a.nobold:hover {
 	font-weight:100;
-	color: #DD0000;
+	color: #CC0000;
 	text-decoration: none;
 }
 a.nobold:active {
