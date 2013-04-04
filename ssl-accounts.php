@@ -89,7 +89,7 @@ Below is a list of all the SSL Provider Accounts that are stored in your <?=$sof
         <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_ssl_provider_name?></a>
         </td>
         <td valign="top" width="200">
-                <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#0040FF\"><strong>*</strong></font></a>"; ?>
+                <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
         </td>
         <td colspan="2">
             <table width="100%" border="0" cellspacing="3" cellpadding="0">
@@ -181,7 +181,7 @@ if ($has_active == "1") echo "<BR>";
             <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_ssl_provider_name?></a>
             </td>
             <td valign="top" width="200">
-                    <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#0040FF\"><strong>*</strong></font></a>"; ?>
+                    <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
             </td>
             <td colspan="2">
     
@@ -214,7 +214,7 @@ if ($has_active == "1") echo "<BR>";
 <?php 
 } ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font color="#DD0000"><strong>*</strong></font> = Default Account&nbsp;&nbsp;<font color="#0040FF"><strong>*</strong></font> = Reseller Account
+		<BR><font class="default_highlight"><strong>*</strong></font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight"><strong>*</strong></font> = Reseller Account
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		You don't currently have any SSL Accounts. <a href="add/ssl-account.php">Click here to add one</a>.

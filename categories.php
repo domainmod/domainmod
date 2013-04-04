@@ -60,7 +60,7 @@ Below is a list of all the Domain Categories that are stored in your <?=$softwar
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
     <td>
 		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
@@ -118,7 +118,7 @@ if ($has_active == "1") echo "<BR>";
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
     <td>
 		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
@@ -128,7 +128,7 @@ if ($has_active == "1") echo "<BR>";
 </table>
 <?php } ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font color="#DD0000"><strong>*</strong></font> = Default Category
+		<BR><font class="default_highlight"><strong>*</strong></font> = Default Category
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		You don't currently have any Categories. <a href="add/category.php">Click here to add one</a>.

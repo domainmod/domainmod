@@ -61,7 +61,7 @@ Below is a list of all the DNS Profiles that are stored in your <?=$software_tit
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_dns == "1") echo "<a title=\"Default DNS Profile\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+		<a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_dns == "1") echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
     <td>
         <a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->number_of_servers?></a>
@@ -118,7 +118,7 @@ if ($has_active == "1") echo "<BR>";
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_dns == "1") echo "<a title=\"Default DNS Profile\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+		<a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_dns == "1") echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
     <td>
         <a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->number_of_servers?></a>
@@ -128,7 +128,7 @@ if ($has_active == "1") echo "<BR>";
 </table>
 <?php } ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font color="#DD0000"><strong>*</strong></font> = Default DNS Profile
+		<BR><font class="default_highlight"><strong>*</strong></font> = Default DNS Profile
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		You don't currently have any DNS Profiles. <a href="add/dns.php">Click here to add one</a>.

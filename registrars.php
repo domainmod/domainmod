@@ -74,7 +74,7 @@ Below is a list of all the Domain Registrars that are stored in your <?=$softwar
     
         <tr height="20">
             <td>
-                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td>
                 <?php
@@ -184,7 +184,7 @@ if ($has_active == "1") echo "<BR>";
     
         <tr height="20">
             <td>
-                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td>
                 <?php
@@ -223,7 +223,7 @@ if ($has_active == "1") echo "<BR>";
 
 } ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font color="#DD0000"><strong>*</strong></font> = Default Registrar
+		<BR><font class="default_highlight"><strong>*</strong></font> = Default Registrar
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		You don't currently have any Domain Registrars. <a href="add/owner.php">Click here to add one</a>.

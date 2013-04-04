@@ -57,7 +57,7 @@ Below is a list of all the types of SSL certificates that are stored in your <?=
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+		<a class="subtlelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font clas=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
 	<td>
     <?php
@@ -109,14 +109,14 @@ if ($has_active == "1") echo "<BR>";
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+		<a class="subtlelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
 </tr>
 <?php } ?>
 </table>
 <?php } ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font color="#DD0000"><strong>*</strong></font> = Default SSL Types
+		<BR><font class="default_highlight"><strong>*</strong></font> = Default SSL Types
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		You don't currently have any SSL Types. <a href="add/ssl-type.php">Click here to add one</a>.

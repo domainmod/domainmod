@@ -61,7 +61,7 @@ Below is a list of all the Domain Registrar and SSL Provider Account Owners that
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a>
+		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
 	</td>
 	<td>
     <?php
@@ -142,7 +142,7 @@ if ($has_active == "1") echo "<BR>";
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a>
+		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
 	</td>
 	<td>
     <?php
@@ -168,7 +168,7 @@ if ($has_active == "1") echo "<BR>";
 </table>
 <?php } ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font color="#DD0000"><strong>*</strong></font> = Default Owner
+		<BR><font class="default_highlight"><strong>*</strong></font> = Default Owner
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		You don't currently have any Owners. <a href="add/owner.php">Click here to add one</a>.

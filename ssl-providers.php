@@ -64,7 +64,7 @@ Below is a list of all the SSL Certificate Providers that are stored in your <?=
 
         <tr height="20">
             <td>
-                <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td>
                 <?php
@@ -143,7 +143,7 @@ if ($has_active == "1") echo "<BR>";
     
             <tr height="20">
                 <td>
-                    <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
+                    <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
                 </td>
                 <td>
                     <?php
@@ -175,7 +175,7 @@ if ($has_active == "1") echo "<BR>";
 <?php 
 } ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font color="#DD0000"><strong>*</strong></font> = Default SSL Provider
+		<BR><font class="default_highlight"><strong>*</strong></font> = Default SSL Provider
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		You don't currently have any SSL Providers. <a href="add/ssl-provider.php">Click here to add one</a>.

@@ -95,7 +95,7 @@ Below is a list of all the Domain Registrar Accounts that are stored in your <?=
 				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
 			</td>
 			<td valign="top">
-				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#0040FF\"><strong>*</strong></font></a>"; ?>
+				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
 			</td>
 			<td>
 				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
@@ -171,7 +171,7 @@ if ($has_active == "1") echo "<BR>";
                 <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
             </td>
             <td valign="top" width="200">
-                    <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#0040FF\"><strong>*</strong></font></a>"; ?>
+                    <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
             </td>
             <td width="200">
                 <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
@@ -189,7 +189,7 @@ if ($has_active == "1") echo "<BR>";
 
 } ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font color="#DD0000"><strong>*</strong></font> = Default Account&nbsp;&nbsp;<font color="#0040FF"><strong>*</strong></font> = Reseller Account
+		<BR><font class="default_highlight"><strong>*</strong></font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight"><strong>*</strong></font> = Reseller Account
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		You don't currently have any Registrar Accounts. <a href="add/account.php">Click here to add one</a>.

@@ -64,7 +64,7 @@ Conversion rates are based on your system's default currency, which can be set b
 while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/currency.php?curid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_currency == 1) echo "<a title=\"Default Currency\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+		<a class="subtlelink" href="edit/currency.php?curid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_currency == 1) echo "<a title=\"Default Currency\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 <?php if ($row->currency == $_SESSION['session_default_currency']) echo ""; ?>
 	</td>
     <td>
@@ -78,7 +78,7 @@ while ($row = mysql_fetch_object($result)) { ?>
 </table>
 <?php } ?>
 <?php if ($has_active) { ?>
-		<BR><font color="#DD0000"><strong>*</strong></font> = Default Currency (for rate conversions, reporting, etc.)
+		<BR><font class="default_highlight"><strong>*</strong></font> = Default Currency (for rate conversions, reporting, etc.)
 <?php } ?>
 <?php if (!$has_active) { ?>
 		You don't currently have any Currencies. <a href="add/currency.php">Click here to add one</a>.

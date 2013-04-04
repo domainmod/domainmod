@@ -144,6 +144,12 @@ font.subheadline {
 font.highlight {
 	color: #DD0000;
 }
+font.default_highlight {
+	color: #DD0000;
+}
+font.reseller_highlight {
+	color: #0040FF;
+}
 a:link {
 	font-weight: bold;
 	color: #0066FF;

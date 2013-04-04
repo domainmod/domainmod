@@ -80,7 +80,7 @@ if (mysql_num_rows($result) > 0) { ?>
     
             <tr height="20">
                 <td>
-                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a>
+                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
                 </td>
                 <td>
                     <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
@@ -126,7 +126,7 @@ if (mysql_num_rows($result) > 0) { ?>
     
             <tr height="20">
                 <td>
-                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a>
+                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
                 </td>
                 <td>
                     <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
@@ -141,7 +141,7 @@ if (mysql_num_rows($result) > 0) { ?>
 	</table>
 	<?php 
 } ?>
-<BR><font color="#DD0000"><strong>*</strong></font> = Admin Account
+<BR><font class="default_highlight"><strong>*</strong></font> = Admin Account
 <?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>
