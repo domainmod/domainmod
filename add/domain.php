@@ -137,7 +137,7 @@ echo "</select>";
 $sql_dns = "SELECT id, name
 			FROM dns
 			WHERE active = '1'
-			ORDER BY name asc";
+			ORDER BY default_dns desc, name asc";
 $result_dns = mysql_query($sql_dns,$connection) or die(mysql_error());
 echo "<select name=\"new_dns_id\">";
 while ($row_dns = mysql_fetch_object($result_dns)) {
@@ -159,7 +159,7 @@ echo "</select>";
 <?php
 $sql_ip = "SELECT id, name, ip
 		   FROM ip_addresses
-		   ORDER BY name asc, ip asc";
+		   ORDER BY default_ip_address desc, name asc, ip asc";
 $result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
 echo "<select name=\"new_ip_id\">";
 
@@ -185,7 +185,7 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
 				WHERE ra.owner_id = o.id
 				  AND ra.registrar_id = r.id
 				  AND ra.active = '1'
-				ORDER BY r_name asc, o_name asc, ra.username asc";
+				ORDER BY ra.default_account desc, r_name asc, o_name asc, ra.username asc";
 $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysql_fetch_object($result_account)) {

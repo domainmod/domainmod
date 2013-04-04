@@ -110,12 +110,37 @@ while ($row_domain = mysql_fetch_object($result_domain)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Type:</strong><BR><BR>
+<strong>SSL Provider Account:</strong><BR><BR>
+<?php
+$sql_account = "SELECT sslpa.id, sslpa.username, o.name as o_name, sslp.name as sslp_name
+				FROM ssl_accounts as sslpa, owners as o, ssl_providers as sslp
+				WHERE sslpa.owner_id = o.id
+				  AND sslpa.ssl_provider_id = sslp.id
+				  AND sslpa.active = '1'
+				ORDER BY sslpa.default_account desc, sslp_name asc, o_name asc, sslpa.username asc";
+$result_account = mysql_query($sql_account,$connection) or die(mysql_error());
+echo "<select name=\"new_account_id\">";
+while ($row_account = mysql_fetch_object($result_account)) {
+
+	if ($row_account->id == $new_account_id) {
+
+		echo "<option value=\"$row_account->id\" selected>[ $row_account->sslp_name :: $row_account->o_name :: $row_account->username ]</option>";
+	
+	} else {
+
+		echo "<option value=\"$row_account->id\">$row_account->sslp_name :: $row_account->o_name :: $row_account->username</option>";
+	
+	}
+}
+echo "</select>";
+?>
+<BR><BR>
+<strong>Certificate Type:</strong><BR><BR>
 <?php
 $sql_type = "SELECT id, type
 			 FROM ssl_cert_types
 			 WHERE active = '1'
-			 ORDER BY type asc";
+			 ORDER BY default_type desc, type asc";
 $result_type = mysql_query($sql_type,$connection) or die(mysql_error());
 echo "<select name=\"new_type_id\">";
 while ($row_type = mysql_fetch_object($result_type)) {
@@ -135,31 +160,6 @@ echo "</select>";
 <BR><BR>
 <strong>Expiry Date (YYYY-MM-DD):</strong><BR><BR>
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
-<BR><BR>
-<strong>SSL Provider Account:</strong><BR><BR>
-<?php
-$sql_account = "SELECT sslpa.id, sslpa.username, o.name as o_name, sslp.name as sslp_name
-				FROM ssl_accounts as sslpa, owners as o, ssl_providers as sslp
-				WHERE sslpa.owner_id = o.id
-				  AND sslpa.ssl_provider_id = sslp.id
-				  AND sslpa.active = '1'
-				ORDER BY sslp_name asc, o_name asc, sslpa.username asc";
-$result_account = mysql_query($sql_account,$connection) or die(mysql_error());
-echo "<select name=\"new_account_id\">";
-while ($row_account = mysql_fetch_object($result_account)) {
-
-	if ($row_account->id == $new_account_id) {
-
-		echo "<option value=\"$row_account->id\" selected>[ $row_account->sslp_name :: $row_account->o_name :: $row_account->username ]</option>";
-	
-	} else {
-
-		echo "<option value=\"$row_account->id\">$row_account->sslp_name :: $row_account->o_name :: $row_account->username</option>";
-	
-	}
-}
-echo "</select>";
-?>
 <BR><BR>
 <strong>Certificate Status:</strong><BR><BR>
 <?php
