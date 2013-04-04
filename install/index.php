@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "2.0005";
+$most_recent_db_version = "2.0006";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -190,7 +190,7 @@ if (mysql_num_rows($result) > 0) {
 				`status_notes` longtext NOT NULL,
 				`notes` longtext NOT NULL,
 				`privacy` int(1) NOT NULL default '0',
-				`active` int(1) NOT NULL default '1',
+				`active` int(2) NOT NULL default '1',
 				`test_data` int(1) NOT NULL default '0',
 				`fee_fixed` int(1) NOT NULL,
 				`insert_time` datetime NOT NULL,
@@ -351,6 +351,7 @@ if (mysql_num_rows($result) > 0) {
 				`rdns` varchar(255) NOT NULL default '-',
 				`notes` longtext NOT NULL,
 				`default_ip_address` int(1) NOT NULL default '0',
+				`active` int(1) NOT NULL default '1',
 				`test_data` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
