@@ -35,7 +35,7 @@ $software_section = "registrars";
 <body>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT r.id AS rid, r.name AS rname, r.url
+$sql = "SELECT r.id AS rid, r.name AS rname, r.default_registrar, r.url
 		FROM registrars AS r, domains AS d
 		WHERE r.id = d.registrar_id
 		  AND r.active = '1'
@@ -74,7 +74,7 @@ Below is a list of all the Domain Registrars that are stored in your <?=$softwar
     
         <tr height="20">
             <td>
-                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td>
                 <?php
@@ -141,7 +141,7 @@ $exclude_registrar_string = substr($exclude_registrar_string_raw, 0, -2);
 
 if ($exclude_registrar_string == "") {
 
-	$sql = "SELECT r.id AS rid, r.name AS rname, r.url
+	$sql = "SELECT r.id AS rid, r.name AS rname, r.default_registrar, r.url
 			FROM registrars AS r
 			WHERE r.id
 			  AND r.active = '1'
@@ -150,7 +150,7 @@ if ($exclude_registrar_string == "") {
 
 } else {
 	
-	$sql = "SELECT r.id AS rid, r.name AS rname, r.url
+	$sql = "SELECT r.id AS rid, r.name AS rname, r.default_registrar, r.url
 			FROM registrars AS r
 			WHERE r.id
 			  AND r.active = '1'
@@ -184,7 +184,7 @@ if ($has_active == "1") echo "<BR>";
     
         <tr height="20">
             <td>
-                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td>
                 <?php

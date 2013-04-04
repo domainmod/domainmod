@@ -40,10 +40,30 @@ $new_username = $_POST['new_username'];
 $new_reseller = $_POST['new_reseller'];
 $new_notes = $_POST['new_notes'];
 $new_sslpaid = $_POST['new_sslpaid'];
+$new_default_account = $_POST['new_default_account'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_username != "") {
+
+		if ($new_default_account == "1") {
+			
+			$sql = "UPDATE ssl_accounts
+					SET default_account = '0',
+					    update_time = '$current_timestamp'";
+			$result = mysql_query($sql,$connection);
+			
+		} else { 
+		
+			$sql = "SELECT default_account
+					FROM ssl_accounts
+					WHERE default_account = '1'
+					  AND id != '$new_sslpaid'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) { $temp_default_account = $row->default_account; }
+			if ($temp_default_account == "") { $new_default_account = "1"; }
+		
+		}
 
 		$sql = "UPDATE ssl_accounts
 				SET owner_id = '$new_owner_id',
@@ -51,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					username = '" . mysql_real_escape_string($new_username) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					reseller = '$new_reseller',
+					default_account = '$new_default_account',
 					update_time = '$current_timestamp'
 				WHERE id = '$new_sslpaid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -79,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT owner_id, ssl_provider_id, username, notes, reseller
+	$sql = "SELECT owner_id, ssl_provider_id, username, notes, reseller, default_account
 			FROM ssl_accounts
 			WHERE id = '$sslpaid'";
 	$result = mysql_query($sql,$connection);
@@ -91,6 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_username = $row->username;
 		$new_notes = $row->notes;
 		$new_reseller = $row->reseller;
+		$new_default_account = $row->default_account;
 	
 	}
 
@@ -210,6 +232,9 @@ echo "</select>";
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+<BR><BR>
+<strong>Default SSL Account?:</strong>&nbsp;
+<input name="new_default_account" type="checkbox" value="1"<?php if ($new_default_account == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_sslpaid" value="<?=$sslpaid?>">
 <input type="submit" name="button" value="Update This SSL Provider Account &raquo;">

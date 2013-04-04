@@ -45,7 +45,7 @@ if ($rid != "") { $rid_string = " AND ra.registrar_id = '$rid' "; } else { $rid_
 if ($raid != "") { $raid_string = " AND ra.id = '$raid' "; } else { $raid_string = ""; }
 if ($oid != "") { $oid_string = " AND ra.owner_id = '$oid' "; } else { $oid_string = ""; }
 
-$sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
+$sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, ra.default_account, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
 		FROM registrar_accounts AS ra, owners AS o, registrars AS r, domains AS d
 		WHERE ra.active = '1'
 		  AND ra.owner_id = o.id
@@ -95,7 +95,7 @@ Below is a list of all the Domain Registrar Accounts that are stored in your <?=
 				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
 			</td>
 			<td valign="top">
-				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#0040FF\"><strong>*</strong></font></a>"; ?>
 			</td>
 			<td>
 				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
@@ -127,7 +127,7 @@ $exclude_account_string = substr($exclude_account_string_raw, 0, -2);
 
 if ($exclude_account_string != "") { $raid_string = " AND ra.id not in ($exclude_account_string) "; } else { $raid_string = ""; }
 
-$sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
+$sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, ra.default_account, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
 		FROM registrar_accounts AS ra, owners AS o, registrars AS r
 		WHERE ra.active = '1'
 		  AND ra.owner_id = o.id
@@ -171,7 +171,7 @@ if ($has_active == "1") echo "<BR>";
                 <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
             </td>
             <td valign="top" width="200">
-                    <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+                    <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#0040FF\"><strong>*</strong></font></a>"; ?>
             </td>
             <td width="200">
                 <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
@@ -189,7 +189,7 @@ if ($has_active == "1") echo "<BR>";
 
 } ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font color="#DD0000"><strong>*</strong></font> = Reseller Account
+		<BR><font color="#DD0000"><strong>*</strong></font> = Default Account&nbsp;&nbsp;<font color="#0040FF"><strong>*</strong></font> = Reseller Account
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		You don't currently have any Registrar Accounts. <a href="add/account.php">Click here to add one</a>.

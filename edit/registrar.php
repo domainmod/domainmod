@@ -44,15 +44,36 @@ $new_renewal_fee = $_POST['new_renewal_fee'];
 $new_currency_id = $_POST['new_currency_id'];
 $IS_SUBMITTED_FEE = $_POST['IS_SUBMITTED_FEE'];
 $new_rid = $_POST['new_rid'];
+$new_default_registrar = $_POST['new_default_registrar'];
 
 if ($IS_SUBMITTED_REGISTRAR == "1") {
 
 	if ($new_registrar != "" && $new_url != "") {
 
+		if ($new_default_registrar == "1") {
+
+			$sql = "UPDATE registrars
+					SET default_registrar = '0',
+					    update_time = '$current_timestamp'";
+			$result = mysql_query($sql,$connection);
+			
+		} else { 
+		
+			$sql = "SELECT default_registrar
+					FROM registrars
+					WHERE default_registrar = '1'
+					  AND id != '$new_rid'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) { $temp_default_registrar = $row->default_registrar; }
+			if ($temp_default_registrar == "") { $new_default_registrar = "1"; }
+		
+		}
+
 		$sql = "UPDATE registrars
 				SET name = '" . mysql_real_escape_string($new_registrar) . "', 
 					url = '" . mysql_real_escape_string($new_url) . "', 
 					notes = '" . mysql_real_escape_string($new_notes) . "',
+					default_registrar = '$new_default_registrar',
 					update_time = '$current_timestamp'
 				WHERE id = '$new_rid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -190,7 +211,7 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 
 include("../_includes/system/check-for-missing-domain-fees.inc.php");
 
-$sql = "SELECT name, url, notes
+$sql = "SELECT name, url, notes, default_registrar
 		FROM registrars
 		WHERE id = '$rid'";
 $result = mysql_query($sql,$connection);
@@ -200,6 +221,7 @@ while ($row = mysql_fetch_object($result)) {
 	$new_registrar = $row->name;
 	$new_url = $row->url;
 	$new_notes = $row->notes;
+	$new_default_registrar = $row->default_registrar;
 
 }
 if ($del == "1") {
@@ -273,6 +295,9 @@ if ($really_del == "1") {
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+<BR><BR>
+<strong>Default Registrar?:</strong>&nbsp;
+<input name="new_default_registrar" type="checkbox" value="1"<?php if ($new_default_registrar == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_rid" value="<?=$rid?>">
 <input type="hidden" name="IS_SUBMITTED_REGISTRAR" value="1">

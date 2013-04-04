@@ -35,7 +35,7 @@ $software_section = "ssl-providers";
 <body>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT id, name, url
+$sql = "SELECT id, name, url, default_provider
 		FROM ssl_providers
 		WHERE id IN (SELECT ssl_provider_id FROM ssl_certs WHERE ssl_provider_id != '0' AND active != '0' GROUP BY ssl_provider_id)
 		ORDER BY name asc";
@@ -64,7 +64,7 @@ Below is a list of all the SSL Certificate Providers that are stored in your <?=
 
         <tr height="20">
             <td>
-                <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td>
                 <?php
@@ -117,7 +117,7 @@ Below is a list of all the SSL Certificate Providers that are stored in your <?=
 } ?>
 
 <?php
-$sql = "SELECT id, name, url
+$sql = "SELECT id, name, url, default_provider
 		FROM ssl_providers
 		WHERE id NOT IN (SELECT ssl_provider_id FROM ssl_certs WHERE ssl_provider_id != '0' AND active != '0' GROUP BY ssl_provider_id)
 		ORDER BY name asc";
@@ -143,7 +143,7 @@ if ($has_active == "1") echo "<BR>";
     
             <tr height="20">
                 <td>
-                    <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
+                    <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
                 </td>
                 <td>
                     <?php

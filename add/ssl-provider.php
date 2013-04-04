@@ -31,14 +31,33 @@ $software_section = "ssl-providers";
 $new_ssl_provider = $_POST['new_ssl_provider'];
 $new_url = $_POST['new_url'];
 $new_notes = $_POST['new_notes'];
+$new_default_provider = $_POST['new_default_provider'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_ssl_provider != "" && $new_url != "") {
 
+		if ($new_default_provider == "1") {
+			
+			$sql = "UPDATE ssl_providers 
+					SET default_provider = '0',
+						update_time = '$current_timestamp'";
+			$result = mysql_query($sql,$connection);
+			
+		} else { 
+		
+			$sql = "SELECT count(*) as total_count
+					FROM ssl_providers
+					WHERE default_provider = '1'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) { $temp_total = $row->total_count; }
+			if ($temp_total == "0") $new_default_provider = "1";
+		
+		}
+
 		$sql = "INSERT INTO ssl_providers
-				(name, url, notes, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_ssl_provider) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
+				(name, url, notes, default_provider, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_ssl_provider) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_provider', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Added<BR>";
@@ -72,6 +91,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+<BR><BR>
+<strong>Default SSL Provider?:</strong>&nbsp;
+<input name="new_default_provider" type="checkbox" id="new_default_provider" value="1">
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This SSL Provider &raquo;">
 </form>

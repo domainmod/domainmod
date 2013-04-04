@@ -43,7 +43,7 @@ $oid = $_GET['oid'];
 if ($sslpid != "") { $sslpid_string = " and ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
 if ($oid != "") { $oid_string = " and owner_id = '$oid' "; } else { $oid_string = ""; }
 
-$sql = "SELECT id, username, owner_id, ssl_provider_id, reseller
+$sql = "SELECT id, username, owner_id, ssl_provider_id, reseller, default_account
 		FROM ssl_accounts
 		WHERE id IN (SELECT account_id FROM ssl_certs WHERE account_id != '0' AND active = '1' GROUP BY account_id)
 		  $sslpid_string
@@ -58,14 +58,14 @@ Below is a list of all the SSL Provider Accounts that are stored in your <?=$sof
 <BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
+        <td width="250">
+            <font class="subheadline">SSL Provider</font>
+        </td>
         <td width="200">
             <font class="subheadline">Account/Username</font>
         </td>
         <td width="250">
             <font class="subheadline">Owner</font>
-        </td>
-        <td width="250">
-            <font class="subheadline">SSL Provider</font>
         </td>
         <td>
             <font class="subheadline"># of Certs</font>
@@ -75,10 +75,23 @@ Below is a list of all the SSL Provider Accounts that are stored in your <?=$sof
 	<?php 
     while ($row = mysql_fetch_object($result)) { ?>
     <tr height="20">
-        <td valign="top" width="200">
-                <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+        <td width="250">
+        <?php
+        $sql2 = "SELECT id, name
+                 FROM ssl_providers
+                 WHERE id = '$row->ssl_provider_id'";
+        $result2 = mysql_query($sql2,$connection) or die(mysql_error());
+        while ($row2 = mysql_fetch_object($result2)) {
+            $temp_id = $row2->id;
+            $temp_ssl_provider_name = $row2->name;
+        }
+        ?>
+        <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_ssl_provider_name?></a>
         </td>
-        <td colspan="3">
+        <td valign="top" width="200">
+                <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#0040FF\"><strong>*</strong></font></a>"; ?>
+        </td>
+        <td colspan="2">
             <table width="100%" border="0" cellspacing="3" cellpadding="0">
                 <tr>
                     <td width="244">
@@ -93,19 +106,6 @@ Below is a list of all the SSL Provider Accounts that are stored in your <?=$sof
                     }
                     ?>
                     <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_owner_name?></a>
-                    </td>
-                    <td width="250">
-                    <?php
-                    $sql2 = "SELECT id, name
-                             FROM ssl_providers
-                             WHERE id = '$row->ssl_provider_id'";
-                    $result2 = mysql_query($sql2,$connection) or die(mysql_error());
-                    while ($row2 = mysql_fetch_object($result2)) {
-                        $temp_id = $row2->id;
-                        $temp_ssl_provider_name = $row2->name;
-                    }
-                    ?>
-                    <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_ssl_provider_name?></a>
                     </td>
                     <td>
                     <?php
@@ -134,7 +134,7 @@ Below is a list of all the SSL Provider Accounts that are stored in your <?=$sof
 <?php 
 } ?>
 <?php
-$sql = "SELECT id, username, owner_id, ssl_provider_id, reseller
+$sql = "SELECT id, username, owner_id, ssl_provider_id, reseller, default_account
 		FROM ssl_accounts
 		WHERE id NOT IN (SELECT account_id FROM ssl_certs WHERE account_id != '0' AND active = '1' GROUP BY account_id)
 		  $sslpid_string
@@ -149,14 +149,14 @@ if ($has_active == "1") echo "<BR>";
     <strong>Number of Inactive Accounts:</strong> <?=mysql_num_rows($result)?><BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr height="20">
+            <td width="250">
+                <font class="subheadline">SSL Provider</font>
+            </td>
             <td width="200">
                 <font class="subheadline">Account/Username</font>
             </td>
             <td width="250">
                 <font class="subheadline">Owner</font>
-            </td>
-            <td width="250">
-                <font class="subheadline">SSL Provider</font>
             </td>
             <td>&nbsp;
                 
@@ -167,10 +167,23 @@ if ($has_active == "1") echo "<BR>";
     while ($row = mysql_fetch_object($result)) { ?>
     
         <tr height="20">
-            <td valign="top" width="200">
-                    <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?>
+            <td width="250">
+            <?php
+            $sql2 = "SELECT id, name
+                     FROM ssl_providers
+                     WHERE id = '$row->ssl_provider_id'";
+            $result2 = mysql_query($sql2,$connection) or die(mysql_error());
+            while ($row2 = mysql_fetch_object($result2)) {
+                $temp_id = $row2->id;
+                $temp_ssl_provider_name = $row2->name;
+            }
+            ?>
+            <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_ssl_provider_name?></a>
             </td>
-            <td colspan="3">
+            <td valign="top" width="200">
+                    <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font color=\"#0040FF\"><strong>*</strong></font></a>"; ?>
+            </td>
+            <td colspan="2">
     
                 <table width="100%" border="0" cellspacing="3" cellpadding="0">
                     <tr>
@@ -187,19 +200,6 @@ if ($has_active == "1") echo "<BR>";
                         ?>
                         <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_owner_name?></a>
                         </td>
-                        <td width="250">
-                        <?php
-                        $sql2 = "SELECT id, name
-                                 FROM ssl_providers
-                                 WHERE id = '$row->ssl_provider_id'";
-                        $result2 = mysql_query($sql2,$connection) or die(mysql_error());
-                        while ($row2 = mysql_fetch_object($result2)) {
-                            $temp_id = $row2->id;
-                            $temp_ssl_provider_name = $row2->name;
-                        }
-                        ?>
-                        <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_ssl_provider_name?></a>
-                        </td>
                         <td>&nbsp;
                             
                         </td>
@@ -214,7 +214,7 @@ if ($has_active == "1") echo "<BR>";
 <?php 
 } ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font color="#DD0000"><strong>*</strong></font> = Reseller Account
+		<BR><font color="#DD0000"><strong>*</strong></font> = Default Account&nbsp;&nbsp;<font color="#0040FF"><strong>*</strong></font> = Reseller Account
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		You don't currently have any SSL Accounts. <a href="add/ssl-account.php">Click here to add one</a>.

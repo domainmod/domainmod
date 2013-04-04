@@ -33,14 +33,33 @@ $new_ssl_provider_id = $_POST['new_ssl_provider_id'];
 $new_username = $_POST['new_username'];
 $new_reseller = $_POST['new_reseller'];
 $new_notes = $_POST['new_notes'];
+$new_default_account = $_POST['new_default_account'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_username != "") {
 
+		if ($new_default_account == "1") {
+			
+			$sql = "UPDATE ssl_accounts
+					SET default_account = '0',
+						update_time = '$current_timestamp'";
+			$result = mysql_query($sql,$connection);
+			
+		} else { 
+		
+			$sql = "SELECT count(*) as total_count
+					FROM ssl_accounts
+					WHERE default_account = '1'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) { $temp_total = $row->total_count; }
+			if ($temp_total == "0") $new_default_account = "1";
+		
+		}
+
 		$sql = "INSERT into ssl_accounts
-				(owner_id, ssl_provider_id, username, notes, reseller, insert_time) VALUES 
-				('$new_owner_id', '$new_ssl_provider_id', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_reseller', '$current_timestamp')";
+				(owner_id, ssl_provider_id, username, notes, reseller, default_account, insert_time) VALUES 
+				('$new_owner_id', '$new_ssl_provider_id', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_reseller', '$new_default_account', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "SELECT name
@@ -135,6 +154,9 @@ echo "</select>";
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?>
 </textarea>
+<BR><BR>
+<strong>Default Account?:</strong>&nbsp;
+<input name="new_default_account" type="checkbox" id="new_default_account" value="1">
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This SSL Provider Account &raquo;">
 </form>

@@ -31,14 +31,33 @@ $software_section = "registrars";
 $new_registrar = $_POST['new_registrar'];
 $new_url = $_POST['new_url'];
 $new_notes = $_POST['new_notes'];
+$new_default_registrar = $_POST['new_default_registrar'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_registrar != "" && $new_url != "") {
 
+		if ($new_default_registrar == "1") {
+			
+			$sql = "UPDATE registrars
+					SET default_registrar = '0',
+						update_time = '$current_timestamp'";
+			$result = mysql_query($sql,$connection);
+			
+		} else { 
+		
+			$sql = "SELECT count(*) as total_count
+					FROM registrars
+					WHERE default_registrar = '1'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) { $temp_total = $row->total_count; }
+			if ($temp_total == "0") $new_default_registrar = "1";
+		
+		}
+
 		$sql = "INSERT INTO registrars
-				(name, url, notes, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_registrar) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
+				(name, url, notes, default_registrar, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_registrar) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_registrar', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Added<BR>";
@@ -81,6 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+<BR><BR>
+<strong>Default Registrar?:</strong>&nbsp;
+<input name="new_default_registrar" type="checkbox" id="new_default_registrar" value="1">
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This Registrar &raquo;">
 </form>
