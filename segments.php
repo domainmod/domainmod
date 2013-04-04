@@ -56,16 +56,12 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 Segments identify a specific subset of domains, which can be used to help filter and manage your <a href="domains.php">domain results</a>.
 <BR><BR>
-<strong>Number of Active Segments:</strong> <?=mysql_num_rows($result)?>
-
 <?php 
 if (mysql_num_rows($result) > 0) { ?>
-
-    <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="5">
     <tr height="30">
         <td width="250">
-            <font class="subheadline">Segment Name</font>
+            <font class="subheadline">Segments (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td width="350">
             <font class="subheadline">Segment Description</font>
