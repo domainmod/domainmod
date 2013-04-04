@@ -607,6 +607,34 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0006 to 2.0007
+	if ($current_db_version == 2.0006) {
+
+		$sql = "ALTER TABLE `registrars` 
+					ADD `default_registrar` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `registrar_accounts` 
+					ADD `default_account` INT(1) NOT NULL DEFAULT '0' AFTER `reseller`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `ssl_providers` 
+					ADD `default_provider` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `ssl_accounts` 
+					ADD `default_account` INT(1) NOT NULL DEFAULT '0' AFTER `reseller`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0007',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0007;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";

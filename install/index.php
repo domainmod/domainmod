@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "2.0006";
+$most_recent_db_version = "2.0007";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -275,6 +275,7 @@ if (mysql_num_rows($result) > 0) {
 				`name` varchar(255) NOT NULL,
 				`url` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
+				`default_registrar` int(1) NOT NULL default '0',
 				`active` int(1) NOT NULL default '1',
 				`test_data` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
@@ -289,6 +290,7 @@ if (mysql_num_rows($result) > 0) {
 				`name` varchar(255) NOT NULL,
 				`url` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
+				`default_provider` int(1) NOT NULL default '0',
 				`active` int(1) NOT NULL default '1',
 				`test_data` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
@@ -304,6 +306,7 @@ if (mysql_num_rows($result) > 0) {
 				`username` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
 				`reseller` int(1) NOT NULL default '0',
+				`default_account` int(1) NOT NULL default '0',
 				`active` int(1) NOT NULL default '1',
 				`test_data` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
@@ -320,6 +323,7 @@ if (mysql_num_rows($result) > 0) {
 				`username` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
 				`reseller` int(1) NOT NULL default '0',
+				`default_account` int(1) NOT NULL default '0',
 				`active` int(1) NOT NULL default '1',
 				`test_data` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
