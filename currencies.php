@@ -38,7 +38,7 @@ $software_section = "currencies";
 $sql = "SELECT id, currency, name, conversion, default_currency
 		FROM currencies
 		WHERE active = '1'
-		ORDER BY default_currency desc, name asc";
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection);
 ?>
 The below conversion rates are used for accounting and reporting purposes, and at the very least they should be updated before you export your domains or SSL certificates.<BR><BR>

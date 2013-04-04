@@ -38,7 +38,7 @@ $software_section = "owners";
 $sql = "SELECT id, name, default_owner
 		FROM owners
 		WHERE id IN (SELECT owner_id FROM domains WHERE owner_id != '0' AND active NOT IN ('0','10') GROUP BY owner_id)
-		ORDER BY default_owner desc, name asc";
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 Below is a list of all the Domain Registrar and SSL Provider Account Owners that are stored in your <?=$software_title?>.<BR><BR>
@@ -113,14 +113,14 @@ if ($has_active == "1") {
 	$sql = "SELECT id, name, default_owner
 			FROM owners
 			WHERE id NOT IN (SELECT owner_id FROM domains WHERE owner_id != '0' AND active NOT IN ('0','10') GROUP BY owner_id)
-			ORDER BY default_owner desc, name asc";
+			ORDER BY name asc";
 
 } else {
 	
 	$sql = "SELECT id, name, default_owner
 			FROM owners
 			WHERE active = '1'
-			ORDER BY default_owner desc, name asc";
+			ORDER BY name asc";
 	
 }
 $result = mysql_query($sql,$connection) or die(mysql_error());

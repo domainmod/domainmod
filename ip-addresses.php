@@ -38,7 +38,7 @@ $software_section = "ip-addresses";
 $sql = "SELECT id, name, ip, rdns, default_ip_address
 		FROM ip_addresses
 		WHERE id IN (SELECT ip_id FROM domains WHERE ip_id != '0' AND active NOT IN ('0','10') GROUP BY ip_id)
-		ORDER BY default_ip_address desc, name asc";
+		ORDER BY name asc";
 $result = mysql_query($sql,$connection);
 ?>
 Below is a list of all the IP Addresses that are stored in your <?=$software_title?>.<BR><BR>
@@ -101,14 +101,14 @@ if ($has_active == "1") {
 	$sql = "SELECT id, name, ip, rdns, default_ip_address
 			FROM ip_addresses
 			WHERE id NOT IN (SELECT ip_id FROM domains WHERE ip_id != '0' AND active NOT IN ('0','10') GROUP BY ip_id)
-			ORDER BY default_ip_address desc, name asc";
+			ORDER BY name asc";
 
 } else {
 	
 	$sql = "SELECT id, name, ip, rdns, default_ip_address
 			FROM ip_addresses
 			WHERE active = '1'
-			ORDER BY default_ip_address desc, name asc";
+			ORDER BY name asc";
 	
 }
 $result = mysql_query($sql,$connection);

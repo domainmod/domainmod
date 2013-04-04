@@ -38,7 +38,7 @@ $software_section = "ssl-types";
 $sql = "SELECT id, type, default_type
 		FROM ssl_cert_types
 		WHERE id IN (SELECT type_id FROM ssl_certs WHERE type_id != '0' AND active NOT IN ('0') GROUP BY type_id)
-		ORDER BY default_type desc, type asc";
+		ORDER BY type asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 Below is a list of all the types of SSL certificates that are stored in your <?=$software_title?>.<BR><BR>
@@ -84,14 +84,14 @@ if ($has_active == "1") {
 	$sql = "SELECT id, type, default_type
 			FROM ssl_cert_types
 			WHERE id NOT IN (SELECT type_id FROM ssl_certs WHERE type_id != '0' AND active NOT IN ('0') GROUP BY type_id)
-			ORDER BY default_type desc, type asc";
+			ORDER BY type asc";
 
 } else {
 	
 	$sql = "SELECT id, type, default_type
 			FROM ssl_cert_types
 			WHERE active = '1'
-			ORDER BY default_type desc, type asc";
+			ORDER BY type asc";
 	
 }
 $result = mysql_query($sql,$connection) or die(mysql_error());
