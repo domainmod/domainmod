@@ -59,7 +59,7 @@ while ($row = mysql_fetch_object($result)) {
 
 		$_SESSION['session_result_message'] .= "You're trying to edit an invalid user<BR>";
 
-		header("Location: ../list-users.php");
+		header("Location: ../users.php");
 		exit;
 		
 	}
@@ -164,7 +164,7 @@ if ($really_del == "1") {
 	
 	$_SESSION['session_result_message'] = "User <font class=\"highlight\">$new_first_name $new_last_name ($new_username)</font> Deleted<BR>";
 	
-	header("Location: ../list-users.php");
+	header("Location: ../users.php");
 	exit;
 
 }

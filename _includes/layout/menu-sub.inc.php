@@ -51,7 +51,7 @@
              &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/tlds.php">TLD Breakdown</a>
              &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/update-profile.php">Update Profile</a>
              &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/change-password.php">Change Password</a>
-             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/list-users.php">User List</a>
+             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/users.php">User List</a>
              &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/add/user.php">Add New User</a>
 			<?php } else { ?>
              &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>

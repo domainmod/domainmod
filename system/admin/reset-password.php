@@ -69,7 +69,7 @@ if ($new_username != "") {
 
 		$_SESSION['session_result_message'] .= "You have entered an invalid username<BR>";
 
-		header("Location: list-users.php");
+		header("Location: users.php");
 		exit;
 		
 	}
@@ -80,7 +80,7 @@ if ($new_username != "") {
 
 		if ($new_username == "") $_SESSION['session_result_message'] .= "Enter the username<BR>";
 
-		header("Location: list-users.php");
+		header("Location: users.php");
 		exit;
 
 	}

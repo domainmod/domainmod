@@ -48,21 +48,19 @@ $sql = "SELECT id, name, default_owner
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 Below is a list of all the Domain Registrar and SSL Provider Account Owners that are stored in your <?=$software_title?>.
-<?php if ($zero_owners != "1") { ?><h2>Domains</h2><?php } ?>
+<?php if ($zero_owners != "1") { ?><BR><BR><font class="headline">Domains</font><BR><BR><?php } ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<strong>Number of Active Owners:</strong> <?=mysql_num_rows($result)?><BR>
-<BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
 	<td width="225">
-    	<font class="subheadline">Owner Name</font>
+    	<font class="subheadline">Active Owners (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td width="150">
-    	<font class="subheadline"># of Accounts</font>
+    	<font class="subheadline">Accounts</font>
     </td>
 	<td>
-    	<font class="subheadline"># of Domains</font>
+    	<font class="subheadline">Domains</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -136,14 +134,13 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-<strong>Number of Inactive Owners:</strong> <?=mysql_num_rows($result)?><BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
 	<td width="225">
-    	<font class="subheadline">Owner Name</font>
+    	<font class="subheadline">Inactive Owners (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td>
-    	<font class="subheadline"># of Accounts</font>
+    	<font class="subheadline">Accounts</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -181,21 +178,19 @@ $sql = "SELECT id, name, default_owner
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-<?php if ($zero_owners != "1") { ?><BR><h2>SSL Certificates</h2><?php } ?>
+<?php if ($zero_owners != "1") { ?><BR><BR><font class="headline">SSL Certificates</font><BR><BR><?php } ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<strong>Number of Active Owners:</strong> <?=mysql_num_rows($result)?><BR>
-<BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
 	<td width="225">
-    	<font class="subheadline">Owner Name</font>
+    	<font class="subheadline">Active Owners (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td width="150">
-    	<font class="subheadline"># of Accounts</font>
+    	<font class="subheadline">Accounts</font>
     </td>
 	<td>
-    	<font class="subheadline"># of SSL Certs</font>
+    	<font class="subheadline">SSL Certs</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -269,14 +264,13 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 if ($has_active) echo "<BR>";
 $has_inactive = "1";
 ?>
-<strong>Number of Inactive Owners:</strong> <?=mysql_num_rows($result)?><BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
 	<td width="225">
-    	<font class="subheadline">Owner Name</font>
+    	<font class="subheadline">Inactive Owners (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td>
-    	<font class="subheadline"># of Accounts</font>
+    	<font class="subheadline">Accounts</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
