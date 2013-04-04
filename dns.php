@@ -23,7 +23,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 
-$page_title = "DNS Profile Breakdown";
+$page_title = "DNS Profiles";
 $software_section = "dns";
 ?>
 <html>
@@ -44,18 +44,16 @@ $result = mysql_query($sql,$connection);
 Below is a list of all the DNS Profiles that are stored in your <?=$software_title?>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<strong>Number of Active DNS Profiles:</strong> <?=mysql_num_rows($result)?><BR>
-<BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
-	<td width="325">
-    	<font class="subheadline">Profile Name</font>
+	<td width="340">
+    	<font class="subheadline">Active Profiles (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td width="150">
-    	<font class="subheadline"># of Servers</font>
+    	<font class="subheadline">Servers</font>
     </td>
 	<td>
-    	<font class="subheadline"># of Domains</font>
+    	<font class="subheadline">Domains</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -105,14 +103,13 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-<strong>Number of Inactive DNS Profiles:</strong> <?=mysql_num_rows($result)?><BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
-	<td width="325">
-    	<font class="subheadline">Profile Name</font>
+	<td width="340">
+    	<font class="subheadline">Inactive Profiles (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td>
-    	<font class="subheadline"># of Servers</font>
+    	<font class="subheadline">Servers</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>

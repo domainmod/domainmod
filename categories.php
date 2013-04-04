@@ -23,7 +23,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 
-$page_title = "Category Breakdown";
+$page_title = "Domain Categories";
 $software_section = "categories";
 ?>
 <html>
@@ -45,16 +45,14 @@ $number_of_categories = mysql_num_rows($result);
 Below is a list of all the Domain Categories that are stored in your <?=$software_title?>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<strong>Number of Active Categories:</strong> <?=$number_of_categories?><BR>
-<BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
 	<td width="325">
-   	<font class="subheadline">Category</font></td>
+   	<font class="subheadline">Active Categories (<?=$number_of_categories?>)</font></td>
 	<td width="200">
    	<font class="subheadline">Stakeholder</font></td>
 	<td>
-    	<font class="subheadline"># of Domains</font>
+    	<font class="subheadline">Domains</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -107,11 +105,10 @@ $number_of_categories = mysql_num_rows($result);
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-<strong>Number of Inactive Categories:</strong> <?=$number_of_categories?><BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
 	<td width="325">
-   	<font class="subheadline">Category</font></td>
+   	<font class="subheadline">Inactive Categories (<?=$number_of_categories?>)</font></td>
 	<td>
    	<font class="subheadline">Stakeholder</font></td>
 </tr>

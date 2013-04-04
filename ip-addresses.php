@@ -23,7 +23,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 
-$page_title = "IP Address Breakdown";
+$page_title = "IP Addresses";
 $software_section = "ip-addresses";
 ?>
 <html>
@@ -44,21 +44,19 @@ $result = mysql_query($sql,$connection);
 Below is a list of all the IP Addresses that are stored in your <?=$software_title?>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<strong>Number of Active IP Addresses:</strong> <?=mysql_num_rows($result)?><BR>
-<BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
-        <td width="300">
-            <font class="subheadline">IP Name</font>
+        <td width="280">
+            <font class="subheadline">IP Address Name</font>
         </td>
         <td width="190">
-            <font class="subheadline">IP Address</font>
+            <font class="subheadline">Active IPs (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td width="210">
             <font class="subheadline">rDNS</font>
         </td>
         <td>
-            <font class="subheadline"># of Domains</font>
+            <font class="subheadline">Domains</font>
         </td>
     </tr>
 
@@ -117,14 +115,13 @@ $result = mysql_query($sql,$connection);
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-<strong>Number of Inactive IP Addresses:</strong> <?=mysql_num_rows($result)?><BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
-        <td width="300">
-            <font class="subheadline">IP Name</font>
+        <td width="280">
+            <font class="subheadline">IP Address Name</font>
         </td>
         <td width="190">
-            <font class="subheadline">IP Address</font>
+            <font class="subheadline">Inactive IPs (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td>
             <font class="subheadline">rDNS</font>

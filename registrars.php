@@ -23,7 +23,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 
-$page_title = "Registrar Breakdown";
+$page_title = "Domain Registrars";
 $software_section = "registrars";
 ?>
 <html>
@@ -48,18 +48,16 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 Below is a list of all the Domain Registrars that are stored in your <?=$software_title?>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<strong>Number of Active Registrars:</strong> <?=mysql_num_rows($result)?><BR>
-<BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
         <td width="250">
-            <font class="subheadline">Registrar Name</font>
+            <font class="subheadline">Active Registrars (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td width="150">
-            <font class="subheadline"># of Accounts</font>
+            <font class="subheadline">Accounts</font>
         </td>
         <td>
-            <font class="subheadline"># of Domains</font>
+            <font class="subheadline">Domains</font>
         </td>
     </tr>
     <?php 
@@ -165,14 +163,13 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-<strong>Number of Inactive Registrars:</strong> <?=mysql_num_rows($result)?><BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
         <td width="250">
-            <font class="subheadline">Registrar Name</font>
+            <font class="subheadline">Inactive Registrars (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td width="150">
-            <font class="subheadline"># of Accounts</font>
+            <font class="subheadline">Accounts</font>
         </td>
         <td>&nbsp;
         	

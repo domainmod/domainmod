@@ -23,7 +23,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 
-$page_title = "SSL Provider Breakdown";
+$page_title = "SSL Certificate Providers";
 $software_section = "ssl-providers";
 ?>
 <html>
@@ -44,18 +44,16 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 Below is a list of all the SSL Certificate Providers that are stored in your <?=$software_title?>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<strong>Number of Active SSL Providers:</strong> <?=mysql_num_rows($result)?><BR>
-<BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
         <td width="250">
-            <font class="subheadline">Provider Name</font>
+            <font class="subheadline">Active Providers (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td width="150">
-            <font class="subheadline"># of Accounts</font>
+            <font class="subheadline">Accounts</font>
         </td>
         <td>
-            <font class="subheadline"># of Certs</font>
+            <font class="subheadline">Certs</font>
         </td>
     </tr>
 
@@ -127,14 +125,13 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-<strong>Number of Inactive SSL Providers:</strong> <?=mysql_num_rows($result)?><BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr height="20">
             <td width="250">
-                <font class="subheadline">Provider Name</font>
+                <font class="subheadline">Inactive Providers (<?=mysql_num_rows($result)?>)</font>
             </td>
             <td>
-                <font class="subheadline"># of Accounts</font>
+                <font class="subheadline">Accounts</font>
             </td>
         </tr>
 

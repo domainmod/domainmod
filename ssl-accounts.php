@@ -54,21 +54,19 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 Below is a list of all the SSL Provider Accounts that are stored in your <?=$software_title?>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<strong>Number of Active Accounts:</strong> <?=mysql_num_rows($result)?><BR>
-<BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
         <td width="250">
             <font class="subheadline">SSL Provider</font>
         </td>
         <td width="200">
-            <font class="subheadline">Account/Username</font>
+            <font class="subheadline">Active Accounts (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td width="250">
             <font class="subheadline">Owner</font>
         </td>
         <td>
-            <font class="subheadline"># of Certs</font>
+            <font class="subheadline">Certs</font>
         </td>
     </tr>
 
@@ -146,14 +144,13 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-    <strong>Number of Inactive Accounts:</strong> <?=mysql_num_rows($result)?><BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr height="20">
             <td width="250">
                 <font class="subheadline">SSL Provider</font>
             </td>
             <td width="200">
-                <font class="subheadline">Account/Username</font>
+                <font class="subheadline">Inactive Accounts (<?=mysql_num_rows($result)?>)</font>
             </td>
             <td width="250">
                 <font class="subheadline">Owner</font>

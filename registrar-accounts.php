@@ -23,7 +23,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 
-$page_title = "Registrar Accounts";
+$page_title = "Domains Registrar Accounts";
 $software_section = "accounts";
 
 // Form Variables
@@ -63,21 +63,19 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 Below is a list of all the Domain Registrar Accounts that are stored in your <?=$software_title?>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = 1; ?>
-<strong>Number of Active Accounts:</strong> <?=mysql_num_rows($result)?><BR>
-<BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
-        <td width="250">
+        <td width="200">
             <font class="subheadline">Registrar Name</font>
         </td>
-        <td width="200">
-            <font class="subheadline">Account/Username</font>
+        <td width="250">
+            <font class="subheadline">Active Accounts (<?=mysql_num_rows($result)?>)</font>
         </td>
-        <td width="200">
+        <td width="180">
             <font class="subheadline">Owner</font>
         </td>
         <td>
-            <font class="subheadline"># of Domains</font>
+            <font class="subheadline">Domains</font>
         </td>
     </tr>
     <?php 
@@ -143,19 +141,15 @@ if (mysql_num_rows($result) > 0) {
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-	<BR>    
-    <strong>Number of Inactive Accounts:</strong> <?=mysql_num_rows($result)?>
-
-    <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
-        <td width="250">
+        <td width="200">
             <font class="subheadline">Registrar Name</font>
         </td>
-        <td width="200">
-            <font class="subheadline">Account/Username</font>
+        <td width="250">
+            <font class="subheadline">Inactive Accounts (<?=mysql_num_rows($result)?>)</font>
         </td>
-        <td width="200">
+        <td>
             <font class="subheadline">Owner</font>
         </td>
         <td>&nbsp;
@@ -167,13 +161,13 @@ if ($has_active == "1") echo "<BR>";
 	while ($row = mysql_fetch_object($result)) { ?>
 
         <tr height="20">
-            <td width="200">
+            <td>
                 <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
             </td>
             <td valign="top" width="200">
                     <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
             </td>
-            <td width="200">
+            <td>
                 <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
             </td>
             <td>&nbsp;

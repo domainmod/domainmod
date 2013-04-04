@@ -57,15 +57,12 @@ if ($_SESSION['session_username'] == "admin") {
 
 }
 ?>
-<strong>Number of Active User Accounts:</strong> <?=mysql_num_rows($result)?>
 <?php
 if (mysql_num_rows($result) > 0) { ?>
-
-    <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr height="20">
             <td width="200">
-                <font class="subheadline">Name</font>
+                <font class="subheadline">Active Users (<?=mysql_num_rows($result)?>)</font>
             </td>
             <td width="150">
                 <font class="subheadline">Username</font>
@@ -104,14 +101,11 @@ $result = mysql_query($sql,$connection);
 ?>
 <?php
 if (mysql_num_rows($result) > 0) { ?>
-
-    <BR><BR>
-	<strong>Number of Inactive User Accounts:</strong> <?=mysql_num_rows($result)?>
-    <BR><BR>
+    <BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr height="20">
             <td width="200">
-                <font class="subheadline">Name</font>
+                <font class="subheadline">Inactive Users (<?=mysql_num_rows($result)?>)</font>
             </td>
             <td width="150">
                 <font class="subheadline">Username</font>

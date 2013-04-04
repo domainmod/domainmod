@@ -44,14 +44,12 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 Below is a list of all the types of SSL certificates that are stored in your <?=$software_title?>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<strong>Number of Active Types:</strong> <?=mysql_num_rows($result)?><BR>
-<BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
 	<td width="325">
-   	<font class="subheadline">Type</font></td>
+   	<font class="subheadline">Active SSL Types (<?=mysql_num_rows($result)?>)</font></td>
 	<td>
-    	<font class="subheadline"># of SSL Certs</font>
+    	<font class="subheadline">SSL Certs</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -100,11 +98,10 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-<strong>Number of Inactive Types:</strong> <?=mysql_num_rows($result)?><BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
 	<td width="325">
-   	<font class="subheadline">Type</font></td>
+   	<font class="subheadline">Inactive SSL Types (<?=mysql_num_rows($result)?>)</font></td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
@@ -116,7 +113,7 @@ if ($has_active == "1") echo "<BR>";
 </table>
 <?php } ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font class="default_highlight"><strong>*</strong></font> = Default SSL Types
+		<BR><font class="default_highlight"><strong>*</strong></font> = Default SSL Type
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		You don't currently have any SSL Types. <a href="add/ssl-type.php">Click here to add one</a>.

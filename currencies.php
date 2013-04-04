@@ -42,22 +42,19 @@ $sql = "SELECT id, currency, name, conversion, default_currency
 $result = mysql_query($sql,$connection);
 ?>
 The below conversion rates are used for accounting and reporting purposes, and at the very least they should be updated before you export your domains or SSL certificates.<BR><BR>
-Conversion rates are based on your system's default currency, which can be set by any user with admin access.<BR><BR>
 <strong>NOTE:</strong> Thanks to Yahoo! Finance's free API, rate conversions have now been automated! Simply <a href="system/update-conversion-rates.php">click here to update the conversion rates</a>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<strong>Number of Active Currencies:</strong> <?=mysql_num_rows($result)?>
-<BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
 	<td width="250">
-    	<font class="subheadline">Currency</font>
+    	<font class="subheadline">Currency (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td width="125">
     	<font class="subheadline">ABV</font>
     </td>
 	<td>
-    	<font class="subheadline">Conversion Rates</font>
+    	<font class="subheadline">Conversion Rate</font>
     </td>
 </tr>
 <?php
