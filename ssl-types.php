@@ -34,21 +34,20 @@ $software_section = "ssl-types";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-Below is a list of all the types of SSL certificates that are stored in the <?=$software_title?>.<BR><BR>
-
 <?php
 $sql = "SELECT id, type, default_type
 		FROM ssl_cert_types
 		WHERE id IN (SELECT type_id FROM ssl_certs WHERE type_id != '0' AND active NOT IN ('0') GROUP BY type_id)
 		ORDER BY default_type desc, type asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
-$number_of_types = mysql_num_rows($result);
 ?>
-<strong>Number of Active Types:</strong> <?=$number_of_types?>
+Below is a list of all the types of SSL certificates that are stored in your <?=$software_title?>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
+<?php $has_active = "1"; ?>
+<strong>Number of Active Types:</strong> <?=mysql_num_rows($result)?><BR>
+<BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
+<tr height="20">
 	<td width="325">
    	<font class="subheadline">Type</font></td>
 	<td>
@@ -79,20 +78,31 @@ $number_of_types = mysql_num_rows($result);
 <?php } ?>
 </table>
 <?php } ?>
-<BR><BR>
 <?php
-$sql = "SELECT id, type, default_type
-		FROM ssl_cert_types
-		WHERE id NOT IN (SELECT type_id FROM ssl_certs WHERE type_id != '0' AND active NOT IN ('0') GROUP BY type_id)
-		ORDER BY default_type desc, type asc";
+if ($has_active == "1") {
+
+	$sql = "SELECT id, type, default_type
+			FROM ssl_cert_types
+			WHERE id NOT IN (SELECT type_id FROM ssl_certs WHERE type_id != '0' AND active NOT IN ('0') GROUP BY type_id)
+			ORDER BY default_type desc, type asc";
+
+} else {
+	
+	$sql = "SELECT id, type, default_type
+			FROM ssl_cert_types
+			WHERE active = '1'
+			ORDER BY default_type desc, type asc";
+	
+}
 $result = mysql_query($sql,$connection) or die(mysql_error());
-$number_of_types = mysql_num_rows($result);
 ?>
-<strong>Number of Inactive Types:</strong> <?=$number_of_types?>
-<?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
+<?php if (mysql_num_rows($result) > 0) { 
+$has_inactive = "1";
+if ($has_active == "1") echo "<BR>";
+?>
+<strong>Number of Inactive Types:</strong> <?=mysql_num_rows($result)?><BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
+<tr height="20">
 	<td width="325">
    	<font class="subheadline">Type</font></td>
 </tr>
@@ -105,7 +115,12 @@ $number_of_types = mysql_num_rows($result);
 <?php } ?>
 </table>
 <?php } ?>
-<BR><font color="#DD0000"><strong>*</strong></font> = Default SSL Type
+<?php if ($has_active || $has_inactive) { ?>
+		<BR><font color="#DD0000"><strong>*</strong></font> = Default SSL Types
+<?php } ?>
+<?php if (!$has_active && !$has_inactive) { ?>
+		You don't currently have any SSL Types. <a href="add/ssl-type.php">Click here to add one</a>.
+<?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

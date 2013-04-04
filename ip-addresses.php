@@ -34,7 +34,6 @@ $software_section = "ip-addresses";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-Below is a list of all the IP Addresses that are stored in the <?=$software_title?>.<BR><BR>
 <?php
 $sql = "SELECT id, name, ip, rdns, default_ip_address
 		FROM ip_addresses
@@ -42,107 +41,122 @@ $sql = "SELECT id, name, ip, rdns, default_ip_address
 		ORDER BY default_ip_address desc, name asc";
 $result = mysql_query($sql,$connection);
 ?>
-<strong>Number of Active IP Addresses:</strong> <?=mysql_num_rows($result)?>
-<?php
-if (mysql_num_rows($result) > 0) { ?>
+Below is a list of all the IP Addresses that are stored in your <?=$software_title?>.<BR><BR>
+<?php if (mysql_num_rows($result) > 0) { ?>
+<?php $has_active = "1"; ?>
+<strong>Number of Active IP Addresses:</strong> <?=mysql_num_rows($result)?><BR>
+<BR>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr height="20">
+        <td width="300">
+            <font class="subheadline">IP Name</font>
+        </td>
+        <td width="190">
+            <font class="subheadline">IP Address</font>
+        </td>
+        <td width="210">
+            <font class="subheadline">rDNS</font>
+        </td>
+        <td>
+            <font class="subheadline"># of Domains</font>
+        </td>
+    </tr>
 
-    <BR><BR>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr height="30">
-            <td width="300">
-                <font class="subheadline">IP Name</font>
-            </td>
-            <td width="190">
-                <font class="subheadline">IP Address</font>
-            </td>
-            <td width="210">
-                <font class="subheadline">rDNS</font>
+    <?php
+    while ($row = mysql_fetch_object($result)) { ?>
+
+        <tr height="20">
+            <td>
+                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a>
             </td>
             <td>
-                <font class="subheadline"># of Domains</font>
-            </td>
-        </tr>
-
-		<?php
-        while ($row = mysql_fetch_object($result)) { ?>
-    
-            <tr height="20">
-                <td>
-                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a>
-                </td>
-                <td>
-                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
-                </td>
-                <td>
-                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
-                </td>
-                <td>
-                    <?php
-                    $sql2 = "SELECT count(*) AS total_count
-                             FROM domains
-                             WHERE ip_id = '$row->id'
-                               AND active NOT IN ('0', '10')";
-                    $result2 = mysql_query($sql2,$connection);
-                    while ($row2 = mysql_fetch_object($result2)) {
-                        $total_ip_count = $row2->total_count;
-                    }
-                    ?>
-                    <a class="nobold" href="domains.php?ipid=<?=$row->id?>"><?=number_format($total_ip_count)?></a>
-                </td>
-            </tr>
-        <?php 
-        } ?>
-
-	</table>
-	<?php 
-} ?>
-<?php
-$sql = "SELECT id, name, ip, rdns, default_ip_address
-		FROM ip_addresses
-		WHERE id NOT IN (SELECT ip_id FROM domains WHERE ip_id != '0' AND active NOT IN ('0','10') GROUP BY ip_id)
-		ORDER BY default_ip_address desc, name asc";
-$result = mysql_query($sql,$connection);
-?>
-<?php
-if (mysql_num_rows($result) > 0) { ?>
-
-    <BR><BR>
-    <strong>Number of Inactive IP Addresses:</strong> <?=mysql_num_rows($result)?>
-    <BR><BR>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr height="30">
-            <td width="300">
-                <font class="subheadline">IP Name</font>
-            </td>
-            <td width="190">
-                <font class="subheadline">IP Address</font>
+                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
             </td>
             <td>
-                <font class="subheadline">rDNS</font>
+                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
+            </td>
+            <td>
+                <?php
+                $sql2 = "SELECT count(*) AS total_count
+                         FROM domains
+                         WHERE ip_id = '$row->id'
+                           AND active NOT IN ('0', '10')";
+                $result2 = mysql_query($sql2,$connection);
+                while ($row2 = mysql_fetch_object($result2)) {
+                    $total_ip_count = $row2->total_count;
+                }
+                ?>
+                <a class="nobold" href="domains.php?ipid=<?=$row->id?>"><?=number_format($total_ip_count)?></a>
             </td>
         </tr>
+    <?php 
+    } ?>
 
-		<?php
-        while ($row = mysql_fetch_object($result)) { ?>
-    
-            <tr height="20">
-                <td>
-                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a></a>
-                </td>
-                <td>
-                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
-                </td>
-                <td>
-                    <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
-                </td>
-            </tr>
-		<?php 
-		} ?>
-
-	</table>
+</table>
 <?php 
 } ?>
-<BR><font color="#DD0000"><strong>*</strong></font> = Default IP Address
+<?php
+if ($has_active == "1") {
+
+	$sql = "SELECT id, name, ip, rdns, default_ip_address
+			FROM ip_addresses
+			WHERE id NOT IN (SELECT ip_id FROM domains WHERE ip_id != '0' AND active NOT IN ('0','10') GROUP BY ip_id)
+			ORDER BY default_ip_address desc, name asc";
+
+} else {
+	
+	$sql = "SELECT id, name, ip, rdns, default_ip_address
+			FROM ip_addresses
+			WHERE active = '1'
+			ORDER BY default_ip_address desc, name asc";
+	
+}
+$result = mysql_query($sql,$connection);
+?>
+<?php if (mysql_num_rows($result) > 0) { 
+$has_inactive = "1";
+if ($has_active == "1") echo "<BR>";
+?>
+<strong>Number of Inactive IP Addresses:</strong> <?=mysql_num_rows($result)?><BR><BR>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr height="20">
+        <td width="300">
+            <font class="subheadline">IP Name</font>
+        </td>
+        <td width="190">
+            <font class="subheadline">IP Address</font>
+        </td>
+        <td>
+            <font class="subheadline">rDNS</font>
+        </td>
+    </tr>
+
+    <?php
+    while ($row = mysql_fetch_object($result)) { ?>
+
+        <tr height="20">
+            <td>
+                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a></a>
+            </td>
+            <td>
+                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
+            </td>
+            <td>
+                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
+            </td>
+        </tr>
+    <?php 
+    } ?>
+
+</table>
+<?php 
+} ?>
+<?php if ($has_active || $has_inactive) { ?>
+		<BR><font color="#DD0000"><strong>*</strong></font> = Default IP Address
+<?php } ?>
+<?php if (!$has_active && !$has_inactive) { ?>
+		You don't currently have any IP Addresses. <a href="add/ip-address.php">Click here to add one</a>.
+<?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

@@ -41,17 +41,15 @@ $sql = "SELECT id, currency, name, conversion, default_currency
 		ORDER BY default_currency desc, name asc";
 $result = mysql_query($sql,$connection);
 ?>
-The below conversion rates are used for accounting and reporting purposes, and at the very least they should be updated before you export your domains or SSL certificates.<BR>
-<BR>
-Conversion rates are based on your system's default currency, which can be set by any user with admin access.<BR>
-<BR>
-<strong>NOTE:</strong> Thanks to Yahoo! Finance's free API, rate conversions have now been automated! Simply <a href="system/update-conversion-rates.php">click here to update the conversion rates</a>.<BR>
-<BR>
-<strong>Number of Active Currencies:</strong> <?=mysql_num_rows($result)?>
+The below conversion rates are used for accounting and reporting purposes, and at the very least they should be updated before you export your domains or SSL certificates.<BR><BR>
+Conversion rates are based on your system's default currency, which can be set by any user with admin access.<BR><BR>
+<strong>NOTE:</strong> Thanks to Yahoo! Finance's free API, rate conversions have now been automated! Simply <a href="system/update-conversion-rates.php">click here to update the conversion rates</a>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
+<?php $has_active = "1"; ?>
+<strong>Number of Active Currencies:</strong> <?=mysql_num_rows($result)?>
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
+<tr height="20">
 	<td width="250">
     	<font class="subheadline">Currency</font>
     </td>
@@ -79,8 +77,12 @@ while ($row = mysql_fetch_object($result)) { ?>
 <?php } ?>
 </table>
 <?php } ?>
-<BR>
-<font color="#DD0000"><strong>*</strong></font> = Default Currency (for rate conversions, reporting, etc.)
+<?php if ($has_active) { ?>
+		<BR><font color="#DD0000"><strong>*</strong></font> = Default Currency (for rate conversions, reporting, etc.)
+<?php } ?>
+<?php if (!$has_active) { ?>
+		You don't currently have any Currencies. <a href="add/currency.php">Click here to add one</a>.
+<?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

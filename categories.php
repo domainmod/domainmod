@@ -34,8 +34,6 @@ $software_section = "categories";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-Below is a list of all the Domain Categories that are stored in the <?=$software_title?>.<BR><BR>
-
 <?php
 $sql = "SELECT id, name, stakeholder, default_category
 		FROM categories
@@ -44,11 +42,13 @@ $sql = "SELECT id, name, stakeholder, default_category
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $number_of_categories = mysql_num_rows($result);
 ?>
-<strong>Number of Active Categories:</strong> <?=$number_of_categories?>
+Below is a list of all the Domain Categories that are stored in your <?=$software_title?>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
+<?php $has_active = "1"; ?>
+<strong>Number of Active Categories:</strong> <?=$number_of_categories?><BR>
+<BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
+<tr height="20">
 	<td width="325">
    	<font class="subheadline">Category</font></td>
 	<td width="200">
@@ -84,21 +84,32 @@ $number_of_categories = mysql_num_rows($result);
 <?php } ?>
 </table>
 <?php } ?>
-
 <?php
-$sql = "SELECT id, name, stakeholder, default_category
-		FROM categories
-		WHERE id NOT IN (SELECT cat_id FROM domains WHERE cat_id != '0' AND active NOT IN ('0','10') GROUP BY cat_id)
-		ORDER BY default_category desc, name asc";
+if ($has_active == "1") {
+
+	$sql = "SELECT id, name, stakeholder, default_category
+			FROM categories
+			WHERE id NOT IN (SELECT cat_id FROM domains WHERE cat_id != '0' AND active NOT IN ('0','10') GROUP BY cat_id)
+			ORDER BY default_category desc, name asc";
+
+} else {
+	
+	$sql = "SELECT id, name, stakeholder, default_category
+			FROM categories
+			WHERE active = '1'
+			ORDER BY default_category desc, name asc";
+	
+}
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $number_of_categories = mysql_num_rows($result);
 ?>
-<?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
-<strong>Number of Inactive Categories:</strong> <?=$number_of_categories?>
-<BR><BR>
+<?php if (mysql_num_rows($result) > 0) { 
+$has_inactive = "1";
+if ($has_active == "1") echo "<BR>";
+?>
+<strong>Number of Inactive Categories:</strong> <?=$number_of_categories?><BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
+<tr height="20">
 	<td width="325">
    	<font class="subheadline">Category</font></td>
 	<td>
@@ -116,7 +127,12 @@ $number_of_categories = mysql_num_rows($result);
 <?php } ?>
 </table>
 <?php } ?>
-<BR><font color="#DD0000"><strong>*</strong></font> = Default Category
+<?php if ($has_active || $has_inactive) { ?>
+		<BR><font color="#DD0000"><strong>*</strong></font> = Default Category
+<?php } ?>
+<?php if (!$has_active && !$has_inactive) { ?>
+		You don't currently have any Categories. <a href="add/category.php">Click here to add one</a>.
+<?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

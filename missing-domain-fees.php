@@ -42,7 +42,7 @@ $sql = "SELECT r.id AS registrar_id, r.name AS registrar_name
 		ORDER BY r.name asc";
 $result = mysql_query($sql,$connection);
 ?>
-The following Registrars/TLDs are missing Domain fees. In order to ensure your Domain reporting is accurate please update these fees.
+The following Registrars/TLDs are missing Domain fees. In order to ensure your domain reporting is accurate please update these fees.
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">

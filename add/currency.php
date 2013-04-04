@@ -54,9 +54,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			if ($temp_total == "0") $new_default_currency = "1";
 		
 		}
+		
+		$sql = "SELECT currency
+				FROM currencies
+				WHERE default_currency = '1'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) {
+			$temp_default_currency = $row->currency;
+		}
 
 		$from = $new_abbreviation;
-		$to = $_SESSION['session_default_currency'];
+		$to = $temp_default_currency;
 		$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
 		$handle = @fopen($full_url, "r");
 			 

@@ -34,7 +34,6 @@ $software_section = "ssl-providers";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-Below is a list of all the SSL Certificate Providers that are stored in the <?=$software_title?>.
 <?php
 $sql = "SELECT id, name, url
 		FROM ssl_providers
@@ -42,14 +41,13 @@ $sql = "SELECT id, name, url
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-<BR><BR>
-<strong>Number of Active SSL Providers:</strong> <?=mysql_num_rows($result)?>
-<?php 
-if (mysql_num_rows($result) > 0) { ?>
-
-    <BR><BR>
+Below is a list of all the SSL Certificate Providers that are stored in your <?=$software_title?>.<BR><BR>
+<?php if (mysql_num_rows($result) > 0) { ?>
+<?php $has_active = "1"; ?>
+<strong>Number of Active SSL Providers:</strong> <?=mysql_num_rows($result)?><BR>
+<BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="30">
+    <tr height="20">
         <td width="250">
             <font class="subheadline">Provider Name</font>
         </td>
@@ -125,14 +123,13 @@ $sql = "SELECT id, name, url
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-<?php 
-if (mysql_num_rows($result) > 0) { ?>
-
-    <BR><BR>
-    <strong>Number of Inactive SSL Providers:</strong> <?=mysql_num_rows($result)?>
-    <BR><BR>
+<?php if (mysql_num_rows($result) > 0) { 
+$has_inactive = "1";
+if ($has_active == "1") echo "<BR>";
+?>
+<strong>Number of Inactive SSL Providers:</strong> <?=mysql_num_rows($result)?><BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr height="30">
+        <tr height="20">
             <td width="250">
                 <font class="subheadline">Provider Name</font>
             </td>
@@ -177,6 +174,12 @@ if (mysql_num_rows($result) > 0) { ?>
     </table>
 <?php 
 } ?>
+<?php if ($has_active || $has_inactive) { ?>
+		<BR><font color="#DD0000"><strong>*</strong></font> = Default SSL Provider
+<?php } ?>
+<?php if (!$has_active && !$has_inactive) { ?>
+		You don't currently have any SSL Providers. <a href="add/ssl-provider.php">Click here to add one</a>.
+<?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

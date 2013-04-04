@@ -157,6 +157,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 <body onLoad="document.forms[0].elements[8].focus()";>
 <?php include("_includes/header.inc.php"); ?>
 <?php
+
 if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
 elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
 elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 

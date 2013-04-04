@@ -63,7 +63,7 @@ if (mysql_num_rows($result) > 0) { ?>
 
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr height="30">
+        <tr height="20">
             <td width="200">
                 <font class="subheadline">Name</font>
             </td>
@@ -109,7 +109,7 @@ if (mysql_num_rows($result) > 0) { ?>
 	<strong>Number of Inactive User Accounts:</strong> <?=mysql_num_rows($result)?>
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr height="30">
+        <tr height="20">
             <td width="200">
                 <font class="subheadline">Name</font>
             </td>

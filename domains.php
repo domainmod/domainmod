@@ -188,28 +188,27 @@ while ($row = mysql_fetch_object($result)) {
 	$number_of_domains = $row->total_count;
 }
 
-
 if ($number_of_registrars == 0 || $number_of_registrar_accounts == 0 || $number_of_domains == 0) {
 	
 	$_SESSION['session_first_run'] = "1";
 	
 	if ($number_of_registrars == 0) {
 
-		echo "<strong><font color=\"#FF0000\">0</font></strong> Domain Registrars found. Please <a href=\"add/registrar.php\">click here</a> to add one.<BR><BR>";
+		echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrars found. Please <a href=\"add/registrar.php\">click here</a> to add one.<BR><BR>";
 		exit;
 
 	}
 
 	if ($number_of_registrar_accounts == 0) {
 
-		echo "<strong><font color=\"#FF0000\">0</font></strong> Domain Registrar Accounts found. Please <a href=\"add/account.php\">click here</a> to add one.<BR><BR>";
+		echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrar Accounts found. Please <a href=\"add/account.php\">click here</a> to add one.<BR><BR>";
 		exit;
 
 	}
 
 	if ($number_of_domains == 0) {
 
-		echo "<strong><font color=\"#FF0000\">0</font></strong> Domains found. Please <a href=\"add/domain.php\">click here</a> to add one.<BR><BR>";
+		echo "<strong><font class=\"highlight\">0</font></strong> Domains found. Please <a href=\"add/domain.php\">click here</a> to add one.<BR><BR>";
 		exit;
 		
 	}

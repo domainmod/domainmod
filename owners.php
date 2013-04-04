@@ -34,7 +34,6 @@ $software_section = "owners";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-
 <?php
 $sql = "SELECT id, name, default_owner
 		FROM owners
@@ -42,12 +41,13 @@ $sql = "SELECT id, name, default_owner
 		ORDER BY default_owner desc, name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-Below is a list of all the Domain Registrar and SSL Provider Account Owners that are stored in the <?=$software_title?>.<BR><BR>
-<strong>Number of Active Owners:</strong> <?=mysql_num_rows($result)?>
+Below is a list of all the Domain Registrar and SSL Provider Account Owners that are stored in your <?=$software_title?>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
+<?php $has_active = "1"; ?>
+<strong>Number of Active Owners:</strong> <?=mysql_num_rows($result)?><BR>
+<BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
+<tr height="20">
 	<td width="225">
     	<font class="subheadline">Owner Name</font>
     </td>
@@ -108,54 +108,49 @@ Below is a list of all the Domain Registrar and SSL Provider Account Owners that
 </table>
 <?php } ?>
 <?php
-$sql = "SELECT id, name, default_owner
-		FROm owners
-		WHERE id NOT IN (SELECT owner_id FROM domains WHERE owner_id != '0' AND active NOT IN ('0','10') GROUP BY owner_id)
-		ORDER BY default_owner desc, name asc";
+if ($has_active == "1") {
+
+	$sql = "SELECT id, name, default_owner
+			FROM owners
+			WHERE id NOT IN (SELECT owner_id FROM domains WHERE owner_id != '0' AND active NOT IN ('0','10') GROUP BY owner_id)
+			ORDER BY default_owner desc, name asc";
+
+} else {
+	
+	$sql = "SELECT id, name, default_owner
+			FROM owners
+			WHERE active = '1'
+			ORDER BY default_owner desc, name asc";
+	
+}
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-<?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
-<strong>Number of Inactive Owners:</strong> <?=mysql_num_rows($result)?>
-<BR><BR>
+<?php if (mysql_num_rows($result) > 0) { 
+$has_inactive = "1";
+if ($has_active == "1") echo "<BR>";
+?>
+<strong>Number of Inactive Owners:</strong> <?=mysql_num_rows($result)?><BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
+<tr height="20">
 	<td width="225">
     	<font class="subheadline">Owner Name</font>
-    </td>
-	<td>
-    	<font class="subheadline"># of Accounts</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
-		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a></a>
+		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a>
 	</td>
-	<td>
-    <?php
-	$sql2 = "SELECT count(*) AS total_count
-			 FROM registrar_accounts
-			 WHERE active = '1'
-			   AND owner_id = '$row->id'";
-	$result2 = mysql_query($sql2,$connection);
-	while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
-	?>
-    	<?php if ($total_accounts >= 1) { ?>
-
-	        <a class="nobold" href="registrar-accounts.php?oid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
-
-        <?php } else { ?>
-
-	        <?=number_format($total_accounts)?>
-        
-        <?php } ?>
-    </td>
 </tr>
 <?php } ?>
 </table>
 <?php } ?>
-<BR><font color="#DD0000"><strong>*</strong></font> = Default Owner
+<?php if ($has_active || $has_inactive) { ?>
+		<BR><font color="#DD0000"><strong>*</strong></font> = Default Owner
+<?php } ?>
+<?php if (!$has_active && !$has_inactive) { ?>
+		You don't currently have any Owners. <a href="add/owner.php">Click here to add one</a>.
+<?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

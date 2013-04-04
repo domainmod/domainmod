@@ -17,7 +17,9 @@
 ?>
 <br><br>
 <?php if ($software_section == "domains") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/domain.php">Add A New Domain</a>
+	<?php if ($_SESSION['session_first_run'] != "1") { ?>
+		 &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/domain.php">Add A New Domain</a>
+	<?php } ?>
 <?php } elseif ($software_section == "ssl-providers") { ?>
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-provider.php">Add A New SSL Provider</a>
 <?php } elseif ($software_section == "ssl-accounts") { ?>

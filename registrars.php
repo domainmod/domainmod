@@ -25,11 +25,6 @@ include("_includes/auth/auth-check.inc.php");
 
 $page_title = "Registrar Breakdown";
 $software_section = "registrars";
-
-if ($_SESSION['session_first_run'] == "1") {
-	header("Location: domains.php");
-	exit;
-}
 ?>
 <html>
 <head>
@@ -50,15 +45,13 @@ $sql = "SELECT r.id AS rid, r.name AS rname, r.url
 		ORDER BY r.name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-Below is a list of all the Domain Registrars that are stored in the <?=$software_title?>.<BR><BR>
-<strong>Number of Active Registrars:</strong> <?=mysql_num_rows($result)?>
-<?php
-
-if (mysql_num_rows($result) > 0) { ?>
-
-    <BR><BR>
+Below is a list of all the Domain Registrars that are stored in your <?=$software_title?>.<BR><BR>
+<?php if (mysql_num_rows($result) > 0) { ?>
+<?php $has_active = "1"; ?>
+<strong>Number of Active Registrars:</strong> <?=mysql_num_rows($result)?><BR>
+<BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="30">
+    <tr height="20">
         <td width="250">
             <font class="subheadline">Registrar Name</font>
         </td>
@@ -168,13 +161,13 @@ if ($exclude_registrar_string == "") {
 }
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-<?php
-if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
-<strong>Number of Inactive Registrars:</strong> <?=mysql_num_rows($result)?>
-    <BR><BR>
+<?php if (mysql_num_rows($result) > 0) { 
+$has_inactive = "1";
+if ($has_active == "1") echo "<BR>";
+?>
+<strong>Number of Inactive Registrars:</strong> <?=mysql_num_rows($result)?><BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="30">
+    <tr height="20">
         <td width="250">
             <font class="subheadline">Registrar Name</font>
         </td>
@@ -229,6 +222,12 @@ if (mysql_num_rows($result) > 0) { ?>
 	<?php
 
 } ?>
+<?php if ($has_active || $has_inactive) { ?>
+		<BR><font color="#DD0000"><strong>*</strong></font> = Default Registrar
+<?php } ?>
+<?php if (!$has_active && !$has_inactive) { ?>
+		You don't currently have any Domain Registrars. <a href="add/owner.php">Click here to add one</a>.
+<?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

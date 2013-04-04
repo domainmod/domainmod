@@ -34,7 +34,6 @@ $software_section = "dns";
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-Below is a list of all the DNS Profiles that are stored in the <?=$software_title?>.<BR><BR>
 <?php
 $sql = "SELECT id, name, number_of_servers, default_dns
 		FROM dns
@@ -42,11 +41,13 @@ $sql = "SELECT id, name, number_of_servers, default_dns
 		ORDER BY default_dns desc, name asc";
 $result = mysql_query($sql,$connection);
 ?>
-<strong>Number of Active DNS Profiles:</strong> <?=mysql_num_rows($result)?>
+Below is a list of all the DNS Profiles that are stored in your <?=$software_title?>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
+<?php $has_active = "1"; ?>
+<strong>Number of Active DNS Profiles:</strong> <?=mysql_num_rows($result)?><BR>
+<BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
+<tr height="20">
 	<td width="325">
     	<font class="subheadline">Profile Name</font>
     </td>
@@ -82,20 +83,31 @@ $result = mysql_query($sql,$connection);
 <?php } ?>
 </table>
 <?php } ?>
-
 <?php
-$sql = "SELECT id, name, number_of_servers, default_dns
-		FROM dns
-		WHERE id NOT IN (SELECT dns_id FROM domains WHERE dns_id != '0' AND active NOT IN ('0','10') GROUP BY dns_id)
-		ORDER BY default_dns desc, name asc";
-$result = mysql_query($sql,$connection);
+if ($has_active == "1") {
+
+	$sql = "SELECT id, name, number_of_servers, default_dns
+			FROM dns
+			WHERE id NOT IN (SELECT dns_id FROM domains WHERE dns_id != '0' AND active NOT IN ('0','10') GROUP BY dns_id)
+			ORDER BY default_dns desc, name asc";
+
+} else {
+	
+	$sql = "SELECT id, name, number_of_servers, default_dns
+			FROM dns
+			WHERE active = '1'
+			ORDER BY default_dns desc, name asc";
+	
+}
+$result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-<?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
-<strong>Number of Inactive DNS Profiles:</strong> <?=mysql_num_rows($result)?>
-<BR><BR>
+<?php if (mysql_num_rows($result) > 0) { 
+$has_inactive = "1";
+if ($has_active == "1") echo "<BR>";
+?>
+<strong>Number of Inactive DNS Profiles:</strong> <?=mysql_num_rows($result)?><BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
+<tr height="20">
 	<td width="325">
     	<font class="subheadline">Profile Name</font>
     </td>
@@ -115,7 +127,12 @@ $result = mysql_query($sql,$connection);
 <?php } ?>
 </table>
 <?php } ?>
-<BR><font color="#DD0000"><strong>*</strong></font> = Default DNS Profile
+<?php if ($has_active || $has_inactive) { ?>
+		<BR><font color="#DD0000"><strong>*</strong></font> = Default DNS Profile
+<?php } ?>
+<?php if (!$has_active && !$has_inactive) { ?>
+		You don't currently have any DNS Profiles. <a href="add/dns.php">Click here to add one</a>.
+<?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

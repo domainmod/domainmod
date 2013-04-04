@@ -30,11 +30,6 @@ $software_section = "accounts";
 $rid = $_GET['rid'];
 $raid = $_GET['raid'];
 $oid = $_GET['oid'];
-
-if ($_SESSION['session_first_run'] == "1") {
-	header("Location: domains.php");
-	exit;
-}
 ?>
 <html>
 <head>
@@ -65,16 +60,13 @@ $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.rese
 		ORDER BY rname asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-Below is a list of all the Domain Registrar Accounts that are stored in the <?=$software_title?>.<BR><BR>
-<strong>Number of Active Accounts:</strong> <?=mysql_num_rows($result)?>
-<BR><BR>
-<?php
-if (mysql_num_rows($result) > 0) { 
-	
-    $has_active_accounts = 1; ?>
-
+Below is a list of all the Domain Registrar Accounts that are stored in your <?=$software_title?>.<BR><BR>
+<?php if (mysql_num_rows($result) > 0) { ?>
+<?php $has_active = 1; ?>
+<strong>Number of Active Accounts:</strong> <?=mysql_num_rows($result)?><BR>
+<BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="30">
+    <tr height="20">
         <td width="250">
             <font class="subheadline">Registrar Name</font>
         </td>
@@ -129,16 +121,14 @@ if (mysql_num_rows($result) > 0) {
 
 	</table>
 	<?php 
-
 } ?>
-
 <?php
 $exclude_account_string = substr($exclude_account_string_raw, 0, -2); 
 
 if ($exclude_account_string != "") { $raid_string = " AND ra.id not in ($exclude_account_string) "; } else { $raid_string = ""; }
 
 $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
-		FROM registrar_accounts AS ra, owners AS o, registrars AS r, domains AS d
+		FROM registrar_accounts AS ra, owners AS o, registrars AS r
 		WHERE ra.active = '1'
 		  AND ra.owner_id = o.id
 		  AND ra.registrar_id = r.id
@@ -146,18 +136,19 @@ $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.rese
 		  $raid_string
 		  $oid_string
 		GROUP BY ra.username, oname, rname
-		ORDER BY rname";
+		ORDER BY rname asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-if (mysql_num_rows($result) > 0) {
-
-    if ($has_active_accounts == 1) { echo "<BR>"; } ?>
+if (mysql_num_rows($result) > 0) { 
+$has_inactive = "1";
+if ($has_active == "1") echo "<BR>";
+?>
 	<BR>    
     <strong>Number of Inactive Accounts:</strong> <?=mysql_num_rows($result)?>
 
     <BR><BR>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="30">
+    <tr height="20">
         <td width="250">
             <font class="subheadline">Registrar Name</font>
         </td>
@@ -197,7 +188,12 @@ if (mysql_num_rows($result) > 0) {
 	<?php 
 
 } ?>
-<BR><font color="#DD0000"><strong>*</strong></font> = Reseller Account
+<?php if ($has_active || $has_inactive) { ?>
+		<BR><font color="#DD0000"><strong>*</strong></font> = Reseller Account
+<?php } ?>
+<?php if (!$has_active && !$has_inactive) { ?>
+		You don't currently have any Registrar Accounts. <a href="add/account.php">Click here to add one</a>.
+<?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>
