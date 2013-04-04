@@ -192,7 +192,7 @@ while ($row_owner = mysql_fetch_object($result_owner)) {
 
 	if ($row_owner->id == $new_owner_id) {
 
-		echo "<option value=\"$row_owner->id\" selected>$row_owner->name</option>";
+		echo "<option value=\"$row_owner->id\" selected>[ $row_owner->name ]</option>";
 	
 	} else {
 
@@ -215,7 +215,7 @@ while ($row_registrar = mysql_fetch_object($result_registrar)) {
 
 	if ($row_registrar->id == $new_registrar_id) {
 
-		echo "<option value=\"$row_registrar->id\" selected>$row_registrar->name</option>";
+		echo "<option value=\"$row_registrar->id\" selected>[ $row_registrar->name ]</option>";
 	
 	} else {
 

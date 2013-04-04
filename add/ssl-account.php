@@ -108,7 +108,7 @@ while ($row_owner = mysql_fetch_object($result_owner)) {
 
 	if ($row_owner->id == $new_owner_id) {
 
-		echo "<option value=\"$row_owner->id\" selected>$row_owner->name</option>";
+		echo "<option value=\"$row_owner->id\" selected>[ $row_owner->name ]</option>";
 	
 	} else {
 
@@ -131,7 +131,7 @@ while ($row_ssl_provider = mysql_fetch_object($result_ssl_provider)) {
 
 	if ($row_ssl_provider->id == $new_ssl_provider_id) {
 
-		echo "<option value=\"$row_ssl_provider->id\" selected>$row_ssl_provider->name</option>";
+		echo "<option value=\"$row_ssl_provider->id\" selected>[ $row_ssl_provider->name ]</option>";
 	
 	} else {
 

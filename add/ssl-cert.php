@@ -147,7 +147,7 @@ while ($row_type = mysql_fetch_object($result_type)) {
 
 	if ($row_type->id == $new_type_id) {
 
-		echo "<option value=\"$row_type->id\" selected>$row_type->type</option>";
+		echo "<option value=\"$row_type->id\" selected>[ $row_type->type ]</option>";
 	
 	} else {
 
