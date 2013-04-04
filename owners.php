@@ -135,12 +135,34 @@ if ($has_active == "1") echo "<BR>";
 	<td width="225">
     	<font class="subheadline">Owner Name</font>
     </td>
+	<td>
+    	<font class="subheadline"># of Accounts</font>
+    </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr height="20">
     <td>
 		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font color=\"#DD0000\"><strong>*</strong></font></a>"; ?></a>
 	</td>
+	<td>
+    <?php
+	$sql2 = "SELECT count(*) AS total_count
+			 FROM registrar_accounts
+			 WHERE active = '1'
+			   AND owner_id = '$row->id'";
+	$result2 = mysql_query($sql2,$connection);
+	while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
+	?>
+    	<?php if ($total_accounts >= 1) { ?>
+
+	        <a class="nobold" href="registrar-accounts.php?oid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
+
+        <?php } else { ?>
+
+	        <?=number_format($total_accounts)?>
+        
+        <?php } ?>
+    </td>
 </tr>
 <?php } ?>
 </table>
