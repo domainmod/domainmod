@@ -809,7 +809,7 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Owner</font></a>
 	</td>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "r_a") { echo "r_d"; } else { echo "r_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Registrar (Username)</font></a>
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "r_a") { echo "r_d"; } else { echo "r_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Registrar Account</font></a>
 	</td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>

@@ -179,7 +179,7 @@ Expiring Between
     	<font class="subheadline">Owner</font>
     </td>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">SSL Provider (Username)</font>
+    	<font class="subheadline">SSL Account</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -222,7 +222,7 @@ Expiring Between
 		<?=$row->owner_name?>
     </td>
 	<td class="main_table_cell_active">
-		<?=$row->ssl_provider_name?> (<?=substr($row->username, 0, 10);?>...)
+		<?=$row->ssl_provider_name?> (<?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?>)
     </td>
 </tr>
 <?php } ?>

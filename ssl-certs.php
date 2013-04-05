@@ -597,7 +597,7 @@ echo "</select>";
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Owner</font></a>
 	</td>
 	<td class="main_table_cell_heading_active">
-		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslp_a") { echo "sslp_d"; } else { echo "sslp_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">SSL Provider (Username)</font></a>
+		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslp_a") { echo "sslp_d"; } else { echo "sslp_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">SSL Account</font></a>
 	</td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>

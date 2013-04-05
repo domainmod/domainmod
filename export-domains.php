@@ -178,7 +178,7 @@ Expiring Between
     	<font class="subheadline">Stakeholder</font>
     </td>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Registrar (Username)</font>
+    	<font class="subheadline">Registrar Account</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -205,7 +205,7 @@ Expiring Between
 		<?=$row->owner_name?>
     </td>
 	<td class="main_table_cell_active">
-		<?=$row->registrar_name?> (<?=substr($row->username, 0, 10);?>...)
+		<?=$row->registrar_name?> (<?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?>)
     </td>
 </tr>
 <?php } ?>
