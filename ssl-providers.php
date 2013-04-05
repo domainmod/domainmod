@@ -41,18 +41,18 @@ $sql = "SELECT id, name, url, default_provider
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-Below is a list of all the SSL Certificate Providers that are stored in your <?=$software_title?>.<BR><BR>
+Below is a list of all the SSL Certificate Providers that are stored in your <?=$software_title?>.<BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="20">
-        <td width="250">
+    <table class="main_table">
+    <tr class="main_table_row_heading_active">
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">Active Providers (<?=mysql_num_rows($result)?>)</font>
         </td>
-        <td width="150">
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">Accounts</font>
         </td>
-        <td>
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">Certs</font>
         </td>
     </tr>
@@ -60,11 +60,11 @@ Below is a list of all the SSL Certificate Providers that are stored in your <?=
     <?php 
 	while ($row = mysql_fetch_object($result)) { ?>
 
-        <tr height="20">
-            <td>
+        <tr class="main_table_row_active">
+            <td class="main_table_cell_active">
                 <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
-            <td>
+            <td class="main_table_cell_active">
                 <?php
                 $sql2 = "SELECT count(*) AS total_count
                          FROM ssl_accounts
@@ -85,7 +85,7 @@ Below is a list of all the SSL Certificate Providers that are stored in your <?=
                 <?php } ?>
         
             </td>
-            <td>
+            <td class="main_table_cell_active">
                 <?php
                 $sql3 = "SELECT count(*) AS total_count
                          FROM ssl_certs
@@ -109,8 +109,6 @@ Below is a list of all the SSL Certificate Providers that are stored in your <?=
         </tr>
     <?php 
 	} ?>
-
-    </table>
 <?php 
 } ?>
 
@@ -125,12 +123,11 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr height="20">
-            <td width="250">
+        <tr class="main_table_row_heading_inactive">
+            <td class="main_table_cell_heading_inactive">
                 <font class="subheadline">Inactive Providers (<?=mysql_num_rows($result)?>)</font>
             </td>
-            <td>
+            <td class="main_table_cell_heading_inactive">
                 <font class="subheadline">Accounts</font>
             </td>
         </tr>
@@ -138,11 +135,11 @@ if ($has_active == "1") echo "<BR>";
 		<?php
         while ($row = mysql_fetch_object($result)) { ?>
     
-            <tr height="20">
-                <td>
+            <tr class="main_table_row_inactive">
+                <td class="main_table_cell_inactive">
                     <a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
                 </td>
-                <td>
+                <td class="main_table_cell_inactive">
                     <?php
                     $sql2 = "SELECT count(*) AS total_count
                              FROM ssl_accounts
@@ -167,10 +164,9 @@ if ($has_active == "1") echo "<BR>";
     
         <?php 
         } ?>
-
-    </table>
 <?php 
 } ?>
+    </table>
 <?php if ($has_active || $has_inactive) { ?>
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default SSL Provider
 <?php } ?>

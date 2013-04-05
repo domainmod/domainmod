@@ -45,29 +45,29 @@ The below conversion rates are used for accounting and reporting purposes, and a
 <strong>NOTE:</strong> Thanks to Yahoo! Finance's free API, rate conversions have now been automated! Simply <a href="system/update-conversion-rates.php">click here to update the conversion rates</a>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="20">
-	<td width="230">
+<table class="main_table">
+<tr class="main_table_row_heading_active">
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Currency (<?=mysql_num_rows($result)?>)</font>
     </td>
-	<td width="125">
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">ABV</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Conversion Rate</font>
     </td>
 </tr>
 <?php
 while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td>
+<tr class="main_table_row_active">
+    <td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/currency.php?curid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_currency == 1) echo "<a title=\"Default Currency\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 <?php if ($row->currency == $_SESSION['session_default_currency']) echo ""; ?>
 	</td>
-    <td>
+    <td class="main_table_cell_active">
 		<?php echo "$row->currency"; ?>
 	</td>
-    <td>
+    <td class="main_table_cell_active">
 		<?php echo "$row->conversion"; ?>
 	</td>
 </tr>

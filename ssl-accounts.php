@@ -60,21 +60,21 @@ $sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, s
 		ORDER BY sslpname, username, oname";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-Below is a list of all the SSL Provider Accounts that are stored in your <?=$software_title?>.<BR><BR>
+Below is a list of all the SSL Provider Accounts that are stored in your <?=$software_title?>.<BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = 1; ?>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="20">
-        <td width="200">
+    <table class="main_table">
+    <tr class="main_table_row_heading_active">
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">SSL Provider</font>
         </td>
-        <td width="250">
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">Active Accounts (<?=mysql_num_rows($result)?>)</font>
         </td>
-        <td width="180">
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">Owner</font>
         </td>
-        <td>
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">SSL Certs</font>
         </td>
     </tr>
@@ -88,17 +88,17 @@ Below is a list of all the SSL Provider Accounts that are stored in your <?=$sof
 			$exclude_account_string_raw .= "'$row->sslpaid', ";
 		} ?>
 
-		<tr height="20">
-			<td>
+		<tr class="main_table_row_active">
+			<td class="main_table_cell_active">
 				<a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
 			</td>
-			<td valign="top">
+			<td class="main_table_cell_active">
 				<a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
 			</td>
-			<td>
+			<td class="main_table_cell_active">
 				<a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>
 			</td>
-			<td>
+			<td class="main_table_cell_active">
 				<?php
 				$sql2 = "SELECT count(*) AS total_cert_count
 						 FROM ssl_certs
@@ -116,8 +116,6 @@ Below is a list of all the SSL Provider Accounts that are stored in your <?=$sof
 		$current_sslpaid = $row->sslpaid;
 	
 	} ?>
-
-	</table>
 	<?php 
 } ?>
 <?php
@@ -141,18 +139,17 @@ if (mysql_num_rows($result) > 0) {
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="20">
-        <td width="200">
+    <tr class="main_table_row_heading_inactive">
+        <td class="main_table_cell_heading_inactive">
             <font class="subheadline">SSL Provider</font>
         </td>
-        <td width="250">
+        <td class="main_table_cell_heading_inactive">
             <font class="subheadline">Inactive Accounts (<?=mysql_num_rows($result)?>)</font>
         </td>
-        <td>
+        <td class="main_table_cell_heading_inactive">
             <font class="subheadline">Owner</font>
         </td>
-        <td>&nbsp;
+        <td class="main_table_cell_heading_inactive">&nbsp;
             
         </td>
     </tr>
@@ -160,28 +157,26 @@ if ($has_active == "1") echo "<BR>";
 
 	while ($row = mysql_fetch_object($result)) { ?>
 
-        <tr height="20">
-            <td>
+        <tr class="main_table_row_inactive">
+            <td class="main_table_cell_inactive">
                 <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
             </td>
-            <td valign="top" width="200">
+            <td class="main_table_cell_inactive">
                     <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
             </td>
-            <td>
+            <td class="main_table_cell_inactive">
                 <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>
             </td>
-            <td>&nbsp;
+            <td class="main_table_cell_inactive">&nbsp;
                 
             </td>
         </tr>
         <?php 
 
 	} ?>
-
-    </table>
 	<?php 
-
 } ?>
+</table>
 <?php if ($has_active || $has_inactive) { ?>
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight"><strong>*</strong></font> = Reseller Account
 <?php } ?>

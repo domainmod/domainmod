@@ -45,18 +45,18 @@ $sql = "SELECT r.id AS rid, r.name AS rname, r.default_registrar, r.url
 		ORDER BY r.name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-Below is a list of all the Domain Registrars that are stored in your <?=$software_title?>.<BR><BR>
+Below is a list of all the Domain Registrars that are stored in your <?=$software_title?>.<BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="20">
-        <td width="250">
+    <table class="main_table">
+    <tr class="main_table_row_heading_active">
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">Active Registrars (<?=mysql_num_rows($result)?>)</font>
         </td>
-        <td width="150">
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">Accounts</font>
         </td>
-        <td>
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">Domains</font>
         </td>
     </tr>
@@ -70,11 +70,11 @@ Below is a list of all the Domain Registrars that are stored in your <?=$softwar
 			$exclude_registrar_string_raw .= "'$row->rid', ";
 		} ?>
     
-        <tr height="20">
-            <td>
+        <tr class="main_table_row_active">
+            <td class="main_table_cell_active">
                 <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
-            <td>
+            <td class="main_table_cell_active">
                 <?php
                 $sql2 = "SELECT count(*) AS total_count
                          FROM registrar_accounts
@@ -98,7 +98,7 @@ Below is a list of all the Domain Registrars that are stored in your <?=$softwar
                     } ?>
         
             </td>
-            <td>
+            <td class="main_table_cell_active">
                 <?php
                 $sql3 = "SELECT count(*) AS total_count
                          FROM domains
@@ -128,8 +128,6 @@ Below is a list of all the Domain Registrars that are stored in your <?=$softwar
 		$current_rid = $row->rid;
 
 	} ?>
-
-    </table>
 	<?php
 
 } ?>
@@ -163,15 +161,14 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="20">
-        <td width="250">
+    <tr class="main_table_row_heading_inactive">
+        <td class="main_table_cell_heading_inactive">
             <font class="subheadline">Inactive Registrars (<?=mysql_num_rows($result)?>)</font>
         </td>
-        <td width="150">
+        <td class="main_table_cell_heading_inactive">
             <font class="subheadline">Accounts</font>
         </td>
-        <td>&nbsp;
+        <td class="main_table_cell_heading_inactive">&nbsp;
         	
         </td>
     </tr>
@@ -179,11 +176,11 @@ if ($has_active == "1") echo "<BR>";
     
     while ($row = mysql_fetch_object($result)) { ?>
     
-        <tr height="20">
-            <td>
+        <tr class="main_table_row_inactive">
+            <td class="main_table_cell_inactive">
                 <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
-            <td>
+            <td class="main_table_cell_inactive">
                 <?php
                 $sql2 = "SELECT count(*) AS total_count
                          FROM registrar_accounts
@@ -207,18 +204,17 @@ if ($has_active == "1") echo "<BR>";
                     } ?>
         
             </td>
-            <td>&nbsp;
+            <td class="main_table_cell_inactive">&nbsp;
 				
             </td>
         </tr>
         <?php 
 
 	} ?>
-
-    </table>
 	<?php
 
 } ?>
+</table>
 <?php if ($has_active || $has_inactive) { ?>
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default Registrar
 <?php } ?>

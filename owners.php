@@ -48,27 +48,27 @@ $sql = "SELECT id, name, default_owner
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 Below is a list of all the Domain Registrar and SSL Provider Account Owners that are stored in your <?=$software_title?>.
-<?php if ($zero_owners != "1") { ?><BR><BR><font class="headline">Domains</font><BR><BR><?php } ?>
+<?php if ($zero_owners != "1") { ?><BR><BR><font class="headline">Domains</font><BR><?php } ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="20">
-	<td width="225">
+<table class="main_table">
+<tr class="main_table_row_heading_active">
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Active Owners (<?=mysql_num_rows($result)?>)</font>
     </td>
-	<td width="150">
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Accounts</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Domains</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td>
+<tr class="main_table_row_active">
+    <td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
 	</td>
-	<td>
+	<td class="main_table_cell_active">
     <?php
 	$sql2 = "SELECT count(*) AS total_count
 			 FROM registrar_accounts
@@ -87,7 +87,7 @@ Below is a list of all the Domain Registrar and SSL Provider Account Owners that
         
         <?php } ?>
     </td>
-	<td>
+	<td class="main_table_cell_active">
     <?php
 	$sql3 = "SELECT count(*) AS total_count
 			 FROM domains
@@ -110,7 +110,6 @@ Below is a list of all the Domain Registrar and SSL Provider Account Owners that
     </td>
 </tr>
 <?php } ?>
-</table>
 <?php } ?>
 <?php
 if ($has_active == "1") {
@@ -134,21 +133,20 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="20">
-	<td width="225">
+<tr class="main_table_row_heading_inactive">
+	<td class="main_table_cell_heading_inactive">
     	<font class="subheadline">Inactive Owners (<?=mysql_num_rows($result)?>)</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_inactive">
     	<font class="subheadline">Accounts</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td>
+<tr class="main_table_row_inactive">
+    <td class="main_table_cell_inactive">
 		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
 	</td>
-	<td>
+	<td class="main_table_cell_inactive">
     <?php
 	$sql2 = "SELECT count(*) AS total_count
 			 FROM registrar_accounts
@@ -169,8 +167,8 @@ if ($has_active == "1") echo "<BR>";
     </td>
 </tr>
 <?php } ?>
-</table>
 <?php } ?>
+</table>
 <?php
 $sql = "SELECT id, name, default_owner
 		FROM owners
@@ -178,27 +176,27 @@ $sql = "SELECT id, name, default_owner
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-<?php if ($zero_owners != "1") { ?><BR><BR><font class="headline">SSL Certificates</font><BR><BR><?php } ?>
+<?php if ($zero_owners != "1") { ?><BR><BR><font class="headline">SSL Certificates</font><BR><?php } ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="20">
-	<td width="225">
+<table class="main_table">
+<tr class="main_table_row_heading_active">
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Active Owners (<?=mysql_num_rows($result)?>)</font>
     </td>
-	<td width="150">
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Accounts</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">SSL Certs</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td>
+<tr class="main_table_row_active">
+    <td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
 	</td>
-	<td>
+	<td class="main_table_cell_active">
     <?php
 	$sql2 = "SELECT count(*) AS total_count
 			 FROM ssl_accounts
@@ -217,7 +215,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
         
         <?php } ?>
     </td>
-	<td>
+	<td class="main_table_cell_active">
     <?php
 	$sql3 = "SELECT count(*) AS total_count
 			 FROM ssl_certs
@@ -240,7 +238,6 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
     </td>
 </tr>
 <?php } ?>
-</table>
 <?php } ?>
 <?php
 if ($has_active == "1") {
@@ -264,21 +261,20 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 if ($has_active) echo "<BR>";
 $has_inactive = "1";
 ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="20">
-	<td width="225">
+<tr class="main_table_row_heading_inactive">
+	<td class="main_table_cell_heading_inactive">
     	<font class="subheadline">Inactive Owners (<?=mysql_num_rows($result)?>)</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_inactive">
     	<font class="subheadline">Accounts</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td>
+<tr class="main_table_row_inactive">
+    <td class="main_table_cell_inactive">
 		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
 	</td>
-	<td>
+	<td class="main_table_cell_inactive">
     <?php
 	$sql2 = "SELECT count(*) AS total_count
 			 FROM ssl_accounts
@@ -299,8 +295,8 @@ $has_inactive = "1";
     </td>
 </tr>
 <?php } ?>
-</table>
 <?php } ?>
+</table>
 <?php if ($has_active || $has_inactive) { ?>
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default Owner
 <?php } ?>

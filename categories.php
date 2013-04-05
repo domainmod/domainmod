@@ -42,28 +42,28 @@ $sql = "SELECT id, name, stakeholder, default_category
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $number_of_categories = mysql_num_rows($result);
 ?>
-Below is a list of all the Domain Categories that are stored in your <?=$software_title?>.<BR><BR>
+Below is a list of all the Domain Categories that are stored in your <?=$software_title?>.<BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="20">
-	<td width="300">
+<table class="main_table">
+<tr class="main_table_row_heading_active">
+	<td class="main_table_cell_heading_active">
    	<font class="subheadline">Active Categories (<?=$number_of_categories?>)</font></td>
-	<td width="200">
+	<td class="main_table_cell_heading_active">
    	<font class="subheadline">Stakeholder</font></td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Domains</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td>
+<tr class="main_table_row_active">
+    <td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
-    <td>
+    <td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
 	</td>
-	<td>
+	<td class="main_table_cell_active">
     <?php
 	$sql2 = "SELECT count(*) AS total_count
 			 FROM domains
@@ -80,7 +80,6 @@ Below is a list of all the Domain Categories that are stored in your <?=$softwar
     </td>
 </tr>
 <?php } ?>
-</table>
 <?php } ?>
 <?php
 if ($has_active == "1") {
@@ -105,25 +104,24 @@ $number_of_categories = mysql_num_rows($result);
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="20">
-	<td width="300">
+<tr class="main_table_row_heading_inactive">
+	<td class="main_table_cell_heading_inactive">
    	<font class="subheadline">Inactive Categories (<?=$number_of_categories?>)</font></td>
-	<td>
+	<td class="main_table_cell_heading_inactive">
    	<font class="subheadline">Stakeholder</font></td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td>
+<tr class="main_table_row_inactive">
+    <td class="main_table_cell_inactive">
 		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
-    <td>
+    <td class="main_table_cell_inactive">
 		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
 	</td>
 </tr>
 <?php } ?>
-</table>
 <?php } ?>
+</table>
 <?php if ($has_active || $has_inactive) { ?>
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default Category
 <?php } ?>

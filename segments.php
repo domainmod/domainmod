@@ -68,15 +68,15 @@ if (mysql_num_rows($result_segment_check) == 0) {
 <?php
 }
 if (mysql_num_rows($result) > 0) { ?>
-    <table width="100%" border="0" cellspacing="0" cellpadding="5">
-    <tr height="30">
-        <td width="250">
+    <table class="main_table">
+    <tr class="main_table_row_heading_active">
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">Segments (<?=mysql_num_rows($result)?>)</font>
         </td>
-        <td width="350">
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">Segment Description</font>
         </td>
-        <td>
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">Segment</font>
         </td>
     </tr>
@@ -84,17 +84,17 @@ if (mysql_num_rows($result) > 0) { ?>
     <?php 
 	while ($row = mysql_fetch_object($result)) { ?>
 
-        <tr height="20">
-            <td valign="top">
+        <tr class="main_table_row_active">
+            <td class="main_table_cell_active">
                 <a class="subtlelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$row->name?></a>
             </td>
-            <td valign="top">
+            <td class="main_table_cell_active">
                 <?php
                 $temp_description = preg_replace("/\r\n/", "<BR>", $row->description);
                 echo $temp_description;
-                ?><BR><BR>
+                ?>
             </td>
-            <td valign="top">
+            <td class="main_table_cell_active">
                 <?php
                 $temp_segment = preg_replace("/','/", ", ", $row->segment);
                 $temp_segment = preg_replace("/'/", "", $temp_segment);
@@ -105,9 +105,9 @@ if (mysql_num_rows($result) > 0) { ?>
 
     <?php 
 	} ?>
-    </table>
 <?php 
 } ?>
+    </table>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

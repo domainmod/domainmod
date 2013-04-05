@@ -41,23 +41,23 @@ $sql = "SELECT id, type, default_type
 		ORDER BY type asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-Below is a list of all the types of SSL certificates that are stored in your <?=$software_title?>.<BR><BR>
+Below is a list of all the types of SSL certificates that are stored in your <?=$software_title?>.<BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="20">
-	<td width="325">
+<table class="main_table">
+<tr class="main_table_row_heading_active">
+	<td class="main_table_cell_heading_active">
    	<font class="subheadline">Active SSL Types (<?=mysql_num_rows($result)?>)</font></td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">SSL Certs</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td>
+<tr class="main_table_row_active">
+    <td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font clas=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
-	<td>
+	<td class="main_table_cell_active">
     <?php
 	$sql2 = "SELECT count(*) AS total_count
 			 FROM ssl_certs
@@ -74,7 +74,6 @@ Below is a list of all the types of SSL certificates that are stored in your <?=
     </td>
 </tr>
 <?php } ?>
-</table>
 <?php } ?>
 <?php
 if ($has_active == "1") {
@@ -98,20 +97,19 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="20">
-	<td width="325">
+<tr class="main_table_row_heading_inactive">
+	<td class="main_table_cell_heading_inactive">
    	<font class="subheadline">Inactive SSL Types (<?=mysql_num_rows($result)?>)</font></td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-    <td>
+<tr class="main_table_row_inactive">
+    <td class="main_table_cell_inactive">
 		<a class="subtlelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
 </tr>
 <?php } ?>
-</table>
 <?php } ?>
+</table>
 <?php if ($has_active || $has_inactive) { ?>
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default SSL Type
 <?php } ?>

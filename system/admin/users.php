@@ -59,15 +59,15 @@ if ($_SESSION['session_username'] == "admin") {
 ?>
 <?php
 if (mysql_num_rows($result) > 0) { ?>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr height="20">
-            <td width="200">
+    <table class="main_table">
+        <tr class="main_table_row_heading_active">
+            <td class="main_table_cell_heading_active">
                 <font class="subheadline">Active Users (<?=mysql_num_rows($result)?>)</font>
             </td>
-            <td width="150">
+            <td class="main_table_cell_heading_active">
                 <font class="subheadline">Username</font>
             </td>
-            <td>
+            <td class="main_table_cell_heading_active">
                 <font class="subheadline">Email Address</font>
             </td>
         </tr>
@@ -75,21 +75,19 @@ if (mysql_num_rows($result) > 0) { ?>
 		<?php
         while ($row = mysql_fetch_object($result)) { ?>
     
-            <tr height="20">
-                <td>
+            <tr class="main_table_row_active">
+                <td class="main_table_cell_active">
                     <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
                 </td>
-                <td>
+                <td class="main_table_cell_active">
                     <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
                 </td>
-                <td>
+                <td class="main_table_cell_active">
                     <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->email_address?></a>
                 </td>
             </tr>
         <?php 
         } ?>
-
-	</table>
 	<?php 
 } ?>
 <?php
@@ -101,16 +99,14 @@ $result = mysql_query($sql,$connection);
 ?>
 <?php
 if (mysql_num_rows($result) > 0) { ?>
-    <BR>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr height="20">
-            <td width="200">
+        <tr class="main_table_row_heading_inactive">
+            <td class="main_table_cell_heading_inactive">
                 <font class="subheadline">Inactive Users (<?=mysql_num_rows($result)?>)</font>
             </td>
-            <td width="150">
+            <td class="main_table_cell_heading_inactive">
                 <font class="subheadline">Username</font>
             </td>
-            <td>
+            <td class="main_table_cell_heading_inactive">
                 <font class="subheadline">Email Address</font>
             </td>
         </tr>
@@ -118,23 +114,23 @@ if (mysql_num_rows($result) > 0) { ?>
 		<?php
         while ($row = mysql_fetch_object($result)) { ?>
     
-            <tr height="20">
-                <td>
+            <tr class="main_table_row_inactive">
+                <td class="main_table_cell_inactive">
                     <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
                 </td>
-                <td>
+                <td class="main_table_cell_inactive">
                     <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
                 </td>
-                <td>
+                <td class="main_table_cell_inactive">
                     <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->email_address?></a>
                 </td>
             </tr>
         <?php 
         } ?>
 
-	</table>
 	<?php 
 } ?>
+	</table>
 <BR><font class="default_highlight"><strong>*</strong></font> = Admin Account
 <?php include("../../_includes/footer.inc.php"); ?>
 </body>

@@ -41,21 +41,21 @@ $sql = "SELECT id, name, ip, rdns, default_ip_address
 		ORDER BY name, ip, rdns";
 $result = mysql_query($sql,$connection);
 ?>
-Below is a list of all the IP Addresses that are stored in your <?=$software_title?>.<BR><BR>
+Below is a list of all the IP Addresses that are stored in your <?=$software_title?>.<BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="20">
-        <td width="260">
+<table class="main_table">
+    <tr class="main_table_row_heading_active">
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">IP Address Name</font>
         </td>
-        <td width="190">
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">Active IPs (<?=mysql_num_rows($result)?>)</font>
         </td>
-        <td width="210">
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">rDNS</font>
         </td>
-        <td>
+        <td class="main_table_cell_heading_active">
             <font class="subheadline">Domains</font>
         </td>
     </tr>
@@ -63,17 +63,17 @@ Below is a list of all the IP Addresses that are stored in your <?=$software_tit
     <?php
     while ($row = mysql_fetch_object($result)) { ?>
 
-        <tr height="20">
-            <td>
+        <tr class="main_table_row_active">
+            <td class="main_table_cell_active">
                 <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
             </td>
-            <td>
+            <td class="main_table_cell_active">
                 <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
             </td>
-            <td>
+            <td class="main_table_cell_active">
                 <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
             </td>
-            <td>
+            <td class="main_table_cell_active">
                 <?php
                 $sql2 = "SELECT count(*) AS total_count
                          FROM domains
@@ -89,8 +89,6 @@ Below is a list of all the IP Addresses that are stored in your <?=$software_tit
         </tr>
     <?php 
     } ?>
-
-</table>
 <?php 
 } ?>
 <?php
@@ -115,15 +113,14 @@ $result = mysql_query($sql,$connection);
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="20">
-        <td width="260">
+    <tr class="main_table_row_heading_inactive">
+        <td class="main_table_cell_heading_inactive">
             <font class="subheadline">IP Address Name</font>
         </td>
-        <td width="190">
+        <td class="main_table_cell_heading_inactive">
             <font class="subheadline">Inactive IPs (<?=mysql_num_rows($result)?>)</font>
         </td>
-        <td>
+        <td class="main_table_cell_heading_inactive">
             <font class="subheadline">rDNS</font>
         </td>
     </tr>
@@ -131,23 +128,23 @@ if ($has_active == "1") echo "<BR>";
     <?php
     while ($row = mysql_fetch_object($result)) { ?>
 
-        <tr height="20">
-            <td>
+        <tr class="main_table_row_inactive">
+            <td class="main_table_cell_inactive">
                 <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a></a>
             </td>
-            <td>
+            <td class="main_table_cell_inactive">
                 <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
             </td>
-            <td>
+            <td class="main_table_cell_inactive">
                 <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
             </td>
         </tr>
     <?php 
     } ?>
 
-</table>
 <?php 
 } ?>
+</table>
 <?php if ($has_active || $has_inactive) { ?>
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default IP Address
 <?php } ?>
