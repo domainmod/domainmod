@@ -155,54 +155,48 @@ Expiring Between
 </table>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
-	<td>
+<table class="main_table">
+<tr class="main_table_row_heading_active">
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Expiry Date</font>
     </td>
-	<td width="15" align="center">&nbsp;
-		
-    </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Renewal</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Host / Label</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Domain</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">IP Address</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Type</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Owner</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">SSL Provider (Username)</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-	<td valign="top">
+<tr class="main_table_row_active">
+	<td class="main_table_cell_active">
 		<?=$row->expiry_date?>
 	</td>
-	<td valign="top">&nbsp;
-		
-	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
     	<?php 
 		$renewal_fee_individual = $row->renewal_fee * $row->conversion;
 		$total_renewal_cost = $total_renewal_cost + $renewal_fee_individual; ?>
 		$<?=number_format($renewal_fee_individual, 2, '.', ',')?>
 	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<?=$row->name?>
 	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<?php
 		$sql_domain = "SELECT d.domain, ip.name, ip.ip
 					   FROM domains AS d, ip_addresses AS ip
@@ -218,16 +212,16 @@ Expiring Between
 		?>		
 		<?=$full_domain_name?>
 	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<?=$full_ip_name?> (<?=$full_ip_address?>)
 	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<?=$row->type?>
     </td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<?=$row->owner_name?>
     </td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<?=$row->ssl_provider_name?> (<?=substr($row->username, 0, 10);?>...)
     </td>
 </tr>

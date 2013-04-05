@@ -157,60 +157,54 @@ Expiring Between
 </table>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
-	<td>
+<table class="main_table">
+<tr class="main_table_row_heading_active">
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Expiry Date</font>
     </td>
-	<td width="15" align="center">&nbsp;
-		
-    </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Renewal</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Domain Name</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">IP Address</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Category</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Stakeholder</font>
     </td>
-	<td>
+	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Registrar (Username)</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-	<td valign="top">
+<tr class="main_table_row_active">
+	<td class="main_table_cell_active">
 		<?=$row->expiry_date?>
 	</td>
-	<td valign="top">&nbsp;
-		
-	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
     	<?php 
 		$renewal_fee_individual = $row->renewal_fee * $row->conversion;
 		$total_renewal_cost = $total_renewal_cost + $renewal_fee_individual; ?>
 		$<?=number_format($renewal_fee_individual, 2, '.', ',')?>
 	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<?=$row->domain?>
 	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<?=$row->name?> (<?=$row->ip?>)
 	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<?=$row->category_name?>
 	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<?=$row->owner_name?>
     </td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<?=$row->registrar_name?> (<?=substr($row->username, 0, 10);?>...)
     </td>
 </tr>
