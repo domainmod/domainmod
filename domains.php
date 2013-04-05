@@ -738,14 +738,13 @@ echo "</select>";
 <input type="hidden" name="sort_by" value="<?=$sort_by?>">
 </td>
 <td class="search-table-inside">
-<input name="search_for" type="text" value="<?=$search_for?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" value="Search Results &raquo;">
-<BR><BR>
+<input name="search_for" type="text" value="<?=$search_for?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" value="Search Results &raquo;">&nbsp;&nbsp;<BR><BR>
 <?php
 $quick_search = preg_replace("/', '/", "\r\n", $quick_search);
 $quick_search = preg_replace("/','/", "\r\n", $quick_search);
 $quick_search = preg_replace("/'/", "", $quick_search);
 ?>
-<textarea name="quick_search" cols="40" rows="11"><?=$quick_search?>
+<textarea name="quick_search" cols="35" rows="11"><?=$quick_search?>
 </textarea>&nbsp;&nbsp;
 <BR>
 <BR>
@@ -800,15 +799,19 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Domain Name</font></a>
 	</td>
+<?php /* ?>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ip_a") { echo "ip_d"; } else { echo "ip_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">IP Address</font></a>
 	</td>
+<?php */ ?>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "pc_a") { echo "pc_d"; } else { echo "pc_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Category</font></a>
 	</td>
+<?php /* ?>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Owner</font></a>
 	</td>
+<?php */ ?>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "r_a") { echo "r_d"; } else { echo "r_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Registrar (Username)</font></a>
 	</td>
@@ -835,17 +838,21 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 				} 
 			?><a class="subtlelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->domain?></a><?php if ($row->privacy == "1") { echo "&nbsp;<a title=\"Private WHOIS Registration\"><strong><font color=\"#DD0000\">PRV</font></strong></a>&nbsp;"; } else { echo "&nbsp;"; } ?>[<a class="subtlelink" target="_blank" href="http://<?=$row->domain?>">v</a>] [<a target="_blank" class="subtlelink" href="http://who.is/whois/<?=$row->domain?>">w</a>]
 	</td>
+<?php /* ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->ipid?>"><?=$row->ip_name?> (<?=$row->ip?>)</a>
 	</td>
+<?php */ ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->pcid?>"><?=$row->category_name?></a>
 	</td>
+<?php /* ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
 	</td>
+<?php */ ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a> (<a class="subtlelink" href="edit/account.php?raid=<?=$row->ra_id?>"><?=substr($row->username, 0, 10);?><?php if (strlen($row->username) >= 11) echo "..."; ?></a>)
+		<a class="subtlelink" href="edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a> (<a class="subtlelink" href="edit/account.php?raid=<?=$row->ra_id?>"><?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?></a>)
 	</td>
 </tr>
 <?php } ?>

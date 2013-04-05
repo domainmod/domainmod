@@ -140,13 +140,13 @@ tr.main_table_row_heading_active {
 	line-height: 30px; 
 }
 td.main_table_cell_heading_active {
-	padding-right: 50px;
+	padding-right: 40px;
 }
 tr.main_table_row_active {
 	line-height: 18px; 
 }
 td.main_table_cell_active {
-	padding-right: 50px; 
+	padding-right: 40px; 
 }
 
 tr.main_table_row_heading_inactive {
@@ -154,13 +154,13 @@ tr.main_table_row_heading_inactive {
 }
 td.main_table_cell_heading_inactive {
 	padding-top: 15px;
-	padding-right: 50px;
+	padding-right: 40px;
 }
 tr.main_table_row_inactive {
 	line-height: 18px; 
 }
 td.main_table_cell_inactive {
-	padding-right: 50px; 
+	padding-right: 40px; 
 }
 font.headline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
