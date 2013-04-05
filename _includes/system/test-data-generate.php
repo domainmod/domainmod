@@ -395,6 +395,7 @@ while ($count <= 5) {
 
 }
 
+include("../auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
 if ($_SESSION['session_installation_mode'] == 1 || $_SESSION['session_first_login'] == 1) {
 	

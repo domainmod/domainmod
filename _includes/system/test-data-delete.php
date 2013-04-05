@@ -68,6 +68,8 @@ $result = mysql_query($sql,$connection);
 $sql = "DELETE FROM ip_addresses WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
+include("../auth/login-checks/domain-and-ssl-asset-check.inc.php");
+
 if ($generating_test_data == "1") {
 
 	header("Location: test-data-generate.php");

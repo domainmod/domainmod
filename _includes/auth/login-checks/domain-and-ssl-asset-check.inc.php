@@ -23,40 +23,64 @@ $sql_asset_check = "SELECT id
 					WHERE active = '1'
 					LIMIT 1";
 $result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
-if (mysql_num_rows($result_asset_check) == 0) $_SESSION['session_need_registrar'] = "1";
+if (mysql_num_rows($result_asset_check) == 0) { 
+	$_SESSION['session_need_registrar'] = "1";
+} else {
+	$_SESSION['session_need_registrar'] = "0";
+}
 
 $sql_asset_check = "SELECT id
 					FROM registrar_accounts
 					WHERE active = '1'
 					LIMIT 1";
 $result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
-if (mysql_num_rows($result_asset_check) == 0) $_SESSION['session_need_registrar_account'] = "1";
+if (mysql_num_rows($result_asset_check) == 0) { 
+	$_SESSION['session_need_registrar_account'] = "1";
+} else {
+	$_SESSION['session_need_registrar_account'] = "0";
+}
 
 $sql_asset_check = "SELECT id
 					FROM domains
 					WHERE active = '1'
 					LIMIT 1";
 $result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
-if (mysql_num_rows($result_asset_check) == 0) $_SESSION['session_need_domain'] = "1";
+if (mysql_num_rows($result_asset_check) == 0) { 
+	$_SESSION['session_need_domain'] = "1";
+} else {
+	$_SESSION['session_need_domain'] = "0";
+}
 
 $sql_asset_check = "SELECT id
 					FROM ssl_providers
 					WHERE active = '1'
 					LIMIT 1";
 $result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
-if (mysql_num_rows($result_asset_check) == 0) $_SESSION['session_need_ssl_provider'] = "1";
+if (mysql_num_rows($result_asset_check) == 0) { 
+	$_SESSION['session_need_ssl_provider'] = "1";
+} else {
+	$_SESSION['session_need_ssl_provider'] = "0";
+}
 
 $sql_asset_check = "SELECT id
 					FROM ssl_accounts
 					WHERE active = '1'
 					LIMIT 1";
 $result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
-if (mysql_num_rows($result_asset_check) == 0) $_SESSION['session_need_ssl_account'] = "1";
+if (mysql_num_rows($result_asset_check) == 0) { 
+	$_SESSION['session_need_ssl_account'] = "1";
+} else {
+	$_SESSION['session_need_ssl_account'] = "0";
+}
 
 $sql_asset_check = "SELECT id
 					FROM ssl_certs
 					WHERE active = '1'
 					LIMIT 1";
 $result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
-if (mysql_num_rows($result_asset_check) == 0) $_SESSION['session_need_ssl_cert'] = "1";
+if (mysql_num_rows($result_asset_check) == 0) { 
+	$_SESSION['session_need_ssl_cert'] = "1";
+} else {
+	$_SESSION['session_need_ssl_cert'] = "0";
+}
 ?>
