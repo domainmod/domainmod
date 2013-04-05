@@ -32,6 +32,9 @@ include("../auth/auth-check.inc.php");
 $sql = "DELETE FROM categories WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
+$sql = "DELETE FROM currencies WHERE test_data = '1'";
+$result = mysql_query($sql,$connection);
+
 $sql = "DELETE FROM owners WHERE test_data = '1'";
 $result = mysql_query($sql,$connection);
 
