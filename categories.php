@@ -47,7 +47,7 @@ Below is a list of all the Domain Categories that are stored in your <?=$softwar
 <?php $has_active = "1"; ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
-	<td width="325">
+	<td width="300">
    	<font class="subheadline">Active Categories (<?=$number_of_categories?>)</font></td>
 	<td width="200">
    	<font class="subheadline">Stakeholder</font></td>
@@ -107,7 +107,7 @@ if ($has_active == "1") echo "<BR>";
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
-	<td width="325">
+	<td width="300">
    	<font class="subheadline">Inactive Categories (<?=$number_of_categories?>)</font></td>
 	<td>
    	<font class="subheadline">Stakeholder</font></td>
