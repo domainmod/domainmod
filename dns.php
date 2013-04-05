@@ -38,7 +38,7 @@ $software_section = "dns";
 $sql = "SELECT id, name, number_of_servers, default_dns
 		FROM dns
 		WHERE id IN (SELECT dns_id FROM domains WHERE dns_id != '0' AND active NOT IN ('0','10') GROUP BY dns_id)
-		ORDER BY name asc";
+		ORDER BY name, number_of_servers desc";
 $result = mysql_query($sql,$connection);
 ?>
 Below is a list of all the DNS Profiles that are stored in your <?=$software_title?>.<BR><BR>
@@ -87,14 +87,14 @@ if ($has_active == "1") {
 	$sql = "SELECT id, name, number_of_servers, default_dns
 			FROM dns
 			WHERE id NOT IN (SELECT dns_id FROM domains WHERE dns_id != '0' AND active NOT IN ('0','10') GROUP BY dns_id)
-			ORDER BY name asc";
+			ORDER BY name, number_of_servers desc";
 
 } else {
 	
 	$sql = "SELECT id, name, number_of_servers, default_dns
 			FROM dns
 			WHERE active = '1'
-			ORDER BY name asc";
+			ORDER BY name, number_of_servers desc";
 	
 }
 $result = mysql_query($sql,$connection) or die(mysql_error());

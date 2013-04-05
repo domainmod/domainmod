@@ -43,7 +43,7 @@ if ($_SESSION['session_username'] == "admin") {
 	$sql = "SELECT id, first_name, last_name, username, email_address, admin
 			FROM users
 			WHERE active = '1'
-			ORDER BY first_name asc, last_name asc";
+			ORDER BY first_name, last_name, username, email_address";
 	$result = mysql_query($sql,$connection);
 
 } else {
@@ -52,7 +52,7 @@ if ($_SESSION['session_username'] == "admin") {
 			FROM users
 			WHERE active = '1'
 			  AND username != 'admin'
-			ORDER BY first_name asc, last_name asc";
+			ORDER BY first_name, last_name, username, email_address";
 	$result = mysql_query($sql,$connection);
 
 }
@@ -96,7 +96,7 @@ if (mysql_num_rows($result) > 0) { ?>
 $sql = "SELECT id, first_name, last_name, username, email_address, admin
 		FROM users
 		WHERE active = '0'
-		ORDER BY first_name asc, last_name asc";
+		ORDER BY first_name, last_name, username, email_address";
 $result = mysql_query($sql,$connection);
 ?>
 <?php

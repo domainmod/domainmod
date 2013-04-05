@@ -57,7 +57,7 @@ $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.rese
 		  $oid_string
 		  AND (SELECT count(*) FROM domains WHERE account_id = ra.id AND active NOT IN ('0', '10')) > 0
 		GROUP BY ra.username, oname, rname
-		ORDER BY rname asc";
+		ORDER BY rname, username, oname";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 Below is a list of all the Domain Registrar Accounts that are stored in your <?=$software_title?>.<BR><BR>
@@ -134,7 +134,7 @@ $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.rese
 		  $raid_string
 		  $oid_string
 		GROUP BY ra.username, oname, rname
-		ORDER BY rname asc";
+		ORDER BY rname, username, oname";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 if (mysql_num_rows($result) > 0) { 

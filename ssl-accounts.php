@@ -28,6 +28,7 @@ $software_section = "ssl-accounts";
 
 // Form Variables
 $sslpid = $_GET['sslpid'];
+$sslpaid = $_GET['sslpaid'];
 $oid = $_GET['oid'];
 ?>
 <html>
@@ -40,175 +41,146 @@ $oid = $_GET['oid'];
 <?php include("_includes/header.inc.php"); ?>
 <?php
 
-if ($sslpid != "") { $sslpid_string = " and ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
-if ($oid != "") { $oid_string = " and owner_id = '$oid' "; } else { $oid_string = ""; }
+if ($sslpid != "") { $sslpid_string = " AND sa.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
+if ($sslpaid != "") { $sslpaid_string = " AND sa.id = '$sslpaid' "; } else { $sslpaid_string = ""; }
+if ($oid != "") { $oid_string = " AND sa.owner_id = '$oid' "; } else { $oid_string = ""; }
 
-$sql = "SELECT id, username, owner_id, ssl_provider_id, reseller, default_account
-		FROM ssl_accounts
-		WHERE id IN (SELECT account_id FROM ssl_certs WHERE account_id != '0' AND active = '1' GROUP BY account_id)
+$sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, sa.default_account, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname
+		FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp, ssl_certs as sslc
+		WHERE sa.active = '1'
+		  AND sa.owner_id = o.id
+		  AND sa.ssl_provider_id = sslp.id
+		  AND sa.id = sslc.account_id
+		  AND sslc.active not in ('0')
 		  $sslpid_string
+		  $sslpaid_string
 		  $oid_string
-		ORDER BY username asc";
+		  AND (SELECT count(*) FROM ssl_certs WHERE account_id = sa.id AND active NOT IN ('0')) > 0
+		GROUP BY sa.username, oname, sslpname
+		ORDER BY sslpname, username, oname";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 Below is a list of all the SSL Provider Accounts that are stored in your <?=$software_title?>.<BR><BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
-<?php $has_active = "1"; ?>
+<?php $has_active = 1; ?>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
-        <td width="250">
+        <td width="200">
             <font class="subheadline">SSL Provider</font>
         </td>
-        <td width="200">
+        <td width="250">
             <font class="subheadline">Active Accounts (<?=mysql_num_rows($result)?>)</font>
         </td>
-        <td width="250">
+        <td width="180">
             <font class="subheadline">Owner</font>
         </td>
         <td>
-            <font class="subheadline">Certs</font>
-        </td>
-    </tr>
-
-	<?php 
-    while ($row = mysql_fetch_object($result)) { ?>
-    <tr height="20">
-        <td width="250">
-        <?php
-        $sql2 = "SELECT id, name
-                 FROM ssl_providers
-                 WHERE id = '$row->ssl_provider_id'";
-        $result2 = mysql_query($sql2,$connection) or die(mysql_error());
-        while ($row2 = mysql_fetch_object($result2)) {
-            $temp_id = $row2->id;
-            $temp_ssl_provider_name = $row2->name;
-        }
-        ?>
-        <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_ssl_provider_name?></a>
-        </td>
-        <td valign="top" width="200">
-                <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
-        </td>
-        <td colspan="2">
-            <table width="100%" border="0" cellspacing="3" cellpadding="0">
-                <tr>
-                    <td width="244">
-                    <?php
-                    $sql2 = "SELECT id, name
-                             FROM owners
-                             WHERE id = '$row->owner_id'";
-                    $result2 = mysql_query($sql2,$connection) or die(mysql_error());
-                    while ($row2 = mysql_fetch_object($result2)) {
-                        $temp_id = $row2->id;
-                        $temp_owner_name = $row2->name;
-                    }
-                    ?>
-                    <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_owner_name?></a>
-                    </td>
-                    <td>
-                    <?php
-                    $sql3 = "SELECT count(*) AS total_ssl_count
-                             FROM ssl_certs
-                             WHERE account_id = '$row->id'
-                               AND active != '0'
-                               AND active != '10'";
-                    $result3 = mysql_query($sql3,$connection);
-                    while ($row3 = mysql_fetch_object($result3)) {
-                        if ($row3->total_ssl_count != 0) {
-                            echo "<a class=\"nobold\" href=\"ssl-certs.php?oid=$row->owner_id&sslpid=$row->ssl_provider_id&sslpaid=$row->id\">" . number_format($row3->total_ssl_count) . "</a>";
-                        } else {
-                            echo number_format($row3->total_ssl_count);
-                        }
-                    }
-                    ?>
-                    </td>
-                </tr>
-            </table>
+            <font class="subheadline">SSL Certs</font>
         </td>
     </tr>
     <?php 
-    } ?>
+
+    while ($row = mysql_fetch_object($result)) { 
+
+	    $new_sslpaid = $row->sslpaid;
+    
+        if ($current_sslpaid != $new_sslpaid) {
+			$exclude_account_string_raw .= "'$row->sslpaid', ";
+		} ?>
+
+		<tr height="20">
+			<td>
+				<a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
+			</td>
+			<td valign="top">
+				<a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
+			</td>
+			<td>
+				<a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>
+			</td>
+			<td>
+				<?php
+				$sql2 = "SELECT count(*) AS total_cert_count
+						 FROM ssl_certs
+						 WHERE account_id = '$row->sslpaid'
+						   AND active NOT IN ('0')";
+				$result2 = mysql_query($sql2,$connection);
+
+				while ($row2 = mysql_fetch_object($result2)) { 
+					echo "<a class=\"nobold\" href=\"ssl-certs.php?oid=$row->oid&sslpid=$row->sslpid&sslpaid=$row->sslpaid\">" . number_format($row2->total_cert_count) . "</a>"; 
+				} ?>
+
+			</td>
+		</tr>
+		<?php 
+		$current_sslpaid = $row->sslpaid;
+	
+	} ?>
+
 	</table>
-<?php 
+	<?php 
 } ?>
 <?php
-$sql = "SELECT id, username, owner_id, ssl_provider_id, reseller, default_account
-		FROM ssl_accounts
-		WHERE id NOT IN (SELECT account_id FROM ssl_certs WHERE account_id != '0' AND active = '1' GROUP BY account_id)
+$exclude_account_string = substr($exclude_account_string_raw, 0, -2); 
+
+if ($exclude_account_string != "") { $sslpaid_string = " AND sa.id not in ($exclude_account_string) "; } else { $sslpaid_string = ""; }
+
+$sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, sa.default_account, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname
+		FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
+		WHERE sa.active = '1'
+		  AND sa.owner_id = o.id
+		  AND sa.ssl_provider_id = sslp.id
 		  $sslpid_string
+		  $sslpaid_string
 		  $oid_string
-		ORDER BY username asc";
+		GROUP BY sa.username, oname, sslpname
+		ORDER BY sslpname, username, oname";
 $result = mysql_query($sql,$connection) or die(mysql_error());
-?>
-<?php if (mysql_num_rows($result) > 0) { 
+
+if (mysql_num_rows($result) > 0) { 
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
 ?>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr height="20">
+        <td width="200">
+            <font class="subheadline">SSL Provider</font>
+        </td>
+        <td width="250">
+            <font class="subheadline">Inactive Accounts (<?=mysql_num_rows($result)?>)</font>
+        </td>
+        <td>
+            <font class="subheadline">Owner</font>
+        </td>
+        <td>&nbsp;
+            
+        </td>
+    </tr>
+    <?php 
+
+	while ($row = mysql_fetch_object($result)) { ?>
+
         <tr height="20">
-            <td width="250">
-                <font class="subheadline">SSL Provider</font>
+            <td>
+                <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
             </td>
-            <td width="200">
-                <font class="subheadline">Inactive Accounts (<?=mysql_num_rows($result)?>)</font>
+            <td valign="top" width="200">
+                    <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
             </td>
-            <td width="250">
-                <font class="subheadline">Owner</font>
+            <td>
+                <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>
             </td>
             <td>&nbsp;
                 
             </td>
         </tr>
+        <?php 
 
+	} ?>
+
+    </table>
 	<?php 
-    while ($row = mysql_fetch_object($result)) { ?>
-    
-        <tr height="20">
-            <td width="250">
-            <?php
-            $sql2 = "SELECT id, name
-                     FROM ssl_providers
-                     WHERE id = '$row->ssl_provider_id'";
-            $result2 = mysql_query($sql2,$connection) or die(mysql_error());
-            while ($row2 = mysql_fetch_object($result2)) {
-                $temp_id = $row2->id;
-                $temp_ssl_provider_name = $row2->name;
-            }
-            ?>
-            <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_ssl_provider_name?></a>
-            </td>
-            <td valign="top" width="200">
-                    <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
-            </td>
-            <td colspan="2">
-    
-                <table width="100%" border="0" cellspacing="3" cellpadding="0">
-                    <tr>
-                        <td width="246">
-                        <?php
-                        $sql2 = "SELECT id, name
-                                 FROM owners
-                                 WHERE id = '$row->owner_id'";
-                        $result2 = mysql_query($sql2,$connection) or die(mysql_error());
-                        while ($row2 = mysql_fetch_object($result2)) {
-                            $temp_id = $row2->id;
-                            $temp_owner_name = $row2->name;
-                        }
-                        ?>
-                        <a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->id?>"><?=$temp_owner_name?></a>
-                        </td>
-                        <td>&nbsp;
-                            
-                        </td>
-                    </tr>
-                </table>
-    
-            </td>
-        </tr>
-    <?php 
-    } ?>
-</table>
-<?php 
+
 } ?>
 <?php if ($has_active || $has_inactive) { ?>
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight"><strong>*</strong></font> = Reseller Account
