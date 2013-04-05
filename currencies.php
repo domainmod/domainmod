@@ -47,7 +47,7 @@ The below conversion rates are used for accounting and reporting purposes, and a
 <?php $has_active = "1"; ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
-	<td width="250">
+	<td width="230">
     	<font class="subheadline">Currency (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td width="125">
