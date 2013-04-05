@@ -340,7 +340,7 @@ if (mysql_num_rows($result) > 0) {
 	$all_missing_fees = substr($temp_all_missing_fees, 0, -2); 
     ?>
     <?=$all_missing_fees?><BR><BR>
-    <strong><font color="#DD0000">*</font> Please update the fees for these TLDs below in order to ensure proper domain accounting.</strong>
+    <strong><font class="highlight">*</font> Please update the fees for these TLDs below in order to ensure proper domain accounting.</strong>
     <BR><BR><BR><BR>
 <?php
 }

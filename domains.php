@@ -819,20 +819,20 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 	</td>
 	<td class="main_table_cell_active">
 		  <?php if ($row->active == "0") { 
-					echo "<a title=\"Inactive Domain\"><strong><font color=\"#DD0000\">x</font></strong></a>&nbsp;"; 
+					echo "<a title=\"Inactive Domain\"><strong><font class=\"highlight\">x</font></strong></a>&nbsp;"; 
 				} elseif ($row->active == "10") { 
-					echo "<a title=\"Sold\"><strong><font color=\"#DD0000\">S</font></strong></a>&nbsp;"; 
+					echo "<a title=\"Sold\"><strong><font class=\"highlight\">S</font></strong></a>&nbsp;"; 
 					echo "<a title=\"Sold\"></a>"; 
 				} elseif ($row->active == "2") { 
-					echo "<a title=\"In Transfer\"><strong><font color=\"#DD0000\">T</font></strong></a>&nbsp;"; 
+					echo "<a title=\"In Transfer\"><strong><font class=\"highlight\">T</font></strong></a>&nbsp;"; 
 				} elseif ($row->active == "3") { 
-					echo "<a title=\"Pending (Renewal)\"><strong><font color=\"#DD0000\">PRn</font></strong></a>&nbsp;"; 
+					echo "<a title=\"Pending (Renewal)\"><strong><font class=\"highlight\">PRn</font></strong></a>&nbsp;"; 
 				} elseif ($row->active == "4") { 
-					echo "<a title=\"Pending (Other)\"><strong><font color=\"#DD0000\">PO</font></strong></a>&nbsp;"; 
+					echo "<a title=\"Pending (Other)\"><strong><font class=\"highlight\">PO</font></strong></a>&nbsp;"; 
 				} elseif ($row->active == "5") { 
-					echo "<a title=\"Pending (Registration)\"><strong><font color=\"#DD0000\">PRg</font></strong></a>&nbsp;"; 
+					echo "<a title=\"Pending (Registration)\"><strong><font class=\"highlight\">PRg</font></strong></a>&nbsp;"; 
 				} 
-			?><a class="subtlelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->domain?></a><?php if ($row->privacy == "1") { echo "&nbsp;<a title=\"Private WHOIS Registration\"><strong><font color=\"#DD0000\">PRV</font></strong></a>&nbsp;"; } else { echo "&nbsp;"; } ?>[<a class="subtlelink" target="_blank" href="http://<?=$row->domain?>">v</a>] [<a target="_blank" class="subtlelink" href="http://who.is/whois/<?=$row->domain?>">w</a>]
+			?><a class="subtlelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->domain?></a><?php if ($row->privacy == "1") { echo "&nbsp;<a title=\"Private WHOIS Registration\"><strong><font class=\"highlight\">prv</font></strong></a>&nbsp;"; } else { echo "&nbsp;"; } ?>[<a class="subtlelink" target="_blank" href="http://<?=$row->domain?>">v</a>] [<a target="_blank" class="subtlelink" href="http://who.is/whois/<?=$row->domain?>">w</a>]
 	</td>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->ipid?>"><?=$row->ip_name?> (<?=$row->ip?>)</a>

@@ -607,15 +607,15 @@ echo "</select>";
 	</td>
 	<td class="main_table_cell_active">
 		  <?php if ($row->active == "0") { 
-					echo "<a title=\"Inactive SSL Certificate\"><strong><font color=\"#DD0000\">x</font></strong></a>&nbsp;"; 
+					echo "<a title=\"Inactive SSL Certificate\"><strong><font class=\"highlight\">x</font></strong></a>&nbsp;"; 
 				} elseif ($row->active == "2") { 
-					echo "<a title=\"In Transfer\"><strong><font color=\"#DD0000\">T</font></strong></a>&nbsp;"; 
+					echo "<a title=\"In Transfer\"><strong><font class=\"highlight\">T</font></strong></a>&nbsp;"; 
 				} elseif ($row->active == "3") { 
-					echo "<a title=\"Pending (Renewal)\"><strong><font color=\"#DD0000\">PRn</font></strong></a>&nbsp;"; 
+					echo "<a title=\"Pending (Renewal)\"><strong><font class=\"highlight\">PRn</font></strong></a>&nbsp;"; 
 				} elseif ($row->active == "4") { 
-					echo "<a title=\"Pending (Other)\"><strong><font color=\"#DD0000\">PO</font></strong></a>&nbsp;"; 
+					echo "<a title=\"Pending (Other)\"><strong><font class=\"highlight\">PO</font></strong></a>&nbsp;"; 
 				} elseif ($row->active == "5") { 
-					echo "<a title=\"Pending (Registration)\"><strong><font color=\"#DD0000\">PRg</font></strong></a>&nbsp;"; 
+					echo "<a title=\"Pending (Registration)\"><strong><font class=\"highlight\">PRg</font></strong></a>&nbsp;"; 
 				} 
 			?><a class="subtlelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
