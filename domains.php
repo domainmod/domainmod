@@ -164,61 +164,21 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 <body onLoad="document.forms[0].elements[11].focus()";>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT count(*) as total_count
-		FROM registrars
-		WHERE active = '1'";
-$result = mysql_query($sql,$connection) or die(mysql_error());
-while ($row = mysql_fetch_object($result)) {
-	$number_of_registrars = $row->total_count;
-}
-
-$sql = "SELECT count(*) as total_count
-		FROM registrar_accounts
-		WHERE active = '1'";
-$result = mysql_query($sql,$connection) or die(mysql_error());
-while ($row = mysql_fetch_object($result)) {
-	$number_of_registrar_accounts = $row->total_count;
-}
-
-$sql = "SELECT count(*) as total_count
-		FROM domains
-		WHERE active = '1'";
-$result = mysql_query($sql,$connection) or die(mysql_error());
-while ($row = mysql_fetch_object($result)) {
-	$number_of_domains = $row->total_count;
-}
-
-if ($number_of_registrars == 0 || $number_of_registrar_accounts == 0 || $number_of_domains == 0) {
-	
-	$_SESSION['session_first_run'] = "1";
-	
-	if ($number_of_registrars == 0) {
-
-		echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrars found. Please <a href=\"add/registrar.php\">click here</a> to add one.<BR><BR>";
-		exit;
-
-	}
-
-	if ($number_of_registrar_accounts == 0) {
-
-		echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrar Accounts found. Please <a href=\"add/account.php\">click here</a> to add one.<BR><BR>";
-		exit;
-
-	}
-
-	if ($number_of_domains == 0) {
-
-		echo "<strong><font class=\"highlight\">0</font></strong> Domains found. Please <a href=\"add/domain.php\">click here</a> to add one.<BR><BR>";
-		exit;
-		
-	}
-
+if ($_SESSION['session_need_registrar'] == "1") {
+	echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrars found. Please <a href=\"add/registrar.php\">click here</a> to add one.<BR><BR>";
 	exit;
-
 }
 
-$_SESSION['session_first_run'] = "0";
-	
+if ($_SESSION['session_need_registrar_account'] == "1" && $_SESSION['session_need_registrar'] != "1") {
+	echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrar Accounts found. Please <a href=\"add/account.php\">click here</a> to add one.<BR><BR>";
+	exit;
+}
+
+if ($_SESSION['session_need_domain'] == "1" && $_SESSION['session_need_registrar'] != "1" && $_SESSION['session_need_registrar_account'] != "1") {
+	echo "<strong><font class=\"highlight\">0</font></strong> Domains found. Please <a href=\"add/domain.php\">click here</a> to add one.<BR><BR>";
+	exit;
+}
+
 if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; } 
 elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; } 
 elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; } 

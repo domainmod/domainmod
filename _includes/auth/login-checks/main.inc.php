@@ -32,6 +32,9 @@ include("../../auth/login-checks/new-password-check.inc.php");
 // Check the database version
 include("../../auth/login-checks/database-version-check.inc.php");
 
+// Check if there are Domain and SSL assets
+include("../../auth/login-checks/domain-and-ssl-asset-check.inc.php");
+
 unset($_SESSION['session_running_login_checks']);
 
 $sql_user_update = "UPDATE users

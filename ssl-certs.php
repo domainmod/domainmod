@@ -157,6 +157,25 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 <body onLoad="document.forms[0].elements[8].focus()";>
 <?php include("_includes/header.inc.php"); ?>
 <?php
+if ($_SESSION['session_need_ssl_provider'] == "1") {
+	echo "<strong><font class=\"highlight\">0</font></strong> SSL Providers found. Please <a href=\"add/ssl-provider.php\">click here</a> to add one.<BR><BR>";
+	exit;
+}
+
+if ($_SESSION['session_need_ssl_account'] == "1" && $_SESSION['session_need_ssl_provider'] != "1") {
+	echo "<strong><font class=\"highlight\">0</font></strong> SSL Provider Accounts found. Please <a href=\"add/ssl-account.php\">click here</a> to add one.<BR><BR>";
+	exit;
+}
+
+if ($_SESSION['session_need_ssl_cert'] == "1" && $_SESSION['session_need_ssl_provider'] != "1" && $_SESSION['session_need_ssl_account'] != "1" && $_SESSION['session_need_domain'] == "0") {
+	echo "<strong><font class=\"highlight\">0</font></strong> SSL Certificates. Please <a href=\"add/ssl-cert.php\">click here</a> to add one.<BR><BR>";
+	exit;
+}
+
+if ($_SESSION['session_need_domain'] == "1" && $_SESSION['session_need_ssl_provider'] == "0" && $_SESSION['session_need_ssl_account'] == "0") {
+	echo "Before you can add an SSL Certificate you must have at least one domain stored in your $software_title. Please <a href=\"domains.php\">click here</a> to add one.<BR><BR>";
+	exit;
+}
 
 if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
 elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 

@@ -76,8 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$_SESSION['session_result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar, $temp_owner)</font> Added<BR>";
 
-		if ($_SESSION['session_first_run'] == "1") {
-
+		if ($_SESSION['session_need_registrar_account'] == "1") {
+			
+			$_SESSION['session_need_registrar_account'] = "0";
 			header("Location: ../domains.php");
 
 		} else {

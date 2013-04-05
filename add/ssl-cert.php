@@ -66,6 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
 		
+		$_SESSION['session_need_ssl_cert'] = "0";
+		
 	} else {
 	
 		if ($new_name == "") { $_SESSION['session_result_message'] .= "Enter a name for the SSL certificate<BR>"; }

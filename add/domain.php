@@ -74,6 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
 		
+		$_SESSION['session_need_domain'] = "0";
+		
 	} else {
 	
 		if (!preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) { $_SESSION['session_result_message'] .= "The domain format is incorrect<BR>"; }

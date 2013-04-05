@@ -61,9 +61,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Added<BR>";
-		
-		header("Location: ../ssl-providers.php");
-		exit;
+
+		if ($_SESSION['session_need_ssl_provider'] == "1") {
+			
+			$_SESSION['session_need_ssl_provider'] = "0";
+			header("Location: ../ssl-certs.php");
+
+		} else {
+
+			header("Location: ../ssl-providers.php");
+			
+		}
 
 	} else {
 	

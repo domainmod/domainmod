@@ -17,15 +17,19 @@
 ?>
 <br><br>
 <?php if ($software_section == "domains") { ?>
-	<?php if ($_SESSION['session_first_run'] != "1") { ?>
+	<?php if ($_SESSION['session_need_registrar'] != "1" && $_SESSION['session_need_registrar_account'] != "1") { ?>
 		 &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/domain.php">Add A New Domain</a>
 	<?php } ?>
 <?php } elseif ($software_section == "ssl-providers") { ?>
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-provider.php">Add A New SSL Provider</a>
 <?php } elseif ($software_section == "ssl-accounts") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-account.php">Add A New SSL Account</a>
+	<?php if ($_SESSION['session_need_ssl_provider'] != "1") { ?>
+		 &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-account.php">Add A New SSL Account</a>
+	<?php } ?>
 <?php } elseif ($software_section == "ssl-certs") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-cert.php">Add A New SSL Certificate</a>
+	<?php if ($_SESSION['session_need_ssl_provider'] != "1" && $_SESSION['session_need_ssl_account'] != "1" && $_SESSION['session_need_domain'] != "1") { ?>
+		 &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-cert.php">Add A New SSL Certificate</a>
+	<?php } ?>
 <?php } elseif ($software_section == "ssl-types") { ?>
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-type.php">Add A New SSL Type</a>
 <?php } elseif ($software_section == "categories") { ?>
@@ -37,7 +41,9 @@
 <?php } elseif ($software_section == "registrars") { ?>
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/registrar.php">Add A New Registrar</a>
 <?php } elseif ($software_section == "accounts") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/account.php">Add A New Registrar Account</a>
+	<?php if ($_SESSION['session_need_registrar'] != "1") { ?>
+		 &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/account.php">Add A New Registrar Account</a>
+	<?php } ?>
 <?php } elseif ($software_section == "owners") { ?>
  &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/owner.php">Add A New Owner</a>
 <?php } elseif ($software_section == "segments") { ?>

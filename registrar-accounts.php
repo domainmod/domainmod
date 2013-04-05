@@ -186,7 +186,19 @@ if ($has_active == "1") echo "<BR>";
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight"><strong>*</strong></font> = Reseller Account
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
-		You don't currently have any Registrar Accounts. <a href="add/account.php">Click here to add one</a>.
+			<?php
+            $sql = "SELECT id
+                    FROM registrars
+                    WHERE active = '1'
+					LIMIT 1";
+            $result = mysql_query($sql,$connection);
+
+            if (mysql_num_rows($result) == 0) { 
+			?>
+                    Before adding a Registrar Account you must add at least one Registrar. <a href="add/registrar.php">Click here to add a Registrar</a>.<BR>
+			<?php } else { ?>
+                    You don't currently have any Registrar Accounts. <a href="add/account.php">Click here to add one</a>.<BR>
+			<?php } ?>
 <?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>

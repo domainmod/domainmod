@@ -75,8 +75,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
 		
 		$_SESSION['session_result_message'] = "SSL Account <font class=\"highlight\">$new_username ($temp_ssl_provider, $temp_owner)</font> Added<BR>";
-		
-		header("Location: ../ssl-accounts.php");
+
+		if ($_SESSION['session_need_ssl_account'] == "1") {
+			
+			$_SESSION['session_need_ssl_account'] = "0";
+			header("Location: ../ssl-certs.php");
+
+		} else {
+
+			header("Location: ../ssl-accounts.php");
+			
+		}
 		exit;
 
 	} else {

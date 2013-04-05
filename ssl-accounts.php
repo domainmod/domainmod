@@ -214,7 +214,19 @@ if ($has_active == "1") echo "<BR>";
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight"><strong>*</strong></font> = Reseller Account
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
-		You don't currently have any SSL Accounts. <a href="add/ssl-account.php">Click here to add one</a>.
+			<?php
+            $sql = "SELECT id
+                    FROM ssl_providers
+                    WHERE active = '1'
+					LIMIT 1";
+            $result = mysql_query($sql,$connection);
+
+            if (mysql_num_rows($result) == 0) { 
+			?>
+                    Before adding an SSL Provider Account you must add at least one SSL Provider. <a href="add/ssl-provider.php">Click here to add an SSL Provider</a>.<BR>
+			<?php } else { ?>
+                    You don't currently have any SSL Provider Accounts. <a href="add/ssl-account.php">Click here to add one</a>.<BR>
+			<?php } ?>
 <?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
