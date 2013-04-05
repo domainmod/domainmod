@@ -579,65 +579,56 @@ echo "</select>";
 </table>
 <BR>
 <?php if ($totalrows != '0') { ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr height="30">
-	<td>
+<table class="main_table">
+<tr class="main_table_row_heading_active">
+	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ed_a") { echo "ed_d"; } else { echo "ed_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Expiry Date</font></a>
 	</td>
-
-	<td width="20" align="center">&nbsp;
-		
-	</td>
-	<td>
+	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslc_a") { echo "sslc_d"; } else { echo "sslc_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Host / Label</font></a>
 	</td>
-	<td>
+	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Domain</font></a>
 	</td>
-	<td>
+	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslf_a") { echo "sslf_d"; } else { echo "sslf_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Type</font></a>
 	</td>
-	<td>
+	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Owner</font></a>
 	</td>
-	<td>
+	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslp_a") { echo "sslp_d"; } else { echo "sslp_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">SSL Provider (Username)</font></a>
 	</td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
-<tr height="20">
-	<td valign="top">
+<tr class="main_table_row_active">
+	<td class="main_table_cell_active">
 		<?=$row->expiry_date?>
 	</td>
-	<td valign="top" align="right">
+	<td class="main_table_cell_active">
 		  <?php if ($row->active == "0") { 
-					echo "<a title=\"Inactive SSL Certificate\"><strong><font color=\"#DD0000\">x</font></strong></a>"; 
+					echo "<a title=\"Inactive SSL Certificate\"><strong><font color=\"#DD0000\">x</font></strong></a>&nbsp;"; 
 				} elseif ($row->active == "2") { 
-					echo "<a title=\"In Transfer\"><strong><font color=\"#DD0000\">T</font></strong></a>"; 
+					echo "<a title=\"In Transfer\"><strong><font color=\"#DD0000\">T</font></strong></a>&nbsp;"; 
 				} elseif ($row->active == "3") { 
-					echo "<a title=\"Pending (Renewal)\"><strong><font color=\"#DD0000\">PRn</font></strong></a>"; 
+					echo "<a title=\"Pending (Renewal)\"><strong><font color=\"#DD0000\">PRn</font></strong></a>&nbsp;"; 
 				} elseif ($row->active == "4") { 
-					echo "<a title=\"Pending (Other)\"><strong><font color=\"#DD0000\">PO</font></strong></a>"; 
+					echo "<a title=\"Pending (Other)\"><strong><font color=\"#DD0000\">PO</font></strong></a>&nbsp;"; 
 				} elseif ($row->active == "5") { 
-					echo "<a title=\"Pending (Registration)\"><strong><font color=\"#DD0000\">PRg</font></strong></a>"; 
-				} else { 
-					echo "&nbsp;"; 
+					echo "<a title=\"Pending (Registration)\"><strong><font color=\"#DD0000\">PRg</font></strong></a>&nbsp;"; 
 				} 
-			?>
-	&nbsp;</td>
-	<td valign="top">
-		<a class="subtlelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->name?></a>
+			?><a class="subtlelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/domain.php?did=<?=$row->domain_id?>"><?=$row->domain?></a>
 	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->type?></a>
 	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
 	</td>
-	<td valign="top">
+	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a> (<a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpa_id?>"><?=substr($row->username, 0, 10);?><?php if (strlen($row->username) >= 11) echo "..."; ?></a>)
 	</td>
 </tr>

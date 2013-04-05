@@ -143,7 +143,7 @@ td.main_table_cell_heading_active {
 	padding-right: 50px;
 }
 tr.main_table_row_active {
-	line-height: 19px; 
+	line-height: 18px; 
 }
 td.main_table_cell_active {
 	padding-right: 50px; 
@@ -157,7 +157,7 @@ td.main_table_cell_heading_inactive {
 	padding-right: 50px;
 }
 tr.main_table_row_inactive {
-	line-height: 19px; 
+	line-height: 18px; 
 }
 td.main_table_cell_inactive {
 	padding-right: 50px; 

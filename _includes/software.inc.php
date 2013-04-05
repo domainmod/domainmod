@@ -23,7 +23,7 @@ $software_title = "Domain Manager";
 $software_version = "1.0"; 
 
 // Site Width
-$site_width = "96%";
+$site_width = "980";
 
 // Number of 'Test Data' domains to generate
 $number_of_temp_domains = 100;
