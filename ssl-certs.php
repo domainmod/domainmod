@@ -593,11 +593,9 @@ echo "</select>";
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslf_a") { echo "sslf_d"; } else { echo "sslf_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Type</font></a>
 	</td>
-<?php /* ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Owner</font></a>
 	</td>
-<?php */ ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslp_a") { echo "sslp_d"; } else { echo "sslp_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">SSL Provider (Username)</font></a>
 	</td>
@@ -627,11 +625,9 @@ echo "</select>";
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->type?></a>
 	</td>
-<?php /* ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
 	</td>
-<?php */ ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a> (<a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpa_id?>"><?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?></a>)
 	</td>
