@@ -57,6 +57,16 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 Segments identify a specific subset of domains, which can be used to help filter and manage your <a href="domains.php">domain results</a>.
 <BR><BR>
 <?php 
+$sql_segment_check = "SELECT id
+					  FROM segments
+					  WHERE active = '1'
+					  LIMIT 1";
+$result_segment_check = mysql_query($sql_segment_check,$connection);
+if (mysql_num_rows($result_segment_check) == 0) {
+?>
+	You don't currently have any Segments. <a href="add/segment.php">Click here to add one</a>.<BR>
+<?php
+}
 if (mysql_num_rows($result) > 0) { ?>
     <table width="100%" border="0" cellspacing="0" cellpadding="5">
     <tr height="30">
