@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "2.0007";
+$most_recent_db_version = "2.0008";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -85,7 +85,7 @@ if (mysql_num_rows($result) > 0) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `owners` ( 
-				`id` int(5) NOT NULL auto_increment,
+				`id` int(10) NOT NULL auto_increment,
 				`name` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_owner` int(1) NOT NULL default '0',
@@ -271,7 +271,7 @@ if (mysql_num_rows($result) > 0) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `registrars` ( 
-				`id` int(5) NOT NULL auto_increment,
+				`id` int(10) NOT NULL auto_increment,
 				`name` varchar(255) NOT NULL,
 				`url` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
@@ -286,7 +286,7 @@ if (mysql_num_rows($result) > 0) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_providers` ( 
-				`id` int(5) NOT NULL auto_increment,
+				`id` int(10) NOT NULL auto_increment,
 				`name` varchar(255) NOT NULL,
 				`url` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
