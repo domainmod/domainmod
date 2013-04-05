@@ -347,15 +347,15 @@ if (mysql_num_rows($result) > 0) {
 ?>
 <font class="headline">Add/Update TLD Fee</font><BR><BR>
 <form name="edit_registrar_fee_form" method="post" action="<?=$PHP_SELF?>">
-<table border="0" cellspacing="0" cellpadding="0">
-	<tr>
-    	<td width="200" valign="top"><strong>TLD</strong><BR><BR>
+<table class="main_table">
+	<tr class="main_table_row_heading_active">
+    	<td class="main_table_cell_heading_active"><strong>TLD</strong><BR>
    	    <input name="new_tld" type="text" value="" size="10"></td>
-		<td width="200" valign="top"><strong>Initial Fee</strong><BR><BR>
+		<td class="main_table_cell_heading_active"><strong>Initial Fee</strong><BR>
 	    <input name="new_initial_fee" type="text" value="" size="10"></td>
-		<td width="200" valign="top"><strong>Renewal Fee</strong><BR><BR>
+		<td class="main_table_cell_heading_active"><strong>Renewal Fee</strong><BR>
 	    <input name="new_renewal_fee" type="text" value="" size="10"></td>
-	  	<td valign="top"><strong>Currency</strong><BR><BR>
+	  	<td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
 		  <select name="new_currency_id" id="new_currency">
 		  	<?php
 			$sql = "SELECT id, currency, name 
@@ -379,12 +379,12 @@ if (mysql_num_rows($result) > 0) {
 </form>
 <BR><BR>
 <font class="headline">TLD Fees</font><BR><BR>
-<table border="0" cellspacing="0" cellpadding="0">
-	<tr>
-    	<td width="120" height="20" valign="top"><strong>TLD</strong></td>
-        <td width="120"><strong>Initial Fee</strong></td>
-        <td width="120"><strong>Renewal Fee</strong></td>
-        <td><strong>Currency</strong></td>
+<table class="main_table">
+	<tr class="main_table_row_heading_active">
+    	<td class="main_table_cell_heading_active"><strong>TLD</strong></td>
+        <td class="main_table_cell_heading_active"><strong>Initial Fee</strong></td>
+        <td class="main_table_cell_heading_active"><strong>Renewal Fee</strong></td>
+        <td class="main_table_cell_heading_active"><strong>Currency</strong></td>
 	</tr>
 <?php
 $sql = "SELECT f.tld, f.initial_fee, f.renewal_fee, c.currency 
@@ -396,11 +396,11 @@ $sql = "SELECT f.tld, f.initial_fee, f.renewal_fee, c.currency
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 ?>
-	<tr>
-    	<td height="20" valign="middle">.<?=$row->tld?></td>
-        <td><?php echo number_format($row->initial_fee, 2, '.', ','); ?></td>
-        <td><?php echo number_format($row->renewal_fee, 2, '.', ','); ?></td>
-        <td><?=$row->currency?></td>
+	<tr class="main_table_row_active">
+    	<td class="main_table_cell_active">.<?=$row->tld?></td>
+        <td class="main_table_cell_active"><?php echo number_format($row->initial_fee, 2, '.', ','); ?></td>
+        <td class="main_table_cell_active"><?php echo number_format($row->renewal_fee, 2, '.', ','); ?></td>
+        <td class="main_table_cell_active"><?=$row->currency?></td>
 	</tr>
 <?php
 }
