@@ -46,7 +46,7 @@ Below is a list of all the IP Addresses that are stored in your <?=$software_tit
 <?php $has_active = "1"; ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
-        <td width="280">
+        <td width="260">
             <font class="subheadline">IP Address Name</font>
         </td>
         <td width="190">
@@ -117,7 +117,7 @@ if ($has_active == "1") echo "<BR>";
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
-        <td width="280">
+        <td width="260">
             <font class="subheadline">IP Address Name</font>
         </td>
         <td width="190">
