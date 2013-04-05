@@ -46,7 +46,7 @@ Below is a list of all the DNS Profiles that are stored in your <?=$software_tit
 <?php $has_active = "1"; ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
-	<td width="340">
+	<td width="320">
     	<font class="subheadline">Active Profiles (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td width="150">
@@ -105,7 +105,7 @@ if ($has_active == "1") echo "<BR>";
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr height="20">
-	<td width="340">
+	<td width="320">
     	<font class="subheadline">Inactive Profiles (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td>
