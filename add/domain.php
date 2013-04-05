@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
 		
-		$_SESSION['session_need_domain'] = "0";
+		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 		
 	} else {
 	

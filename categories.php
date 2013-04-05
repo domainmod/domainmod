@@ -103,6 +103,7 @@ $number_of_categories = mysql_num_rows($result);
 <?php if (mysql_num_rows($result) > 0) { 
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
+if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\">";
 ?>
 <tr class="main_table_row_heading_inactive">
 	<td class="main_table_cell_heading_inactive">
@@ -121,12 +122,14 @@ if ($has_active == "1") echo "<BR>";
 </tr>
 <?php } ?>
 <?php } ?>
-</table>
+<?php
+if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+?>
 <?php if ($has_active || $has_inactive) { ?>
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default Category
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
-		You don't currently have any Categories. <a href="add/category.php">Click here to add one</a>.
+		<BR>You don't currently have any Categories. <a href="add/category.php">Click here to add one</a>.
 <?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>

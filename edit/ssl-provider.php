@@ -282,6 +282,8 @@ if ($really_del == "1") {
 	$result = mysql_query($sql,$connection);
 
 	$_SESSION['session_result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Deleted<BR>";
+
+	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
 	header("Location: ../ssl-providers.php");
 	exit;

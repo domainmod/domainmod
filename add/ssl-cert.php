@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
 		
-		$_SESSION['session_need_ssl_cert'] = "0";
+		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 		
 	} else {
 	

@@ -138,6 +138,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 if (mysql_num_rows($result) > 0) { 
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
+if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\">";
 ?>
     <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">
@@ -176,7 +177,9 @@ if ($has_active == "1") echo "<BR>";
 	} ?>
 	<?php 
 } ?>
-</table>
+<?php
+if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+?>
 <?php if ($has_active || $has_inactive) { ?>
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight"><strong>*</strong></font> = Reseller Account
 <?php } ?>
@@ -190,9 +193,9 @@ if ($has_active == "1") echo "<BR>";
 
             if (mysql_num_rows($result) == 0) { 
 			?>
-                    Before adding an SSL Provider Account you must add at least one SSL Provider. <a href="add/ssl-provider.php">Click here to add an SSL Provider</a>.<BR>
+                    <BR>Before adding an SSL Provider Account you must add at least one SSL Provider. <a href="add/ssl-provider.php">Click here to add an SSL Provider</a>.<BR>
 			<?php } else { ?>
-                    You don't currently have any SSL Provider Accounts. <a href="add/ssl-account.php">Click here to add one</a>.<BR>
+                    <BR>You don't currently have any SSL Provider Accounts. <a href="add/ssl-account.php">Click here to add one</a>.<BR>
 			<?php } ?>
 <?php } ?>
 <?php include("_includes/footer.inc.php"); ?>

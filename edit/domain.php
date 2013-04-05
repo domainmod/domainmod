@@ -175,6 +175,8 @@ if ($really_del == "1") {
 	
 	$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Deleted<BR>";
 	
+	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
+	
 	header("Location: ../domains.php");
 	exit;
 

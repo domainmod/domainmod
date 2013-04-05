@@ -160,6 +160,8 @@ if ($really_del == "1") {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$_SESSION['session_result_message'] = "SSL Account <font class=\"highlight\">$temp_username ($temp_ssl_provider_name, $temp_owner_name)</font> Deleted<BR>";
+
+	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
 	header("Location: ../ssl-accounts.php");
 	exit;

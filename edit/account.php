@@ -165,6 +165,8 @@ if ($really_del == "1") {
 	$result = mysql_query($sql,$connection);
 	
 	$_SESSION['session_result_message'] = "Registrar Account <font class=\"highlight\">$temp_username ($temp_registrar_name, $temp_owner_name)</font> Deleted<BR>";
+
+	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
 	header("Location: ../registrar-accounts.php");
 	exit;

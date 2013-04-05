@@ -64,7 +64,7 @@ $sql_segment_check = "SELECT id
 $result_segment_check = mysql_query($sql_segment_check,$connection);
 if (mysql_num_rows($result_segment_check) == 0) {
 ?>
-	You don't currently have any Segments. <a href="add/segment.php">Click here to add one</a>.<BR>
+	You don't currently have any Segments. <a href="add/segment.php">Click here to add one</a>.<BR><BR>
 <?php
 }
 if (mysql_num_rows($result) > 0) { ?>

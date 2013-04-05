@@ -272,6 +272,8 @@ if ($really_del == "1") {
 	$result = mysql_query($sql,$connection);
 
 	$_SESSION['session_result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Deleted<BR>";
+
+	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
 	header("Location: ../registrars.php");
 	exit;

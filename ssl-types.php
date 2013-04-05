@@ -96,6 +96,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php if (mysql_num_rows($result) > 0) { 
 $has_inactive = "1";
 if ($has_active == "1") echo "<BR>";
+if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\">";
 ?>
 <tr class="main_table_row_heading_inactive">
 	<td class="main_table_cell_heading_inactive">
@@ -109,12 +110,14 @@ if ($has_active == "1") echo "<BR>";
 </tr>
 <?php } ?>
 <?php } ?>
-</table>
+<?php
+if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+?>
 <?php if ($has_active || $has_inactive) { ?>
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default SSL Type
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
-		You don't currently have any SSL Types. <a href="add/ssl-type.php">Click here to add one</a>.
+		<BR>You don't currently have any SSL Types. <a href="add/ssl-type.php">Click here to add one</a>.
 <?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>

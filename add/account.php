@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		if ($_SESSION['session_need_registrar_account'] == "1") {
 			
-			$_SESSION['session_need_registrar_account'] = "0";
+			include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 			header("Location: ../domains.php");
 
 		} else {
