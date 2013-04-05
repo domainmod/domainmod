@@ -129,6 +129,9 @@ td.footer-table {
 	padding-left: 10px;
 	padding-right: 10px; 
 }
+td.main_table {
+	padding-right: 40px; 
+}
 font.headline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
