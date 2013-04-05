@@ -139,7 +139,6 @@ font.subheadline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	font-size: 12;
-	color: #CC0000;
 	color: #000000;
 }
 font.highlight {

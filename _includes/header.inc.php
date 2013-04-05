@@ -23,7 +23,7 @@ session_start();
 <table align="center" width="<?=$site_width?>" border="0" cellspacing="0" cellpadding="0">
 	<tr>
         <td class="header-table" height="100%">
-			<font class="headline"><?=$software_title?> v<?=$software_version?></font>
+			<font class="headline"><?=$software_title?></font>
 		</td>
         <td align="right" valign="bottom" height="100%">
         <?php if ($_SESSION['session_is_logged_in'] == 1) { ?>
