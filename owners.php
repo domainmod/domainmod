@@ -50,7 +50,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 Below is a list of all the Domain Registrar and SSL Provider Account Owners that are stored in your <?=$software_title?>.
 <?php if ($zero_owners != "1") { ?><BR><BR><font class="headline">Domains</font><BR><?php } ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
-<?php $has_active = "1"; ?>
+<?php $has_active_domain = "1"; ?>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 	<td class="main_table_cell_heading_active">
@@ -112,7 +112,7 @@ Below is a list of all the Domain Registrar and SSL Provider Account Owners that
 <?php } ?>
 <?php } ?>
 <?php
-if ($has_active == "1") {
+if ($has_active_domain == "1") {
 
 	$sql = "SELECT id, name, default_owner
 			FROM owners
@@ -130,9 +130,9 @@ if ($has_active == "1") {
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <?php if (mysql_num_rows($result) > 0) { 
-$has_inactive = "1";
-if ($has_active == "1") echo "<BR>";
-if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\">";
+$has_inactive_domains = "1";
+if ($has_active_domain == "1") echo "<BR>";
+if ($has_active_domain != "1" && $has_inactive_domains == "1") echo "<table class=\"main_table\">";
 ?>
 <tr class="main_table_row_heading_inactive">
 	<td class="main_table_cell_heading_inactive">
@@ -169,7 +169,10 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 </tr>
 <?php } ?>
 <?php } ?>
-</table>
+<?php
+if ($has_active_domain == "1" || $has_inactive_domains == "1") echo "</table>";
+?>
+
 <?php
 $sql = "SELECT id, name, default_owner
 		FROM owners
@@ -179,7 +182,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <?php if ($zero_owners != "1") { ?><BR><BR><font class="headline">SSL Certificates</font><BR><?php } ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
-<?php $has_active = "1"; ?>
+<?php $has_active_ssl = "1"; ?>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 	<td class="main_table_cell_heading_active">
@@ -241,7 +244,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php } ?>
 <?php } ?>
 <?php
-if ($has_active == "1") {
+if ($has_active_ssl == "1") {
 
 	$sql = "SELECT id, name, default_owner
 			FROM owners
@@ -259,9 +262,9 @@ if ($has_active == "1") {
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <?php if (mysql_num_rows($result) > 0) { 
-if ($has_active) echo "<BR>";
-$has_inactive = "1";
-if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\">";
+if ($has_active_ssl) echo "<BR>";
+$has_inactive_ssl = "1";
+if ($has_active_ssl != "1" && $has_inactive_ssl == "1") echo "<table class=\"main_table\">";
 ?>
 <tr class="main_table_row_heading_inactive">
 	<td class="main_table_cell_heading_inactive">
@@ -299,13 +302,13 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 <?php } ?>
 <?php } ?>
 <?php
-if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+if ($has_active_ssl == "1" || $has_inactive_ssl == "1") echo "</table>";
 ?>
-<?php if ($has_active || $has_inactive) { ?>
+<?php if ($has_active_domain || $has_inactive_domain || $has_active_ssl || $has_inactive_ssl) { ?>
 		<BR><font class="default_highlight"><strong>*</strong></font> = Default Owner
 <?php } ?>
-<?php if (!$has_active && !$has_inactive) { ?>
-		<BR><BR>You don't currently have any Owners. <a href="add/owner.php">Click here to add one</a>.
+<?php if (!$has_active_domain && !$has_inactive_domain && !$has_active_ssl && !$has_inactive_ssl) { ?>
+        <BR><BR>You don't currently have any Owners. <a href="add/owner.php">Click here to add one</a>.
 <?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
