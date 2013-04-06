@@ -685,7 +685,7 @@ if ($current_db_version < $most_recent_db_version) {
 					`number_of_ssl_certs` int(5) NOT NULL default '50',
 					`display_domain_owner` int(1) NOT NULL default '0',
 					`display_domain_registrar` int(1) NOT NULL default '0',
-					`display_domain_account` int(1) NOT NULL default '0',
+					`display_domain_account` int(1) NOT NULL default '1',
 					`display_domain_expiry_date` int(1) NOT NULL default '1',
 					`display_domain_category` int(1) NOT NULL default '1',
 					`display_domain_dns` int(1) NOT NULL default '0',
@@ -737,6 +737,22 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0011;
+
+	}
+
+	// upgrade database from 2.0011 to 2.0012
+	if ($current_db_version == 2.0011) {
+
+		$sql = "ALTER TABLE `user_settings` 
+				CHANGE `display_domain_account` `display_domain_account` INT(1) NOT NULL DEFAULT '1'";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0012',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0012;
 
 	}
 

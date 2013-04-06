@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "2.001";
+$most_recent_db_version = "2.0012";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
@@ -67,7 +67,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`number_of_ssl_certs` int(5) NOT NULL default '50',
 				`display_domain_owner` int(1) NOT NULL default '0',
 				`display_domain_registrar` int(1) NOT NULL default '0',
-				`display_domain_account` int(1) NOT NULL default '0',
+				`display_domain_account` int(1) NOT NULL default '1',
 				`display_domain_expiry_date` int(1) NOT NULL default '1',
 				`display_domain_category` int(1) NOT NULL default '1',
 				`display_domain_dns` int(1) NOT NULL default '0',
