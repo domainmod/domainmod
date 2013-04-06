@@ -18,7 +18,7 @@
 <?php
 session_start();
 
-$most_recent_db_version = "2.0012";
+$most_recent_db_version = "2.0013";
 
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");

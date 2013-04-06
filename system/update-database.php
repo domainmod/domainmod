@@ -756,6 +756,82 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0012 to 2.0013
+	if ($current_db_version == 2.0012) {
+
+		$sql = "ALTER TABLE `categories` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `currencies` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `dns` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `domains` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `fees` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ip_addresses` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `owners` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `registrars` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `registrar_accounts` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `segments` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `segments` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_accounts` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_certs` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_cert_types` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_fees` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_providers` 
+				DROP `test_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0013',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0013;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
