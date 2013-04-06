@@ -797,36 +797,52 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 <?php if ($totalrows != '0') { ?>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
+<?php if ($_SESSION['session_display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ed_a") { echo "ed_d"; } else { echo "ed_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Expiry Date</font></a>
 	</td>
+<?php } ?>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Domain Name</font></a>
 	</td>
+<?php if ($_SESSION['session_display_domain_tld'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "tld_a") { echo "tld_d"; } else { echo "tld_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">TLD</font></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ip_a") { echo "ip_d"; } else { echo "ip_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">IP Address</font></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_dns'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dns_a") { echo "dns_d"; } else { echo "dns_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">DNS Profile</font></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_category'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "pc_a") { echo "pc_d"; } else { echo "pc_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Category</font></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Owner</font></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "r_a") { echo "r_d"; } else { echo "r_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Registrar Account</font></a>
 	</td>
+<?php } ?>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
+<?php if ($_SESSION['session_display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->expiry_date?>
 	</td>
+<?php } ?>
 	<td class="main_table_cell_active">
 		  <?php if ($row->active == "0") { 
 					echo "<a title=\"Inactive Domain\"><strong><font class=\"highlight\">x</font></strong></a>&nbsp;"; 
@@ -844,25 +860,36 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 				} 
 			?><a class="subtlelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->domain?></a><?php if ($row->privacy == "1") { echo "&nbsp;<a title=\"Private WHOIS Registration\"><strong><font class=\"highlight\">prv</font></strong></a>&nbsp;"; } else { echo "&nbsp;"; } ?>[<a class="subtlelink" target="_blank" href="http://<?=$row->domain?>">v</a>] [<a target="_blank" class="subtlelink" href="http://who.is/whois/<?=$row->domain?>">w</a>]
 	</td>
+<?php if ($_SESSION['session_display_domain_tld'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->tld?>
 	</td>
-
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->ipid?>"><?=$row->ip_name?> (<?=$row->ip?>)</a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_dns'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->dnsid?>"><?=$row->dns_name?></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_category'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->pcid?>"><?=$row->category_name?></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a> (<a class="subtlelink" href="edit/account.php?raid=<?=$row->ra_id?>"><?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?></a>)
 	</td>
+<?php } ?>
 </tr>
 <?php } ?>
 </table>
