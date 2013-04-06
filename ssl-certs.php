@@ -569,6 +569,7 @@ echo "</select>";
   <tr>
 	<td align="left" valign="top">
 		<?php echo $navigate[2]; ?>
+        &nbsp;[<a class="subtlelink" href="system/display-settings.php">display settings</a>]
 	</td>
 	<td width="280" align="right" valign="top">
 		<?php if ($totalrows != '0') { ?>
@@ -581,30 +582,42 @@ echo "</select>";
 <?php if ($totalrows != '0') { ?>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
+<?php if ($_SESSION['session_display_ssl_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ed_a") { echo "ed_d"; } else { echo "ed_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Expiry Date</font></a>
 	</td>
+<?php } ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslc_a") { echo "sslc_d"; } else { echo "sslc_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Host / Label</font></a>
 	</td>
+<?php if ($_SESSION['session_display_ssl_domain'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Domain</font></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslf_a") { echo "sslf_d"; } else { echo "sslf_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Type</font></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Owner</font></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslp_a") { echo "sslp_d"; } else { echo "sslp_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">SSL Account</font></a>
 	</td>
+<?php } ?>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
+<?php if ($_SESSION['session_display_ssl_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->expiry_date?>
 	</td>
+<?php } ?>
 	<td class="main_table_cell_active">
 		  <?php if ($row->active == "0") { 
 					echo "<a title=\"Inactive SSL Certificate\"><strong><font class=\"highlight\">x</font></strong></a>&nbsp;"; 
@@ -619,18 +632,26 @@ echo "</select>";
 				} 
 			?><a class="subtlelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
+<?php if ($_SESSION['session_display_ssl_domain'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/domain.php?did=<?=$row->domain_id?>"><?=$row->domain?></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->type?></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a> (<a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpa_id?>"><?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?></a>)
 	</td>
+<?php } ?>
 </tr>
 <?php } ?>
 </table>

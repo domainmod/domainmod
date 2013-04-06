@@ -162,6 +162,16 @@ tr.main_table_row_inactive {
 td.main_table_cell_inactive {
 	padding-right: 40px; 
 }
+
+td.main_table_cell_heading_active_centered {
+	padding-right: 40px;
+	text-align: center;
+}
+td.main_table_cell_active_centered {
+	padding-right: 40px; 
+	text-align: center;
+}
+
 font.headline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
