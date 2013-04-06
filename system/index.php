@@ -41,7 +41,6 @@ $software_section = "system";
 	&raquo; <a href="admin/system-settings.php">System Settings</a><BR><BR>
 	&raquo; <a href="admin/users.php">User List</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/add/user.php">Add New User</a><BR><BR>
 	&raquo; <a href="update-database.php">Check For Database  Updates</a><BR><BR> 
-	&raquo; <a href="../_includes/system/test-data-delete.php?generating_test_data=1">Regenerate Test Data</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/test-data-delete.php">Delete Test Data</a>
 <?php } ?>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
