@@ -156,8 +156,8 @@ echo "</select>";
 <BR><BR>
 <strong>Reseller Account?</strong><BR><BR>
 <select name="new_reseller">";
-<option value="0" selected>No</option>
-<option value="1">Yes</option>
+<option value="0"<?php if ($new_reseller != "1") echo " selected"; ?>>No</option>
+<option value="1"<?php if ($new_reseller == "1") echo " selected"; ?>>Yes</option>
 </select>
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
@@ -165,7 +165,7 @@ echo "</select>";
 </textarea>
 <BR><BR>
 <strong>Default Account?:</strong>&nbsp;
-<input name="new_default_account" type="checkbox" id="new_default_account" value="1">
+<input name="new_default_account" type="checkbox" id="new_default_account" value="1"<?php if ($new_default_account == "1") echo " checked";?>>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This Account &raquo;">
 </form>

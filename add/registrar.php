@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
 <strong>Default Registrar?:</strong>&nbsp;
-<input name="new_default_registrar" type="checkbox" id="new_default_registrar" value="1">
+<input name="new_default_registrar" type="checkbox" id="new_default_registrar" value="1"<?php if ($new_default_registrar == "1") echo " checked";?>>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This Registrar &raquo;">
 </form>

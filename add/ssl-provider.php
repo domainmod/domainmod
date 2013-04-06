@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
 <strong>Default SSL Provider?:</strong>&nbsp;
-<input name="new_default_provider" type="checkbox" id="new_default_provider" value="1">
+<input name="new_default_provider" type="checkbox" value="1"<?php if ($new_default_provider == "1") echo " checked";?>>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This SSL Provider &raquo;">
 </form>

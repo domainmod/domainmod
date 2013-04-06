@@ -207,8 +207,7 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 	header("Location: registrar.php?rid=$new_rid");
 	exit;
 
-}
-
+} 
 include("../_includes/system/check-for-missing-domain-fees.inc.php");
 
 $sql = "SELECT name, url, notes, default_registrar
@@ -290,10 +289,10 @@ if ($really_del == "1") {
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_registrar_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Registrar Name:</strong><BR><BR>
-<input name="new_registrar" type="text" value="<?php if ($new_registrar != "") echo $new_registrar; ?>" size="50" maxlength="255">
+<input name="new_registrar" type="text" value="<?=$new_registrar?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Registrar's URL:</strong><BR><BR>
-<input name="new_url" type="text" value="<?php if ($new_url != "") echo $new_url; ?>" size="50" maxlength="255">
+<input name="new_url" type="text" value="<?=$new_url?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
