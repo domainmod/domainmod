@@ -31,6 +31,7 @@ $software_section = "system";
 $new_number_of_domains = $_POST['new_number_of_domains'];
 $new_number_of_ssl_certs = $_POST['new_number_of_ssl_certs'];
 $new_display_domain_owner = $_POST['new_display_domain_owner'];
+$new_display_domain_registrar = $_POST['new_display_domain_registrar'];
 $new_display_domain_account = $_POST['new_display_domain_account'];
 $new_display_domain_category = $_POST['new_display_domain_category'];
 $new_display_domain_expiry_date = $_POST['new_display_domain_expiry_date'];
@@ -38,6 +39,7 @@ $new_display_domain_dns = $_POST['new_display_domain_dns'];
 $new_display_domain_ip = $_POST['new_display_domain_ip'];
 $new_display_domain_tld = $_POST['new_display_domain_tld'];
 $new_display_ssl_owner = $_POST['new_display_ssl_owner'];
+$new_display_ssl_provider = $_POST['new_display_ssl_provider'];
 $new_display_ssl_account = $_POST['new_display_ssl_account'];
 $new_display_ssl_domain = $_POST['new_display_ssl_domain'];
 $new_display_ssl_type = $_POST['new_display_ssl_type'];
@@ -48,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	$sql = "UPDATE user_settings
 			SET number_of_domains = '$new_number_of_domains',
 				display_domain_owner = '$new_display_domain_owner',
+				display_domain_registrar = '$new_display_domain_registrar',
 				display_domain_account = '$new_display_domain_account',
 				display_domain_category = '$new_display_domain_category',
 				display_domain_expiry_date = '$new_display_domain_expiry_date',
@@ -55,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 				display_domain_ip = '$new_display_domain_ip',
 				display_domain_tld = '$new_display_domain_tld',
 				display_ssl_owner = '$new_display_ssl_owner',
+				display_ssl_provider = '$new_display_ssl_provider',
 				display_ssl_account = '$new_display_ssl_account',
 				display_ssl_domain = '$new_display_ssl_domain',
 				display_ssl_type = '$new_display_ssl_type',
@@ -66,6 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	$_SESSION['session_number_of_domains'] = $new_number_of_domains;
 	$_SESSION['session_number_of_ssl_certs'] = $new_number_of_ssl_certs;
 	$_SESSION['session_display_domain_owner'] = $new_display_domain_owner;
+	$_SESSION['session_display_domain_registrar'] = $new_display_domain_registrar;
 	$_SESSION['session_display_domain_account'] = $new_display_domain_account;
 	$_SESSION['session_display_domain_category'] = $new_display_domain_category;
 	$_SESSION['session_display_domain_expiry_date'] = $new_display_domain_expiry_date;
@@ -73,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	$_SESSION['session_display_domain_ip'] = $new_display_domain_ip;
 	$_SESSION['session_display_domain_tld'] = $new_display_domain_tld;
 	$_SESSION['session_display_ssl_owner'] = $new_display_ssl_owner;
+	$_SESSION['session_display_ssl_provider'] = $new_display_ssl_provider;
 	$_SESSION['session_display_ssl_account'] = $new_display_ssl_account;
 	$_SESSION['session_display_ssl_domain'] = $new_display_ssl_domain;
 	$_SESSION['session_display_ssl_type'] = $new_display_ssl_type;
@@ -103,6 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 			$new_number_of_domains = $row->number_of_domains;
 			$new_number_of_ssl_certs = $row->number_of_ssl_certs;
 			$new_display_domain_owner = $row->display_domain_owner;
+			$new_display_domain_registrar = $row->display_domain_registrar;
 			$new_display_domain_account = $row->display_domain_account;
 			$new_display_domain_category = $row->display_domain_category;
 			$new_display_domain_expiry_date = $row->display_domain_expiry_date;
@@ -110,6 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 			$new_display_domain_ip = $row->display_domain_ip;
 			$new_display_domain_tld = $row->display_domain_tld;
 			$new_display_ssl_owner = $row->display_ssl_owner;
+			$new_display_ssl_provider = $row->display_ssl_provider;
 			$new_display_ssl_account = $row->display_ssl_account;
 			$new_display_ssl_domain = $row->display_ssl_domain;
 			$new_display_ssl_type = $row->display_ssl_type;
@@ -142,6 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     	<td class="main_table_cell_heading_active">DNS Profile</td>
     	<td class="main_table_cell_heading_active">Category</td>
     	<td class="main_table_cell_heading_active">Owner</td>
+    	<td class="main_table_cell_heading_active">Registrar</td>
     	<td class="main_table_cell_heading_active">Account</td>
     </tr>
 	<tr class="main_table_row_active">
@@ -152,6 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_dns" value="1"<?php if ($new_display_domain_dns == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_category" value="1"<?php if ($new_display_domain_category == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_owner" value="1"<?php if ($new_display_domain_owner == "1") echo " checked"; ?>></td>
+    	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_registrar" value="1"<?php if ($new_display_domain_registrar == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_account" value="1"<?php if ($new_display_domain_account == "1") echo " checked"; ?>></td>
     </tr>
 </table>        
@@ -166,6 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     	<td class="main_table_cell_heading_active">Domain</td>
     	<td class="main_table_cell_heading_active">SSL Type</td>
     	<td class="main_table_cell_heading_active">Owner</td>
+    	<td class="main_table_cell_heading_active">SSL Provider</td>
     	<td class="main_table_cell_heading_active">Account</td>
     </tr>
 	<tr class="main_table_row_active">
@@ -174,6 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_domain" value="1"<?php if ($new_display_ssl_domain == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_type" value="1"<?php if ($new_display_ssl_type == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_owner" value="1"<?php if ($new_display_ssl_owner == "1") echo " checked"; ?>></td>
+    	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_provider" value="1"<?php if ($new_display_ssl_provider == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_account" value="1"<?php if ($new_display_ssl_account == "1") echo " checked"; ?>></td>
     </tr>
 </table>        
