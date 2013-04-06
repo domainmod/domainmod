@@ -59,6 +59,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 				(first_name, last_name, username, email_address, password, new_password, admin, insert_time) VALUES 
 				('$new_first_name', '$new_last_name', '$new_username', '$new_email_address', password('$new_password'), '1', '$new_admin', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "SELECT id
+				FROM users
+				WHERE first_name = '$new_first_name'
+				  AND last_name = '$new_last_name'
+				  AND insert_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection);
+		
+		while ($row = mysql_fetch_object($result)) {
+			$temp_user_id = $row->id;
+		}
+		
+		$sql = "INSERT INTO user_settings
+				(user_id, insert_time) VALUES 
+				('$temp_user_id', '$current_timestamp');";
+		$result = mysql_query($sql,$connection);
 	
 		$_SESSION['session_result_message'] .= "User <font class=\"highlight\">$new_first_name $new_last_name ($new_username / $new_password)</font> Added<BR><BR>
 		You can either manually email the above credentials to the user, or you can <a href=\"reset-password.php?new_username=$new_username\">click here</a> to have $software_title email them for you<BR>";
