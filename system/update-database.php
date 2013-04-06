@@ -675,6 +675,54 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0009 to 2.001
+	if ($current_db_version == 2.0009) {
+
+		$sql = "CREATE TABLE IF NOT EXISTS `user_settings` (
+					`id` int(10) NOT NULL auto_increment,
+					`user_id` int(10) NOT NULL,
+					`number_of_domains` int(5) NOT NULL default '50',
+					`number_of_ssl_certs` int(5) NOT NULL default '50',
+					`display_domain_owner` int(1) NOT NULL default '0',
+					`display_domain_registrar` int(1) NOT NULL default '0',
+					`display_domain_account` int(1) NOT NULL default '0',
+					`display_domain_expiry_date` int(1) NOT NULL default '1',
+					`display_domain_category` int(1) NOT NULL default '1',
+					`display_domain_dns` int(1) NOT NULL default '0',
+					`display_domain_ip` int(1) NOT NULL default '0',
+					`display_domain_tld` int(1) NOT NULL default '0',
+					`display_ssl_owner` int(1) NOT NULL default '0',
+					`display_ssl_provider` int(1) NOT NULL default '0',
+					`display_ssl_account` int(1) NOT NULL default '0',
+					`display_ssl_domain` int(1) NOT NULL default '0',
+					`display_ssl_type` int(1) NOT NULL default '0',
+					`display_ssl_expiry_date` int(1) NOT NULL default '0',
+					`insert_time` datetime NOT NULL,
+					`update_time` datetime NOT NULL,
+					PRIMARY KEY  (`id`)
+				) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "SELECT id
+				FROM users";
+		$result = mysql_query($sql,$connection);
+		
+		while ($row = mysql_fetch_object($result)) {
+			$sql_temp = "INSERT INTO user_settings
+						 (user_id, insert_time) VALUES 
+						 ('$row->id', '$current_timestamp');";
+			$result_temp = mysql_query($sql_temp,$connection);
+		}
+
+		$sql = "UPDATE settings
+				SET db_version = '2.001',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.001;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
