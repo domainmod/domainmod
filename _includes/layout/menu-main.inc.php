@@ -17,12 +17,13 @@
 ?>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/domains.php">Domains</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/registrars.php">Registrars</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/registrar-accounts.php">Registrar Accounts</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/dns.php">DNS Profiles</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ip-addresses.php">IP Addresses</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/registrar-accounts.php">Accounts</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/dns.php">DNS</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ip-addresses.php">IPs</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/categories.php">Categories</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/owners.php">Owners</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/currencies.php">Currencies</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/tlds.php">TLDs</a> ]&nbsp;
 <BR><BR>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-certs.php">SSL Certificates</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-providers.php">SSL Providers</a> ]&nbsp;

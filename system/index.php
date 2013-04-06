@@ -34,7 +34,6 @@ $software_section = "system";
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
-&raquo; <a href="tlds.php">TLD Breakdown</a><BR><BR>
 &raquo; <a href="display-settings.php">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="change-password.php">Change Password</a><BR><BR>
 &raquo; <a href="../_includes/system/fix-domain-fees.php">Fix Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-ssl-fees.php">Fix SSL Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/fix-tlds.php">Fix TLDs</a><BR>
 <?php if ($_SESSION['session_is_admin'] == 1) { ?>

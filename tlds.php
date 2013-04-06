@@ -18,23 +18,23 @@
 <?php
 session_start();
 
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
+include("_includes/config.inc.php");
+include("_includes/database.inc.php");
+include("_includes/software.inc.php");
+include("_includes/auth/auth-check.inc.php");
 
 $page_title = "Top Level Domain Breakdown";
-$software_section = "system";
+$software_section = "tlds";
 ?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
-This is a breakdown of the Top Level Domains that are currently active in the system.
+<?php include("_includes/header.inc.php"); ?>
+This is a breakdown of the Top Level Domains that are currently active in your <?=$software_title?>.
 <BR><BR>
 <?php
 $sql = "SELECT tld, count(*) AS total_tld_count
@@ -44,29 +44,26 @@ $sql = "SELECT tld, count(*) AS total_tld_count
 		ORDER BY total_tld_count desc, tld asc";
 $result = mysql_query($sql,$connection);
 ?>
-<strong>Number of Active TLDs:</strong> <?=mysql_num_rows($result)?>
 <?php 
 if (mysql_num_rows($result) > 0) { ?>
-
-    <BR><BR>
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="30">
-        <td width="100">
-            <font class="subheadline">TLD</font>
+    <table class="main_table">
+    <tr class="main_table_row_heading_active">
+        <td class="main_table_cell_heading_active">
+            <font class="subheadline">TLDs (<?=mysql_num_rows($result)?>)</font>
         </td>
-        <td>
-            <font class="subheadline"># of Domains</font>
+        <td class="main_table_cell_heading_active">
+            <font class="subheadline">Domains</font>
         </td>
     </tr>
 
     <?php 
 	while ($row = mysql_fetch_object($result)) { ?>
-        <tr height="20">
-            <td>
+        <tr class="main_table_row_active">
+            <td class="main_table_cell_active">
                 <?php echo ".$row->tld"; ?>
             </td>
-            <td>
-                <a class="nobold" href="../domains.php?tld=<?=$row->tld?>"><?=number_format($row->total_tld_count)?></a>
+            <td class="main_table_cell_active">
+                <a class="nobold" href="domains.php?tld=<?=$row->tld?>"><?=number_format($row->total_tld_count)?></a>
             </td>
         </tr>
     <?php 
@@ -80,6 +77,6 @@ if (mysql_num_rows($result) > 0) { ?>
 
 }
 ?>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>
