@@ -64,12 +64,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			if ($row->admin == 1) $_SESSION['session_is_admin'] = 1;
 			$_SESSION['session_is_logged_in'] = 1;
 			
-			$sql_settings = "SELECT number_of_domains, number_of_ssl_certs
-							 FROM settings";
+			$sql_settings = "SELECT *
+							 FROM user_settings
+							 WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
 			$result_settings = mysql_query($sql_settings,$connection);
+
 			while ($row_settings = mysql_fetch_object($result_settings)) {
 				$_SESSION['session_number_of_domains'] = $row_settings->number_of_domains;
 				$_SESSION['session_number_of_ssl_certs'] = $row_settings->number_of_ssl_certs;
+				$_SESSION['session_display_domain_owner'] = $row_settings->display_domain_owner;
+				$_SESSION['session_display_domain_registrar'] = $row_settings->display_domain_registrar;
+				$_SESSION['session_display_domain_account'] = $row_settings->display_domain_account;
+				$_SESSION['session_display_domain_expiry_date'] = $row_settings->display_domain_expiry_date;
+				$_SESSION['session_display_domain_category'] = $row_settings->display_domain_category;
+				$_SESSION['session_display_domain_dns'] = $row_settings->display_domain_dns;
+				$_SESSION['session_display_domain_ip'] = $row_settings->display_domain_ip;
+				$_SESSION['session_display_domain_tld'] = $row_settings->display_domain_tld;
+				$_SESSION['session_display_ssl_owner'] = $row_settings->display_ssl_owner;
+				$_SESSION['session_display_ssl_provider'] = $row_settings->display_ssl_provider;
+				$_SESSION['session_display_ssl_account'] = $row_settings->display_ssl_account;
+				$_SESSION['session_display_ssl_domain'] = $row_settings->display_ssl_domain;
+				$_SESSION['session_display_ssl_type'] = $row_settings->display_ssl_type;
+				$_SESSION['session_display_ssl_expiry_date'] = $row_settings->display_ssl_expiry_date;
 			}
 			
 			header("Location: _includes/auth/login-checks/main.inc.php");
