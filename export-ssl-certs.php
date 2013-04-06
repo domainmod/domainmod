@@ -157,45 +157,55 @@ Expiring Between
 <BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
+<?php if ($_SESSION['session_display_ssl_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Expiry Date</font>
     </td>
-	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Renewal</font>
-    </td>
+<?php } ?>
 	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Host / Label</font>
     </td>
+<?php if ($_SESSION['session_display_ssl_domain'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Domain</font>
     </td>
-	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">IP Address</font>
-    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Type</font>
     </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Owner</font>
     </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_provider'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+    	<font class="subheadline">SSL Provider</font>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="subheadline">SSL Account</font>
     </td>
+<?php } ?>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
+<?php 
+$renewal_fee_individual = $row->renewal_fee * $row->conversion;
+$total_renewal_cost = $total_renewal_cost + $renewal_fee_individual; 
+?>
 <tr class="main_table_row_active">
+<?php if ($_SESSION['session_display_ssl_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->expiry_date?>
 	</td>
-	<td class="main_table_cell_active">
-    	<?php 
-		$renewal_fee_individual = $row->renewal_fee * $row->conversion;
-		$total_renewal_cost = $total_renewal_cost + $renewal_fee_individual; ?>
-		$<?=number_format($renewal_fee_individual, 2, '.', ',')?>
-	</td>
+<?php } ?>
 	<td class="main_table_cell_active">
 		<?=$row->name?>
 	</td>
+<?php if ($_SESSION['session_display_ssl_domain'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?php
 		$sql_domain = "SELECT d.domain, ip.name, ip.ip
@@ -212,18 +222,27 @@ Expiring Between
 		?>		
 		<?=$full_domain_name?>
 	</td>
-	<td class="main_table_cell_active">
-		<?=$full_ip_name?> (<?=$full_ip_address?>)
-	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->type?>
     </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->owner_name?>
     </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_provider'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=$row->ssl_provider_name?>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->ssl_provider_name?> (<?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?>)
     </td>
+<?php } ?>
 </tr>
 <?php } ?>
 </table>

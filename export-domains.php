@@ -31,6 +31,15 @@ $export = $_GET['export'];
 $new_expiry_start = $_REQUEST['new_expiry_start'];
 $new_expiry_end = $_REQUEST['new_expiry_end'];
 
+$sql = "SELECT currency
+		FROM currencies
+		WHERE default_currency = '1'
+		LIMIT 1";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	$default_currency = $row->currency;
+}
+
 if ($export == "1") {
 
 	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
@@ -75,7 +84,7 @@ $full_export = "";
 
 if ($export == "1") {
 
-	$full_export .= "\"All prices are listed in " . $_SESSION['session_default_currency'] . "\"\n\n";
+	$full_export .= "\"All prices are listed in " . $default_currency . "\"\n\n";
 
 	$full_export .= "\"DOMAIN STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Registrar\",\"Username\"\n";
 
@@ -104,7 +113,7 @@ if ($export == "1") {
 	
 	$full_export .= "\n";
 	
-	$full_export .= "\"\",\"\",\"Total Cost:\",\"\$" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"" . $_SESSION['session_default_currency'] . "\"\n";
+	$full_export .= "\"\",\"\",\"Total Cost:\",\"" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"" . $default_currency . "\"\n";
 	
 	$export = "0";
 	
@@ -159,58 +168,104 @@ Expiring Between
 <BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
+<?php if ($_SESSION['session_display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Expiry Date</font>
     </td>
-	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Renewal</font>
-    </td>
+<?php } ?>
 	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Domain Name</font>
     </td>
+<?php if ($_SESSION['session_display_domain_tld'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+    	<font class="subheadline">TLD</font>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="subheadline">IP Address</font>
     </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_dns'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+    	<font class="subheadline">DNS Profile</font>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_category'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Category</font>
     </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Stakeholder</font>
+    	<font class="subheadline">Owner</font>
     </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_registrar'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+    	<font class="subheadline">Registrar</font>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="subheadline">Registrar Account</font>
     </td>
+<?php } ?>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
+<?php 
+$renewal_fee_individual = $row->renewal_fee * $row->conversion;
+$total_renewal_cost = $total_renewal_cost + $renewal_fee_individual; 
+?>
+
 <tr class="main_table_row_active">
+<?php if ($_SESSION['session_display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->expiry_date?>
 	</td>
-	<td class="main_table_cell_active">
-    	<?php 
-		$renewal_fee_individual = $row->renewal_fee * $row->conversion;
-		$total_renewal_cost = $total_renewal_cost + $renewal_fee_individual; ?>
-		$<?=number_format($renewal_fee_individual, 2, '.', ',')?>
-	</td>
+<?php } ?>
 	<td class="main_table_cell_active">
 		<?=$row->domain?>
 	</td>
+<?php if ($_SESSION['session_display_domain_tld'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=$row->tld?>
+	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->name?> (<?=$row->ip?>)
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_dns'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=$row->dns_profile?>
+	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_category'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->category_name?>
 	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->owner_name?>
     </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_registrar'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=$row->registrar_name?>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->registrar_name?> (<?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?>)
     </td>
+<?php } ?>
 </tr>
 <?php } ?>
 </table>
-<BR><strong>Total Cost:</strong> $<?=number_format($total_renewal_cost,2)?> <?=$_SESSION['session_default_currency']?><BR>
+<BR><strong>Total Cost:</strong> <?=number_format($total_renewal_cost,2)?> <?=$default_currency?><BR>
 <?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
