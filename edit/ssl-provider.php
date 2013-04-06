@@ -91,7 +91,7 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 
 } elseif ($IS_SUBMITTED_FEE == "1") {
 
-	if ($new_sslpid == "" || $new_initial_fee == "" || $new_renewal_fee == "") { 
+	if ($new_sslpid == "" || $new_sslpid == "0" || $new_initial_fee == "" || $new_renewal_fee == "" || $new_type_id == "" || $new_currency_id == "" || $new_type_id == "0" || $new_currency_id == "0") { 
 
 		$_SESSION['session_result_message'] = "Please enter all fields before submitting the new fee<BR>";
 

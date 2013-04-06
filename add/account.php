@@ -37,7 +37,7 @@ $new_default_account = $_POST['new_default_account'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_username != "") {
+	if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" && $new_registrar_id != "0") {
 
 		if ($new_default_account == "1") {
 			

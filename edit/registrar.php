@@ -94,7 +94,7 @@ if ($IS_SUBMITTED_REGISTRAR == "1") {
 
 } elseif ($IS_SUBMITTED_FEE == "1") {
 
-	if ($new_rid == "" || $new_tld == "" || $new_initial_fee == "" || $new_renewal_fee == "") { 
+	if ($new_rid == "" || $new_tld == "" || $new_initial_fee == "" || $new_renewal_fee == "" && $new_currency_id != "" && $new_currency_id != "0") { 
 
 		$_SESSION['session_result_message'] = "Please enter all fields before submitting the new fee<BR>";
 

@@ -44,7 +44,7 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) {
+	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_account_id != "0") {
 
 		$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 		
