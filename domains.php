@@ -246,6 +246,10 @@ elseif ($sort_by == "pc_a") { $sort_by_string = " ORDER BY cat.name asc "; }
 elseif ($sort_by == "pc_d") { $sort_by_string = " ORDER BY cat.name desc "; } 
 elseif ($sort_by == "dn_a") { $sort_by_string = " ORDER BY d.domain asc "; } 
 elseif ($sort_by == "dn_d") { $sort_by_string = " ORDER BY d.domain desc "; } 
+elseif ($sort_by == "dns_a") { $sort_by_string = " ORDER BY dns.name asc "; } 
+elseif ($sort_by == "dns_d") { $sort_by_string = " ORDER BY dns.name desc "; } 
+elseif ($sort_by == "tld_a") { $sort_by_string = " ORDER BY d.tld asc "; } 
+elseif ($sort_by == "tld_d") { $sort_by_string = " ORDER BY d.tld desc "; } 
 elseif ($sort_by == "ip_a") { $sort_by_string = " ORDER BY ip.name asc, ip.ip asc"; } 
 elseif ($sort_by == "ip_d") { $sort_by_string = " ORDER BY ip.name desc, ip.ip desc"; } 
 elseif ($sort_by == "o_a") { $sort_by_string = " ORDER BY o.name asc, d.domain asc "; } 
@@ -253,7 +257,7 @@ elseif ($sort_by == "o_d") { $sort_by_string = " ORDER BY o.name desc, d.domain 
 elseif ($sort_by == "r_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc "; } 
 elseif ($sort_by == "r_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
 
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.notes, d.privacy, d.active, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, f.renewal_fee, cc.conversion, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.notes, d.privacy, d.active, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, f.renewal_fee, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name
 		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS cc, dns AS dns, ip_addresses AS ip
 		WHERE d.account_id = ra.id
 		  AND ra.registrar_id = r.id
@@ -800,7 +804,13 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Domain Name</font></a>
 	</td>
 	<td class="main_table_cell_heading_active">
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "tld_a") { echo "tld_d"; } else { echo "tld_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">TLD</font></a>
+	</td>
+	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ip_a") { echo "ip_d"; } else { echo "ip_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">IP Address</font></a>
+	</td>
+	<td class="main_table_cell_heading_active">
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dns_a") { echo "dns_d"; } else { echo "dns_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">DNS Profile</font></a>
 	</td>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "pc_a") { echo "pc_d"; } else { echo "pc_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Category</font></a>
@@ -835,7 +845,14 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 			?><a class="subtlelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->domain?></a><?php if ($row->privacy == "1") { echo "&nbsp;<a title=\"Private WHOIS Registration\"><strong><font class=\"highlight\">prv</font></strong></a>&nbsp;"; } else { echo "&nbsp;"; } ?>[<a class="subtlelink" target="_blank" href="http://<?=$row->domain?>">v</a>] [<a target="_blank" class="subtlelink" href="http://who.is/whois/<?=$row->domain?>">w</a>]
 	</td>
 	<td class="main_table_cell_active">
+		<?=$row->tld?>
+	</td>
+
+	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->ipid?>"><?=$row->ip_name?> (<?=$row->ip?>)</a>
+	</td>
+	<td class="main_table_cell_active">
+		<a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->dnsid?>"><?=$row->dns_name?></a>
 	</td>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->pcid?>"><?=$row->category_name?></a>
