@@ -86,7 +86,7 @@ if ($export == "1") {
 
 	$full_export .= "\"All prices are listed in " . $default_currency . "\"\n\n";
 
-	$full_export .= "\"DOMAIN STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Registrar\",\"Username\"\n";
+	$full_export .= "\"DOMAIN STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Registrar\",\"Username\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
@@ -108,7 +108,7 @@ if ($export == "1") {
 			$privacy_status = "Public";
 		}
 
-		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$privacy_status\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->registrar_name\",\"$row->username\"\n";
+		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$privacy_status\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->registrar_name\",\"$row->username\",\"$row->notes\"\n";
 	}
 	
 	$full_export .= "\n";
@@ -266,6 +266,29 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 <?php } ?>
 </table>
 <BR><strong>Total Cost:</strong> <?=number_format($total_renewal_cost,2)?> <?=$default_currency?><BR>
+<?php } else {?>
+<BR>The results that will be shown below will display the same columns as you have on your <a href="domains.php">Domains</a> page, but when you export the results you will be given even more information.<BR><BR>
+The full list of fields in the export is:<BR><BR>
+Domain Status<BR>
+Expiry Date<BR>
+Renewal Fee<BR>
+Total Renewal Cost<BR>
+Domain<BR>
+TLD<BR>
+WHOIS Status (Public or Private)<BR>
+DNS Profile<BR>
+IP Address Name<BR>
+IP Address<BR>
+IP Address rDNS<BR>
+Domain Function<BR>
+Domain Status<BR>
+Domain Status Notes<BR>
+Category<BR>
+Category Stakeholder<BR>
+Owner<BR>
+Domain Registrar<BR>
+Registrar Account<BR>
+Notes<BR>
 <?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
