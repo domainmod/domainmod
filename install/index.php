@@ -404,8 +404,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`id` int(10) NOT NULL auto_increment,
 				`db_version` float NOT NULL,
 				`email_address` varchar(255) NOT NULL,
-				`number_of_domains` int(5) NOT NULL default '50',
-				`number_of_ssl_certs` int(5) NOT NULL default '50',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -413,8 +411,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "INSERT INTO `settings` 
-			(`db_version`, `email_address`, `number_of_domains`, `number_of_ssl_certs`, `insert_time`) VALUES 
-			('$most_recent_db_version', 'code@aysmedia.com', '50', '50', '$current_timestamp');";
+			(`db_version`, `email_address`, `insert_time`) VALUES 
+			('$most_recent_db_version', 'code@aysmedia.com', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$_SESSION['session_institallation_mode'] = 0;
