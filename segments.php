@@ -91,15 +91,16 @@ if (mysql_num_rows($result) > 0) { ?>
             <td class="main_table_cell_active">
                 <?php
                 $temp_description = preg_replace("/\r\n/", "<BR>", $row->description);
-                echo $temp_description;
                 ?>
+                <a class="subtlelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$temp_description?></a>
             </td>
             <td class="main_table_cell_active">
                 <?php
                 $temp_segment = preg_replace("/','/", ", ", $row->segment);
                 $temp_segment = preg_replace("/'/", "", $temp_segment);
-                echo str_stop($temp_segment, 250);
-                ?>
+                $cut_string = str_stop($temp_segment, 250);
+				?>
+                <a class="subtlelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$cut_string?></a>
             </td>
         </tr>
 

@@ -73,7 +73,7 @@ if (mysql_num_rows($result) > 0) { ?>
 
 } else {
 
-	echo "<BR><BR>You must add some domains before your TLD breakdown will show up here."; 	
+	echo "You must add some domains before your TLD breakdown will show up here."; 	
 
 }
 ?>
