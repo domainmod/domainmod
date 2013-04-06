@@ -23,15 +23,10 @@ $most_recent_db_version = "2.001";
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
-include("_includes/system/installation-check.inc.php");
+include("../_includes/system/installation-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 
-$sql = "SELECT db_version
-		FROM settings";
-$result = mysql_query($sql,$connection);
-
-if (mysql_num_rows($result) > 0) {
+if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$_SESSION['session_result_message'] = "$software_title is already installed<BR>";
 

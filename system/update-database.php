@@ -675,7 +675,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
-	// upgrade database from 2.0009 to 2.001
+	// upgrade database from 2.0009 to 2.0010
 	if ($current_db_version == 2.0009) {
 
 		$sql = "CREATE TABLE IF NOT EXISTS `user_settings` (
