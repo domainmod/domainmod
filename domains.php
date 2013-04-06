@@ -256,6 +256,8 @@ elseif ($sort_by == "o_a") { $sort_by_string = " ORDER BY o.name asc, d.domain a
 elseif ($sort_by == "o_d") { $sort_by_string = " ORDER BY o.name desc, d.domain asc "; } 
 elseif ($sort_by == "r_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc "; } 
 elseif ($sort_by == "r_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
+elseif ($sort_by == "ra_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc "; } 
+elseif ($sort_by == "ra_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
 
 $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.notes, d.privacy, d.active, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, f.renewal_fee, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name
 		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS cc, dns AS dns, ip_addresses AS ip
@@ -831,9 +833,14 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Owner</font></a>
 	</td>
 <?php } ?>
+<?php if ($_SESSION['session_display_domain_registrar'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "r_a") { echo "r_d"; } else { echo "r_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Registrar</font></a>
+	</td>
+<?php } ?>
 <?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "r_a") { echo "r_d"; } else { echo "r_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Registrar Account</font></a>
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ra_a") { echo "ra_d"; } else { echo "ra_a"; } ?>&search_for=<?=$search_for?>"><font class="subheadline">Registrar Account</font></a>
 	</td>
 <?php } ?>
 </tr>
@@ -884,6 +891,11 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 <?php if ($_SESSION['session_display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
+	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_registrar'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<a class="subtlelink" href="edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
