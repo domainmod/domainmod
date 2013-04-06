@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 		
 	} else {
 		
- 		$sql = "SELECT number_of_domains, number_of_ssl_certs, display_domain_owner, display_domain_account, display_domain_account, display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_ip, display_domain_tld, display_ssl_owner, display_ssl_account, display_ssl_account, display_ssl_domain, display_ssl_type, display_ssl_expiry_date
+ 		$sql = "SELECT number_of_domains, number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account, display_domain_account, display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_ip, display_domain_tld, display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_account, display_ssl_domain, display_ssl_type, display_ssl_expiry_date
 				FROM user_settings
 				WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
