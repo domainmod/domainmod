@@ -27,11 +27,13 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $page_title = "Editting An SSL Provider's Fees";
 $software_section = "ssl-providers";
 
-// 'Delete SSL Provider' Confirmation Variables
+// 'Delete SSL Provider Fee' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 $sslpid = $_GET['sslpid'];
+$ssltid = $_GET['ssltid'];
+$sslfeeid = $_GET['sslfeeid'];
 
 // Form Variables
 $new_type_id = $_POST['new_type_id'];
@@ -50,50 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ($new_currency_id == "" || $new_currency_id == "0") $_SESSION['session_result_message'] .= "There was a problem with the currency you chose<BR>";
 
 	} else {
-		
-		if ($new_initial_fee == "0" && $new_renewal_fee == "0") {
-
-			$sql = "SELECT *
-					FROM ssl_fees
-					WHERE ssl_provider_id = '$new_sslpid'
-					  AND type_id = '$new_type_id'";
-			$result = mysql_query($sql,$connection);
-			
-			if (mysql_num_rows($result) == 0) {
-
-				$_SESSION['session_result_message'] = "The fee you're trying to delete doesn't exist<BR>";
-	
-				header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
-				exit;
-
-			} else {
-
-				$sql = "DELETE FROM ssl_fees
-						WHERE ssl_provider_id = '$new_sslpid'
-						  AND type_id = '$new_type_id'";
-				$result = mysql_query($sql,$connection) or die(mysql_error());
-				
-				$sql = "UPDATE ssl_certs
-						SET fee_id = '0',
-							update_time = '$current_timestamp'
-						WHERE ssl_provider_id = '$new_sslpid'
-						  AND type_id = '$new_type_id'";
-				$result = mysql_query($sql,$connection) or die(mysql_error());
-				
-				$sql = "SELECT type
-						FROM ssl_cert_types
-						WHERE id = '$new_type_id'";
-				$result = mysql_query($sql,$connection) or die(mysql_error());
-				while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
-				
-				$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been deleted<BR>";
-	
-				header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
-				exit;
-	
-			}
-			
-		}
 		
 		$sql = "SELECT *
 				FROM ssl_fees
@@ -191,6 +149,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
 
 	include("../_includes/system/check-for-missing-ssl-fees.inc.php");
+	
+}
+if ($del == "1") {
+	$_SESSION['session_result_message'] = "Are you sure you want to delete this SSL Provider Fee?<BR><BR><a href=\"$PHP_SELF?sslpid=$sslpid&ssltid=$ssltid&sslfeeid=$sslfeeid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER FEE</a><BR>";
+}
+if ($really_del == "1") {
+
+	$sql = "SELECT *
+			FROM ssl_fees
+			WHERE id = '$sslfeeid'
+			  AND ssl_provider_id = '$sslpid'
+			  AND type_id = '$ssltid'";
+	$result = mysql_query($sql,$connection);
+	
+	if (mysql_num_rows($result) == 0) {
+
+		$_SESSION['session_result_message'] = "The fee you're trying to delete doesn't exist<BR>";
+
+		header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
+		exit;
+
+	} else {
+
+		$sql = "DELETE FROM ssl_fees
+				WHERE id = '$sslfeeid'
+				  AND ssl_provider_id = '$sslpid'
+				  AND type_id = '$ssltid'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "UPDATE ssl_certs
+				SET fee_id = '0',
+					update_time = '$current_timestamp'
+				WHERE fee_id = '$sslfeeid'
+				  AND ssl_provider_id = '$sslpid'
+				  AND type_id = '$ssltid'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "SELECT type
+				FROM ssl_cert_types
+				WHERE id = '$ssltid'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
+		
+		$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been deleted<BR>";
+
+		header("Location: ssl-provider-fees.php?sslpid=$sslpid");
+		exit;
+
+	}
 	
 }
 ?>
@@ -346,7 +353,7 @@ To delete a fee enter 0 for the initial and renewal fees.<BR><BR>
         <td class="main_table_cell_heading_active"><strong>Currency</strong></td>
 	</tr>
 <?php
-$sql = "SELECT f.initial_fee, f.renewal_fee, c.currency, t.type
+$sql = "SELECT f.id as sslfeeid, f.initial_fee, f.renewal_fee, c.currency, t.id as ssltid, t.type
 		FROM ssl_fees AS f, currencies AS c, ssl_cert_types AS t
 		WHERE f.currency_id = c.id
 		  AND f.type_id = t.id
@@ -360,7 +367,9 @@ while ($row = mysql_fetch_object($result)) {
     	<td class="main_table_cell_active"><?=$row->type?></td>
         <td class="main_table_cell_active"><?php echo number_format($row->initial_fee, 2, '.', ','); ?></td>
         <td class="main_table_cell_active"><?php echo number_format($row->renewal_fee, 2, '.', ','); ?></td>
-        <td class="main_table_cell_active"><?=$row->currency?></td>
+        <td class="main_table_cell_active"><?=$row->currency?>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="subtlelink" href="ssl-provider-fees.php?sslpid=<?=$sslpid?>&ssltid=<?=$row->ssltid?>&sslfeeid=<?=$row->sslfeeid?>&del=1">delete</a>]
+        </td>
 	</tr>
 <?php
 }

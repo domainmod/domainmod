@@ -27,11 +27,13 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 $page_title = "Editting A Registrar's Fees";
 $software_section = "registrars";
 
-// 'Delete Registrar' Confirmation Variables
+// 'Delete Registrar Fee' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 $rid = $_GET['rid'];
+$feeid = $_GET['feeid'];
+$tld = $_GET['tld'];
 
 // Form Variables
 $new_tld = $_POST['new_tld'];
@@ -52,45 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	} else {
 		
 		$new_tld = trim($new_tld, ". \t\n\r\0\x0B");
-		
-		if ($new_initial_fee == "0" && $new_renewal_fee == "0") {
 
-			$sql = "SELECT *
-					FROM fees
-					WHERE registrar_id = '$new_rid'
-					  AND tld = '$new_tld'";
-			$result = mysql_query($sql,$connection);
-			
-			if (mysql_num_rows($result) == 0) {
-
-				$_SESSION['session_result_message'] = "The fee you're trying to delete doesn't exist<BR>";
-	
-				header("Location: registrar-fees.php?rid=$new_rid");
-				exit;
-
-			} else {
-
-				$sql = "DELETE FROM fees
-						WHERE registrar_id = '$new_rid'
-						  AND tld = '$new_tld'";
-				$result = mysql_query($sql,$connection) or die(mysql_error());
-				
-				$sql = "UPDATE domains
-						SET fee_id = '0',
-							update_time = '$current_timestamp'
-						WHERE registrar_id = '$new_rid'
-						  AND tld = '$new_tld'";
-				$result = mysql_query($sql,$connection) or die(mysql_error());
-				
-				$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been deleted<BR>";
-	
-				header("Location: registrar-fees.php?rid=$new_rid");
-				exit;
-
-			}
-
-		}
-		
 		$sql = "SELECT *
 				FROM fees
 				WHERE registrar_id = '$new_rid'
@@ -176,6 +140,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	include("../_includes/system/check-for-missing-domain-fees.inc.php");
 	
+}
+if ($del == "1") {
+	$_SESSION['session_result_message'] = "Are you sure you want to delete this Registrar Fee?<BR><BR><a href=\"$PHP_SELF?rid=$rid&tld=$tld&feeid=$feeid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR FEE</a><BR>";
+}
+
+if ($really_del == "1") {
+
+	$sql = "SELECT *
+			FROM fees
+			WHERE id = '$feeid'
+			  AND registrar_id = '$rid'
+			  AND tld = '$tld'";
+	$result = mysql_query($sql,$connection);
+	
+	if (mysql_num_rows($result) == 0) {
+
+		$_SESSION['session_result_message'] = "The fee you're trying to delete doesn't exist<BR>";
+
+		header("Location: registrar-fees.php?rid=$rid");
+		exit;
+
+	} else {
+
+		$sql = "DELETE FROM fees
+				WHERE id = '$feeid'
+				  AND registrar_id = '$rid'
+				  AND tld = '$tld'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "UPDATE domains
+				SET fee_id = '0',
+					update_time = '$current_timestamp'
+				WHERE fee_id = '$feeid'
+				  AND registrar_id = '$rid'
+				  AND tld = '$tld'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
+
+		header("Location: registrar-fees.php?rid=$rid");
+		exit;
+
+	}
+
 }
 ?>
 <html>
@@ -306,7 +314,7 @@ To delete a fee enter 0 for the initial and renewal fees.<BR><BR>
         <td class="main_table_cell_heading_active"><strong>Currency</strong></td>
 	</tr>
 <?php
-$sql = "SELECT f.tld, f.initial_fee, f.renewal_fee, c.currency 
+$sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, c.currency 
 		FROM fees AS f, currencies AS c
 		WHERE f.currency_id = c.id
 		  AND f.registrar_id = '$rid'
@@ -319,7 +327,9 @@ while ($row = mysql_fetch_object($result)) {
     	<td class="main_table_cell_active">.<?=$row->tld?></td>
         <td class="main_table_cell_active"><?php echo number_format($row->initial_fee, 2, '.', ','); ?></td>
         <td class="main_table_cell_active"><?php echo number_format($row->renewal_fee, 2, '.', ','); ?></td>
-        <td class="main_table_cell_active"><?=$row->currency?></td>
+        <td class="main_table_cell_active"><?=$row->currency?>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="subtlelink" href="registrar-fees.php?rid=<?=$rid?>&tld=<?=$row->tld?>&feeid=<?=$row->id?>&del=1">delete</a>]
+        </td>
 	</tr>
 <?php
 }
