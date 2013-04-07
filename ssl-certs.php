@@ -571,7 +571,7 @@ echo "</select>";
   <tr>
 	<td align="left" valign="top">
 		<?php echo $navigate[2]; ?>
-        &nbsp;[<a class="subtlelink" href="system/display-settings.php">display settings</a>]
+        &nbsp;[<a href="system/display-settings.php">display settings</a>]
 	</td>
 	<td width="280" align="right" valign="top">
 		<?php if ($totalrows != '0') { ?>
