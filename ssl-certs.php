@@ -215,7 +215,7 @@ elseif ($sort_by == "sslp_d") { $sort_by_string = " ORDER BY sslp.name desc, ssl
 elseif ($sort_by == "sslpa_a") { $sort_by_string = " ORDER BY sslp.name asc, sslc.name asc "; } 
 elseif ($sort_by == "sslpa_d") { $sort_by_string = " ORDER BY sslp.name desc, sslc.name asc "; }
  
-$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, o.id AS o_id, o.name AS owner_name, f.renewal_fee, cc.conversion, d.domain, sslcf.type
+$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, o.id AS o_id, o.name AS owner_name, f.renewal_fee, cc.conversion, d.domain, sslcf.id as type_id, sslcf.type
 		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS cc, domains AS d, ssl_cert_types AS sslcf
 		WHERE sslc.account_id = sslpa.id
 		  AND sslpa.ssl_provider_id = sslp.id
@@ -646,7 +646,7 @@ echo "</select>";
 <?php } ?>
 <?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->type?></a>
+		<a class="subtlelink" href="edit/ssl-type.php?ssltid=<?=$row->type_id?>"><?=$row->type?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
