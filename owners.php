@@ -48,19 +48,19 @@ $sql = "SELECT id, name, default_owner
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 Below is a list of all the Domain Registrar and SSL Provider Account Owners that are stored in your <?=$software_title?>.
-<?php if ($zero_owners != "1") { ?><BR><BR><font class="headline">Domains</font><BR><?php } ?>
+<?php if ($zero_owners != "1") { ?><BR><BR><BR><font class="subheadline">Domains</font><?php } ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active_domain = "1"; ?>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Active Owners (<?=mysql_num_rows($result)?>)</font>
+    	<font class="main_table_heading">Active Owners (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Accounts</font>
+    	<font class="main_table_heading">Accounts</font>
     </td>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Domains</font>
+    	<font class="main_table_heading">Domains</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -136,10 +136,10 @@ if ($has_active_domain != "1" && $has_inactive_domains == "1") echo "<table clas
 ?>
 <tr class="main_table_row_heading_inactive">
 	<td class="main_table_cell_heading_inactive">
-    	<font class="subheadline">Inactive Owners (<?=mysql_num_rows($result)?>)</font>
+    	<font class="main_table_heading">Inactive Owners (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td class="main_table_cell_heading_inactive">
-    	<font class="subheadline">Accounts</font>
+    	<font class="main_table_heading">Accounts</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -180,19 +180,19 @@ $sql = "SELECT id, name, default_owner
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-<?php if ($zero_owners != "1") { ?><BR><BR><font class="headline">SSL Certificates</font><BR><?php } ?>
+<?php if ($zero_owners != "1") { ?><BR><BR><font class="subheadline">SSL Certificates</font><?php } ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active_ssl = "1"; ?>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Active Owners (<?=mysql_num_rows($result)?>)</font>
+    	<font class="main_table_heading">Active Owners (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Accounts</font>
+    	<font class="main_table_heading">Accounts</font>
     </td>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">SSL Certs</font>
+    	<font class="main_table_heading">SSL Certs</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -268,10 +268,10 @@ if ($has_active_ssl != "1" && $has_inactive_ssl == "1") echo "<table class=\"mai
 ?>
 <tr class="main_table_row_heading_inactive">
 	<td class="main_table_cell_heading_inactive">
-    	<font class="subheadline">Inactive Owners (<?=mysql_num_rows($result)?>)</font>
+    	<font class="main_table_heading">Inactive Owners (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td class="main_table_cell_heading_inactive">
-    	<font class="subheadline">Accounts</font>
+    	<font class="main_table_heading">Accounts</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>

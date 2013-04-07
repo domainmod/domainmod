@@ -48,13 +48,13 @@ The below conversion rates are used for accounting and reporting purposes, and a
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Currency (<?=mysql_num_rows($result)?>)</font>
+    	<font class="main_table_heading">Currency (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">ABV</font>
+    	<font class="main_table_heading">ABV</font>
     </td>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Conversion Rate</font>
+    	<font class="main_table_heading">Conversion Rate</font>
     </td>
 </tr>
 <?php

@@ -49,10 +49,10 @@ if (mysql_num_rows($result) > 0) { ?>
     <table class="main_table">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">TLDs (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">TLDs (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">Domains</font>
+            <font class="main_table_heading">Domains</font>
         </td>
     </tr>
 

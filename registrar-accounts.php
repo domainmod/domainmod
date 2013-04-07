@@ -66,16 +66,16 @@ Below is a list of all the Domain Registrar Accounts that are stored in your <?=
     <table class="main_table">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">Registrar Name</font>
+            <font class="main_table_heading">Registrar Name</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">Active Accounts (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Active Accounts (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">Owner</font>
+            <font class="main_table_heading">Owner</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">Domains</font>
+            <font class="main_table_heading">Domains</font>
         </td>
     </tr>
     <?php 
@@ -142,13 +142,13 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 ?>
     <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">
-            <font class="subheadline">Registrar Name</font>
+            <font class="main_table_heading">Registrar Name</font>
         </td>
         <td class="main_table_cell_heading_inactive">
-            <font class="subheadline">Inactive Accounts (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Inactive Accounts (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td class="main_table_cell_heading_inactive">
-            <font class="subheadline">Owner</font>
+            <font class="main_table_heading">Owner</font>
         </td>
         <td class="main_table_cell_heading_inactive">&nbsp;
             

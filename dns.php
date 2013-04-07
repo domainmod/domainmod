@@ -47,13 +47,13 @@ Below is a list of all the DNS Profiles that are stored in your <?=$software_tit
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Active Profiles (<?=mysql_num_rows($result)?>)</font>
+    	<font class="main_table_heading">Active Profiles (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Servers</font>
+    	<font class="main_table_heading">Servers</font>
     </td>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Domains</font>
+    	<font class="main_table_heading">Domains</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -105,10 +105,10 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 ?>
 <tr class="main_table_row_heading_inactive">
 	<td class="main_table_cell_heading_inactive">
-    	<font class="subheadline">Inactive Profiles (<?=mysql_num_rows($result)?>)</font>
+    	<font class="main_table_heading">Inactive Profiles (<?=mysql_num_rows($result)?>)</font>
     </td>
 	<td class="main_table_cell_heading_inactive">
-    	<font class="subheadline">Servers</font>
+    	<font class="main_table_heading">Servers</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>

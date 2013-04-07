@@ -71,13 +71,13 @@ if (mysql_num_rows($result) > 0) { ?>
     <table class="main_table">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">Segments (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Segments (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">Segment Description</font>
+            <font class="main_table_heading">Segment Description</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">Segment</font>
+            <font class="main_table_heading">Segment</font>
         </td>
     </tr>
 

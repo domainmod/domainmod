@@ -47,16 +47,16 @@ Below is a list of all the IP Addresses that are stored in your <?=$software_tit
 <table class="main_table">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">IP Address Name</font>
+            <font class="main_table_heading">IP Address Name</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">Active IPs (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Active IPs (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">rDNS</font>
+            <font class="main_table_heading">rDNS</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">Domains</font>
+            <font class="main_table_heading">Domains</font>
         </td>
     </tr>
 
@@ -116,13 +116,13 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 ?>
     <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">
-            <font class="subheadline">IP Address Name</font>
+            <font class="main_table_heading">IP Address Name</font>
         </td>
         <td class="main_table_cell_heading_inactive">
-            <font class="subheadline">Inactive IPs (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Inactive IPs (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td class="main_table_cell_heading_inactive">
-            <font class="subheadline">rDNS</font>
+            <font class="main_table_heading">rDNS</font>
         </td>
     </tr>
 

@@ -170,45 +170,45 @@ Expiring Between
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['session_display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Expiry Date</font>
+    	<font class="main_table_heading">Expiry Date</font>
     </td>
 <?php } ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Domain Name</font>
+    	<font class="main_table_heading">Domain Name</font>
     </td>
 <?php if ($_SESSION['session_display_domain_tld'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">TLD</font>
+    	<font class="main_table_heading">TLD</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">IP Address</font>
+    	<font class="main_table_heading">IP Address</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_dns'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">DNS Profile</font>
+    	<font class="main_table_heading">DNS Profile</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_category'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Category</font>
+    	<font class="main_table_heading">Category</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Owner</font>
+    	<font class="main_table_heading">Owner</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_registrar'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Registrar</font>
+    	<font class="main_table_heading">Registrar</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Registrar Account</font>
+    	<font class="main_table_heading">Registrar Account</font>
     </td>
 <?php } ?>
 </tr>

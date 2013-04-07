@@ -47,13 +47,13 @@ Below is a list of all the SSL Certificate Providers that are stored in your <?=
     <table class="main_table">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">Active Providers (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Active Providers (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">Accounts</font>
+            <font class="main_table_heading">Accounts</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="subheadline">Certs</font>
+            <font class="main_table_heading">Certs</font>
         </td>
     </tr>
 
@@ -126,10 +126,10 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 ?>
         <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
-                <font class="subheadline">Inactive Providers (<?=mysql_num_rows($result)?>)</font>
+                <font class="main_table_heading">Inactive Providers (<?=mysql_num_rows($result)?>)</font>
             </td>
             <td class="main_table_cell_heading_inactive">
-                <font class="subheadline">Accounts</font>
+                <font class="main_table_heading">Accounts</font>
             </td>
         </tr>
 

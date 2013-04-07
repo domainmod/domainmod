@@ -47,9 +47,9 @@ Below is a list of all the types of SSL certificates that are stored in your <?=
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 	<td class="main_table_cell_heading_active">
-   	<font class="subheadline">Active SSL Types (<?=mysql_num_rows($result)?>)</font></td>
+   	<font class="main_table_heading">Active SSL Types (<?=mysql_num_rows($result)?>)</font></td>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">SSL Certs</font>
+    	<font class="main_table_heading">SSL Certs</font>
     </td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
@@ -100,7 +100,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 ?>
 <tr class="main_table_row_heading_inactive">
 	<td class="main_table_cell_heading_inactive">
-   	<font class="subheadline">Inactive SSL Types (<?=mysql_num_rows($result)?>)</font></td>
+   	<font class="main_table_heading">Inactive SSL Types (<?=mysql_num_rows($result)?>)</font></td>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">

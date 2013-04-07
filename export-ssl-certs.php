@@ -160,35 +160,35 @@ Expiring Between
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['session_display_ssl_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Expiry Date</font>
+    	<font class="main_table_heading">Expiry Date</font>
     </td>
 <?php } ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Host / Label</font>
+    	<font class="main_table_heading">Host / Label</font>
     </td>
 <?php if ($_SESSION['session_display_ssl_domain'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Domain</font>
+    	<font class="main_table_heading">Domain</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Type</font>
+    	<font class="main_table_heading">Type</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">Owner</font>
+    	<font class="main_table_heading">Owner</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['session_display_ssl_provider'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">SSL Provider</font>
+    	<font class="main_table_heading">SSL Provider</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['session_display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="subheadline">SSL Account</font>
+    	<font class="main_table_heading">SSL Account</font>
     </td>
 <?php } ?>
 </tr>

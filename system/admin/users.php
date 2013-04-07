@@ -62,13 +62,13 @@ if (mysql_num_rows($result) > 0) { ?>
     <table class="main_table">
         <tr class="main_table_row_heading_active">
             <td class="main_table_cell_heading_active">
-                <font class="subheadline">Active Users (<?=mysql_num_rows($result)?>)</font>
+                <font class="main_table_heading">Active Users (<?=mysql_num_rows($result)?>)</font>
             </td>
             <td class="main_table_cell_heading_active">
-                <font class="subheadline">Username</font>
+                <font class="main_table_heading">Username</font>
             </td>
             <td class="main_table_cell_heading_active">
-                <font class="subheadline">Email Address</font>
+                <font class="main_table_heading">Email Address</font>
             </td>
         </tr>
 
@@ -101,13 +101,13 @@ $result = mysql_query($sql,$connection);
 if (mysql_num_rows($result) > 0) { ?>
         <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
-                <font class="subheadline">Inactive Users (<?=mysql_num_rows($result)?>)</font>
+                <font class="main_table_heading">Inactive Users (<?=mysql_num_rows($result)?>)</font>
             </td>
             <td class="main_table_cell_heading_inactive">
-                <font class="subheadline">Username</font>
+                <font class="main_table_heading">Username</font>
             </td>
             <td class="main_table_cell_heading_inactive">
-                <font class="subheadline">Email Address</font>
+                <font class="main_table_heading">Email Address</font>
             </td>
         </tr>
 

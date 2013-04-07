@@ -181,6 +181,12 @@ font.headline {
 font.subheadline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
+	font-size: 13;
+	color: #CC0000;
+}
+font.main_table_heading {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
 	font-size: 12;
 	color: #000000;
 }
