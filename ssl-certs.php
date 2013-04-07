@@ -473,7 +473,7 @@ $sql_domain = "SELECT d.id, d.domain
 			   ORDER BY d.domain asc"; 
 $result_domain = mysql_query($sql_domain,$connection);
 echo "<select name=\"did\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?did=&oid=$oid&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Associated Domain - ALL</option>";
+echo "<option value=\"$PHP_SELF?did=&oid=$oid&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Domain - ALL</option>";
 while ($row_domain = mysql_fetch_object($result_domain)) { 
 	echo "<option value=\"$PHP_SELF?did=$row_domain->id&oid=$oid&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_domain->id == $did) echo " selected"; echo ">"; echo "$row_domain->domain</option>";
 } 
