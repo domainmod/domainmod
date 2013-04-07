@@ -104,7 +104,7 @@ if ($del == "1") {
 
 	$sql = "SELECT ssl_provider_id
 			FROM ssl_accounts
-			WHERE provider_id = '$sslpid'";
+			WHERE ssl_provider_id = '$sslpid'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	while ($row = mysql_fetch_object($result)) {
