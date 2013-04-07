@@ -80,9 +80,9 @@ if ($export == "1") {
 
 		if ($row->active == "0") { $ssl_status = "EXPIRED"; } 
 		elseif ($row->active == "1") { $ssl_status = "ACTIVE"; } 
-		elseif ($row->active == "2") { $ssl_status = "PENDING (REGISTRATION)"; } 
 		elseif ($row->active == "3") { $ssl_status = "PENDING (RENEWAL)"; } 
 		elseif ($row->active == "4") { $ssl_status = "PENDING (OTHER)"; } 
+		elseif ($row->active == "5") { $ssl_status = "PENDING (REGISTRATION)"; } 
 		else { $ssl_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-SSL-CERTS.PHP"; } 
 		
 		$sql_domain = "SELECT d.domain, ip.name, ip.ip, ip.rdns
