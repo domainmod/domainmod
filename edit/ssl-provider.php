@@ -37,25 +37,19 @@ $sslpid = $_GET['sslpid'];
 $new_ssl_provider = $_POST['new_ssl_provider'];
 $new_url = $_POST['new_url'];
 $new_notes = $_POST['new_notes'];
-$IS_SUBMITTED_SSL_PROVIDER = $_POST['IS_SUBMITTED_SSL_PROVIDER'];
-$new_type_id = $_POST['new_type_id'];
-$new_initial_fee = $_POST['new_initial_fee'];
-$new_renewal_fee = $_POST['new_renewal_fee'];
-$new_currency_id = $_POST['new_currency_id'];
-$IS_SUBMITTED_FEE = $_POST['IS_SUBMITTED_FEE'];
 $new_sslpid = $_POST['new_sslpid'];
-$new_default_provider = $_POST['new_default_provider'];
+$new_default_ssl_provider = $_POST['new_default_ssl_provider'];
 
-if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_ssl_provider != "" && $new_url != "") {
 
-		if ($new_default_provider == "1") {
+		if ($new_default_ssl_provider == "1") {
 
 			$sql = "UPDATE ssl_providers
 					SET default_provider = '0',
 					    update_time = '$current_timestamp'";
-			$result = mysql_query($sql,$connection);
+			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 		} else { 
 		
@@ -63,9 +57,9 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 					FROM ssl_providers
 					WHERE default_provider = '1'
 					  AND id != '$new_sslpid'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_default_provider = $row->default_provider; }
-			if ($temp_default_provider == "") { $new_default_provider = "1"; }
+			$result = mysql_query($sql,$connection) or die(mysql_error());
+			while ($row = mysql_fetch_object($result)) { $temp_default_ssl_provider = $row->default_ssl_provider; }
+			if ($temp_default_ssl_provider == "") { $new_default_ssl_provider = "1"; }
 		
 		}
 
@@ -73,15 +67,15 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 				SET name = '" . mysql_real_escape_string($new_ssl_provider) . "', 
 					url = '" . mysql_real_escape_string($new_url) . "', 
 					notes = '" . mysql_real_escape_string($new_notes) . "',
-					default_provider = '$new_default_provider',
+					default_provider = '$new_default_ssl_provider',
 					update_time = '$current_timestamp'
 				WHERE id = '$new_sslpid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sslpid = $new_sslpid;
-		
-		$_SESSION['session_result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Updated<BR>";
 
+		$_SESSION['session_result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Updated<BR>";
+		
 	} else {
 
 		if ($new_ssl_provider == "") $_SESSION['session_result_message'] .= "Please enter the SSL provider's name<BR>";
@@ -89,174 +83,46 @@ if ($IS_SUBMITTED_SSL_PROVIDER == "1") {
 
 	}
 
-} elseif ($IS_SUBMITTED_FEE == "1") {
+} else {
 
-	if ($new_sslpid == "" || $new_sslpid == "0" || $new_initial_fee == "" || $new_renewal_fee == "" || $new_type_id == "" || $new_currency_id == "" || $new_type_id == "0" || $new_currency_id == "0") { 
-
-		$_SESSION['session_result_message'] = "Please enter all fields before submitting the new fee<BR>";
-
-	} else {
-		
-		if ($new_initial_fee == "0" && $new_renewal_fee == "0") {
-
-			$sql = "DELETE FROM ssl_fees
-					WHERE ssl_provider_id = '$new_sslpid'
-					  AND type_id = '$new_type_id'";
-			mysql_query($sql,$connection);
-			
-			$sql = "UPDATE ssl_certs
-					SET fee_id = '0',
-						update_time = '$current_timestamp'
-					WHERE ssl_provider_id = '$new_sslpid'
-					  AND type_id = '$new_type_id'";
-			mysql_query($sql,$connection);
-
-			$sql = "SELECT type
-					FROM ssl_cert_types
-					WHERE id = '$new_type_id'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) {
-					$temp_type = $row->type;
-			}
-
-			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been deleted<BR>";
-
-			header("Location: ssl-provider.php?sslpid=$new_sslpid");
-			exit;
-
-		}
-		
-		$sql = "SELECT *
-				FROM ssl_fees
-				WHERE ssl_provider_id = '$new_sslpid'
-				  AND type_id = '$new_type_id'";
-		$result = mysql_query($sql,$connection);
-
-		if (mysql_num_rows($result) > 0) {
-			
-			$sql = "UPDATE ssl_fees
-					SET initial_fee = '$new_initial_fee',
-						renewal_fee = '$new_renewal_fee',
-						currency_id = '$new_currency_id',
-						update_time = '$current_timestamp'
-					WHERE ssl_provider_id = '$new_sslpid'
-					  AND type_id = '$new_type_id'";
-			mysql_query($sql,$connection);
-
-			$sql = "SELECT id
-					FROM ssl_fees
-					WHERE ssl_provider_id = '$new_sslpid'
-					  AND type_id = '$new_type_id'
-					  AND currency_id = '$new_currency_id'
-					LIMIT 1";
+	$sql = "SELECT name, url, notes, default_provider
+			FROM ssl_providers
+			WHERE id = '$sslpid'";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-
-			while ($row = mysql_fetch_object($result)) {
-				$new_fee_id = $row->id;
-			}
-
-			$sql = "UPDATE ssl_certs
-					SET fee_id = '$new_fee_id',
-						update_time = '$current_timestamp'
-					WHERE ssl_provider_id = '$new_sslpid'
-					  AND type_id = '$new_type_id'";
-			$result = mysql_query($sql,$connection);
+	while ($row = mysql_fetch_object($result)) { 
 	
-			$sslpid = $new_sslpid;
-			
-			$sql = "SELECT type
-					FROM ssl_cert_types
-					WHERE id = '$new_type_id'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) {
-					$temp_type = $row->type;
-			}
-
-			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been updated<BR>";
-
-		} else {
-			
-			$sql = "INSERT INTO ssl_fees
-					(ssl_provider_id, type_id, initial_fee, renewal_fee, currency_id, insert_time) VALUES 
-					('$new_sslpid', '$new_type_id', '$new_initial_fee', '$new_renewal_fee', '$new_currency_id', '$current_timestamp')";
-			$result = mysql_query($sql,$connection);
-
-			$sql = "SELECT id
-					FROM ssl_fees
-					WHERE ssl_provider_id = '$new_sslpid'
-					  AND type_id = '$new_type_id'
-					  AND currency_id = '$new_currency_id'
-					ORDER BY id desc
-					LIMIT 1";
+		$new_ssl_provider = $row->name;
+		$new_url = $row->url;
+		$new_notes = $row->notes;
+		$new_default_ssl_provider = $row->default_provider;
 	
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			
-			while ($row = mysql_fetch_object($result)) {
-				$new_fee_id = $row->id;
-			}
-
-			$sql = "UPDATE ssl_certs
-					SET fee_id = '$new_fee_id',
-						update_time = '$current_timestamp'
-					WHERE ssl_provider_id = '$new_sslpid'
-					  AND type_id = '$new_type_id'";
-			$result = mysql_query($sql,$connection);
-
-			$sql = "SELECT type
-					FROM ssl_cert_types
-					WHERE id = '$new_type_id'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) {
-					$temp_type = $row->type;
-			}
-
-			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been submitted<BR>";
-	
-		}
-
 	}
-
-}
-
-include("../_includes/system/check-for-missing-ssl-fees.inc.php");
-
-$sql = "SELECT name, url, notes, default_provider
-		FROM ssl_providers
-		WHERE id = '$sslpid'";
-$result = mysql_query($sql,$connection);
-
-while ($row = mysql_fetch_object($result)) { 
-
-	$new_ssl_provider = $row->name;
-	$new_url = $row->url;
-	$new_notes = $row->notes;
-	$new_default_provider = $row->default_provider;
 
 }
 if ($del == "1") {
 
 	$sql = "SELECT ssl_provider_id
 			FROM ssl_accounts
-			WHERE ssl_provider_id = '$sslpid'";
-	$result = mysql_query($sql,$connection);
+			WHERE provider_id = '$sslpid'";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	while ($row = mysql_fetch_object($result)) {
-		$existing_ssl_accounts = 1;
+		$existing_ssl_provider_accounts = 1;
 	}
 
 	$sql = "SELECT ssl_provider_id
 			FROM ssl_certs
 			WHERE ssl_provider_id = '$sslpid'";
-	$result = mysql_query($sql,$connection);
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	while ($row = mysql_fetch_object($result)) {
 		$existing_ssl_certs = 1;
 	}
 
-	if ($existing_ssl_accounts > 0 || $existing_ssl_certs > 0) {
+	if ($existing_ssl_provider_accounts > 0 || $existing_ssl_certs > 0) {
 		
-		if ($existing_ssl_accounts > 0) $_SESSION['session_result_message'] .= "This SSL Provider has SSL Accounts associated with it and cannot be deleted<BR>";
+		if ($existing_ssl_provider_accounts > 0) $_SESSION['session_result_message'] .= "This SSL Provider has Accounts associated with it and cannot be deleted<BR>";
 		if ($existing_ssl_certs > 0) $_SESSION['session_result_message'] .= "This SSL Provider has SSL Certificates associated with it and cannot be deleted<BR>";
 
 	} else {
@@ -271,15 +137,15 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM ssl_fees
 			WHERE ssl_provider_id = '$sslpid'";
-	$result = mysql_query($sql,$connection);
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "DELETE FROM ssl_accounts
 			WHERE ssl_provider_id = '$sslpid'";
-	$result = mysql_query($sql,$connection);
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 
-	$sql = "DELETE FROM ssl_providers
+	$sql = "DELETE FROM ssl_providers 
 			WHERE id = '$sslpid'";
-	$result = mysql_query($sql,$connection);
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$_SESSION['session_result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Deleted<BR>";
 
@@ -300,146 +166,22 @@ if ($really_del == "1") {
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_ssl_provider_form" method="post" action="<?=$PHP_SELF?>">
 <strong>SSL Provider Name:</strong><BR><BR>
-<input name="new_ssl_provider" type="text" value="<?php if ($new_ssl_provider != "") echo $new_ssl_provider; ?>" size="50" maxlength="255">
+<input name="new_ssl_provider" type="text" value="<?=$new_ssl_provider?>" size="50" maxlength="255">
 <BR><BR>
 <strong>SSL Provider's URL:</strong><BR><BR>
-<input name="new_url" type="text" value="<?php if ($new_url != "") echo $new_url; ?>" size="50" maxlength="255">
+<input name="new_url" type="text" value="<?=$new_url?>" size="50" maxlength="255">
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
 <strong>Default SSL Provider?:</strong>&nbsp;
-<input name="new_default_provider" type="checkbox" value="1"<?php if ($new_default_provider == "1") echo " checked"; ?>>
+<input name="new_default_ssl_provider" type="checkbox" value="1"<?php if ($new_default_ssl_provider == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_sslpid" value="<?=$sslpid?>">
-<input type="hidden" name="IS_SUBMITTED_SSL_PROVIDER" value="1">
 <input type="submit" name="button" value="Update This SSL Provider &raquo;">
 </form>
-<BR><BR>
-<font class="headline">Active Types</font><BR><BR>
-<?php
-$sql = "SELECT sslcf.type AS full_tf_string
-		FROM ssl_certs AS sslc, ssl_cert_types AS sslcf
-		WHERE sslc.type_id = sslcf.id
-		  AND sslc.ssl_provider_id = '$sslpid'
-		GROUP BY full_tf_string
-		ORDER BY full_tf_string asc";
-$result = mysql_query($sql,$connection) or die(mysql_error());
-
-while ($row = mysql_fetch_object($result)) {
-	$temp_full_ft_string = $temp_full_ft_string .= "$row->full_tf_string / ";
-}
-	$all_types = substr($temp_full_ft_string, 0, -2); 
-?>
-<?=$all_types?>
-<BR><BR><BR><BR>
-<?php
-$sql = "SELECT sslcf.type AS full_tf_string
-		FROM ssl_certs AS sslc, ssl_cert_types AS sslcf
-		WHERE sslc.type_id = sslcf.id
-		  AND sslc.ssl_provider_id = '$sslpid'
-		  AND sslc.fee_id = '0'
-		GROUP BY full_tf_string
-		ORDER BY full_tf_string asc";
-$result = mysql_query($sql,$connection);
-if (mysql_num_rows($result) > 0) {
-?>
-    <a name="missingfees"></a><font class="headline">Missing or Out Of Date Fees</font><BR><BR>
-    <?php
-    while ($row = mysql_fetch_object($result)) {
-        $temp_all_missing_fees = $temp_all_missing_fees .= "$row->full_tf_string / ";
-    }
-        $all_missing_fees = substr($temp_all_missing_fees, 0, -2); 
-    ?>
-    <?=$all_missing_fees?><BR><BR>
-    <strong><font class="highlight">*</font> Please update the fees below in order to ensure proper SSL accounting.</strong>
-    <BR><BR><BR>
-<?php
-}
-?>
-<font class="headline">Add/Update Fee</font><BR><BR>
-<form name="edit_ssl_provider_fee_form" method="post" action="<?=$PHP_SELF?>">
-<table class="main_table">
-	<tr class="main_table_row_heading_active">
-    	<td class="main_table_cell_heading_active">
-        	<strong>Type</strong><BR>
-		  <select name="new_type_id">
-		  	<?php
-			$sql = "SELECT id, type
-					FROM ssl_cert_types
-					WHERE active = '1'
-					ORDER BY type asc";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) {
-			?>
-			    <option value="<?=$row->id?>"><?=$row->type?></option>
-			<?php
-			}
-			?>
-	      </select>
-		</td>
-		<td class="main_table_cell_heading_active">
-        	<strong>Initial Fee</strong><BR>
-	    	<input name="new_initial_fee" type="text" value="" size="10">
-        </td>
-		<td class="main_table_cell_heading_active">
-        	<strong>Renewal Fee</strong><BR>
-	    	<input name="new_renewal_fee" type="text" value="" size="10">
-		</td>
-	  	<td class="main_table_cell_heading_active">
-        	<strong>Currency</strong><BR>
-		  <select name="new_currency_id">
-		  	<?php
-			$sql = "SELECT id, currency, name 
-					FROM currencies
-					WHERE active = '1'
-					ORDER BY currency asc";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) {
-			?>
-			    <option value="<?=$row->id?>"><?php echo "$row->currency - $row->name"; ?></option>
-			<?php
-			}
-			?>
-	      </select>
-	    </td>
-	</tr>
-</table>
-<input type="hidden" name="new_sslpid" value="<?=$sslpid?>">
-<input type="hidden" name="IS_SUBMITTED_FEE" value="1">
-<BR><BR><input type="submit" name="button" value="Add/Update This Fee &raquo;">
-</form>
-<BR><BR>
-<font class="headline">Fees</font><BR><BR>
-<table class="main_table">
-	<tr class="main_table_row_heading_active">
-    	<td class="main_table_cell_heading_active"><strong>Type</strong></td>
-        <td class="main_table_cell_heading_active"><strong>Initial Fee</strong></td>
-        <td class="main_table_cell_heading_active"><strong>Renewal Fee</strong></td>
-        <td class="main_table_cell_heading_active"><strong>Currency</strong></td>
-	</tr>
-<?php
-$sql = "SELECT f.initial_fee, f.renewal_fee, c.currency, sslcf.type
-		FROM ssl_fees AS f, currencies AS c, ssl_cert_types AS sslcf
-		WHERE f.currency_id = c.id
-		  AND f.type_id = sslcf.id
-		  AND f.ssl_provider_id = '$sslpid'
-		  AND c.active = '1'
-		ORDER BY sslcf.type asc";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
-?>
-	<tr class="main_table_row_active">
-    	<td class="main_table_cell_active"><?=$row->type?>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td class="main_table_cell_active"><?=$row->initial_fee?></td>
-        <td class="main_table_cell_active"><?=$row->renewal_fee?></td>
-        <td class="main_table_cell_active"><?=$row->currency?></td>
-	</tr>
-<?php
-}
-?>
-</table>
-<BR><BR><a href="<?=$PHP_SELF?>?sslpid=<?=$sslpid?>&del=1">DELETE THIS SSL PROVIDER</a>
+<BR><a href="ssl-provider-fees.php?sslpid=<?=$sslpid?>">EDIT THIS SSL PROVIDER'S FEES</a><BR><BR>
+<BR><a href="<?=$PHP_SELF?>?sslpid=<?=$sslpid?>&del=1">DELETE THIS SSL PROVIDER</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

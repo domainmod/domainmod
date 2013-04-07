@@ -47,10 +47,10 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
         <td width="250">
-            <font class="subheadline">Registrar</font>
+            <font class="main_table_heading">Registrar</font>
         </td>
         <td>
-            <font class="subheadline">Missing TLD Fees</font>
+            <font class="main_table_heading">Missing TLD Fees</font>
         </td>
     </tr>
 
@@ -76,7 +76,7 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
                 }
                 $full_tld_list_formatted = substr($full_tld_list, 0, -2); 
                 ?>
-                <a class="nobold" href="edit/registrar.php?rid=<?=$row->registrar_id?>#missingfees"><?=$full_tld_list_formatted?></a>
+                <a class="nobold" href="edit/registrar-fees.php?rid=<?=$row->registrar_id?>"><?=$full_tld_list_formatted?></a>
             </td>
         </tr>
 

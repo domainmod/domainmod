@@ -47,10 +47,10 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr height="20">
         <td width="250">
-            <font class="subheadline">SSL Provider</font>
+            <font class="main_table_heading">SSL Provider</font>
         </td>
         <td>
-            <font class="subheadline">Missing Fees</font>
+            <font class="main_table_heading">Missing Fees</font>
         </td>
     </tr>
 
@@ -79,7 +79,7 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
 
                 $full_type_list_formatted = substr($full_type_list, 0, -2); 
                 ?>
-                <a class="nobold" href="edit/ssl-provider.php?sslpid=<?=$row->ssl_provider_id?>#missingfees"><?=$full_type_list_formatted?></a>
+                <a class="nobold" href="edit/ssl-provider-fees.php?sslpid=<?=$row->ssl_provider_id?>"><?=$full_type_list_formatted?></a>
             </td>
         </tr>
     <?php 
