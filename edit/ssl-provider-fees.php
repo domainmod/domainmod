@@ -53,28 +53,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		if ($new_initial_fee == "0" && $new_renewal_fee == "0") {
 
-			$sql = "DELETE FROM ssl_fees
+			$sql = "SELECT *
+					FROM ssl_fees
 					WHERE ssl_provider_id = '$new_sslpid'
 					  AND type_id = '$new_type_id'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+			$result = mysql_query($sql,$connection);
 			
-			$sql = "UPDATE ssl_certs
-					SET fee_id = '0',
-						update_time = '$current_timestamp'
-					WHERE ssl_provider_id = '$new_sslpid'
-					  AND type_id = '$new_type_id'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			
-			$sql = "SELECT type
-					FROM ssl_cert_types
-					WHERE id = '$new_type_id'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
-			
-			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">.$temp_type</font> has been deleted<BR>";
+			if (mysql_num_rows($result) == 0) {
 
-			header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
-			exit;
+				$_SESSION['session_result_message'] = "The fee you're trying to delete doesn't exist<BR>";
+	
+				header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
+				exit;
+
+			} else {
+
+				$sql = "DELETE FROM ssl_fees
+						WHERE ssl_provider_id = '$new_sslpid'
+						  AND type_id = '$new_type_id'";
+				$result = mysql_query($sql,$connection) or die(mysql_error());
+				
+				$sql = "UPDATE ssl_certs
+						SET fee_id = '0',
+							update_time = '$current_timestamp'
+						WHERE ssl_provider_id = '$new_sslpid'
+						  AND type_id = '$new_type_id'";
+				$result = mysql_query($sql,$connection) or die(mysql_error());
+				
+				$sql = "SELECT type
+						FROM ssl_cert_types
+						WHERE id = '$new_type_id'";
+				$result = mysql_query($sql,$connection) or die(mysql_error());
+				while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
+				
+				$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been deleted<BR>";
+	
+				header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
+				exit;
+	
+			}
 			
 		}
 		
@@ -123,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 			$sslpid = $new_sslpid;
 
-			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">.$temp_type</font> has been updated<BR>";
+			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been updated<BR>";
 			
 			header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
 			exit;
@@ -162,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
 	
-			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">.$temp_type</font> has been added<BR>";
+			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been added<BR>";
 			
 			header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
 			exit;
@@ -253,6 +270,7 @@ $all_types = substr($temp_all_types, 0, -2);
 <?=$all_types?>
 <BR><BR><BR><BR>
 <font class="subheadline">Add/Update SSL Type Fee</font><BR><BR>
+To delete a fee enter 0 for the initial and renewal fees.<BR><BR>
 <form name="edit_ssl_provider_fee_form" method="post" action="<?=$PHP_SELF?>">
 <table class="main_table">
 	<tr class="main_table_row_heading_active">

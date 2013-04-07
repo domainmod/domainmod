@@ -55,23 +55,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		if ($new_initial_fee == "0" && $new_renewal_fee == "0") {
 
-			$sql = "DELETE FROM fees
+			$sql = "SELECT *
+					FROM fees
 					WHERE registrar_id = '$new_rid'
 					  AND tld = '$new_tld'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+			$result = mysql_query($sql,$connection);
 			
-			$sql = "UPDATE domains
-					SET fee_id = '0',
-						update_time = '$current_timestamp'
-					WHERE registrar_id = '$new_rid'
-					  AND tld = '$new_tld'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			
-			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been deleted<BR>";
+			if (mysql_num_rows($result) == 0) {
 
-			header("Location: registrar-fees.php?rid=$new_rid");
-			exit;
-			
+				$_SESSION['session_result_message'] = "The fee you're trying to delete doesn't exist<BR>";
+	
+				header("Location: registrar-fees.php?rid=$new_rid");
+				exit;
+
+			} else {
+
+				$sql = "DELETE FROM fees
+						WHERE registrar_id = '$new_rid'
+						  AND tld = '$new_tld'";
+				$result = mysql_query($sql,$connection) or die(mysql_error());
+				
+				$sql = "UPDATE domains
+						SET fee_id = '0',
+							update_time = '$current_timestamp'
+						WHERE registrar_id = '$new_rid'
+						  AND tld = '$new_tld'";
+				$result = mysql_query($sql,$connection) or die(mysql_error());
+				
+				$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been deleted<BR>";
+	
+				header("Location: registrar-fees.php?rid=$new_rid");
+				exit;
+
+			}
+
 		}
 		
 		$sql = "SELECT *
@@ -235,6 +252,7 @@ $all_tlds = substr($temp_all_tlds, 0, -2);
 <?=$all_tlds?>
 <BR><BR><BR><BR>
 <font class="subheadline">Add/Update TLD Fee</font><BR><BR>
+To delete a fee enter 0 for the initial and renewal fees.<BR><BR>
 <form name="edit_registrar_fee_form" method="post" action="<?=$PHP_SELF?>">
 <table class="main_table">
 	<tr class="main_table_row_heading_active">
