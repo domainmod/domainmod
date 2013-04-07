@@ -500,7 +500,7 @@ elseif ($is_active == "ALL") { $is_active_string = " AND active IN ('0', '1', '2
 
 if ($oid != "") { $oid_string = " AND owner_id = '$oid' "; } else { $oid_string = ""; }
 if ($did != "") { $did_string = " AND domain_id = '$did' "; } else { $did_string = ""; }
-if ($sslpid != "") { $sslp_string = " AND ssl_provider_id = '$sslp' "; } else { $sslp_string = ""; }
+if ($sslpid != "") { $sslp_string = " AND ssl_provider_id = '$sslpid' "; } else { $sslp_string = ""; }
 if ($sslpaid != "") { $sslpaid_string = " AND account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
 if ($ssltid != "") { $ssltid_string = " AND type_id = '$ssltid' "; } else { $ssltid_string = ""; }
 
