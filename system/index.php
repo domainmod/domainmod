@@ -40,7 +40,7 @@ $software_section = "system";
 	<BR><BR><font class="headline">Admin Tools</font><BR><BR>
 	&raquo; <a href="admin/system-settings.php">System Settings</a><BR><BR>
 	&raquo; <a href="admin/users.php">User List</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/add/user.php">Add New User</a><BR><BR>
-	&raquo; <a href="update-database.php">Check For Database  Updates</a><BR><BR> 
+	&raquo; <a href="update-database.php">Check For Database  Updates</a><BR>
 <?php } ?>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
