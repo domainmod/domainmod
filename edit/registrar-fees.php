@@ -260,7 +260,6 @@ $all_tlds = substr($temp_all_tlds, 0, -2);
 <?=$all_tlds?>
 <BR><BR><BR><BR>
 <font class="subheadline">Add/Update TLD Fee</font><BR><BR>
-To delete a fee enter 0 for the initial and renewal fees.<BR><BR>
 <form name="edit_registrar_fee_form" method="post" action="<?=$PHP_SELF?>">
 <table class="main_table">
 	<tr class="main_table_row_heading_active">
