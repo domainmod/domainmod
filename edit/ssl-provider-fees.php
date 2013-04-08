@@ -246,7 +246,6 @@ if (mysql_num_rows($result) > 0) {
 <?php
 }
 ?>
-<BR><font class="subheadline">SSL Types Linked to Active SSL Certificates</font><BR><BR>
 <?php
 $sql = "SELECT t.id, t.type
 		FROM ssl_certs AS c, ssl_cert_types AS t
@@ -256,26 +255,38 @@ $sql = "SELECT t.id, t.type
 		GROUP BY t.type
 		ORDER BY t.type";
 $result = mysql_query($sql,$connection) or die(mysql_error());
-while ($row = mysql_fetch_object($result)) {
-	
-	$sql_temp = "SELECT fee_id
-				 FROM ssl_certs
-				 WHERE ssl_provider_id = '$sslpid'
-				   AND type_id = '$row->id'";
-	$result_temp = mysql_query($sql_temp,$connection) or die(mysql_error());
-	while ($row_temp = mysql_fetch_object($result_temp)) { $temp_fee_id = $row_temp->fee_id; }
-	
-	if ($temp_fee_id == "0") {
-		$temp_all_types = $temp_all_types .= "<font class=\"highlight\">$row->type</font>, ";
-	} else {
-		$temp_all_types = $temp_all_types .= "$row->type, ";
-	}
+
+
+if (mysql_num_rows($result) != 0) {
+?>
+
+    <BR><BR><font class="subheadline">SSL Types Linked to Active SSL Certificates</font><BR><BR>
+    
+    <?php
+    while ($row = mysql_fetch_object($result)) {
+        
+        $sql_temp = "SELECT fee_id
+                     FROM ssl_certs
+                     WHERE ssl_provider_id = '$sslpid'
+                       AND type_id = '$row->id'";
+        $result_temp = mysql_query($sql_temp,$connection) or die(mysql_error());
+        while ($row_temp = mysql_fetch_object($result_temp)) { $temp_fee_id = $row_temp->fee_id; }
+        
+        if ($temp_fee_id == "0") {
+            $temp_all_types = $temp_all_types .= "<font class=\"highlight\">$row->type</font>, ";
+        } else {
+            $temp_all_types = $temp_all_types .= "$row->type, ";
+        }
+    
+    }
+
+	$all_types = substr($temp_all_types, 0, -2); 
+	echo $all_types;
+	echo "<BR><BR><BR>";
 
 }
-$all_types = substr($temp_all_types, 0, -2); 
 ?>
-<?=$all_types?>
-<BR><BR><BR><BR>
+<BR>
 <font class="subheadline">Add/Update SSL Type Fee</font><BR><BR>
 <form name="edit_ssl_provider_fee_form" method="post" action="<?=$PHP_SELF?>">
 <table class="main_table">

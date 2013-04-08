@@ -230,7 +230,6 @@ if (mysql_num_rows($result) > 0) {
 <?php
 }
 ?>
-<BR><font class="subheadline">TLDs Linked to Active Domains</font><BR><BR>
 <?php
 $sql = "SELECT tld 
 		FROM domains
@@ -239,26 +238,35 @@ $sql = "SELECT tld
 		GROUP BY tld
 		ORDER BY tld";
 $result = mysql_query($sql,$connection) or die(mysql_error());
-while ($row = mysql_fetch_object($result)) {
-	
-	$sql_temp = "SELECT tld, fee_id
-				 FROM domains
-				 WHERE registrar_id = '$rid'
-				   AND tld = '$row->tld'";
-	$result_temp = mysql_query($sql_temp,$connection) or die(mysql_error());
-	while ($row_temp = mysql_fetch_object($result_temp)) { $temp_fee_id = $row_temp->fee_id; }
-	
-	if ($temp_fee_id == "0") {
-		$temp_all_tlds = $temp_all_tlds .= "<font class=\"highlight\">.$row->tld</font>, ";
-	} else {
-		$temp_all_tlds = $temp_all_tlds .= ".$row->tld, ";
-	}
+
+if (mysql_num_rows($result) != 0) {
+?>
+    <BR><BR><font class="subheadline">TLDs Linked to Active Domains</font><BR><BR>
+    <?php
+    while ($row = mysql_fetch_object($result)) {
+        
+        $sql_temp = "SELECT tld, fee_id
+                     FROM domains
+                     WHERE registrar_id = '$rid'
+                       AND tld = '$row->tld'";
+        $result_temp = mysql_query($sql_temp,$connection) or die(mysql_error());
+        while ($row_temp = mysql_fetch_object($result_temp)) { $temp_fee_id = $row_temp->fee_id; }
+        
+        if ($temp_fee_id == "0") {
+            $temp_all_tlds = $temp_all_tlds .= "<font class=\"highlight\">.$row->tld</font>, ";
+        } else {
+            $temp_all_tlds = $temp_all_tlds .= ".$row->tld, ";
+        }
+    
+    }
+
+	$all_tlds = substr($temp_all_tlds, 0, -2); 
+	echo $all_tlds;
+	echo "<BR><BR><BR>";
 
 }
-$all_tlds = substr($temp_all_tlds, 0, -2); 
 ?>
-<?=$all_tlds?>
-<BR><BR><BR><BR>
+<BR>
 <font class="subheadline">Add/Update TLD Fee</font><BR><BR>
 <form name="edit_registrar_fee_form" method="post" action="<?=$PHP_SELF?>">
 <table class="main_table">
