@@ -1,5 +1,5 @@
 <?php
-// export-ssl-certs.php
+// ssl-cert-renewals.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -83,7 +83,7 @@ if ($export == "1") {
 		elseif ($row->active == "3") { $ssl_status = "PENDING (RENEWAL)"; } 
 		elseif ($row->active == "4") { $ssl_status = "PENDING (OTHER)"; } 
 		elseif ($row->active == "5") { $ssl_status = "PENDING (REGISTRATION)"; } 
-		else { $ssl_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-SSL-CERTS.PHP"; } 
+		else { $ssl_status = "ERROR -- PROBLEM WITH CODE IN SSL-CERT-RENEWALS.PHP"; } 
 		
 		$sql_domain = "SELECT d.domain, ip.name, ip.ip, ip.rdns
 					   FROM domains AS d, ip_addresses AS ip
@@ -147,7 +147,7 @@ Expiring Between
 </td>
 <td class="search-table-inside" width="200" valign="middle" align="center">
 <?php if (mysql_num_rows($result) > 0) { ?>
-		<a href="export-ssl-certs.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>">Export Results</a><BR>
+		<a href="ssl-cert-renewals.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>">Export Results</a><BR>
 <?php } ?>
 </td>
 </tr>
