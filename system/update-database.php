@@ -854,6 +854,26 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0014 to 2.0015
+	if ($current_db_version == 2.0014) {
+
+		$sql = "ALTER TABLE `user_settings` 
+					ADD `display_domain_fee` INT(1) NOT NULL DEFAULT '0' AFTER `display_domain_tld`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `user_settings` 
+					ADD `display_ssl_fee` INT(1) NOT NULL DEFAULT '0' AFTER `display_ssl_expiry_date`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0015',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0015;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
