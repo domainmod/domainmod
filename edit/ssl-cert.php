@@ -140,7 +140,13 @@ if ($really_del == "1") {
 			WHERE id = '$sslcid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Deleted<BR>";
+	$sql = "SELECT type
+			FROM ssl_cert_types
+			WHERE id = '$new_type_id'";
+	$result = mysql_query($sql,$connection);
+	while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
+	
+	$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name ($temp_type)</font> Deleted<BR>";
 
 	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
