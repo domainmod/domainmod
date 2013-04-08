@@ -29,7 +29,7 @@
 <table align="center" width="<?=$site_width?>" border="0" cellspacing="0" cellpadding="0">
 	<tr>
         <td class="footer-table" height="100%">
-        Domain Manager is free software created by <a target="_blank" class="subtlelink" href="http://aysmedia.com">AYS Media</a> and released under the GNU/GPL License.<br>
+        Domain Manager is free software created by <a target="_blank" class="subtlelink" href="http://chetcuti.com">Greg Chetcuti</a> and released under the GNU/GPL License.<br>
 		For more information on the GNU/GPL License <a target="_blank" class="subtlelink" href="http://www.gnu.org/licenses/">click here</a>.<br>
 		To obtain your own copy of the Domain Manager software <a target="_blank" class="subtlelink" href="http://aysmedia.com/code/domain-manager/">click here</a>.
 		</td>
