@@ -43,7 +43,9 @@ $new_segid = $_POST['new_segid'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != "" && $new_segment != "") {
-		
+
+		$new_segment = preg_replace("/^\n+|^[\t\s]*\n+/m", "", $new_segment);
+
 		$lines = explode("\r\n", $new_segment);
 		$number_of_domains = count($lines);
 
