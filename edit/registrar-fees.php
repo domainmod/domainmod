@@ -230,7 +230,7 @@ if (mysql_num_rows($result) > 0) {
 <?php
 }
 ?>
-<BR><font class="subheadline">Active TLDs</font><BR><BR>
+<BR><font class="subheadline">TLDs Linked to Active Domains</font><BR><BR>
 <?php
 $sql = "SELECT tld 
 		FROM domains

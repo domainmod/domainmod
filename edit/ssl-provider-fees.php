@@ -246,7 +246,7 @@ if (mysql_num_rows($result) > 0) {
 <?php
 }
 ?>
-<BR><font class="subheadline">Active SSL Types</font><BR><BR>
+<BR><font class="subheadline">SSL Types Linked to Active SSL Certificates</font><BR><BR>
 <?php
 $sql = "SELECT t.id, t.type
 		FROM ssl_certs AS c, ssl_cert_types AS t
