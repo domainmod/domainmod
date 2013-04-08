@@ -22,11 +22,13 @@ include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
+include("_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "SSL Certificates";
 $software_section = "ssl-certs";
 
 // Form Variables
+$export = $_GET['export'];
 $oid = $_REQUEST['oid'];
 $did = $_REQUEST['did'];
 $sslpid = $_REQUEST['sslpid'];
@@ -139,44 +141,6 @@ function pageBrowser($totalrows,$numLimit,$amm,$queryStr,$numBegin,$begin,$num) 
 //
 // END - Code for pagination
 // 
-?>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
-<script type="text/javascript">
-<!--
-function MM_jumpMenu(targ,selObj,restore){ //v3.0
-  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
-  if (restore) selObj.selectedIndex=0;
-}
-//-->
-</script>
-</head>
-<body onLoad="document.forms[0].elements[8].focus()";>
-<?php include("_includes/header.inc.php"); ?>
-<?php
-if ($_SESSION['session_need_ssl_provider'] == "1") {
-	echo "<strong><font class=\"highlight\">0</font></strong> SSL Providers found. Please <a href=\"add/ssl-provider.php\">click here</a> to add one.<BR><BR>";
-	exit;
-}
-
-if ($_SESSION['session_need_ssl_account'] == "1" && $_SESSION['session_need_ssl_provider'] != "1") {
-	echo "<strong><font class=\"highlight\">0</font></strong> SSL Provider Accounts found. Please <a href=\"add/ssl-account.php\">click here</a> to add one.<BR><BR>";
-	exit;
-}
-
-if ($_SESSION['session_need_ssl_cert'] == "1" && $_SESSION['session_need_ssl_provider'] != "1" && $_SESSION['session_need_ssl_account'] != "1" && $_SESSION['session_need_domain'] == "0") {
-	echo "<strong><font class=\"highlight\">0</font></strong> SSL Certificates. Please <a href=\"add/ssl-cert.php\">click here</a> to add one.<BR><BR>";
-	exit;
-}
-
-if ($_SESSION['session_need_domain'] == "1" && $_SESSION['session_need_ssl_provider'] == "0" && $_SESSION['session_need_ssl_account'] == "0") {
-	echo "Before you can add an SSL Certificate you must have at least one domain stored in your $software_title. Please <a href=\"domains.php\">click here</a> to add one.<BR><BR>";
-	exit;
-}
-
 if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
 elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
 elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
@@ -237,6 +201,96 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes,
 		  $search_string
 		  $sort_by_string";	
 
+$full_export = "";
+
+if ($export == "1") {
+
+	$result = mysql_query($sql,$connection);
+
+	$full_export .= "\"All prices are listed in " . $default_currency . "\"\n\n";
+
+	$full_export .= "\"SSL STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"SSL Type\",\"Owner\",\"SSL Provider\",\"Username\",\"Notes\"\n";
+
+	while ($row = mysql_fetch_object($result)) {
+		
+		$temp_renewal_fee = number_format($row->renewal_fee * $row->conversion, 2, '.', ',');
+		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
+
+		if ($row->active == "0") { $ssl_status = "EXPIRED"; } 
+		elseif ($row->active == "1") { $ssl_status = "ACTIVE"; } 
+		elseif ($row->active == "3") { $ssl_status = "PENDING (RENEWAL)"; } 
+		elseif ($row->active == "4") { $ssl_status = "PENDING (OTHER)"; } 
+		elseif ($row->active == "5") { $ssl_status = "PENDING (REGISTRATION)"; } 
+		else { $ssl_status = "ERROR -- PROBLEM WITH CODE IN SSL-CERTS.PHP"; } 
+		
+		$sql_domain = "SELECT d.domain, ip.name, ip.ip, ip.rdns
+					   FROM domains AS d, ip_addresses AS ip
+					   WHERE d.ip_id = ip.id
+					     AND d.id = '$row->domain_id'";
+		$result_domain = mysql_query($sql_domain,$connection);
+		
+		while ($row_domain = mysql_fetch_object($result_domain)) {
+			$full_domain_name = $row_domain->domain;
+			$full_ip_name = $row_domain->name;
+			$full_ip_address = $row_domain->ip;
+			$full_ip_rdns = $row_domain->rdns;
+		}
+
+		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"$row->to_renew\",\"$temp_renewal_fee\",\"$row->name\",\"$full_domain_name\",\"$full_ip_name\",\"$full_ip_address\",\"$full_ip_rdns\",\"$row->type\",\"$row->owner_name\",\"$row->ssl_provider_name\",\"$row->username\",\"$row->notes\"\n";
+	}
+	
+	$full_export .= "\n";
+	
+	$full_export .= "\"\",\"\",\"Total Cost:\",\"" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"" . $default_currency . "\"\n";
+	
+	$export = "0";
+	
+header('Content-Type: text/plain');
+$unixtime_timestamp = strtotime($current_timestamp);
+$full_content_disposition = "Content-Disposition: attachment; filename=\"ssl_results_$unixtime_timestamp.csv\"";
+header("$full_content_disposition");
+header('Content-Transfer-Encoding: binary');
+header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+echo $full_export;
+exit;
+}
+?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title><?=$software_title?> :: <?=$page_title?></title>
+<?php include("_includes/head-tags.inc.php"); ?>
+<script type="text/javascript">
+<!--
+function MM_jumpMenu(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
+//-->
+</script>
+</head>
+<body onLoad="document.forms[0].elements[8].focus()";>
+<?php include("_includes/header.inc.php"); ?>
+<?php
+if ($_SESSION['session_need_ssl_provider'] == "1") {
+	echo "<strong><font class=\"highlight\">0</font></strong> SSL Providers found. Please <a href=\"add/ssl-provider.php\">click here</a> to add one.<BR><BR>";
+	exit;
+}
+
+if ($_SESSION['session_need_ssl_account'] == "1" && $_SESSION['session_need_ssl_provider'] != "1") {
+	echo "<strong><font class=\"highlight\">0</font></strong> SSL Provider Accounts found. Please <a href=\"add/ssl-account.php\">click here</a> to add one.<BR><BR>";
+	exit;
+}
+
+if ($_SESSION['session_need_ssl_cert'] == "1" && $_SESSION['session_need_ssl_provider'] != "1" && $_SESSION['session_need_ssl_account'] != "1" && $_SESSION['session_need_domain'] == "0") {
+	echo "<strong><font class=\"highlight\">0</font></strong> SSL Certificates. Please <a href=\"add/ssl-cert.php\">click here</a> to add one.<BR><BR>";
+	exit;
+}
+
+if ($_SESSION['session_need_domain'] == "1" && $_SESSION['session_need_ssl_provider'] == "0" && $_SESSION['session_need_ssl_account'] == "0") {
+	echo "Before you can add an SSL Certificate you must have at least one domain stored in your $software_title. Please <a href=\"domains.php\">click here</a> to add one.<BR><BR>";
+	exit;
+}
 $totalrows = mysql_num_rows(mysql_query($sql));
 $navigate = pageBrowser($totalrows,15,$result_limit, "&oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for",$_GET[numBegin],$_GET[begin],$_GET[num]);
 $sql = $sql.$navigate[0];
@@ -571,7 +625,7 @@ echo "</select>";
   <tr>
 	<td align="left" valign="top">
 		<?php echo $navigate[2]; ?>
-        &nbsp;[<a href="system/display-settings.php">display settings</a>]
+        &nbsp;[<a href="ssl-certs.php?<?=$_SERVER['QUERY_STRING']?>&export=1">export results</a>]&nbsp;[<a href="system/display-settings.php">display settings</a>]
 	</td>
 	<td width="280" align="right" valign="top">
 		<?php if ($totalrows != '0') { ?>
