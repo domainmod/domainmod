@@ -943,12 +943,12 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 <tr class="main_table_row_active">
 <?php if ($_SESSION['session_display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=$row->expiry_date?>
+		<a class="subtlelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->expiry_date?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=number_format($row->renewal_fee * $row->conversion, 2, '.', ',');?>
+		<a class="subtlelink" href="edit/registrar-fees.php?rid=<?=$row->r_id?>"><?=number_format($row->renewal_fee * $row->conversion, 2, '.', ',');?></a>
 	</td>
 <?php } ?>
 	<td class="main_table_cell_active">
@@ -970,7 +970,7 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 	</td>
 <?php if ($_SESSION['session_display_domain_tld'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=$row->tld?>
+		<a class="subtlelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->tld?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
