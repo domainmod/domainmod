@@ -406,7 +406,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	$sql = "INSERT INTO `settings` 
 			(`db_version`, `email_address`, `insert_time`) VALUES 
 			('$most_recent_db_version', 'code@aysmedia.com', '$current_timestamp');";
-			echo $sql; exit;
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$_SESSION['session_institallation_mode'] = 0;
