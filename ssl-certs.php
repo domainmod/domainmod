@@ -178,6 +178,8 @@ elseif ($sort_by == "sslp_a") { $sort_by_string = " ORDER BY sslp.name asc, sslc
 elseif ($sort_by == "sslp_d") { $sort_by_string = " ORDER BY sslp.name desc, sslc.name asc "; }
 elseif ($sort_by == "sslpa_a") { $sort_by_string = " ORDER BY sslp.name asc, sslc.name asc "; } 
 elseif ($sort_by == "sslpa_d") { $sort_by_string = " ORDER BY sslp.name desc, sslc.name asc "; }
+elseif ($sort_by == "sf_a") { $sort_by_string = " ORDER BY f.renewal_fee asc "; } 
+elseif ($sort_by == "sf_d") { $sort_by_string = " ORDER BY f.renewal_fee desc "; }
  
 $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, o.id AS o_id, o.name AS owner_name, f.renewal_fee, cc.conversion, d.domain, sslcf.id as type_id, sslcf.type
 		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS cc, domains AS d, ssl_cert_types AS sslcf
@@ -643,6 +645,18 @@ echo "</select>";
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ed_a") { echo "ed_d"; } else { echo "ed_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Expiry Date</font></a>
 	</td>
 <?php } ?>
+<?php if ($_SESSION['session_display_ssl_fee'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+		<?php
+        $sql_currency = "SELECT currency
+                         FROM currencies
+                         WHERE default_currency = '1'";
+        $result_currency = mysql_query($sql_currency,$connection);
+        while ($row_currency = mysql_fetch_object($result_currency)) { $temp_currency = $row_currency->currency; }
+        ?>
+		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sf_a") { echo "sf_d"; } else { echo "sf_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Fee (<?=$temp_currency?>)</font></a>
+	</td>
+<?php } ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslc_a") { echo "sslc_d"; } else { echo "sslc_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Host / Label</font></a>
 	</td>
@@ -677,6 +691,11 @@ echo "</select>";
 <?php if ($_SESSION['session_display_ssl_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->expiry_date?>
+	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_fee'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=number_format($row->renewal_fee * $row->conversion, 2, '.', ',');?>
 	</td>
 <?php } ?>
 	<td class="main_table_cell_active">
@@ -722,7 +741,10 @@ echo "</select>";
 <BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-	<td align="left" valign="top"><?php echo $navigate[2]; ?> </td>
+	<td align="left" valign="top">
+		<?php echo $navigate[2]; ?>
+        &nbsp;[<a href="ssl-certs.php?<?=$_SERVER['QUERY_STRING']?>&export=1">export results</a>]&nbsp;[<a href="system/display-settings.php">display settings</a>]
+    </td>
 	<td width="280" align="right" valign="top"><?php 
 		echo "&nbsp;&nbsp;(Listing $navigate[1] of " . number_format($totalrows) . ")";
 		?>

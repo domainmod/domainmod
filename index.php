@@ -80,12 +80,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['session_display_domain_dns'] = $row_settings->display_domain_dns;
 				$_SESSION['session_display_domain_ip'] = $row_settings->display_domain_ip;
 				$_SESSION['session_display_domain_tld'] = $row_settings->display_domain_tld;
+				$_SESSION['session_display_domain_fee'] = $row_settings->display_domain_fee;
 				$_SESSION['session_display_ssl_owner'] = $row_settings->display_ssl_owner;
 				$_SESSION['session_display_ssl_provider'] = $row_settings->display_ssl_provider;
 				$_SESSION['session_display_ssl_account'] = $row_settings->display_ssl_account;
 				$_SESSION['session_display_ssl_domain'] = $row_settings->display_ssl_domain;
 				$_SESSION['session_display_ssl_type'] = $row_settings->display_ssl_type;
 				$_SESSION['session_display_ssl_expiry_date'] = $row_settings->display_ssl_expiry_date;
+				$_SESSION['session_display_ssl_fee'] = $row_settings->display_ssl_fee;
 			}
 			
 			header("Location: _includes/auth/login-checks/main.inc.php");

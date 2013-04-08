@@ -151,6 +151,18 @@ Expiring Between
     	<font class="main_table_heading">Expiry Date</font>
     </td>
 <?php } ?>
+<?php if ($_SESSION['session_display_domain_fee'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+		<?php
+        $sql_currency = "SELECT currency
+                         FROM currencies
+                         WHERE default_currency = '1'";
+        $result_currency = mysql_query($sql_currency,$connection);
+        while ($row_currency = mysql_fetch_object($result_currency)) { $temp_currency = $row_currency->currency; }
+        ?>
+    	<font class="main_table_heading">Fee (<?=$temp_currency?>)</font>
+    </td>
+<?php } ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Domain Name</font>
     </td>
@@ -200,6 +212,11 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 <?php if ($_SESSION['session_display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->expiry_date?>
+	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_fee'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=number_format($row->renewal_fee * $row->conversion, 2, '.', ',');?>
 	</td>
 <?php } ?>
 	<td class="main_table_cell_active">

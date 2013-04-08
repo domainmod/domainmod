@@ -38,12 +38,14 @@ $new_display_domain_expiry_date = $_POST['new_display_domain_expiry_date'];
 $new_display_domain_dns = $_POST['new_display_domain_dns'];
 $new_display_domain_ip = $_POST['new_display_domain_ip'];
 $new_display_domain_tld = $_POST['new_display_domain_tld'];
+$new_display_domain_fee = $_POST['new_display_domain_fee'];
 $new_display_ssl_owner = $_POST['new_display_ssl_owner'];
 $new_display_ssl_provider = $_POST['new_display_ssl_provider'];
 $new_display_ssl_account = $_POST['new_display_ssl_account'];
 $new_display_ssl_domain = $_POST['new_display_ssl_domain'];
 $new_display_ssl_type = $_POST['new_display_ssl_type'];
 $new_display_ssl_expiry_date = $_POST['new_display_ssl_expiry_date'];
+$new_display_ssl_fee = $_POST['new_display_ssl_fee'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new_number_of_ssl_certs != "") {
 
@@ -57,12 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 				display_domain_dns = '$new_display_domain_dns',
 				display_domain_ip = '$new_display_domain_ip',
 				display_domain_tld = '$new_display_domain_tld',
+				display_domain_fee = '$new_display_domain_fee',
 				display_ssl_owner = '$new_display_ssl_owner',
 				display_ssl_provider = '$new_display_ssl_provider',
 				display_ssl_account = '$new_display_ssl_account',
 				display_ssl_domain = '$new_display_ssl_domain',
 				display_ssl_type = '$new_display_ssl_type',
 				display_ssl_expiry_date = '$new_display_ssl_expiry_date',
+				display_ssl_fee = '$new_display_ssl_fee',
 				number_of_ssl_certs = '$new_number_of_ssl_certs'
 			WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -77,12 +81,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	$_SESSION['session_display_domain_dns'] = $new_display_domain_dns;
 	$_SESSION['session_display_domain_ip'] = $new_display_domain_ip;
 	$_SESSION['session_display_domain_tld'] = $new_display_domain_tld;
+	$_SESSION['session_display_domain_fee'] = $new_display_domain_fee;
 	$_SESSION['session_display_ssl_owner'] = $new_display_ssl_owner;
 	$_SESSION['session_display_ssl_provider'] = $new_display_ssl_provider;
 	$_SESSION['session_display_ssl_account'] = $new_display_ssl_account;
 	$_SESSION['session_display_ssl_domain'] = $new_display_ssl_domain;
 	$_SESSION['session_display_ssl_type'] = $new_display_ssl_type;
 	$_SESSION['session_display_ssl_expiry_date'] = $new_display_ssl_expiry_date;
+	$_SESSION['session_display_ssl_fee'] = $new_display_ssl_fee;
 
 	$_SESSION['session_result_message'] .= "The Display Settings were updated<BR>";
 	
@@ -99,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 		
 	} else {
 		
- 		$sql = "SELECT number_of_domains, number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account, display_domain_account, display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_ip, display_domain_tld, display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_account, display_ssl_domain, display_ssl_type, display_ssl_expiry_date
+ 		$sql = "SELECT number_of_domains, number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account, display_domain_account, display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_ip, display_domain_tld, display_domain_fee, display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_account, display_ssl_domain, display_ssl_type, display_ssl_expiry_date, display_ssl_fee
 				FROM user_settings
 				WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -116,12 +122,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 			$new_display_domain_dns = $row->display_domain_dns;
 			$new_display_domain_ip = $row->display_domain_ip;
 			$new_display_domain_tld = $row->display_domain_tld;
+			$new_display_domain_fee = $row->display_domain_fee;
 			$new_display_ssl_owner = $row->display_ssl_owner;
 			$new_display_ssl_provider = $row->display_ssl_provider;
 			$new_display_ssl_account = $row->display_ssl_account;
 			$new_display_ssl_domain = $row->display_ssl_domain;
 			$new_display_ssl_type = $row->display_ssl_type;
 			$new_display_ssl_expiry_date = $row->display_ssl_expiry_date;
+			$new_display_ssl_fee = $row->display_ssl_fee;
 
 		}
 
@@ -145,6 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active"><strong>Columns to display: </strong></td>
     	<td class="main_table_cell_heading_active">Expiry Date</td>
+    	<td class="main_table_cell_heading_active">Renewal Fee</td>
     	<td class="main_table_cell_heading_active">TLD</td>
     	<td class="main_table_cell_heading_active">IP Address</td>
     	<td class="main_table_cell_heading_active">DNS Profile</td>
@@ -156,6 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	<tr class="main_table_row_active">
     	<td class="main_table_cell_active_centered"></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_expiry_date" value="1"<?php if ($new_display_domain_expiry_date == "1") echo " checked"; ?>></td>
+    	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_fee" value="1"<?php if ($new_display_domain_fee == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_tld" value="1"<?php if ($new_display_domain_tld == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_ip" value="1"<?php if ($new_display_domain_ip == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_dns" value="1"<?php if ($new_display_domain_dns == "1") echo " checked"; ?>></td>
@@ -173,6 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active"><strong>Columns to display: </strong></td>
     	<td class="main_table_cell_heading_active">Expiry Date</td>
+    	<td class="main_table_cell_heading_active">Renewal Fee</td>
     	<td class="main_table_cell_heading_active">Domain</td>
     	<td class="main_table_cell_heading_active">SSL Type</td>
     	<td class="main_table_cell_heading_active">Owner</td>
@@ -182,6 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	<tr class="main_table_row_active">
     	<td class="main_table_cell_heading_active"></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_expiry_date" value="1"<?php if ($new_display_ssl_expiry_date == "1") echo " checked"; ?>></td>
+    	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_fee" value="1"<?php if ($new_display_ssl_fee == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_domain" value="1"<?php if ($new_display_ssl_domain == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_type" value="1"<?php if ($new_display_ssl_type == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_owner" value="1"<?php if ($new_display_ssl_owner == "1") echo " checked"; ?>></td>

@@ -215,6 +215,8 @@ elseif ($sort_by == "pc_a") { $sort_by_string = " ORDER BY cat.name asc "; }
 elseif ($sort_by == "pc_d") { $sort_by_string = " ORDER BY cat.name desc "; } 
 elseif ($sort_by == "dn_a") { $sort_by_string = " ORDER BY d.domain asc "; } 
 elseif ($sort_by == "dn_d") { $sort_by_string = " ORDER BY d.domain desc "; } 
+elseif ($sort_by == "df_a") { $sort_by_string = " ORDER BY f.renewal_fee asc "; } 
+elseif ($sort_by == "df_d") { $sort_by_string = " ORDER BY f.renewal_fee desc "; } 
 elseif ($sort_by == "dns_a") { $sort_by_string = " ORDER BY dns.name asc "; } 
 elseif ($sort_by == "dns_d") { $sort_by_string = " ORDER BY dns.name desc "; } 
 elseif ($sort_by == "tld_a") { $sort_by_string = " ORDER BY d.tld asc "; } 
@@ -228,7 +230,7 @@ elseif ($sort_by == "r_d") { $sort_by_string = " ORDER BY r.name desc, d.domain 
 elseif ($sort_by == "ra_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc "; } 
 elseif ($sort_by == "ra_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
 
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.renewal_fee, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.renewal_fee, cc.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns
 		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS cc, dns AS dns, ip_addresses AS ip
 		WHERE d.account_id = ra.id
 		  AND ra.registrar_id = r.id
@@ -886,6 +888,18 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ed_a") { echo "ed_d"; } else { echo "ed_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Expiry Date</font></a>
 	</td>
 <?php } ?>
+<?php if ($_SESSION['session_display_domain_fee'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+		<?php
+        $sql_currency = "SELECT currency
+                         FROM currencies
+                         WHERE default_currency = '1'";
+        $result_currency = mysql_query($sql_currency,$connection);
+        while ($row_currency = mysql_fetch_object($result_currency)) { $temp_currency = $row_currency->currency; }
+        ?>
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "df_a") { echo "df_d"; } else { echo "df_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Fee (<?=$temp_currency?>)</font></a>
+	</td>
+<?php } ?>
 	<td class="main_table_cell_heading_active">
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Domain Name</font></a>
 	</td>
@@ -930,6 +944,11 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 <?php if ($_SESSION['session_display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->expiry_date?>
+	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_fee'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=number_format($row->renewal_fee * $row->conversion, 2, '.', ',');?>
 	</td>
 <?php } ?>
 	<td class="main_table_cell_active">
@@ -990,7 +1009,10 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 <BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-	<td align="left" valign="top"><?php echo $navigate[2]; ?> </td>
+	<td align="left" valign="top">
+		<?php echo $navigate[2]; ?> 
+        &nbsp;[<a href="domains.php?<?=$_SERVER['QUERY_STRING']?>&export=1">export results</a>]&nbsp;[<a href="system/display-settings.php">display settings</a>]	
+	</td>
 	<td width="280" align="right" valign="top"><?php 
 		echo "&nbsp;&nbsp;(Listing $navigate[1] of " . number_format($totalrows) . ")";
 		?>
