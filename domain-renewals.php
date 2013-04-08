@@ -22,6 +22,7 @@ include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
+include("_includes/timestamps/current-timestamp.inc.php");
 include("_includes/timestamps/current-timestamp-basic.inc.php");
 
 $page_title = "Domain Renewal Export";
@@ -95,7 +96,7 @@ if ($export == "1") {
 	$export = "0";
 	
 header('Content-Type: text/plain');
-$full_content_disposition = "Content-Disposition: attachment; filename=\"export_domains_$new_expiry_start--$new_expiry_end.csv\"";
+$full_content_disposition = "Content-Disposition: attachment; filename=\"domain_renewals_$new_expiry_start--$new_expiry_end.csv\"";
 header("$full_content_disposition");
 header('Content-Transfer-Encoding: binary');
 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
