@@ -771,13 +771,38 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 </tr>
 </table>
 <BR>
-<?php if ($segid != "") { ?>
-<strong>Domains in Segment:</strong> <?=$number_of_domains?><BR><BR>
-<strong>Number of Matching Domains:</strong> <?=number_format($totalrows)?>
-<?php } else { ?>
-<strong>Number of Domains:</strong> <?=number_format($totalrows)?>
-<?php } ?>
+<?php if ($segid != "") {
+	
+		$sql_segment = "SELECT domain
+						FROM segment_data
+						WHERE segment_id = '$segid'
+						  AND domain NOT IN (SELECT domain FROM domains)
+						ORDER BY domain";
+		$result_segment = mysql_query($sql_segment,$connection);
+		$totalrows_missing = mysql_num_rows($result_segment);
 
+		$sql_segment = "SELECT domain
+						FROM segment_data
+						WHERE segment_id = '$segid'
+						  AND domain IN (SELECT domain FROM domains WHERE active IN ('0', '10'))
+						ORDER BY domain";
+		$result_segment = mysql_query($sql_segment,$connection);
+		$totalrows_inactive = mysql_num_rows($result_segment);
+		?>
+		<strong>Domains in Segment:</strong> <?=number_format($number_of_domains)?>
+		<BR><BR><strong>Matching Domains:</strong> <?=number_format($totalrows)?>
+        <?php if ($totalrows_inactive > 0) { ?>
+			<BR><BR><strong>Matching But Inactive Domains:</strong> <?=number_format($totalrows_inactive)?> [<a class="subtlelink" href="segments-inactive.php?segid=<?=$segid?>">view</a>]
+		<?php } ?>
+        <?php if ($totalrows_missing > 0) { ?>
+	        <BR><BR><strong>Missing Domains:</strong> <?=number_format($totalrows_missing)?> [<a class="subtlelink" href="segments-missing.php?segid=<?=$segid?>">view</a>]
+		<?php } ?>
+
+<?php } else { ?>
+
+		<strong>Number of Domains:</strong> <?=number_format($totalrows)?>
+
+<?php } ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR>
 <?php if ($totalrows == '0') echo "<BR"; ?>
