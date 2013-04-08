@@ -38,42 +38,21 @@ $sql = "SELECT currency
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) { $default_currency = $row->currency; }
 
-if ($export == "1") {
-
-	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
-			FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip
-			WHERE d.account_id = ra.id
-			  AND ra.registrar_id = r.id
-			  AND ra.owner_id = o.id
-			  AND d.registrar_id = f.registrar_id
-			  AND d.tld = f.tld
-			  AND f.currency_id = cc.id
-			  AND d.cat_id = cat.id
-			  AND d.dns_id = dns.id
-			  AND d.ip_id = ip.id
-			  AND cat.active = '1'
-			  AND d.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
-			ORDER BY d.expiry_date asc";	
-
-} else {
-
-	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
-			FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip
-			WHERE d.account_id = ra.id
-			  AND ra.registrar_id = r.id
-			  AND ra.owner_id = o.id
-			  AND d.registrar_id = f.registrar_id
-			  AND d.tld = f.tld
-			  AND f.currency_id = cc.id
-			  AND d.cat_id = cat.id
-			  AND d.dns_id = dns.id
-			  AND d.ip_id = ip.id
-			  AND cat.active = '1'
-			  AND d.active NOT IN ('0', '10')
-			  AND d.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
-			ORDER BY d.expiry_date asc";	
-
-}
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
+		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip
+		WHERE d.account_id = ra.id
+		  AND ra.registrar_id = r.id
+		  AND ra.owner_id = o.id
+		  AND d.registrar_id = f.registrar_id
+		  AND d.tld = f.tld
+		  AND f.currency_id = cc.id
+		  AND d.cat_id = cat.id
+		  AND d.dns_id = dns.id
+		  AND d.ip_id = ip.id
+		  AND cat.active = '1'
+		  AND d.active NOT IN ('0', '10')
+		  AND d.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
+		ORDER BY d.expiry_date asc";	
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $result2 = mysql_query($sql,$connection) or die(mysql_error());

@@ -31,36 +31,25 @@ $export = $_GET['export'];
 $new_expiry_start = $_REQUEST['new_expiry_start'];
 $new_expiry_end = $_REQUEST['new_expiry_end'];
 
-if ($export == "1") {
+$sql = "SELECT currency
+		FROM currencies
+		WHERE default_currency = '1'
+		LIMIT 1";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) { $default_currency = $row->currency; }
 
-	$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion
-			FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS cc, ssl_cert_types AS sslcf
-			WHERE sslc.account_id = sslpa.id
-			  AND sslc.type_id = sslcf.id
-			  AND sslpa.ssl_provider_id = sslp.id
-			  AND sslpa.owner_id = o.id
-			  AND sslc.ssl_provider_id = f.ssl_provider_id
-			  AND sslc.type_id = f.type_id
-			  AND f.currency_id = cc.id
-			  AND sslc.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
-			ORDER BY sslc.expiry_date asc";	
-
-} else {
-
-	$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion
-			FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS cc, ssl_cert_types AS sslcf
-			WHERE sslc.account_id = sslpa.id
-			  AND sslc.type_id = sslcf.id
-			  AND sslpa.ssl_provider_id = sslp.id
-			  AND sslpa.owner_id = o.id
-			  AND sslc.ssl_provider_id = f.ssl_provider_id
-			  AND sslc.type_id = f.type_id
-			  AND f.currency_id = cc.id
-			  AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')
-			  AND sslc.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
-			ORDER BY sslc.expiry_date asc";	
-
-}
+$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion
+		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS cc, ssl_cert_types AS sslcf
+		WHERE sslc.account_id = sslpa.id
+		  AND sslc.type_id = sslcf.id
+		  AND sslpa.ssl_provider_id = sslp.id
+		  AND sslpa.owner_id = o.id
+		  AND sslc.ssl_provider_id = f.ssl_provider_id
+		  AND sslc.type_id = f.type_id
+		  AND f.currency_id = cc.id
+		  AND sslc.active NOT IN ('0')
+		  AND sslc.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
+		ORDER BY sslc.expiry_date asc";	
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $result2 = mysql_query($sql,$connection) or die(mysql_error());
@@ -69,7 +58,7 @@ $full_export = "";
 
 if ($export == "1") {
 
-	$full_export .= "\"All prices are listed in " . $_SESSION['session_default_currency'] . "\"\n\n";
+	$full_export .= "\"All prices are listed in " . $default_currency . "\"\n\n";
 
 	$full_export .= "\"SSL STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"SSL Type\",\"Owner\",\"SSL Provider\",\"Username\",\"Notes\"\n";
 
@@ -103,7 +92,7 @@ if ($export == "1") {
 	
 	$full_export .= "\n";
 	
-	$full_export .= "\"\",\"\",\"Total Cost:\",\"\$" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"" . $_SESSION['session_default_currency'] . "\"\n";
+	$full_export .= "\"\",\"\",\"Total Cost:\",\"\$" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"" . $default_currency . "\"\n";
 	
 	$export = "0";
 	
