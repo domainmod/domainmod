@@ -63,6 +63,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					update_time = '$current_timestamp'
 				WHERE id = '$new_segid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "DELETE FROM segment_data
+				WHERE segment_id = '$new_segid'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		foreach ($lines as $domain) {
+
+			$sql = "INSERT INTO segment_data
+					(segment_id, domain, update_time) VALUES 
+					('$new_segid', '$domain', '$current_timestamp');";
+			$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		}
 		
 		$segid = $new_segid;
 		
@@ -115,6 +128,10 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM segments 
 			WHERE id = '$segid'";
+	$result = mysql_query($sql,$connection);
+
+	$sql = "DELETE FROM segment_data
+			WHERE segment_id = '$segid'";
 	$result = mysql_query($sql,$connection);
 	
 	$_SESSION['session_result_message'] = "Segment <font class=\"highlight\">$temp_segment_name</font> Deleted<BR>";

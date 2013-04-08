@@ -51,6 +51,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				(name, description, segment, number_of_domains, notes, insert_time) VALUES 
 				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_description) . "', '$new_segment_formatted', '$number_of_domains', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "SELECT id
+				FROM segments
+				WHERE name = '$new_name'
+				  AND segment = '$new_segment_formatted'
+				  AND insert_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $temp_segment_id = $row->id; }
+		
+		$sql = "DELETE FROM segment_data
+				WHERE segment_id = '$temp_segment_id'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		foreach ($lines as $domain) {
+
+			$sql = "INSERT INTO segment_data
+					(segment_id, domain, insert_time) VALUES 
+					('$temp_segment_id', '$domain', '$current_timestamp');";
+			$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		}
 
 		$_SESSION['session_result_message'] = "Segment <font class=\"highlight\">$new_name</font> Added<BR>";
 		
