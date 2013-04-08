@@ -48,7 +48,7 @@ function str_stop($string, $max_length){
 <body>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT id, name, description, segment
+$sql = "SELECT id, name, description, segment, number_of_domains
 		FROM segments
 		WHERE active = '1'
 		ORDER BY name asc";
@@ -74,7 +74,7 @@ if (mysql_num_rows($result) > 0) { ?>
             <font class="main_table_heading">Segments (<?=mysql_num_rows($result)?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Segment Description</font>
+            <font class="main_table_heading">Domains</font>
         </td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Segment</font>
@@ -85,20 +85,17 @@ if (mysql_num_rows($result) > 0) { ?>
 	while ($row = mysql_fetch_object($result)) { ?>
 
         <tr class="main_table_row_active">
-            <td class="main_table_cell_active">
+            <td class="main_table_cell_active" valign="top">
                 <a class="subtlelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$row->name?></a>
             </td>
-            <td class="main_table_cell_active">
-                <?php
-                $temp_description = preg_replace("/\r\n/", "<BR>", $row->description);
-                ?>
-                <a class="subtlelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$temp_description?></a>
+            <td class="main_table_cell_active" valign="top">
+                <a class="subtlelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$row->number_of_domains?></a>
             </td>
-            <td class="main_table_cell_active">
+            <td class="main_table_cell_active" valign="top">
                 <?php
                 $temp_segment = preg_replace("/','/", ", ", $row->segment);
                 $temp_segment = preg_replace("/'/", "", $temp_segment);
-                $cut_string = str_stop($temp_segment, 250);
+                $cut_string = str_stop($temp_segment, 100);
 				?>
                 <a class="subtlelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$cut_string?></a>
             </td>
