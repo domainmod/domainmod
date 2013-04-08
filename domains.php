@@ -276,7 +276,7 @@ if ($export == "1") {
 
 	while ($row = mysql_fetch_object($result)) {
 		
-		$temp_renewal_fee = number_format($row->renewal_fee * $row->conversion, 2, '.', ',');
+		$temp_renewal_fee = $row->renewal_fee * $row->conversion;
 		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
 		if ($row->active == "0") { $domain_status = "EXPIRED"; } 
@@ -294,12 +294,18 @@ if ($export == "1") {
 			$privacy_status = "Public";
 		}
 
-		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$privacy_status\",\"$row->dns_name\",\"$row->ip_name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->stakeholder\",\"$row->owner_name\",\"$row->registrar_name\",\"$row->username\",\"$row->notes\"\n";
+		setlocale(LC_MONETARY, 'en_CA');
+		$export_renewal_fee = money_format('%!i', $temp_renewal_fee);
+
+		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"" . $export_renewal_fee . "\",\"$row->domain\",\"$row->tld\",\"$privacy_status\",\"$row->dns_name\",\"$row->ip_name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->stakeholder\",\"$row->owner_name\",\"$row->registrar_name\",\"$row->username\",\"$row->notes\"\n";
 	}
 	
 	$full_export .= "\n";
+
+	setlocale(LC_MONETARY, 'en_CA');
+	$total_export_renewal_fee = money_format('%!i', $total_renewal_fee_export);
 	
-	$full_export .= "\"\",\"Total Cost:\",\"" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"" . $default_currency . "\"\n";
+	$full_export .= "\"\",\"Total Cost:\",\"" . $total_export_renewal_fee . "\",\"$default_currency\"\n";
 	
 	$export = "0";
 	
@@ -948,7 +954,13 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/registrar-fees.php?rid=<?=$row->r_id?>"><?=number_format($row->renewal_fee * $row->conversion, 2, '.', ',');?></a>
+		<a class="subtlelink" href="edit/registrar-fees.php?rid=<?=$row->r_id?>">
+		<?php
+		$converted_fee = $row->renewal_fee * $row->conversion;
+		setlocale(LC_MONETARY, 'en_CA');
+		echo money_format('%!i', $converted_fee);
+		?>
+        </a>
 	</td>
 <?php } ?>
 	<td class="main_table_cell_active">

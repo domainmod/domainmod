@@ -209,13 +209,20 @@ if ($export == "1") {
 
 	$result = mysql_query($sql,$connection);
 
+	$sql_currency = "SELECT currency
+			FROM currencies
+			WHERE default_currency = '1'
+			LIMIT 1";
+	$result_currency = mysql_query($sql_currency,$connection);
+	while ($row_currency = mysql_fetch_object($result_currency)) { $default_currency = $row_currency->currency; }
+
 	$full_export .= "\"All prices are listed in " . $default_currency . "\"\n\n";
 
 	$full_export .= "\"SSL STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"SSL Type\",\"Owner\",\"SSL Provider\",\"Username\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
-		$temp_renewal_fee = number_format($row->renewal_fee * $row->conversion, 2, '.', ',');
+		$temp_renewal_fee = $row->renewal_fee * $row->conversion;
 		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
 		if ($row->active == "0") { $ssl_status = "EXPIRED"; } 
@@ -238,12 +245,18 @@ if ($export == "1") {
 			$full_ip_rdns = $row_domain->rdns;
 		}
 
-		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"$row->to_renew\",\"$temp_renewal_fee\",\"$row->name\",\"$full_domain_name\",\"$full_ip_name\",\"$full_ip_address\",\"$full_ip_rdns\",\"$row->type\",\"$row->owner_name\",\"$row->ssl_provider_name\",\"$row->username\",\"$row->notes\"\n";
+		setlocale(LC_MONETARY, 'en_CA');
+		$export_renewal_fee = money_format('%!i', $temp_renewal_fee);
+
+		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"$row->to_renew\",\"" . $export_renewal_fee . "\",\"$row->name\",\"$full_domain_name\",\"$full_ip_name\",\"$full_ip_address\",\"$full_ip_rdns\",\"$row->type\",\"$row->owner_name\",\"$row->ssl_provider_name\",\"$row->username\",\"$row->notes\"\n";
 	}
 	
 	$full_export .= "\n";
+
+	setlocale(LC_MONETARY, 'en_CA');
+	$total_export_renewal_fee = money_format('%!i', $total_renewal_fee_export);
 	
-	$full_export .= "\"\",\"\",\"Total Cost:\",\"" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"" . $default_currency . "\"\n";
+	$full_export .= "\"\",\"\",\"Total Cost:\",\"" . $total_export_renewal_fee . "\",\"$default_currency\"\n";
 	
 	$export = "0";
 	
@@ -695,7 +708,13 @@ echo "</select>";
 <?php } ?>
 <?php if ($_SESSION['session_display_ssl_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/ssl-provider-fees.php?sslpid=<?=$row->sslp_id?>"><?=number_format($row->renewal_fee * $row->conversion, 2, '.', ',');?></a>
+		<a class="subtlelink" href="edit/ssl-provider-fees.php?sslpid=<?=$row->sslp_id?>">
+		<?php
+		$converted_fee = $row->renewal_fee * $row->conversion;
+		setlocale(LC_MONETARY, 'en_CA');
+		echo money_format('%!i', $converted_fee);
+		?>
+        </a>
 	</td>
 <?php } ?>
 	<td class="main_table_cell_active">

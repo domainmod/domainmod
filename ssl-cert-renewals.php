@@ -88,12 +88,18 @@ if ($export == "1") {
 			$full_ip_rdns = $row_domain->rdns;
 		}
 
-		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"$row->to_renew\",\"$temp_renewal_fee\",\"$row->name\",\"$full_domain_name\",\"$full_ip_name\",\"$full_ip_address\",\"$full_ip_rdns\",\"$row->type\",\"$row->owner_name\",\"$row->ssl_provider_name\",\"$row->username\",\"$row->notes\"\n";
+		setlocale(LC_MONETARY, 'en_CA');
+		$export_renewal_fee = money_format('%!i', $temp_renewal_fee);
+
+		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"$row->to_renew\",\"" . $export_renewal_fee . "\",\"$row->name\",\"$full_domain_name\",\"$full_ip_name\",\"$full_ip_address\",\"$full_ip_rdns\",\"$row->type\",\"$row->owner_name\",\"$row->ssl_provider_name\",\"$row->username\",\"$row->notes\"\n";
 	}
 	
 	$full_export .= "\n";
+
+	setlocale(LC_MONETARY, 'en_CA');
+	$total_export_renewal_fee = money_format('%!i', $total_renewal_fee_export);
 	
-	$full_export .= "\"\",\"\",\"Total Cost:\",\"" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"" . $default_currency . "\"\n";
+	$full_export .= "\"\",\"\",\"Total Cost:\",\"" . $total_export_renewal_fee . "\",\"" . $default_currency . "\"\n";
 	
 	$export = "0";
 	
@@ -207,7 +213,11 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 <?php } ?>
 <?php if ($_SESSION['session_display_ssl_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=number_format($row->renewal_fee * $row->conversion, 2, '.', ',');?>
+		<?php
+		$converted_fee = $row->renewal_fee * $row->conversion;
+		setlocale(LC_MONETARY, 'en_CA');
+		echo money_format('%!i', $converted_fee);
+		?>
 	</td>
 <?php } ?>
 	<td class="main_table_cell_active">
@@ -255,7 +265,11 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 </tr>
 <?php } ?>
 </table>
-<BR><strong>Total Cost:</strong> <?=number_format($total_renewal_cost,2)?> <?=$default_currency?><BR>
+<?php
+setlocale(LC_MONETARY, 'en_CA');
+$total_cost = money_format('%!i', $total_renewal_cost);
+?>
+<BR><strong>Total Cost:</strong> <?=$total_cost?> <?=$default_currency?><BR>
 <?php } else { ?>
 <BR>The results that will be shown below will display the same columns as you have on your <a href="ssl-certs.php">SSL Certificates</a> page, but when you export the results you will be given even more information.<BR><BR>
 The full list of fields in the export is:<BR><BR>

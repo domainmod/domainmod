@@ -375,8 +375,18 @@ while ($row = mysql_fetch_object($result)) {
 ?>
 	<tr class="main_table_row_active">
     	<td class="main_table_cell_active"><?=$row->type?></td>
-        <td class="main_table_cell_active"><?php echo number_format($row->initial_fee, 2, '.', ','); ?></td>
-        <td class="main_table_cell_active"><?php echo number_format($row->renewal_fee, 2, '.', ','); ?></td>
+        <td class="main_table_cell_active">
+			<?php
+            setlocale(LC_MONETARY, 'en_CA');
+            echo money_format('%!i', $row->initial_fee);
+            ?>
+		</td>
+        <td class="main_table_cell_active">
+			<?php
+            setlocale(LC_MONETARY, 'en_CA');
+            echo money_format('%!i', $row->renewal_fee);
+            ?>
+		</td>
         <td class="main_table_cell_active"><?=$row->currency?>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="subtlelink" href="ssl-provider-fees.php?sslpid=<?=$sslpid?>&ssltid=<?=$row->ssltid?>&sslfeeid=<?=$row->sslfeeid?>&del=1">delete</a>]
         </td>
