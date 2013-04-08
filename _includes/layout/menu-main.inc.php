@@ -32,8 +32,8 @@
 <BR><BR>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/segments.php">Segment Filters</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-actions.php">Perform Bulk Actions</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/domain-renewals.php">Renew Domains</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-cert-renewals.php">Renew SSL Cert</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/domain-renewals.php">Domain Renewals</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-cert-renewals.php">SSL Renewals</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a> ]&nbsp;
 <?php /* ?>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/">Help!</a> ]&nbsp;

@@ -24,7 +24,7 @@ include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp-basic.inc.php");
 
-$page_title = "Export SSL Certificates";
+$page_title = "SSL Certificate Renewal Export";
 
 // Form Variables
 $export = $_GET['export'];
