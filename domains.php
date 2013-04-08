@@ -264,9 +264,9 @@ if ($export == "1") {
 	$result = mysql_query($sql,$connection);
 
 	$sql_currency = "SELECT currency
-			FROM currencies
-			WHERE default_currency = '1'
-			LIMIT 1";
+					 FROM currencies
+					 WHERE default_currency = '1'
+					 LIMIT 1";
 	$result_currency = mysql_query($sql_currency,$connection);
 	while ($row_currency = mysql_fetch_object($result_currency)) { $default_currency = $row_currency->currency; }
 
@@ -276,8 +276,8 @@ if ($export == "1") {
 
 	while ($row = mysql_fetch_object($result)) {
 		
-		$temp_renewal_fee = $row->renewal_fee * $row->conversion;
-		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
+		$temp_converted_fee = $row->renewal_fee * $row->conversion;
+		$total_renewal_fee_export = $total_renewal_fee_export + $temp_converted_fee;
 
 		if ($row->active == "0") { $domain_status = "EXPIRED"; } 
 		elseif ($row->active == "1") { $domain_status = "ACTIVE"; } 
@@ -294,17 +294,27 @@ if ($export == "1") {
 			$privacy_status = "Public";
 		}
 
-		setlocale(LC_MONETARY, 'en_CA');
-		$export_renewal_fee = money_format('%!i', $temp_renewal_fee);
+		// Currency Conversion & Formatting
+		// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
+		// Output: $temp_output_amount
+		$temp_input_amount = $temp_converted_fee;
+		$temp_input_conversion = "";
+		include("_includes/system/convert-and-format-currency.inc.php");
+		$export_renewal_fee = $temp_output_amount;
 
 		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"" . $export_renewal_fee . "\",\"$row->domain\",\"$row->tld\",\"$privacy_status\",\"$row->dns_name\",\"$row->ip_name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->stakeholder\",\"$row->owner_name\",\"$row->registrar_name\",\"$row->username\",\"$row->notes\"\n";
 	}
-	
+
 	$full_export .= "\n";
 
-	setlocale(LC_MONETARY, 'en_CA');
-	$total_export_renewal_fee = money_format('%!i', $total_renewal_fee_export);
-	
+	// Currency Conversion & Formatting
+	// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
+	// Output: $temp_output_amount
+	$temp_input_amount = $total_renewal_fee_export;
+	$temp_input_conversion = "";
+	include("_includes/system/convert-and-format-currency.inc.php");
+	$total_export_renewal_fee = $temp_output_amount;
+
 	$full_export .= "\"\",\"Total Cost:\",\"" . $total_export_renewal_fee . "\",\"$default_currency\"\n";
 	
 	$export = "0";
@@ -956,9 +966,13 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 	<td class="main_table_cell_active">
 		<a class="subtlelink" href="edit/registrar-fees.php?rid=<?=$row->r_id?>">
 		<?php
-		$converted_fee = $row->renewal_fee * $row->conversion;
-		setlocale(LC_MONETARY, 'en_CA');
-		echo money_format('%!i', $converted_fee);
+		// Currency Conversion & Formatting
+		// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
+		// Output: $temp_output_amount
+		$temp_input_amount = $row->renewal_fee;
+		$temp_input_conversion = $row->conversion;
+		include("_includes/system/convert-and-format-currency.inc.php");
+		echo $temp_output_amount;
 		?>
         </a>
 	</td>

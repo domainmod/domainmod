@@ -86,17 +86,27 @@ if ($export == "1") {
 			$privacy_status = "Public";
 		}
 
-		setlocale(LC_MONETARY, 'en_CA');
-		$export_renewal_fee = money_format('%!i', $temp_renewal_fee);
+		// Currency Conversion & Formatting
+		// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
+		// Output: $temp_output_amount
+		$temp_input_amount = $temp_renewal_fee;
+		$temp_input_conversion = "";
+		include("_includes/system/convert-and-format-currency.inc.php");
+		$export_renewal_fee = $temp_output_amount;
 
 		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"" . $export_renewal_fee . "\",\"$row->domain\",\"$row->tld\",\"$privacy_status\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->registrar_name\",\"$row->username\",\"$row->notes\"\n";
 	}
 	
 	$full_export .= "\n";
 
-	setlocale(LC_MONETARY, 'en_CA');
-	$total_export_renewal_fee = money_format('%!i', $total_renewal_fee_export);
-	
+	// Currency Conversion & Formatting
+	// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
+	// Output: $temp_output_amount
+	$temp_input_amount = $total_renewal_fee_export;
+	$temp_input_conversion = "";
+	include("_includes/system/convert-and-format-currency.inc.php");
+	$total_export_renewal_fee = $temp_output_amount;
+
 	$full_export .= "\"\",\"\",\"Total Cost:\",\"" . $total_export_renewal_fee . "\",\"" . $default_currency . "\"\n";
 	
 	$export = "0";
@@ -222,9 +232,13 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 <?php if ($_SESSION['session_display_domain_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?php
-		$converted_fee = $row->renewal_fee * $row->conversion;
-		setlocale(LC_MONETARY, 'en_CA');
-		echo money_format('%!i', $converted_fee);
+		// Currency Conversion & Formatting
+		// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
+		// Output: $temp_output_amount
+		$temp_input_amount = $row->renewal_fee;
+		$temp_input_conversion = $row->conversion;
+		include("_includes/system/convert-and-format-currency.inc.php");
+		echo $temp_output_amount;
 		?>
 	</td>
 <?php } ?>
@@ -270,8 +284,13 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 <?php } ?>
 </table>
 <?php
-setlocale(LC_MONETARY, 'en_CA');
-$total_cost = money_format('%!i', $total_renewal_cost);
+// Currency Conversion & Formatting
+// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
+// Output: $temp_output_amount
+$temp_input_amount = $total_renewal_cost;
+$temp_input_conversion = "";
+include("_includes/system/convert-and-format-currency.inc.php");
+$total_cost = $temp_output_amount;
 ?>
 <BR><strong>Total Cost:</strong> <?=$total_cost?> <?=$default_currency?><BR>
 <?php } else {?>
