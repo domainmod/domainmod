@@ -22,11 +22,13 @@ include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
+include("_includes/timestamps/current-timestamp-basic.inc.php");
 
 $page_title = "Domains";
 $software_section = "domains";
 
 // Form Variables
+$export = $_GET['export'];
 $pcid = $_REQUEST['pcid'];
 $oid = $_REQUEST['oid'];
 $dnsid = $_REQUEST['dnsid'];
@@ -146,39 +148,6 @@ function pageBrowser($totalrows,$numLimit,$amm,$queryStr,$numBegin,$begin,$num) 
 //
 // END - Code for pagination
 // 
-?>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
-<script type="text/javascript">
-<!--
-function MM_jumpMenu(targ,selObj,restore){ //v3.0
-  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
-  if (restore) selObj.selectedIndex=0;
-}
-//-->
-</script>
-</head>
-<body onLoad="document.forms[0].elements[11].focus()";>
-<?php include("_includes/header.inc.php"); ?>
-<?php
-if ($_SESSION['session_need_registrar'] == "1") {
-	echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrars found. Please <a href=\"add/registrar.php\">click here</a> to add one.<BR><BR>";
-	exit;
-}
-
-if ($_SESSION['session_need_registrar_account'] == "1" && $_SESSION['session_need_registrar'] != "1") {
-	echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrar Accounts found. Please <a href=\"add/account.php\">click here</a> to add one.<BR><BR>";
-	exit;
-}
-
-if ($_SESSION['session_need_domain'] == "1" && $_SESSION['session_need_registrar'] != "1" && $_SESSION['session_need_registrar_account'] != "1") {
-	echo "<strong><font class=\"highlight\">0</font></strong> Domains found. Please <a href=\"add/domain.php\">click here</a> to add one.<BR><BR>";
-	exit;
-}
-
 if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; } 
 elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; } 
 elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; } 
@@ -259,7 +228,7 @@ elseif ($sort_by == "r_d") { $sort_by_string = " ORDER BY r.name desc, d.domain 
 elseif ($sort_by == "ra_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc "; } 
 elseif ($sort_by == "ra_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
 
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.notes, d.privacy, d.active, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, f.renewal_fee, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.renewal_fee, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns
 		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS cc, dns AS dns, ip_addresses AS ip
 		WHERE d.account_id = ra.id
 		  AND ra.registrar_id = r.id
@@ -286,6 +255,92 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.notes, d.privacy, d.activ
 		  $search_string
 		  $sort_by_string";	
 
+$full_export = "";
+
+if ($export == "1") {
+
+	$result = mysql_query($sql,$connection);
+
+	$sql_currency = "SELECT currency
+			FROM currencies
+			WHERE default_currency = '1'
+			LIMIT 1";
+	$result_currency = mysql_query($sql_currency,$connection);
+	while ($row_currency = mysql_fetch_object($result_currency)) { $default_currency = $row_currency->currency; }
+
+	$full_export .= "\"All prices are listed in " . $default_currency . "\"\n\n";
+
+	$full_export .= "\"DOMAIN STATUS\",\"Expiry Date\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Registrar\",\"Username\",\"Notes\"\n";
+
+	while ($row = mysql_fetch_object($result)) {
+		
+		$temp_renewal_fee = number_format($row->renewal_fee * $row->conversion, 2, '.', ',');
+		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
+
+		if ($row->active == "0") { $domain_status = "EXPIRED"; } 
+		elseif ($row->active == "1") { $domain_status = "ACTIVE"; } 
+		elseif ($row->active == "2") { $domain_status = "IN TRANSFER"; } 
+		elseif ($row->active == "3") { $domain_status = "PENDING (RENEWAL)"; } 
+		elseif ($row->active == "4") { $domain_status = "PENDING (OTHER)"; } 
+		elseif ($row->active == "5") { $domain_status = "PENDING (REGISTRATION)"; } 
+		elseif ($row->active == "10") { $domain_status = "SOLD"; } 
+		else { $domain_status = "ERROR -- PROBLEM WITH CODE IN EXPORT-DOMAINS.PHP"; } 
+		
+		if ($row->privacy == "1") {
+			$privacy_status = "Private";
+		} elseif ($row->privacy == "0") {
+			$privacy_status = "Public";
+		}
+
+		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$privacy_status\",\"$row->dns_name\",\"$row->ip_name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->stakeholder\",\"$row->owner_name\",\"$row->registrar_name\",\"$row->username\",\"$row->notes\"\n";
+	}
+	
+	$full_export .= "\n";
+	
+	$full_export .= "\"\",\"Total Cost:\",\"" . number_format($total_renewal_fee_export, 2, '.', ',') . "\",\"" . $default_currency . "\"\n";
+	
+	$export = "0";
+	
+header('Content-Type: text/plain');
+$full_content_disposition = "Content-Disposition: attachment; filename=\"export_domain_results_$current_timestamp_basic.csv\"";
+header("$full_content_disposition");
+header('Content-Transfer-Encoding: binary');
+header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+echo $full_export;
+exit;
+}
+?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title><?=$software_title?> :: <?=$page_title?></title>
+<?php include("_includes/head-tags.inc.php"); ?>
+<script type="text/javascript">
+<!--
+function MM_jumpMenu(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
+//-->
+</script>
+</head>
+<body onLoad="document.forms[0].elements[11].focus()";>
+<?php include("_includes/header.inc.php"); ?>
+<?php
+if ($_SESSION['session_need_registrar'] == "1") {
+	echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrars found. Please <a href=\"add/registrar.php\">click here</a> to add one.<BR><BR>";
+	exit;
+}
+
+if ($_SESSION['session_need_registrar_account'] == "1" && $_SESSION['session_need_registrar'] != "1") {
+	echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrar Accounts found. Please <a href=\"add/account.php\">click here</a> to add one.<BR><BR>";
+	exit;
+}
+
+if ($_SESSION['session_need_domain'] == "1" && $_SESSION['session_need_registrar'] != "1" && $_SESSION['session_need_registrar_account'] != "1") {
+	echo "<strong><font class=\"highlight\">0</font></strong> Domains found. Please <a href=\"add/domain.php\">click here</a> to add one.<BR><BR>";
+	exit;
+}
 $totalrows = mysql_num_rows(mysql_query($sql));
 $navigate = pageBrowser($totalrows,15,$result_limit, "&pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for",$_GET[numBegin],$_GET[begin],$_GET[num]);
 $sql = $sql.$navigate[0];
@@ -810,7 +865,7 @@ $quick_search = preg_replace("/'/", "", $quick_search);
   <tr>
 	<td align="left" valign="top">
 		<?php echo $navigate[2]; ?>
-        &nbsp;[<a href="system/display-settings.php">display settings</a>]
+        &nbsp;[<a href="domains.php?<?=$_SERVER['QUERY_STRING']?>&export=1">export results</a>]&nbsp;[<a href="system/display-settings.php">display settings</a>]
 	</td>
 	<td width="280" align="right" valign="top">
 		<?php if ($totalrows != '0') { ?>

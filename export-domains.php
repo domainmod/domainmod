@@ -36,9 +36,7 @@ $sql = "SELECT currency
 		WHERE default_currency = '1'
 		LIMIT 1";
 $result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
-	$default_currency = $row->currency;
-}
+while ($row = mysql_fetch_object($result)) { $default_currency = $row->currency; }
 
 if ($export == "1") {
 
@@ -108,7 +106,7 @@ if ($export == "1") {
 			$privacy_status = "Public";
 		}
 
-		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"\$$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$privacy_status\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->registrar_name\",\"$row->username\",\"$row->notes\"\n";
+		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"$temp_renewal_fee\",\"$row->domain\",\"$row->tld\",\"$privacy_status\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->registrar_name\",\"$row->username\",\"$row->notes\"\n";
 	}
 	
 	$full_export .= "\n";
