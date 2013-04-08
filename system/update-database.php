@@ -832,6 +832,28 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0013 to 2.0014
+	if ($current_db_version == 2.0013) {
+
+		$sql = "CREATE TABLE IF NOT EXISTS `segment_data` (
+				`id` int(10) NOT NULL auto_increment,
+				`segment_id` int(10) NOT NULL,
+				`domain` varchar(255) NOT NULL,
+				`insert_time` datetime NOT NULL,
+				`update_time` datetime NOT NULL,
+				PRIMARY KEY  (`id`)
+				) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0014',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0014;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
