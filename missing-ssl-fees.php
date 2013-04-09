@@ -85,8 +85,6 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
     <?php 
 	} ?>
 </table>
-<BR><BR>
-<a href="_includes/system/fix-ssl-fees.php">Fix All SSL Fees (this may take a while, depending on how many SSL Certificates you have)</a>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

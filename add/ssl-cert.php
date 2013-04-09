@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		include("../_includes/system/check-for-missing-ssl-fees.inc.php");
+		include("../_includes/system/fix-ssl-fees.inc.php");
 		
 		$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
 		

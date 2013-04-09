@@ -19,6 +19,9 @@
 session_start();
 
 include("_includes/config.inc.php");
+
+$_SESSION['full_server_path'] = $full_server_path;
+
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/login-check.inc.php");
@@ -51,10 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
    if (mysql_num_rows($result) == 1) {
 	   
 	   while ($row = mysql_fetch_object($result)) {
-
-			include("_includes/auth/login-checks/database-version-check.inc.php");
-			include("_includes/system/check-for-missing-domain-fees.inc.php");
-			include("_includes/system/check-for-missing-ssl-fees.inc.php");
 
 			$_SESSION['session_user_id'] = $row->id;
 			$_SESSION['session_first_name'] = $row->first_name;
@@ -89,7 +88,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['session_display_ssl_expiry_date'] = $row_settings->display_ssl_expiry_date;
 				$_SESSION['session_display_ssl_fee'] = $row_settings->display_ssl_fee;
 			}
-			
+
+			include("_includes/system/fix-domain-fees.inc.php");
+			include("_includes/system/fix-ssl-fees.inc.php");
+
 			header("Location: _includes/auth/login-checks/main.inc.php");
 			exit;
 	   }

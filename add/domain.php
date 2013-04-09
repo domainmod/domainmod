@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 
-		include("../_includes/system/check-for-missing-domain-fees.inc.php");
+		include("../_includes/system/fix-domain-fees.inc.php");
 
 		$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
 		

@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	include("../_includes/system/check-for-missing-ssl-fees.inc.php");
+	include("../_includes/system/fix-ssl-fees.inc.php");
 	
 }
 if ($del == "1") {

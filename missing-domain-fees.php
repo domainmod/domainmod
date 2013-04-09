@@ -84,8 +84,6 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
 	} ?>
 
 </table>
-<BR><BR>
-<a href="_includes/system/fix-domain-fees.php">Fix All Domain Fees (this may take a while, depending on how many domains you have)</a>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>
