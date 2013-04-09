@@ -49,19 +49,54 @@ $new_renewal_years = $_POST['new_renewal_years'];
 $choose_text = "Click Here To Choose A New";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	
-	if ($new_data == "" || $new_data == "List of Domains") { 
 
-		$_SESSION['session_result_message'] = "Please enter the list of domains to apply<BR>";
+	// strip out blank lines
+	$new_data = preg_replace("/^\n+|^[\t\s]*\n+/m", "", $new_data);
+
+	$lines = explode("\r\n", $new_data);
+	$invalid_domain_count = 0;
+	$invalid_domains_to_display = 5;
+
+	while (list($key, $new_domain) = each($lines)) {
+
+		if (!preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) {
+			if ($invalid_domain_count < $invalid_domains_to_display) $temp_result_message .= "Line " . number_format($key + 1) . " contains an invalid domain<BR>";
+			$invalid_domains = 1;
+			$invalid_domain_count++;
+		}
+
+	}
+	
+	if ($new_data == "" || $new_data == "List of Domains" || $invalid_domains == 1) { 
+	
+		if ($invalid_domains == 1) {
+
+			if ($invalid_domain_count == 1) {
+				$_SESSION['session_result_message'] = "There is " . number_format($invalid_domain_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
+			} else {
+				$_SESSION['session_result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message . "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
+			}
+
+		} else {
+
+			$_SESSION['session_result_message'] = "Please enter the list of domains to apply<BR>";
+
+		}
 		$submission_failed = 1;
 
 	} else {
-
-		// strip out blank lines
-		$new_data = preg_replace("/^\n+|^[\t\s]*\n+/m", "", $new_data);
-
+	
 		$lines = explode("\r\n", $new_data);
 		$number_of_domains = count($lines);
+
+		while (list($key, $new_domain) = each($lines)) {
+
+			if (!preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) {
+				echo "invalid domain $key"; exit;
+			}
+
+		}
+		
 
 		$new_data_formatted = "'" . $new_data;
 		$new_data_formatted = $new_data_formatted . "'";
