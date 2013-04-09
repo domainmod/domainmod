@@ -1,5 +1,5 @@
 <?php
-// domain.php
+// /add/domain.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?>
 </textarea>
 <BR><BR>
-<strong>Primary Category:</strong><BR><BR>
+<strong>Category:</strong><BR><BR>
 <?php
 $sql_cat = "SELECT id, name
 			FROM categories
