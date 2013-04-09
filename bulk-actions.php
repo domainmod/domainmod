@@ -32,7 +32,6 @@ $software_section == "bulkactions";
 // Form Variables
 $jumpMenu = $_GET['jumpMenu'];
 $action = $_REQUEST['action'];
-$new_notes = $_POST['new_notes'];
 $new_data = $_POST['new_data'];
 $new_expiry_date = $_POST['new_expiry_date'];
 $new_function = $_POST['new_function'];
@@ -49,7 +48,17 @@ $new_renewal_years = $_POST['new_renewal_years'];
 
 $choose_text = "Click Here To Choose A New";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	
+	if ($new_data == "" || $new_data == "List of Domains") { 
+
+		$_SESSION['session_result_message'] = "Please enter the list of domains to apply<BR>";
+		$submission_failed = 1;
+
+	} else {
+
+		// strip out blank lines
+		$new_data = preg_replace("/^\n+|^[\t\s]*\n+/m", "", $new_data);
 
 		$lines = explode("\r\n", $new_data);
 		$number_of_domains = count($lines);
@@ -85,48 +94,70 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 
 		} elseif ($action == "AD") { 
 		
-			$sql = "SELECT owner_id, registrar_id
-					FROM registrar_accounts
-					WHERE id = '$new_raid'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) {
-				$temp_owner_id = $row->owner_id;
-				$temp_registrar_id = $row->registrar_id;
-			}
+			function MyCheckDate( $postedDate ) {
+			   if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $postedDate, $datebit)) {
+				  return checkdate($datebit[2] , $datebit[3] , $datebit[1]);
+			   } else {
+				  return false;
+			   }
+			} 	
 
-			$lines = explode("\r\n", $new_data);
-			$number_of_domains = count($lines);
-	
-			reset($lines);
-	
-			// cycle through domains here
-			while (list($key, $new_domain) = each($lines)) {
+			if (!MyCheckDate($new_expiry_date) || $new_pcid == "" || $new_dnsid == "" || $new_ipid == "" || $new_raid == "" || $new_pcid == "0" || $new_dnsid == "0" || $new_ipid == "0" || $new_raid == "0") {
+
+				if (!MyCheckDate($new_expiry_date)) $_SESSION['session_result_message'] .= "You have entered an invalid expiry date<BR>";
+				if ($new_pcid == "" || $new_pcid == "0") $_SESSION['session_result_message'] .= "Please choose the new Category<BR>";
+				if ($new_dnsid == "" || $new_dnsid == "0") $_SESSION['session_result_message'] .= "Please choose the new DNS Profile<BR>";
+				if ($new_ipid == "" || $new_ipid == "0") $_SESSION['session_result_message'] .= "Please choose the new IP Address<BR>";
+				if ($new_raid == "" || $new_raid == "0") $_SESSION['session_result_message'] .= "Please choose the new Registrar Account<BR>";
+				$submission_failed = 1;
 			
-				$new_tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
+			} else {
 
-				$sql = "SELECT id
-						FROM fees
-						WHERE registrar_id = '$temp_registrar_id'
-						  AND tld = '$new_tld'";
+				$sql = "SELECT owner_id, registrar_id
+						FROM registrar_accounts
+						WHERE id = '$new_raid'";
 				$result = mysql_query($sql,$connection);
 				while ($row = mysql_fetch_object($result)) {
-					$temp_fee_id = $row->id;
+					$temp_owner_id = $row->owner_id;
+					$temp_registrar_id = $row->registrar_id;
 				}
-
-				if ($temp_fee_id == '0' || $temp_fee_id == "") { $temp_fee_fixed = 0; $temp_fee_id = 0; } else { $temp_fee_fixed = 1; }
 	
-				$sql = "INSERT INTO domains 
-						(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, dns_id, ip_id, function, status, status_notes, notes, privacy, active, fee_fixed, insert_time) VALUES 
-						('$temp_owner_id', '$temp_registrar_id', '$new_raid',  '$new_domain', '$new_tld', '$new_expiry_date', '$new_pcid', '$temp_fee_id', '$new_dnsid', '$new_ipid', '$new_function', '$new_status', '$new_status_notes', '$new_notes', '$new_privacy', '$new_active', '$temp_fee_fixed', '$current_timestamp')";
-				$result = mysql_query($sql,$connection) or die(mysql_error());
-				$temp_fee_id = 0;
-			
+				$lines = explode("\r\n", $new_data);
+				$number_of_domains = count($lines);
+		
+				reset($lines);
+		
+				// cycle through domains here
+				while (list($key, $new_domain) = each($lines)) {
+				
+					$new_tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
+	
+					$sql = "SELECT id
+							FROM fees
+							WHERE registrar_id = '$temp_registrar_id'
+							  AND tld = '$new_tld'";
+					$result = mysql_query($sql,$connection);
+					while ($row = mysql_fetch_object($result)) {
+						$temp_fee_id = $row->id;
+					}
+	
+					if ($temp_fee_id == '0' || $temp_fee_id == "") { $temp_fee_fixed = 0; $temp_fee_id = 0; } else { $temp_fee_fixed = 1; }
+		
+					$sql = "INSERT INTO domains 
+							(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, dns_id, ip_id, function, status, status_notes, notes, privacy, active, fee_fixed, insert_time) VALUES 
+							('$temp_owner_id', '$temp_registrar_id', '$new_raid',  '$new_domain', '$new_tld', '$new_expiry_date', '$new_pcid', '$temp_fee_id', '$new_dnsid', '$new_ipid', '$new_function', '$new_status', '$new_status_notes', '$new_notes', '$new_privacy', '$new_active', '$temp_fee_fixed', '$current_timestamp')";
+					$result = mysql_query($sql,$connection) or die(mysql_error());
+					$temp_fee_id = 0;
+	
+				// finish cycling through domains here
+				}
+	
+				include("_includes/system/fix-domain-fees.inc.php");
+				
+				$_SESSION['session_result_message'] = "Domains Added<BR>";
 
-			// finish cycling through domains here
 			}
 
-			$_SESSION['session_result_message'] = "Domains Added<BR>";
-			
 		} elseif ($action == "FR") { 
 		
 			$sql = "SELECT domain, expiry_date
@@ -146,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 					$renewal_years_string = "$new_renewal_years Years";
 				}
 				
-				$new_notes = "$current_timestamp_basic - Domain Renewed For $renewal_years_string";
+				$new_notes = "$current_timestamp_basic - Domains Renewed For $renewal_years_string";
 				
 				$sql2 = "UPDATE domains
 						 SET expiry_date = '$new_expiry',
@@ -162,102 +193,156 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 			$_SESSION['session_result_message'] = "Domains Fully Renewed<BR>";
 			
 		} elseif ($action == "CPC") { 
+		
+			if ($new_pcid == "" || $new_pcid == 0) {
 
-			$sql = "UPDATE domains
-					SET cat_id = '$new_pcid',
-				    	update_time = '$current_timestamp'
-					WHERE domain IN ($new_data_formatted)";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			
-			$sql = "SELECT name
-					FROM categories
-					WHERE id = '$new_pcid'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) {
-				$new_primary_category_string = $row->name;
+				$_SESSION['session_result_message'] = "Please choose the new Category<BR>";
+				$submission_failed = 1;
+
+			} else {
+
+				$sql = "UPDATE domains
+						SET cat_id = '$new_pcid',
+							update_time = '$current_timestamp'
+						WHERE domain IN ($new_data_formatted)";
+				$result = mysql_query($sql,$connection) or die(mysql_error());
+				
+				$sql = "SELECT name
+						FROM categories
+						WHERE id = '$new_pcid'";
+				$result = mysql_query($sql,$connection);
+				while ($row = mysql_fetch_object($result)) {
+					$new_category_string = $row->name;
+				}
+	
+				$_SESSION['session_result_message'] = "Category Updated<BR>";
+
 			}
-
-			$_SESSION['session_result_message'] = "Primary Categories Updated<BR>";
 
 		} elseif ($action == "CDNS") { 
 
-			$sql = "UPDATE domains
-					SET dns_id = '$new_dnsid',
-						update_time = '$current_timestamp'
-					WHERE domain IN ($new_data_formatted)";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			
-			$sql = "SELECT name
-					FROM dns
-					WHERE id = '$new_dnsid'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) {
-				$new_dns_string = $row->name;
-			}
+			if ($new_dnsid == "" || $new_dnsid == 0) {
 
-			$_SESSION['session_result_message'] = "DNS Profile Updated<BR>";
+				$_SESSION['session_result_message'] = "Please choose the new DNS Profile<BR>";
+				$submission_failed = 1;
+
+			} else {
+
+				$sql = "UPDATE domains
+						SET dns_id = '$new_dnsid',
+							update_time = '$current_timestamp'
+						WHERE domain IN ($new_data_formatted)";
+				$result = mysql_query($sql,$connection) or die(mysql_error());
+				
+				$sql = "SELECT name
+						FROM dns
+						WHERE id = '$new_dnsid'";
+				$result = mysql_query($sql,$connection);
+				while ($row = mysql_fetch_object($result)) {
+					$new_dns_string = $row->name;
+				}
+	
+				$_SESSION['session_result_message'] = "DNS Profile Updated<BR>";
+			}
 
 		} elseif ($action == "CIP") {
 
-			$sql = "UPDATE domains
-					SET ip_id = '$new_ipid',
-						update_time = '$current_timestamp'
-					WHERE domain IN ($new_data_formatted)";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			
-			$_SESSION['session_result_message'] = "IP Address Updated<BR>";
+			if ($new_ipid == "" || $new_ipid == 0) {
 
-		} elseif ($action == "AN") { 
-		
-			$sql2 = "UPDATE domains
-					SET notes = CONCAT('$new_notes\r\n\r\n', notes),
-						update_time = '$current_timestamp'
-					WHERE domain IN ($new_data_formatted)";
+				$_SESSION['session_result_message'] = "Please choose the new IP Address<BR>";
+				$submission_failed = 1;
 
-			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
+			} else {
+
+				$sql = "UPDATE domains
+						SET ip_id = '$new_ipid',
+							update_time = '$current_timestamp'
+						WHERE domain IN ($new_data_formatted)";
+				$result = mysql_query($sql,$connection) or die(mysql_error());
+
+				$sql = "SELECT name
+						FROM ip_addresses
+						WHERE id = '$new_ipid'";
+				$result = mysql_query($sql,$connection);
+				while ($row = mysql_fetch_object($result)) {
+					$new_ip_string = $row->name;
+				}
+				
+				$_SESSION['session_result_message'] = "IP Address Updated<BR>";
+
+			}
+
+		} elseif ($action == "AN") {
 			
-			$_SESSION['session_result_message'] = "Note Added<BR>";
+			if ($new_notes == "" || $new_notes == "New Note") {
+
+				$_SESSION['session_result_message'] = "Please enter the new Note<BR>";
+				$submission_failed = 1;
+
+			} else {
+
+				$sql2 = "UPDATE domains
+						SET notes = CONCAT('$new_notes\r\n\r\n', notes),
+							update_time = '$current_timestamp'
+						WHERE domain IN ($new_data_formatted)";
+	
+				$result2 = mysql_query($sql2,$connection) or die(mysql_error());
+				
+				$_SESSION['session_result_message'] = "Note Added<BR>";
+
+			}
 
 		} elseif ($action == "CRA") { 
-		
-			$sql = "SELECT ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS r_name, o.id AS o_id, o.name AS o_name
-  				    FROM registrar_accounts AS ra, registrars AS r, owners AS o
-				    WHERE ra.registrar_id = r.id
-				      AND ra.owner_id = o.id
-					  AND ra.id = '$new_raid'
-					GROUP BY r.name, o.name, ra.username
-				    ORDER BY r.name asc, o.name asc, ra.username asc";
-			$result = mysql_query($sql,$connection);
 
-			while ($row = mysql_fetch_object($result)) {
-				$new_owner_id = $row->o_id;
-				$new_registrar_id = $row->r_id;
-				$new_registrar_account_id = $row->ra_id;
-				$new_owner_name = $row->o_name;
-				$new_registrar_name = $row->r_name;
-				$new_username = $row->username;
+			if ($new_raid == "" || $new_raid == 0) {
+
+				$_SESSION['session_result_message'] = "Please choose the new Registrar Account<BR>";
+				$submission_failed = 1;
+
+			} else {
+
+				$sql = "SELECT ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS r_name, o.id AS o_id, o.name AS o_name
+						FROM registrar_accounts AS ra, registrars AS r, owners AS o
+						WHERE ra.registrar_id = r.id
+						  AND ra.owner_id = o.id
+						  AND ra.id = '$new_raid'
+						GROUP BY r.name, o.name, ra.username
+						ORDER BY r.name asc, o.name asc, ra.username asc";
+				$result = mysql_query($sql,$connection);
+		
+				while ($row = mysql_fetch_object($result)) {
+					$new_owner_id = $row->o_id;
+					$new_registrar_id = $row->r_id;
+					$new_registrar_account_id = $row->ra_id;
+					$new_owner_name = $row->o_name;
+					$new_registrar_name = $row->r_name;
+					$new_username = $row->username;
+				}
+				
+				$sql = "UPDATE domains
+						SET owner_id = '$new_owner_id', 
+							registrar_id = '$new_registrar_id', 
+							account_id = '$new_registrar_account_id',
+							update_time = '$current_timestamp'
+						WHERE domain IN ($new_data_formatted)";
+				$result = mysql_query($sql,$connection) or die(mysql_error());
+				
+				$new_account_string = "$new_registrar_name :: $new_owner_name ($new_username)";
+				$_SESSION['session_result_message'] = "Registrar Account Changed<BR>";
+
+				include("_includes/system/fix-domain-fees.inc.php");
+
 			}
-			
-			$sql = "UPDATE domains
-					SET owner_id = '$new_owner_id', 
-						registrar_id = '$new_registrar_id', 
-						account_id = '$new_registrar_account_id',
-						update_time = '$current_timestamp'
-					WHERE domain IN ($new_data_formatted)";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			
-			$new_account_string = "$new_registrar_name :: $new_owner_name ($new_username)";
-			$_SESSION['session_result_message'] = "Registrar Account Changed<BR>";
 
 		} elseif ($action == "E") { 
-		
+
 			$sql = "UPDATE domains
 					SET active = '0',
 				    	update_time = '$current_timestamp'
 					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$_SESSION['session_result_message'] = "Domains Marked As Expired<BR>";
+			$_SESSION['session_result_message'] = "Domains marked as expired<BR>";
 
 		} elseif ($action == "S") { 
 		
@@ -267,7 +352,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$_SESSION['session_result_message'] = "Domains Marked As Sold<BR>";
+			$_SESSION['session_result_message'] = "Domains marked as sold<BR>";
 
 		} elseif ($action == "A") { 
 		
@@ -277,7 +362,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$_SESSION['session_result_message'] = "Domains Marked As Active<BR>";
+			$_SESSION['session_result_message'] = "Domains marked as active<BR>";
 
 		} elseif ($action == "T") { 
 		
@@ -287,7 +372,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$_SESSION['session_result_message'] = "Domains Marked As 'In Transfer'<BR>";
+			$_SESSION['session_result_message'] = "Domains marked as 'In Transfer'<BR>";
 
 		} elseif ($action == "PRg") { 
 		
@@ -297,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$_SESSION['session_result_message'] = "Domains Marked As 'Pending (Registration)'<BR>";
+			$_SESSION['session_result_message'] = "Domains marked as 'Pending (Registration)'<BR>";
 
 		} elseif ($action == "PRn") { 
 		
@@ -307,7 +392,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$_SESSION['session_result_message'] = "Domains Marked As 'Pending (Renewal)'<BR>";
+			$_SESSION['session_result_message'] = "Domains marked as 'Pending (Renewal)'<BR>";
 
 		} elseif ($action == "PO") { 
 		
@@ -317,7 +402,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$_SESSION['session_result_message'] = "Domains Marked As 'Pending (Other)'<BR>";
+			$_SESSION['session_result_message'] = "Domains marked as 'Pending (Other)'<BR>";
 
 		} elseif ($action == "PRVE") { 
 		
@@ -327,7 +412,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$_SESSION['session_result_message'] = "Domains Marked As 'Private WHOIS'<BR>";
+			$_SESSION['session_result_message'] = "Domains marked as 'Private WHOIS'<BR>";
 
 		} elseif ($action == "PRVD") { 
 		
@@ -337,22 +422,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_data != "") {
 					WHERE domain IN ($new_data_formatted)";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
-			$_SESSION['session_result_message'] = "Domains Marked As 'Public WHOIS'<BR>";
+			$_SESSION['session_result_message'] = "Domains marked as 'Public WHOIS'<BR>";
 
 		} elseif ($action == "CED") { 
-		
-			$sql = "UPDATE domains
-					SET expiry_date = '$new_expiry_date',
-						update_time = '$current_timestamp'
-					WHERE domain IN ($new_data_formatted)";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			
-			$_SESSION['session_result_message'] = "Expiry Date Updated ($new_expiry_date)<BR>";
+
+			function MyCheckDate( $postedDate ) {
+			   if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $postedDate, $datebit)) {
+				  return checkdate($datebit[2] , $datebit[3] , $datebit[1]);
+			   } else {
+				  return false;
+			   }
+			} 	
+
+			if (!MyCheckDate($new_expiry_date)) {
+
+				$_SESSION['session_result_message'] = "The expiry date you entered is invalid<BR>";
+				$submission_failed = 1;
+
+			} else {
+
+				$sql = "UPDATE domains
+						SET expiry_date = '$new_expiry_date',
+							update_time = '$current_timestamp'
+						WHERE domain IN ($new_data_formatted)";
+				$result = mysql_query($sql,$connection) or die(mysql_error());
+				
+				$_SESSION['session_result_message'] = "Expiry Date Updated ($new_expiry_date)<BR>";
+
+			}
 
 		}
 
 		$done = "1";
 		$new_data_unformatted = strtolower(preg_replace("/\r\n/", ", ", $new_data));
+
+	}
 
 }
 ?>
@@ -374,48 +478,58 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 <?php include("_includes/header.inc.php"); ?>
 <?php if ($done == "1") { ?>
 
-    <?php if ($action == "CPC") { echo "<BR><strong>New Primary Category:</strong> " . $new_primary_category_string . "<BR><BR>"; } ?>
-    <?php if ($action == "CDNS") { echo "<BR><strong>New DNS Profile:</strong> " . $new_dns_string . "<BR><BR>"; } ?>
-    <?php if ($action == "CIP") { echo "<BR><strong>New IP Address:</strong> " . $new_ip_string . "<BR><BR>"; } ?>
-    <?php if ($action == "CRA") { echo "<BR><strong>New Account:</strong> " . $new_account_string . "<BR><BR>"; } ?>
-    <?php if ($action == "AD") { ?>
-    	<BR><strong>The Following Domains Were Added:</strong><BR>
-    <?php } elseif ($action == "R") { ?>
-    	<BR><strong>The Following Domains Were Renewed For <?=$new_renewal_years?> Year<?php if ($new_renewal_years > 1) { echo "s"; } ?>:</strong><BR>
-    <?php } elseif ($action == "FR") { ?>
-    	<BR><strong>The Following Domains Were Fully Renewed For <?=$new_renewal_years?> Year<?php if ($new_renewal_years > 1) { echo "s"; } ?>:</strong><BR>
-    <?php } elseif ($action == "E") { ?>
-    	<BR><strong>The Following Domains Were Marked As Expired:</strong><BR>
-    <?php } elseif ($action == "S") { ?>
-    	<BR><strong>The Following Domains Were Marked As Sold:</strong><BR>
-    <?php } elseif ($action == "A") { ?>
-    	<BR><strong>The Following Domains Were Marked As Active:</strong><BR>
-    <?php } elseif ($action == "T") { ?>
-    	<BR><strong>The Following Domains Were Marked As 'In Transfer':</strong><BR>
-    <?php } elseif ($action == "PRg") { ?>
-    	<BR><strong>The Following Domains Were Marked As 'Pending (Registration)':</strong><BR>
-    <?php } elseif ($action == "PRn") { ?>
-    	<BR><strong>The Following Domains Were Marked As 'Pending (Renewal)':</strong><BR>
-    <?php } elseif ($action == "PO") { ?>
-    	<BR><strong>The Following Domains Were Marked As 'Pending (Other)':</strong><BR>
-    <?php } elseif ($action == "PRVE") { ?>
-    	<BR><strong>The Following Domains Were Marked As 'Private WHOIS':</strong><BR>
-    <?php } elseif ($action == "PRVD") { ?>
-    	<BR><strong>The Following Domains Were Marked As 'Public WHOIS':</strong><BR>
-    <?php } elseif ($action == "CED") { ?>
-    	<BR><strong>The Expiry Date Was UpdateD For The Following Domains</strong><BR>
-    <?php } elseif ($action == "CPC") { ?>
-    	<BR><strong>The Following Domains Had Their Primary Category Changed:</strong><BR>
-    <?php } elseif ($action == "CDNS") { ?>
-    	<BR><strong>The Following Domains Had Their DNS Profile Changed:</strong><BR>
-    <?php } elseif ($action == "CIP") { ?>
-    	<BR><strong>The Following Domains Had Their IP Address Changed:</strong><BR>
-    <?php } elseif ($action == "CRA") { ?>
-    	<BR><strong>The Following Domains Had Their Account Changed:</strong><BR>
-    <?php } elseif ($action == "AN") { ?>
-    	<BR><strong>The Following Domains Had The Note Appended</strong><BR>
-    <?php } ?>
-	<BR><?=$new_data_unformatted?><BR><BR><BR>
+	<?php if ($submission_failed != "1") { ?>
+
+        <?php if ($action == "AD") { ?>
+            <BR><strong>The following domains were added:</strong><BR>
+        <?php } elseif ($action == "R") { ?>
+            <BR><strong>The following domains were renewed for <?=$new_renewal_years?> year<?php if ($new_renewal_years > 1) { echo "s"; } ?>:</strong><BR>
+        <?php } elseif ($action == "FR") { ?>
+            <BR><strong>The following domains were fully renewed for <?=$new_renewal_years?> year<?php if ($new_renewal_years > 1) { echo "s"; } ?>:</strong><BR>
+        <?php } elseif ($action == "E") { ?>
+            <BR><strong>The following domains were marked as expired:</strong><BR>
+        <?php } elseif ($action == "S") { ?>
+            <BR><strong>The following domains were marked as sold:</strong><BR>
+        <?php } elseif ($action == "A") { ?>
+            <BR><strong>The following domains were marked as active:</strong><BR>
+        <?php } elseif ($action == "T") { ?>
+            <BR><strong>The following domains were marked as 'In Transfer':</strong><BR>
+        <?php } elseif ($action == "PRg") { ?>
+            <BR><strong>The following domains were marked as 'Pending (Registration)':</strong><BR>
+        <?php } elseif ($action == "PRn") { ?>
+            <BR><strong>The following domains were marked as 'Pending (Renewal)':</strong><BR>
+        <?php } elseif ($action == "PO") { ?>
+            <BR><strong>The following domains were marked as 'Pending (Other)':</strong><BR>
+        <?php } elseif ($action == "PRVE") { ?>
+            <BR><strong>The following domains were marked as 'Private WHOIS':</strong><BR>
+        <?php } elseif ($action == "PRVD") { ?>
+            <BR><strong>The following domains were marked as 'Public WHOIS':</strong><BR>
+        <?php } elseif ($action == "CED") { ?>
+            <BR><strong>The expiry date was updated for the following domains:</strong><BR>
+        <?php } elseif ($action == "CPC") { ?>
+            <BR><strong>The following domains had their Category changed:</strong><BR>
+        <?php } elseif ($action == "CDNS") { ?>
+            <BR><strong>The following domains had their DNS Profile changed:</strong><BR>
+        <?php } elseif ($action == "CIP") { ?>
+            <BR><strong>The following domains had their IP Address changed:</strong><BR>
+        <?php } elseif ($action == "CRA") { ?>
+            <BR><strong>The following domains had their Registrar Account changed:</strong><BR>
+        <?php } elseif ($action == "AN") { ?>
+            <BR><strong>The following domains had the Note appended:</strong><BR>
+        <?php } ?>
+
+            <?php if ($action == "CPC" || $action == "CDNS" || $action == "CIP" || $action == "CRA") { ?>
+	            <BR><?=$new_data_unformatted?><BR>
+			<?php } else { ?>
+	            <BR><?=$new_data_unformatted?><BR><BR><BR>
+            <?php } ?>
+			<?php if ($action == "CPC") { echo "<BR><strong>New Category:</strong> " . $new_category_string . "<BR><BR><BR>"; } ?>
+            <?php if ($action == "CDNS") { echo "<BR><strong>New DNS Profile:</strong> " . $new_dns_string . "<BR><BR><BR>"; } ?>
+            <?php if ($action == "CIP") { echo "<BR><strong>New IP Address:</strong> " . $new_ip_string . "<BR><BR><BR>"; } ?>
+            <?php if ($action == "CRA") { echo "<BR><strong>New Account:</strong> " . $new_account_string . "<BR><BR><BR>"; } ?>
+
+	<?php } ?>
+
 <?php } ?>
 Instead of having to waste time editing domains one-by-one, you can use the below form to execute actions on multiple domains.<BR><BR>
 <form name="bulk_actions_forum" method="post" action="<?=$PHP_SELF?>">
@@ -431,7 +545,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 	<option value="bulk-actions.php?action=PO"<?php if ($action == "PO") { echo " selected"; } ?>>Mark As 'Pending (Other)'</option>
     <option value="bulk-actions.php?action=E"<?php if ($action == "E") { echo " selected"; } ?>>Mark As 'Expired'</option>
     <option value="bulk-actions.php?action=S"<?php if ($action == "S") { echo " selected"; } ?>>Mark As 'Sold'</option>
-    <option value="bulk-actions.php?action=CPC"<?php if ($action == "CPC") { echo " selected"; } ?>>Change Primary Category</option>
+    <option value="bulk-actions.php?action=CPC"<?php if ($action == "CPC") { echo " selected"; } ?>>Change Category</option>
     <option value="bulk-actions.php?action=CDNS"<?php if ($action == "CDNS") { echo " selected"; } ?>>Change DNS Profile</option>
     <option value="bulk-actions.php?action=CIP"<?php if ($action == "CIP") { echo " selected"; } ?>>Change IP Address</option>
     <option value="bulk-actions.php?action=CRA"<?php if ($action == "CRA") { echo " selected"; } ?>>Change Registrar Account</option>
@@ -461,7 +575,7 @@ Enter the domains one per line:
       <option value="7"<?php if ($new_renewal_years == "7") { echo " selected"; } ?>>7 Years</option>
       <option value="8"<?php if ($new_renewal_years == "8") { echo " selected"; } ?>>8 Years</option>
       <option value="9"<?php if ($new_renewal_years == "9") { echo " selected"; } ?>>9 Years</option>
-      <option value="10"<?php if ($renewal_years == "10") { echo " selected"; } ?>>10 Years</option>
+      <option value="10"<?php if ($new_renewal_years == "10") { echo " selected"; } ?>>10 Years</option>
     </select>
     <BR><BR>
 <?php } elseif ($action == "AD") { ?>
@@ -475,10 +589,9 @@ Enter the domains one per line:
     <input name="new_status" type="text" size="50" maxlength="255" value="<?=$new_status?>">
     <BR><BR>
     <strong>Status Notes:</strong><BR><BR>
-    <textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?>
-    </textarea>
+    <textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?></textarea>
     <BR><BR>
-    <strong>Primary Category:</strong><BR><BR>
+    <strong>Category:</strong><BR><BR>
     <?php
     $sql_cat = "SELECT id, name
 				FROM categories
@@ -606,7 +719,7 @@ Enter the domains one per line:
 				ORDER BY default_category desc, name asc";
     $result_cat = mysql_query($sql_cat,$connection);
     echo "<select name=\"new_pcid\">";
-    echo "<option value=\"\""; if ($new_pcid == "") echo " selected"; echo ">"; echo "$choose_text Primary Category</option>";
+    echo "<option value=\"\""; if ($new_pcid == "") echo " selected"; echo ">"; echo "$choose_text Category</option>";
 	while ($row_cat = mysql_fetch_object($result_cat)) { 
     echo "<option value=\"$row_cat->id\""; if ($row_cat->id == $new_pcid) echo " selected"; echo ">"; echo "$row_cat->name</option>";
     } 
