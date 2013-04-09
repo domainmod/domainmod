@@ -18,11 +18,11 @@
 <?php
 session_start();
 
-include ($_SESSION['full_server_path'] . "/_includes/config.inc.php");
-include ($_SESSION['full_server_path'] . "/_includes/database.inc.php");
-include ($_SESSION['full_server_path'] . "/_includes/software.inc.php");
-include ($_SESSION['full_server_path'] . "/_includes/auth/auth-check.inc.php");
-include ($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/config.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/database.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/software.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/auth/auth-check.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp.inc.php");
 
 $sql_domain_fee_fix1 = "UPDATE domains 
 						SET fee_fixed = '0', 
