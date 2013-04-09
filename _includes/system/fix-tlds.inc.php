@@ -1,5 +1,5 @@
 <?php
-// fix-tlds.php
+// /_includes/system/fix-tlds.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -18,11 +18,11 @@
 <?php
 session_start();
 
-include("../config.inc.php");
-include("../database.inc.php");
-include("../software.inc.php");
-include("../auth/auth-check.inc.php");
-include("../timestamps/current-timestamp.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/config.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/database.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/software.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/auth/auth-check.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp.inc.php");
 
 $sql = "SELECT id, domain 
 		FROM domains 
@@ -40,9 +40,4 @@ while ($row = mysql_fetch_object($result)) {
 	$result2 = mysql_query($sql2,$connection);
 
 }
-
-$_SESSION['session_result_message'] .= "All TLDs have been fixed<BR>";
-
-header("Location: ../../system/index.php");
-exit;
 ?>

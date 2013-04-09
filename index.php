@@ -89,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['session_display_ssl_fee'] = $row_settings->display_ssl_fee;
 			}
 
+			include("_includes/system/fix-tlds.inc.php");
 			include("_includes/system/fix-domain-fees.inc.php");
 			include("_includes/system/fix-ssl-fees.inc.php");
 
