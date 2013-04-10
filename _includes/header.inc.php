@@ -19,15 +19,14 @@
 session_start();
 ?>
 <a name="top"></a>
-<BR>
 <table align="center" width="<?=$site_width?>" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-        <td class="header-table" height="100%">
-			<font class="headline"><?=$software_title?></font>
+        <td class="header-table-left">
+			<a href="<?=$web_root?>"><font class="headline">Domain Manager</font>
 		</td>
-        <td align="right" valign="bottom" height="100%">
+        <td class="header-table-right">
         <?php if ($_SESSION['session_is_logged_in'] == 1) { ?>
-        <em>logged in as <strong><?=$_SESSION['session_username']?></strong> (<a class="subtlelink" href="<?=$web_root?>/system/update-profile.php"><?=$_SESSION['session_first_name']?> <?=$_SESSION['session_last_name']?></a>)</em>&nbsp;&nbsp;[ <a href="<?=$web_root?>/logout.php">Logout</a> ]<BR><BR>
+        	<em>logged in as <strong><?=$_SESSION['session_username']?></strong> (<a class="subtlelink" href="<?=$web_root?>/system/update-profile.php"><?=$_SESSION['session_first_name']?> <?=$_SESSION['session_last_name']?></a>)</em>&nbsp;&nbsp;[ <a href="<?=$web_root?>/logout.php">Logout</a> ]
         <?php } ?>
 		</td>
 	</tr>
