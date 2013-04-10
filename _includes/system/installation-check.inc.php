@@ -1,5 +1,5 @@
 <?php
-// installation-check.inc.php
+// /_includes/system/installation-check.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -37,12 +37,9 @@ if (is_dir($full_install_path)) {
 		}
 
 	} else {
-		
+
 		$_SESSION['session_installation_mode'] = 0;
 
-			// $_SESSION['session_result_message'] .= "<BR>The software has been installed, but the /install/ directory still exists.<BR><BR>";
-			// $_SESSION['session_result_message'] .= "You should delete the /install/ directory from your web server.<BR><BR>";
-		
 	}
 	
 }
