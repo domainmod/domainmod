@@ -92,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			include("_includes/system/fix-tlds.inc.php");
 			include("_includes/system/fix-domain-fees.inc.php");
 			include("_includes/system/fix-ssl-fees.inc.php");
+			include("_includes/system/update-segments.inc.php");
 
 			header("Location: _includes/auth/login-checks/main.inc.php");
 			exit;
