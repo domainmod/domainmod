@@ -453,7 +453,7 @@ if ($segid != "") {
 <form name="domain_search_form" method="post" action="<?=$PHP_SELF?>">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td class="search-table-inside" width="640">
+<td class="search-table-inside" width="560">
 
 &nbsp;&nbsp;
 <?php 
@@ -924,13 +924,15 @@ echo "</select>";
 <input type="hidden" name="sort_by" value="<?=$sort_by?>">
 </td>
 <td class="search-table-inside">
+<strong>Keyword Search:</strong><BR><BR>
 <input name="search_for" type="text" value="<?=$_SESSION['session_search_for']?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" value="Search Results &raquo;">&nbsp;&nbsp;<BR><BR>
 <?php
 $_SESSION['session_quick_search'] = preg_replace("/', '/", "\r\n", $_SESSION['session_quick_search']);
 $_SESSION['session_quick_search'] = preg_replace("/','/", "\r\n", $_SESSION['session_quick_search']);
 $_SESSION['session_quick_search'] = preg_replace("/'/", "", $_SESSION['session_quick_search']);
 ?>
-<textarea name="quick_search" cols="35" rows="11"><?=$_SESSION['session_quick_search']?></textarea>&nbsp;&nbsp;
+<BR><strong>Domain Search (one domain per line):</strong><BR><BR>
+<textarea name="quick_search" cols="30" rows="11"><?=$_SESSION['session_quick_search']?></textarea>&nbsp;&nbsp;
 <BR>
 <BR>
 <input type="hidden" name="segid" value="<?=$segid?>">
