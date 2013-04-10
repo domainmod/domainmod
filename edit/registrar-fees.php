@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	include("../_includes/system/fix-domain-fees.inc.php");
+	include("../_includes/system/update-domain-fees.inc.php");
 	
 }
 if ($del == "1") {

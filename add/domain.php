@@ -68,9 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('$new_owner_id', '$new_registrar_id', '$new_account_id', '" . mysql_real_escape_string($new_domain) . "', '$tld', '$new_expiry_date', '$new_cat_id', '$new_dns_id', '$new_ip_id', '$new_fee_id', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_status) . "', '" . mysql_real_escape_string($new_status_notes) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_privacy', '$new_active', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
-		
 
-		include("../_includes/system/fix-domain-fees.inc.php");
+		include("../_includes/system/update-domain-fees.inc.php");
+		include("../_includes/system/update-segments.inc.php");
 		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
 		$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";

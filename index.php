@@ -89,10 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['session_display_ssl_fee'] = $row_settings->display_ssl_fee;
 			}
 
-			include("_includes/system/fix-tlds.inc.php");
-			include("_includes/system/fix-domain-fees.inc.php");
-			include("_includes/system/fix-ssl-fees.inc.php");
+			include("_includes/system/update-domain-fees.inc.php");
+			include("_includes/system/update-ssl-fees.inc.php");
 			include("_includes/system/update-segments.inc.php");
+			include("_includes/system/update-tlds.inc.php");
 
 			header("Location: _includes/auth/login-checks/main.inc.php");
 			exit;

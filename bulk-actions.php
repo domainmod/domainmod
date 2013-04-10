@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					$result2 = mysql_query($sql2,$connection);
 				
 				}
-				
+
 				$_SESSION['session_result_message'] = "Domains Renewed<BR>";
 	
 			} elseif ($action == "AD") { 
@@ -192,9 +192,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 					// finish cycling through domains here
 					}
-		
+
 					$_SESSION['session_result_message'] = "Domains Added<BR>";
-	
+
+					include("_includes/system/update-domain-fees.inc.php");
+					include("_includes/system/update-segments.inc.php");
+					include("_includes/system/update-tlds.inc.php");
+
 				}
 	
 			} elseif ($action == "FR") { 
@@ -368,6 +372,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					
 					$new_account_string = "$new_registrar_name :: $new_owner_name ($new_username)";
 					$_SESSION['session_result_message'] = "Registrar Account Changed<BR>";
+
+					include("_includes/system/update-domain-fees.inc.php");
 	
 				}
 	
@@ -380,6 +386,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
 				$_SESSION['session_result_message'] = "Domains marked as expired<BR>";
+
+				include("_includes/system/update-domain-fees.inc.php");
+				include("_includes/system/update-segments.inc.php");
 	
 			} elseif ($action == "S") { 
 			
@@ -390,6 +399,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
 				$_SESSION['session_result_message'] = "Domains marked as sold<BR>";
+
+				include("_includes/system/update-domain-fees.inc.php");
+				include("_includes/system/update-segments.inc.php");
 	
 			} elseif ($action == "A") { 
 			
@@ -400,6 +412,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
 				$_SESSION['session_result_message'] = "Domains marked as active<BR>";
+
+				include("_includes/system/update-domain-fees.inc.php");
+				include("_includes/system/update-segments.inc.php");
 	
 			} elseif ($action == "T") { 
 			
@@ -410,6 +425,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
 				$_SESSION['session_result_message'] = "Domains marked as 'In Transfer'<BR>";
+
+				include("_includes/system/update-domain-fees.inc.php");
+				include("_includes/system/update-segments.inc.php");
 	
 			} elseif ($action == "PRg") { 
 			
@@ -421,6 +439,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
 				$_SESSION['session_result_message'] = "Domains marked as 'Pending (Registration)'<BR>";
+
+				include("_includes/system/update-domain-fees.inc.php");
+				include("_includes/system/update-segments.inc.php");
 	
 			} elseif ($action == "PRn") { 
 			
@@ -431,6 +452,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
 				$_SESSION['session_result_message'] = "Domains marked as 'Pending (Renewal)'<BR>";
+
+				include("_includes/system/update-domain-fees.inc.php");
+				include("_includes/system/update-segments.inc.php");
 	
 			} elseif ($action == "PO") { 
 			
@@ -441,6 +465,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
 				$_SESSION['session_result_message'] = "Domains marked as 'Pending (Other)'<BR>";
+
+				include("_includes/system/update-domain-fees.inc.php");
+				include("_includes/system/update-segments.inc.php");
 	
 			} elseif ($action == "PRVE") { 
 			
@@ -451,6 +478,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
 				$_SESSION['session_result_message'] = "Domains marked as 'Private WHOIS'<BR>";
+
+				include("_includes/system/update-domain-fees.inc.php");
+				include("_includes/system/update-segments.inc.php");
 	
 			} elseif ($action == "PRVD") { 
 			
@@ -498,9 +528,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	}
 
-	include("_includes/system/fix-tlds.inc.php");
-	include("_includes/system/fix-domain-fees.inc.php");
-	include("_includes/system/fix-ssl-fees.inc.php");
+	include("_includes/system/update-tlds.inc.php");
+	include("_includes/system/update-domain-fees.inc.php");
+	include("_includes/system/update-ssl-fees.inc.php");
 	include("_includes/system/update-segments.inc.php");
 
 }

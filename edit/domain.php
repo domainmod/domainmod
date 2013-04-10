@@ -105,9 +105,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$did = $new_did;
 		
-		include("../_includes/system/fix-domain-fees.inc.php");
-
 		$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Updated<BR>";
+
+		include("../_includes/system/update-domain-fees.inc.php");
+		include("../_includes/system/update-segments.inc.php");
 
 	} else {
 	
@@ -174,7 +175,9 @@ if ($really_del == "1") {
 	$result = mysql_query($sql,$connection);
 	
 	$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Deleted<BR>";
-	
+
+	include("../_includes/system/update-domain-fees.inc.php");
+	include("../_includes/system/update-segments.inc.php");
 	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
 	header("Location: ../domains.php");

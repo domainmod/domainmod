@@ -1,5 +1,5 @@
 <?php
-// fix-domain-fees.inc.php
+// /_includes/system/update-domain-fees.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti

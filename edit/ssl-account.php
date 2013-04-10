@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				WHERE id = '$new_owner_id'";
 		$result = mysql_query($sql,$connection);
 		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
-		
+
 		$_SESSION['session_result_message'] = "SSL Account <font class=\"highlight\">$new_username ($temp_ssl_provider, $temp_owner)</font> Updated<BR>";
 
 	} else {
@@ -161,6 +161,7 @@ if ($really_del == "1") {
 
 	$_SESSION['session_result_message'] = "SSL Account <font class=\"highlight\">$temp_username ($temp_ssl_provider_name, $temp_owner_name)</font> Deleted<BR>";
 
+	include("../_includes/system/update-ssl-fees.inc.php");
 	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
 	header("Location: ../ssl-accounts.php");
