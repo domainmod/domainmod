@@ -925,7 +925,7 @@ echo "</select>";
 </td>
 <td class="search-table-inside">
 <strong>Keyword Search:</strong><BR><BR>
-<input name="search_for" type="text" value="<?=$_SESSION['session_search_for']?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" value="Search Results &raquo;">&nbsp;&nbsp;<BR><BR>
+<input name="search_for" type="text" value="<?=$_SESSION['session_search_for']?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" value="Search &raquo;">&nbsp;&nbsp;<BR><BR>
 <?php
 $_SESSION['session_quick_search'] = preg_replace("/', '/", "\r\n", $_SESSION['session_quick_search']);
 $_SESSION['session_quick_search'] = preg_replace("/','/", "\r\n", $_SESSION['session_quick_search']);
