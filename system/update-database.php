@@ -874,6 +874,30 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0015 to 2.0016
+	if ($current_db_version == 2.0015) {
+
+		$sql = "ALTER TABLE `segment_data` 
+					ADD `active` INT(1) NOT NULL DEFAULT '0' AFTER `domain`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `segment_data` 
+					ADD `inactive` INT(1) NOT NULL DEFAULT '0' AFTER `active`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `segment_data` 
+					ADD `missing` INT(1) NOT NULL DEFAULT '0' AFTER `inactive`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0016',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0016;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";

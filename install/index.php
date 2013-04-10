@@ -370,6 +370,9 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 			`id` int(10) NOT NULL auto_increment,
 			`segment_id` int(10) NOT NULL,
 			`domain` varchar(255) NOT NULL,
+			`active` int(1) NOT NULL default '0',
+			`inactive` int(1) NOT NULL default '0',
+			`missing` int(1) NOT NULL default '0',
 			`insert_time` datetime NOT NULL,
 			`update_time` datetime NOT NULL,
 			PRIMARY KEY  (`id`)
