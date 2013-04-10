@@ -625,7 +625,7 @@ echo "</select>";
 <input type="hidden" name="sort_by" value="<?=$sort_by?>">
 </td>
 <td class="search-table-inside">
-<input name="search_for" type="text" id="textfield" value="<?=$search_for?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" id="button" value="Search Results &raquo;">
+<input name="search_for" type="text" id="textfield" value="<?=$search_for?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" id="button" value="Search &raquo;">
 <BR><BR>
 <input type="hidden" name="oid" value="<?=$oid?>">
 <input type="hidden" name="did" value="<?=$did?>">

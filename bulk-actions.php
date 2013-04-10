@@ -132,6 +132,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				}
 
 				$_SESSION['session_result_message'] = "Domains Renewed<BR>";
+
+				include("_includes/system/update-segments.inc.php");
 	
 			} elseif ($action == "AD") { 
 			
@@ -232,7 +234,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					$result2 = mysql_query($sql2,$connection);
 				
 				}
-				
+
+				include("_includes/system/update-segments.inc.php");
+
 				$_SESSION['session_result_message'] = "Domains Fully Renewed<BR>";
 				
 			} elseif ($action == "CPC") { 

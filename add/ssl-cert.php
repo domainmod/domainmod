@@ -61,11 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('$new_owner_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '" . mysql_real_escape_string($new_name) . "', '$new_type_id', '$new_expiry_date', '$new_fee_id', '" . mysql_real_escape_string($new_notes) . "', '$new_active', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
-		
-		include("../_includes/system/update-ssl-fees.inc.php");
-		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
 		$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
+
+		include("../_includes/system/update-ssl-fees.inc.php");
+		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
 	} else {
 	

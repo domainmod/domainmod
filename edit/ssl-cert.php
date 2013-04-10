@@ -92,9 +92,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$sslcid = $new_sslcid;
 
-		include("../_includes/system/update-ssl-fees.inc.php");
-
 		$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Updated<BR>";
+
+		include("../_includes/system/update-ssl-fees.inc.php");
 
 	} else {
 	

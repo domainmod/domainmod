@@ -69,11 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
+		$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
+
 		include("../_includes/system/update-domain-fees.inc.php");
 		include("../_includes/system/update-segments.inc.php");
 		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
-
-		$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
 
 	} else {
 	
