@@ -81,6 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$segid = $new_segid;
 		
+		include("../_includes/system/update-segments.inc.php");
+		
 		$_SESSION['session_result_message'] = "Segment <font class=\"highlight\">$new_name</font> Updated<BR>";
 
 	} else {

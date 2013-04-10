@@ -1,5 +1,5 @@
 <?php
-// domains.php
+// /domains.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -42,13 +42,27 @@ $result_limit = $_REQUEST['result_limit'];
 $sort_by = $_REQUEST['sort_by'];
 $search_for = $_REQUEST['search_for'];
 $quick_search = $_REQUEST['quick_search'];
+$from_dropdown = $_REQUEST['from_dropdown'];
 
 // Search Navigation Variables
 $numBegin = $_REQUEST['numBegin'];
 $begin = $_REQUEST['begin'];
 $num = $_REQUEST['num'];
 
-if ($search_for == "Search Term") $search_for = "";
+if ($_SERVER['REQUEST_METHOD'] == 'POST') $from_dropdown = 0;
+
+if ($export != "1") {
+
+	if ($from_dropdown != "1") {
+
+		if ($search_for != "") { $_SESSION['session_search_for'] = $search_for; } else { $_SESSION['session_search_for'] = ""; }
+		if ($quick_search != "") { $_SESSION['session_quick_search'] = $quick_search; } else { $_SESSION['session_quick_search'] = ""; }
+
+	}
+
+}
+
+if ($_SESSION['session_search_for'] == "Search Term") $_SESSION['session_search_for'] = "";
 if ($result_limit == "") $result_limit = $_SESSION['session_number_of_domains'];
 
 if ($is_active == "") $is_active = "LIVE";
@@ -173,28 +187,62 @@ if ($segid != "") {
 
 } else { 
 
-	$segid_string = ""; 
-
+	$segid_string = "";
 }
 
-if ($quick_search != "") {
+if ($_SESSION['session_quick_search'] != "") {
 
-	$quick_search_dropdown = $quick_search;
-	$quick_search_dropdown = preg_replace("/\r\n/", "z8l2q9", $quick_search_dropdown);
-	$quick_search_dropdown = preg_replace("/', '/", "z8l2q9", $quick_search_dropdown);
-	$quick_search_dropdown = preg_replace("/','/", "z8l2q9", $quick_search_dropdown);
-	$quick_search_dropdown = preg_replace("/'/", "", $quick_search_dropdown);
+	$_SESSION['session_quick_search'] = preg_replace("/^\n+|^[\t\s]*\n+/m", "", $_SESSION['session_quick_search']);
 
-	$lines = explode("\r\n", $quick_search);
-	$quick_search_number_of_domains = count($lines);
+	$lines = explode("\r\n", $_SESSION['session_quick_search']);
+	$invalid_domain_count = 0;
+	$invalid_domains_to_display = 5;
 
-	$quick_search_new_segment_formatted = "'" . $quick_search . "'";
-	$quick_search_new_segment_formatted = preg_replace("/\r\n/", "','", $quick_search_new_segment_formatted);
-	$quick_search_new_segment_formatted = str_replace (" ", "", $quick_search_new_segment_formatted);
-	$quick_search_new_segment_formatted = trim($quick_search_new_segment_formatted);
-	$quick_search = $quick_search_new_segment_formatted;
+	while (list($key, $new_domain) = each($lines)) {
 
-	$segid_string .= " AND d.domain IN ($quick_search)"; 
+		if (!preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) {
+			if ($invalid_domain_count < $invalid_domains_to_display) $temp_result_message .= "Line " . number_format($key + 1) . " contains an invalid domain<BR>";
+			$invalid_domains = 1;
+			$invalid_domain_count++;
+		}
+
+	}
+
+	if ($invalid_domains == 1) {
+
+		if ($invalid_domain_count == 1) {
+
+			$_SESSION['session_result_message'] = "There is " . number_format($invalid_domain_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
+
+		} else {
+			
+			if ($invalid_domain_count < $invalid_domains_to_display) {
+
+				$_SESSION['session_result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message . "<BR>";
+
+			} else {
+
+				$_SESSION['session_result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message . "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
+				
+			}
+
+		}
+
+	} else {
+
+		$lines = explode("\r\n", $_SESSION['session_quick_search']);
+		$quick_search_number_of_domains = count($lines);
+		
+		$quick_search_new_segment_formatted = "'" . $_SESSION['session_quick_search'] . "'";
+		$quick_search_new_segment_formatted = preg_replace("/\r\n/", "','", $quick_search_new_segment_formatted);
+		$quick_search_new_segment_formatted = str_replace (" ", "", $quick_search_new_segment_formatted);
+		$quick_search_new_segment_formatted = trim($quick_search_new_segment_formatted);
+		$_SESSION['session_quick_search'] = $quick_search_new_segment_formatted;
+
+		$segid_string .= " AND d.domain IN (" . $_SESSION['session_quick_search'] . ")";
+
+	}
+
 }
 	
 	
@@ -205,7 +253,7 @@ if ($ipid != "") { $ipid_string = " AND ip.id = '$ipid' "; } else { $ipid_string
 if ($rid != "") { $rid_string = " AND r.id = '$rid' "; } else { $rid_string = ""; }
 if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
 if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
-if ($search_for != "") { $search_string = " AND d.domain LIKE '%$search_for%' "; } else { $search_string = ""; }
+if ($_SESSION['session_search_for'] != "") { $search_string = " AND d.domain LIKE '%" . $_SESSION['session_search_for'] . "%' "; } else { $search_string = ""; }
 
 if ($sort_by == "") $sort_by = "ed_a";
 
@@ -255,7 +303,31 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.sta
 		  $raid_string
 		  $tld_string
 		  $search_string
+		  $quick_search_string
 		  $sort_by_string";	
+
+if ($segid != "") {
+	
+	$result = mysql_query($sql,$connection);
+	$active_domains = "'";
+	while ($row = mysql_fetch_object($result)) { $active_domains .= $row->domain . "', '";	}
+	$active_domains .= "'";
+	$active_domains = substr($active_domains, 0, -4);
+	
+	$sql_filter_update = "UPDATE segment_data
+						  SET filtered = '0'
+						  WHERE active = '1'
+						    AND segment_id = '$segid'";
+	$result_filter_update = mysql_query($sql_filter_update,$connection);
+
+	$sql_filter_update = "UPDATE segment_data
+						  SET filtered = '1'
+						  WHERE active = '1'
+						    AND segment_id = '$segid'
+							AND domain NOT IN ($active_domains)";
+	$result_filter_update = mysql_query($sql_filter_update,$connection);
+	
+}
 
 $full_export = "";
 
@@ -361,7 +433,7 @@ if ($_SESSION['session_need_domain'] == "1" && $_SESSION['session_need_registrar
 	exit;
 }
 $totalrows = mysql_num_rows(mysql_query($sql));
-$navigate = pageBrowser($totalrows,15,$result_limit, "&pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for",$_GET[numBegin],$_GET[begin],$_GET[num]);
+$navigate = pageBrowser($totalrows,15,$result_limit, "&pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by",$_GET[numBegin],$_GET[begin],$_GET[num]);
 $sql = $sql.$navigate[0];
 $result = mysql_query($sql,$connection);
 
@@ -406,7 +478,9 @@ if ($ipid != "") { $ipid_string = " AND d.ip_id = '$ipid' "; } else { $ipid_stri
 if ($rid != "") { $rid_string = " AND d.registrar_id = '$rid' "; } else { $rid_string = ""; }
 if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
 if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
-if ($search_for != "") { $search_string = " AND d.domain LIKE '%$search_for%'"; } else { $search_string = ""; }
+if ($_SESSION['session_search_for'] != "") { $search_string = " AND d.domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
+if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND d.domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
+if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
 $sql_owner = "SELECT o.id, o.name 
 			  FROM owners AS o, domains AS d
@@ -420,13 +494,15 @@ $sql_owner = "SELECT o.id, o.name
 				$raid_string
 				$tld_string
 				$search_string
+				$quick_search_string
+				$segment_string
 			  GROUP BY o.name
 			  ORDER BY o.name asc";
 $result_owner = mysql_query($sql_owner,$connection);
 echo "<select name=\"oid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Owner - ALL</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Owner - ALL</option>";
 while ($row_owner = mysql_fetch_object($result_owner)) { 
-	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$row_owner->id&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
+	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$row_owner->id&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
 } 
 echo "</select>";
 ?>
@@ -455,7 +531,9 @@ if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid
 if ($ipid != "") { $ipid_string = " AND d.ip_id = '$ipid' "; } else { $ipid_string = ""; }
 if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
 if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
-if ($search_for != "") { $search_string = " AND d.domain LIKE '%$search_for%'"; } else { $search_string = ""; }
+if ($_SESSION['session_search_for'] != "") { $search_string = " AND d.domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
+if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND d.domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
+if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
 $sql_category = "SELECT c.id, c.name
 				 FROM categories AS c, domains AS d
@@ -468,14 +546,16 @@ $sql_category = "SELECT c.id, c.name
 				   $raid_string
 				   $tld_string
 				   $search_string
+				   $quick_search_string
+				   $segment_string
 				   AND c.active = '1'
 				 GROUP BY c.name
 				 ORDER BY c.name asc";
 $result_category = mysql_query($sql_category,$connection);
 echo "<select name=\"pcid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?pcid=&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Category - ALL</option>";
+echo "<option value=\"$PHP_SELF?pcid=&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Category - ALL</option>";
 while ($row_category = mysql_fetch_object($result_category)) { 
-	echo "<option value=\"$PHP_SELF?pcid=$row_category->id&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_category->id == $pcid) echo " selected"; echo ">"; echo "$row_category->name</option>";
+	echo "<option value=\"$PHP_SELF?pcid=$row_category->id&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_category->id == $pcid) echo " selected"; echo ">"; echo "$row_category->name</option>";
 } 
 echo "</select>";
 ?>
@@ -504,7 +584,9 @@ if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid
 if ($ipid != "") { $ipid_string = " AND d.ip_id = '$ipid' "; } else { $ipid_string = ""; }
 if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
 if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
-if ($search_for != "") { $search_string = " AND d.domain LIKE '%$search_for%'"; } else { $search_string = ""; }
+if ($_SESSION['session_search_for'] != "") { $search_string = " AND d.domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
+if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND d.domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
+if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
 $sql_registrar = "SELECT r.id, r.name 
 				  FROM registrars AS r, domains AS d
@@ -518,13 +600,15 @@ $sql_registrar = "SELECT r.id, r.name
 				    $raid_string
 				    $tld_string
 				    $search_string
+					$quick_search_string
+					$segment_string
 				  GROUP BY r.name
 				  ORDER BY r.name asc";
 $result_registrar = mysql_query($sql_registrar,$connection);
 echo "<select name=\"rid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Registrar - ALL</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Registrar - ALL</option>";
 while ($row_registrar = mysql_fetch_object($result_registrar)) { 
-	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$row_registrar->id&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_registrar->id == $rid) echo " selected"; echo ">"; echo "$row_registrar->name</option>";
+	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$row_registrar->id&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_registrar->id == $rid) echo " selected"; echo ">"; echo "$row_registrar->name</option>";
 } 
 echo "</select>";
 ?>
@@ -552,7 +636,9 @@ if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid
 if ($ipid != "") { $ipid_string = " AND d.ip_id = '$ipid' "; } else { $ipid_string = ""; }
 if ($rid != "") { $rid_string = " AND d.registrar_id = '$rid' "; } else { $rid_string = ""; }
 if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
-if ($search_for != "") { $search_string = " AND d.domain LIKE '%$search_for%'"; } else { $search_string = ""; }
+if ($_SESSION['session_search_for'] != "") { $search_string = " AND d.domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
+if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND d.domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
+if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
 $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS o_name
 				FROM registrar_accounts AS ra, registrars AS r, owners AS o, domains AS d
@@ -569,13 +655,15 @@ $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS 
 				  $rid_string
 				  $tld_string
 				  $search_string
+				  $quick_search_string
+				  $segment_string
 				GROUP BY r.name, o.name, ra.username
 				ORDER BY r.name asc, o.name asc, ra.username asc";
 $result_account = mysql_query($sql_account,$connection);
 echo "<select name=\"raid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?segid=$segid&raid=&sort_by=$sort_by&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&tld=$tld&is_active=$is_active&result_limit=$result_limit&search_for=$search_for\">Registrar Account - ALL</option>";
+echo "<option value=\"$PHP_SELF?segid=$segid&raid=&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Registrar Account - ALL</option>";
 while ($row_account = mysql_fetch_object($result_account)) { 
-	echo "<option value=\"$PHP_SELF?segid=$segid&raid=$row_account->ra_id&sort_by=$sort_by&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&tld=$tld&is_active=$is_active&result_limit=$result_limit&search_for=$search_for\""; if ($row_account->ra_id == $raid) echo " selected"; echo ">"; echo "$row_account->r_name :: $row_account->o_name ($row_account->username)</option>";
+	echo "<option value=\"$PHP_SELF?segid=$segid&raid=$row_account->ra_id&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_account->ra_id == $raid) echo " selected"; echo ">"; echo "$row_account->r_name :: $row_account->o_name ($row_account->username)</option>";
 } 
 echo "</select>";
 ?>
@@ -604,7 +692,9 @@ if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_strin
 if ($rid != "") { $rid_string = " AND d.registrar_id = '$rid' "; } else { $rid_string = ""; }
 if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
 if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
-if ($search_for != "") { $search_string = " AND d.domain LIKE '%$search_for%'"; } else { $search_string = ""; }
+if ($_SESSION['session_search_for'] != "") { $search_string = " AND d.domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
+if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND d.domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
+if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
 $sql_dns = "SELECT dns.id, dns.name 
 			FROM dns AS dns, domains AS d
@@ -618,13 +708,15 @@ $sql_dns = "SELECT dns.id, dns.name
 			  $raid_string
 			  $tld_string
 			  $search_string
+			  $quick_search_string
+			  $segment_string
 			GROUP BY dns.name
 			ORDER BY dns.name asc";
 $result_dns = mysql_query($sql_dns,$connection);
 echo "<select name=\"dnsid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">DNS Profile - ALL</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">DNS Profile - ALL</option>";
 while ($row_dns = mysql_fetch_object($result_dns)) { 
-	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$row_dns->id&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_dns->id == $dnsid) echo " selected"; echo ">"; echo "$row_dns->name</option>";
+	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$row_dns->id&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_dns->id == $dnsid) echo " selected"; echo ">"; echo "$row_dns->name</option>";
 } 
 echo "</select>";
 ?>
@@ -653,26 +745,30 @@ if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_strin
 if ($rid != "") { $rid_string = " AND d.registrar_id = '$rid' "; } else { $rid_string = ""; }
 if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
 if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
-if ($search_for != "") { $search_string = " AND d.domain LIKE '%$search_for%'"; } else { $search_string = ""; }
+if ($_SESSION['session_search_for'] != "") { $search_string = " AND d.domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
+if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND d.domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
 
-$sql_ip = "SELECT ip.id, ip.name, ip.ip
-		   FROM ip_addresses AS ip, domains AS d
-		   WHERE ip.id = d.ip_id
-		     $is_active_string
-		     $pcid_string
-		     $dnsid_string
-		     $oid_string
-		     $rid_string
-		     $raid_string
-		     $tld_string
-		     $search_string
-		   GROUP BY ip.name
-		   ORDER BY ip.name asc";
+if ($segid != "") { $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
+	$sql_ip = "SELECT ip.id, ip.name, ip.ip
+			   FROM ip_addresses AS ip, domains AS d
+			   WHERE ip.id = d.ip_id
+				 $is_active_string
+				 $pcid_string
+				 $dnsid_string
+				 $oid_string
+				 $rid_string
+				 $raid_string
+				 $tld_string
+				 $search_string
+				 $quick_search_string
+				 $segment_string
+			   GROUP BY ip.name
+			   ORDER BY ip.name asc";
 $result_ip = mysql_query($sql_ip,$connection);
 echo "<select name=\"ipid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">IP Address - ALL</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">IP Address - ALL</option>";
 while ($row_ip = mysql_fetch_object($result_ip)) { 
-	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$row_ip->id&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_ip->id == $ipid) echo " selected"; echo ">"; echo "$row_ip->name ($row_ip->ip)</option>";
+	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$row_ip->id&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_ip->id == $ipid) echo " selected"; echo ">"; echo "$row_ip->name ($row_ip->ip)</option>";
 } 
 echo "</select>";
 ?>
@@ -696,9 +792,9 @@ $sql_segment = "SELECT id, name
 $result_segment = mysql_query($sql_segment,$connection);
 
 echo "<select name=\"segid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&tld=$tld&segid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for&quick_search_dropdown=$quick_search_dropdown\">Segment Filter - ALL</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&tld=$tld&segid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Segment Filter - ALL</option>";
 while ($row_segment = mysql_fetch_object($result_segment)) { 
-	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$row_segment->id&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for&quick_search_dropdown=$quick_search_dropdown\""; if ($row_segment->id == $segid) echo " selected"; echo ">"; echo "$row_segment->name</option>";
+	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$row_segment->id&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_segment->id == $segid) echo " selected"; echo ">"; echo "$row_segment->name</option>";
 } 
 echo "</select>";
 ?>
@@ -727,7 +823,9 @@ if ($dnsid != "") { $dnsid_string = " AND dns_id = '$dnsid' "; } else { $dnsid_s
 if ($ipid != "") { $ipid_string = " AND ip_id = '$ipid' "; } else { $ipid_string = ""; }
 if ($rid != "") { $rid_string = " AND registrar_id = '$rid' "; } else { $rid_string = ""; }
 if ($raid != "") { $raid_string = " AND account_id = '$raid' "; } else { $raid_string = ""; }
-if ($search_for != "") { $search_string = " AND domain LIKE '%$search_for%'"; } else { $search_string = ""; }
+if ($_SESSION['session_search_for'] != "") { $search_string = " AND domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
+if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
+if ($segid != "") { $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
 $sql_tld = "SELECT tld, count(*) AS total_tld_count
 			FROM domains
@@ -739,13 +837,15 @@ $sql_tld = "SELECT tld, count(*) AS total_tld_count
 			$rid_string
 			$raid_string
 			$search_string
+			$segment_string
+			$quick_segment_string
 			GROUP BY tld
 			ORDER BY tld asc";
 $result_tld = mysql_query($sql_tld,$connection);
 echo "<select name=\"tld\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">TLD - ALL</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">TLD - ALL</option>";
 while ($row_tld = mysql_fetch_object($result_tld)) { 
-	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$row_tld->tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_tld->tld == $tld) echo " selected"; echo ">"; echo ".$row_tld->tld</option>";
+	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$row_tld->tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_tld->tld == $tld) echo " selected"; echo ">"; echo ".$row_tld->tld</option>";
 } 
 echo "</select>";
 ?>
@@ -774,6 +874,9 @@ if ($ipid != "") { $ipid_string = " AND ip_id = '$ipid' "; } else { $ipid_string
 if ($rid != "") { $rid_string = " AND registrar_id = '$rid' "; } else { $rid_string = ""; }
 if ($raid != "") { $raid_string = " AND account_id = '$raid' "; } else { $raid_string = ""; }
 if ($tld != "") { $tld_string = " AND tld = '$tld' "; } else { $tld_string = ""; }
+if ($_SESSION['session_search_for'] != "") { $search_string = " AND domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
+if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
+if ($segid != "") { $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
 $sql_active = "SELECT active, count(*) AS total_count
 			   FROM domains
@@ -785,15 +888,18 @@ $sql_active = "SELECT active, count(*) AS total_count
 			     $rid_string
 			     $raid_string
 			     $tld_string
+				 $search_string
+				 $quick_search_string
+				 $segment_string
 			   GROUP BY active
 			   ORDER BY active asc";
 $result_active = mysql_query($sql_active,$connection);
 echo "<select name=\"is_active\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Transfer / Pending)</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Transfer / Pending)</option>";
 while ($row_active = mysql_fetch_object($result_active)) { 
-	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$row_active->active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_active->active == $is_active) echo " selected"; echo ">"; if ($row_active->active == "0") { echo "Expired"; } elseif ($row_active->active == "10") { echo "Sold"; } elseif ($row_active->active == "1") { echo "Active"; } elseif ($row_active->active == "2") { echo "In Transfer"; } elseif ($row_active->active == "3") { echo "Pending (Renewal)"; } elseif ($row_active->active == "4") { echo "Pending (Other)"; } elseif ($row_active->active == "5") { echo "Pending (Registration)"; } echo "</option>";
+	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$row_active->active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_active->active == $is_active) echo " selected"; echo ">"; if ($row_active->active == "0") { echo "Expired"; } elseif ($row_active->active == "10") { echo "Sold"; } elseif ($row_active->active == "1") { echo "Active"; } elseif ($row_active->active == "2") { echo "In Transfer"; } elseif ($row_active->active == "3") { echo "Pending (Renewal)"; } elseif ($row_active->active == "4") { echo "Pending (Other)"; } elseif ($row_active->active == "5") { echo "Pending (Registration)"; } echo "</option>";
 } 
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=ALL&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($is_active == "ALL") echo " selected"; echo ">"; echo "ALL</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=ALL&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($is_active == "ALL") echo " selected"; echo ">"; echo "ALL</option>";
 echo "</select>";
 ?>
 
@@ -803,29 +909,28 @@ echo "</select>";
 echo "<select name=\"result_limit\" onChange=\"MM_jumpMenu('parent',this,0)\">"; 
 
 if ($_SESSION['session_number_of_domains'] != "10" && $_SESSION['session_number_of_domains'] != "50" && $_SESSION['session_number_of_domains'] != "100" && $_SESSION['session_number_of_domains'] != "500" && $_SESSION['session_number_of_domains'] != "1000" && $_SESSION['session_number_of_domains'] != "1000000") {
-	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=" . $_SESSION['session_number_of_domains'] . "&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == $_SESSION['session_number_of_domains']) echo " selected"; echo ">"; echo "" . $_SESSION['session_number_of_domains'] . "</option>";
+	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=" . $_SESSION['session_number_of_domains'] . "&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == $_SESSION['session_number_of_domains']) echo " selected"; echo ">"; echo "" . $_SESSION['session_number_of_domains'] . "</option>";
 }
 
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=10&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "10") echo " selected"; echo ">"; echo "10</option>";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=50&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "50") echo " selected"; echo ">"; echo "50</option>";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=100&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "100") echo " selected"; echo ">"; echo "100</option>";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=500&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "500") echo " selected"; echo ">"; echo "500</option>";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=1000&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "1000") echo " selected"; echo ">"; echo "1,000</option>";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=1000000&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "1000000") echo " selected"; echo ">"; echo "ALL</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=10&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "10") echo " selected"; echo ">"; echo "10</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=50&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "50") echo " selected"; echo ">"; echo "50</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=100&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "100") echo " selected"; echo ">"; echo "100</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=500&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "500") echo " selected"; echo ">"; echo "500</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=1000&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "1000") echo " selected"; echo ">"; echo "1,000</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&rid=$rid&raid=$raid&segid=$segid&tld=$tld&is_active=$is_active&result_limit=1000000&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "1000000") echo " selected"; echo ">"; echo "ALL</option>";
 echo "</select>";
 ?>
 <BR>
 <input type="hidden" name="sort_by" value="<?=$sort_by?>">
 </td>
 <td class="search-table-inside">
-<input name="search_for" type="text" value="<?=$search_for?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" value="Search Results &raquo;">&nbsp;&nbsp;<BR><BR>
+<input name="search_for" type="text" value="<?=$_SESSION['session_search_for']?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" value="Search Results &raquo;">&nbsp;&nbsp;<BR><BR>
 <?php
-$quick_search = preg_replace("/', '/", "\r\n", $quick_search);
-$quick_search = preg_replace("/','/", "\r\n", $quick_search);
-$quick_search = preg_replace("/'/", "", $quick_search);
+$_SESSION['session_quick_search'] = preg_replace("/', '/", "\r\n", $_SESSION['session_quick_search']);
+$_SESSION['session_quick_search'] = preg_replace("/','/", "\r\n", $_SESSION['session_quick_search']);
+$_SESSION['session_quick_search'] = preg_replace("/'/", "", $_SESSION['session_quick_search']);
 ?>
-<textarea name="quick_search" cols="35" rows="11"><?=$quick_search?>
-</textarea>&nbsp;&nbsp;
+<textarea name="quick_search" cols="35" rows="11"><?=$_SESSION['session_quick_search']?></textarea>&nbsp;&nbsp;
 <BR>
 <BR>
 <input type="hidden" name="segid" value="<?=$segid?>">
@@ -850,7 +955,15 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 		$sql_segment = "SELECT domain
 						FROM segment_data
 						WHERE segment_id = '$segid'
-						  AND domain NOT IN (SELECT domain FROM domains)
+						  AND inactive = '1'
+						ORDER BY domain";
+		$result_segment = mysql_query($sql_segment,$connection);
+		$totalrows_inactive = mysql_num_rows($result_segment);
+	
+		$sql_segment = "SELECT domain
+						FROM segment_data
+						WHERE segment_id = '$segid'
+						  AND missing = '1'
 						ORDER BY domain";
 		$result_segment = mysql_query($sql_segment,$connection);
 		$totalrows_missing = mysql_num_rows($result_segment);
@@ -858,18 +971,21 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 		$sql_segment = "SELECT domain
 						FROM segment_data
 						WHERE segment_id = '$segid'
-						  AND domain IN (SELECT domain FROM domains WHERE active IN ('0', '10'))
+						  AND filtered = '1'
 						ORDER BY domain";
 		$result_segment = mysql_query($sql_segment,$connection);
-		$totalrows_inactive = mysql_num_rows($result_segment);
+		$totalrows_filtered = mysql_num_rows($result_segment);
 		?>
 		<strong>Domains in Segment:</strong> <?=number_format($number_of_domains)?>
 		<BR><BR><strong>Matching Domains:</strong> <?=number_format($totalrows)?>
         <?php if ($totalrows_inactive > 0) { ?>
-			<BR><BR><strong>Matching But Inactive Domains:</strong> <?=number_format($totalrows_inactive)?> [<a class="subtlelink" href="segments-inactive.php?segid=<?=$segid?>">view</a>]
+			<BR><BR><strong>Matching But Inactive Domains:</strong> <?=number_format($totalrows_inactive)?> [<a class="subtlelink" target="_blank" href="segment-results.php?type=inactive&segid=<?=$segid?>">view</a>]
 		<?php } ?>
         <?php if ($totalrows_missing > 0) { ?>
-	        <BR><BR><strong>Missing Domains:</strong> <?=number_format($totalrows_missing)?> [<a class="subtlelink" href="segments-missing.php?segid=<?=$segid?>">view</a>]
+	        <BR><BR><strong>Missing Domains:</strong> <?=number_format($totalrows_missing)?> [<a class="subtlelink" target="_blank" href="segment-results.php?type=missing&segid=<?=$segid?>">view</a>]
+		<?php } ?>
+        <?php if ($totalrows_filtered > 0) { ?>
+	        <BR><BR><strong>Filtered Out Domains:</strong> <?=number_format($totalrows_filtered)?> [<a class="subtlelink" target="_blank" href="segment-results.php?type=filtered&segid=<?=$segid?>">view</a>]
 		<?php } ?>
 
 <?php } else { ?>
@@ -884,7 +1000,7 @@ $quick_search = preg_replace("/'/", "", $quick_search);
   <tr>
 	<td align="left" valign="top">
 		<?php echo $navigate[2]; ?>
-        &nbsp;[<a href="domains.php?<?=$_SERVER['QUERY_STRING']?>&export=1">export results</a>]&nbsp;[<a href="system/display-settings.php">display settings</a>]
+	        &nbsp;[<a href="domains.php?<?=$_SERVER['QUERY_STRING']?>&export=1">export results</a>]&nbsp;[<a href="system/display-settings.php">display settings</a>]
 	</td>
 	<td width="280" align="right" valign="top">
 		<?php if ($totalrows != '0') { ?>
@@ -901,7 +1017,7 @@ $quick_search = preg_replace("/'/", "", $quick_search);
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['session_display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ed_a") { echo "ed_d"; } else { echo "ed_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Expiry Date</font></a>
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ed_a") { echo "ed_d"; } else { echo "ed_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Expiry Date</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_fee'] == "1") { ?>
@@ -913,45 +1029,45 @@ $quick_search = preg_replace("/'/", "", $quick_search);
         $result_currency = mysql_query($sql_currency,$connection);
         while ($row_currency = mysql_fetch_object($result_currency)) { $temp_currency = $row_currency->currency; }
         ?>
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "df_a") { echo "df_d"; } else { echo "df_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Fee (<?=$temp_currency?>)</font></a>
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "df_a") { echo "df_d"; } else { echo "df_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Fee (<?=$temp_currency?>)</font></a>
 	</td>
 <?php } ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Domain Name</font></a>
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Domain Name</font></a>
 	</td>
 <?php if ($_SESSION['session_display_domain_tld'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "tld_a") { echo "tld_d"; } else { echo "tld_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">TLD</font></a>
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "tld_a") { echo "tld_d"; } else { echo "tld_a"; } ?>&from_dropdown=1"><font class="main_table_heading">TLD</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ip_a") { echo "ip_d"; } else { echo "ip_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">IP Address</font></a>
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ip_a") { echo "ip_d"; } else { echo "ip_a"; } ?>&from_dropdown=1"><font class="main_table_heading">IP Address</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_dns'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dns_a") { echo "dns_d"; } else { echo "dns_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">DNS Profile</font></a>
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dns_a") { echo "dns_d"; } else { echo "dns_a"; } ?>&from_dropdown=1"><font class="main_table_heading">DNS Profile</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_category'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "pc_a") { echo "pc_d"; } else { echo "pc_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Category</font></a>
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "pc_a") { echo "pc_d"; } else { echo "pc_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Category</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Owner</font></a>
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Owner</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_registrar'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "r_a") { echo "r_d"; } else { echo "r_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Registrar</font></a>
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "r_a") { echo "r_d"; } else { echo "r_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Registrar</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ra_a") { echo "ra_d"; } else { echo "ra_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Registrar Account</font></a>
+		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ra_a") { echo "ra_d"; } else { echo "ra_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Registrar Account</font></a>
 	</td>
 <?php } ?>
 </tr>
@@ -1037,7 +1153,7 @@ $quick_search = preg_replace("/'/", "", $quick_search);
   <tr>
 	<td align="left" valign="top">
 		<?php echo $navigate[2]; ?> 
-        &nbsp;[<a href="domains.php?<?=$_SERVER['QUERY_STRING']?>&export=1">export results</a>]&nbsp;[<a href="system/display-settings.php">display settings</a>]	
+	        &nbsp;[<a href="domains.php?<?=$_SERVER['QUERY_STRING']?>&export=1">export results</a>]&nbsp;[<a href="system/display-settings.php">display settings</a>]
 	</td>
 	<td width="280" align="right" valign="top"><?php 
 		echo "&nbsp;&nbsp;(Listing $navigate[1] of " . number_format($totalrows) . ")";
