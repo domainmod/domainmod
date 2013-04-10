@@ -63,11 +63,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		include("../_includes/system/fix-ssl-fees.inc.php");
-		
-		$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
-		
 		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
-		
+
+		$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
+
 	} else {
 	
 		if ($new_name == "") { $_SESSION['session_result_message'] .= "Enter a name for the SSL certificate<BR>"; }

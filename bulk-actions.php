@@ -1,5 +1,5 @@
 <?php
-// bulk-actions.php
+// /bulk-actions.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -193,8 +193,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					// finish cycling through domains here
 					}
 		
-					include("_includes/system/fix-domain-fees.inc.php");
-					
 					$_SESSION['session_result_message'] = "Domains Added<BR>";
 	
 				}
@@ -371,8 +369,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					$new_account_string = "$new_registrar_name :: $new_owner_name ($new_username)";
 					$_SESSION['session_result_message'] = "Registrar Account Changed<BR>";
 	
-					include("_includes/system/fix-domain-fees.inc.php");
-	
 				}
 	
 			} elseif ($action == "E") { 
@@ -501,6 +497,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 
 	}
+
+	include("_includes/system/fix-tlds.inc.php");
+	include("_includes/system/fix-domain-fees.inc.php");
+	include("_includes/system/fix-ssl-fees.inc.php");
+	include("_includes/system/update-segments.inc.php");
 
 }
 ?>

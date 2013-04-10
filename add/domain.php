@@ -71,11 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 
 		include("../_includes/system/fix-domain-fees.inc.php");
+		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
 		$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
-		
-		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
-		
+
 	} else {
 	
 		if (!preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) { $_SESSION['session_result_message'] .= "The domain format is incorrect<BR>"; }
