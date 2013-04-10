@@ -898,6 +898,22 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0016 to 2.0017
+	if ($current_db_version == 2.0016) {
+
+		$sql = "ALTER TABLE `segment_data` 
+					ADD `filtered` INT(1) NOT NULL DEFAULT '0' AFTER `missing`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0017',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0017;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
