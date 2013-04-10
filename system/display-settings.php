@@ -149,9 +149,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 <font class="headline">Main Domain Page</font><BR><BR>
 <strong>Number of domains per page:</strong> <input name="new_number_of_domains" type="text" size="3" maxlength="5" value="<?php if ($new_number_of_domains != "") echo $new_number_of_domains; ?>">
 <BR><BR>
+<strong>Columns to display: </strong><BR><BR>
 <table class="main_table">
 	<tr class="main_table_row_heading_active">
-    	<td class="main_table_cell_heading_active"><strong>Columns to display: </strong></td>
     	<td class="main_table_cell_heading_active">Expiry Date</td>
     	<td class="main_table_cell_heading_active">Renewal Fee</td>
     	<td class="main_table_cell_heading_active">TLD</td>
@@ -163,7 +163,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     	<td class="main_table_cell_heading_active">Account</td>
     </tr>
 	<tr class="main_table_row_active">
-    	<td class="main_table_cell_active_centered"></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_expiry_date" value="1"<?php if ($new_display_domain_expiry_date == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_fee" value="1"<?php if ($new_display_domain_fee == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_tld" value="1"<?php if ($new_display_domain_tld == "1") echo " checked"; ?>></td>
@@ -179,9 +178,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 <font class="headline">Main SSL Certificate Page</font><BR><BR>
 <strong>Number of SSL certificates per page:</strong> <input name="new_number_of_ssl_certs" type="text" size="3" maxlength="5" value="<?php if ($new_number_of_ssl_certs != "") echo $new_number_of_ssl_certs; ?>">
 <BR><BR>
+<strong>Columns to display: </strong><BR><BR>
 <table class="main_table">
 	<tr class="main_table_row_heading_active">
-    	<td class="main_table_cell_heading_active"><strong>Columns to display: </strong></td>
     	<td class="main_table_cell_heading_active">Expiry Date</td>
     	<td class="main_table_cell_heading_active">Renewal Fee</td>
     	<td class="main_table_cell_heading_active">Domain</td>
@@ -191,7 +190,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     	<td class="main_table_cell_heading_active">Account</td>
     </tr>
 	<tr class="main_table_row_active">
-    	<td class="main_table_cell_heading_active"></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_expiry_date" value="1"<?php if ($new_display_ssl_expiry_date == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_fee" value="1"<?php if ($new_display_ssl_fee == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_domain" value="1"<?php if ($new_display_ssl_domain == "1") echo " checked"; ?>></td>
