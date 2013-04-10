@@ -1,5 +1,5 @@
 <?php
-// registrar-fees.php
+// /edit/registrar-fees.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -295,7 +295,7 @@ if (mysql_num_rows($result) != 0) {
 			
 			if ($row->id == $new_currency_id) {
 			?>
-			    <option value="<?=$row->id?>" selected>[ <?php echo "$row->currency - $row->name"; ?> ]</option>
+			    <option value="<?=$row->id?>" selected><?php echo "$row->currency - $row->name"; ?></option>
 			<?php
 			} else {
 			?>

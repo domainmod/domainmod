@@ -1,5 +1,5 @@
 <?php
-// ssl-provider.php
+// /edit/ssl-provider.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti

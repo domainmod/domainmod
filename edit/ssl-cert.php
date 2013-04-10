@@ -1,5 +1,5 @@
 <?php
-// ssl-cert.php
+// /edit/ssl-cert.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -178,7 +178,7 @@ while ($row_domain = mysql_fetch_object($result_domain)) {
 
 	if ($row_domain->id == $new_domain_id) {
 
-		echo "<option value=\"$row_domain->id\" selected>[ $row_domain->domain ]</option>";
+		echo "<option value=\"$row_domain->id\" selected>$row_domain->domain</option>";
 	
 	} else {
 
@@ -202,7 +202,7 @@ while ($row_account = mysql_fetch_object($result_account)) {
 
 	if ($row_account->id == $new_account_id) {
 
-		echo "<option value=\"$row_account->id\" selected>[ $row_account->sslp_name :: $row_account->o_name :: $row_account->username ]</option>";
+		echo "<option value=\"$row_account->id\" selected>$row_account->sslp_name :: $row_account->o_name :: $row_account->username</option>";
 	
 	} else {
 
@@ -225,7 +225,7 @@ while ($row_type = mysql_fetch_object($result_type)) {
 
 	if ($row_type->id == $new_type_id) {
 
-		echo "<option value=\"$row_type->id\" selected>[ $row_type->type ]</option>";
+		echo "<option value=\"$row_type->id\" selected>$row_type->type</option>";
 	
 	} else {
 

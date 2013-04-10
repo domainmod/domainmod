@@ -219,7 +219,7 @@ while ($row_cat = mysql_fetch_object($result_cat)) {
 
 	if ($row_cat->id == $new_cat_id) {
 
-		echo "<option value=\"$row_cat->id\" selected>[ $row_cat->name ]</option>";
+		echo "<option value=\"$row_cat->id\" selected>$row_cat->name</option>";
 	
 	} else {
 
@@ -242,7 +242,7 @@ while ($row_dns = mysql_fetch_object($result_dns)) {
 
 	if ($row_dns->id == $new_dns_id) {
 
-		echo "<option value=\"$row_dns->id\" selected>[ $row_dns->name ]</option>";
+		echo "<option value=\"$row_dns->id\" selected>$row_dns->name</option>";
 	
 	} else {
 
@@ -265,7 +265,7 @@ while ($row_ip = mysql_fetch_object($result_ip)) {
 
 	if ($row_ip->id == $new_ip_id) {
 
-		echo "<option value=\"$row_ip->id\" selected>[ $row_ip->name ($row_ip->ip) ]</option>";
+		echo "<option value=\"$row_ip->id\" selected>$row_ip->name ($row_ip->ip)</option>";
 	
 	} else {
 
@@ -289,7 +289,7 @@ while ($row_account = mysql_fetch_object($result_account)) {
 
 	if ($row_account->id == $new_account_id) {
 
-		echo "<option value=\"$row_account->id\" selected>[ $row_account->r_name :: $row_account->o_name :: $row_account->username ]</option>";
+		echo "<option value=\"$row_account->id\" selected>$row_account->r_name :: $row_account->o_name :: $row_account->username</option>";
 	
 	} else {
 
