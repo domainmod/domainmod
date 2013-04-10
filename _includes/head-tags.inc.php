@@ -29,9 +29,9 @@ td {
 	font-size: 10pt;
 	font-size: .7em;
 }
-td.header-table {
+td.header-table-left {
 	text-align: left;
-	vertical-align: center; 
+	vertical-align: bottom; 
 	font-family: Verdana, sans-serif, Arial;
 	font-weight: normal;
 	color: #404040;
@@ -40,9 +40,24 @@ td.header-table {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 0px;
-	padding-bottom: 15px;
-	padding-left: 10px;
-	padding-right: 10px; 
+	padding-bottom: 3px;
+	padding-left: 8px;
+	padding-right: 0px; 
+}
+td.header-table-right {
+	text-align: right;
+	vertical-align: bottom; 
+	font-family: Verdana, sans-serif, Arial;
+	font-weight: normal;
+	color: #404040;
+	border-top: 0px #6699CC ridge;
+	border-bottom: 0px #6699CC ridge;
+	border-right: 0px #6699CC ridge;
+	border-left: 0px #6699CC ridge;
+	padding-top: 0px;
+	padding-bottom: 10px;
+	padding-left: 0px;
+	padding-right: 8px; 
 }
 td.main-table {
 	text-align: left;
