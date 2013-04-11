@@ -1,5 +1,5 @@
 <?php
-// head-tags.inc.php
+// /_includes/head-tags.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -46,6 +46,21 @@ td.header-table-left {
 }
 td.header-table-right {
 	text-align: right;
+	vertical-align: bottom; 
+	font-family: Verdana, sans-serif, Arial;
+	font-weight: normal;
+	color: #404040;
+	border-top: 0px #6699CC ridge;
+	border-bottom: 0px #6699CC ridge;
+	border-right: 0px #6699CC ridge;
+	border-left: 0px #6699CC ridge;
+	padding-top: 0px;
+	padding-bottom: 10px;
+	padding-left: 0px;
+	padding-right: 8px; 
+}
+td.header-table-center {
+	text-align: center;
 	vertical-align: bottom; 
 	font-family: Verdana, sans-serif, Arial;
 	font-weight: normal;
@@ -131,6 +146,21 @@ td.cell-maintenance-table {
 }
 td.footer-table {
 	text-align: right;
+	vertical-align: center; 
+	font-family: Verdana, sans-serif, Arial;
+	font-weight: normal;
+	color: #404040;
+	border-top: 0px #6699CC ridge;
+	border-bottom: 0px #6699CC ridge;
+	border-right: 0px #6699CC ridge;
+	border-left: 0px #6699CC ridge;
+	padding-top: 0px;
+	padding-bottom: 15px;
+	padding-left: 10px;
+	padding-right: 10px; 
+}
+td.footer-table-login {
+	text-align: center;
 	vertical-align: center; 
 	font-family: Verdana, sans-serif, Arial;
 	font-weight: normal;

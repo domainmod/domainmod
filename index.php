@@ -29,12 +29,12 @@ include("_includes/system/installation-check.inc.php");
 
 if ($_SESSION['session_installation_mode'] == 1) {
 	
-	$page_title = "Installation";
+//	$page_title = "Installation";
 	$software_section = "installation";
 
 } else {
 
-	$page_title = "Please Login";
+//	$page_title = "Please Login";
 	$software_section = "login";
 
 }
@@ -135,31 +135,38 @@ if ($new_username == "") { ?>
 } else { ?>
 	<body onLoad="document.forms[0].elements[1].focus()";><?php 
 } ?>
-<?php include("_includes/header.inc.php"); ?>
+<?php include("_includes/header-login.inc.php"); ?>
 <?php 
-if ($_SESSION['session_installation_mode'] != 1) {
-
-	if ($_SERVER['HTTP_HOST'] == "demos.aysmedia.com") { ?>
-		<strong>Demo Username:</strong> admin<BR>
-		<strong>Demo Password:</strong> admin<BR><?php 
-	} ?>
-
-    <BR>
-    <form name="login_form" method="post" action="<?=$PHP_SELF?>">
-        <strong>Username:<strong><BR><BR>
-        <input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
-        <strong>Password:</strong><BR><BR>
-        <input name="new_password" type="password" id="new_password" size="20" maxlength="20"><br><?php 
-
-        if ($_SERVER['HTTP_HOST'] != "demos.aysmedia.com") { ?>
-            <BR><font size="1"><i>(<a href="reset-password.php"><i>Forgot your Password?</i></a>)</i></font><BR><?php 
-        } ?>
-
-        <BR><BR>
-        <input type="submit" name="button" value="Login &raquo;">
-    </form>
+if ($_SESSION['session_installation_mode'] != 1) { ?>
+<form name="login_form" method="post" action="<?=$PHP_SELF?>">
+    <table align="center" border="0">
+        <tr>
+            <td>
+            	<?php
+				if ($_SERVER['HTTP_HOST'] == "demos.aysmedia.com") { ?>
+					<strong>Demo Username & Password:</strong> "admin"<BR><BR><BR><?php 
+				}
+				?>
+                    <strong>Username:</strong>&nbsp;
+                    <input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
+                    &nbsp;<strong>Password:</strong>&nbsp;
+                    <input name="new_password" type="password" id="new_password" size="20" maxlength="20"><br>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+				<?php 
+                if ($_SERVER['HTTP_HOST'] != "demos.aysmedia.com") { ?>
+                    <BR><font size="1"><a class="subtlelink" href="reset-password.php">Forgot your Password?</a></font><BR><?php 
+                } ?>
+                <BR><BR>
+                <input type="submit" name="button" value="Manage Your Domains &raquo;">
+            </td>
+        </tr>
+    </table>
+</form>
 <?php 
 } ?>
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("_includes/footer-login.inc.php"); ?>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <?php
-// /_includes/header.inc.php
+// /_includes/header-login.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -18,10 +18,11 @@
 <?php
 session_start();
 ?>
+<BR><BR><BR>
 <a name="top"></a>
-<table align="center" width="<?=$site_width?>" border="0" cellspacing="0" cellpadding="0">
+<table align="center" width="<?=$site_width_login?>" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-        <td class="header-table-left">
+        <td class="header-table-center">
 			<font class="headline">Domain Manager</font>
 		</td>
         <td class="header-table-right">
@@ -31,7 +32,7 @@ session_start();
 		</td>
 	</tr>
 </table>
-<table align="center" width="<?=$site_width?>" border="0" cellspacing="0" cellpadding="0">
+<table align="center" width="<?=$site_width_login?>" border="0" cellspacing="0" cellpadding="0">
 	<tr>
         <td class="main-table" height="100%">
 			<?php if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['session_running_login_checks'] != 1) { ?>
@@ -42,7 +43,6 @@ session_start();
                 <tr>
                     <td width="10">&nbsp;</td>
                     <td>
-                        <font class="headline"><?=$page_title?></font>
                         <BR><BR>
                         <?php 
                             include($full_server_path . "/_includes/layout/table-maintenance.inc.php"); 
