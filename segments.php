@@ -1,5 +1,5 @@
 <?php
-// segments.php
+// /segments.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -54,7 +54,9 @@ $sql = "SELECT id, name, description, segment, number_of_domains
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
-Segments identify a specific subset of domains, which can be used to help filter and manage your <a href="domains.php">domain results</a>.
+Segments are lists of domains that can be used to help filter and manage your <a href="domains.php">domain results</a>.<BR>
+<BR>
+Segment filters will tell you which domains match with domains that are saved in your <?=$software_title?>, as well as domains that are missing, and you can easily export the results.
 <BR><BR>
 <?php 
 $sql_segment_check = "SELECT id
