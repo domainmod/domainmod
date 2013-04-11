@@ -1,5 +1,5 @@
 <?php
-// software.inc.php
+// /_includes/software.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -31,7 +31,7 @@ $site_width_login = "500";
 // Number of 'Test Data' domains to generate
 $number_of_temp_domains = 100;
 
-// This is the newest, most recent version of the Domain Manager database
+// This is the newest, most recent version of the database
 // 
 // DO NOT CHANGE THIS - CHANGING THIS LINE CAN MESS UP YOUR DATABASE
 //
