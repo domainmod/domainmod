@@ -1,5 +1,5 @@
 <?php
-// /_includes/layout/index.php
+// /invalid.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,6 +16,23 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-header("Location: ../../invalid.php");
-exit;
+session_start();
+
+include("_includes/config.inc.php");
+include("_includes/software.inc.php");
+
+$page_title = "Invalid Page";
+$software_section = "invalid";
 ?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title><?=$software_title?> :: <?=$page_title?></title>
+<?php include("_includes/head-tags.inc.php"); ?>
+</head>
+<body>
+<?php include("_includes/header.inc.php"); ?>
+The page you're trying to access is invalid.
+<?php include("_includes/footer.inc.php"); ?>
+</body>
+</html>
