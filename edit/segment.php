@@ -157,12 +157,11 @@ if ($really_del == "1") {
 <strong>Segment Name:</strong><BR><BR>
 <input name="new_name" type="text" value="<?php if ($new_name != "") echo $new_name; ?>" size="50" maxlength="255">
 <BR><BR>
+<strong>Segment Domains (one per line):</strong><BR><BR>
+<textarea name="new_segment" cols="60" rows="5"><?php if ($new_segment != "") echo $new_segment; ?></textarea>
+<BR><BR>
 <strong>Description:</strong><BR><BR>
 <textarea name="new_description" cols="60" rows="5"><?php if ($new_description != "") echo $new_description; ?></textarea>
-<BR><BR>
-<strong>Segment:</strong><BR><BR>
-Enter the domains one per line.<BR><BR>
-<textarea name="new_segment" cols="60" rows="5"><?php if ($new_segment != "") echo $new_segment; ?></textarea>
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
