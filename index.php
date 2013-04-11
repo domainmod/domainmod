@@ -127,7 +127,11 @@ $new_password = "";
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title><?=$software_title?> :: <?=$page_title?></title>
+<?php if ($page_title != "") { ?>
+	<title><?=$software_title?> :: <?=$page_title?></title>
+<?php } else { ?>
+	<title><?=$software_title?></title>
+<?php } ?>
 <?php include("_includes/head-tags.inc.php"); ?>
 </head> <?php 
 if ($new_username == "") { ?>

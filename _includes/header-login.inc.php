@@ -23,7 +23,7 @@ session_start();
 <table align="center" width="<?=$site_width_login?>" border="0" cellspacing="0" cellpadding="0">
 	<tr>
         <td class="header-table-center">
-			<font class="headline">Domain Manager</font>
+			<a href="<?=$web_root?>"><img border="0" src="<?=$web_root?>/images/logo.png"></a>
 		</td>
         <td class="header-table-right">
 			<?php if ($_SESSION['session_is_logged_in'] == 1) { ?>

@@ -39,9 +39,9 @@ td.header-table-left {
 	border-bottom: 0px #6699CC ridge;
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
-	padding-top: 0px;
-	padding-bottom: 3px;
-	padding-left: 8px;
+	padding-top: 3px;
+	padding-bottom: 5px;
+	padding-left: 20px;
 	padding-right: 0px; 
 }
 td.header-table-right {
@@ -307,6 +307,7 @@ a.subtlelink:active {
 	text-decoration: none;
 }
 </style>
+<link rel="icon" type="image/ico" href="<?=$web_root?>/images/favicon.ico"/>
 <style type="text/css">
 html { overflow-y: scroll; }
 </style>
