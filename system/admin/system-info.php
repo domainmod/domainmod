@@ -1,5 +1,5 @@
 <?php
-// /system/index.php
+// /system/admin/system-info.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,29 +16,39 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
+include("../../_includes/start-session.inc.php");
 
-$page_title = "Control Panel";
+// If the user isn't an administrator, redirect them to $full_redirect
+$full_redirect = "index.php";
+include("../../_includes/auth/admin-user-check.inc.php");
+
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
+
+$page_title = "System Information";
 $software_section = "system";
 ?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
-&raquo; <a href="display-settings.php">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="change-password.php">Change Password</a><BR>
-<?php if ($_SESSION['session_is_admin'] == 1) { ?>
-	<BR><BR><font class="headline">Admin Tools</font><BR><BR>
-	&raquo; <a href="admin/system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/system-info.php">System Info</a><BR><BR>
-	&raquo; <a href="admin/users.php">User List</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/add/user.php">Add New User</a><BR>
-<?php } ?>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/header.inc.php"); ?>
+<?php
+$sql = "SELECT db_version
+		FROM settings";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	$db_version = $row->db_version;
+}
+?>
+<strong>Database Version:</strong> v<?=number_format($db_version, 4)?>
+
+<?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>
