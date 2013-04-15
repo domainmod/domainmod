@@ -102,8 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				}
 	
 			}
-			
-	
+
 			$new_data_formatted = "'" . $new_data;
 			$new_data_formatted = $new_data_formatted . "'";
 			$new_data_formatted = preg_replace("/\r\n/", "','", $new_data_formatted);
