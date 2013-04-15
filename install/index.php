@@ -231,7 +231,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`owner_id` int(5) NOT NULL,
 				`ssl_provider_id` int(5) NOT NULL,
 				`account_id` int(5) NOT NULL,
-				`domain_id` int(10) NOT NULL,
+				`domain_id` int(10) NOT NULL default '0',
 				`type_id` int(10) NOT NULL,
 				`name` varchar(255) NOT NULL,
 				`expiry_date` date NOT NULL,
