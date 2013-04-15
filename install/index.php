@@ -60,6 +60,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	$sql = "CREATE TABLE IF NOT EXISTS `user_settings` (
 				`id` int(10) NOT NULL auto_increment,
 				`user_id` int(10) NOT NULL,
+				`expiration_emails` int(1) NOT NULL default '1',
 				`number_of_domains` int(5) NOT NULL default '50',
 				`number_of_ssl_certs` int(5) NOT NULL default '50',
 				`display_domain_owner` int(1) NOT NULL default '0',
