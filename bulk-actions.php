@@ -806,11 +806,15 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
   </select>
 
 <?php if ($action != "") { ?>
-<BR><BR><BR>
-<strong>Domains to update (one per line):</strong>
-<BR><BR>
-<textarea name="new_data" cols="60" rows="5"><?=$new_data?></textarea>
-<BR><BR>
+        <BR><BR><BR>
+		<?php if ($action == "AD") { ?>
+	        <strong>Domains to add (one per line):</strong>
+        <?php } else { ?>
+	        <strong>Domains to update (one per line):</strong>
+        <?php } ?>
+        <BR><BR>
+        <textarea name="new_data" cols="60" rows="5"><?=$new_data?></textarea>
+        <BR><BR>
 <?php } ?>
 
 <?php if ($action == "R" || $action == "FR") { ?>
