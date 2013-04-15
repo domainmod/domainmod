@@ -28,14 +28,14 @@ while ($row_email = mysql_fetch_object($result_email)) {
 $to = $row->email_address;
 $from_name = $software_title;
 
+$subject = "Your " . $software_title . " Password has been Reset";
+$headline = "Your " . $software_title . " Password has been Reset";
+
 $headers = "";
 $headers .= "MIME-Version: 1.0" . "\r\n";
 $headers .= "Content-type: text/html; charset=iso-8859-1" . "\r\n";
 $headers .= "From: \"" . $from_name . "\" <" . $from_address . ">\n";
 $headers .= "Return-Path: <" . $return_path . ">\n";  // Return path for errors
-
-$subject = "Your " . $software_title . " Password has been Reset";
-$headline = "Your " . $software_title . " Password has been Reset";
 
 $message .= "
 <html>
