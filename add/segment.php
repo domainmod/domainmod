@@ -58,22 +58,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			if ($invalid_domains == 1) {
 	
 				if ($invalid_domain_count == 1) {
-
+	
 					$_SESSION['session_result_message'] = "There is " . number_format($invalid_domain_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
-
+	
 				} else {
-
+	
 					$_SESSION['session_result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
-
+	
 					if (($invalid_domain_count-$invalid_domains_to_display) == 1) { 
-
+	
 						$_SESSION['session_result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " other<BR>";
-
+	
 					} elseif (($invalid_domain_count-$invalid_domains_to_display) > 1) { 
-
+	
 						$_SESSION['session_result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
 					}
-
+	
 				}
 	
 			}

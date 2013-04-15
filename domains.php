@@ -215,19 +215,20 @@ if ($_SESSION['session_quick_search'] != "") {
 			$_SESSION['session_result_message'] = "There is " . number_format($invalid_domain_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
 
 		} else {
-			
-			if ($invalid_domain_count < $invalid_domains_to_display) {
 
-				$_SESSION['session_result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message . "<BR>";
+			$_SESSION['session_result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
 
-			} else {
+			if (($invalid_domain_count-$invalid_domains_to_display) == 1) { 
 
-				$_SESSION['session_result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message . "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
-				
+				$_SESSION['session_result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " other<BR>";
+
+			} elseif (($invalid_domain_count-$invalid_domains_to_display) > 1) { 
+
+				$_SESSION['session_result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
 			}
 
 		}
-
+	
 	} else {
 
 		$lines = explode("\r\n", $_SESSION['session_quick_search']);
