@@ -32,31 +32,52 @@ $export = $_GET['export'];
 $new_expiry_start = $_REQUEST['new_expiry_start'];
 $new_expiry_end = $_REQUEST['new_expiry_end'];
 
-$sql = "SELECT currency
-		FROM currencies
-		WHERE default_currency = '1'
-		LIMIT 1";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) { $default_currency = $row->currency; }
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
-		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip
-		WHERE d.account_id = ra.id
-		  AND ra.registrar_id = r.id
-		  AND ra.owner_id = o.id
-		  AND d.registrar_id = f.registrar_id
-		  AND d.tld = f.tld
-		  AND f.currency_id = cc.id
-		  AND d.cat_id = cat.id
-		  AND d.dns_id = dns.id
-		  AND d.ip_id = ip.id
-		  AND cat.active = '1'
-		  AND d.active NOT IN ('0', '10')
-		  AND d.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
-		ORDER BY d.expiry_date asc";	
+	function MyCheckDate( $postedDate ) {
+	   if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $postedDate, $datebit)) {
+		  return checkdate($datebit[2] , $datebit[3] , $datebit[1]);
+	   } else {
+		  return false;
+	   }
+	} 	
 
-$result = mysql_query($sql,$connection) or die(mysql_error());
-$result2 = mysql_query($sql,$connection) or die(mysql_error());
+	if (MyCheckDate($new_expiry_start) && MyCheckDate($new_expiry_end)) {
+	
+		$sql = "SELECT currency
+				FROM currencies
+				WHERE default_currency = '1'
+				LIMIT 1";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $default_currency = $row->currency; }
+		
+		$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
+				FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip
+				WHERE d.account_id = ra.id
+				  AND ra.registrar_id = r.id
+				  AND ra.owner_id = o.id
+				  AND d.registrar_id = f.registrar_id
+				  AND d.tld = f.tld
+				  AND f.currency_id = cc.id
+				  AND d.cat_id = cat.id
+				  AND d.dns_id = dns.id
+				  AND d.ip_id = ip.id
+				  AND cat.active = '1'
+				  AND d.active NOT IN ('0', '10')
+				  AND d.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
+				ORDER BY d.expiry_date asc";	
+		
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result2 = mysql_query($sql,$connection) or die(mysql_error());
+
+	} else {
+
+		if (!MyCheckDate($new_expiry_start)) { $_SESSION['session_result_message'] .= "The starting expiry date you entered is invalid<BR>"; }
+		if (!MyCheckDate($new_expiry_end)) { $_SESSION['session_result_message'] .= "The ending expiry date you entered is invalid<BR>"; }
+
+	}
+
+}
 
 $full_export = "";
 

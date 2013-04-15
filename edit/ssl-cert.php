@@ -45,7 +45,15 @@ $new_sslcid = $_POST['new_sslcid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "" && $new_domain_id != "0" && $new_account_id != "0" && $new_type_id != "0") {
+	function MyCheckDate( $postedDate ) {
+	   if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $postedDate, $datebit)) {
+		  return checkdate($datebit[2] , $datebit[3] , $datebit[1]);
+	   } else {
+		  return false;
+	   }
+	} 	
+
+	if (MyCheckDate($new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "" && $new_domain_id != "0" && $new_account_id != "0" && $new_type_id != "0") {
 
 		$sql = "SELECT ssl_provider_id, owner_id
 				FROM ssl_accounts
@@ -99,8 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	} else {
 	
 		if ($new_name == "") { $_SESSION['session_result_message'] .= "Enter the SSL certificate name<BR>"; }
-
-		if (!preg_match("/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])$/i", $new_expiry_date)) { $_SESSION['session_result_message'] .= "The expiry date format is incorrect<BR>"; }
+		if (!MyCheckDate($new_expiry_date)) { $_SESSION['session_result_message'] .= "The expiry date you entered is invalid<BR>"; }
 
 	}
 
