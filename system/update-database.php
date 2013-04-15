@@ -1,5 +1,5 @@
 <?php
-// update-database.php
+// /system/update-database.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -927,6 +927,22 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0018;
+
+	}
+
+	// upgrade database from 2.0018 to 2.0019
+	if ($current_db_version == 2.0018) {
+
+		$sql = "ALTER TABLE `ssl_certs` 
+					CHANGE `domain_id` `domain_id` INT(10) NOT NULL";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0019',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0019;
 
 	}
 
