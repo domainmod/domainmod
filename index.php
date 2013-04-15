@@ -142,6 +142,7 @@ if ($new_username == "") { ?>
 <?php include("_includes/header-login.inc.php"); ?>
 <?php 
 if ($_SESSION['session_installation_mode'] != 1) { ?>
+<?php if ($_SERVER['REQUEST_METHOD'] == 'POST') echo "<BR>"; ?>
 <form name="login_form" method="post" action="<?=$PHP_SELF?>">
     <table align="center" border="0">
         <tr>
