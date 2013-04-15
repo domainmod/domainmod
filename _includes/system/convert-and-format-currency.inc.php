@@ -1,5 +1,5 @@
 <?php
-// convert-and-format-currency.inc.php
+// /_includes/system/convert-and-format-currency.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -27,8 +27,6 @@
 // $xxxxx = $temp_output_amount;
 ?>
 <?php
-session_start();
-
 setlocale(LC_MONETARY, 'en_CA');
 
 if ($temp_input_conversion == "") {

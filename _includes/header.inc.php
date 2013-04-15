@@ -15,9 +15,6 @@
 // You should have received a copy of the GNU General Public License along with Domain Manager. If not, please 
 // see http://www.gnu.org/licenses/
 ?>
-<?php
-session_start();
-?>
 <a name="top"></a>
 <table align="center" width="<?=$site_width?>" border="0" cellspacing="0" cellpadding="0">
 	<tr>

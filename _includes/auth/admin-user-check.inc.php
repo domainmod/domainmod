@@ -1,5 +1,5 @@
 <?php
-// admin-user-check.inc.php
+// /_includes/auth/admin-user-check.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,8 +16,6 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-session_start();
-
 if ($_SESSION['session_is_admin'] != 1) { 
 	header("Location: $full_redirect"); 
 	exit; 

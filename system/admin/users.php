@@ -1,5 +1,5 @@
 <?php
-// users.php
+// /system/admin/users.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,7 +16,7 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-session_start();
+include("../../_includes/start-session.inc.php");
 
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "index.php";

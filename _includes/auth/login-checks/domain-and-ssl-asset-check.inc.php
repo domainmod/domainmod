@@ -1,5 +1,5 @@
 <?php
-// domain-and-ssl-asset-check.inc.php
+// /_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,8 +16,6 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-session_start();
-
 $sql_asset_check = "SELECT id
 					FROM registrars
 					WHERE active = '1'

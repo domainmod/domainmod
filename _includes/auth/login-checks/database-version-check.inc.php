@@ -1,5 +1,5 @@
 <?php
-// database-version-check.inc.php
+// /_includes/auth/login-checks/database-version-check.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,8 +16,6 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-session_start();
-
 $sql_db_check = "SELECT db_version
 				FROM settings";
 $result_db_check = mysql_query($sql_db_check,$connection) or die(mysql_error());

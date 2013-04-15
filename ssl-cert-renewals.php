@@ -1,5 +1,5 @@
 <?php
-// ssl-cert-renewals.php
+// /ssl-cert-renewals.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,8 +16,7 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-session_start();
-
+include("_includes/start-session.inc.php");
 include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");

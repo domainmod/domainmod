@@ -1,5 +1,5 @@
 <?php
-// table-maintenance.inc.php
+// /_includes/layout/table-maintenance.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -14,9 +14,6 @@
 // 
 // You should have received a copy of the GNU General Public License along with Domain Manager. If not, please 
 // see http://www.gnu.org/licenses/
-?>
-<?php
-session_start();
 ?>
 <?php if ($_SESSION['session_needs_database_upgrade'] == 1) { ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" bordercolor="#000000">
@@ -34,6 +31,7 @@ session_start();
                     </td>
 				</tr>
 			</table>
+
 		</td>
 	</tr>
 </table>
@@ -59,6 +57,7 @@ session_start();
                     </td>
 				</tr>
 			</table>
+
 		</td>
 	</tr>
 </table>

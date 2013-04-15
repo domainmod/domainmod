@@ -16,8 +16,7 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-session_start();
-
+include("../_includes/start-sessoin.inc.php");
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");

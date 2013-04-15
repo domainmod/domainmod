@@ -1,5 +1,5 @@
 <?php
-// menu-main.inc.php
+// /_includes/layout/menu-main.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -35,7 +35,4 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/domain-renewals.php">Domain Renewals</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-cert-renewals.php">SSL Renewals</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a> ]&nbsp;
-<?php /* ?>
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/">Help!</a> ]&nbsp;
-<?php */ ?>
 <?php include($full_server_path . "/_includes/layout/menu-sub.inc.php"); ?>

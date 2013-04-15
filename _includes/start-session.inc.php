@@ -1,5 +1,5 @@
 <?php
-// /_includes/auth/login-check.inc.php
+// /_includes/start-session.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,18 +16,5 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-if ($_SESSION['session_is_logged_in'] == 1) {
-
-    if (isset($_SESSION['session_running_login_checks'])) {
-		header("Location: /_includes/auth/login-checks/main.inc.php");
-	    exit;
-	}
-	
-	if ($web_root == "/") {
-		header("Location: /domains.php");
-	} else {
-		header("Location: " . $web_root . "/domains.php");
-	}
-    exit;
-}
+session_start();
 ?>

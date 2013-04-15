@@ -16,8 +16,6 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-session_start();
-
 $full_install_path = $full_server_path . "/install/";
 
 if (is_dir($full_install_path)) {
