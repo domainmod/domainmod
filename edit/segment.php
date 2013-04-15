@@ -42,48 +42,100 @@ $new_segid = $_POST['new_segid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+	$new_segment = preg_replace("/^\n+|^[\t\s]*\n+/m", "", $new_segment);
+
 	if ($new_name != "" && $new_segment != "") {
 
-		$new_segment = preg_replace("/^\n+|^[\t\s]*\n+/m", "", $new_segment);
-
 		$lines = explode("\r\n", $new_segment);
-		$number_of_domains = count($lines);
-
-		$new_segment_formatted = "'" . $new_segment;
-		$new_segment_formatted = $new_segment_formatted . "'";
-		$new_segment_formatted = preg_replace("/\r\n/", "','", $new_segment_formatted);
-		$new_segment_formatted = str_replace (" ", "", $new_segment_formatted);
-		$new_segment_formatted = trim($new_segment_formatted);
-		$new_segment_formatted = mysql_real_escape_string($new_segment_formatted);
-
-		$sql = "UPDATE segments
-				SET name = '" . mysql_real_escape_string($new_name) . "',
-					description = '" . mysql_real_escape_string($new_description) . "',
-					segment = '$new_segment_formatted',
-					number_of_domains = '$number_of_domains',
-					notes = '" . mysql_real_escape_string($new_notes) . "',
-					update_time = '$current_timestamp'
-				WHERE id = '$new_segid'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-
-		$sql = "DELETE FROM segment_data
-				WHERE segment_id = '$new_segid'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-
-		foreach ($lines as $domain) {
-
-			$sql = "INSERT INTO segment_data
-					(segment_id, domain, update_time) VALUES 
-					('$new_segid', '$domain', '$current_timestamp');";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-
+		$invalid_domain_count = 0;
+		$invalid_domains_to_display = 5;
+	
+		while (list($key, $new_domain) = each($lines)) {
+	
+			if (!preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) {
+				if ($invalid_domain_count < $invalid_domains_to_display) $temp_result_message .= "Line " . number_format($key + 1) . " contains an invalid domain<BR>";
+				$invalid_domains = 1;
+				$invalid_domain_count++;
+			}
+	
 		}
 		
-		$segid = $new_segid;
+		if ($new_segment == "" || $invalid_domains == 1) { 
 		
-		$_SESSION['session_result_message'] = "Segment <font class=\"highlight\">$new_name</font> Updated<BR>";
+			if ($invalid_domains == 1) {
+	
+				if ($invalid_domain_count == 1) {
 
-		include("../_includes/system/update-segments.inc.php");
+					$_SESSION['session_result_message'] = "There is " . number_format($invalid_domain_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
+
+				} else {
+
+					$_SESSION['session_result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
+					
+					if (($invalid_domain_count-$invalid_domains_to_display) == 1) { 
+
+						$_SESSION['session_result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " other<BR>";
+
+					} elseif (($invalid_domain_count-$invalid_domains_to_display) > 1) { 
+
+						$_SESSION['session_result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
+					}
+
+				}
+	
+			}
+			$submission_failed = 1;
+	
+		} else {
+
+			$lines = explode("\r\n", $new_segment);
+			$number_of_domains = count($lines);
+	
+			while (list($key, $new_domain) = each($lines)) {
+	
+				if (!preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) {
+					echo "invalid domain $key"; exit;
+				}
+	
+			}
+	
+			$new_segment_formatted = "'" . $new_segment;
+			$new_segment_formatted = $new_segment_formatted . "'";
+			$new_segment_formatted = preg_replace("/\r\n/", "','", $new_segment_formatted);
+			$new_segment_formatted = str_replace (" ", "", $new_segment_formatted);
+			$new_segment_formatted = trim($new_segment_formatted);
+			$new_segment_formatted = mysql_real_escape_string($new_segment_formatted);
+	
+			$sql = "UPDATE segments
+					SET name = '" . mysql_real_escape_string($new_name) . "',
+						description = '" . mysql_real_escape_string($new_description) . "',
+						segment = '$new_segment_formatted',
+						number_of_domains = '$number_of_domains',
+						notes = '" . mysql_real_escape_string($new_notes) . "',
+						update_time = '$current_timestamp'
+					WHERE id = '$new_segid'";
+			$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+			$sql = "DELETE FROM segment_data
+					WHERE segment_id = '$new_segid'";
+			$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+			foreach ($lines as $domain) {
+	
+				$sql = "INSERT INTO segment_data
+						(segment_id, domain, update_time) VALUES 
+						('$new_segid', '$domain', '$current_timestamp');";
+				$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+			}
+			
+			$segid = $new_segid;
+			
+			$_SESSION['session_result_message'] = "Segment <font class=\"highlight\">$new_name</font> Updated<BR>";
+	
+			include("../_includes/system/update-segments.inc.php");
+		
+		}
 
 	} else {
 	
