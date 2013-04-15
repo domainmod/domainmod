@@ -1,7 +1,7 @@
 # Domain Manager
     Project Home: http://aysmedia.com/code/domainmanager/  
     Project Demo: http://demos.aysmedia.com/domainmanager/  
-    Code Home: http://github.com/aysmedia/domainmanager/  
+    Source Code: http://github.com/aysmedia/domainmanager/  
 
 
 # About
