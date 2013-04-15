@@ -46,6 +46,7 @@ font.highlight {
 	color: #CC0000;
 }
 </style>
+<link rel="icon" type="image/ico" href="<?=$web_root?>/images/favicon.ico"/>
 <style type="text/css">
 html { overflow-y: scroll; }
 </style>
