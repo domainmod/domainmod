@@ -17,8 +17,7 @@
 ?>
 <?php
 $sql_email = "SELECT email_address
-			  FROM settings
-			  WHERE type = 'system'";
+			  FROM settings";
 $result_email = mysql_query($sql_email,$connection);
 
 while ($row_email = mysql_fetch_object($result_email)) {
