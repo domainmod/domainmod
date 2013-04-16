@@ -44,6 +44,13 @@ NOTE: Whenever possible we recommend that you use option #1, the git repository 
 6. If you have any problems during installation please see the Support section below.
 
 
+# Cron Job Installation (Optional)
+Included with Domain Manger is a cron job that will send out an email reminder about Domains and SSL Certificates that are expiring in the next 60 days. This feature is completely optional, and it can be triggered at whatever frequency you wish.
+
+The file to execute with the cron job is:
+
+        /SERVER-PATH-TO-DOMAIN-MANAGER/cron/expirations.php  
+
 # Usage
 After installation just load the URL in a web browser and play around in the UI, it's pretty self explanatory.  
 
