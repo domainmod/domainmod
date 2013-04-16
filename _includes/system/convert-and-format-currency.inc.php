@@ -27,6 +27,7 @@
 // $xxxxx = $temp_output_amount;
 ?>
 <?php
+date_default_timezone_set($_SESSION['session_system_timezone']);
 setlocale(LC_MONETARY, 'en_CA');
 
 if ($temp_input_conversion == "") {
