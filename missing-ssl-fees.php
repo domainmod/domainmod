@@ -43,12 +43,12 @@ $result = mysql_query($sql,$connection);
 ?>
 The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these fees.
 <BR><BR>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr height="20">
-        <td width="250">
+<table class="main_table">
+    <tr class="main_table_row_heading_active">
+        <td class="main_table_cell_heading_active">
             <font class="main_table_heading">SSL Provider</font>
         </td>
-        <td>
+        <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Missing Fees</font>
         </td>
     </tr>
@@ -56,11 +56,11 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
 	<?php 
     while ($row = mysql_fetch_object($result)) { ?>
 
-        <tr height="20">
-            <td>
+        <tr class="main_table_row_active">
+            <td class="main_table_cell_active">
                 <?=$row->ssl_provider_name;?>
             </td>
-            <td>
+            <td class="main_table_cell_active">
                 <?php
 				$sql2 = "SELECT sslcf.type AS full_tf_string
 						FROM ssl_certs AS sslc, ssl_cert_types AS sslcf
