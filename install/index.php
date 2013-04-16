@@ -404,6 +404,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`full_url` varchar(100) NOT NULL default 'http://',
 				`db_version` float NOT NULL,
 				`email_address` varchar(255) NOT NULL,
+				`timezone` varchar(10) NOT NULL default 'Etc/GMT',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -412,7 +413,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 
 	$sql = "INSERT INTO `settings` 
 			(`db_version`, `email_address`, `insert_time`) VALUES 
-			('$most_recent_db_version', 'code@aysmedia.com', '$current_timestamp');";
+			('$most_recent_db_version', 'dm@aysmedia.com', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$_SESSION['session_institallation_mode'] = 0;

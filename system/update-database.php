@@ -977,6 +977,22 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0021 to 2.0022
+	if ($current_db_version == 2.0021) {
+
+		$sql = "ALTER TABLE `settings`  
+					ADD `timezone` VARCHAR(10) NOT NULL DEFAULT 'Etc/GMT' AFTER `email_address`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0022',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0022;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
