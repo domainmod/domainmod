@@ -404,7 +404,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`full_url` varchar(100) NOT NULL default 'http://',
 				`db_version` float NOT NULL,
 				`email_address` varchar(255) NOT NULL,
-				`timezone` varchar(10) NOT NULL default 'Etc/GMT',
+				`timezone` varchar(50) NOT NULL default 'Canada/Pacific',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
