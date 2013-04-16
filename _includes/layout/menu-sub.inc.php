@@ -16,58 +16,78 @@
 // see http://www.gnu.org/licenses/
 ?>
 <br><br>
-<?php if ($software_section == "domains") { ?>
-	<?php if ($_SESSION['session_need_registrar'] != "1" && $_SESSION['session_need_registrar_account'] != "1") { ?>
-		 &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/domain.php">Add A New Domain</a>
-	<?php } ?>
-<?php } elseif ($software_section == "ssl-providers") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-provider.php">Add A New SSL Provider</a>
-<?php } elseif ($software_section == "ssl-accounts") { ?>
-	<?php if ($_SESSION['session_need_ssl_provider'] != "1") { ?>
-		 &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-account.php">Add A New SSL Account</a>
-	<?php } ?>
-<?php } elseif ($software_section == "ssl-certs") { ?>
-	<?php if ($_SESSION['session_need_ssl_provider'] != "1" && $_SESSION['session_need_ssl_account'] != "1" && $_SESSION['session_need_domain'] != "1") { ?>
-		 &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-cert.php">Add A New SSL Certificate</a>
-	<?php } ?>
-<?php } elseif ($software_section == "ssl-types") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-type.php">Add A New SSL Type</a>
-<?php } elseif ($software_section == "categories") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/category.php">Add A New Category</a>
-<?php } elseif ($software_section == "dns") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/dns.php">Add A New DNS Profile</a>
-<?php } elseif ($software_section == "ip-addresses") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ip-address.php">Add A New IP Address</a>
-<?php } elseif ($software_section == "registrars") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/registrar.php">Add A New Registrar</a>
-<?php } elseif ($software_section == "accounts") { ?>
-	<?php if ($_SESSION['session_need_registrar'] != "1") { ?>
-		 &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/account.php">Add A New Registrar Account</a>
-	<?php } ?>
-<?php } elseif ($software_section == "owners") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/owner.php">Add A New Owner</a>
-<?php } elseif ($software_section == "segments") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/segment.php">Add A New Segment</a>
-<?php } elseif ($software_section == "currencies") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/currency.php">Add A New Currency</a>
- &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/update-conversion-rates.php">Update Conversion Rates</a>
-<?php } elseif ($software_section == "system") { ?>
-			<?php if ($_SESSION['session_is_admin'] == 1) { ?>
-             &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>
-             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/display-settings.php">Display Settings</a>
-             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/update-profile.php">Update Profile</a>
-             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/change-password.php">Change Password</a>
-             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/system-settings.php">System Settings</a>
-             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/system-info.php">System Info</a>
-             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/users.php">Users</a>
-			<?php } else { ?>
-             &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>
-             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/display-settings.php">Display Settings</a>
-             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/update-profile.php">Update Profile</a>
-             &nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/change-password.php">Change Password</a>
-            <?php } ?>
-<?php } elseif ($software_section == "bulkactions") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/bulk-actions.php">Reset Bulk Action</a>
-<?php } elseif ($software_section == "help") { ?>
- &raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/">Main</a>  /  <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/getting-started/">Getting Started</a>
-<?php } ?>
+<?php 
+if ($software_section == "domains") {
+
+	if ($_SESSION['session_need_registrar'] != "1" && $_SESSION['session_need_registrar_account'] != "1") { ?>
+    	&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/domain.php">Add A New Domain</a><?php 
+	} 
+	
+} elseif ($software_section == "ssl-providers") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-provider.php">Add A New SSL Provider</a><?php 
+
+} elseif ($software_section == "ssl-accounts") {
+
+	if ($_SESSION['session_need_ssl_provider'] != "1") { ?>
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-account.php">Add A New SSL Account</a><?php 
+	} 
+	
+} elseif ($software_section == "ssl-certs") {
+	
+	if ($_SESSION['session_need_ssl_provider'] != "1" && $_SESSION['session_need_ssl_account'] != "1" && $_SESSION['session_need_domain'] != "1") { ?>
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-cert.php">Add A New SSL Certificate</a><?php 
+	}
+
+} elseif ($software_section == "ssl-types") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-type.php">Add A New SSL Type</a><?php 
+
+} elseif ($software_section == "categories") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/category.php">Add A New Category</a><?php 
+		
+} elseif ($software_section == "dns") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/dns.php">Add A New DNS Profile</a><?php 
+		
+} elseif ($software_section == "ip-addresses") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ip-address.php">Add A New IP Address</a><?php 
+
+} elseif ($software_section == "registrars") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/registrar.php">Add A New Registrar</a><?php 
+
+} elseif ($software_section == "accounts") {
+	
+	if ($_SESSION['session_need_registrar'] != "1") { ?>
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/account.php">Add A New Registrar Account</a><?php 
+	}
+	
+} elseif ($software_section == "owners") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/owner.php">Add A New Owner</a><?php 
+		
+} elseif ($software_section == "segments") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/segment.php">Add A New Segment</a><?php 
+
+} elseif ($software_section == "currencies") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/currency.php">Add A New Currency</a>
+		&nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/update-conversion-rates.php">Update Conversion Rates</a><?php 
+		
+} elseif ($software_section == "system") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a><?php 
+
+} elseif ($software_section == "bulkactions") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/bulk-actions.php">Reset Bulk Action</a><?php 
+
+} elseif ($software_section == "help") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/">Main</a>  /  <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/getting-started/">Getting Started</a><?php
+
+} ?>
