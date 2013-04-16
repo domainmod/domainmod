@@ -16,5 +16,5 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("send-expiration-emails.inc.php");
+include("expiration-email.php");
 ?>
