@@ -1,5 +1,5 @@
 <?php
-// /system/index.php
+// /system/email-settings.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -20,10 +20,44 @@ include("../_includes/start-session.inc.php");
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
+include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
-$page_title = "Control Panel";
+$page_title = "Edit Email Settings";
 $software_section = "system";
+
+// Form Variables
+$new_expiration_email = $_POST['new_expiration_email'];
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+	$sql = "UPDATE user_settings
+			SET expiration_emails = '$new_expiration_email',
+				update_time = '$current_timestamp'
+			WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$_SESSION['session_expiration_email'] = $new_expiration_email;
+
+	$_SESSION['session_result_message'] .= "Your Email Settings were updated<BR>";
+	
+	header("Location: index.php");
+	exit;
+
+} else {
+
+	$sql = "SELECT expiration_emails
+			FROM user_settings
+			WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+	while ($row = mysql_fetch_object($result)) {
+		
+		$new_expiration_email = $row->expiration_emails;
+
+	}
+
+}
 ?>
 <html>
 <head>
@@ -33,13 +67,11 @@ $software_section = "system";
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
-&raquo; <a href="display-settings.php">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="email-settings.php">Email Settings</a><BR><BR>
-&raquo; <a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="change-password.php">Change Password</a><BR>
-<?php if ($_SESSION['session_is_admin'] == 1) { ?>
-	<BR><BR><font class="headline">Admin Tools</font><BR><BR>
-	&raquo; <a href="admin/system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/system-info.php">System Info</a><BR><BR>
-	&raquo; <a href="admin/users.php">User List</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/add/user.php">Add New User</a><BR>
-<?php } ?>
+<form name="email_settings_form" method="post" action="<?=$PHP_SELF?>">
+<strong>Receive email notifications for upcoming Domain & SSL Certificate expirations?</strong> <input type="checkbox" name="new_expiration_email" value="1"<?php if ($new_expiration_email == "1") echo " checked"; ?>>
+<BR><BR><BR>
+<input type="submit" name="button" value="Update Email Settings&raquo;">
+</form>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>
