@@ -66,7 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 				display_ssl_type = '$new_display_ssl_type',
 				display_ssl_expiry_date = '$new_display_ssl_expiry_date',
 				display_ssl_fee = '$new_display_ssl_fee',
-				number_of_ssl_certs = '$new_number_of_ssl_certs'
+				number_of_ssl_certs = '$new_number_of_ssl_certs',
+				update_time = '$current_timestamp'
 			WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -89,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	$_SESSION['session_display_ssl_expiry_date'] = $new_display_ssl_expiry_date;
 	$_SESSION['session_display_ssl_fee'] = $new_display_ssl_fee;
 
-	$_SESSION['session_result_message'] .= "The Display Settings were updated<BR>";
+	$_SESSION['session_result_message'] .= "Your Display Settings were updated<BR>";
 	
 	header("Location: index.php");
 	exit;
