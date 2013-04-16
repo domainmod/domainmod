@@ -63,29 +63,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			$_SESSION['session_is_logged_in'] = 1;
 			
 			$sql_settings = "SELECT *
-							 FROM user_settings
-							 WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
+							 FROM settings";
 			$result_settings = mysql_query($sql_settings,$connection);
-
+			
 			while ($row_settings = mysql_fetch_object($result_settings)) {
-				$_SESSION['session_number_of_domains'] = $row_settings->number_of_domains;
-				$_SESSION['session_number_of_ssl_certs'] = $row_settings->number_of_ssl_certs;
-				$_SESSION['session_display_domain_owner'] = $row_settings->display_domain_owner;
-				$_SESSION['session_display_domain_registrar'] = $row_settings->display_domain_registrar;
-				$_SESSION['session_display_domain_account'] = $row_settings->display_domain_account;
-				$_SESSION['session_display_domain_expiry_date'] = $row_settings->display_domain_expiry_date;
-				$_SESSION['session_display_domain_category'] = $row_settings->display_domain_category;
-				$_SESSION['session_display_domain_dns'] = $row_settings->display_domain_dns;
-				$_SESSION['session_display_domain_ip'] = $row_settings->display_domain_ip;
-				$_SESSION['session_display_domain_tld'] = $row_settings->display_domain_tld;
-				$_SESSION['session_display_domain_fee'] = $row_settings->display_domain_fee;
-				$_SESSION['session_display_ssl_owner'] = $row_settings->display_ssl_owner;
-				$_SESSION['session_display_ssl_provider'] = $row_settings->display_ssl_provider;
-				$_SESSION['session_display_ssl_account'] = $row_settings->display_ssl_account;
-				$_SESSION['session_display_ssl_domain'] = $row_settings->display_ssl_domain;
-				$_SESSION['session_display_ssl_type'] = $row_settings->display_ssl_type;
-				$_SESSION['session_display_ssl_expiry_date'] = $row_settings->display_ssl_expiry_date;
-				$_SESSION['session_display_ssl_fee'] = $row_settings->display_ssl_fee;
+				
+				$_SESSION['session_system_full_url'] = $row_settings->full_url;
+				$_SESSION['session_system_db_version'] = $row_settings->db_version;
+				$_SESSION['session_system_email_address'] = $row_settings->email_address;
+				$_SESSION['session_system_timezone'] = $row_settings->timezone;
+
+			}
+
+			$sql_user_settings = "SELECT *
+								  FROM user_settings
+								  WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
+			$result_user_settings = mysql_query($sql_user_settings,$connection);
+
+			while ($row_user_settings = mysql_fetch_object($result_user_settings)) {
+				$_SESSION['session_number_of_domains'] = $row_user_settings->number_of_domains;
+				$_SESSION['session_number_of_ssl_certs'] = $row_user_settings->number_of_ssl_certs;
+				$_SESSION['session_display_domain_owner'] = $row_user_settings->display_domain_owner;
+				$_SESSION['session_display_domain_registrar'] = $row_user_settings->display_domain_registrar;
+				$_SESSION['session_display_domain_account'] = $row_user_settings->display_domain_account;
+				$_SESSION['session_display_domain_expiry_date'] = $row_user_settings->display_domain_expiry_date;
+				$_SESSION['session_display_domain_category'] = $row_user_settings->display_domain_category;
+				$_SESSION['session_display_domain_dns'] = $row_user_settings->display_domain_dns;
+				$_SESSION['session_display_domain_ip'] = $row_user_settings->display_domain_ip;
+				$_SESSION['session_display_domain_tld'] = $row_user_settings->display_domain_tld;
+				$_SESSION['session_display_domain_fee'] = $row_user_settings->display_domain_fee;
+				$_SESSION['session_display_ssl_owner'] = $row_user_settings->display_ssl_owner;
+				$_SESSION['session_display_ssl_provider'] = $row_user_settings->display_ssl_provider;
+				$_SESSION['session_display_ssl_account'] = $row_user_settings->display_ssl_account;
+				$_SESSION['session_display_ssl_domain'] = $row_user_settings->display_ssl_domain;
+				$_SESSION['session_display_ssl_type'] = $row_user_settings->display_ssl_type;
+				$_SESSION['session_display_ssl_expiry_date'] = $row_user_settings->display_ssl_expiry_date;
+				$_SESSION['session_display_ssl_fee'] = $row_user_settings->display_ssl_fee;
 			}
 
 			include("_includes/system/update-domain-fees.inc.php");
