@@ -33,11 +33,13 @@ $software_section = "system";
 
 // Form Variables
 $new_email_address = $_POST['new_email_address'];
+$new_full_url = $_POST['new_full_url'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "") {
 
 	$sql = "UPDATE settings
-			SET email_address = '$new_email_address'";
+			SET full_url = '$new_full_url',
+				email_address = '$new_email_address'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$_SESSION['session_result_message'] = "The System Settings were updated<BR><BR>";
@@ -51,15 +53,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		if ($new_email_address == "") $_SESSION['session_result_message'] .= "Enter the system email address<BR>";
+		if ($new_full_url == "") $_SESSION['session_result_message'] .= "Enter the full URL of your " . $software_title . " installation<BR>";
 		
 	} else {
 		
-		$sql = "SELECT email_address
+		$sql = "SELECT full_url, email_address
 				FROM settings";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		while ($row = mysql_fetch_object($result)) {
 			
+			$new_full_url = $row->full_url;
 			$new_email_address = $row->email_address;
 
 		}
@@ -76,6 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "") {
 <body>
 <?php include("../../_includes/header.inc.php"); ?>
 <form name="system_settings_form" method="post" action="<?=$PHP_SELF?>">
+<strong>Full URL:</strong><BR><BR>
+Enter the full URL of your <?=$software_title?> installation, excluding the trailing slash (Example: http://yourdomain.com/domainmanager).<BR><BR>
+<input name="new_full_url" type="text" size="50" maxlength="100" value="<?php if ($new_full_url != "") echo $new_full_url; ?>">
+<BR><BR>
 <strong>Email Address:</strong><BR><BR>
 This should be a valid email address that is able to receive mail. It will be used in various system locations, such as the FROM address for emails sent by <?=$software_title?>.<BR><BR>
 <input name="new_email_address" type="text" size="50" maxlength="255" value="<?php if ($new_email_address != "") echo $new_email_address; ?>">
