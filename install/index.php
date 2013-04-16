@@ -401,7 +401,9 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `settings` ( 
 				`id` int(10) NOT NULL auto_increment,
+				`full_url` varchar(100) NOT NULL default 'http://',
 				`db_version` float NOT NULL,
+				`email_address` varchar(255) NOT NULL,
 				`email_address` varchar(255) NOT NULL,
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,

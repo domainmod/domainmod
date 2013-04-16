@@ -961,6 +961,22 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0020 to 2.0021
+	if ($current_db_version == 2.002) {
+
+		$sql = "ALTER TABLE `settings` 
+					ADD `full_url` VARCHAR(100) NOT NULL DEFAULT 'http://' AFTER `id`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0021',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0021;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
