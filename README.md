@@ -49,7 +49,7 @@ Included with Domain Manger is a cron job that will send out an email reminder a
 
 The file to execute with the cron job is:
 
-        SERVER-PATH-TO-DOMAIN-MANAGER/cron/expirations.php  
+    /SERVER-PATH-TO-DOMAIN-MANAGER/cron/expirations.php  
 
 # Usage
 After installation just load the URL in a web browser and play around in the UI, it's pretty self explanatory.  
