@@ -98,33 +98,17 @@ This should be a valid email address that is able to receive mail. It will be us
 <BR><BR>
 <strong>Default Timezone:</strong><BR><BR>
 <select name="new_timezone">
-<option value="Etc/GMT-14"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-14") echo " selected"; ?>>GMT-14</option>
-<option value="Etc/GMT-13"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-13") echo " selected"; ?>>GMT-13</option>
-<option value="Etc/GMT-12"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-12") echo " selected"; ?>>GMT-12</option>
-<option value="Etc/GMT-11"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-11") echo " selected"; ?>>GMT-11</option>
-<option value="Etc/GMT-10"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-10") echo " selected"; ?>>GMT-10</option>
-<option value="Etc/GMT-9"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-9") echo " selected"; ?>>GMT-9</option>
-<option value="Etc/GMT-8"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-8") echo " selected"; ?>>GMT-8</option>
-<option value="Etc/GMT-7"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-7") echo " selected"; ?>>GMT-7</option>
-<option value="Etc/GMT-6"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-6") echo " selected"; ?>>GMT-6</option>
-<option value="Etc/GMT-5"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-5") echo " selected"; ?>>GMT-5</option>
-<option value="Etc/GMT-4"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-4") echo " selected"; ?>>GMT-4</option>
-<option value="Etc/GMT-3"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-3") echo " selected"; ?>>GMT-3</option>
-<option value="Etc/GMT-2"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-2") echo " selected"; ?>>GMT-2</option>
-<option value="Etc/GMT-1"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT-1") echo " selected"; ?>>GMT-1</option>
-<option value="Etc/GMT"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT") echo " selected"; ?>>GMT</option>
-<option value="Etc/GMT+1"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT+1") echo " selected"; ?>>GMT+1</option>
-<option value="Etc/GMT+2"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT+2") echo " selected"; ?>>GMT+2</option>
-<option value="Etc/GMT+3"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT+3") echo " selected"; ?>>GMT+3</option>
-<option value="Etc/GMT+4"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT+4") echo " selected"; ?>>GMT+4</option>
-<option value="Etc/GMT+5"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT+5") echo " selected"; ?>>GMT+5</option>
-<option value="Etc/GMT+6"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT+6") echo " selected"; ?>>GMT+6</option>
-<option value="Etc/GMT+7"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT+7") echo " selected"; ?>>GMT+7</option>
-<option value="Etc/GMT+8"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT+8") echo " selected"; ?>>GMT+8</option>
-<option value="Etc/GMT+9"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT+9") echo " selected"; ?>>GMT+9</option>
-<option value="Etc/GMT+10"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT+10") echo " selected"; ?>>GMT+10</option>
-<option value="Etc/GMT+11"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT+11") echo " selected"; ?>>GMT+11</option>
-<option value="Etc/GMT+12"<?php if ($_SESSION['session_system_timezone'] == "Etc/GMT+12") echo " selected"; ?>>GMT+12</option>
+<?php
+$sql = "SELECT timezone
+		FROM timezones
+		ORDER BY timezone";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	?>
+	<option value="<?=$row->timezone?>"<?php if ($_SESSION['session_system_timezone'] == "$row->timezone") echo " selected"; ?>><?=$row->timezone?></option>
+    <?php
+}
+?>
 </select>
 <BR><BR><BR>
 <input type="submit" name="button" value="Update System Settings&raquo;">
