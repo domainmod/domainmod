@@ -217,6 +217,14 @@ td.main_table_cell_active_centered {
 	text-align: center;
 }
 
+div.login_form {
+	text-align: center;
+}
+
+div.reset_password {
+	text-align: center;
+}
+
 font.headline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
