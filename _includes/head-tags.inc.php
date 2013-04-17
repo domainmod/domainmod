@@ -110,23 +110,6 @@ td.search-table-inside {
 	vertical-align: top; 
 	background-color: #fafafa;
 }
-td.cell-maintenance-table {
-	text-align: left;
-	vertical-align: center; 
-	border-top: 1px #CC0000 ridge;
-	border-bottom: 1px #CC0000 ridge;
-	border-right: 1px #CC0000 ridge;
-	border-left: 1px #CC0000 ridge;
-	font-family: Verdana, sans-serif, Arial;
-	font-weight: normal;
-	font-size: .7em;
-	color: #404040;
-	background-color: #fafafa;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	padding-left: 20px;
-	padding-right: 20px; 
-}
 td.footer-table {
 	text-align: right;
 	vertical-align: center; 
@@ -198,6 +181,36 @@ td.main_table_cell_heading_active_centered {
 td.main_table_cell_active_centered {
 	padding-right: 40px; 
 	text-align: center;
+}
+
+div.maintenance_warning_outer {
+	width: 100%;
+	border-top: 0px;
+	border-bottom: 0px;
+	border-right: 0px;
+	border-left: 0px;
+	padding-top: 0px;
+	padding-bottom: 13px;
+	padding-left: 0px;
+	padding-right: 0px; 
+}
+
+div.maintenance_warning_inner {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 8pt;
+	font-weight: normal;
+	text-align: left;
+	vertical-align: center; 
+	border-top: 3px #CC0000 ridge;
+	border-bottom: 3px #CC0000 ridge;
+	border-right: 3px #CC0000 ridge;
+	border-left: 3px #CC0000 ridge;
+	color: #404040;
+	background-color: #fafafa;
+	padding-top: 23px;
+	padding-bottom: 23px;
+	padding-left: 20px;
+	padding-right: 8px; 
 }
 
 div.result_message_outer {
