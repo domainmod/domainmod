@@ -72,7 +72,7 @@ Below is a list of all the Domain Registrars that are stored in your <?=$softwar
     
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td class="main_table_cell_active">
                 <?php
@@ -179,7 +179,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
     
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="subtlelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="subtlelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td class="main_table_cell_inactive">
                 <?php

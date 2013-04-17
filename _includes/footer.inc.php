@@ -19,9 +19,9 @@
 	</div>
 
     <div class="footer-container">
-	    <?=$software_title?> is open source software released under the <a target="_blank" class="subtlelink" href="http://www.gnu.org/licenses/">GNU/GPL License</a><br>
-        To obtain your own copy of the <?=$software_title?> software <a target="_blank" class="subtlelink" href="http://aysmedia.com/code/domain-manager/">click here</a><BR>
-        Created by <a target="_blank" class="subtlelink" href="http://chetcuti.com">Greg Chetcuti</a> @ <a target="_blank" class="subtlelink" href="http://aysmedia.com">AYS Media</a><BR><BR>
+	    <?=$software_title?> is open source software released under the <a target="_blank" class="invisiblelink" href="http://www.gnu.org/licenses/">GNU/GPL License</a><br>
+        To obtain your own copy of the <?=$software_title?> software <a target="_blank" class="invisiblelink" href="http://aysmedia.com/code/domain-manager/">click here</a><BR>
+        Created by <a target="_blank" class="invisiblelink" href="http://chetcuti.com">Greg Chetcuti</a> @ <a target="_blank" class="invisiblelink" href="http://aysmedia.com">AYS Media</a><BR><BR>
         <a target="_blank" href="http://www.gnu.org/licenses/"><img border="0" width="88" height="31" src="https://www.gnu.org/graphics/gplv3-88x31.png" /></a>
     </div>
 

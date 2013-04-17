@@ -88,10 +88,10 @@ if (mysql_num_rows($result) > 0) { ?>
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active" valign="top">
-                <a class="subtlelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$row->name?></a>
+                <a class="invisiblelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$row->name?></a>
             </td>
             <td class="main_table_cell_active" valign="top">
-                <a class="subtlelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$row->number_of_domains?></a>
+                <a class="invisiblelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$row->number_of_domains?></a>
             </td>
             <td class="main_table_cell_active" valign="top">
                 <?php
@@ -99,7 +99,7 @@ if (mysql_num_rows($result) > 0) { ?>
                 $temp_segment = preg_replace("/'/", "", $temp_segment);
                 $cut_string = str_stop($temp_segment, 100);
 				?>
-                <a class="subtlelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$cut_string?></a>
+                <a class="invisiblelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$cut_string?></a>
             </td>
         </tr>
 

@@ -171,7 +171,7 @@ if ($_SESSION['session_installation_mode'] != 1) { ?>
     <div class="login_form">
 		<?php 
         if ($_SERVER['HTTP_HOST'] != "demos.aysmedia.com") { ?>
-            <BR><font size="1"><a class="subtlelink" href="reset-password.php">Forgot your Password?</a></font><BR><?php 
+            <BR><font size="1"><a class="invisiblelink" href="reset-password.php">Forgot your Password?</a></font><BR><?php 
         } ?>
         <BR><BR>
         <input type="submit" name="button" value="Manage Your Domains &raquo;">

@@ -65,13 +65,13 @@ Below is a list of all the IP Addresses that are stored in your <?=$software_tit
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
+                <a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
             </td>
             <td class="main_table_cell_active">
-                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
+                <a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
             </td>
             <td class="main_table_cell_active">
-                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
+                <a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
             </td>
             <td class="main_table_cell_active">
                 <?php
@@ -131,13 +131,13 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a></a>
+                <a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a></a>
             </td>
             <td class="main_table_cell_inactive">
-                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
+                <a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
             </td>
             <td class="main_table_cell_inactive">
-                <a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
+                <a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
             </td>
         </tr>
     <?php 

@@ -61,7 +61,7 @@ The below conversion rates are used for accounting and reporting purposes, and a
 while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/currency.php?curid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_currency == 1) echo "<a title=\"Default Currency\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
+		<a class="invisiblelink" href="edit/currency.php?curid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_currency == 1) echo "<a title=\"Default Currency\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 <?php if ($row->currency == $_SESSION['session_default_currency']) echo ""; ?>
 	</td>
     <td class="main_table_cell_active">

@@ -713,12 +713,12 @@ echo "</select>";
 <tr class="main_table_row_active">
 <?php if ($_SESSION['session_display_ssl_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->expiry_date?></a>
+		<a class="invisiblelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->expiry_date?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_ssl_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/ssl-provider-fees.php?sslpid=<?=$row->sslp_id?>">
+		<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?=$row->sslp_id?>">
 		<?php
 		// Currency Conversion & Formatting
 		// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
@@ -741,31 +741,31 @@ echo "</select>";
 				} elseif ($row->active == "4") { 
 					echo "<a title=\"Pending (Other)\"><strong><font class=\"highlight\">PO</font></strong></a>&nbsp;"; 
 				}
-			?><a class="subtlelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->name?></a>
+			?><a class="invisiblelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
 <?php if ($_SESSION['session_display_ssl_domain'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/domain.php?did=<?=$row->domain_id?>"><?=$row->domain?></a>
+		<a class="invisiblelink" href="edit/domain.php?did=<?=$row->domain_id?>"><?=$row->domain?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/ssl-type.php?ssltid=<?=$row->type_id?>"><?=$row->type?></a>
+		<a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?=$row->type_id?>"><?=$row->type?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
+		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_ssl_provider'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a>
+		<a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a> (<a class="subtlelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpa_id?>"><?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?></a>)
+		<a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a> (<a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpa_id?>"><?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?></a>)
 	</td>
 <?php } ?>
 </tr>

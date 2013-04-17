@@ -90,13 +90,13 @@ Below is a list of all the Domain Registrar Accounts that are stored in your <?=
 
 		<tr class="main_table_row_active">
 			<td class="main_table_cell_active">
-				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
+				<a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
 			</td>
 			<td class="main_table_cell_active" valign="top">
-				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
+				<a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
 			</td>
 			<td class="main_table_cell_active">
-				<a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
+				<a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
 			</td>
 			<td class="main_table_cell_active">
 				<?php
@@ -160,13 +160,13 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
+                <a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
             </td>
             <td class="main_table_cell_inactive" valign="top">
-                    <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
+                    <a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\"><strong>*</strong></font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
-                <a class="subtlelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
+                <a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
             </td>
             <td class="main_table_cell_inactive">&nbsp;
                 

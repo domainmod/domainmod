@@ -984,13 +984,13 @@ $_SESSION['session_quick_search'] = preg_replace("/'/", "", $_SESSION['session_q
 		<strong>Domains in Segment:</strong> <?=number_format($number_of_domains)?>
 		<BR><BR><strong>Matching Domains:</strong> <?=number_format($totalrows)?>
         <?php if ($totalrows_inactive > 0) { ?>
-			<BR><BR><strong>Matching But Inactive Domains:</strong> <?=number_format($totalrows_inactive)?> [<a class="subtlelink" target="_blank" href="segment-results.php?type=inactive&segid=<?=$segid?>">view</a>]
+			<BR><BR><strong>Matching But Inactive Domains:</strong> <?=number_format($totalrows_inactive)?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=inactive&segid=<?=$segid?>">view</a>]
 		<?php } ?>
         <?php if ($totalrows_missing > 0) { ?>
-	        <BR><BR><strong>Missing Domains:</strong> <?=number_format($totalrows_missing)?> [<a class="subtlelink" target="_blank" href="segment-results.php?type=missing&segid=<?=$segid?>">view</a>]
+	        <BR><BR><strong>Missing Domains:</strong> <?=number_format($totalrows_missing)?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=missing&segid=<?=$segid?>">view</a>]
 		<?php } ?>
         <?php if ($totalrows_filtered > 0) { ?>
-	        <BR><BR><strong>Filtered Out Domains:</strong> <?=number_format($totalrows_filtered)?> [<a class="subtlelink" target="_blank" href="segment-results.php?type=filtered&segid=<?=$segid?>">view</a>]
+	        <BR><BR><strong>Filtered Out Domains:</strong> <?=number_format($totalrows_filtered)?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=filtered&segid=<?=$segid?>">view</a>]
 		<?php } ?>
 
 <?php } else { ?>
@@ -1080,12 +1080,12 @@ $_SESSION['session_quick_search'] = preg_replace("/'/", "", $_SESSION['session_q
 <tr class="main_table_row_active">
 <?php if ($_SESSION['session_display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->expiry_date?></a>
+		<a class="invisiblelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->expiry_date?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/registrar-fees.php?rid=<?=$row->r_id?>">
+		<a class="invisiblelink" href="edit/registrar-fees.php?rid=<?=$row->r_id?>">
 		<?php
 		// Currency Conversion & Formatting
 		// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
@@ -1113,41 +1113,41 @@ $_SESSION['session_quick_search'] = preg_replace("/'/", "", $_SESSION['session_q
 				} elseif ($row->active == "5") { 
 					echo "<a title=\"Pending (Registration)\"><strong><font class=\"highlight\">PRg</font></strong></a>&nbsp;"; 
 				} 
-			?><a class="subtlelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->domain?></a><?php if ($row->privacy == "1") { echo "&nbsp;<a title=\"Private WHOIS Registration\"><strong><font class=\"highlight\">prv</font></strong></a>&nbsp;"; } else { echo "&nbsp;"; } ?>[<a class="subtlelink" target="_blank" href="http://<?=$row->domain?>">v</a>] [<a target="_blank" class="subtlelink" href="http://who.is/whois/<?=$row->domain?>">w</a>]
+			?><a class="invisiblelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->domain?></a><?php if ($row->privacy == "1") { echo "&nbsp;<a title=\"Private WHOIS Registration\"><strong><font class=\"highlight\">prv</font></strong></a>&nbsp;"; } else { echo "&nbsp;"; } ?>[<a class="invisiblelink" target="_blank" href="http://<?=$row->domain?>">v</a>] [<a target="_blank" class="invisiblelink" href="http://who.is/whois/<?=$row->domain?>">w</a>]
 	</td>
 <?php if ($_SESSION['session_display_domain_tld'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->tld?></a>
+		<a class="invisiblelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->tld?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/ip-address.php?ipid=<?=$row->ipid?>"><?=$row->ip_name?> (<?=$row->ip?>)</a>
+		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->ipid?>"><?=$row->ip_name?> (<?=$row->ip?>)</a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_dns'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/dns.php?dnsid=<?=$row->dnsid?>"><?=$row->dns_name?></a>
+		<a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->dnsid?>"><?=$row->dns_name?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_category'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/category.php?pcid=<?=$row->pcid?>"><?=$row->category_name?></a>
+		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->pcid?>"><?=$row->category_name?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
+		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_registrar'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a>
+		<a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a> (<a class="subtlelink" href="edit/account.php?raid=<?=$row->ra_id?>"><?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?></a>)
+		<a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a> (<a class="invisiblelink" href="edit/account.php?raid=<?=$row->ra_id?>"><?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?></a>)
 	</td>
 <?php } ?>
 </tr>

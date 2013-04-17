@@ -398,7 +398,7 @@ while ($row = mysql_fetch_object($result)) {
             ?>
 		</td>
         <td class="main_table_cell_active"><?=$row->currency?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="subtlelink" href="ssl-provider-fees.php?sslpid=<?=$sslpid?>&ssltid=<?=$row->ssltid?>&sslfeeid=<?=$row->sslfeeid?>&del=1">delete</a>]
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="ssl-provider-fees.php?sslpid=<?=$sslpid?>&ssltid=<?=$row->ssltid?>&sslfeeid=<?=$row->sslfeeid?>&del=1">delete</a>]
         </td>
 	</tr>
 <?php

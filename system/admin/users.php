@@ -78,13 +78,13 @@ if (mysql_num_rows($result) > 0) { ?>
     
             <tr class="main_table_row_active">
                 <td class="main_table_cell_active">
-                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
+                    <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
                 </td>
                 <td class="main_table_cell_active">
-                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
+                    <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
                 </td>
                 <td class="main_table_cell_active">
-                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->email_address?></a>
+                    <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->email_address?></a>
                 </td>
             </tr>
         <?php 
@@ -117,13 +117,13 @@ if (mysql_num_rows($result) > 0) { ?>
     
             <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
-                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
+                    <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
                 </td>
                 <td class="main_table_cell_inactive">
-                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
+                    <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
                 </td>
                 <td class="main_table_cell_inactive">
-                    <a class="subtlelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->email_address?></a>
+                    <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->email_address?></a>
                 </td>
             </tr>
         <?php 

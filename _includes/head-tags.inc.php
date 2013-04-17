@@ -151,7 +151,7 @@ div.main-inner {
 	font-family: Verdana, sans-serif, Arial;
 	font-size: 8pt;
 	font-weight: normal;
-	color: #404040;
+	color: #000000;
 	border-top: 0px #6699CC ridge;
 	border-bottom: 0px #6699CC ridge;
 	border-right: 0px #6699CC ridge;
@@ -175,7 +175,7 @@ div.header-left {
 	font-family: Verdana, sans-serif, Arial;
 	font-size: 8pt;
 	font-weight: normal;
-	color: #404040;
+	color: #000000;
 	border-top: 0px #6699CC ridge;
 	border-bottom: 0px #6699CC ridge;
 	border-right: 0px #6699CC ridge;
@@ -193,7 +193,7 @@ div.header-right {
 	font-family: Verdana, sans-serif, Arial;
 	font-size: 8pt;
 	font-weight: normal;
-	color: #404040;
+	color: #000000;
 	border-top: 0px #6699CC ridge;
 	border-bottom: 0px #6699CC ridge;
 	border-right: 0px #6699CC ridge;
@@ -209,7 +209,7 @@ div.header-center {
 	font-family: Verdana, sans-serif, Arial;
 	font-size: 8pt;
 	font-weight: normal;
-	color: #404040;
+	color: #000000;
 	border-top: 0px #6699CC ridge;
 	border-bottom: 0px #6699CC ridge;
 	border-right: 0px #6699CC ridge;
@@ -224,7 +224,7 @@ div.main-menu {
 	font-family: Verdana, sans-serif, Arial;
 	font-size: 8pt;
 	font-weight: normal;
-	color: #404040;
+	color: #000000;
 	border-top: 0px #6699CC ridge;
 	border-bottom: 0px #6699CC ridge;
 	border-right: 0px #6699CC ridge;
@@ -255,7 +255,7 @@ div.maintenance_warning_inner {
 	border-bottom: 3px #CC0000 ridge;
 	border-right: 3px #CC0000 ridge;
 	border-left: 3px #CC0000 ridge;
-	color: #404040;
+	color: #000000;
 	background-color: #fafafa;
 	padding-top: 23px;
 	padding-bottom: 23px;
@@ -283,7 +283,7 @@ div.result_message_inner {
 	border-bottom: 1px #6699CC ridge;
 	border-right: 1px #6699CC ridge;
 	border-left: 1px #6699CC ridge;
-	color: #404040;
+	color: #000000;
 	background-color: #fafafa;
 	padding-top: 21px;
 	padding-bottom: 21px;
@@ -310,7 +310,7 @@ div.footer-container {
 	font-family: Verdana, sans-serif, Arial;
 	font-size: 8pt;
 	font-weight: normal;
-	color: #404040;
+	color: #000000;
 	border-top: 0px #6699CC ridge;
 	border-bottom: 0px #6699CC ridge;
 	border-right: 0px #6699CC ridge;
@@ -326,7 +326,7 @@ div.footer-container-center {
 	font-family: Verdana, sans-serif, Arial;
 	font-size: 8pt;
 	font-weight: normal;
-	color: #404040;
+	color: #000000;
 	border-top: 0px #6699CC ridge;
 	border-bottom: 0px #6699CC ridge;
 	border-right: 0px #6699CC ridge;
@@ -404,24 +404,44 @@ a.nobold:active {
 	color: #0066FF;
 	text-decoration: none;
 }
-a.subtlelink:link {
+a.invisiblelink:link {
 	font-weight:100;
 	color: #000000;
 	text-decoration: none;
 }
-a.subtlelink:visited {
+a.invisiblelink:visited {
 	font-weight:100;
 	color: #000000;
 	text-decoration: none;
 }
-a.subtlelink:hover {
+a.invisiblelink:hover {
 	font-weight:100;
 	color: #000000;
 	text-decoration: underline;
 }
-a.subtlelink:active {
+a.invisiblelink:active {
 	font-weight:100;
 	color: #000000;
+	text-decoration: none;
+}
+a.subtlelink:link {
+	font-weight:100;
+	color: #333;
+	text-decoration: none;
+}
+a.subtlelink:visited {
+	font-weight:100;
+	color: #333;
+	text-decoration: none;
+}
+a.subtlelink:hover {
+	font-weight:100;
+	color: #333;
+	text-decoration: underline;
+}
+a.subtlelink:active {
+	font-weight:100;
+	color: #333;
 	text-decoration: none;
 }
 </style>

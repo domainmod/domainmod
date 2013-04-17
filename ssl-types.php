@@ -55,7 +55,7 @@ Below is a list of all the types of SSL certificates that are stored in your <?=
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="subtlelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
+		<a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
 	<td class="main_table_cell_active">
     <?php
@@ -105,7 +105,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="subtlelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
+		<a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
 </tr>
 <?php } ?>

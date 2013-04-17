@@ -355,7 +355,7 @@ while ($row = mysql_fetch_object($result)) {
             ?>
 		</td>
         <td class="main_table_cell_active"><?=$row->currency?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="subtlelink" href="registrar-fees.php?rid=<?=$rid?>&tld=<?=$row->tld?>&feeid=<?=$row->id?>&del=1">delete</a>]
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="registrar-fees.php?rid=<?=$rid?>&tld=<?=$row->tld?>&feeid=<?=$row->id?>&del=1">delete</a>]
         </td>
 	</tr>
 <?php
