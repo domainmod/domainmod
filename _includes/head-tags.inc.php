@@ -404,7 +404,6 @@ a.nobold:active {
 	color: #0066FF;
 	text-decoration: none;
 }
-
 a.subtlelink:link {
 	font-weight:100;
 	color: #000000;
