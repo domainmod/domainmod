@@ -17,12 +17,10 @@
 ?>
 		</div>
 	</div>
-
-    <div class="footer-container-center">
-		<?=$software_title?> is free software created by <a target="_blank" class="subtlelink" href="http://chetcuti.com">Greg Chetcuti</a> and released under the GNU/GPL License.<br>
-        For more information on the GNU/GPL License <a target="_blank" class="subtlelink" href="http://www.gnu.org/licenses/">click here</a>.<br>
-        To obtain your own copy of the <?=$software_title?> software <a target="_blank" class="subtlelink" href="http://aysmedia.com/code/domain-manager/">click here</a>.<BR><BR>
-        <a target="_blank" href="http://www.gnu.org/licenses/"><img border="0" width="88" height="31" src="https://www.gnu.org/graphics/gplv3-88x31.png" /></a>
-    </div>
-
+</div>
+<div class="footer-container-center">
+    <?=$software_title?> is free software created by <a target="_blank" class="subtlelink" href="http://chetcuti.com">Greg Chetcuti</a> and released under the GNU/GPL License.<br>
+    For more information on the GNU/GPL License <a target="_blank" class="subtlelink" href="http://www.gnu.org/licenses/">click here</a>.<br>
+    To obtain your own copy of the <?=$software_title?> software <a target="_blank" class="subtlelink" href="http://aysmedia.com/code/domain-manager/">click here</a>.<BR><BR>
+    <a target="_blank" href="http://www.gnu.org/licenses/"><img border="0" width="88" height="31" src="https://www.gnu.org/graphics/gplv3-88x31.png" /></a>
 </div>

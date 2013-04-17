@@ -1,5 +1,5 @@
 <?php
-// /help/getting-started/index.php
+// /_includes/doctype.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -15,26 +15,4 @@
 // You should have received a copy of the GNU General Public License along with Domain Manager. If not, please 
 // see http://www.gnu.org/licenses/
 ?>
-<?php
-include("../../_includes/start-session.inc.php");
-include("../../_includes/config.inc.php");
-include("../../_includes/database.inc.php");
-include("../../_includes/software.inc.php");
-include("../../_includes/auth/auth-check.inc.php");
-
-$page_title = "Getting Started";
-$software_section = "help";
-?>
-<?php include("../../_includes/doctype.inc.php"); ?>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
-</head>
-<body>
-<?php include("../../_includes/header.inc.php"); ?>
-This is where the getting started guide will go.<BR>
-<?php include("../../_includes/footer.inc.php"); ?>
-</body>
-</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">

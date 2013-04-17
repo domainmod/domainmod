@@ -23,6 +23,7 @@ include("_includes/software.inc.php");
 $page_title = "Invalid Page";
 $software_section = "invalid";
 ?>
+<?php include("_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">

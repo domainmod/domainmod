@@ -25,6 +25,7 @@ include("_includes/auth/auth-check.inc.php");
 $page_title = "SSL Certificate Types";
 $software_section = "ssl-types";
 ?>
+<?php include("_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">

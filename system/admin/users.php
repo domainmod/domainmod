@@ -30,6 +30,7 @@ include("../../_includes/auth/auth-check.inc.php");
 $page_title = "User List";
 $software_section = "system";
 ?>
+<?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">

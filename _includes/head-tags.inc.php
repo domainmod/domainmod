@@ -217,7 +217,7 @@ div.header-center {
 	padding-top: 33px;
 	padding-bottom: 8px;
 	padding-left: 0px;
-	padding-right: 8px; 
+	padding-right: 0px; 
 }
 div.main-menu {
 	text-align: left;

@@ -38,6 +38,7 @@ function str_stop($string, $max_length){
     } 
 } 
 ?>
+<?php include("_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">

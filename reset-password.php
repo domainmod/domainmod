@@ -75,6 +75,7 @@ if ($new_username != "") {
 
 }
 ?>
+<?php include("_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">

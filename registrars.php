@@ -25,6 +25,7 @@ include("_includes/auth/auth-check.inc.php");
 $page_title = "Domain Registrars";
 $software_section = "registrars";
 ?>
+<?php include("_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">

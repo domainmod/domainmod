@@ -31,6 +31,7 @@ $sql = "SELECT id
 $result = mysql_query($sql,$connection);
 if (mysql_num_rows($result) == 0) $zero_owners = "1";
 ?>
+<?php include("_includes/doctype.inc.php"); ?>
 <html>
 <head>	
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
