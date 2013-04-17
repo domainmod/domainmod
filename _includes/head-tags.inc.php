@@ -20,74 +20,13 @@ body {
 	background-color: #FFFFFF;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #000000;
-	font-size: 10pt;
+	font-size: 8pt;
 }
 td {
 	background-color: #FFFFFF;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #000000;
-	font-size: 10pt;
-	font-size: .7em;
-}
-td.header-table-left {
-	text-align: left;
-	vertical-align: bottom; 
-	font-family: Verdana, sans-serif, Arial;
-	font-weight: normal;
-	color: #404040;
-	border-top: 0px #6699CC ridge;
-	border-bottom: 0px #6699CC ridge;
-	border-right: 0px #6699CC ridge;
-	border-left: 0px #6699CC ridge;
-	padding-top: 3px;
-	padding-bottom: 5px;
-	padding-left: 20px;
-	padding-right: 0px; 
-}
-td.header-table-right {
-	text-align: right;
-	vertical-align: bottom; 
-	font-family: Verdana, sans-serif, Arial;
-	font-weight: normal;
-	color: #404040;
-	border-top: 0px #6699CC ridge;
-	border-bottom: 0px #6699CC ridge;
-	border-right: 0px #6699CC ridge;
-	border-left: 0px #6699CC ridge;
-	padding-top: 0px;
-	padding-bottom: 10px;
-	padding-left: 0px;
-	padding-right: 8px; 
-}
-td.header-table-center {
-	text-align: center;
-	vertical-align: bottom; 
-	font-family: Verdana, sans-serif, Arial;
-	font-weight: normal;
-	color: #404040;
-	border-top: 0px #6699CC ridge;
-	border-bottom: 0px #6699CC ridge;
-	border-right: 0px #6699CC ridge;
-	border-left: 0px #6699CC ridge;
-	padding-top: 0px;
-	padding-bottom: 10px;
-	padding-left: 0px;
-	padding-right: 8px; 
-}
-td.main-table {
-	text-align: left;
-	vertical-align: center; 
-	font-family: Verdana, sans-serif, Arial;
-	font-weight: normal;
-	color: #404040;
-	border-top: 1px #6699CC ridge;
-	border-bottom: 1px #6699CC ridge;
-	border-right: 1px #6699CC ridge;
-	border-left: 1px #6699CC ridge;
-	padding-top: 15px;
-	padding-bottom: 15px;
-	padding-left: 15px;
-	padding-right: 15px; 
+	font-size: 8pt;
 }
 td.search-table {
 	text-align: left;
@@ -98,7 +37,7 @@ td.search-table {
 	border-left: 1px #6699CC ridge;
 	font-family: Verdana, sans-serif, Arial;
 	font-weight: normal;
-	font-size: .7em;
+	font-size: 8pt;
 	color: #404040;
 	background-color: #fafafa;
 	padding-top: 8px;
@@ -109,21 +48,6 @@ td.search-table {
 td.search-table-inside {
 	vertical-align: top; 
 	background-color: #fafafa;
-}
-td.footer-table {
-	text-align: right;
-	vertical-align: center; 
-	font-family: Verdana, sans-serif, Arial;
-	font-weight: normal;
-	color: #404040;
-	border-top: 0px #6699CC ridge;
-	border-bottom: 0px #6699CC ridge;
-	border-right: 0px #6699CC ridge;
-	border-left: 0px #6699CC ridge;
-	padding-top: 0px;
-	padding-bottom: 15px;
-	padding-left: 10px;
-	padding-right: 10px; 
 }
 td.footer-table-login {
 	text-align: center;
@@ -159,7 +83,6 @@ tr.main_table_row_active {
 td.main_table_cell_active {
 	padding-right: 40px; 
 }
-
 tr.main_table_row_heading_inactive {
 	line-height: 30px; 
 }
@@ -173,7 +96,6 @@ tr.main_table_row_inactive {
 td.main_table_cell_inactive {
 	padding-right: 40px; 
 }
-
 td.main_table_cell_heading_active_centered {
 	padding-right: 40px;
 	text-align: center;
@@ -182,7 +104,136 @@ td.main_table_cell_active_centered {
 	padding-right: 40px; 
 	text-align: center;
 }
-
+div.main-container {
+	width: <?=$site_width?>;
+	display: table;
+	margin: 0 auto;
+}
+div.main-container-login {
+	width: <?=$site_width_login?>;
+	display: table;
+	margin: 0 auto;
+}
+div.main-outer {
+	width: 100%;
+	display: table;
+	margin: 0 auto;
+	text-align: left;
+	font-family: Verdana, sans-serif, Arial;
+	font-weight: normal;
+	border-top: 1px #6699CC ridge;
+	border-bottom: 1px #6699CC ridge;
+	border-right: 1px #6699CC ridge;
+	border-left: 1px #6699CC ridge;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px; 
+}
+div.main-outer-login {
+	width: 100%;
+	display: table;
+	margin: 0 auto;
+	text-align: left;
+	font-family: Verdana, sans-serif, Arial;
+	font-weight: normal;
+	border-top: 1px #6699CC ridge;
+	border-bottom: 1px #6699CC ridge;
+	border-right: 1px #6699CC ridge;
+	border-left: 1px #6699CC ridge;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px; 
+}
+div.main-inner {
+	text-align: left;
+	font-family: Verdana, sans-serif, Arial;
+	font-size: 8pt;
+	font-weight: normal;
+	color: #404040;
+	border-top: 0px #6699CC ridge;
+	border-bottom: 0px #6699CC ridge;
+	border-right: 0px #6699CC ridge;
+	border-left: 0px #6699CC ridge;
+	padding-top: 12px;
+	padding-bottom: 23px;
+	padding-left: 23px;
+	padding-right: 23px; 
+}
+div.header-container {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px; 
+}
+div.header-left {
+	width: 50%;
+	float: left;
+	text-align: left;
+	vertical-align: bottom; 
+	font-family: Verdana, sans-serif, Arial;
+	font-size: 8pt;
+	font-weight: normal;
+	color: #404040;
+	border-top: 0px #6699CC ridge;
+	border-bottom: 0px #6699CC ridge;
+	border-right: 0px #6699CC ridge;
+	border-left: 0px #6699CC ridge;
+	padding-top: 3px;
+	padding-bottom: 5px;
+	padding-left: 20px;
+	padding-right: 0px; 
+}
+div.header-right {
+	width: 40%;
+	float: right;
+	text-align: right;
+	vertical-align: bottom; 
+	font-family: Verdana, sans-serif, Arial;
+	font-size: 8pt;
+	font-weight: normal;
+	color: #404040;
+	border-top: 0px #6699CC ridge;
+	border-bottom: 0px #6699CC ridge;
+	border-right: 0px #6699CC ridge;
+	border-left: 0px #6699CC ridge;
+	padding-top: 33px;
+	padding-bottom: 8px;
+	padding-left: 0px;
+	padding-right: 8px; 
+}
+div.header-center {
+	text-align: center;
+	vertical-align: bottom; 
+	font-family: Verdana, sans-serif, Arial;
+	font-size: 8pt;
+	font-weight: normal;
+	color: #404040;
+	border-top: 0px #6699CC ridge;
+	border-bottom: 0px #6699CC ridge;
+	border-right: 0px #6699CC ridge;
+	border-left: 0px #6699CC ridge;
+	padding-top: 33px;
+	padding-bottom: 8px;
+	padding-left: 0px;
+	padding-right: 8px; 
+}
+div.main-menu {
+	text-align: left;
+	font-family: Verdana, sans-serif, Arial;
+	font-size: 8pt;
+	font-weight: normal;
+	color: #404040;
+	border-top: 0px #6699CC ridge;
+	border-bottom: 0px #6699CC ridge;
+	border-right: 0px #6699CC ridge;
+	border-left: 0px #6699CC ridge;
+	padding-top: 15px;
+	padding-bottom: 0px;
+	padding-left: 15px;
+	padding-right: 15px; 
+}
 div.maintenance_warning_outer {
 	width: 100%;
 	border-top: 0px;
@@ -194,7 +245,6 @@ div.maintenance_warning_outer {
 	padding-left: 0px;
 	padding-right: 0px; 
 }
-
 div.maintenance_warning_inner {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 8pt;
@@ -212,7 +262,6 @@ div.maintenance_warning_inner {
 	padding-left: 20px;
 	padding-right: 8px; 
 }
-
 div.result_message_outer {
 	width: 100%;
 	border-top: 0px;
@@ -224,7 +273,6 @@ div.result_message_outer {
 	padding-left: 0px;
 	padding-right: 0px; 
 }
-
 div.result_message_inner {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 8pt;
@@ -242,31 +290,68 @@ div.result_message_inner {
 	padding-left: 8px;
 	padding-right: 8px; 
 }
-
 div.login_form {
 	text-align: center;
 }
-
-div.reset_password {
+div.reset-password {
 	text-align: center;
+	border-top: 0px;
+	border-bottom: 0px;
+	border-right: 0px;
+	border-left: 0px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 0px;
+	padding-right: 0px; 
 }
-
+div.footer-container {
+	text-align: right;
+	vertical-align: right; 
+	font-family: Verdana, sans-serif, Arial;
+	font-size: 8pt;
+	font-weight: normal;
+	color: #404040;
+	border-top: 0px #6699CC ridge;
+	border-bottom: 0px #6699CC ridge;
+	border-right: 0px #6699CC ridge;
+	border-left: 0px #6699CC ridge;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 0px;
+	padding-right: 8px; 
+}
+div.footer-container-center {
+	text-align: center;
+	vertical-align: center; 
+	font-family: Verdana, sans-serif, Arial;
+	font-size: 8pt;
+	font-weight: normal;
+	color: #404040;
+	border-top: 0px #6699CC ridge;
+	border-bottom: 0px #6699CC ridge;
+	border-right: 0px #6699CC ridge;
+	border-left: 0px #6699CC ridge;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 0px;
+	padding-right: 0px; 
+}
 font.headline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
-	font-size: 15;
+	font-size: 10pt;
 	color: #CC0000;
 }
 font.subheadline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
-	font-size: 13;
+	font-size: 9pt;
 	color: #CC0000;
 }
 font.main_table_heading {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
-	font-size: 12;
+	font-size: 8pt;
 	color: #000000;
 }
 font.highlight {

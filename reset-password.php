@@ -83,14 +83,14 @@ if ($new_username != "") {
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("_includes/header-login.inc.php"); ?>
-<div class="reset_password">
+<div class="reset-password">
     <font class="headline">Reset Your Password</font>
     <BR><BR><BR>
     <form name="reset_password_form" method="post" action="<?=$PHP_SELF?>">
     <strong>Username:</strong>&nbsp;<input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR><BR>
     <input type="submit" name="button" value="Reset Password &raquo;">
     </form>
-    <BR><BR><BR>[<a class="subtlelink" href="index.php">Cancel Password Reset</a>]
+    <BR><BR>[<a class="subtlelink" href="index.php">Cancel Password Reset</a>]
 </div>
 <?php include("_includes/footer-login.inc.php"); ?>
 </body>
