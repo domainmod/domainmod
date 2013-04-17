@@ -156,28 +156,32 @@ if (mysql_num_rows($result) > 0) { ?>
 Before exporting your domains you should <a href="system/update-conversion-rates.php">update the conversion rates</a>.
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td class="search-table"><BR>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td class="search-table-inside">
-<form name="export_domains_form" method="post" action="<?=$PHP_SELF?>">
-Expiring Between 
-  <input name="new_expiry_start" type="text" size="10" maxlength="10" <?php if ($new_expiry_start == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_start\""; } ?>> 
-  and 
-  <input name="new_expiry_end" type="text" size="10" maxlength="10" <?php if ($new_expiry_end == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_end\""; } ?>> 
-  &nbsp;&nbsp;<input type="submit" name="button" value="List Domains &raquo;">
-</form>
-</td>
-<td class="search-table-inside" width="200" valign="middle" align="center">
-<?php if (mysql_num_rows($result) > 0) { ?>
-<a href="domain-renewals.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>">Export Results</a><BR>
-<?php } ?>
-</td>
-</tr>
+	<tr>
+		<td class="search-table"><BR>
+
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="search-table-inside">
+                        <form name="export_domains_form" method="post" action="<?=$PHP_SELF?>">
+                        Expiring Between 
+                          <input name="new_expiry_start" type="text" size="10" maxlength="10" <?php if ($new_expiry_start == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_start\""; } ?>> 
+                          and 
+                          <input name="new_expiry_end" type="text" size="10" maxlength="10" <?php if ($new_expiry_end == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_end\""; } ?>> 
+                          &nbsp;&nbsp;<input type="submit" name="button" value="List Domains &raquo;">
+                        </form>
+					</td>
+					<td class="search-table-inside" width="200" valign="middle" align="center">
+						<?php if (mysql_num_rows($result) > 0) { ?>
+                        <a href="domain-renewals.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>">Export Results</a><BR>
+                        <?php } ?>
+					</td>
+				</tr>
+			</table>
+
+		</td>
+	</tr>
 </table>
-</tr>
-</table>
+
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR>
 <table class="main_table">
