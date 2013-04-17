@@ -24,7 +24,7 @@
         </div>
         <div class="header-right">
             <?php if ($_SESSION['session_is_logged_in'] == 1) { ?>
-                <em>logged in as <strong><?=$_SESSION['session_username']?></strong> (<a class="subtlelink" href="<?=$web_root?>/system/update-profile.php"><?=$_SESSION['session_first_name']?> <?=$_SESSION['session_last_name']?></a>)</em>&nbsp;&nbsp;[ <a href="<?=$web_root?>/logout.php">Logout</a> ]
+                <em>logged in as <strong><?=$_SESSION['session_username']?></strong> (<a class="subtlelink" href="<?=$web_root?>/system/update-profile.php"><?=$_SESSION['session_first_name']?> <?=$_SESSION['session_last_name']?></a>)</em>&nbsp;&nbsp;[ <a target="_blank" href="http://aysmedia.com/contact/">Help</a> ]&nbsp;&nbsp;[ <a href="<?=$web_root?>/logout.php">Logout</a> ]
             <?php } ?>
         </div>
     </div>
