@@ -155,7 +155,7 @@ if ($new_username == "") { ?>
 <?php 
 if ($_SESSION['session_installation_mode'] != 1) { ?>
 <BR><form name="login_form" method="post" action="<?=$PHP_SELF?>">
-    <div align="center">
+    <div class="login_form">
 		<?php
         if ($_SERVER['HTTP_HOST'] == "demos.aysmedia.com") { ?>
             <strong>Demo Username & Password:</strong> "admin"<BR><BR><BR><?php 
@@ -167,7 +167,7 @@ if ($_SESSION['session_installation_mode'] != 1) { ?>
         <input name="new_password" type="password" id="new_password" size="20" maxlength="20"><br>
 	</div>
 
-    <div align="center">
+    <div class="login_form">
 		<?php 
         if ($_SERVER['HTTP_HOST'] != "demos.aysmedia.com") { ?>
             <BR><font size="1"><a class="subtlelink" href="reset-password.php">Forgot your Password?</a></font><BR><?php 
