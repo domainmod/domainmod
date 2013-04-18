@@ -1034,6 +1034,68 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0024 to 2.0025
+	if ($current_db_version == 2.0024) {
+
+		$sql = "CREATE TABLE IF NOT EXISTS `hosting` ( 
+				`id` int(10) NOT NULL auto_increment,
+				`name` varchar(255) NOT NULL,
+				`notes` longtext NOT NULL,
+				`default_host` int(1) NOT NULL default '0',
+				`active` int(1) NOT NULL default '1',
+				`insert_time` datetime NOT NULL,
+				`update_time` datetime NOT NULL,
+				PRIMARY KEY  (`id`)
+				) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "INSERT INTO `hosting` 
+					(`name`, `default_host`, `insert_time`) VALUES 
+					('[no hosting]', 1, '$current_timestamp');";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `domains`  
+					ADD `hosting_id` int(10) NOT NULL default '1' AFTER `ip_id`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "SELECT id
+				FROM hosting
+				WHERE name = '[no hosting]'";
+		$result = mysql_query($sql,$connection);
+		
+		while ($row = mysql_fetch_object($result)) {
+			$temp_hosting_id = $row->id;
+		}
+		
+		$sql = "UPDATE domains
+				SET hosting_id = '" . $temp_hosting_id . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `domains` 
+					CHANGE `owner_id` `owner_id` INT(5) NOT NULL DEFAULT '1'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `domains` 
+					CHANGE `registrar_id` `registrar_id` INT(5) NOT NULL DEFAULT '1'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `domains` 
+					CHANGE `account_id` `account_id` INT(5) NOT NULL DEFAULT '1'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `domains` 
+					CHANGE `dns_id` `dns_id` INT(5) NOT NULL DEFAULT '1'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0025',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0025;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";

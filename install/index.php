@@ -113,7 +113,24 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 			(`name`, `stakeholder`, `default_category`, `insert_time`) VALUES 
 			('[no category]', '[no stakeholder]', 1, '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
-	
+
+	$sql = "CREATE TABLE IF NOT EXISTS `hosting` ( 
+				`id` int(10) NOT NULL auto_increment,
+				`name` varchar(255) NOT NULL,
+				`notes` longtext NOT NULL,
+				`default_host` int(1) NOT NULL default '0',
+				`active` int(1) NOT NULL default '1',
+				`insert_time` datetime NOT NULL,
+				`update_time` datetime NOT NULL,
+				PRIMARY KEY  (`id`)
+			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$sql = "INSERT INTO `hosting` 
+			(`name`, `default_host`, `insert_time`) VALUES 
+			('[no hosting]', 1, '$current_timestamp');";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
 	$sql = "CREATE TABLE IF NOT EXISTS `owners` ( 
 				`id` int(10) NOT NULL auto_increment,
 				`name` varchar(255) NOT NULL,
@@ -202,16 +219,17 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `domains` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`owner_id` int(5) NOT NULL,
-				`registrar_id` int(5) NOT NULL,
-				`account_id` int(5) NOT NULL,
+				`owner_id` int(5) NOT NULL default '1',
+				`registrar_id` int(5) NOT NULL default '1',
+				`account_id` int(5) NOT NULL default '1',
 				`domain` varchar(255) NOT NULL,
 				`tld` varchar(50) NOT NULL,
 				`expiry_date` date NOT NULL,
 				`cat_id` int(10) NOT NULL default '1',
 				`fee_id` int(10) NOT NULL default '0',
-				`dns_id` int(10) NOT NULL default '0',
+				`dns_id` int(10) NOT NULL default '1',
 				`ip_id` int(10) NOT NULL default '1',
+				`hosting_id` int(10) NOT NULL default '1',
 				`function` varchar(255) NOT NULL,
 				`status` varchar(255) NOT NULL,
 				`status_notes` longtext NOT NULL,
