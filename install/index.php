@@ -69,6 +69,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`display_domain_expiry_date` int(1) NOT NULL default '1',
 				`display_domain_category` int(1) NOT NULL default '1',
 				`display_domain_dns` int(1) NOT NULL default '1',
+				`display_domain_host` int(1) NOT NULL default '0',
 				`display_domain_ip` int(1) NOT NULL default '0',
 				`display_domain_tld` int(1) NOT NULL default '0',
 				`display_domain_fee` int(1) NOT NULL default '0',
