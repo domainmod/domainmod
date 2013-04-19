@@ -39,6 +39,7 @@ $new_status_notes = $_POST['new_status_notes'];
 $new_pcid = $_POST['new_pcid'];
 $new_dnsid = $_POST['new_dnsid'];
 $new_ipid = $_POST['new_ipid'];
+$new_whid = $_POST['new_whid'];
 $new_raid = $_POST['new_raid'];
 $new_privacy = $_POST['new_privacy'];
 $new_active = $_POST['new_active'];
@@ -168,12 +169,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				   }
 				} 	
 	
-				if (!MyCheckDate($new_expiry_date) || $new_pcid == "" || $new_dnsid == "" || $new_ipid == "" || $new_raid == "" || $new_pcid == "0" || $new_dnsid == "0" || $new_ipid == "0" || $new_raid == "0") {
+				if (!MyCheckDate($new_expiry_date) || $new_pcid == "" || $new_dnsid == "" || $new_ipid == "" || $new_whid == "" || $new_raid == "" || $new_pcid == "0" || $new_dnsid == "0" || $new_ipid == "0" || $new_whid == "0" || $new_raid == "0") {
 	
 					if (!MyCheckDate($new_expiry_date)) $_SESSION['session_result_message'] .= "You have entered an invalid expiry date<BR>";
 					if ($new_pcid == "" || $new_pcid == "0") $_SESSION['session_result_message'] .= "Please choose the new Category<BR>";
 					if ($new_dnsid == "" || $new_dnsid == "0") $_SESSION['session_result_message'] .= "Please choose the new DNS Profile<BR>";
 					if ($new_ipid == "" || $new_ipid == "0") $_SESSION['session_result_message'] .= "Please choose the new IP Address<BR>";
+					if ($new_whid == "" || $new_whid == "0") $_SESSION['session_result_message'] .= "Please choose the new Web Hosting Provider<BR>";
 					if ($new_raid == "" || $new_raid == "0") $_SESSION['session_result_message'] .= "Please choose the new Registrar Account<BR>";
 					$submission_failed = 1;
 				
@@ -210,8 +212,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						if ($temp_fee_id == '0' || $temp_fee_id == "") { $temp_fee_fixed = 0; $temp_fee_id = 0; } else { $temp_fee_fixed = 1; }
 			
 						$sql = "INSERT INTO domains 
-								(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, dns_id, ip_id, function, status, status_notes, notes, privacy, active, fee_fixed, insert_time) VALUES 
-								('$temp_owner_id', '$temp_registrar_id', '$new_raid',  '$new_domain', '$new_tld', '$new_expiry_date', '$new_pcid', '$temp_fee_id', '$new_dnsid', '$new_ipid', '$new_function', '$new_status', '$new_status_notes', '$new_notes', '$new_privacy', '$new_active', '$temp_fee_fixed', '$current_timestamp')";
+								(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, dns_id, ip_id, hosting_id, function, status, status_notes, notes, privacy, active, fee_fixed, insert_time) VALUES 
+								('$temp_owner_id', '$temp_registrar_id', '$new_raid',  '$new_domain', '$new_tld', '$new_expiry_date', '$new_pcid', '$temp_fee_id', '$new_dnsid', '$new_ipid', '$new_whid', '$new_function', '$new_status', '$new_status_notes', '$new_notes', '$new_privacy', '$new_active', '$temp_fee_fixed', '$current_timestamp')";
 						$result = mysql_query($sql,$connection) or die(mysql_error());
 						$temp_fee_id = 0;
 		
@@ -386,7 +388,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					$_SESSION['session_result_message'] = "Note Added<BR>";
 	
 				}
-	
+
 			} elseif ($action == "CRA") { 
 	
 				if ($new_raid == "" || $new_raid == 0) {
@@ -441,7 +443,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					include("_includes/system/update-domain-fees.inc.php");
 	
 				}
+
+			} elseif ($action == "CWH") {
 	
+				if ($new_whid == "" || $new_whid == 0) {
+	
+					$_SESSION['session_result_message'] = "Please choose the new Web Hosting Provider<BR>";
+					$submission_failed = 1;
+	
+				} else {
+
+					if ($new_notes != "") {
+
+						$sql = "UPDATE domains
+								SET hosting_id = '$new_whid',
+									notes = CONCAT('$new_notes\r\n\r\n', notes),
+									update_time = '$current_timestamp'
+								WHERE domain IN ($new_data_formatted)";
+						
+					} else {
+
+						$sql = "UPDATE domains
+								SET hosting_id = '$new_whid',
+									update_time = '$current_timestamp'
+								WHERE domain IN ($new_data_formatted)";
+
+					}
+					$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+					$_SESSION['session_result_message'] = "Web Hosting Provider Changed<BR>";
+	
+				}
+
 			} elseif ($action == "E") { 
 
 				if ($new_notes != "") {
@@ -774,6 +807,8 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
             <BR><strong>The following domains had their IP Address changed:</strong><BR>
         <?php } elseif ($action == "CRA") { ?>
             <BR><strong>The following domains had their Registrar Account changed:</strong><BR>
+        <?php } elseif ($action == "CWH") { ?>
+            <BR><strong>The following domains had their Web Hosting Provider changed:</strong><BR>
         <?php } elseif ($action == "AN") { ?>
             <BR><strong>The following domains had the Note appended:</strong><BR>
         <?php } ?>
@@ -785,24 +820,25 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 Instead of having to waste time editing domains one-by-one, you can use the below form to execute actions on multiple domains.<BR><BR><BR>
 <form name="bulk_actions_forum" method="post" action="<?=$PHP_SELF?>">
   <select name="jumpMenu" id="jumpMenu" onChange="MM_jumpMenu('parent',this,0)">
-    <option value="bulk-actions.php"<?php if ($action == "") { echo " selected"; } ?>>Click To Choose Action</option>
+    <option value="bulk-actions.php"<?php if ($action == "") { echo " selected"; } ?>>Click to Choose Action</option>
     <option value="bulk-actions.php?action=AD"<?php if ($action == "AD") { echo " selected"; } ?>>Add Domains</option>
     <option value="bulk-actions.php?action=FR"<?php if ($action == "FR") { echo " selected"; } ?>>Renew Domains (Update Expiry Date, Mark Active, Add Note)</option>
     <option value="bulk-actions.php?action=R"<?php if ($action == "R") { echo " selected"; } ?>>Renew Domains (Update Expiry Date Only)</option>
-    <option value="bulk-actions.php?action=A"<?php if ($action == "A") { echo " selected"; } ?>>Mark As 'Active'</option>
-    <option value="bulk-actions.php?action=T"<?php if ($action == "T") { echo " selected"; } ?>>Mark As 'In Transfer'</option>
-	<option value="bulk-actions.php?action=PRg"<?php if ($action == "PRg") { echo " selected"; } ?>>Mark As 'Pending (Registration)'</option>
-	<option value="bulk-actions.php?action=PRn"<?php if ($action == "PRn") { echo " selected"; } ?>>Mark As 'Pending (Renewal)'</option>
-	<option value="bulk-actions.php?action=PO"<?php if ($action == "PO") { echo " selected"; } ?>>Mark As 'Pending (Other)'</option>
-    <option value="bulk-actions.php?action=E"<?php if ($action == "E") { echo " selected"; } ?>>Mark As 'Expired'</option>
-    <option value="bulk-actions.php?action=S"<?php if ($action == "S") { echo " selected"; } ?>>Mark As 'Sold'</option>
+    <option value="bulk-actions.php?action=A"<?php if ($action == "A") { echo " selected"; } ?>>Mark as 'Active'</option>
+    <option value="bulk-actions.php?action=T"<?php if ($action == "T") { echo " selected"; } ?>>Mark as 'In Transfer'</option>
+	<option value="bulk-actions.php?action=PRg"<?php if ($action == "PRg") { echo " selected"; } ?>>Mark as 'Pending (Registration)'</option>
+	<option value="bulk-actions.php?action=PRn"<?php if ($action == "PRn") { echo " selected"; } ?>>Mark as 'Pending (Renewal)'</option>
+	<option value="bulk-actions.php?action=PO"<?php if ($action == "PO") { echo " selected"; } ?>>Mark as 'Pending (Other)'</option>
+    <option value="bulk-actions.php?action=E"<?php if ($action == "E") { echo " selected"; } ?>>Mark as 'Expired'</option>
+    <option value="bulk-actions.php?action=S"<?php if ($action == "S") { echo " selected"; } ?>>Mark as 'Sold'</option>
+    <option value="bulk-actions.php?action=PRVE"<?php if ($action == "PRVE") { echo " selected"; } ?>>Mark as Private WHOIS</option>
+    <option value="bulk-actions.php?action=PRVD"<?php if ($action == "PRVD") { echo " selected"; } ?>>Mark as Public WHOIS</option>
     <option value="bulk-actions.php?action=CPC"<?php if ($action == "CPC") { echo " selected"; } ?>>Change Category</option>
     <option value="bulk-actions.php?action=CDNS"<?php if ($action == "CDNS") { echo " selected"; } ?>>Change DNS Profile</option>
+    <option value="bulk-actions.php?action=CED"<?php if ($action == "CED") { echo " selected"; } ?>>Change Expiry Date</option>
     <option value="bulk-actions.php?action=CIP"<?php if ($action == "CIP") { echo " selected"; } ?>>Change IP Address</option>
     <option value="bulk-actions.php?action=CRA"<?php if ($action == "CRA") { echo " selected"; } ?>>Change Registrar Account</option>
-    <option value="bulk-actions.php?action=PRVE"<?php if ($action == "PRVE") { echo " selected"; } ?>>Change To Private WHOIS</option>
-    <option value="bulk-actions.php?action=PRVD"<?php if ($action == "PRVD") { echo " selected"; } ?>>Change To Public WHOIS</option>
-    <option value="bulk-actions.php?action=CED"<?php if ($action == "CED") { echo " selected"; } ?>>Change Expiry Date</option>
+    <option value="bulk-actions.php?action=CWH"<?php if ($action == "CWH") { echo " selected"; } ?>>Change Web Hosting Provider</option>
     <option value="bulk-actions.php?action=AN"<?php if ($action == "AN") { echo " selected"; } ?>>Add A Note</option>
   </select>
 
@@ -845,6 +881,30 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <BR><BR>
     <strong>Status Notes:</strong><BR><BR>
     <textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?></textarea>
+    <BR><BR>
+    <strong>Web Hosting Provider:</strong><BR><BR>
+    <?php
+    $sql_host = "SELECT id, name
+				 FROM hosting
+				 WHERE active = '1'
+				 ORDER BY default_host desc, name asc";
+
+    $result_host = mysql_query($sql_host,$connection) or die(mysql_error());
+    echo "<select name=\"new_whid\">";
+    while ($row_host = mysql_fetch_object($result_host)) {
+    
+        if ($row_host->id == $new_whid) {
+    
+            echo "<option value=\"$row_host->id\" selected>[ $row_host->name ]</option>";
+        
+        } else {
+    
+            echo "<option value=\"$row_host->id\">$row_host->name</option>";
+        
+        }
+    }
+    echo "</select>";
+    ?>
     <BR><BR>
     <strong>Category:</strong><BR><BR>
     <?php
@@ -1036,6 +1096,22 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
+<?php } elseif ($action == "CWH") { ?>
+
+	<?php
+    $sql_host = "SELECT id, name
+				 FROM hosting
+				 ORDER BY name asc";
+    $result_host = mysql_query($sql_host,$connection);
+    echo "<strong>New Web Hosting Provider:</strong> <BR><BR>";
+    echo "<select name=\"new_whid\">";
+    echo "<option value=\"\""; if ($new_whid == "") echo " selected"; echo ">"; echo "$choose_text Web Hosting Provider</option>";
+    while ($row_host = mysql_fetch_object($result_host)) { 
+    echo "<option value=\"$row_host->id\""; if ($row_host->id == $new_whid) echo " selected"; echo ">"; echo "$row_host->name</option>";
+    } 
+    echo "</select>";
+    ?>
+    <BR><BR>
 <?php } elseif ($action == "AN") { ?>
 
 <?php } elseif ($action == "CED") { ?>
@@ -1056,6 +1132,9 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <?php } ?>
     <?php if ($action == "CRA") { ?>
     <input type="hidden" name="raid" value="<?=$new_raid?>">
+    <?php } ?>
+    <?php if ($action == "CWH") { ?>
+    <input type="hidden" name="whid" value="<?=$new_whid?>">
     <?php } ?>
     <input type="submit" name="button" value="Perform Bulk Action &raquo;">
 <?php } ?>

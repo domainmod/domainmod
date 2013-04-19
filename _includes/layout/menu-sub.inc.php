@@ -55,6 +55,10 @@ if ($software_section == "domains") {
 
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ip-address.php">Add A New IP Address</a><?php 
 
+} elseif ($software_section == "hosting") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/host.php">Add A New Web Host</a><?php 
+
 } elseif ($software_section == "registrars") { ?>
 
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/registrar.php">Add A New Registrar</a><?php 

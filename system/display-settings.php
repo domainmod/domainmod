@@ -35,6 +35,7 @@ $new_display_domain_account = $_POST['new_display_domain_account'];
 $new_display_domain_category = $_POST['new_display_domain_category'];
 $new_display_domain_expiry_date = $_POST['new_display_domain_expiry_date'];
 $new_display_domain_dns = $_POST['new_display_domain_dns'];
+$new_display_domain_host = $_POST['new_display_domain_host'];
 $new_display_domain_ip = $_POST['new_display_domain_ip'];
 $new_display_domain_tld = $_POST['new_display_domain_tld'];
 $new_display_domain_fee = $_POST['new_display_domain_fee'];
@@ -56,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 				display_domain_category = '$new_display_domain_category',
 				display_domain_expiry_date = '$new_display_domain_expiry_date',
 				display_domain_dns = '$new_display_domain_dns',
+				display_domain_host = '$new_display_domain_host',
 				display_domain_ip = '$new_display_domain_ip',
 				display_domain_tld = '$new_display_domain_tld',
 				display_domain_fee = '$new_display_domain_fee',
@@ -79,7 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	$_SESSION['session_display_domain_category'] = $new_display_domain_category;
 	$_SESSION['session_display_domain_expiry_date'] = $new_display_domain_expiry_date;
 	$_SESSION['session_display_domain_dns'] = $new_display_domain_dns;
+	$_SESSION['session_display_domain_host'] = $new_display_domain_host;
 	$_SESSION['session_display_domain_ip'] = $new_display_domain_ip;
+	$_SESSION['session_display_domain_host'] = $new_display_domain_host;
 	$_SESSION['session_display_domain_tld'] = $new_display_domain_tld;
 	$_SESSION['session_display_domain_fee'] = $new_display_domain_fee;
 	$_SESSION['session_display_ssl_owner'] = $new_display_ssl_owner;
@@ -105,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 		
 	} else {
 		
- 		$sql = "SELECT number_of_domains, number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account, display_domain_account, display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_ip, display_domain_tld, display_domain_fee, display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_account, display_ssl_domain, display_ssl_type, display_ssl_expiry_date, display_ssl_fee
+ 		$sql = "SELECT number_of_domains, number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account, display_domain_account, display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_host, display_domain_ip, display_domain_tld, display_domain_fee, display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_account, display_ssl_domain, display_ssl_type, display_ssl_expiry_date, display_ssl_fee
 				FROM user_settings
 				WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -120,6 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 			$new_display_domain_category = $row->display_domain_category;
 			$new_display_domain_expiry_date = $row->display_domain_expiry_date;
 			$new_display_domain_dns = $row->display_domain_dns;
+			$new_display_domain_host = $row->display_domain_host;
 			$new_display_domain_ip = $row->display_domain_ip;
 			$new_display_domain_tld = $row->display_domain_tld;
 			$new_display_domain_fee = $row->display_domain_fee;
@@ -154,10 +159,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 <table class="main_table">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active">Expiry Date</td>
-    	<td class="main_table_cell_heading_active">Renewal Fee</td>
+    	<td class="main_table_cell_heading_active">Fee</td>
     	<td class="main_table_cell_heading_active">TLD</td>
+    	<td class="main_table_cell_heading_active">Web Host</td>
     	<td class="main_table_cell_heading_active">IP Address</td>
-    	<td class="main_table_cell_heading_active">DNS Profile</td>
+    	<td class="main_table_cell_heading_active">DNS</td>
     	<td class="main_table_cell_heading_active">Category</td>
     	<td class="main_table_cell_heading_active">Owner</td>
     	<td class="main_table_cell_heading_active">Registrar</td>
@@ -167,6 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_expiry_date" value="1"<?php if ($new_display_domain_expiry_date == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_fee" value="1"<?php if ($new_display_domain_fee == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_tld" value="1"<?php if ($new_display_domain_tld == "1") echo " checked"; ?>></td>
+    	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_host" value="1"<?php if ($new_display_domain_host == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_ip" value="1"<?php if ($new_display_domain_ip == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_dns" value="1"<?php if ($new_display_domain_dns == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_category" value="1"<?php if ($new_display_domain_category == "1") echo " checked"; ?>></td>
@@ -183,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 <table class="main_table">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active">Expiry Date</td>
-    	<td class="main_table_cell_heading_active">Renewal Fee</td>
+    	<td class="main_table_cell_heading_active">Fee</td>
     	<td class="main_table_cell_heading_active">Domain</td>
     	<td class="main_table_cell_heading_active">SSL Type</td>
     	<td class="main_table_cell_heading_active">Owner</td>

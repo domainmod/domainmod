@@ -31,6 +31,23 @@ $export = $_GET['export'];
 $new_expiry_start = $_REQUEST['new_expiry_start'];
 $new_expiry_end = $_REQUEST['new_expiry_end'];
 
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
+		WHERE d.account_id = ra.id
+		  AND ra.registrar_id = r.id
+		  AND ra.owner_id = o.id
+		  AND d.registrar_id = f.registrar_id
+		  AND d.tld = f.tld
+		  AND f.currency_id = cc.id
+		  AND d.cat_id = cat.id
+		  AND d.dns_id = dns.id
+		  AND d.ip_id = ip.id
+		  AND d.hosting_id = h.id
+		  AND cat.active = '1'
+		  AND d.active NOT IN ('0', '10')
+		  AND d.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
+		ORDER BY d.expiry_date asc, d.domain";	
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	function MyCheckDate( $postedDate ) {
@@ -43,29 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if (MyCheckDate($new_expiry_start) && MyCheckDate($new_expiry_end)) {
 	
-		$sql = "SELECT currency
-				FROM currencies
-				WHERE default_currency = '1'
-				LIMIT 1";
-		$result = mysql_query($sql,$connection);
-		while ($row = mysql_fetch_object($result)) { $default_currency = $row->currency; }
-		
-		$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.status, d.status_notes, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns
-				FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip
-				WHERE d.account_id = ra.id
-				  AND ra.registrar_id = r.id
-				  AND ra.owner_id = o.id
-				  AND d.registrar_id = f.registrar_id
-				  AND d.tld = f.tld
-				  AND f.currency_id = cc.id
-				  AND d.cat_id = cat.id
-				  AND d.dns_id = dns.id
-				  AND d.ip_id = ip.id
-				  AND cat.active = '1'
-				  AND d.active NOT IN ('0', '10')
-				  AND d.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
-				ORDER BY d.expiry_date asc";	
-		
+		$sql_currency = "SELECT currency
+						 FROM currencies
+						 WHERE default_currency = '1'
+						 LIMIT 1";
+		$result_currency = mysql_query($sql_currency,$connection);
+		while ($row_currency = mysql_fetch_object($result_currency)) { $default_currency = $row_currency->currency; }
+
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		$result2 = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -82,12 +83,14 @@ $full_export = "";
 
 if ($export == "1") {
 
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
 	$full_export .= "\"All prices are listed in " . $default_currency . "\"\n\n";
 
-	$full_export .= "\"DOMAIN STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Registrar\",\"Username\",\"Notes\"\n";
+	$full_export .= "\"DOMAIN STATUS\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"Web Host\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Function\",\"Status\",\"Status Notes\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Registrar\",\"Username\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
-		
+
 		$temp_renewal_fee = $row->renewal_fee * $row->conversion;
 		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
@@ -114,7 +117,7 @@ if ($export == "1") {
 		include("_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
-		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"" . $export_renewal_fee . "\",\"$row->domain\",\"$row->tld\",\"$privacy_status\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->registrar_name\",\"$row->username\",\"$row->notes\"\n";
+		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"$row->to_renew\",\"" . $export_renewal_fee . "\",\"$row->domain\",\".$row->tld\",\"$privacy_status\",\"$row->wh_name\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->function\",\"$row->status\",\"$row->status_notes\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->registrar_name\",\"$row->username\",\"$row->notes\"\n";
 	}
 	
 	$full_export .= "\n";
@@ -212,6 +215,11 @@ Before exporting your domains you should <a href="system/update-conversion-rates
     	<font class="main_table_heading">TLD</font>
     </td>
 <?php } ?>
+<?php if ($_SESSION['session_display_domain_host'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+    	<font class="main_table_heading">Web Host</font>
+    </td>
+<?php } ?>
 <?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">IP Address</font>
@@ -272,7 +280,12 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 	</td>
 <?php if ($_SESSION['session_display_domain_tld'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=$row->tld?>
+		.<?=$row->tld?>
+	</td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_host'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=$row->wh_name?>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
@@ -328,6 +341,7 @@ Total Renewal Cost<BR>
 Domain<BR>
 TLD<BR>
 WHOIS Status (Public or Private)<BR>
+Web Hosting Provider<BR>
 DNS Profile<BR>
 IP Address Name<BR>
 IP Address<BR>

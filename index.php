@@ -89,7 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['session_display_domain_expiry_date'] = $row_user_settings->display_domain_expiry_date;
 				$_SESSION['session_display_domain_category'] = $row_user_settings->display_domain_category;
 				$_SESSION['session_display_domain_dns'] = $row_user_settings->display_domain_dns;
+				$_SESSION['session_display_domain_host'] = $row_user_settings->display_domain_host;
 				$_SESSION['session_display_domain_ip'] = $row_user_settings->display_domain_ip;
+				$_SESSION['session_display_domain_host'] = $row_user_settings->display_domain_host;
 				$_SESSION['session_display_domain_tld'] = $row_user_settings->display_domain_tld;
 				$_SESSION['session_display_domain_fee'] = $row_user_settings->display_domain_fee;
 				$_SESSION['session_display_ssl_owner'] = $row_user_settings->display_ssl_owner;

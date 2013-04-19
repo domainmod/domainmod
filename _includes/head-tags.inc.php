@@ -75,33 +75,33 @@ tr.main_table_row_heading_active {
 	line-height: 30px; 
 }
 td.main_table_cell_heading_active {
-	padding-right: 40px;
+	padding-right: 29px;
 }
 tr.main_table_row_active {
 	line-height: 18px; 
 }
 td.main_table_cell_active {
-	padding-right: 40px; 
+	padding-right: 29px; 
 }
 tr.main_table_row_heading_inactive {
 	line-height: 30px; 
 }
 td.main_table_cell_heading_inactive {
 	padding-top: 15px;
-	padding-right: 40px;
+	padding-right: 29px;
 }
 tr.main_table_row_inactive {
 	line-height: 18px; 
 }
 td.main_table_cell_inactive {
-	padding-right: 40px; 
+	padding-right: 29px; 
 }
 td.main_table_cell_heading_active_centered {
-	padding-right: 40px;
+	padding-right: 29px;
 	text-align: center;
 }
 td.main_table_cell_active_centered {
-	padding-right: 40px; 
+	padding-right: 29px; 
 	text-align: center;
 }
 div.main-container {

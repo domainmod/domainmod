@@ -20,6 +20,7 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/registrar-accounts.php">Accounts</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/dns.php">DNS</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ip-addresses.php">IPs</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/hosting.php">Hosting</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/categories.php">Categories</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/owners.php">Owners</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/currencies.php">Currencies</a> ]&nbsp;

@@ -36,6 +36,7 @@ $new_status_notes = $_POST['new_status_notes'];
 $new_cat_id = $_POST['new_cat_id'];
 $new_dns_id = $_POST['new_dns_id'];
 $new_ip_id = $_POST['new_ip_id'];
+$new_hosting_id = $_POST['new_hosting_id'];
 $new_account_id = $_POST['new_account_id'];
 $new_privacy = $_POST['new_privacy'];
 $new_active = $_POST['new_active'];
@@ -51,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	   }
 	} 	
 
-	if (MyCheckDate($new_expiry_date) && preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_account_id != "0") {
+	if (MyCheckDate($new_expiry_date) && preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0") {
 
 		$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 		
@@ -71,8 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
 
 		$sql = "INSERT INTO domains
-				(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, fee_id, function, status, status_notes, notes, privacy, active, insert_time) VALUES 
-				('$new_owner_id', '$new_registrar_id', '$new_account_id', '" . mysql_real_escape_string($new_domain) . "', '$tld', '$new_expiry_date', '$new_cat_id', '$new_dns_id', '$new_ip_id', '$new_fee_id', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_status) . "', '" . mysql_real_escape_string($new_status_notes) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_privacy', '$new_active', '$current_timestamp')";
+				(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id, fee_id, function, status, status_notes, notes, privacy, active, insert_time) VALUES 
+				('$new_owner_id', '$new_registrar_id', '$new_account_id', '" . mysql_real_escape_string($new_domain) . "', '$tld', '$new_expiry_date', '$new_cat_id', '$new_dns_id', '$new_ip_id', '$new_hosting_id', '$new_fee_id', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_status) . "', '" . mysql_real_escape_string($new_status_notes) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_privacy', '$new_active', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -116,6 +117,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <strong>Status Notes:</strong><BR><BR>
 <textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?>
 </textarea>
+<BR><BR>
+<strong>Web Hosting Provider:</strong><BR><BR>
+<?php
+$sql_hosting = "SELECT id, name
+				FROM hosting
+				WHERE active = '1'
+				ORDER BY default_host desc, name asc";
+$result_hosting = mysql_query($sql_hosting,$connection) or die(mysql_error());
+echo "<select name=\"new_hosting_id\">";
+while ($row_hosting = mysql_fetch_object($result_hosting)) {
+
+	if ($row_hosting->id == $new_hosting_id) {
+
+		echo "<option value=\"$row_hosting->id\" selected>$row_hosting->name</option>";
+	
+	} else {
+
+		echo "<option value=\"$row_hosting->id\">$row_hosting->name</option>";
+	
+	}
+}
+echo "</select>";
+?>
 <BR><BR>
 <strong>Category:</strong><BR><BR>
 <?php
