@@ -421,7 +421,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 //-->
 </script>
 </head>
-<body onLoad="document.forms[0].elements[11].focus()";>
+<body onLoad="document.forms[0].elements[12].focus()";>
 <?php include("_includes/header.inc.php"); ?>
 <?php
 if ($_SESSION['session_need_registrar'] == "1") {
