@@ -677,7 +677,7 @@ echo "</select>";
         $result_currency = mysql_query($sql_currency,$connection);
         while ($row_currency = mysql_fetch_object($result_currency)) { $temp_currency = $row_currency->currency; }
         ?>
-		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sf_a") { echo "sf_d"; } else { echo "sf_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Fee (<?=$temp_currency?>)</font></a>
+		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sf_a") { echo "sf_d"; } else { echo "sf_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Fee</font></a>
 	</td>
 <?php } ?>
 	<td class="main_table_cell_heading_active">
