@@ -20,7 +20,7 @@
 
     <div class="header-container">
         <div class="header-left">
-            <a href="<?=$web_root?>"><img border="0" src="<?=$web_root?>/images/logo.png"></a>
+            <a href="<?=$web_root?>/domains.php"><img border="0" src="<?=$web_root?>/images/logo.png"></a>
         </div>
         <div class="header-right">
             <?php if ($_SESSION['session_is_logged_in'] == 1) { ?>
