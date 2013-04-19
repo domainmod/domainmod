@@ -1028,7 +1028,7 @@ $_SESSION['session_quick_search'] = preg_replace("/'/", "", $_SESSION['session_q
 </td>
 </tr>
 </table>
-</form></td>
+</form><BR></td>
 </tr>
 </table>
 <BR>
