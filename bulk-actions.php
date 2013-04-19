@@ -46,7 +46,7 @@ $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 $new_renewal_years = $_POST['new_renewal_years'];
 
-$choose_text = "Click Here To Choose A New";
+$choose_text = "Click here to choose the new";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
