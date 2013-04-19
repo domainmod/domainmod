@@ -50,17 +50,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					SET default_ip_address = '0',
 					    update_time = '$current_timestamp'";
 			$result = mysql_query($sql,$connection);
-			
+
 		} else { 
 		
-			$sql = "SELECT default_ip
+			$sql = "SELECT default_ip_address
 					FROM ip_addresses
-					WHERE default_ip = '1'
+					WHERE default_ip_address = '1'
 					  AND id != '$new_ipid'";
 			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_default_ip = $row->default_ip; }
+			while ($row = mysql_fetch_object($result)) { $temp_default_ip = $row->default_ip_address; }
 			if ($temp_default_ip == "") { $new_default_ip_address = "1"; }
-		
+
 		}
 
 		$sql2 = "UPDATE ip_addresses
