@@ -327,7 +327,7 @@ $result = mysql_query($sql,$connection);
 <form name="ssl_cert_search_form" method="post" action="<?=$PHP_SELF?>">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td class="search-table-inside" width="640">
+<td class="search-table-inside" width="560">
 &nbsp;&nbsp;
 <?php 
 // OWNER
@@ -625,8 +625,8 @@ echo "</select>";
 <input type="hidden" name="sort_by" value="<?=$sort_by?>">
 </td>
 <td class="search-table-inside">
+<strong>Keyword Search:</strong><BR><BR>
 <input name="search_for" type="text" id="textfield" value="<?=$search_for?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" id="button" value="Search &raquo;">
-<BR><BR>
 <input type="hidden" name="oid" value="<?=$oid?>">
 <input type="hidden" name="did" value="<?=$did?>">
 <input type="hidden" name="sslpid" value="<?=$sslpid?>">
@@ -637,7 +637,7 @@ echo "</select>";
 </td>
 </tr>
 </table>
-</form></td>
+</form><BR></td>
 </tr>
 </table>
 <BR>
