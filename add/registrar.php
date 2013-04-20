@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR><BR>
 <strong>Default Registrar?</strong>&nbsp;
 <input name="new_default_registrar" type="checkbox" id="new_default_registrar" value="1"<?php if ($new_default_registrar == "1") echo " checked";?>>
-<BR><BR><BR>
+<BR><BR>
 <input type="submit" name="button" value="Add This Registrar &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>

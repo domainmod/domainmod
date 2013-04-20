@@ -351,7 +351,7 @@ if (mysql_num_rows($result) != 0) {
 	</tr>
 </table>
 <input type="hidden" name="new_sslpid" value="<?=$sslpid?>">
-<BR><BR><input type="submit" name="button" value="Add/Update This SSL Fee &raquo;">
+<BR><input type="submit" name="button" value="Add/Update This SSL Fee &raquo;">
 </form>
 <BR><BR>
 <font class="subheadline">SSL Type Fees</font><BR><BR>
