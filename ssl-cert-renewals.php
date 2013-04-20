@@ -312,13 +312,13 @@ Renewal Fee<BR>
 Total Renewal Cost<BR>
 SSL Cert Name<BR>
 Associated Domain<BR>
+SSL Provider<BR>
+SSL Account<BR>
+SSL Type<BR>
+Owner<BR>
 IP Address Name<BR>
 IP Address<BR>
 IP Address rDNS<BR>
-SSL Type<BR>
-Owner<BR>
-SSL Provider<BR>
-SSL Account<BR>
 Notes<BR>
 <?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
