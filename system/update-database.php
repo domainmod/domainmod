@@ -1144,6 +1144,35 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0028 to 2.0029
+	if ($current_db_version == 2.0028) {
+
+		$sql = "ALTER TABLE `dns`  
+					ADD `ip1` VARCHAR(255) NOT NULL AFTER `dns10`,  
+					ADD `ip2` VARCHAR(255) NOT NULL AFTER `ip1`,  
+					ADD `ip3` VARCHAR(255) NOT NULL AFTER `ip2`,  
+					ADD `ip4` VARCHAR(255) NOT NULL AFTER `ip3`,  
+					ADD `ip5` VARCHAR(255) NOT NULL AFTER `ip4`,  
+					ADD `ip6` VARCHAR(255) NOT NULL AFTER `ip5`,  
+					ADD `ip7` VARCHAR(255) NOT NULL AFTER `ip6`,  
+					ADD `ip8` VARCHAR(255) NOT NULL AFTER `ip7`,  
+					ADD `ip9` VARCHAR(255) NOT NULL AFTER `ip8`,  
+					ADD `ip10` VARCHAR(255) NOT NULL AFTER `ip9`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `settings`  
+					ADD `expiration_email_days` INT(3) NOT NULL DEFAULT '60' AFTER `timezone`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0029',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0029;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
