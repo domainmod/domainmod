@@ -328,20 +328,20 @@ Renewal Fee<BR>
 Total Renewal Cost<BR>
 Domain<BR>
 TLD<BR>
-WHOIS Status (Public or Private)<BR>
-Web Hosting Provider<BR>
+WHOIS Status<BR>
+Domain Registrar<BR>
+Registrar Account<BR>
 DNS Profile<BR>
 IP Address Name<BR>
 IP Address<BR>
 IP Address rDNS<BR>
-Domain Function<BR>
-Domain Status<BR>
-Domain Status Notes<BR>
+Web Hosting Provider<BR>
 Category<BR>
 Category Stakeholder<BR>
 Owner<BR>
-Domain Registrar<BR>
-Registrar Account<BR>
+Domain Function<BR>
+Domain Status<BR>
+Domain Status Notes<BR>
 Notes<BR>
 <?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
