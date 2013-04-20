@@ -210,16 +210,6 @@ Before exporting your SSL Certificates you should <a href="system/update-convers
     	<font class="main_table_heading">Domain</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Type</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Owner</font>
-    </td>
-<?php } ?>
 <?php if ($_SESSION['session_display_ssl_provider'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">SSL Provider</font>
@@ -228,6 +218,16 @@ Before exporting your SSL Certificates you should <a href="system/update-convers
 <?php if ($_SESSION['session_display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">SSL Account</font>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+    	<font class="main_table_heading">Type</font>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+    	<font class="main_table_heading">Owner</font>
     </td>
 <?php } ?>
 </tr>
@@ -274,16 +274,6 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 		<?=$full_domain_name?>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
-	<td class="main_table_cell_active">
-		<?=$row->type?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
-	<td class="main_table_cell_active">
-		<?=$row->owner_name?>
-    </td>
-<?php } ?>
 <?php if ($_SESSION['session_display_ssl_provider'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->ssl_provider_name?>
@@ -292,6 +282,16 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 <?php if ($_SESSION['session_display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->ssl_provider_name?> (<?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?>)
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=$row->type?>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=$row->owner_name?>
     </td>
 <?php } ?>
 </tr>
