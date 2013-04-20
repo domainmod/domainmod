@@ -39,11 +39,21 @@ $new_dns7 = $_POST['new_dns7'];
 $new_dns8 = $_POST['new_dns8'];
 $new_dns9 = $_POST['new_dns9'];
 $new_dns10 = $_POST['new_dns10'];
+$new_ip1 = $_POST['new_ip1'];
+$new_ip2 = $_POST['new_ip2'];
+$new_ip3 = $_POST['new_ip3'];
+$new_ip4 = $_POST['new_ip4'];
+$new_ip5 = $_POST['new_ip5'];
+$new_ip6 = $_POST['new_ip6'];
+$new_ip7 = $_POST['new_ip7'];
+$new_ip8 = $_POST['new_ip8'];
+$new_ip9 = $_POST['new_ip9'];
+$new_ip10 = $_POST['new_ip10'];
 $new_default_dns = $_POST['new_default_dns'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_name != '') {
+	if ($new_name != '' && $new_dns1 != "" && $new_dns2 != "") {
 
 		if ($new_default_dns == "1") {
 			
@@ -77,8 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ($new_dns1 == '') { $new_number_of_servers = '0'; }
 
 		$sql = "INSERT INTO dns 
-				(name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, notes, number_of_servers, default_dns, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_dns1) . "', '" . mysql_real_escape_string($new_dns2) . "', '" . mysql_real_escape_string($new_dns3) . "', '" . mysql_real_escape_string($new_dns4) . "', '" . mysql_real_escape_string($new_dns5) . "', '" . mysql_real_escape_string($new_dns6) . "', '" . mysql_real_escape_string($new_dns7) . "', '" . mysql_real_escape_string($new_dns8) . "', '" . mysql_real_escape_string($new_dns9) . "', '" . mysql_real_escape_string($new_dns10) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_number_of_servers', '$new_default_dns', '$current_timestamp')";
+				(name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, number_of_servers, default_dns, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_dns1) . "', '" . mysql_real_escape_string($new_dns2) . "', '" . mysql_real_escape_string($new_dns3) . "', '" . mysql_real_escape_string($new_dns4) . "', '" . mysql_real_escape_string($new_dns5) . "', '" . mysql_real_escape_string($new_dns6) . "', '" . mysql_real_escape_string($new_dns7) . "', '" . mysql_real_escape_string($new_dns8) . "', '" . mysql_real_escape_string($new_dns9) . "', '" . mysql_real_escape_string($new_dns10) . "', '" . mysql_real_escape_string($new_ip1) . "', '" . mysql_real_escape_string($new_ip2) . "', '" . mysql_real_escape_string($new_ip3) . "', '" . mysql_real_escape_string($new_ip4) . "', '" . mysql_real_escape_string($new_ip5) . "', '" . mysql_real_escape_string($new_ip6) . "', '" . mysql_real_escape_string($new_ip7) . "', '" . mysql_real_escape_string($new_ip8) . "', '" . mysql_real_escape_string($new_ip9) . "', '" . mysql_real_escape_string($new_ip10) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_number_of_servers', '$new_default_dns', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -88,7 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 	} else {
 	
-		if ($new_name == '') { $_SESSION['session_result_message'] .= "Please enter a name for the DNS profile<BR>"; }
+		if ($new_name == "") $_SESSION['session_result_message'] .= "Please enter a name for the DNS profile<BR>";
+		if ($new_dns1 == "" || $new_dns2 == "") $_SESSION['session_result_message'] .= "Please enter at least two DNS servers<BR>";
 
 	}
 
@@ -107,41 +118,113 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <strong>Profile Name:</strong><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?=$new_name?>">
 <BR><BR>
-<strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR>
-<strong>DNS 1:</strong><BR><BR>
-<input name="new_dns1" type="text" size="50" maxlength="255" value="<?=$new_dns1?>">
-<BR><BR>
-<strong>DNS 2:</strong><BR><BR>
-<input name="new_dns2" type="text" size="50" maxlength="255" value="<?=$new_dns2?>">
-<BR><BR>
-<strong>DNS 3:</strong><BR><BR>
-<input name="new_dns3" type="text" size="50" maxlength="255" value="<?=$new_dns3?>">
-<BR><BR>
-<strong>DNS 4:</strong><BR><BR>
-<input name="new_dns4" type="text" size="50" maxlength="255" value="<?=$new_dns4?>">
-<BR><BR>
-<strong>DNS 5:</strong><BR><BR>
-<input name="new_dns5" type="text" size="50" maxlength="255" value="<?=$new_dns5?>">
-<BR><BR>
-<strong>DNS 6:</strong><BR><BR>
-<input name="new_dns6" type="text" size="50" maxlength="255" value="<?=$new_dns6?>">
-<BR><BR>
-<strong>DNS 7:</strong><BR><BR>
-<input name="new_dns7" type="text" size="50" maxlength="255" value="<?=$new_dns7?>">
-<BR><BR>
-<strong>DNS 8:</strong><BR><BR>
-<input name="new_dns8" type="text" size="50" maxlength="255" value="<?=$new_dns8?>">
-<BR><BR>
-<strong>DNS 9:</strong><BR><BR>
-<input name="new_dns9" type="text" size="50" maxlength="255" value="<?=$new_dns9?>">
-<BR><BR>
-<strong>DNS 10:</strong><BR><BR>
-<input name="new_dns10" type="text" size="50" maxlength="255" value="<?=$new_dns10?>">
-<BR><BR>
+<table class="dns_table">
+	<tr>
+    	<td class="dns_table_left">
+            <strong>DNS Server 1:</strong><BR><BR>
+            <input name="new_dns1" type="text" size="28" maxlength="255" value="<?=$new_dns1?>">
+		</td>
+    	<td class="dns_table_right">
+            <strong>IP Address 1 (optional):</strong><BR><BR>
+            <input name="new_ip1" type="text" size="28" maxlength="255" value="<?=$new_ip1?>">
+		</td>
+	</tr>
+	<tr>
+    	<td class="dns_table_left">
+            <strong>DNS Server 2:</strong><BR><BR>
+            <input name="new_dns2" type="text" size="28" maxlength="255" value="<?=$new_dns2?>">
+		</td>
+    	<td class="dns_table_right">
+            <strong>IP Address 2 (optional):</strong><BR><BR>
+            <input name="new_ip2" type="text" size="28" maxlength="255" value="<?=$new_ip2?>">
+		</td>
+	</tr>
+	<tr>
+    	<td class="dns_table_left">
+            <strong>DNS Server 3:</strong><BR><BR>
+            <input name="new_dns3" type="text" size="28" maxlength="255" value="<?=$new_dns3?>">
+		</td>
+    	<td class="dns_table_right">
+            <strong>IP Address 3 (optional):</strong><BR><BR>
+            <input name="new_ip3" type="text" size="28" maxlength="255" value="<?=$new_ip3?>">
+		</td>
+	</tr>
+	<tr>
+    	<td class="dns_table_left">
+            <strong>DNS Server 4:</strong><BR><BR>
+            <input name="new_dns4" type="text" size="28" maxlength="255" value="<?=$new_dns4?>">
+		</td>
+    	<td class="dns_table_right">
+            <strong>IP Address 4 (optional):</strong><BR><BR>
+            <input name="new_ip4" type="text" size="28" maxlength="255" value="<?=$new_ip4?>">
+		</td>
+	</tr>
+	<tr>
+    	<td class="dns_table_left">
+            <strong>DNS Server 5:</strong><BR><BR>
+            <input name="new_dns5" type="text" size="28" maxlength="255" value="<?=$new_dns5?>">
+		</td>
+    	<td class="dns_table_right">
+            <strong>IP Address 5 (optional):</strong><BR><BR>
+            <input name="new_ip5" type="text" size="28" maxlength="255" value="<?=$new_ip5?>">
+		</td>
+	</tr>
+	<tr>
+    	<td class="dns_table_left">
+            <strong>DNS Server 6:</strong><BR><BR>
+            <input name="new_dns6" type="text" size="28" maxlength="255" value="<?=$new_dns6?>">
+		</td>
+    	<td class="dns_table_right">
+            <strong>IP Address 6 (optional):</strong><BR><BR>
+            <input name="new_ip6" type="text" size="28" maxlength="255" value="<?=$new_ip6?>">
+		</td>
+	</tr>
+	<tr>
+    	<td class="dns_table_left">
+            <strong>DNS Server 7:</strong><BR><BR>
+            <input name="new_dns7" type="text" size="28" maxlength="255" value="<?=$new_dns7?>">
+		</td>
+    	<td class="dns_table_right">
+            <strong>IP Address 7 (optional):</strong><BR><BR>
+            <input name="new_ip7" type="text" size="28" maxlength="255" value="<?=$new_ip7?>">
+		</td>
+	</tr>
+	<tr>
+    	<td class="dns_table_left">
+            <strong>DNS Server 8:</strong><BR><BR>
+            <input name="new_dns8" type="text" size="28" maxlength="255" value="<?=$new_dns8?>">
+		</td>
+    	<td class="dns_table_right">
+            <strong>IP Address 8 (optional):</strong><BR><BR>
+            <input name="new_ip8" type="text" size="28" maxlength="255" value="<?=$new_ip8?>">
+		</td>
+	</tr>
+	<tr>
+    	<td class="dns_table_left">
+            <strong>DNS Server 9:</strong><BR><BR>
+            <input name="new_dns9" type="text" size="28" maxlength="255" value="<?=$new_dns9?>">
+		</td>
+    	<td class="dns_table_right">
+            <strong>IP Address 9 (optional):</strong><BR><BR>
+            <input name="new_ip9" type="text" size="28" maxlength="255" value="<?=$new_ip9?>">
+		</td>
+	</tr>
+	<tr>
+    	<td class="dns_table_left">
+            <strong>DNS Server 10:</strong><BR><BR>
+            <input name="new_dns10" type="text" size="28" maxlength="255" value="<?=$new_dns10?>">
+		</td>
+    	<td class="dns_table_right">
+            <strong>IP Address 10 (optional):</strong><BR><BR>
+            <input name="new_ip10" type="text" size="28" maxlength="255" value="<?=$new_ip10?>">
+		</td>
+	</tr>
+</table>
 <strong>Default DNS Profile?:</strong>&nbsp;
 <input name="new_default_dns" type="checkbox" id="new_default_dns" value="1">
+<BR><BR>
+<strong>Notes:</strong><BR><BR>
+<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This DNS Profile &raquo;">
 </form>

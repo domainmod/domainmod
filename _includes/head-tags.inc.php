@@ -104,6 +104,43 @@ td.main_table_cell_active_centered {
 	padding-right: 29px; 
 	text-align: center;
 }
+table.dns_table {
+	border-spacing: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px; 
+}
+td.dns_table_left {
+	text-align: left;
+	vertical-align: center; 
+	border-top: 0px;
+	border-bottom: 0px;
+	border-right: 0px;
+	border-left: 0px;
+	font-family: Verdana, sans-serif, Arial;
+	font-weight: normal;
+	font-size: 8pt;
+	padding-top: 0px;
+	padding-bottom: 14px;
+	padding-left: 0px;
+	padding-right: 15px; 
+}
+td.dns_table_right {
+	text-align: left;
+	vertical-align: center; 
+	border-top: 0px;
+	border-bottom: 0px;
+	border-right: 0px;
+	border-left: 0px;
+	font-family: Verdana, sans-serif, Arial;
+	font-weight: normal;
+	font-size: 8pt;
+	padding-top: 0px;
+	padding-bottom: 14px;
+	padding-left: 0px;
+	padding-right: 0px; 
+}
 div.main-container {
 	width: <?=$site_width?>;
 	display: table;
