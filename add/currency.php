@@ -54,32 +54,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		}
 		
-		$sql = "SELECT currency
-				FROM currencies
-				WHERE default_currency = '1'";
-		$result = mysql_query($sql,$connection);
-		while ($row = mysql_fetch_object($result)) {
-			$temp_default_currency = $row->currency;
+		if ($new_default_currency == "1") {
+			
+			$value = 1;
+			
+		} else {
+
+			$sql = "SELECT currency
+					FROM currencies
+					WHERE default_currency = '1'";
+			$result = mysql_query($sql,$connection);
+			while ($row = mysql_fetch_object($result)) {
+				$temp_default_currency = $row->currency;
+			}
+	
+			$from = $new_abbreviation;
+			$to = $temp_default_currency;
+			$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
+			$handle = @fopen($full_url, "r");
+				 
+			if ($handle) {
+	
+				$handle_result = fgets($handle, 4096);
+				fclose($handle);
+	
+			}
+				
+			$data = explode(",",$handle_result);
+			$value = $data[1];
+			
 		}
 
-		$from = $new_abbreviation;
-		$to = $temp_default_currency;
-		$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
-		$handle = @fopen($full_url, "r");
-			 
-		if ($handle) {
-
-			$handle_result = fgets($handle, 4096);
-			fclose($handle);
-
-		}
-			
-		$data = explode(",",$handle_result);
-		$value = $data[1];
-			
 		$sql = "INSERT INTO currencies
 				(currency, name, conversion, notes, default_currency, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_abbreviation) . "', '" . mysql_real_escape_string($new_name) . "', '$value', '" . mysql_real_escape_string($new_notes) . "', '$new_default_currency', '$current_timestamp')";
+				('" . mysql_real_escape_string($new_abbreviation) . "', '" . mysql_real_escape_string($new_name) . "', '" . $value . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_currency', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['session_result_message'] = "Currency <font class=\"highlight\">$new_name ($new_abbreviation)</font> Added<BR><BR><a href=\"system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";

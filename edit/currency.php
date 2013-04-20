@@ -63,6 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 		}
 
+		if ($new_default_currency == "1") $new_conversion = "1";
+		
 		$sql = "UPDATE currencies
 				SET name = '" . mysql_real_escape_string($new_name) . "',
 					currency = '" . mysql_real_escape_string($new_abbreviation) . "',
