@@ -209,9 +209,19 @@ Before exporting your domains you should <a href="system/update-conversion-rates
     	<font class="main_table_heading">TLD</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_host'] == "1") { ?>
+<?php if ($_SESSION['session_display_domain_registrar'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Web Host</font>
+    	<font class="main_table_heading">Registrar</font>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+    	<font class="main_table_heading">Registrar Account</font>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_dns'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+    	<font class="main_table_heading">DNS Profile</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
@@ -219,9 +229,9 @@ Before exporting your domains you should <a href="system/update-conversion-rates
     	<font class="main_table_heading">IP Address</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_dns'] == "1") { ?>
+<?php if ($_SESSION['session_display_domain_host'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">DNS Profile</font>
+    	<font class="main_table_heading">Web Host</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_category'] == "1") { ?>
@@ -232,16 +242,6 @@ Before exporting your domains you should <a href="system/update-conversion-rates
 <?php if ($_SESSION['session_display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Owner</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['session_display_domain_registrar'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Registrar</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Registrar Account</font>
     </td>
 <?php } ?>
 </tr>
@@ -274,9 +274,19 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 		.<?=$row->tld?>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_host'] == "1") { ?>
+<?php if ($_SESSION['session_display_domain_registrar'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=$row->wh_name?>
+		<?=$row->registrar_name?>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=$row->registrar_name?> (<?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?>)
+    </td>
+<?php } ?>
+<?php if ($_SESSION['session_display_domain_dns'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=$row->dns_profile?>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
@@ -284,9 +294,9 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 		<?=$row->name?> (<?=$row->ip?>)
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_dns'] == "1") { ?>
+<?php if ($_SESSION['session_display_domain_host'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=$row->dns_profile?>
+		<?=$row->wh_name?>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_category'] == "1") { ?>
@@ -297,16 +307,6 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 <?php if ($_SESSION['session_display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->owner_name?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['session_display_domain_registrar'] == "1") { ?>
-	<td class="main_table_cell_active">
-		<?=$row->registrar_name?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
-	<td class="main_table_cell_active">
-		<?=$row->registrar_name?> (<?=substr($row->username, 0, 20);?><?php if (strlen($row->username) >= 21) echo "..."; ?>)
     </td>
 <?php } ?>
 </tr>
