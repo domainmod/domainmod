@@ -61,7 +61,8 @@ Below is a list of all the Domain Categories that are stored in your <?=$softwar
 		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
+		<?php if ($row->stakeholder == "") $row->stakeholder = "n/a"; ?>
+       	<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
 	</td>
 	<td class="main_table_cell_active">
     <?php
@@ -117,7 +118,8 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
 	</td>
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
+		<?php if ($row->stakeholder == "") $row->stakeholder = "n/a"; ?>
+        <a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
 	</td>
 </tr>
 <?php } ?>
