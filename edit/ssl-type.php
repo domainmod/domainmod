@@ -145,14 +145,14 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_type_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Type Name:</strong><BR><BR>
+<strong>Type Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_type" type="text" value="<?php if ($new_type != "") echo $new_type; ?>
 " size="50" maxlength="255">
 <BR><BR>
-<strong>Notes:</strong><BR><BR>
+<strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
-<strong>Default Type?:</strong>&nbsp;
+<strong>Default Type?</strong>&nbsp;
 <input name="new_default_type" type="checkbox" value="1"<?php if ($new_default_type == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_ssltid" value="<?=$ssltid?>">

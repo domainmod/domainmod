@@ -181,7 +181,7 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_ssl_account_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Owner:</strong><BR><BR>
+<strong>Owner<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 $sql_owner = "SELECT id, name
 			  FROM owners
@@ -204,7 +204,7 @@ while ($row_owner = mysql_fetch_object($result_owner)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>SSL Provider:</strong><BR><BR>
+<strong>SSL Provider<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 $sql_ssl_provider = "SELECT id, name
 					 FROM ssl_providers
@@ -227,22 +227,22 @@ while ($row_ssl_provider = mysql_fetch_object($result_ssl_provider)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Username:</strong><BR><BR>
+<strong>Username<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_username" type="text" size="50" maxlength="255" value="<?=$new_username?>">
 <BR><BR>
-<strong>Password:</strong><BR><BR>
+<strong>Password</strong><BR><BR>
 <input name="new_password" type="text" size="50" maxlength="100" value="<?=$new_password?>">
 <BR><BR>
-<strong>Reseller Account?</strong><BR><BR>
+<strong>Reseller Account?<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <select name="new_reseller">";
 <option value="0"<?php if ($new_reseller == "0") echo " selected"; ?>>No</option>
 <option value="1"<?php if ($new_reseller == "1") echo " selected"; ?>>Yes</option>
 </select>
 <BR><BR>
-<strong>Notes:</strong><BR><BR>
+<strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
-<strong>Default SSL Account?:</strong>&nbsp;
+<strong>Default SSL Account?</strong>&nbsp;
 <input name="new_default_account" type="checkbox" value="1"<?php if ($new_default_account == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_sslpaid" value="<?=$sslpaid?>">

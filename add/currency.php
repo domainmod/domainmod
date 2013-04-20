@@ -117,16 +117,16 @@ while ($row = mysql_fetch_object($result)) {
 }
 ?>
 <form name="add_currency_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Name ("<em><?=$default_name?></em>"):</strong><BR><BR>
+<strong>Name ("<em><?=$default_name?></em>")<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_name" type="text" value="<?=$new_name?>" size="50" maxlength="255">
 <BR><BR>
-<strong>Abbreviation ("<em><?=$default_currency?></em>"):</strong><BR><BR>
+<strong>Abbreviation ("<em><?=$default_currency?></em>")<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_abbreviation" type="text" value="<?=$new_abbreviation?>" size="50" maxlength="3">
 <BR><BR>
-<strong>Notes:</strong><BR><BR>
+<strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
-<strong>Default Currency?:</strong>&nbsp;
+<strong>Default Currency?</strong>&nbsp;
 <input name="new_default_currency" type="checkbox" id="new_default_currency" value="1"<?php if ($new_default_currency == "1") echo " checked";?>>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This Currency &raquo;">

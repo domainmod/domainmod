@@ -165,16 +165,16 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_ssl_provider_form" method="post" action="<?=$PHP_SELF?>">
-<strong>SSL Provider Name:</strong><BR><BR>
+<strong>SSL Provider Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_ssl_provider" type="text" value="<?=$new_ssl_provider?>" size="50" maxlength="255">
 <BR><BR>
-<strong>SSL Provider's URL:</strong><BR><BR>
+<strong>SSL Provider's URL<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_url" type="text" value="<?=$new_url?>" size="50" maxlength="255">
 <BR><BR>
-<strong>Notes:</strong><BR><BR>
+<strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
-<strong>Default SSL Provider?:</strong>&nbsp;
+<strong>Default SSL Provider?</strong>&nbsp;
 <input name="new_default_ssl_provider" type="checkbox" value="1"<?php if ($new_default_ssl_provider == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_sslpid" value="<?=$sslpid?>">

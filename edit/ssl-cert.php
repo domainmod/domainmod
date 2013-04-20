@@ -171,10 +171,13 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_ssl_cert_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Host / Label:</strong><BR><BR>
+<strong>Host / Label<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo $new_name; ?>">
 <BR><BR>
-<strong>Domain:</strong><BR><BR>
+<strong>Expiry Date (YYYY-MM-DD)<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
+<BR><BR>
+<strong>Domain<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 $sql_domain = "SELECT id, domain
 			   FROM domains
@@ -196,7 +199,7 @@ while ($row_domain = mysql_fetch_object($result_domain)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>SSL Provider Account:</strong><BR><BR>
+<strong>SSL Provider Account<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 $sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS sslp_name
 				FROM ssl_accounts AS sslpa, owners AS o, ssl_providers AS sslp
@@ -220,7 +223,7 @@ while ($row_account = mysql_fetch_object($result_account)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Certificate Type:</strong><BR><BR>
+<strong>Certificate Type<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 $sql_type = "SELECT id, type
 			 FROM ssl_cert_types
@@ -243,11 +246,7 @@ while ($row_type = mysql_fetch_object($result_type)) {
 echo "</select>";
 ?>
 <BR><BR>
-
-<strong>Expiry Date (YYYY-MM-DD):</strong><BR><BR>
-<input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
-<BR><BR>
-<strong>Certificate Status:</strong><BR><BR>
+<strong>Certificate Status<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 echo "<select name=\"new_active\">";
 echo "<option value=\"1\""; if ($new_active == "1") echo " selected"; echo ">Active</option>";
@@ -258,7 +257,7 @@ echo "<option value=\"0\""; if ($new_active == "0") echo " selected"; echo ">Exp
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Notes:</strong><BR><BR>
+<strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_sslcid" value="<?=$sslcid?>">

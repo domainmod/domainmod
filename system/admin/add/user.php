@@ -37,6 +37,7 @@ $new_last_name = $_POST['new_last_name'];
 $new_username = $_POST['new_username'];
 $new_email_address = $_POST['new_email_address'];
 $new_admin = $_POST['new_admin'];
+$new_active = $_POST['new_active'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != "" && $new_email_address != "") {
 	
@@ -56,8 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		$new_password = substr(md5(time()),0,8);
 
 		$sql = "INSERT INTO users 
-				(first_name, last_name, username, email_address, password, new_password, admin, insert_time) VALUES 
-				('$new_first_name', '$new_last_name', '$new_username', '$new_email_address', password('$new_password'), '1', '$new_admin', '$current_timestamp')";
+				(first_name, last_name, username, email_address, password, new_password, admin, active, insert_time) VALUES 
+				('$new_first_name', '$new_last_name', '$new_username', '$new_email_address', password('$new_password'), '1', '$new_admin', '$new_active', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "SELECT id
@@ -107,14 +108,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../../../_includes/header.inc.php"); ?>
 <form name="add_user_form" method="post" action="<?=$PHP_SELF?>">
-<strong>First Name:</strong><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?=$new_first_name?>"><BR><BR>
-<strong>Last Name:</strong><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?=$new_last_name?>"><BR><BR>
-<strong>Username:</strong><BR><BR><input name="new_username" type="text" size="50" maxlength="20" value="<?=$new_username?>"><BR><BR>
-<strong>Email Address:</strong><BR><BR><input name="new_email_address" type="text" size="50" maxlength="255" value="<?=$new_email_address?>"><BR><BR>
-<strong>Admin Privileges?</strong>&nbsp;
+<strong>First Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?=$new_first_name?>"><BR><BR>
+<strong>Last Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?=$new_last_name?>"><BR><BR>
+<strong>Username<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR><input name="new_username" type="text" size="50" maxlength="20" value="<?=$new_username?>"><BR><BR>
+<strong>Email Address<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR><input name="new_email_address" type="text" size="50" maxlength="255" value="<?=$new_email_address?>"><BR><BR>
+<strong>Admin Privileges?<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong>&nbsp;
 <select name="new_admin">
 <option value="0"<?php if ($new_admin == 0) echo " selected"; ?>>No</option>
 <option value="1"<?php if ($new_admin == 1) echo " selected"; ?>>Yes</option>
+</select>
+<BR><BR>
+<strong>Active Account?<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong>&nbsp;
+<select name="new_active">
+<option value="0"<?php if ($new_active == 0) echo " selected"; ?>>No</option>
+<option value="1"<?php if ($new_active == 1) echo " selected"; ?>>Yes</option>
 </select>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add User &raquo;">

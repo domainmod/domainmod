@@ -154,19 +154,19 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_ip_address_form" method="post" action="<?=$PHP_SELF?>">
-<strong>IP Address Name:</strong><BR><BR>
+<strong>IP Address Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo $new_name; ?>">
 <BR><BR>
-<strong>IP Address:</strong><BR><BR>
+<strong>IP Address<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_ip" type="text" size="50" maxlength="255" value="<?php if ($new_ip != "") echo $new_ip; ?>">
 <BR><BR>
-<strong>rDNS:</strong><BR><BR>
+<strong>rDNS</strong><BR><BR>
 <input name="new_rdns" type="text" size="50" maxlength="255" value="<?php if ($new_rdns != "") echo $new_rdns; ?>">
 <BR><BR>
-<strong>Notes:</strong><BR><BR>
+<strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
-<strong>Default IP Address?:</strong>&nbsp;
+<strong>Default IP Address?</strong>&nbsp;
 <input name="new_default_ip_address" type="checkbox" value="1"<?php if ($new_default_ip_address == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_ipid" value="<?=$ipid?>">

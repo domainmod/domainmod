@@ -81,13 +81,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="add_host_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Web Host Name:</strong><BR><BR>
+<strong>Web Host Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_host" type="text" value="<?=$new_host?>" size="50" maxlength="255">
 <BR><BR>
-<strong>Notes:</strong><BR><BR>
+<strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
-<strong>Default Host?:</strong>&nbsp;
+<strong>Default Host?</strong>&nbsp;
 <input name="new_default_host" type="checkbox" id="new_default_host" value="1"<?php if ($new_default_host == "1") echo " checked";?>>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This Web Host &raquo;">

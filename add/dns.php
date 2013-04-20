@@ -115,116 +115,116 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="add_dns_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Profile Name:</strong><BR><BR>
+<strong>Profile Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?=$new_name?>">
 <BR><BR>
 <table class="dns_table">
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 1:</strong><BR><BR>
+            <strong>DNS Server 1<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
             <input name="new_dns1" type="text" size="28" maxlength="255" value="<?=$new_dns1?>">
 		</td>
     	<td class="dns_table_right">
-            <strong>IP Address 1 (optional):</strong><BR><BR>
+            <strong>IP Address 1</strong><BR><BR>
             <input name="new_ip1" type="text" size="28" maxlength="255" value="<?=$new_ip1?>">
 		</td>
 	</tr>
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 2:</strong><BR><BR>
+            <strong>DNS Server 2<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
             <input name="new_dns2" type="text" size="28" maxlength="255" value="<?=$new_dns2?>">
 		</td>
     	<td class="dns_table_right">
-            <strong>IP Address 2 (optional):</strong><BR><BR>
+            <strong>IP Address 2</strong><BR><BR>
             <input name="new_ip2" type="text" size="28" maxlength="255" value="<?=$new_ip2?>">
 		</td>
 	</tr>
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 3:</strong><BR><BR>
+            <strong>DNS Server 3</strong><BR><BR>
             <input name="new_dns3" type="text" size="28" maxlength="255" value="<?=$new_dns3?>">
 		</td>
     	<td class="dns_table_right">
-            <strong>IP Address 3 (optional):</strong><BR><BR>
+            <strong>IP Address 3</strong><BR><BR>
             <input name="new_ip3" type="text" size="28" maxlength="255" value="<?=$new_ip3?>">
 		</td>
 	</tr>
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 4:</strong><BR><BR>
+            <strong>DNS Server 4</strong><BR><BR>
             <input name="new_dns4" type="text" size="28" maxlength="255" value="<?=$new_dns4?>">
 		</td>
     	<td class="dns_table_right">
-            <strong>IP Address 4 (optional):</strong><BR><BR>
+            <strong>IP Address 4</strong><BR><BR>
             <input name="new_ip4" type="text" size="28" maxlength="255" value="<?=$new_ip4?>">
 		</td>
 	</tr>
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 5:</strong><BR><BR>
+            <strong>DNS Server 5</strong><BR><BR>
             <input name="new_dns5" type="text" size="28" maxlength="255" value="<?=$new_dns5?>">
 		</td>
     	<td class="dns_table_right">
-            <strong>IP Address 5 (optional):</strong><BR><BR>
+            <strong>IP Address 5</strong><BR><BR>
             <input name="new_ip5" type="text" size="28" maxlength="255" value="<?=$new_ip5?>">
 		</td>
 	</tr>
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 6:</strong><BR><BR>
+            <strong>DNS Server 6</strong><BR><BR>
             <input name="new_dns6" type="text" size="28" maxlength="255" value="<?=$new_dns6?>">
 		</td>
     	<td class="dns_table_right">
-            <strong>IP Address 6 (optional):</strong><BR><BR>
+            <strong>IP Address 6</strong><BR><BR>
             <input name="new_ip6" type="text" size="28" maxlength="255" value="<?=$new_ip6?>">
 		</td>
 	</tr>
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 7:</strong><BR><BR>
+            <strong>DNS Server 7</strong><BR><BR>
             <input name="new_dns7" type="text" size="28" maxlength="255" value="<?=$new_dns7?>">
 		</td>
     	<td class="dns_table_right">
-            <strong>IP Address 7 (optional):</strong><BR><BR>
+            <strong>IP Address 7</strong><BR><BR>
             <input name="new_ip7" type="text" size="28" maxlength="255" value="<?=$new_ip7?>">
 		</td>
 	</tr>
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 8:</strong><BR><BR>
+            <strong>DNS Server 8</strong><BR><BR>
             <input name="new_dns8" type="text" size="28" maxlength="255" value="<?=$new_dns8?>">
 		</td>
     	<td class="dns_table_right">
-            <strong>IP Address 8 (optional):</strong><BR><BR>
+            <strong>IP Address 8</strong><BR><BR>
             <input name="new_ip8" type="text" size="28" maxlength="255" value="<?=$new_ip8?>">
 		</td>
 	</tr>
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 9:</strong><BR><BR>
+            <strong>DNS Server 9</strong><BR><BR>
             <input name="new_dns9" type="text" size="28" maxlength="255" value="<?=$new_dns9?>">
 		</td>
     	<td class="dns_table_right">
-            <strong>IP Address 9 (optional):</strong><BR><BR>
+            <strong>IP Address 9</strong><BR><BR>
             <input name="new_ip9" type="text" size="28" maxlength="255" value="<?=$new_ip9?>">
 		</td>
 	</tr>
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 10:</strong><BR><BR>
+            <strong>DNS Server 10</strong><BR><BR>
             <input name="new_dns10" type="text" size="28" maxlength="255" value="<?=$new_dns10?>">
 		</td>
     	<td class="dns_table_right">
-            <strong>IP Address 10 (optional):</strong><BR><BR>
+            <strong>IP Address 10</strong><BR><BR>
             <input name="new_ip10" type="text" size="28" maxlength="255" value="<?=$new_ip10?>">
 		</td>
 	</tr>
 </table>
-<strong>Default DNS Profile?:</strong>&nbsp;
-<input name="new_default_dns" type="checkbox" id="new_default_dns" value="1">
-<BR><BR>
-<strong>Notes:</strong><BR><BR>
+<strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+<BR><BR>
+<strong>Default DNS Profile?</strong>&nbsp;
+<input name="new_default_dns" type="checkbox" id="new_default_dns" value="1">
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This DNS Profile &raquo;">
 </form>

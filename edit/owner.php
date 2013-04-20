@@ -176,14 +176,14 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_owner_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Owner Name:</strong><BR><BR>
+<strong>Owner Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_owner" type="text" value="<?php if ($new_owner != "") echo $new_owner; ?>
 " size="50" maxlength="255">
 <BR><BR>
-<strong>Notes:</strong><BR><BR>
+<strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
-<strong>Default Owner?:</strong>&nbsp;
+<strong>Default Owner?</strong>&nbsp;
 <input name="new_default_owner" type="checkbox" value="1"<?php if ($new_default_owner == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_oid" value="<?=$oid?>">

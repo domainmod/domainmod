@@ -102,23 +102,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="add_domain_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Domain:</strong><BR><BR>
+<strong>Domain<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_domain" type="text" size="50" maxlength="255" value="<?=$new_domain?>">
 <BR><BR>
-<strong>Expiry Date (YYYY-MM-DD):</strong><BR><BR>
+<strong>Expiry Date (YYYY-MM-DD)<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
 <BR><BR>
-<strong>Function:</strong><BR><BR>
+<strong>Function</strong><BR><BR>
 <input name="new_function" type="text" size="50" maxlength="255" value="<?=$new_function?>">
 <BR><BR>
-<strong>Status:</strong><BR><BR>
+<strong>Status</strong><BR><BR>
 <input name="new_status" type="text" size="50" maxlength="255" value="<?=$new_status?>">
 <BR><BR>
-<strong>Status Notes:</strong><BR><BR>
+<strong>Status Notes</strong><BR><BR>
 <textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?>
 </textarea>
 <BR><BR>
-<strong>Web Hosting Provider:</strong><BR><BR>
+<strong>Web Hosting Provider<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 $sql_hosting = "SELECT id, name
 				FROM hosting
@@ -141,7 +141,7 @@ while ($row_hosting = mysql_fetch_object($result_hosting)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Category:</strong><BR><BR>
+<strong>Category<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 $sql_cat = "SELECT id, name
 			FROM categories
@@ -164,7 +164,7 @@ while ($row_cat = mysql_fetch_object($result_cat)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>DNS Profile:</strong><BR><BR>
+<strong>DNS Profile<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 $sql_dns = "SELECT id, name
 			FROM dns
@@ -187,7 +187,7 @@ while ($row_dns = mysql_fetch_object($result_dns)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>IP Address:</strong><BR><BR>
+<strong>IP Address<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 $sql_ip = "SELECT id, name, ip
 		   FROM ip_addresses
@@ -210,7 +210,7 @@ while ($row_ip = mysql_fetch_object($result_ip)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Registrar Account:</strong><BR><BR>
+<strong>Registrar Account<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php 
 $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
 				FROM registrar_accounts AS ra, owners AS o, registrars AS r
@@ -235,7 +235,7 @@ while ($row_account = mysql_fetch_object($result_account)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Privacy Enabled?</strong><BR><BR>
+<strong>Privacy Enabled?<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 echo "<select name=\"new_privacy\">";
 echo "<option value=\"0\""; if ($new_privacy == "0") echo " selected"; echo ">No</option>";
@@ -243,7 +243,7 @@ echo "<option value=\"1\""; if ($new_privacy == "1") echo " selected"; echo ">Ye
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Domain Status:</strong><BR><BR>
+<strong>Domain Status<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 echo "<select name=\"new_active\">";
 echo "<option value=\"1\""; if ($new_active == "1") echo " selected"; echo ">Active</option>";
@@ -256,7 +256,7 @@ echo "<option value=\"10\""; if ($new_active == "10") echo " selected"; echo ">S
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Notes:</strong><BR><BR>
+<strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This Domain &raquo;">

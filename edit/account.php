@@ -185,7 +185,7 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_account_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Owner:</strong><BR><BR>
+<strong>Owner<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 $sql_owner = "SELECT id, name
 			  FROM owners
@@ -208,7 +208,7 @@ while ($row_owner = mysql_fetch_object($result_owner)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Registrar:</strong><BR><BR>
+<strong>Registrar<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
 $sql_registrar = "SELECT id, name
 				  FROM registrars
@@ -231,10 +231,10 @@ while ($row_registrar = mysql_fetch_object($result_registrar)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Username:</strong><BR><BR>
+<strong>Username<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_username" type="text" size="50" maxlength="255" value="<?=$new_username?>">
 <BR><BR>
-<strong>Password:</strong><BR><BR>
+<strong>Password</strong><BR><BR>
 <input name="new_password" type="text" size="50" maxlength="100" value="<?=$new_password?>">
 <BR><BR>
 <strong>Reseller Account?</strong><BR><BR>
@@ -243,10 +243,10 @@ echo "</select>";
 <option value="1"<?php if ($new_reseller == "1") echo " selected"; ?>>Yes</option>
 </select>
 <BR><BR>
-<strong>Notes:</strong><BR><BR>
+<strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
-<strong>Default Account?:</strong>&nbsp;
+<strong>Default Account?</strong>&nbsp;
 <input name="new_default_account" type="checkbox" value="1"<?php if ($new_default_account == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_raid" value="<?=$raid?>">
