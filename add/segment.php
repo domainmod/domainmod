@@ -34,7 +34,9 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	$new_segment = preg_replace("/^\n+|^[\t\s]*\n+/m", "", $new_segment);
+	$temp_input_string = $new_segment;
+	include("../_includes/system/regex-bulk-form-strip-whitespace.inc.php");
+	$new_segment = $temp_output_string;
 
 	if ($new_name != "" && $new_segment != "") {
 

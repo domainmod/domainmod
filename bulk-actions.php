@@ -50,8 +50,9 @@ $choose_text = "Click here to choose the new";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	// strip out blank lines
-	$new_data = preg_replace("/^\n+|^[\t\s]*\n+/m", "", $new_data);
+	$temp_input_string = $new_data;
+	include("_includes/system/regex-bulk-form-strip-whitespace.inc.php");
+	$new_data = $temp_output_string;
 
 	if ($new_data == "") {
 

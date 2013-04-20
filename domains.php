@@ -192,7 +192,9 @@ if ($segid != "") {
 
 if ($_SESSION['session_quick_search'] != "") {
 
-	$_SESSION['session_quick_search'] = preg_replace("/^\n+|^[\t\s]*\n+/m", "", $_SESSION['session_quick_search']);
+	$temp_input_string = $_SESSION['session_quick_search'];
+	include("_includes/system/regex-bulk-form-strip-whitespace.inc.php");
+	$_SESSION['session_quick_search'] = $temp_output_string;
 
 	$lines = explode("\r\n", $_SESSION['session_quick_search']);
 	$invalid_domain_count = 0;
