@@ -1059,11 +1059,11 @@ $_SESSION['session_quick_search'] = preg_replace("/'/", "", $_SESSION['session_q
         <?php if ($totalrows_inactive > 0) { ?>
 			<BR><BR><strong>Matching But Inactive Domains:</strong> <?=number_format($totalrows_inactive)?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=inactive&segid=<?=$segid?>">view</a>]
 		<?php } ?>
+        <?php if ($totalrows_filtered > 0) { ?>
+	        <BR><BR><strong>Matching But Filtered Domains:</strong> <?=number_format($totalrows_filtered)?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=filtered&segid=<?=$segid?>">view</a>]
+		<?php } ?>
         <?php if ($totalrows_missing > 0) { ?>
 	        <BR><BR><strong>Missing Domains:</strong> <?=number_format($totalrows_missing)?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=missing&segid=<?=$segid?>">view</a>]
-		<?php } ?>
-        <?php if ($totalrows_filtered > 0) { ?>
-	        <BR><BR><strong>Filtered Out Domains:</strong> <?=number_format($totalrows_filtered)?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=filtered&segid=<?=$segid?>">view</a>]
 		<?php } ?>
 
 <?php } else { ?>
