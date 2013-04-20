@@ -1112,6 +1112,22 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0026 to 2.0027
+	if ($current_db_version == 2.0026) {
+
+		$sql = "ALTER TABLE `registrar_accounts`  
+					ADD `password` VARCHAR(100) NOT NULL AFTER `username`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0027',
+					update_time = '$current_timestamp'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0027;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
