@@ -210,56 +210,24 @@ if ($really_del == "1") {
 <strong>Expiry Date (YYYY-MM-DD)<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
 <BR><BR>
-<strong>Function</strong><BR><BR>
-<input name="new_function" type="text" size="50" maxlength="255" value="<?php if ($new_function != "") echo $new_function; ?>">
-<BR><BR>
-<strong>Status</strong><BR><BR>
-<input name="new_status" type="text" size="50" maxlength="255" value="<?php if ($new_status != "") echo $new_status; ?>">
-<BR><BR>
-<strong>Status Notes</strong><BR><BR>
-<textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?>
-</textarea>
-<BR><BR>
-<strong>Web Hosting Provider<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
-<?php
-$sql_hosting = "SELECT id, name
-				FROM hosting
-				WHERE active = '1'
-				ORDER BY name asc";
-$result_hosting = mysql_query($sql_hosting,$connection) or die(mysql_error());
-echo "<select name=\"new_hosting_id\">";
-while ($row_hosting = mysql_fetch_object($result_hosting)) {
+<strong>Registrar Account<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<?php 
+$sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
+				FROM registrar_accounts AS ra, owners AS o, registrars AS r
+				WHERE ra.owner_id = o.id
+				  AND ra.registrar_id = r.id
+				ORDER BY r_name asc, o_name asc, ra.username asc";
+$result_account = mysql_query($sql_account,$connection) or die(mysql_error());
+echo "<select name=\"new_account_id\">";
+while ($row_account = mysql_fetch_object($result_account)) {
 
-	if ($row_hosting->id == $new_hosting_id) {
+	if ($row_account->id == $new_account_id) {
 
-		echo "<option value=\"$row_hosting->id\" selected>$row_hosting->name</option>";
+		echo "<option value=\"$row_account->id\" selected>$row_account->r_name :: $row_account->o_name :: $row_account->username</option>";
 	
 	} else {
 
-		echo "<option value=\"$row_hosting->id\">$row_hosting->name</option>";
-	
-	}
-}
-echo "</select>";
-?>
-<BR><BR>
-<strong>Category<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
-<?php
-$sql_cat = "SELECT id, name
-			FROM categories
-			WHERE active = '1'
-			ORDER BY name asc";
-$result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
-echo "<select name=\"new_cat_id\">";
-while ($row_cat = mysql_fetch_object($result_cat)) {
-
-	if ($row_cat->id == $new_cat_id) {
-
-		echo "<option value=\"$row_cat->id\" selected>$row_cat->name</option>";
-	
-	} else {
-
-		echo "<option value=\"$row_cat->id\">$row_cat->name</option>";
+		echo "<option value=\"$row_account->id\">$row_account->r_name :: $row_account->o_name :: $row_account->username</option>";
 	
 	}
 }
@@ -312,35 +280,49 @@ while ($row_ip = mysql_fetch_object($result_ip)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Registrar Account<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
-<?php 
-$sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
-				FROM registrar_accounts AS ra, owners AS o, registrars AS r
-				WHERE ra.owner_id = o.id
-				  AND ra.registrar_id = r.id
-				ORDER BY r_name asc, o_name asc, ra.username asc";
-$result_account = mysql_query($sql_account,$connection) or die(mysql_error());
-echo "<select name=\"new_account_id\">";
-while ($row_account = mysql_fetch_object($result_account)) {
+<strong>Web Hosting Provider<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<?php
+$sql_hosting = "SELECT id, name
+				FROM hosting
+				WHERE active = '1'
+				ORDER BY name asc";
+$result_hosting = mysql_query($sql_hosting,$connection) or die(mysql_error());
+echo "<select name=\"new_hosting_id\">";
+while ($row_hosting = mysql_fetch_object($result_hosting)) {
 
-	if ($row_account->id == $new_account_id) {
+	if ($row_hosting->id == $new_hosting_id) {
 
-		echo "<option value=\"$row_account->id\" selected>$row_account->r_name :: $row_account->o_name :: $row_account->username</option>";
+		echo "<option value=\"$row_hosting->id\" selected>$row_hosting->name</option>";
 	
 	} else {
 
-		echo "<option value=\"$row_account->id\">$row_account->r_name :: $row_account->o_name :: $row_account->username</option>";
+		echo "<option value=\"$row_hosting->id\">$row_hosting->name</option>";
 	
 	}
 }
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Privacy Enabled?<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Category<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <?php
-echo "<select name=\"new_privacy\">";
-echo "<option value=\"0\""; if ($new_privacy == "0") echo " selected"; echo ">No</option>";
-echo "<option value=\"1\""; if ($new_privacy == "1") echo " selected"; echo ">Yes</option>";
+$sql_cat = "SELECT id, name
+			FROM categories
+			WHERE active = '1'
+			ORDER BY name asc";
+$result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
+echo "<select name=\"new_cat_id\">";
+while ($row_cat = mysql_fetch_object($result_cat)) {
+
+	if ($row_cat->id == $new_cat_id) {
+
+		echo "<option value=\"$row_cat->id\" selected>$row_cat->name</option>";
+	
+	} else {
+
+		echo "<option value=\"$row_cat->id\">$row_cat->name</option>";
+	
+	}
+}
 echo "</select>";
 ?>
 <BR><BR>
@@ -356,6 +338,24 @@ echo "<option value=\"0\""; if ($new_active == "0") echo " selected"; echo ">Exp
 echo "<option value=\"10\""; if ($new_active == "10") echo " selected"; echo ">Sold</option>";
 echo "</select>";
 ?>
+<BR><BR>
+<strong>Privacy Enabled?<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<?php
+echo "<select name=\"new_privacy\">";
+echo "<option value=\"0\""; if ($new_privacy == "0") echo " selected"; echo ">No</option>";
+echo "<option value=\"1\""; if ($new_privacy == "1") echo " selected"; echo ">Yes</option>";
+echo "</select>";
+?>
+<BR><BR>
+<strong>Function</strong><BR><BR>
+<input name="new_function" type="text" size="50" maxlength="255" value="<?php if ($new_function != "") echo $new_function; ?>">
+<BR><BR>
+<strong>Status</strong><BR><BR>
+<input name="new_status" type="text" size="50" maxlength="255" value="<?php if ($new_status != "") echo $new_status; ?>">
+<BR><BR>
+<strong>Status Notes</strong><BR><BR>
+<textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?>
+</textarea>
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
