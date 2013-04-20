@@ -30,6 +30,7 @@ $software_section = "ssl-accounts";
 $new_owner_id = $_POST['new_owner_id'];
 $new_ssl_provider_id = $_POST['new_ssl_provider_id'];
 $new_username = $_POST['new_username'];
+$new_password = $_POST['new_password'];
 $new_reseller = $_POST['new_reseller'];
 $new_notes = $_POST['new_notes'];
 $new_default_account = $_POST['new_default_account'];
@@ -57,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 
 		$sql = "INSERT into ssl_accounts
-				(owner_id, ssl_provider_id, username, notes, reseller, default_account, insert_time) VALUES 
-				('$new_owner_id', '$new_ssl_provider_id', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_reseller', '$new_default_account', '$current_timestamp')";
+				(owner_id, ssl_provider_id, username, password, notes, reseller, default_account, insert_time) VALUES 
+				('$new_owner_id', '$new_ssl_provider_id', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_password) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_reseller', '$new_default_account', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "SELECT name
@@ -153,6 +154,9 @@ echo "</select>";
 <BR><BR>
 <strong>Username:</strong><BR><BR>
 <input name="new_username" type="text" size="50" maxlength="255" value="<?=$new_username?>">
+<BR><BR>
+<strong>Password:</strong><BR><BR>
+<input name="new_password" type="text" size="50" maxlength="100" value="<?=$new_password?>">
 <BR><BR>
 <strong>Reseller Account?</strong><BR><BR>
 <select name="new_reseller">";

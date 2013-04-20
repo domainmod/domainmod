@@ -36,6 +36,7 @@ $raid = $_GET['raid'];
 $new_owner_id = $_POST['new_owner_id'];
 $new_registrar_id = $_POST['new_registrar_id'];
 $new_username = $_POST['new_username'];
+$new_password = $_POST['new_password'];
 $new_reseller = $_POST['new_reseller'];
 $new_notes = $_POST['new_notes'];
 $new_raid = $_POST['new_raid'];
@@ -68,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				SET owner_id = '$new_owner_id',
 					registrar_id = '$new_registrar_id',
 					username = '" . mysql_real_escape_string($new_username) . "',
+					password = '" . mysql_real_escape_string($new_password) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					reseller = '$new_reseller',
 					default_account = '$new_default_account',
@@ -104,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT owner_id, registrar_id, username, notes, reseller, default_account
+	$sql = "SELECT owner_id, registrar_id, username, password, notes, reseller, default_account
 			FROM registrar_accounts
 			WHERE id = '$raid'"; 
 	$result = mysql_query($sql,$connection);
@@ -114,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_owner_id = $row->owner_id;
 		$new_registrar_id = $row->registrar_id;
 		$new_username = $row->username;
+		$new_password = $row->password;
 		$new_notes = $row->notes;
 		$new_reseller = $row->reseller;
 		$new_default_account = $row->default_account;
@@ -230,6 +233,9 @@ echo "</select>";
 <BR><BR>
 <strong>Username:</strong><BR><BR>
 <input name="new_username" type="text" size="50" maxlength="255" value="<?=$new_username?>">
+<BR><BR>
+<strong>Password:</strong><BR><BR>
+<input name="new_password" type="text" size="50" maxlength="100" value="<?=$new_password?>">
 <BR><BR>
 <strong>Reseller Account?</strong><BR><BR>
 <select name="new_reseller">";
