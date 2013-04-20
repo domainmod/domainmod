@@ -322,51 +322,6 @@ $result = mysql_query($sql,$connection);
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td class="search-table-inside" width="560">
-&nbsp;&nbsp;
-<?php 
-// OWNER
-if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
-
-if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
-if ($sslpid != "") { $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
-if ($sslpaid != "") { $sslpaid_string = " AND sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
-if ($ssltid != "") { $ssltid_string = " AND sslc.type_id = '$ssltid' "; } else { $ssltid_string = ""; }
-if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
-
-$sql_owner = "SELECT o.id, o.name 
-			  FROM owners AS o, ssl_certs AS sslc, domains AS d
-			  WHERE o.id = sslc.owner_id
-			    AND o.id = d.owner_id
-				AND o.active = '1'
-				$is_active_string
-				$did_string
-				$sslpid_string
-				$sslpaid_string
-				$ssltid_string
-				$search_string
-			  GROUP BY o.name
-			  ORDER BY o.name asc";
-$result_owner = mysql_query($sql_owner,$connection);
-echo "<select name=\"oid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?oid=&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Owner - ALL</option>";
-while ($row_owner = mysql_fetch_object($result_owner)) { 
-	echo "<option value=\"$PHP_SELF?oid=$row_owner->id&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
-} 
-echo "</select>";
-?>
-<BR><BR>
 
 &nbsp;&nbsp;
 <?php 
@@ -549,6 +504,52 @@ echo "<select name=\"did\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?oid=$oid&did=&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Domain - ALL</option>";
 while ($row_domain = mysql_fetch_object($result_domain)) { 
 	echo "<option value=\"$PHP_SELF?oid=$oid&did=$row_domain->id&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_domain->id == $did) echo " selected"; echo ">"; echo "$row_domain->domain</option>";
+} 
+echo "</select>";
+?>
+<BR><BR>
+
+&nbsp;&nbsp;
+<?php 
+// OWNER
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+
+if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
+if ($sslpid != "") { $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
+if ($sslpaid != "") { $sslpaid_string = " AND sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
+if ($ssltid != "") { $ssltid_string = " AND sslc.type_id = '$ssltid' "; } else { $ssltid_string = ""; }
+if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
+
+$sql_owner = "SELECT o.id, o.name 
+			  FROM owners AS o, ssl_certs AS sslc, domains AS d
+			  WHERE o.id = sslc.owner_id
+			    AND o.id = d.owner_id
+				AND o.active = '1'
+				$is_active_string
+				$did_string
+				$sslpid_string
+				$sslpaid_string
+				$ssltid_string
+				$search_string
+			  GROUP BY o.name
+			  ORDER BY o.name asc";
+$result_owner = mysql_query($sql_owner,$connection);
+echo "<select name=\"oid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
+echo "<option value=\"$PHP_SELF?oid=&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Owner - ALL</option>";
+while ($row_owner = mysql_fetch_object($result_owner)) { 
+	echo "<option value=\"$PHP_SELF?oid=$row_owner->id&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
 } 
 echo "</select>";
 ?>
