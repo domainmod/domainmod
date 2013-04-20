@@ -874,57 +874,25 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <strong>Expiry Date (YYYY-MM-DD):</strong><BR><BR>
     <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
     <BR><BR>
-    <strong>Function:</strong><BR><BR>
-    <input name="new_function" type="text" size="50" maxlength="255" value="<?=$new_function?>">
-    <BR><BR>
-    <strong>Status:</strong><BR><BR>
-    <input name="new_status" type="text" size="50" maxlength="255" value="<?=$new_status?>">
-    <BR><BR>
-    <strong>Status Notes:</strong><BR><BR>
-    <textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?></textarea>
-    <BR><BR>
-    <strong>Web Hosting Provider:</strong><BR><BR>
+    <strong>Registrar Account:</strong><BR><BR>
     <?php
-    $sql_host = "SELECT id, name
-				 FROM hosting
-				 WHERE active = '1'
-				 ORDER BY default_host desc, name asc";
-
-    $result_host = mysql_query($sql_host,$connection) or die(mysql_error());
-    echo "<select name=\"new_whid\">";
-    while ($row_host = mysql_fetch_object($result_host)) {
+    $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
+                    FROM registrar_accounts AS ra, owners AS o, registrars AS r
+                    WHERE ra.owner_id = o.id
+                      AND ra.registrar_id = r.id
+                      AND ra.active = '1'
+                    ORDER BY ra.default_account desc, r_name asc, o_name asc, ra.username asc";
+    $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
+    echo "<select name=\"new_raid\">";
+    while ($row_account = mysql_fetch_object($result_account)) {
     
-        if ($row_host->id == $new_whid) {
+        if ($row_account->id == $new_raid) {
     
-            echo "<option value=\"$row_host->id\" selected>[ $row_host->name ]</option>";
+            echo "<option value=\"$row_account->id\" selected>[ $row_account->r_name :: $row_account->o_name :: $row_account->username ]</option>";
         
         } else {
     
-            echo "<option value=\"$row_host->id\">$row_host->name</option>";
-        
-        }
-    }
-    echo "</select>";
-    ?>
-    <BR><BR>
-    <strong>Category:</strong><BR><BR>
-    <?php
-    $sql_cat = "SELECT id, name
-				FROM categories
-				WHERE active = '1'
-				ORDER BY default_category desc, name asc";
-
-    $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
-    echo "<select name=\"new_pcid\">";
-    while ($row_cat = mysql_fetch_object($result_cat)) {
-    
-        if ($row_cat->id == $new_pcid) {
-    
-            echo "<option value=\"$row_cat->id\" selected>[ $row_cat->name ]</option>";
-        
-        } else {
-    
-            echo "<option value=\"$row_cat->id\">$row_cat->name</option>";
+            echo "<option value=\"$row_account->id\">$row_account->r_name :: $row_account->o_name :: $row_account->username</option>";
         
         }
     }
@@ -976,36 +944,51 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>Registrar Account:</strong><BR><BR>
+    <strong>Web Hosting Provider:</strong><BR><BR>
     <?php
-    $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
-                    FROM registrar_accounts AS ra, owners AS o, registrars AS r
-                    WHERE ra.owner_id = o.id
-                      AND ra.registrar_id = r.id
-                      AND ra.active = '1'
-                    ORDER BY ra.default_account desc, r_name asc, o_name asc, ra.username asc";
-    $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
-    echo "<select name=\"new_raid\">";
-    while ($row_account = mysql_fetch_object($result_account)) {
+    $sql_host = "SELECT id, name
+				 FROM hosting
+				 WHERE active = '1'
+				 ORDER BY default_host desc, name asc";
+
+    $result_host = mysql_query($sql_host,$connection) or die(mysql_error());
+    echo "<select name=\"new_whid\">";
+    while ($row_host = mysql_fetch_object($result_host)) {
     
-        if ($row_account->id == $new_raid) {
+        if ($row_host->id == $new_whid) {
     
-            echo "<option value=\"$row_account->id\" selected>[ $row_account->r_name :: $row_account->o_name :: $row_account->username ]</option>";
+            echo "<option value=\"$row_host->id\" selected>[ $row_host->name ]</option>";
         
         } else {
     
-            echo "<option value=\"$row_account->id\">$row_account->r_name :: $row_account->o_name :: $row_account->username</option>";
+            echo "<option value=\"$row_host->id\">$row_host->name</option>";
         
         }
     }
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>Privacy Enabled?</strong><BR><BR>
+    <strong>Category:</strong><BR><BR>
     <?php
-    echo "<select name=\"new_privacy\">";
-    echo "<option value=\"0\""; if ($new_privacy == "0") echo " selected"; echo ">No</option>";
-    echo "<option value=\"1\""; if ($new_privacy == "1") echo " selected"; echo ">Yes</option>";
+    $sql_cat = "SELECT id, name
+				FROM categories
+				WHERE active = '1'
+				ORDER BY default_category desc, name asc";
+
+    $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
+    echo "<select name=\"new_pcid\">";
+    while ($row_cat = mysql_fetch_object($result_cat)) {
+    
+        if ($row_cat->id == $new_pcid) {
+    
+            echo "<option value=\"$row_cat->id\" selected>[ $row_cat->name ]</option>";
+        
+        } else {
+    
+            echo "<option value=\"$row_cat->id\">$row_cat->name</option>";
+        
+        }
+    }
     echo "</select>";
     ?>
     <BR><BR>
@@ -1021,6 +1004,23 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<option value=\"10\""; if ($new_active == "10") echo " selected"; echo ">Sold</option>";
     echo "</select>";
     ?>
+    <BR><BR>
+    <strong>Privacy Enabled?</strong><BR><BR>
+    <?php
+    echo "<select name=\"new_privacy\">";
+    echo "<option value=\"0\""; if ($new_privacy == "0") echo " selected"; echo ">No</option>";
+    echo "<option value=\"1\""; if ($new_privacy == "1") echo " selected"; echo ">Yes</option>";
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>Function:</strong><BR><BR>
+    <input name="new_function" type="text" size="50" maxlength="255" value="<?=$new_function?>">
+    <BR><BR>
+    <strong>Status:</strong><BR><BR>
+    <input name="new_status" type="text" size="50" maxlength="255" value="<?=$new_status?>">
+    <BR><BR>
+    <strong>Status Notes:</strong><BR><BR>
+    <textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?></textarea>
     <BR><BR>
 <?php } elseif ($action == "CPC") { ?>
 
