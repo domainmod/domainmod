@@ -459,170 +459,6 @@ if ($segid != "") {
 
 &nbsp;&nbsp;
 <?php 
-// OWNER
-if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; } 
-elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; } 
-
-if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
-if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
-if ($ipid != "") { $ipid_string = " AND d.ip_id = '$ipid' "; } else { $ipid_string = ""; }
-if ($whid != "") { $whid_string = " AND d.hosting_id = '$whid' "; } else { $whid_string = ""; }
-if ($rid != "") { $rid_string = " AND d.registrar_id = '$rid' "; } else { $rid_string = ""; }
-if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
-if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
-if ($_SESSION['session_search_for'] != "") { $search_string = " AND d.domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
-if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND d.domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
-if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
-
-$sql_owner = "SELECT o.id, o.name 
-			  FROM owners AS o, domains AS d
-			  WHERE o.id = d.owner_id
-			    AND o.active = '1'
-				$is_active_string
-				$pcid_string
-				$dnsid_string
-				$ipid_string
-				$whid_string
-				$rid_string
-				$raid_string
-				$tld_string
-				$search_string
-				$quick_search_string
-				$segment_string
-			  GROUP BY o.name
-			  ORDER BY o.name asc";
-$result_owner = mysql_query($sql_owner,$connection);
-echo "<select name=\"oid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Owner - ALL</option>";
-while ($row_owner = mysql_fetch_object($result_owner)) { 
-	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$row_owner->id&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
-} 
-echo "</select>";
-?>
-<BR><BR>
-
-&nbsp;&nbsp;
-<?php 
-// CATEGORY
-if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; } 
-elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; } 
-
-if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
-if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
-if ($ipid != "") { $ipid_string = " AND d.ip_id = '$ipid' "; } else { $ipid_string = ""; }
-if ($whid != "") { $whid_string = " AND d.hosting_id = '$whid' "; } else { $whid_string = ""; }
-if ($rid != "") { $rid_string = " AND d.registrar_id = '$rid' "; } else { $rid_string = ""; }
-if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
-if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
-if ($_SESSION['session_search_for'] != "") { $search_string = " AND d.domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
-if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND d.domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
-if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
-
-$sql_category = "SELECT c.id, c.name
-				 FROM categories AS c, domains AS d
-				 WHERE c.id = d.cat_id
-				   $is_active_string
-				   $oid_string
-				   $dnsid_string
-				   $ipid_string
-				   $whid_string
-				   $rid_string
-				   $raid_string
-				   $tld_string
-				   $search_string
-				   $quick_search_string
-				   $segment_string
-				   AND c.active = '1'
-				 GROUP BY c.name
-				 ORDER BY c.name asc";
-$result_category = mysql_query($sql_category,$connection);
-echo "<select name=\"pcid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?pcid=&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Category - ALL</option>";
-while ($row_category = mysql_fetch_object($result_category)) { 
-	echo "<option value=\"$PHP_SELF?pcid=$row_category->id&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_category->id == $pcid) echo " selected"; echo ">"; echo "$row_category->name</option>";
-} 
-echo "</select>";
-?>
-<BR><BR>
-
-&nbsp;&nbsp;
-<?php 
-// WEB HOSTING PROVIDER
-if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; } 
-elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; } 
-
-if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
-if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
-if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
-if ($ipid != "") { $ipid_string = " AND d.ip_id = '$ipid' "; } else { $ipid_string = ""; }
-if ($rid != "") { $rid_string = " AND d.registrar_id = '$rid' "; } else { $rid_string = ""; }
-if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
-if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
-if ($_SESSION['session_search_for'] != "") { $search_string = " AND d.domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
-if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND d.domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
-if ($segid != "") { $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
-
-	$sql_hosting = "SELECT h.id, h.name
-					FROM hosting AS h, domains AS d
-					WHERE h.id = d.hosting_id
-					$is_active_string
-					$pcid_string
-					$oid_string
-					$dnsid_string
-					$ipid_string
-					$rid_string
-					$raid_string
-					$tld_string
-					$search_string
-					$quick_search_string
-					$segment_string
-					GROUP BY h.name
-					ORDER BY h.name asc";
-$result_hosting = mysql_query($sql_hosting,$connection);
-echo "<select name=\"whid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Web Hosting Provider - ALL</option>";
-while ($row_hosting = mysql_fetch_object($result_hosting)) { 
-	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$row_hosting->id&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_hosting->id == $whid) echo " selected"; echo ">"; echo "$row_hosting->name</option>";
-} 
-echo "</select>";
-?>
-<BR><BR>
-
-&nbsp;&nbsp;
-<?php 
 // REGISTRAR
 if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; } 
 elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; } 
@@ -839,6 +675,170 @@ echo "<select name=\"ipid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">IP Address - ALL</option>";
 while ($row_ip = mysql_fetch_object($result_ip)) { 
 	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$row_ip->id&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_ip->id == $ipid) echo " selected"; echo ">"; echo "$row_ip->name ($row_ip->ip)</option>";
+} 
+echo "</select>";
+?>
+<BR><BR>
+
+&nbsp;&nbsp;
+<?php 
+// WEB HOSTING PROVIDER
+if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; } 
+elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; } 
+elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; } 
+elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; } 
+elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; } 
+elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; } 
+elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; } 
+elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; } 
+elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; } 
+elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; } 
+elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; } 
+elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; } 
+
+if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
+if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
+if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
+if ($ipid != "") { $ipid_string = " AND d.ip_id = '$ipid' "; } else { $ipid_string = ""; }
+if ($rid != "") { $rid_string = " AND d.registrar_id = '$rid' "; } else { $rid_string = ""; }
+if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
+if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
+if ($_SESSION['session_search_for'] != "") { $search_string = " AND d.domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
+if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND d.domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
+if ($segid != "") { $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
+
+	$sql_hosting = "SELECT h.id, h.name
+					FROM hosting AS h, domains AS d
+					WHERE h.id = d.hosting_id
+					$is_active_string
+					$pcid_string
+					$oid_string
+					$dnsid_string
+					$ipid_string
+					$rid_string
+					$raid_string
+					$tld_string
+					$search_string
+					$quick_search_string
+					$segment_string
+					GROUP BY h.name
+					ORDER BY h.name asc";
+$result_hosting = mysql_query($sql_hosting,$connection);
+echo "<select name=\"whid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Web Hosting Provider - ALL</option>";
+while ($row_hosting = mysql_fetch_object($result_hosting)) { 
+	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$row_hosting->id&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_hosting->id == $whid) echo " selected"; echo ">"; echo "$row_hosting->name</option>";
+} 
+echo "</select>";
+?>
+<BR><BR>
+
+&nbsp;&nbsp;
+<?php 
+// CATEGORY
+if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; } 
+elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; } 
+elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; } 
+elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; } 
+elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; } 
+elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; } 
+elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; } 
+elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; } 
+elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; } 
+elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; } 
+elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; } 
+elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; } 
+
+if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
+if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
+if ($ipid != "") { $ipid_string = " AND d.ip_id = '$ipid' "; } else { $ipid_string = ""; }
+if ($whid != "") { $whid_string = " AND d.hosting_id = '$whid' "; } else { $whid_string = ""; }
+if ($rid != "") { $rid_string = " AND d.registrar_id = '$rid' "; } else { $rid_string = ""; }
+if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
+if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
+if ($_SESSION['session_search_for'] != "") { $search_string = " AND d.domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
+if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND d.domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
+if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
+
+$sql_category = "SELECT c.id, c.name
+				 FROM categories AS c, domains AS d
+				 WHERE c.id = d.cat_id
+				   $is_active_string
+				   $oid_string
+				   $dnsid_string
+				   $ipid_string
+				   $whid_string
+				   $rid_string
+				   $raid_string
+				   $tld_string
+				   $search_string
+				   $quick_search_string
+				   $segment_string
+				   AND c.active = '1'
+				 GROUP BY c.name
+				 ORDER BY c.name asc";
+$result_category = mysql_query($sql_category,$connection);
+echo "<select name=\"pcid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
+echo "<option value=\"$PHP_SELF?pcid=&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Category - ALL</option>";
+while ($row_category = mysql_fetch_object($result_category)) { 
+	echo "<option value=\"$PHP_SELF?pcid=$row_category->id&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_category->id == $pcid) echo " selected"; echo ">"; echo "$row_category->name</option>";
+} 
+echo "</select>";
+?>
+<BR><BR>
+
+&nbsp;&nbsp;
+<?php 
+// OWNER
+if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; } 
+elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; } 
+elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; } 
+elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; } 
+elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; } 
+elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; } 
+elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; } 
+elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; } 
+elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; } 
+elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; } 
+elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; } 
+elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; } 
+elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; } 
+
+if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
+if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
+if ($ipid != "") { $ipid_string = " AND d.ip_id = '$ipid' "; } else { $ipid_string = ""; }
+if ($whid != "") { $whid_string = " AND d.hosting_id = '$whid' "; } else { $whid_string = ""; }
+if ($rid != "") { $rid_string = " AND d.registrar_id = '$rid' "; } else { $rid_string = ""; }
+if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
+if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
+if ($_SESSION['session_search_for'] != "") { $search_string = " AND d.domain LIKE '%" . $_SESSION['session_search_for'] . "%'"; } else { $search_string = ""; }
+if ($_SESSION['session_quick_search'] != "") { $quick_search_string = " AND d.domain IN (" . $_SESSION['session_quick_search'] . ") "; } else { $quick_search_string = ""; }
+if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
+
+$sql_owner = "SELECT o.id, o.name 
+			  FROM owners AS o, domains AS d
+			  WHERE o.id = d.owner_id
+			    AND o.active = '1'
+				$is_active_string
+				$pcid_string
+				$dnsid_string
+				$ipid_string
+				$whid_string
+				$rid_string
+				$raid_string
+				$tld_string
+				$search_string
+				$quick_search_string
+				$segment_string
+			  GROUP BY o.name
+			  ORDER BY o.name asc";
+$result_owner = mysql_query($sql_owner,$connection);
+echo "<select name=\"oid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Owner - ALL</option>";
+while ($row_owner = mysql_fetch_object($result_owner)) { 
+	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$row_owner->id&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
 } 
 echo "</select>";
 ?>
