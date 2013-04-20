@@ -148,7 +148,7 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_category_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Category Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Category Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_category" type="text" value="<?php if ($new_category != "") echo $new_category; ?>
 " size="50" maxlength="255">
 <BR><BR>

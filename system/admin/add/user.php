@@ -108,17 +108,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../../../_includes/header.inc.php"); ?>
 <form name="add_user_form" method="post" action="<?=$PHP_SELF?>">
-<strong>First Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?=$new_first_name?>"><BR><BR>
-<strong>Last Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?=$new_last_name?>"><BR><BR>
-<strong>Username<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR><input name="new_username" type="text" size="50" maxlength="20" value="<?=$new_username?>"><BR><BR>
-<strong>Email Address<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR><input name="new_email_address" type="text" size="50" maxlength="255" value="<?=$new_email_address?>"><BR><BR>
-<strong>Admin Privileges?<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong>&nbsp;
+<strong>First Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?=$new_first_name?>"><BR><BR>
+<strong>Last Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?=$new_last_name?>"><BR><BR>
+<strong>Username</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR><input name="new_username" type="text" size="50" maxlength="20" value="<?=$new_username?>"><BR><BR>
+<strong>Email Address</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR><input name="new_email_address" type="text" size="50" maxlength="255" value="<?=$new_email_address?>"><BR><BR>
+<strong>Admin Privileges?</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>&nbsp;
 <select name="new_admin">
 <option value="0"<?php if ($new_admin == 0) echo " selected"; ?>>No</option>
 <option value="1"<?php if ($new_admin == 1) echo " selected"; ?>>Yes</option>
 </select>
 <BR><BR>
-<strong>Active Account?<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong>&nbsp;
+<strong>Active Account?</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>&nbsp;
 <select name="new_active">
 <option value="0"<?php if ($new_active == 0) echo " selected"; ?>>No</option>
 <option value="1"<?php if ($new_active == 1) echo " selected"; ?>>Yes</option>

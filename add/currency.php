@@ -125,10 +125,10 @@ while ($row = mysql_fetch_object($result)) {
 }
 ?>
 <form name="add_currency_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Name ("<em><?=$default_name?></em>")<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Name ("<em><?=$default_name?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" value="<?=$new_name?>" size="50" maxlength="255">
 <BR><BR>
-<strong>Abbreviation ("<em><?=$default_currency?></em>")<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Abbreviation ("<em><?=$default_currency?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_abbreviation" type="text" value="<?=$new_abbreviation?>" size="50" maxlength="3">
 <BR><BR>
 <strong>Notes</strong><BR><BR>

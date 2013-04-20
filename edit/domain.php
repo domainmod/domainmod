@@ -204,13 +204,13 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_domain_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Domain<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Domain</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_domain" type="text" size="50" maxlength="255" value="<?php if ($new_domain != "") echo $new_domain; ?>">
 <BR><BR>
-<strong>Expiry Date (YYYY-MM-DD)<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
 <BR><BR>
-<strong>Registrar Account<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Registrar Account</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <?php 
 $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
 				FROM registrar_accounts AS ra, owners AS o, registrars AS r
@@ -234,7 +234,7 @@ while ($row_account = mysql_fetch_object($result_account)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>DNS Profile<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>DNS Profile</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <?php
 $sql_dns = "SELECT id, name
 			FROM dns
@@ -257,7 +257,7 @@ while ($row_dns = mysql_fetch_object($result_dns)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>IP Address<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>IP Address</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <?php
 $sql_ip = "SELECT id, name, ip
 		   FROM ip_addresses
@@ -280,7 +280,7 @@ while ($row_ip = mysql_fetch_object($result_ip)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Web Hosting Provider<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Web Hosting Provider</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <?php
 $sql_hosting = "SELECT id, name
 				FROM hosting
@@ -303,7 +303,7 @@ while ($row_hosting = mysql_fetch_object($result_hosting)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Category<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Category</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <?php
 $sql_cat = "SELECT id, name
 			FROM categories
@@ -326,7 +326,7 @@ while ($row_cat = mysql_fetch_object($result_cat)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Domain Status<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Domain Status</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <?php
 echo "<select name=\"new_active\">";
 echo "<option value=\"1\""; if ($new_active == "1") echo " selected"; echo ">Active</option>";
@@ -339,7 +339,7 @@ echo "<option value=\"10\""; if ($new_active == "10") echo " selected"; echo ">S
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Privacy Enabled?<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Privacy Enabled?</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <?php
 echo "<select name=\"new_privacy\">";
 echo "<option value=\"0\""; if ($new_privacy == "0") echo " selected"; echo ">No</option>";

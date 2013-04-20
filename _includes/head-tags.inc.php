@@ -395,9 +395,11 @@ font.highlight {
 	color: #CC0000;
 }
 font.default_highlight {
+	font-weight: bold;
 	color: #CC0000;
 }
 font.reseller_highlight {
+	font-weight: bold;
 	color: #0040FF;
 }
 a:link {

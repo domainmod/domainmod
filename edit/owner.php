@@ -176,7 +176,7 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_owner_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Owner Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Owner Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_owner" type="text" value="<?php if ($new_owner != "") echo $new_owner; ?>
 " size="50" maxlength="255">
 <BR><BR>

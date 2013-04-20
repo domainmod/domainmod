@@ -223,13 +223,13 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_dns_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Profile Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Profile Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo $new_name; ?>">
 <BR><BR>
 <table class="dns_table">
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 1<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+            <strong>DNS Server 1</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
             <input name="new_dns1" type="text" size="28" maxlength="255" value="<?php if ($new_dns1 != "") echo $new_dns1; ?>">
 		</td>
         <td class="dns_table_right">
@@ -239,7 +239,7 @@ if ($really_del == "1") {
     </tr>
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 2<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+            <strong>DNS Server 2</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
             <input name="new_dns2" type="text" size="28" maxlength="255" value="<?php if ($new_dns2 != "") echo $new_dns2; ?>">
 		</td>
         <td class="dns_table_right">

@@ -171,13 +171,13 @@ while ($row = mysql_fetch_object($result)) {
 }
 ?>
 <form name="edit_currency_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Name ("<em><?=$default_name?></em>")<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Name ("<em><?=$default_name?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?=$new_name?>">
 <BR><BR>
-<strong>Abbreviation ("<em><?=$default_currency?></em>")<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Abbreviation ("<em><?=$default_currency?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_abbreviation" type="text" size="50" maxlength="3" value="<?=$new_abbreviation?>">
 <BR><BR>
-<strong>Conversion Rate<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Conversion Rate</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_conversion" type="text" size="50" maxlength="10" value="<?=$new_conversion?>">
 <BR><BR>
 <strong>Notes</strong><BR><BR>

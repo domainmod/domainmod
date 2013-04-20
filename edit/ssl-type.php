@@ -145,7 +145,7 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_type_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Type Name<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+<strong>Type Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_type" type="text" value="<?php if ($new_type != "") echo $new_type; ?>
 " size="50" maxlength="255">
 <BR><BR>
