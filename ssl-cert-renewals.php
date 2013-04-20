@@ -110,9 +110,6 @@ if ($export == "1") {
 			$full_ip_rdns = $row_domain->rdns;
 		}
 
-		// Currency Conversion & Formatting
-		// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
-		// Output: $temp_output_amount
 		$temp_input_amount = $temp_renewal_fee;
 		$temp_input_conversion = "";
 		include("_includes/system/convert-and-format-currency.inc.php");
@@ -123,9 +120,6 @@ if ($export == "1") {
 	
 	$full_export .= "\n";
 
-	// Currency Conversion & Formatting
-	// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
-	// Output: $temp_output_amount
 	$temp_input_amount = $total_renewal_fee_export;
 	$temp_input_conversion = "";
 	include("_includes/system/convert-and-format-currency.inc.php");
@@ -250,9 +244,6 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 <?php if ($_SESSION['session_display_ssl_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?php
-		// Currency Conversion & Formatting
-		// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
-		// Output: $temp_output_amount
 		$temp_input_amount = $row->renewal_fee;
 		$temp_input_conversion = $row->conversion;
 		include("_includes/system/convert-and-format-currency.inc.php");
@@ -306,9 +297,6 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 <?php } ?>
 </table>
 <?php
-// Currency Conversion & Formatting
-// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
-// Output: $temp_output_amount
 $temp_input_amount = $total_renewal_cost;
 $temp_input_conversion = "";
 include("_includes/system/convert-and-format-currency.inc.php");

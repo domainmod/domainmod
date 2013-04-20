@@ -377,9 +377,6 @@ while ($row = mysql_fetch_object($result)) {
     	<td class="main_table_cell_active"><?=$row->type?></td>
         <td class="main_table_cell_active">
 			<?php
-			// Currency Conversion & Formatting
-			// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
-			// Output: $temp_output_amount
 			$temp_input_amount = $row->initial_fee;
 			$temp_input_conversion = "";
 			include("../_includes/system/convert-and-format-currency.inc.php");
@@ -388,9 +385,6 @@ while ($row = mysql_fetch_object($result)) {
 		</td>
         <td class="main_table_cell_active">
 			<?php
-			// Currency Conversion & Formatting
-			// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
-			// Output: $temp_output_amount
 			$temp_input_amount = $row->renewal_fee;
 			$temp_input_conversion = "";
 			include("../_includes/system/convert-and-format-currency.inc.php");

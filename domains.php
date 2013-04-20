@@ -371,9 +371,6 @@ if ($export == "1") {
 			$privacy_status = "Public";
 		}
 
-		// Currency Conversion & Formatting
-		// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
-		// Output: $temp_output_amount
 		$temp_input_amount = $temp_converted_fee;
 		$temp_input_conversion = "";
 		include("_includes/system/convert-and-format-currency.inc.php");
@@ -384,9 +381,6 @@ if ($export == "1") {
 
 	$full_export .= "\n";
 
-	// Currency Conversion & Formatting
-	// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
-	// Output: $temp_output_amount
 	$temp_input_amount = $total_renewal_fee_export;
 	$temp_input_conversion = "";
 	include("_includes/system/convert-and-format-currency.inc.php");
@@ -1169,9 +1163,6 @@ $_SESSION['session_quick_search'] = preg_replace("/'/", "", $_SESSION['session_q
 	<td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/registrar-fees.php?rid=<?=$row->r_id?>">
 		<?php
-		// Currency Conversion & Formatting
-		// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
-		// Output: $temp_output_amount
 		$temp_input_amount = $row->renewal_fee;
 		$temp_input_conversion = $row->conversion;
 		include("_includes/system/convert-and-format-currency.inc.php");

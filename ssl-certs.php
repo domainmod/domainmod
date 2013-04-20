@@ -244,9 +244,6 @@ if ($export == "1") {
 			$full_ip_rdns = $row_domain->rdns;
 		}
 
-		// Currency Conversion & Formatting
-		// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
-		// Output: $temp_output_amount
 		$temp_input_amount = $temp_renewal_fee;
 		$temp_input_conversion = "";
 		include("_includes/system/convert-and-format-currency.inc.php");
@@ -257,9 +254,6 @@ if ($export == "1") {
 	
 	$full_export .= "\n";
 
-	// Currency Conversion & Formatting
-	// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
-	// Output: $temp_output_amount
 	$temp_input_amount = $total_renewal_fee_export;
 	$temp_input_conversion = "";
 	include("_includes/system/convert-and-format-currency.inc.php");
@@ -720,9 +714,6 @@ echo "</select>";
 	<td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?=$row->sslp_id?>">
 		<?php
-		// Currency Conversion & Formatting
-		// Input: $temp_input_amount  /  Conversion: $temp_input_conversion (assign empty variable if no conversion is necessary)
-		// Output: $temp_output_amount
 		$temp_input_amount = $row->renewal_fee;
 		$temp_input_conversion = $row->conversion;
 		include("_includes/system/convert-and-format-currency.inc.php");
