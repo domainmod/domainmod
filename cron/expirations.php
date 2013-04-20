@@ -20,8 +20,17 @@ include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp-basic.inc.php");
-include("../_includes/timestamps/current-timestamp-basic-plus-60-days.inc.php");
 include("../_includes/timestamps/current-timestamp-long.inc.php");
+
+$sql = "SELECT expiration_email_days
+		FROM settings";
+$result = mysql_query($sql,$connection);
+
+while ($row = mysql_fetch_object($result)) {
+	$number_of_days = $row->expiration_email_days;
+}
+
+include("../_includes/timestamps/current-timestamp-basic-plus-X-days.inc.php");
 
 $sql_settings = "SELECT full_url, email_address
 				 FROM settings";
@@ -36,7 +45,7 @@ while ($row_settings = mysql_fetch_object($result_settings)) {
 $sql_domains = "SELECT id, expiry_date, domain
 				FROM domains
 				WHERE active NOT IN ('0', '10')
-				  AND expiry_date <= '$current_timestamp_basic_plus_60_days'
+				  AND expiry_date <= '$current_timestamp_basic_plus_x_days'
 				ORDER BY expiry_date, domain";
 $result_domains = mysql_query($sql_domains,$connection);
 
@@ -44,7 +53,7 @@ $sql_ssl = "SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
 			FROM ssl_certs AS sslc, ssl_cert_types AS sslt
 			WHERE sslc.type_id = sslt.id
 			  AND sslc.active NOT IN ('0')
-			  AND sslc.expiry_date <= '$current_timestamp_basic_plus_60_days'
+			  AND sslc.expiry_date <= '$current_timestamp_basic_plus_x_days'
 			ORDER BY sslc.expiry_date, sslc.name";
 $result_ssl = mysql_query($sql_ssl,$connection);
 
@@ -76,7 +85,7 @@ if ((mysql_num_rows($result_domains) != 0 || mysql_num_rows($result_ssl) != 0) &
 				<td width=\"100%\" bgcolor=\"#FFFFFF\">";
 					$message .= "<font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica, sans-serif\">";
 					$message .= "<a title=\"" . $software_title . "\" href=\"" . $full_url . "/\"><img alt=\"" . $software_title . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
-					$message .= "Below is a list of all the Domains & SSL Certificates in the " . $software_title . " that are expiring in the next 60 days. <BR>";
+					$message .= "Below is a list of all the Domains & SSL Certificates in the " . $software_title . " that are expiring in the next " . $number_of_days . " days. <BR>";
 					$message .= "<BR>If you would like to change the frequency of this email notification please contact your " . $software_title . " administrator. <BR>";
 					$message .= "<BR>";
 			

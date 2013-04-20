@@ -1,5 +1,5 @@
 <?php
-// /_includes/timestamps/current-timestamp-basic-plus-60-days.inc.php
+// /_includes/timestamps/current-timestamp-basic-plus-X-days.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,5 +16,5 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-$current_timestamp_basic_plus_60_days = date("Y-m-d",mktime(date("H"),date("i"),date("s"),date("m"),date("d")+60,date("Y")));
+$current_timestamp_basic_plus_x_days = date("Y-m-d",mktime(date("H"),date("i"),date("s"),date("m"),date("d")+$number_of_days,date("Y")));
 ?>

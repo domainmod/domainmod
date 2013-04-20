@@ -72,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['session_system_db_version'] = $row_settings->db_version;
 				$_SESSION['session_system_email_address'] = $row_settings->email_address;
 				$_SESSION['session_system_timezone'] = $row_settings->timezone;
+				$_SESSION['session_system_expiration_email_days'] = $row_settings->expiration_email_days;
 
 			}
 

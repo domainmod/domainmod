@@ -35,19 +35,22 @@ $software_section = "system";
 $new_email_address = $_POST['new_email_address'];
 $new_full_url = $_POST['new_full_url'];
 $new_timezone = $_POST['new_timezone'];
+$new_expiration_email_days = $_POST['new_expiration_email_days'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "" && $new_expiration_email_days != "") {
 
 	$sql = "UPDATE settings
 			SET full_url = '$new_full_url',
 				email_address = '$new_email_address',
 				timezone = '$new_timezone',
+				expiration_email_days = '$new_expiration_email_days',
 				update_time = '$current_timestamp'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$_SESSION['session_system_full_url'] = $new_full_url;
 	$_SESSION['session_system_email_address'] = $new_email_address;
 	$_SESSION['session_system_timezone'] = $new_timezone;
+	$_SESSION['session_system_expiration_email_days'] = $new_expiration_email_days;
 	
 	$_SESSION['session_result_message'] = "The System Settings were updated<BR><BR>";
 	
@@ -61,10 +64,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 	
 		if ($new_email_address == "") $_SESSION['session_result_message'] .= "Enter the system email address<BR>";
 		if ($new_full_url == "") $_SESSION['session_result_message'] .= "Enter the full URL of your " . $software_title . " installation<BR>";
+		if ($new_expiration_email_days == "") $_SESSION['session_result_message'] .= "Enter the number of days to display in expiration emails<BR>";
 		
 	} else {
 		
-		$sql = "SELECT full_url, email_address, timezone
+		$sql = "SELECT full_url, email_address, timezone, expiration_email_days
 				FROM settings";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -73,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 			$new_full_url = $row->full_url;
 			$new_email_address = $row->email_address;
 			$new_timezone = $row->timezone;
+			$new_expiration_email_days = $row->expiration_email_days;
 
 		}
 
@@ -96,6 +101,10 @@ Enter the full URL of your <?=$software_title?> installation, excluding the trai
 <strong>Email Address:</strong><BR><BR>
 This should be a valid email address that is able to receive mail. It will be used in various system locations, such as the FROM address for emails sent by <?=$software_title?>.<BR><BR>
 <input name="new_email_address" type="text" size="50" maxlength="255" value="<?php if ($new_email_address != "") echo $new_email_address; ?>">
+<BR><BR>
+<strong>Days to Display in Expiration Emails:</strong><BR><BR>
+This is the number of days in the future to display in the expiration emails.<BR><BR>
+<input name="new_expiration_email_days" type="text" size="4" maxlength="3" value="<?php if ($new_expiration_email_days != "") echo $new_expiration_email_days; ?>">
 <BR><BR>
 <strong>Default Timezone:</strong><BR><BR>
 <select name="new_timezone">
