@@ -192,19 +192,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     	<td class="main_table_cell_heading_active">Expiry Date</td>
     	<td class="main_table_cell_heading_active">Fee</td>
     	<td class="main_table_cell_heading_active">Domain</td>
-    	<td class="main_table_cell_heading_active">SSL Type</td>
-    	<td class="main_table_cell_heading_active">Owner</td>
     	<td class="main_table_cell_heading_active">SSL Provider</td>
     	<td class="main_table_cell_heading_active">Account</td>
+    	<td class="main_table_cell_heading_active">SSL Type</td>
+    	<td class="main_table_cell_heading_active">Owner</td>
     </tr>
 	<tr class="main_table_row_active">
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_expiry_date" value="1"<?php if ($new_display_ssl_expiry_date == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_fee" value="1"<?php if ($new_display_ssl_fee == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_domain" value="1"<?php if ($new_display_ssl_domain == "1") echo " checked"; ?>></td>
-    	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_type" value="1"<?php if ($new_display_ssl_type == "1") echo " checked"; ?>></td>
-    	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_owner" value="1"<?php if ($new_display_ssl_owner == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_provider" value="1"<?php if ($new_display_ssl_provider == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_account" value="1"<?php if ($new_display_ssl_account == "1") echo " checked"; ?>></td>
+    	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_type" value="1"<?php if ($new_display_ssl_type == "1") echo " checked"; ?>></td>
+    	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_owner" value="1"<?php if ($new_display_ssl_owner == "1") echo " checked"; ?>></td>
     </tr>
 </table>        
 <BR><BR>
