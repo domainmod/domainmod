@@ -846,9 +846,9 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 <?php if ($action != "") { ?>
         <BR><BR><BR>
 		<?php if ($action == "AD") { ?>
-	        <strong>Domains to add (one per line):</strong>
+	        <strong>Domains to add (one per line)<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong>
         <?php } else { ?>
-	        <strong>Domains to update (one per line):</strong>
+	        <strong>Domains to update (one per line)<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong>
         <?php } ?>
         <BR><BR>
         <textarea name="new_data" cols="60" rows="5"><?=$new_data?></textarea>
@@ -856,7 +856,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 <?php } ?>
 
 <?php if ($action == "R" || $action == "FR") { ?>
-    <strong>Renew For:</strong> 
+    <strong>Renew For<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong> 
     <select name="new_renewal_years">
       <option value="1"<?php if ($new_renewal_years == "1") { echo " selected"; } ?>>1 Year</option>
       <option value="2"<?php if ($new_renewal_years == "2") { echo " selected"; } ?>>2 Years</option>
@@ -871,10 +871,10 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     </select>
     <BR><BR>
 <?php } elseif ($action == "AD") { ?>
-    <strong>Expiry Date (YYYY-MM-DD):</strong><BR><BR>
+    <strong>Expiry Date (YYYY-MM-DD)<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
     <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
     <BR><BR>
-    <strong>Registrar Account:</strong><BR><BR>
+    <strong>Registrar Account<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
     <?php
     $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                     FROM registrar_accounts AS ra, owners AS o, registrars AS r
@@ -899,7 +899,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>DNS Profile:</strong><BR><BR>
+    <strong>DNS Profile<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
     <?php
     $sql_dns = "SELECT id, name
 				FROM dns
@@ -922,7 +922,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>IP Address:</strong><BR><BR>
+    <strong>IP Address<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
     <?php
     $sql_ip = "SELECT id, name, ip
 			   FROM ip_addresses
@@ -944,7 +944,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>Web Hosting Provider:</strong><BR><BR>
+    <strong>Web Hosting Provider<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
     <?php
     $sql_host = "SELECT id, name
 				 FROM hosting
@@ -968,7 +968,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>Category:</strong><BR><BR>
+    <strong>Category<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
     <?php
     $sql_cat = "SELECT id, name
 				FROM categories
@@ -992,7 +992,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>Domain Status:</strong><BR><BR>
+    <strong>Domain Status<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
     <?php
     echo "<select name=\"new_active\">";
     echo "<option value=\"1\""; if ($new_active == "1") echo " selected"; echo ">Active</option>";
@@ -1005,7 +1005,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>Privacy Enabled?</strong><BR><BR>
+    <strong>Privacy Enabled?<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
     <?php
     echo "<select name=\"new_privacy\">";
     echo "<option value=\"0\""; if ($new_privacy == "0") echo " selected"; echo ">No</option>";
@@ -1013,13 +1013,13 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>Function:</strong><BR><BR>
+    <strong>Function</strong><BR><BR>
     <input name="new_function" type="text" size="50" maxlength="255" value="<?=$new_function?>">
     <BR><BR>
-    <strong>Status:</strong><BR><BR>
+    <strong>Status</strong><BR><BR>
     <input name="new_status" type="text" size="50" maxlength="255" value="<?=$new_status?>">
     <BR><BR>
-    <strong>Status Notes:</strong><BR><BR>
+    <strong>Status Notes</strong><BR><BR>
     <textarea name="new_status_notes" cols="60" rows="5"><?=$new_status_notes?></textarea>
     <BR><BR>
 <?php } elseif ($action == "CPC") { ?>
@@ -1030,7 +1030,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 				WHERE active = '1'
 				ORDER BY default_category desc, name asc";
     $result_cat = mysql_query($sql_cat,$connection);
-    echo "<strong>New Category:</strong> <BR><BR>";
+    echo "<strong>New Category<a title=\"Required Field\"><font class=\"default_highlight\"><strong>*</strong></font></a></strong> <BR><BR>";
 	echo "<select name=\"new_pcid\">";
     echo "<option value=\"\""; if ($new_pcid == "") echo " selected"; echo ">"; echo "$choose_text Category</option>";
 	while ($row_cat = mysql_fetch_object($result_cat)) { 
@@ -1047,7 +1047,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 				WHERE active = '1'
 				ORDER BY name asc";
     $result_dns = mysql_query($sql_dns,$connection);
-    echo "<strong>New DNS Profile:</strong> <BR><BR>";
+    echo "<strong>New DNS Profile<a title=\"Required Field\"><font class=\"default_highlight\"><strong>*</strong></font></a></strong> <BR><BR>";
     echo "<select name=\"new_dnsid\">";
     echo "<option value=\"\""; if ($new_dnsid == "") echo " selected"; echo ">"; echo "$choose_text DNS Profile</option>";
     while ($row_dns = mysql_fetch_object($result_dns)) { 
@@ -1063,7 +1063,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 			   FROM ip_addresses
 			   ORDER BY name asc, ip asc";
     $result_ip = mysql_query($sql_ip,$connection);
-    echo "<strong>New IP Address:</strong> <BR><BR>";
+    echo "<strong>New IP Address<a title=\"Required Field\"><font class=\"default_highlight\"><strong>*</strong></font></a></strong> <BR><BR>";
     echo "<select name=\"new_ipid\">";
     echo "<option value=\"\""; if ($new_ipid == "") echo " selected"; echo ">"; echo "$choose_text IP Address</option>";
     while ($row_ip = mysql_fetch_object($result_ip)) { 
@@ -1088,7 +1088,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
                    GROUP BY r.name, o.name, ra.username
                    ORDER BY r.name asc, o.name asc, ra.username asc";
     $result_account = mysql_query($sql_account,$connection);
-    echo "<strong>New Registrar Account:</strong> <BR><BR>";
+    echo "<strong>New Registrar Account<a title=\"Required Field\"><font class=\"default_highlight\"><strong>*</strong></font></a></strong> <BR><BR>";
     echo "<select name=\"new_raid\">";
     echo "<option value=\"\""; if ($new_raid == "") echo " selected"; echo ">"; echo "$choose_text Registrar Account</option>";
 	while ($row_account = mysql_fetch_object($result_account)) { 
@@ -1104,7 +1104,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 				 FROM hosting
 				 ORDER BY name asc";
     $result_host = mysql_query($sql_host,$connection);
-    echo "<strong>New Web Hosting Provider:</strong> <BR><BR>";
+    echo "<strong>New Web Hosting Provider<a title=\"Required Field\"><font class=\"default_highlight\"><strong>*</strong></font></a></strong> <BR><BR>";
     echo "<select name=\"new_whid\">";
     echo "<option value=\"\""; if ($new_whid == "") echo " selected"; echo ">"; echo "$choose_text Web Hosting Provider</option>";
     while ($row_host = mysql_fetch_object($result_host)) { 
@@ -1116,12 +1116,16 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 <?php } elseif ($action == "AN") { ?>
 
 <?php } elseif ($action == "CED") { ?>
-<strong>New Expiry Date (YYYY-MM-DD):</strong><BR><BR>
+<strong>New Expiry Date (YYYY-MM-DD)<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
 <input name="new_expiry_date" type="text" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic; } ?>" size="10" maxlength="10">
     <BR><BR>
 <?php } ?>
 <?php if ($action != "") { ?>
-	<strong>Notes:</strong><BR><BR>
+    <?php if ($action == "AN") { ?>
+		<strong>Notes<a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a></strong><BR><BR>
+    <?php } else { ?>
+		<strong>Notes</strong><BR><BR>
+    <?php } ?>
     <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
     <BR><BR>
     <input type="hidden" name="action" value="<?=$action?>">
