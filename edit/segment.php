@@ -161,9 +161,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 	}
 
-$new_segment = preg_replace("/', '/", "\r\n", $new_segment);
-$new_segment = preg_replace("/','/", "\r\n", $new_segment);
-$new_segment = preg_replace("/'/", "", $new_segment);
+	$new_segment = preg_replace("/', '/", "\r\n", $new_segment);
+	$new_segment = preg_replace("/','/", "\r\n", $new_segment);
+	$new_segment = preg_replace("/'/", "", $new_segment);
 
 }
 
