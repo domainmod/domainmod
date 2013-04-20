@@ -223,8 +223,7 @@ if ($really_del == "1") {
 <input type="hidden" name="new_segid" value="<?=$segid?>">
 <input type="submit" name="button" value="Update This Segment &raquo;">
 </form>
-<BR>
-<a href="<?=$PHP_SELF?>?segid=<?=$segid?>&del=1">DELETE THIS SEGMENT</a>
+<BR><BR><a href="<?=$PHP_SELF?>?segid=<?=$segid?>&del=1">DELETE THIS SEGMENT</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

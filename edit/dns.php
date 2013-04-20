@@ -337,7 +337,7 @@ if ($really_del == "1") {
 <input type="hidden" name="new_dnsid" value="<?=$dnsid?>">
 <input type="submit" name="button" value="Update This DNS Profile &raquo;">
 </form>
-<BR><a href="<?=$PHP_SELF?>?dnsid=<?=$dnsid?>&del=1">DELETE THIS DNS PROFILE</a>
+<BR><BR><a href="<?=$PHP_SELF?>?dnsid=<?=$dnsid?>&del=1">DELETE THIS DNS PROFILE</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

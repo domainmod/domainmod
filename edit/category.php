@@ -165,7 +165,7 @@ if ($really_del == "1") {
 <input type="hidden" name="new_pcid" value="<?=$pcid?>">
 <input type="submit" name="button" value="Update This Category &raquo;">
 </form>
-<BR><a href="<?=$PHP_SELF?>?pcid=<?=$pcid?>&del=1">DELETE THIS CATEGORY</a>
+<BR><BR><a href="<?=$PHP_SELF?>?pcid=<?=$pcid?>&del=1">DELETE THIS CATEGORY</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

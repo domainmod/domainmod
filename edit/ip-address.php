@@ -172,7 +172,7 @@ if ($really_del == "1") {
 <input type="hidden" name="new_ipid" value="<?=$ipid?>">
 <input type="submit" name="button" value="Update This IP Address &raquo;">
 </form>
-<BR><a href="<?=$PHP_SELF?>?ipid=<?=$ipid?>&del=1">DELETE THIS IP ADDRESS</a>
+<BR><BR><a href="<?=$PHP_SELF?>?ipid=<?=$ipid?>&del=1">DELETE THIS IP ADDRESS</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

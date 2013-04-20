@@ -187,7 +187,7 @@ while ($row = mysql_fetch_object($result)) {
 <input type="hidden" name="new_curid" value="<?=$curid?>">
 <input type="submit" name="button" value="Update This Currency &raquo;">
 </form>
-<BR><a href="<?=$PHP_SELF?>?curid=<?=$curid?>&del=1">DELETE THIS CURRENCY</a>
+<BR><BR><a href="<?=$PHP_SELF?>?curid=<?=$curid?>&del=1">DELETE THIS CURRENCY</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

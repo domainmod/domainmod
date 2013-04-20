@@ -180,7 +180,7 @@ if ($really_del == "1") {
 <input type="hidden" name="new_rid" value="<?=$rid?>">
 <input type="submit" name="button" value="Update This Registrar &raquo;">
 </form>
-<BR><a href="registrar-fees.php?rid=<?=$rid?>">EDIT THIS REGISTRAR'S FEES</a><BR><BR>
+<BR><BR><a href="registrar-fees.php?rid=<?=$rid?>">EDIT THIS REGISTRAR'S FEES</a><BR>
 <BR><a href="<?=$PHP_SELF?>?rid=<?=$rid?>&del=1">DELETE THIS REGISTRAR</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>

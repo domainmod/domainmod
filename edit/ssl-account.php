@@ -248,7 +248,7 @@ echo "</select>";
 <input type="hidden" name="new_sslpaid" value="<?=$sslpaid?>">
 <input type="submit" name="button" value="Update This SSL Provider Account &raquo;">
 </form>
-<BR><a href="<?=$PHP_SELF?>?sslpaid=<?=$sslpaid?>&del=1">DELETE THIS SSL PROVIDER ACCOUNT</a>
+<BR><BR><a href="<?=$PHP_SELF?>?sslpaid=<?=$sslpaid?>&del=1">DELETE THIS SSL PROVIDER ACCOUNT</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

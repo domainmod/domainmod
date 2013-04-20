@@ -158,7 +158,7 @@ if ($really_del == "1") {
 <input type="hidden" name="new_ssltid" value="<?=$ssltid?>">
 <input type="submit" name="button" value="Update This Type &raquo;">
 </form>
-<BR><a href="<?=$PHP_SELF?>?ssltid=<?=$ssltid?>&del=1">DELETE THIS TYPE</a>
+<BR><BR><a href="<?=$PHP_SELF?>?ssltid=<?=$ssltid?>&del=1">DELETE THIS TYPE</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

@@ -189,8 +189,7 @@ if ($really_del == "1") {
 <input type="hidden" name="new_oid" value="<?=$oid?>">
 <input type="submit" name="button" value="Update This Owner &raquo;">
 </form>
-<BR>
-<a href="<?=$PHP_SELF?>?oid=<?=$oid?>&del=1">DELETE THIS OWNER</a>
+<BR><BR><a href="<?=$PHP_SELF?>?oid=<?=$oid?>&del=1">DELETE THIS OWNER</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

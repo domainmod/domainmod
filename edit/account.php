@@ -252,7 +252,7 @@ echo "</select>";
 <input type="hidden" name="new_raid" value="<?=$raid?>">
 <input type="submit" name="button" value="Update This Account &raquo;">
 </form>
-<BR><a href="<?=$PHP_SELF?>?raid=<?=$raid?>&del=1">DELETE THIS DOMAIN REGISTRAR ACCOUNT</a>
+<BR><BR><a href="<?=$PHP_SELF?>?raid=<?=$raid?>&del=1">DELETE THIS REGISTRAR ACCOUNT</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

@@ -363,8 +363,7 @@ echo "</select>";
 <input type="hidden" name="new_did" value="<?=$did?>">
 <input type="submit" name="button" value="Update This Domain &raquo;">
 </form>
-<BR>
-<a href="<?=$PHP_SELF?>?did=<?=$did?>&del=1">DELETE THIS DOMAIN</a>
+<BR><BR><a href="<?=$PHP_SELF?>?did=<?=$did?>&del=1">DELETE THIS DOMAIN</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

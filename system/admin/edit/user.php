@@ -232,7 +232,7 @@ if ($really_del == "1") {
 <input type="hidden" name="new_uid" value="<?=$uid?>">
 <input type="submit" name="button" value="Update User &raquo;">
 </form>
-<BR><a href="../reset-password.php?new_username=<?=$new_username?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
+<BR><BR><a href="../reset-password.php?new_username=<?=$new_username?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
 <BR><a href="<?=$PHP_SELF?>?uid=<?=$uid?>&del=1">DELETE THIS USER</a>
 <?php include("../../../_includes/footer.inc.php"); ?>
 </body>

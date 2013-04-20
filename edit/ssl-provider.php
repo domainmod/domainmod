@@ -180,7 +180,7 @@ if ($really_del == "1") {
 <input type="hidden" name="new_sslpid" value="<?=$sslpid?>">
 <input type="submit" name="button" value="Update This SSL Provider &raquo;">
 </form>
-<BR><a href="ssl-provider-fees.php?sslpid=<?=$sslpid?>">EDIT THIS SSL PROVIDER'S FEES</a><BR><BR>
+<BR><BR><a href="ssl-provider-fees.php?sslpid=<?=$sslpid?>">EDIT THIS SSL PROVIDER'S FEES</a><BR>
 <BR><a href="<?=$PHP_SELF?>?sslpid=<?=$sslpid?>&del=1">DELETE THIS SSL PROVIDER</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>

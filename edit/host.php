@@ -157,7 +157,7 @@ if ($really_del == "1") {
 <input type="hidden" name="new_whid" value="<?=$whid?>">
 <input type="submit" name="button" value="Update This Web Host &raquo;">
 </form>
-<BR><a href="<?=$PHP_SELF?>?whid=<?=$whid?>&del=1">DELETE THIS WEB HOST</a>
+<BR><BR><a href="<?=$PHP_SELF?>?whid=<?=$whid?>&del=1">DELETE THIS WEB HOST</a>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>
