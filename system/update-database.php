@@ -1304,6 +1304,70 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.003 to 2.0031
+	if ($current_db_version == 2.003) {
+
+		$sql = "ALTER TABLE `categories` 
+					DROP `active`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `currencies` 
+					DROP `active`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `dns` 
+					DROP `active`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `hosting` 
+					DROP `active`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ip_addresses` 
+					DROP `active`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `owners` 
+					DROP `active`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `registrars` 
+					DROP `active`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `registrar_accounts` 
+					DROP `active`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `segments` 
+					DROP `active`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_accounts` 
+					DROP `active`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_cert_types` 
+					DROP `active`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_providers` 
+					DROP `active`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_providers` 
+					DROP `active`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0031',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0031;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";

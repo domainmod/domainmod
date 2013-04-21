@@ -103,7 +103,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`stakeholder` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_category` int(1) NOT NULL default '0',
-				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -120,7 +119,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`name` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_host` int(1) NOT NULL default '0',
-				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -137,7 +135,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`name` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_owner` int(1) NOT NULL default '0',
-				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`),
@@ -157,7 +154,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`conversion` float NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_currency` int(1) NOT NULL default '0',
-				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -267,7 +263,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`type` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_type` int(1) NOT NULL default '0',
-				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -308,7 +303,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`notes` longtext NOT NULL,
 				`number_of_servers` int(2) NOT NULL default '0',
 				`default_dns` int(1) NOT NULL default '0',
-				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -326,7 +320,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`url` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_registrar` int(1) NOT NULL default '0',
-				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`),
@@ -340,7 +333,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`url` varchar(255) NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_provider` int(1) NOT NULL default '0',
-				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -356,7 +348,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`notes` longtext NOT NULL,
 				`reseller` int(1) NOT NULL default '0',
 				`default_account` int(1) NOT NULL default '0',
-				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`),
@@ -373,7 +364,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`notes` longtext NOT NULL,
 				`reseller` int(1) NOT NULL default '0',
 				`default_account` int(1) NOT NULL default '0',
-				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`),
@@ -388,7 +378,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`segment` longtext NOT NULL,
 				`number_of_domains` int(6) NOT NULL,
 				`notes` longtext NOT NULL,
-				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -416,7 +405,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`rdns` varchar(255) NOT NULL default '-',
 				`notes` longtext NOT NULL,
 				`default_ip_address` int(1) NOT NULL default '0',
-				`active` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
