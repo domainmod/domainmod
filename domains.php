@@ -349,7 +349,7 @@ if ($export == "1") {
 	$result_currency = mysql_query($sql_currency,$connection);
 	while ($row_currency = mysql_fetch_object($result_currency)) { $default_currency = $row_currency->currency; }
 
-	$full_export .= "\"All prices are listed in " . $default_currency . "\"\n\n";
+	$full_export .= "\"All fees are listed in " . $default_currency . "\"\n\n";
 
 	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Function\",\"Status\",\"Status Notes\",\"Notes\"\n";
 

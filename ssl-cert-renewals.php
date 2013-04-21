@@ -88,7 +88,7 @@ if ($export == "1") {
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
-	$full_export .= "\"All prices are listed in " . $default_currency . "\"\n\n";
+	$full_export .= "\"All fees are listed in " . $default_currency . "\"\n\n";
 
 	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"Owner\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Notes\"\n";
 

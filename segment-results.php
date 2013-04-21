@@ -108,7 +108,7 @@ if ($export == "1") {
 			
 		}
 
-		$full_export .= "\"All prices are listed in " . $default_currency . "\"\n\n";
+		$full_export .= "\"All fees are listed in " . $default_currency . "\"\n\n";
 	
 		$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Function\",\"Status\",\"Status Notes\",\"Notes\"\n";
 	

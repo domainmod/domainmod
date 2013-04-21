@@ -92,7 +92,7 @@ if ($export == "1") {
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
-	$full_export .= "\"All prices are listed in " . $default_currency . "\"\n\n";
+	$full_export .= "\"All fees are listed in " . $default_currency . "\"\n\n";
 
 	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Function\",\"Status\",\"Status Notes\",\"Notes\"\n";
 
