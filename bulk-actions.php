@@ -854,7 +854,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 <?php } ?>
 
 <?php if ($action == "R" || $action == "FR") { ?>
-    <strong>Renew For</strong><a title="Required Field"><font class="default_highlight">*</font></a> 
+    <strong>Renew For</strong> 
     <select name="new_renewal_years">
       <option value="1"<?php if ($new_renewal_years == "1") { echo " selected"; } ?>>1 Year</option>
       <option value="2"<?php if ($new_renewal_years == "2") { echo " selected"; } ?>>2 Years</option>
@@ -875,7 +875,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
     <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
     <BR><BR>
-    <strong>Registrar Account</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <strong>Registrar Account</strong><BR><BR>
     <?php
     $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                     FROM registrar_accounts AS ra, owners AS o, registrars AS r
@@ -900,7 +900,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>DNS Profile</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <strong>DNS Profile</strong><BR><BR>
     <?php
     $sql_dns = "SELECT id, name
 				FROM dns
@@ -923,7 +923,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>IP Address</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <strong>IP Address</strong><BR><BR>
     <?php
     $sql_ip = "SELECT id, name, ip
 			   FROM ip_addresses
@@ -945,7 +945,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>Web Hosting Provider</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <strong>Web Hosting Provider</strong><BR><BR>
     <?php
     $sql_host = "SELECT id, name
 				 FROM hosting
@@ -969,7 +969,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>Category</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <strong>Category</strong><BR><BR>
     <?php
     $sql_cat = "SELECT id, name
 				FROM categories
@@ -993,7 +993,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>Domain Status</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <strong>Domain Status</strong><BR><BR>
     <?php
     echo "<select name=\"new_active\">";
     echo "<option value=\"1\""; if ($new_active == "1") echo " selected"; echo ">Active</option>";
@@ -1006,7 +1006,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>Privacy Enabled?</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <strong>Privacy Enabled?</strong><BR><BR>
     <?php
     echo "<select name=\"new_privacy\">";
     echo "<option value=\"0\""; if ($new_privacy == "0") echo " selected"; echo ">No</option>";

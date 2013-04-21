@@ -183,14 +183,14 @@ if ($really_del == "1") {
 <body>
 <?php include("../../../_includes/header.inc.php"); ?>
 <form name="edit_user_form" method="post" action="<?=$PHP_SELF?>">
-<strong>First Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") echo $new_first_name; ?>"><BR><BR>
-<strong>Last Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") echo $new_last_name; ?>"><BR><BR>
+<strong>First Name</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") echo $new_first_name; ?>"><BR><BR>
+<strong>Last Name</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") echo $new_last_name; ?>"><BR><BR>
 <?php if ($new_username == "admin" || $new_username == "administrator") { ?>
 	<strong>Username</strong><BR><BR><?=$new_username?><BR><BR>
 <?php } else { ?>
-	<strong>Username</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR><input name="new_username" type="text" size="50" maxlength="20" value="<?php if ($new_username != "") echo $new_username; ?>"><BR><BR>
+	<strong>Username</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_username" type="text" size="50" maxlength="20" value="<?php if ($new_username != "") echo $new_username; ?>"><BR><BR>
 <?php } ?>
-<strong>Email Address</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR><input name="new_email_address" type="text" size="50" maxlength="255" value="<?php if ($new_email_address != "") echo $new_email_address; ?>"><BR><BR>
+<strong>Email Address</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_email_address" type="text" size="50" maxlength="255" value="<?php if ($new_email_address != "") echo $new_email_address; ?>"><BR><BR>
 <?php if ($new_username == "admin" || $new_username == "administrator") { ?>
 
     <strong>Admin Privileges?</strong>&nbsp;&nbsp;Yes
@@ -198,7 +198,7 @@ if ($really_del == "1") {
 
 <?php } else { ?>
 
-    <strong>Admin Privileges?</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>&nbsp;
+    <strong>Admin Privileges?</strong>&nbsp;
     <select name="new_is_admin">
         <option value="0">No</option>
         <option value="1"<?php if ($new_is_admin == "1") echo " selected"; ?>>Yes</option>
@@ -214,7 +214,7 @@ if ($really_del == "1") {
 
 <?php } else { ?>
 
-    <strong>Active Account?</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>&nbsp;
+    <strong>Active Account?</strong>&nbsp;
     <select name="new_is_active">
         <option value="0">No</option>
         <option value="1"<?php if ($new_is_active == "1") echo " selected"; ?>>Yes</option>

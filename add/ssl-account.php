@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[2].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="add_ssl_account_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Owner</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Owner</strong><BR><BR>
 <?php
 $sql_owner = "SELECT id, name
 			  FROM owners
@@ -129,7 +129,7 @@ while ($row_owner = mysql_fetch_object($result_owner)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>SSL Provider</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>SSL Provider</strong><BR><BR>
 <?php
 $sql_ssl_provider = "SELECT id, name
 					 FROM ssl_providers
@@ -152,13 +152,13 @@ while ($row_ssl_provider = mysql_fetch_object($result_ssl_provider)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Username</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Username</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_username" type="text" size="50" maxlength="255" value="<?=$new_username?>">
 <BR><BR>
 <strong>Password</strong><BR><BR>
 <input name="new_password" type="text" size="50" maxlength="100" value="<?=$new_password?>">
 <BR><BR>
-<strong>Reseller Account?</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Reseller Account?</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <select name="new_reseller">";
 <option value="0"<?php if ($new_reseller != "1") echo " selected"; ?>>No</option>
 <option value="1"<?php if ($new_reseller == "1") echo " selected"; ?>>Yes</option>

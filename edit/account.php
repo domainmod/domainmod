@@ -185,7 +185,7 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_account_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Owner</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Owner</strong><BR><BR>
 <?php
 $sql_owner = "SELECT id, name
 			  FROM owners
@@ -208,7 +208,7 @@ while ($row_owner = mysql_fetch_object($result_owner)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Registrar</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Registrar</strong><BR><BR>
 <?php
 $sql_registrar = "SELECT id, name
 				  FROM registrars
@@ -231,7 +231,7 @@ while ($row_registrar = mysql_fetch_object($result_registrar)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Username</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Username</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_username" type="text" size="50" maxlength="255" value="<?=$new_username?>">
 <BR><BR>
 <strong>Password</strong><BR><BR>

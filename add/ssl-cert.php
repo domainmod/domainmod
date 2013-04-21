@@ -93,13 +93,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="add_ssl_cert_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Host / Label</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Host / Label</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?=$new_name?>">
 <BR><BR>
-<strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
 <BR><BR>
-<strong>Domain</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Domain</strong><BR><BR>
 <?php
 $sql_domain = "SELECT id, domain
 			   FROM domains
@@ -121,7 +121,7 @@ while ($row_domain = mysql_fetch_object($result_domain)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>SSL Provider Account</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>SSL Provider Account</strong><BR><BR>
 <?php
 $sql_account = "SELECT sslpa.id, sslpa.username, o.name as o_name, sslp.name as sslp_name
 				FROM ssl_accounts as sslpa, owners as o, ssl_providers as sslp
@@ -146,7 +146,7 @@ while ($row_account = mysql_fetch_object($result_account)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Certificate Type</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Certificate Type</strong><BR><BR>
 <?php
 $sql_type = "SELECT id, type
 			 FROM ssl_cert_types
@@ -169,7 +169,7 @@ while ($row_type = mysql_fetch_object($result_type)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Certificate Status</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Certificate Status</strong><BR><BR>
 <?php
 echo "<select name=\"new_active\">";
 echo "<option value=\"1\""; if ($new_active == "1") echo " selected"; echo ">Active</option>";
