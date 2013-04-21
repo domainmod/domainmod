@@ -103,6 +103,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <strong>Domain</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_domain" type="text" size="50" maxlength="255" value="<?=$new_domain?>">
 <BR><BR>
+<strong>Function</strong><BR><BR>
+<input name="new_function" type="text" size="50" maxlength="255" value="<?=$new_function?>">
+<BR><BR>
 <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
 <BR><BR>
@@ -243,9 +246,6 @@ echo "<option value=\"0\""; if ($new_privacy == "0") echo " selected"; echo ">No
 echo "<option value=\"1\""; if ($new_privacy == "1") echo " selected"; echo ">Yes</option>";
 echo "</select>";
 ?>
-<BR><BR>
-<strong>Function</strong><BR><BR>
-<input name="new_function" type="text" size="50" maxlength="255" value="<?=$new_function?>">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>

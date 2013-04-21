@@ -869,6 +869,9 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     </select>
     <BR><BR>
 <?php } elseif ($action == "AD") { ?>
+    <strong>Function</strong><BR><BR>
+    <input name="new_function" type="text" size="50" maxlength="255" value="<?=$new_function?>">
+    <BR><BR>
     <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
     <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
     <BR><BR>
@@ -1010,9 +1013,6 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<option value=\"1\""; if ($new_privacy == "1") echo " selected"; echo ">Yes</option>";
     echo "</select>";
     ?>
-    <BR><BR>
-    <strong>Function</strong><BR><BR>
-    <input name="new_function" type="text" size="50" maxlength="255" value="<?=$new_function?>">
     <BR><BR>
 <?php } elseif ($action == "CPC") { ?>
 
