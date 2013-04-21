@@ -232,8 +232,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`ip_id` int(10) NOT NULL default '1',
 				`hosting_id` int(10) NOT NULL default '1',
 				`function` varchar(255) NOT NULL,
-				`status` varchar(255) NOT NULL,
-				`status_notes` longtext NOT NULL,
 				`notes` longtext NOT NULL,
 				`privacy` int(1) NOT NULL default '0',
 				`active` int(2) NOT NULL default '1',
