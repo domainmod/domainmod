@@ -83,6 +83,13 @@ $full_export = "";
 
 if ($export == "1") {
 
+	$sql_currency = "SELECT currency
+					 FROM currencies
+					 WHERE default_currency = '1'
+					 LIMIT 1";
+	$result_currency = mysql_query($sql_currency,$connection);
+	while ($row_currency = mysql_fetch_object($result_currency)) { $default_currency = $row_currency->currency; }
+
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$full_export .= "\"All prices are listed in " . $default_currency . "\"\n\n";
