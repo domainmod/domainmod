@@ -217,7 +217,7 @@ if ($export == "1") {
 
 	$full_export .= "\"All prices are listed in " . $default_currency . "\"\n\n";
 
-	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"Owner\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Notes\"\n";
+	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"Owner\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
@@ -249,7 +249,7 @@ if ($export == "1") {
 		include("_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
-		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"$row->to_renew\",\"" . $export_renewal_fee . "\",\"$row->name\",\"$full_domain_name\",\"$row->ssl_provider_name\",\"$row->username\",\"$row->type\",\"$row->owner_name\",\"$full_ip_name\",\"$full_ip_address\",\"$full_ip_rdns\",\"$row->notes\"\n";
+		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"" . $export_renewal_fee . "\",\"$row->name\",\"$full_domain_name\",\"$row->ssl_provider_name\",\"$row->username\",\"$row->type\",\"$row->owner_name\",\"$full_ip_name\",\"$full_ip_address\",\"$full_ip_rdns\",\"$row->notes\"\n";
 	}
 	
 	$full_export .= "\n";
