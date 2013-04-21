@@ -206,7 +206,7 @@ Before exporting your SSL Certificates you should <a href="system/update-convers
         $result_currency = mysql_query($sql_currency,$connection);
         while ($row_currency = mysql_fetch_object($result_currency)) { $temp_currency = $row_currency->currency; }
         ?>
-    	<font class="main_table_heading">Fee (<?=$temp_currency?>)</font>
+    	<font class="main_table_heading">Fee</font>
     </td>
 <?php } ?>
 	<td class="main_table_cell_heading_active">
