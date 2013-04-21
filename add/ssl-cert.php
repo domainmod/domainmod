@@ -127,7 +127,6 @@ $sql_account = "SELECT sslpa.id, sslpa.username, o.name as o_name, sslp.name as 
 				FROM ssl_accounts as sslpa, owners as o, ssl_providers as sslp
 				WHERE sslpa.owner_id = o.id
 				  AND sslpa.ssl_provider_id = sslp.id
-				  AND sslpa.active = '1'
 				ORDER BY sslpa.default_account desc, sslp_name asc, o_name asc, sslpa.username asc";
 $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
@@ -150,7 +149,6 @@ echo "</select>";
 <?php
 $sql_type = "SELECT id, type
 			 FROM ssl_cert_types
-			 WHERE active = '1'
 			 ORDER BY default_type desc, type asc";
 $result_type = mysql_query($sql_type,$connection) or die(mysql_error());
 echo "<select name=\"new_type_id\">";

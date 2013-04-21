@@ -189,7 +189,6 @@ if ($really_del == "1") {
 <?php
 $sql_owner = "SELECT id, name
 			  FROM owners
-			  WHERE active = '1'
 			  ORDER BY name asc";
 $result_owner = mysql_query($sql_owner,$connection) or die(mysql_error());
 echo "<select name=\"new_owner_id\">";
@@ -212,7 +211,6 @@ echo "</select>";
 <?php
 $sql_registrar = "SELECT id, name
 				  FROM registrars
-				  WHERE active = '1'
 				  ORDER BY name asc";
 $result_registrar = mysql_query($sql_registrar,$connection) or die(mysql_error());
 echo "<select name=\"new_registrar_id\">";

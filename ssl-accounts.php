@@ -47,8 +47,7 @@ if ($oid != "") { $oid_string = " AND sa.owner_id = '$oid' "; } else { $oid_stri
 
 $sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, sa.default_account, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname
 		FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp, ssl_certs as sslc
-		WHERE sa.active = '1'
-		  AND sa.owner_id = o.id
+		WHERE sa.owner_id = o.id
 		  AND sa.ssl_provider_id = sslp.id
 		  AND sa.id = sslc.account_id
 		  AND sslc.active not in ('0')
@@ -125,8 +124,7 @@ if ($exclude_account_string != "") { $sslpaid_string = " AND sa.id not in ($excl
 
 $sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, sa.default_account, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname
 		FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
-		WHERE sa.active = '1'
-		  AND sa.owner_id = o.id
+		WHERE sa.owner_id = o.id
 		  AND sa.ssl_provider_id = sslp.id
 		  $sslpid_string
 		  $sslpaid_string
@@ -181,13 +179,12 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font class="default_highlight"><strong>*</strong></font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight">*</font> = Reseller Account
+		<BR><font class="default_highlight">*</font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight">*</font> = Reseller Account
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 			<?php
             $sql = "SELECT id
                     FROM ssl_providers
-                    WHERE active = '1'
 					LIMIT 1";
             $result = mysql_query($sql,$connection);
 

@@ -227,7 +227,6 @@ echo "</select>";
 <?php
 $sql_type = "SELECT id, type
 			 FROM ssl_cert_types
-			 WHERE active = '1'
 			 ORDER BY type asc";
 $result_type = mysql_query($sql_type,$connection) or die(mysql_error());
 echo "<select name=\"new_type_id\">";

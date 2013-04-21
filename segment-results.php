@@ -51,7 +51,6 @@ if ($type == "inactive") {
 			  AND d.dns_id = dns.id
 			  AND d.ip_id = ip.id
 			  AND d.hosting_id = h.id
-			  AND cat.active = '1'
 			  AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = '$segid' AND inactive = '1' ORDER BY domain)
 			ORDER BY d.domain asc";	
 
@@ -69,7 +68,6 @@ if ($type == "inactive") {
 			  AND d.dns_id = dns.id
 			  AND d.ip_id = ip.id
 			  AND d.hosting_id = h.id
-			  AND cat.active = '1'
 			  AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = '$segid' AND filtered = '1' ORDER BY domain)
 			ORDER BY d.domain asc";	
 

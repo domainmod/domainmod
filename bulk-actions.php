@@ -881,7 +881,6 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
                     FROM registrar_accounts AS ra, owners AS o, registrars AS r
                     WHERE ra.owner_id = o.id
                       AND ra.registrar_id = r.id
-                      AND ra.active = '1'
                     ORDER BY ra.default_account desc, r_name asc, o_name asc, ra.username asc";
     $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
     echo "<select name=\"new_raid\">";
@@ -904,7 +903,6 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <?php
     $sql_dns = "SELECT id, name
 				FROM dns
-				WHERE active = '1'
 				ORDER BY default_dns desc, name asc";
     $result_dns = mysql_query($sql_dns,$connection) or die(mysql_error());
     echo "<select name=\"new_dnsid\">";
@@ -949,7 +947,6 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <?php
     $sql_host = "SELECT id, name
 				 FROM hosting
-				 WHERE active = '1'
 				 ORDER BY default_host desc, name asc";
 
     $result_host = mysql_query($sql_host,$connection) or die(mysql_error());
@@ -973,7 +970,6 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <?php
     $sql_cat = "SELECT id, name
 				FROM categories
-				WHERE active = '1'
 				ORDER BY default_category desc, name asc";
 
     $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
@@ -1019,7 +1015,6 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 	<?php
     $sql_cat = "SELECT id, name
 				FROM categories
-				WHERE active = '1'
 				ORDER BY default_category desc, name asc";
     $result_cat = mysql_query($sql_cat,$connection);
     echo "<strong>New Category</strong><a title=\"Required Field\"><font class=\"default_highlight\">*</font></a><BR><BR>";
@@ -1036,7 +1031,6 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 	<?php
     $sql_dns = "SELECT id, name
 				FROM dns
-				WHERE active = '1'
 				ORDER BY name asc";
     $result_dns = mysql_query($sql_dns,$connection);
     echo "<strong>New DNS Profile</strong><a title=\"Required Field\"><font class=\"default_highlight\">*</font></a><BR><BR>";
@@ -1070,9 +1064,6 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
    				   FROM registrar_accounts AS ra, registrars AS r, owners AS o
 				   WHERE ra.registrar_id = r.id
 				     AND ra.owner_id = o.id
-                     AND ra.active = '1'
-                     AND r.active = '1'
-                     AND o.active = '1'
                      $is_active_string
                      $oid_string
                      $rid_string

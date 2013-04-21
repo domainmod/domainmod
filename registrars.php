@@ -38,7 +38,6 @@ $software_section = "registrars";
 $sql = "SELECT r.id AS rid, r.name AS rname, r.default_registrar, r.url
 		FROM registrars AS r, domains AS d
 		WHERE r.id = d.registrar_id
-		  AND r.active = '1'
 		  AND d.domain NOT IN ('0', '10')
 		  AND (SELECT count(*) FROM domains WHERE registrar_id = r.id AND active NOT IN ('0','10')) > 0
 		GROUP BY r.name
@@ -72,14 +71,13 @@ Below is a list of all the Domain Registrars that are stored in your <?=$softwar
     
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td class="main_table_cell_active">
                 <?php
                 $sql2 = "SELECT count(*) AS total_count
                          FROM registrar_accounts
-                         WHERE active = '1'
-                           AND registrar_id = '$row->rid'";
+                         WHERE registrar_id = '$row->rid'";
                 $result2 = mysql_query($sql2,$connection);
         
                 while ($row2 = mysql_fetch_object($result2)) { 
@@ -140,7 +138,6 @@ if ($exclude_registrar_string == "") {
 	$sql = "SELECT r.id AS rid, r.name AS rname, r.default_registrar, r.url
 			FROM registrars AS r
 			WHERE r.id
-			  AND r.active = '1'
 			GROUP BY r.name
 			ORDER BY r.name asc";
 
@@ -149,7 +146,6 @@ if ($exclude_registrar_string == "") {
 	$sql = "SELECT r.id AS rid, r.name AS rname, r.default_registrar, r.url
 			FROM registrars AS r
 			WHERE r.id
-			  AND r.active = '1'
 			  AND r.id NOT IN ($exclude_registrar_string)
 			GROUP BY r.name
 			ORDER BY r.name asc";
@@ -179,14 +175,13 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
     
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td class="main_table_cell_inactive">
                 <?php
                 $sql2 = "SELECT count(*) AS total_count
                          FROM registrar_accounts
-                         WHERE active = '1'
-                           AND registrar_id = '$row->rid'";
+                         WHERE registrar_id = '$row->rid'";
                 $result2 = mysql_query($sql2,$connection);
         
                 while ($row2 = mysql_fetch_object($result2)) { 
@@ -219,7 +214,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font class="default_highlight"><strong>*</strong></font> = Default Registrar
+		<BR><font class="default_highlight">*</font> = Default Registrar
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		<BR>You don't currently have any Domain Registrars. <a href="add/registrar.php">Click here to add one</a>.

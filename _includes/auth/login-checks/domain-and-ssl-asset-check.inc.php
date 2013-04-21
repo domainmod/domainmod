@@ -18,7 +18,6 @@
 <?php
 $sql_asset_check = "SELECT id
 					FROM registrars
-					WHERE active = '1'
 					LIMIT 1";
 $result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
 if (mysql_num_rows($result_asset_check) == 0) { 
@@ -29,7 +28,6 @@ if (mysql_num_rows($result_asset_check) == 0) {
 
 $sql_asset_check = "SELECT id
 					FROM registrar_accounts
-					WHERE active = '1'
 					LIMIT 1";
 $result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
 if (mysql_num_rows($result_asset_check) == 0) { 
@@ -40,7 +38,6 @@ if (mysql_num_rows($result_asset_check) == 0) {
 
 $sql_asset_check = "SELECT id
 					FROM domains
-					WHERE active = '1'
 					LIMIT 1";
 $result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
 if (mysql_num_rows($result_asset_check) == 0) { 
@@ -51,7 +48,6 @@ if (mysql_num_rows($result_asset_check) == 0) {
 
 $sql_asset_check = "SELECT id
 					FROM ssl_providers
-					WHERE active = '1'
 					LIMIT 1";
 $result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
 if (mysql_num_rows($result_asset_check) == 0) { 
@@ -62,7 +58,6 @@ if (mysql_num_rows($result_asset_check) == 0) {
 
 $sql_asset_check = "SELECT id
 					FROM ssl_accounts
-					WHERE active = '1'
 					LIMIT 1";
 $result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
 if (mysql_num_rows($result_asset_check) == 0) { 
@@ -73,7 +68,6 @@ if (mysql_num_rows($result_asset_check) == 0) {
 
 $sql_asset_check = "SELECT id
 					FROM ssl_certs
-					WHERE active = '1'
 					LIMIT 1";
 $result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
 if (mysql_num_rows($result_asset_check) == 0) { 

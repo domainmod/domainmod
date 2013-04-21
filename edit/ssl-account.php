@@ -185,7 +185,6 @@ if ($really_del == "1") {
 <?php
 $sql_owner = "SELECT id, name
 			  FROM owners
-			  WHERE active = '1'
 			  ORDER BY name asc";
 $result_owner = mysql_query($sql_owner,$connection) or die(mysql_error());
 echo "<select name=\"new_owner_id\">";
@@ -208,7 +207,6 @@ echo "</select>";
 <?php
 $sql_ssl_provider = "SELECT id, name
 					 FROM ssl_providers
-					 WHERE active = '1'
 					 ORDER BY name asc";
 $result_ssl_provider = mysql_query($sql_ssl_provider,$connection) or die(mysql_error());
 echo "<select name=\"new_ssl_provider_id\">";

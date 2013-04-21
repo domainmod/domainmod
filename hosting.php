@@ -56,7 +56,7 @@ Below is a list of all the Web Hosting Providers that are stored in your <?=$sof
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/host.php?whid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_host == "1") echo "<a title=\"Default Web Host\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
+		<a class="invisiblelink" href="edit/host.php?whid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_host == "1") echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
 	</td>
 	<td class="main_table_cell_active">
     <?php
@@ -88,7 +88,6 @@ if ($has_active == "1") {
 	
 	$sql = "SELECT id, name, default_host
 			FROM hosting
-			WHERE active = '1'
 			ORDER BY name";
 	
 }
@@ -107,7 +106,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/host.php?whid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_host == "1") echo "<a title=\"Default Web Host\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
+		<a class="invisiblelink" href="edit/host.php?whid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_host == "1") echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
 	</td>
 	</td>
 </tr>
@@ -117,7 +116,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font class="default_highlight"><strong>*</strong></font> = Default Web Host
+		<BR><font class="default_highlight">*</font> = Default Web Host
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		<BR>You don't currently have any Web Hosting Providers. <a href="add/host.php">Click here to add one</a>.

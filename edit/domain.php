@@ -235,7 +235,6 @@ echo "</select>";
 <?php
 $sql_dns = "SELECT id, name
 			FROM dns
-			WHERE active = '1'
 			ORDER BY name asc";
 $result_dns = mysql_query($sql_dns,$connection) or die(mysql_error());
 echo "<select name=\"new_dns_id\">";
@@ -281,7 +280,6 @@ echo "</select>";
 <?php
 $sql_hosting = "SELECT id, name
 				FROM hosting
-				WHERE active = '1'
 				ORDER BY name asc";
 $result_hosting = mysql_query($sql_hosting,$connection) or die(mysql_error());
 echo "<select name=\"new_hosting_id\">";
@@ -304,7 +302,6 @@ echo "</select>";
 <?php
 $sql_cat = "SELECT id, name
 			FROM categories
-			WHERE active = '1'
 			ORDER BY name asc";
 $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
 echo "<select name=\"new_cat_id\">";

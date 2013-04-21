@@ -58,7 +58,7 @@ Below is a list of all the Domain Categories that are stored in your <?=$softwar
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
+		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\">*</font></a>"; ?>
 	</td>
     <td class="main_table_cell_active">
 		<?php if ($row->stakeholder == "") $row->stakeholder = "n/a"; ?>
@@ -94,7 +94,6 @@ if ($has_active == "1") {
 	
 	$sql = "SELECT id, name, stakeholder, default_category
 			FROM categories
-			WHERE active = '1'
 			ORDER BY name, stakeholder";
 	
 }
@@ -115,7 +114,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
+		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\">*</font></a>"; ?>
 	</td>
     <td class="main_table_cell_inactive">
 		<?php if ($row->stakeholder == "") $row->stakeholder = "n/a"; ?>
@@ -128,7 +127,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font class="default_highlight"><strong>*</strong></font> = Default Category
+		<BR><font class="default_highlight">*</font> = Default Category
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		<BR>You don't currently have any Categories. <a href="add/category.php">Click here to add one</a>.

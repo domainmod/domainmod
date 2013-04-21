@@ -65,7 +65,7 @@ Below is a list of all the IP Addresses that are stored in your <?=$software_tit
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
+                <a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
             </td>
             <td class="main_table_cell_active">
                 <a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
@@ -103,7 +103,6 @@ if ($has_active == "1") {
 	
 	$sql = "SELECT id, name, ip, rdns, default_ip_address
 			FROM ip_addresses
-			WHERE active = '1'
 			ORDER BY name, ip, rdns";
 	
 }
@@ -131,7 +130,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a></a>
+                <a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a></a>
             </td>
             <td class="main_table_cell_inactive">
                 <a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
@@ -149,7 +148,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font class="default_highlight"><strong>*</strong></font> = Default IP Address
+		<BR><font class="default_highlight">*</font> = Default IP Address
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		<BR>You don't currently have any IP Addresses. <a href="add/ip-address.php">Click here to add one</a>.

@@ -62,14 +62,13 @@ Below is a list of all the SSL Certificate Providers that are stored in your <?=
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td class="main_table_cell_active">
                 <?php
                 $sql2 = "SELECT count(*) AS total_count
                          FROM ssl_accounts
-                         WHERE active = '1'
-                           AND ssl_provider_id = '$row->id'";
+                         WHERE ssl_provider_id = '$row->id'";
                 $result2 = mysql_query($sql2,$connection);
                 while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
                 ?>
@@ -138,14 +137,13 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
     
             <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
+                    <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
                 </td>
                 <td class="main_table_cell_inactive">
                     <?php
                     $sql2 = "SELECT count(*) AS total_count
                              FROM ssl_accounts
-                             WHERE active = '1'
-                               AND ssl_provider_id = '$row->id'";
+                             WHERE ssl_provider_id = '$row->id'";
                     $result2 = mysql_query($sql2,$connection);
                     while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
                     ?>
@@ -171,7 +169,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font class="default_highlight"><strong>*</strong></font> = Default SSL Provider
+		<BR><font class="default_highlight">*</font> = Default SSL Provider
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		<BR>You don't currently have any SSL Providers. <a href="add/ssl-provider.php">Click here to add one</a>.

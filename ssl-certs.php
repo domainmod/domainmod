@@ -190,10 +190,6 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes,
 		  AND sslc.domain_id = d.id
 		  AND sslc.type_id = sslcf.id
 		  $is_active_string
-		  AND sslpa.active = '1'
-		  AND sslp.active = '1'
-		  AND o.active = '1'
-		  AND cc.active = '1'
 		  $oid_string
 		  $did_string
 		  $sslpid_string
@@ -209,9 +205,9 @@ if ($export == "1") {
 	$result = mysql_query($sql,$connection);
 
 	$sql_currency = "SELECT currency
-			FROM currencies
-			WHERE default_currency = '1'
-			LIMIT 1";
+					 FROM currencies
+					 WHERE default_currency = '1'
+					 LIMIT 1";
 	$result_currency = mysql_query($sql_currency,$connection);
 	while ($row_currency = mysql_fetch_object($result_currency)) { $default_currency = $row_currency->currency; }
 
@@ -395,7 +391,6 @@ $sql_ssl_provider = "SELECT sslp.id, sslp.name
 					 FROM ssl_providers AS sslp, ssl_certs AS sslc, domains AS d
 					 WHERE sslp.id = sslc.ssl_provider_id
 					   AND sslc.domain_id = d.id
-					   AND sslp.active = '1' 
 					   $is_active_string
 					   $oid_string
 					   $did_string
@@ -443,9 +438,6 @@ $sql_account = "SELECT sslpa.id AS sslpa_id, sslpa.username, sslp.name AS sslp_n
 				  AND sslpa.owner_id = o.id
 				  AND sslpa.id = sslc.account_id
 				  AND sslc.domain_id = d.id
-				  AND sslpa.active = '1'
-				  AND sslp.active = '1'
-				  AND o.active = '1'
 				  $is_active_string
 				  $oid_string
 				  $did_string
@@ -536,7 +528,6 @@ $sql_owner = "SELECT o.id, o.name
 			  FROM owners AS o, ssl_certs AS sslc, domains AS d
 			  WHERE o.id = sslc.owner_id
 			    AND o.id = d.owner_id
-				AND o.active = '1'
 				$is_active_string
 				$did_string
 				$sslpid_string

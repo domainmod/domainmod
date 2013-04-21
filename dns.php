@@ -59,7 +59,7 @@ Below is a list of all the DNS Profiles that are stored in your <?=$software_tit
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_dns == "1") echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
+		<a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_dns == "1") echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\">*</font></a>"; ?>
 	</td>
     <td class="main_table_cell_active">
         <a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->number_of_servers?></a>
@@ -92,7 +92,6 @@ if ($has_active == "1") {
 	
 	$sql = "SELECT id, name, number_of_servers, default_dns
 			FROM dns
-			WHERE active = '1'
 			ORDER BY name, number_of_servers desc";
 	
 }
@@ -114,7 +113,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_dns == "1") echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
+		<a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_dns == "1") echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\">*</font></a>"; ?>
 	</td>
     <td class="main_table_cell_inactive">
         <a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->number_of_servers?></a>
@@ -126,7 +125,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font class="default_highlight"><strong>*</strong></font> = Default DNS Profile
+		<BR><font class="default_highlight">*</font> = Default DNS Profile
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 		<BR>You don't currently have any DNS Profiles. <a href="add/dns.php">Click here to add one</a>.

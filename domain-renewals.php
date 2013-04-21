@@ -43,7 +43,6 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
 		  AND d.dns_id = dns.id
 		  AND d.ip_id = ip.id
 		  AND d.hosting_id = h.id
-		  AND cat.active = '1'
 		  AND d.active NOT IN ('0', '10')
 		  AND d.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
 		ORDER BY d.expiry_date asc, d.domain";	

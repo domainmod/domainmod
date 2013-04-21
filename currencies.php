@@ -37,7 +37,6 @@ $software_section = "currencies";
 <?php
 $sql = "SELECT id, currency, name, conversion, default_currency
 		FROM currencies
-		WHERE active = '1'
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection);
 ?>
@@ -61,7 +60,7 @@ The below conversion rates are used for accounting and reporting purposes, and a
 while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/currency.php?curid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_currency == 1) echo "<a title=\"Default Currency\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?>
+		<a class="invisiblelink" href="edit/currency.php?curid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_currency == 1) echo "<a title=\"Default Currency\"><font class=\"default_highlight\">*</font></a>"; ?>
 <?php if ($row->currency == $_SESSION['session_default_currency']) echo ""; ?>
 	</td>
     <td class="main_table_cell_active">
@@ -75,7 +74,7 @@ while ($row = mysql_fetch_object($result)) { ?>
 </table>
 <?php } ?>
 <?php if ($has_active) { ?>
-		<BR><font class="default_highlight"><strong>*</strong></font> = Default Currency (for rate conversions, reporting, etc.)
+		<BR><font class="default_highlight">*</font> = Default Currency (for rate conversions, reporting, etc.)
 <?php } ?>
 <?php if (!$has_active) { ?>
 		You don't currently have any Currencies. <a href="add/currency.php">Click here to add one</a>.

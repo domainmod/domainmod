@@ -297,7 +297,6 @@ if (mysql_num_rows($result) != 0) {
                 <?php
                 $sql = "SELECT id, type
                         FROM ssl_cert_types
-                        WHERE active = '1'
                         ORDER BY default_type desc, type asc";
                 $result = mysql_query($sql,$connection);
                 while ($row = mysql_fetch_object($result)) {
@@ -330,7 +329,6 @@ if (mysql_num_rows($result) != 0) {
 		  	<?php
 			$sql = "SELECT id, currency, name 
 					FROM currencies
-					WHERE active = '1'
 					ORDER BY default_currency desc, currency";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			while ($row = mysql_fetch_object($result)) {
@@ -368,7 +366,6 @@ $sql = "SELECT f.id as sslfeeid, f.initial_fee, f.renewal_fee, c.currency, t.id 
 		WHERE f.currency_id = c.id
 		  AND f.type_id = t.id
 		  AND f.ssl_provider_id = '$sslpid'
-		  AND c.active = '1'
 		ORDER BY t.type asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) {

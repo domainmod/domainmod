@@ -47,8 +47,7 @@ if ($oid != "") { $oid_string = " AND ra.owner_id = '$oid' "; } else { $oid_stri
 
 $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, ra.default_account, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
 		FROM registrar_accounts AS ra, owners AS o, registrars AS r, domains AS d
-		WHERE ra.active = '1'
-		  AND ra.owner_id = o.id
+		WHERE ra.owner_id = o.id
 		  AND ra.registrar_id = r.id
 		  AND ra.id = d.account_id
 		  AND d.active not in ('0', '10')
@@ -125,8 +124,7 @@ if ($exclude_account_string != "") { $raid_string = " AND ra.id not in ($exclude
 
 $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, ra.default_account, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
 		FROM registrar_accounts AS ra, owners AS o, registrars AS r
-		WHERE ra.active = '1'
-		  AND ra.owner_id = o.id
+		WHERE ra.owner_id = o.id
 		  AND ra.registrar_id = r.id
 		  $rid_string
 		  $raid_string
@@ -183,13 +181,12 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 ?>
 <?php if ($has_active || $has_inactive) { ?>
-		<BR><font class="default_highlight"><strong>*</strong></font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight">*</font> = Reseller Account
+		<BR><font class="default_highlight">*</font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight">*</font> = Reseller Account
 <?php } ?>
 <?php if (!$has_active && !$has_inactive) { ?>
 			<?php
             $sql = "SELECT id
                     FROM registrars
-                    WHERE active = '1'
 					LIMIT 1";
             $result = mysql_query($sql,$connection);
 

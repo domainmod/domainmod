@@ -50,7 +50,6 @@ function str_stop($string, $max_length){
 <?php
 $sql = "SELECT id, name, description, segment, number_of_domains
 		FROM segments
-		WHERE active = '1'
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
@@ -61,7 +60,6 @@ Segment filters will tell you which domains match with domains that are saved in
 <?php 
 $sql_segment_check = "SELECT id
 					  FROM segments
-					  WHERE active = '1'
 					  LIMIT 1";
 $result_segment_check = mysql_query($sql_segment_check,$connection);
 if (mysql_num_rows($result_segment_check) == 0) {

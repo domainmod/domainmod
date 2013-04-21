@@ -295,11 +295,6 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
 		  AND d.hosting_id = h.id
 		  AND f.currency_id = cc.id
 		  $is_active_string
-		  AND ra.active = '1'
-		  AND r.active = '1'
-		  AND o.active = '1'
-		  AND cat.active = '1'
-		  AND cc.active = '1'
 		  $segid_string
 		  $pcid_string
 		  $oid_string
@@ -488,7 +483,6 @@ if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segm
 $sql_registrar = "SELECT r.id, r.name 
 				  FROM registrars AS r, domains AS d
 				  WHERE r.id = d.registrar_id
-				    AND r.active = '1' 
 				    $is_active_string
 				    $pcid_string
 				    $oid_string
@@ -545,9 +539,6 @@ $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS 
 				WHERE ra.registrar_id = r.id
 				  AND ra.owner_id = o.id
 				  AND ra.id = d.account_id
-				  AND ra.active = '1'
-				  AND r.active = '1'
-				  AND o.active = '1'
 				  $is_active_string
 				  $pcid_string
 				  $oid_string
@@ -602,7 +593,6 @@ if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segm
 $sql_dns = "SELECT dns.id, dns.name 
 			FROM dns AS dns, domains AS d
 			WHERE dns.id = d.dns_id
-			  AND dns.active = '1'
 			  $is_active_string
 			  $pcid_string
 			  $oid_string
@@ -711,17 +701,17 @@ if ($segid != "") { $segment_string = " AND domain IN (SELECT domain FROM segmen
 	$sql_hosting = "SELECT h.id, h.name
 					FROM hosting AS h, domains AS d
 					WHERE h.id = d.hosting_id
-					$is_active_string
-					$pcid_string
-					$oid_string
-					$dnsid_string
-					$ipid_string
-					$rid_string
-					$raid_string
-					$tld_string
-					$search_string
-					$quick_search_string
-					$segment_string
+					  $is_active_string
+					  $pcid_string
+					  $oid_string
+					  $dnsid_string
+					  $ipid_string
+					  $rid_string
+					  $raid_string
+					  $tld_string
+					  $search_string
+					  $quick_search_string
+					  $segment_string
 					GROUP BY h.name
 					ORDER BY h.name asc";
 $result_hosting = mysql_query($sql_hosting,$connection);
@@ -776,7 +766,6 @@ $sql_category = "SELECT c.id, c.name
 				   $search_string
 				   $quick_search_string
 				   $segment_string
-				   AND c.active = '1'
 				 GROUP BY c.name
 				 ORDER BY c.name asc";
 $result_category = mysql_query($sql_category,$connection);
@@ -820,7 +809,6 @@ if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segm
 $sql_owner = "SELECT o.id, o.name 
 			  FROM owners AS o, domains AS d
 			  WHERE o.id = d.owner_id
-			    AND o.active = '1'
 				$is_active_string
 				$pcid_string
 				$dnsid_string
@@ -858,7 +846,6 @@ if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = "
 
 $sql_segment = "SELECT id, name
 				FROM segments
-				WHERE active = '1'
 				ORDER BY name asc";
 $result_segment = mysql_query($sql_segment,$connection);
 

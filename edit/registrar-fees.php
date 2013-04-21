@@ -288,7 +288,6 @@ if (mysql_num_rows($result) != 0) {
 		  	<?php
 			$sql = "SELECT id, currency, name 
 					FROM currencies
-					WHERE active = '1'
 					ORDER BY default_currency desc, currency";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			while ($row = mysql_fetch_object($result)) {
@@ -325,7 +324,6 @@ $sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, c.currency
 		FROM fees AS f, currencies AS c
 		WHERE f.currency_id = c.id
 		  AND f.registrar_id = '$rid'
-		  AND c.active = '1'
 		ORDER BY f.tld asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) {
