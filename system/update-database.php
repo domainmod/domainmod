@@ -45,7 +45,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.2', 
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.2;
@@ -67,7 +67,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.3', 
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.3;
@@ -83,7 +83,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.4', 
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.4;
@@ -99,7 +99,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.5', 
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.5;
@@ -122,12 +122,12 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `ip_addresses` 
 				(`id`, `name`, `ip`, `insert_time`) VALUES 
-				('1', '[no ip address]', '-', '$current_timestamp')";
+				('1', '[no ip address]', '-', '" . mysql_real_escape_string($current_timestamp) . "')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.6', 
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.6;
@@ -142,7 +142,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.7', 
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.7;
@@ -158,7 +158,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.8', 
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.8;
@@ -175,7 +175,7 @@ if ($current_db_version < $most_recent_db_version) {
 		$sql = "UPDATE settings
 				SET db_version = '1.9', 
 					email_address = 'code@aysmedia.com',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.9;
@@ -191,7 +191,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.91',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.91;
@@ -211,7 +211,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.92',
-					update_time = '$current_timestamp'
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 				WHERE type = 'system'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -227,7 +227,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '1.93',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.93;
@@ -247,7 +247,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '1.94',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.94;
@@ -267,7 +267,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '1.95',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.95;
@@ -283,7 +283,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '1.96',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.96;
@@ -328,7 +328,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '1.97',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.97;
@@ -340,19 +340,19 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `categories` 
 					(`name`, `owner`, `insert_time`) VALUES 
-					('[no category]', '[no stakeholder]', '$current_timestamp');";
+					('[no category]', '[no stakeholder]', '" . mysql_real_escape_string($current_timestamp) . "');";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "SELECT id
 				FROM categories
 				WHERE default_category = '1';";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		if (mysql_num_rows($result) == 0) {
 			$sql2 = "UPDATE categories
 					 SET default_category = '1'
 					 WHERE name = '[no category]'";
-			$result2 = mysql_query($sql2,$connection);
+			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
 		}
 
 		$sql = "ALTER TABLE `dns` 
@@ -361,19 +361,19 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `dns` 
 					(`name`, `dns1`, `dns2`, `number_of_servers`, `insert_time`) VALUES 
-					('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '$current_timestamp');";
+					('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '" . mysql_real_escape_string($current_timestamp) . "');";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "SELECT id
 				FROM dns
 				WHERE default_dns = '1';";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		if (mysql_num_rows($result) == 0) {
 			$sql2 = "UPDATE dns
 					 SET default_dns = '1'
 					 WHERE name = '[no dns]'";
-			$result2 = mysql_query($sql2,$connection);
+			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
 		}
 
 		$sql = "ALTER TABLE `owners`  
@@ -382,19 +382,19 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `owners` 
 					(`name`, `insert_time`) VALUES 
-					('[no owner]', '$current_timestamp');";
+					('[no owner]', '" . mysql_real_escape_string($current_timestamp) . "');";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "SELECT id
 				FROM owners
 				WHERE default_owner = '1';";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		if (mysql_num_rows($result) == 0) {
 			$sql2 = "UPDATE owners
 					 SET default_owner = '1'
 					 WHERE name = '[no owner]'";
-			$result2 = mysql_query($sql2,$connection);
+			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
 		}
 
 		$sql = "ALTER TABLE `ip_addresses` 
@@ -404,18 +404,18 @@ if ($current_db_version < $most_recent_db_version) {
 		$sql = "SELECT id
 				FROM ip_addresses
 				WHERE default_ip_address = '1';";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		if (mysql_num_rows($result) == 0) {
 			$sql2 = "UPDATE ip_addresses
 					 SET default_ip_address = '1'
 					 WHERE name = '[no ip address]'";
-			$result2 = mysql_query($sql2,$connection);
+			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
 		}
 
 		$sql = "UPDATE settings
 				SET db_version = '1.98',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.98;
@@ -427,16 +427,16 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `categories` 
 					CHANGE `owner` `stakeholder` VARCHAR(255) NOT NULL;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE `categories`
 					SET `stakeholder` = '[no stakeholder]' 
 				WHERE `stakeholder` = '[no category owner]';";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '1.99',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 1.99;
@@ -448,11 +448,11 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `currencies` 
 					ADD `default_currency` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "SELECT default_currency
 				FROM settings";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		while ($row = mysql_fetch_object($result)) {
 			$default_currency = $row->default_currency;
@@ -460,19 +460,19 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE currencies
 				SET default_currency = '0'";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE currencies
 				SET default_currency = '1'
-				WHERE currency = '" . $default_currency . "'";
-		$result = mysql_query($sql,$connection);
+				WHERE currency = '" . mysql_real_escape_string($default_currency) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `settings` DROP `default_currency`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0001',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0001;
@@ -502,7 +502,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0002',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0002;
@@ -523,7 +523,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0003',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0003;
@@ -563,7 +563,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0004',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0004;
@@ -579,7 +579,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0005',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0005;
@@ -599,7 +599,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0006',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0006;
@@ -627,7 +627,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0007',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0007;
@@ -651,7 +651,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0008',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0008;
@@ -667,7 +667,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0009',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0009;
@@ -704,18 +704,18 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "SELECT id
 				FROM users";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		while ($row = mysql_fetch_object($result)) {
 			$sql_temp = "INSERT INTO user_settings
 						 (user_id, insert_time) VALUES 
-						 ('$row->id', '$current_timestamp');";
-			$result_temp = mysql_query($sql_temp,$connection);
+						 ('" . mysql_real_escape_string($row->id) . "', '" . mysql_real_escape_string($current_timestamp) . "');";
+			$result_temp = mysql_query($sql_temp,$connection) or die(mysql_error());
 		}
 
 		$sql = "UPDATE settings
 				SET db_version = '2.001',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.001;
@@ -728,11 +728,11 @@ if ($current_db_version < $most_recent_db_version) {
 		$sql = "ALTER TABLE `settings` 
 					DROP `number_of_domains`, 
 					DROP `number_of_ssl_certs`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0011',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0011;
@@ -744,11 +744,11 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `user_settings` 
 				CHANGE `display_domain_account` `display_domain_account` INT(1) NOT NULL DEFAULT '1'";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0012',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0012;
@@ -760,71 +760,71 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `categories` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `currencies` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `dns` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `domains` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `fees` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `ip_addresses` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `owners` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `registrars` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `registrar_accounts` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `segments` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `segments` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `ssl_accounts` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `ssl_certs` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `ssl_cert_types` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `ssl_fees` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `ssl_providers` 
 				DROP `test_data`;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0013',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0013;
@@ -842,11 +842,11 @@ if ($current_db_version < $most_recent_db_version) {
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
 				) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0014',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0014;
@@ -858,15 +858,15 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `user_settings` 
 					ADD `display_domain_fee` INT(1) NOT NULL DEFAULT '0' AFTER `display_domain_tld`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `user_settings` 
 					ADD `display_ssl_fee` INT(1) NOT NULL DEFAULT '0' AFTER `display_ssl_expiry_date`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0015',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0015;
@@ -878,19 +878,19 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `segment_data` 
 					ADD `active` INT(1) NOT NULL DEFAULT '0' AFTER `domain`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `segment_data` 
 					ADD `inactive` INT(1) NOT NULL DEFAULT '0' AFTER `active`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `segment_data` 
 					ADD `missing` INT(1) NOT NULL DEFAULT '0' AFTER `inactive`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0016',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0016;
@@ -902,11 +902,11 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `segment_data` 
 					ADD `filtered` INT(1) NOT NULL DEFAULT '0' AFTER `missing`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0017',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0017;
@@ -918,11 +918,11 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `ssl_certs` 
 					CHANGE `domain_id` `domain_id` INT(10) NOT NULL DEFAULT '0'";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0018',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0018;
@@ -934,11 +934,11 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `ssl_certs` 
 					CHANGE `domain_id` `domain_id` INT(10) NOT NULL";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0019',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0019;
@@ -950,11 +950,11 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `user_settings`  
 					ADD `expiration_emails` INT(1) NOT NULL DEFAULT '1' AFTER `user_id`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0020',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0020;
@@ -966,11 +966,11 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `settings` 
 					ADD `full_url` VARCHAR(100) NOT NULL DEFAULT 'http://' AFTER `id`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0021',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0021;
@@ -982,11 +982,11 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `settings`  
 					ADD `timezone` VARCHAR(10) NOT NULL DEFAULT 'Etc/GMT' AFTER `email_address`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0022',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0022;
@@ -1002,16 +1002,16 @@ if ($current_db_version < $most_recent_db_version) {
 				`insert_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
 				) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "INSERT INTO `timezones` 
 				(`timezone`, `insert_time`) VALUES 
-				('Africa/Abidjan', '$current_timestamp'), ('Africa/Accra', '$current_timestamp'), ('Africa/Addis_Ababa', '$current_timestamp'), ('Africa/Algiers', '$current_timestamp'), ('Africa/Asmara', '$current_timestamp'), ('Africa/Asmera', '$current_timestamp'), ('Africa/Bamako', '$current_timestamp'), ('Africa/Bangui', '$current_timestamp'), ('Africa/Banjul', '$current_timestamp'), ('Africa/Bissau', '$current_timestamp'), ('Africa/Blantyre', '$current_timestamp'), ('Africa/Brazzaville', '$current_timestamp'), ('Africa/Bujumbura', '$current_timestamp'), ('Africa/Cairo', '$current_timestamp'), ('Africa/Casablanca', '$current_timestamp'), ('Africa/Ceuta', '$current_timestamp'), ('Africa/Conakry', '$current_timestamp'), ('Africa/Dakar', '$current_timestamp'), ('Africa/Dar_es_Salaam', '$current_timestamp'), ('Africa/Djibouti', '$current_timestamp'), ('Africa/Douala', '$current_timestamp'), ('Africa/El_Aaiun', '$current_timestamp'), ('Africa/Freetown', '$current_timestamp'), ('Africa/Gaborone', '$current_timestamp'), ('Africa/Harare', '$current_timestamp'), ('Africa/Johannesburg', '$current_timestamp'), ('Africa/Juba', '$current_timestamp'), ('Africa/Kampala', '$current_timestamp'), ('Africa/Khartoum', '$current_timestamp'), ('Africa/Kigali', '$current_timestamp'), ('Africa/Kinshasa', '$current_timestamp'), ('Africa/Lagos', '$current_timestamp'), ('Africa/Libreville', '$current_timestamp'), ('Africa/Lome', '$current_timestamp'), ('Africa/Luanda', '$current_timestamp'), ('Africa/Lubumbashi', '$current_timestamp'), ('Africa/Lusaka', '$current_timestamp'), ('Africa/Malabo', '$current_timestamp'), ('Africa/Maputo', '$current_timestamp'), ('Africa/Maseru', '$current_timestamp'), ('Africa/Mbabane', '$current_timestamp'), ('Africa/Mogadishu', '$current_timestamp'), ('Africa/Monrovia', '$current_timestamp'), ('Africa/Nairobi', '$current_timestamp'), ('Africa/Ndjamena', '$current_timestamp'), ('Africa/Niamey', '$current_timestamp'), ('Africa/Nouakchott', '$current_timestamp'), ('Africa/Ouagadougou', '$current_timestamp'), ('Africa/Porto-Novo', '$current_timestamp'), ('Africa/Sao_Tome', '$current_timestamp'), ('Africa/Timbuktu', '$current_timestamp'), ('Africa/Tripoli', '$current_timestamp'), ('Africa/Tunis', '$current_timestamp'), ('Africa/Windhoek', '$current_timestamp'), ('America/Adak', '$current_timestamp'), ('America/Anchorage', '$current_timestamp'), ('America/Anguilla', '$current_timestamp'), ('America/Antigua', '$current_timestamp'), ('America/Araguaina', '$current_timestamp'), ('America/Argentina/Buenos_Aires', '$current_timestamp'), ('America/Argentina/Catamarca', '$current_timestamp'), ('America/Argentina/ComodRivadavia', '$current_timestamp'), ('America/Argentina/Cordoba', '$current_timestamp'), ('America/Argentina/Jujuy', '$current_timestamp'), ('America/Argentina/La_Rioja', '$current_timestamp'), ('America/Argentina/Mendoza', '$current_timestamp'), ('America/Argentina/Rio_Gallegos', '$current_timestamp'), ('America/Argentina/Salta', '$current_timestamp'), ('America/Argentina/San_Juan', '$current_timestamp'), ('America/Argentina/San_Luis', '$current_timestamp'), ('America/Argentina/Tucuman', '$current_timestamp'), ('America/Argentina/Ushuaia', '$current_timestamp'), ('America/Aruba', '$current_timestamp'), ('America/Asuncion', '$current_timestamp'), ('America/Atikokan', '$current_timestamp'), ('America/Atka', '$current_timestamp'), ('America/Bahia', '$current_timestamp'), ('America/Bahia_Banderas', '$current_timestamp'), ('America/Barbados', '$current_timestamp'), ('America/Belem', '$current_timestamp'), ('America/Belize', '$current_timestamp'), ('America/Blanc-Sablon', '$current_timestamp'), ('America/Boa_Vista', '$current_timestamp'), ('America/Bogota', '$current_timestamp'), ('America/Boise', '$current_timestamp'), ('America/Buenos_Aires', '$current_timestamp'), ('America/Cambridge_Bay', '$current_timestamp'), ('America/Campo_Grande', '$current_timestamp'), ('America/Cancun', '$current_timestamp'), ('America/Caracas', '$current_timestamp'), ('America/Catamarca', '$current_timestamp'), ('America/Cayenne', '$current_timestamp'), ('America/Cayman', '$current_timestamp'), ('America/Chicago', '$current_timestamp'), ('America/Chihuahua', '$current_timestamp'), ('America/Coral_Harbour', '$current_timestamp'), ('America/Cordoba', '$current_timestamp'), ('America/Costa_Rica', '$current_timestamp'), ('America/Creston', '$current_timestamp'), ('America/Cuiaba', '$current_timestamp'), ('America/Curacao', '$current_timestamp'), ('America/Danmarkshavn', '$current_timestamp'), ('America/Dawson', '$current_timestamp'), ('America/Dawson_Creek', '$current_timestamp'), ('America/Denver', '$current_timestamp'), ('America/Detroit', '$current_timestamp'), ('America/Dominica', '$current_timestamp'), ('America/Edmonton', '$current_timestamp'), ('America/Eirunepe', '$current_timestamp'), ('America/El_Salvador', '$current_timestamp'), ('America/Ensenada', '$current_timestamp'), ('America/Fort_Wayne', '$current_timestamp'), ('America/Fortaleza', '$current_timestamp'), ('America/Glace_Bay', '$current_timestamp'), ('America/Godthab', '$current_timestamp'), ('America/Goose_Bay', '$current_timestamp'), ('America/Grand_Turk', '$current_timestamp'), ('America/Grenada', '$current_timestamp'), ('America/Guadeloupe', '$current_timestamp'), ('America/Guatemala', '$current_timestamp'), ('America/Guayaquil', '$current_timestamp'), ('America/Guyana', '$current_timestamp'), ('America/Halifax', '$current_timestamp'), ('America/Havana', '$current_timestamp'), ('America/Hermosillo', '$current_timestamp'), ('America/Indiana/Indianapolis', '$current_timestamp'), ('America/Indiana/Knox', '$current_timestamp'), ('America/Indiana/Marengo', '$current_timestamp'), ('America/Indiana/Petersburg', '$current_timestamp'), ('America/Indiana/Tell_City', '$current_timestamp'), ('America/Indiana/Vevay', '$current_timestamp'), ('America/Indiana/Vincennes', '$current_timestamp'), ('America/Indiana/Winamac', '$current_timestamp'), ('America/Indianapolis', '$current_timestamp'), ('America/Inuvik', '$current_timestamp'), ('America/Iqaluit', '$current_timestamp'), ('America/Jamaica', '$current_timestamp'), ('America/Jujuy', '$current_timestamp'), ('America/Juneau', '$current_timestamp'), ('America/Kentucky/Louisville', '$current_timestamp'), ('America/Kentucky/Monticello', '$current_timestamp'), ('America/Knox_IN', '$current_timestamp'), ('America/Kralendijk', '$current_timestamp'), ('America/La_Paz', '$current_timestamp'), ('America/Lima', '$current_timestamp'), ('America/Los_Angeles', '$current_timestamp'), ('America/Louisville', '$current_timestamp'), ('America/Lower_Princes', '$current_timestamp'), ('America/Maceio', '$current_timestamp'), ('America/Managua', '$current_timestamp'), ('America/Manaus', '$current_timestamp'), ('America/Marigot', '$current_timestamp'), ('America/Martinique', '$current_timestamp'), ('America/Matamoros', '$current_timestamp'), ('America/Mazatlan', '$current_timestamp'), ('America/Mendoza', '$current_timestamp'), ('America/Menominee', '$current_timestamp'), ('America/Merida', '$current_timestamp'), ('America/Metlakatla', '$current_timestamp'), ('America/Mexico_City', '$current_timestamp'), ('America/Miquelon', '$current_timestamp'), ('America/Moncton', '$current_timestamp'), ('America/Monterrey', '$current_timestamp'), ('America/Montevideo', '$current_timestamp'), ('America/Montreal', '$current_timestamp'), ('America/Montserrat', '$current_timestamp'), ('America/Nassau', '$current_timestamp'), ('America/New_York', '$current_timestamp'), ('America/Nipigon', '$current_timestamp'), ('America/Nome', '$current_timestamp'), ('America/Noronha', '$current_timestamp'), ('America/North_Dakota/Beulah', '$current_timestamp'), ('America/North_Dakota/Center', '$current_timestamp'), ('America/North_Dakota/New_Salem', '$current_timestamp'), ('America/Ojinaga', '$current_timestamp'), ('America/Panama', '$current_timestamp'), ('America/Pangnirtung', '$current_timestamp'), ('America/Paramaribo', '$current_timestamp'), ('America/Phoenix', '$current_timestamp'), ('America/Port-au-Prince', '$current_timestamp'), ('America/Port_of_Spain', '$current_timestamp'), ('America/Porto_Acre', '$current_timestamp'), ('America/Porto_Velho', '$current_timestamp'), ('America/Puerto_Rico', '$current_timestamp'), ('America/Rainy_River', '$current_timestamp'), ('America/Rankin_Inlet', '$current_timestamp'), ('America/Recife', '$current_timestamp'), ('America/Regina', '$current_timestamp'), ('America/Resolute', '$current_timestamp'), ('America/Rio_Branco', '$current_timestamp'), ('America/Rosario', '$current_timestamp'), ('America/Santa_Isabel', '$current_timestamp'), ('America/Santarem', '$current_timestamp'), ('America/Santiago', '$current_timestamp'), ('America/Santo_Domingo', '$current_timestamp'), ('America/Sao_Paulo', '$current_timestamp'), ('America/Scoresbysund', '$current_timestamp'), ('America/Shiprock', '$current_timestamp'), ('America/Sitka', '$current_timestamp'), ('America/St_Barthelemy', '$current_timestamp'), ('America/St_Johns', '$current_timestamp'), ('America/St_Kitts', '$current_timestamp'), ('America/St_Lucia', '$current_timestamp'), ('America/St_Thomas', '$current_timestamp'), ('America/St_Vincent', '$current_timestamp'), ('America/Swift_Current', '$current_timestamp'), ('America/Tegucigalpa', '$current_timestamp'), ('America/Thule', '$current_timestamp'), ('America/Thunder_Bay', '$current_timestamp'), ('America/Tijuana', '$current_timestamp'), ('America/Toronto', '$current_timestamp'), ('America/Tortola', '$current_timestamp'), ('America/Vancouver', '$current_timestamp'), ('America/Virgin', '$current_timestamp'), ('America/Whitehorse', '$current_timestamp'), ('America/Winnipeg', '$current_timestamp'), ('America/Yakutat', '$current_timestamp'), ('America/Yellowknife', '$current_timestamp'), ('Antarctica/Casey', '$current_timestamp'), ('Antarctica/Davis', '$current_timestamp'), ('Antarctica/DumontDUrville', '$current_timestamp'), ('Antarctica/Macquarie', '$current_timestamp'), ('Antarctica/Mawson', '$current_timestamp'), ('Antarctica/McMurdo', '$current_timestamp'), ('Antarctica/Palmer', '$current_timestamp'), ('Antarctica/Rothera', '$current_timestamp'), ('Antarctica/South_Pole', '$current_timestamp'), ('Antarctica/Syowa', '$current_timestamp'), ('Antarctica/Vostok', '$current_timestamp'), ('Arctic/Longyearbyen', '$current_timestamp'), ('Asia/Aden', '$current_timestamp'), ('Asia/Almaty', '$current_timestamp'), ('Asia/Amman', '$current_timestamp'), ('Asia/Anadyr', '$current_timestamp'), ('Asia/Aqtau', '$current_timestamp'), ('Asia/Aqtobe', '$current_timestamp'), ('Asia/Ashgabat', '$current_timestamp'), ('Asia/Ashkhabad', '$current_timestamp'), ('Asia/Baghdad', '$current_timestamp'), ('Asia/Bahrain', '$current_timestamp'), ('Asia/Baku', '$current_timestamp'), ('Asia/Bangkok', '$current_timestamp'), ('Asia/Beirut', '$current_timestamp'), ('Asia/Bishkek', '$current_timestamp'), ('Asia/Brunei', '$current_timestamp'), ('Asia/Calcutta', '$current_timestamp'), ('Asia/Choibalsan', '$current_timestamp'), ('Asia/Chongqing', '$current_timestamp'), ('Asia/Chungking', '$current_timestamp'), ('Asia/Colombo', '$current_timestamp'), ('Asia/Dacca', '$current_timestamp'), ('Asia/Damascus', '$current_timestamp'), ('Asia/Dhaka', '$current_timestamp'), ('Asia/Dili', '$current_timestamp'), ('Asia/Dubai', '$current_timestamp'), ('Asia/Dushanbe', '$current_timestamp'), ('Asia/Gaza', '$current_timestamp'), ('Asia/Harbin', '$current_timestamp'), ('Asia/Hebron', '$current_timestamp'), ('Asia/Ho_Chi_Minh', '$current_timestamp'), ('Asia/Hong_Kong', '$current_timestamp'), ('Asia/Hovd', '$current_timestamp'), ('Asia/Irkutsk', '$current_timestamp'), ('Asia/Istanbul', '$current_timestamp'), ('Asia/Jakarta', '$current_timestamp'), ('Asia/Jayapura', '$current_timestamp'), ('Asia/Jerusalem', '$current_timestamp'), ('Asia/Kabul', '$current_timestamp'), ('Asia/Kamchatka', '$current_timestamp'), ('Asia/Karachi', '$current_timestamp'), ('Asia/Kashgar', '$current_timestamp'), ('Asia/Kathmandu', '$current_timestamp'), ('Asia/Katmandu', '$current_timestamp'), ('Asia/Khandyga', '$current_timestamp'), ('Asia/Kolkata', '$current_timestamp'), ('Asia/Krasnoyarsk', '$current_timestamp'), ('Asia/Kuala_Lumpur', '$current_timestamp'), ('Asia/Kuching', '$current_timestamp'), ('Asia/Kuwait', '$current_timestamp'), ('Asia/Macao', '$current_timestamp'), ('Asia/Macau', '$current_timestamp'), ('Asia/Magadan', '$current_timestamp'), ('Asia/Makassar', '$current_timestamp'), ('Asia/Manila', '$current_timestamp'), ('Asia/Muscat', '$current_timestamp'), ('Asia/Nicosia', '$current_timestamp'), ('Asia/Novokuznetsk', '$current_timestamp'), ('Asia/Novosibirsk', '$current_timestamp'), ('Asia/Omsk', '$current_timestamp'), ('Asia/Oral', '$current_timestamp'), ('Asia/Phnom_Penh', '$current_timestamp'), ('Asia/Pontianak', '$current_timestamp'), ('Asia/Pyongyang', '$current_timestamp'), ('Asia/Qatar', '$current_timestamp'), ('Asia/Qyzylorda', '$current_timestamp'), ('Asia/Rangoon', '$current_timestamp'), ('Asia/Riyadh', '$current_timestamp'), ('Asia/Saigon', '$current_timestamp'), ('Asia/Sakhalin', '$current_timestamp'), ('Asia/Samarkand', '$current_timestamp'), ('Asia/Seoul', '$current_timestamp'), ('Asia/Shanghai', '$current_timestamp'), ('Asia/Singapore', '$current_timestamp'), ('Asia/Taipei', '$current_timestamp'), ('Asia/Tashkent', '$current_timestamp'), ('Asia/Tbilisi', '$current_timestamp'), ('Asia/Tehran', '$current_timestamp'), ('Asia/Tel_Aviv', '$current_timestamp'), ('Asia/Thimbu', '$current_timestamp'), ('Asia/Thimphu', '$current_timestamp'), ('Asia/Tokyo', '$current_timestamp'), ('Asia/Ujung_Pandang', '$current_timestamp'), ('Asia/Ulaanbaatar', '$current_timestamp'), ('Asia/Ulan_Bator', '$current_timestamp'), ('Asia/Urumqi', '$current_timestamp'), ('Asia/Ust-Nera', '$current_timestamp'), ('Asia/Vientiane', '$current_timestamp'), ('Asia/Vladivostok', '$current_timestamp'), ('Asia/Yakutsk', '$current_timestamp'), ('Asia/Yekaterinburg', '$current_timestamp'), ('Asia/Yerevan', '$current_timestamp'), ('Atlantic/Azores', '$current_timestamp'), ('Atlantic/Bermuda', '$current_timestamp'), ('Atlantic/Canary', '$current_timestamp'), ('Atlantic/Cape_Verde', '$current_timestamp'), ('Atlantic/Faeroe', '$current_timestamp'), ('Atlantic/Faroe', '$current_timestamp'), ('Atlantic/Jan_Mayen', '$current_timestamp'), ('Atlantic/Madeira', '$current_timestamp'), ('Atlantic/Reykjavik', '$current_timestamp'), ('Atlantic/South_Georgia', '$current_timestamp'), ('Atlantic/St_Helena', '$current_timestamp'), ('Atlantic/Stanley', '$current_timestamp'), ('Australia/ACT', '$current_timestamp'), ('Australia/Adelaide', '$current_timestamp'), ('Australia/Brisbane', '$current_timestamp'), ('Australia/Broken_Hill', '$current_timestamp'), ('Australia/Canberra', '$current_timestamp'), ('Australia/Currie', '$current_timestamp'), ('Australia/Darwin', '$current_timestamp'), ('Australia/Eucla', '$current_timestamp'), ('Australia/Hobart', '$current_timestamp'), ('Australia/LHI', '$current_timestamp'), ('Australia/Lindeman', '$current_timestamp'), ('Australia/Lord_Howe', '$current_timestamp'), ('Australia/Melbourne', '$current_timestamp'), ('Australia/North', '$current_timestamp'), ('Australia/NSW', '$current_timestamp'), ('Australia/Perth', '$current_timestamp'), ('Australia/Queensland', '$current_timestamp'), ('Australia/South', '$current_timestamp'), ('Australia/Sydney', '$current_timestamp'), ('Australia/Tasmania', '$current_timestamp'), ('Australia/Victoria', '$current_timestamp'), ('Australia/West', '$current_timestamp'), ('Australia/Yancowinna', '$current_timestamp'), ('Brazil/Acre', '$current_timestamp'), ('Brazil/DeNoronha', '$current_timestamp'), ('Brazil/East', '$current_timestamp'), ('Brazil/West', '$current_timestamp'), ('Canada/Atlantic', '$current_timestamp'), ('Canada/Central', '$current_timestamp'), ('Canada/East-Saskatchewan', '$current_timestamp'), ('Canada/Eastern', '$current_timestamp'), ('Canada/Mountain', '$current_timestamp'), ('Canada/Newfoundland', '$current_timestamp'), ('Canada/Pacific', '$current_timestamp'), ('Canada/Saskatchewan', '$current_timestamp'), ('Canada/Yukon', '$current_timestamp'), ('Chile/Continental', '$current_timestamp'), ('Chile/EasterIsland', '$current_timestamp'), ('Cuba', '$current_timestamp'), ('Egypt', '$current_timestamp'), ('Eire', '$current_timestamp'), ('Europe/Amsterdam', '$current_timestamp'), ('Europe/Andorra', '$current_timestamp'), ('Europe/Athens', '$current_timestamp'), ('Europe/Belfast', '$current_timestamp'), ('Europe/Belgrade', '$current_timestamp'), ('Europe/Berlin', '$current_timestamp'), ('Europe/Bratislava', '$current_timestamp'), ('Europe/Brussels', '$current_timestamp'), ('Europe/Bucharest', '$current_timestamp'), ('Europe/Budapest', '$current_timestamp'), ('Europe/Busingen', '$current_timestamp'), ('Europe/Chisinau', '$current_timestamp'), ('Europe/Copenhagen', '$current_timestamp'), ('Europe/Dublin', '$current_timestamp'), ('Europe/Gibraltar', '$current_timestamp'), ('Europe/Guernsey', '$current_timestamp'), ('Europe/Helsinki', '$current_timestamp'), ('Europe/Isle_of_Man', '$current_timestamp'), ('Europe/Istanbul', '$current_timestamp'), ('Europe/Jersey', '$current_timestamp'), ('Europe/Kaliningrad', '$current_timestamp'), ('Europe/Kiev', '$current_timestamp'), ('Europe/Lisbon', '$current_timestamp'), ('Europe/Ljubljana', '$current_timestamp'), ('Europe/London', '$current_timestamp'), ('Europe/Luxembourg', '$current_timestamp'), ('Europe/Madrid', '$current_timestamp'), ('Europe/Malta', '$current_timestamp'), ('Europe/Mariehamn', '$current_timestamp'), ('Europe/Minsk', '$current_timestamp'), ('Europe/Monaco', '$current_timestamp'), ('Europe/Moscow', '$current_timestamp'), ('Europe/Nicosia', '$current_timestamp'), ('Europe/Oslo', '$current_timestamp'), ('Europe/Paris', '$current_timestamp'), ('Europe/Podgorica', '$current_timestamp'), ('Europe/Prague', '$current_timestamp'), ('Europe/Riga', '$current_timestamp'), ('Europe/Rome', '$current_timestamp'), ('Europe/Samara', '$current_timestamp'), ('Europe/San_Marino', '$current_timestamp'), ('Europe/Sarajevo', '$current_timestamp'), ('Europe/Simferopol', '$current_timestamp'), ('Europe/Skopje', '$current_timestamp'), ('Europe/Sofia', '$current_timestamp'), ('Europe/Stockholm', '$current_timestamp'), ('Europe/Tallinn', '$current_timestamp'), ('Europe/Tirane', '$current_timestamp'), ('Europe/Tiraspol', '$current_timestamp'), ('Europe/Uzhgorod', '$current_timestamp'), ('Europe/Vaduz', '$current_timestamp'), ('Europe/Vatican', '$current_timestamp'), ('Europe/Vienna', '$current_timestamp'), ('Europe/Vilnius', '$current_timestamp'), ('Europe/Volgograd', '$current_timestamp'), ('Europe/Warsaw', '$current_timestamp'), ('Europe/Zagreb', '$current_timestamp'), ('Europe/Zaporozhye', '$current_timestamp'), ('Europe/Zurich', '$current_timestamp'), ('Greenwich', '$current_timestamp'), ('Hongkong', '$current_timestamp'), ('Iceland', '$current_timestamp'), ('Indian/Antananarivo', '$current_timestamp'), ('Indian/Chagos', '$current_timestamp'), ('Indian/Christmas', '$current_timestamp'), ('Indian/Cocos', '$current_timestamp'), ('Indian/Comoro', '$current_timestamp'), ('Indian/Kerguelen', '$current_timestamp'), ('Indian/Mahe', '$current_timestamp'), ('Indian/Maldives', '$current_timestamp'), ('Indian/Mauritius', '$current_timestamp'), ('Indian/Mayotte', '$current_timestamp'), ('Indian/Reunion', '$current_timestamp'), ('Iran', '$current_timestamp'), ('Israel', '$current_timestamp'), ('Jamaica', '$current_timestamp'), ('Japan', '$current_timestamp'), ('Kwajalein', '$current_timestamp'), ('Libya', '$current_timestamp'), ('Mexico/BajaNorte', '$current_timestamp'), ('Mexico/BajaSur', '$current_timestamp'), ('Mexico/General', '$current_timestamp'), ('Pacific/Apia', '$current_timestamp'), ('Pacific/Auckland', '$current_timestamp'), ('Pacific/Chatham', '$current_timestamp'), ('Pacific/Chuuk', '$current_timestamp'), ('Pacific/Easter', '$current_timestamp'), ('Pacific/Efate', '$current_timestamp'), ('Pacific/Enderbury', '$current_timestamp'), ('Pacific/Fakaofo', '$current_timestamp'), ('Pacific/Fiji', '$current_timestamp'), ('Pacific/Funafuti', '$current_timestamp'), ('Pacific/Galapagos', '$current_timestamp'), ('Pacific/Gambier', '$current_timestamp'), ('Pacific/Guadalcanal', '$current_timestamp'), ('Pacific/Guam', '$current_timestamp'), ('Pacific/Honolulu', '$current_timestamp'), ('Pacific/Johnston', '$current_timestamp'), ('Pacific/Kiritimati', '$current_timestamp'), ('Pacific/Kosrae', '$current_timestamp'), ('Pacific/Kwajalein', '$current_timestamp'), ('Pacific/Majuro', '$current_timestamp'), ('Pacific/Marquesas', '$current_timestamp'), ('Pacific/Midway', '$current_timestamp'), ('Pacific/Nauru', '$current_timestamp'), ('Pacific/Niue', '$current_timestamp'), ('Pacific/Norfolk', '$current_timestamp'), ('Pacific/Noumea', '$current_timestamp'), ('Pacific/Pago_Pago', '$current_timestamp'), ('Pacific/Palau', '$current_timestamp'), ('Pacific/Pitcairn', '$current_timestamp'), ('Pacific/Pohnpei', '$current_timestamp'), ('Pacific/Ponape', '$current_timestamp'), ('Pacific/Port_Moresby', '$current_timestamp'), ('Pacific/Rarotonga', '$current_timestamp'), ('Pacific/Saipan', '$current_timestamp'), ('Pacific/Samoa', '$current_timestamp'), ('Pacific/Tahiti', '$current_timestamp'), ('Pacific/Tarawa', '$current_timestamp'), ('Pacific/Tongatapu', '$current_timestamp'), ('Pacific/Truk', '$current_timestamp'), ('Pacific/Wake', '$current_timestamp'), ('Pacific/Wallis', '$current_timestamp'), ('Pacific/Yap', '$current_timestamp'), ('Poland', '$current_timestamp'), ('Portugal', '$current_timestamp'), ('Singapore', '$current_timestamp'), ('Turkey', '$current_timestamp'), ('US/Alaska', '$current_timestamp'), ('US/Aleutian', '$current_timestamp'), ('US/Arizona', '$current_timestamp'), ('US/Central', '$current_timestamp'), ('US/East-Indiana', '$current_timestamp'), ('US/Eastern', '$current_timestamp'), ('US/Hawaii', '$current_timestamp'), ('US/Indiana-Starke', '$current_timestamp'), ('US/Michigan', '$current_timestamp'), ('US/Mountain', '$current_timestamp'), ('US/Pacific', '$current_timestamp'), ('US/Pacific-New', '$current_timestamp'), ('US/Samoa', '$current_timestamp'), ('Zulu', '$current_timestamp');";
+				('Africa/Abidjan', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Accra', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Addis_Ababa', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Algiers', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Asmara', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Asmera', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Bamako', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Bangui', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Banjul', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Bissau', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Blantyre', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Brazzaville', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Bujumbura', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Cairo', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Casablanca', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Ceuta', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Conakry', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Dakar', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Dar_es_Salaam', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Djibouti', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Douala', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/El_Aaiun', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Freetown', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Gaborone', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Harare', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Johannesburg', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Juba', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Kampala', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Khartoum', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Kigali', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Kinshasa', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Lagos', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Libreville', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Lome', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Luanda', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Lubumbashi', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Lusaka', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Malabo', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Maputo', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Maseru', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Mbabane', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Mogadishu', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Monrovia', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Nairobi', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Ndjamena', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Niamey', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Nouakchott', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Ouagadougou', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Porto-Novo', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Sao_Tome', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Timbuktu', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Tripoli', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Tunis', '" . mysql_real_escape_string($current_timestamp) . "'), ('Africa/Windhoek', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Adak', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Anchorage', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Anguilla', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Antigua', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Araguaina', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Argentina/Buenos_Aires', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Argentina/Catamarca', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Argentina/ComodRivadavia', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Argentina/Cordoba', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Argentina/Jujuy', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Argentina/La_Rioja', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Argentina/Mendoza', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Argentina/Rio_Gallegos', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Argentina/Salta', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Argentina/San_Juan', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Argentina/San_Luis', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Argentina/Tucuman', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Argentina/Ushuaia', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Aruba', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Asuncion', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Atikokan', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Atka', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Bahia', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Bahia_Banderas', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Barbados', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Belem', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Belize', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Blanc-Sablon', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Boa_Vista', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Bogota', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Boise', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Buenos_Aires', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Cambridge_Bay', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Campo_Grande', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Cancun', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Caracas', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Catamarca', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Cayenne', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Cayman', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Chicago', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Chihuahua', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Coral_Harbour', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Cordoba', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Costa_Rica', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Creston', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Cuiaba', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Curacao', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Danmarkshavn', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Dawson', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Dawson_Creek', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Denver', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Detroit', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Dominica', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Edmonton', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Eirunepe', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/El_Salvador', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Ensenada', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Fort_Wayne', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Fortaleza', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Glace_Bay', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Godthab', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Goose_Bay', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Grand_Turk', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Grenada', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Guadeloupe', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Guatemala', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Guayaquil', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Guyana', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Halifax', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Havana', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Hermosillo', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Indiana/Indianapolis', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Indiana/Knox', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Indiana/Marengo', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Indiana/Petersburg', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Indiana/Tell_City', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Indiana/Vevay', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Indiana/Vincennes', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Indiana/Winamac', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Indianapolis', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Inuvik', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Iqaluit', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Jamaica', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Jujuy', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Juneau', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Kentucky/Louisville', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Kentucky/Monticello', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Knox_IN', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Kralendijk', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/La_Paz', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Lima', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Los_Angeles', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Louisville', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Lower_Princes', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Maceio', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Managua', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Manaus', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Marigot', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Martinique', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Matamoros', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Mazatlan', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Mendoza', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Menominee', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Merida', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Metlakatla', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Mexico_City', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Miquelon', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Moncton', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Monterrey', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Montevideo', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Montreal', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Montserrat', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Nassau', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/New_York', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Nipigon', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Nome', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Noronha', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/North_Dakota/Beulah', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/North_Dakota/Center', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/North_Dakota/New_Salem', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Ojinaga', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Panama', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Pangnirtung', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Paramaribo', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Phoenix', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Port-au-Prince', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Port_of_Spain', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Porto_Acre', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Porto_Velho', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Puerto_Rico', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Rainy_River', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Rankin_Inlet', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Recife', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Regina', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Resolute', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Rio_Branco', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Rosario', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Santa_Isabel', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Santarem', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Santiago', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Santo_Domingo', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Sao_Paulo', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Scoresbysund', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Shiprock', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Sitka', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/St_Barthelemy', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/St_Johns', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/St_Kitts', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/St_Lucia', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/St_Thomas', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/St_Vincent', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Swift_Current', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Tegucigalpa', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Thule', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Thunder_Bay', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Tijuana', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Toronto', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Tortola', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Vancouver', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Virgin', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Whitehorse', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Winnipeg', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Yakutat', '" . mysql_real_escape_string($current_timestamp) . "'), ('America/Yellowknife', '" . mysql_real_escape_string($current_timestamp) . "'), ('Antarctica/Casey', '" . mysql_real_escape_string($current_timestamp) . "'), ('Antarctica/Davis', '" . mysql_real_escape_string($current_timestamp) . "'), ('Antarctica/DumontDUrville', '" . mysql_real_escape_string($current_timestamp) . "'), ('Antarctica/Macquarie', '" . mysql_real_escape_string($current_timestamp) . "'), ('Antarctica/Mawson', '" . mysql_real_escape_string($current_timestamp) . "'), ('Antarctica/McMurdo', '" . mysql_real_escape_string($current_timestamp) . "'), ('Antarctica/Palmer', '" . mysql_real_escape_string($current_timestamp) . "'), ('Antarctica/Rothera', '" . mysql_real_escape_string($current_timestamp) . "'), ('Antarctica/South_Pole', '" . mysql_real_escape_string($current_timestamp) . "'), ('Antarctica/Syowa', '" . mysql_real_escape_string($current_timestamp) . "'), ('Antarctica/Vostok', '" . mysql_real_escape_string($current_timestamp) . "'), ('Arctic/Longyearbyen', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Aden', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Almaty', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Amman', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Anadyr', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Aqtau', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Aqtobe', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Ashgabat', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Ashkhabad', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Baghdad', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Bahrain', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Baku', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Bangkok', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Beirut', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Bishkek', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Brunei', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Calcutta', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Choibalsan', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Chongqing', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Chungking', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Colombo', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Dacca', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Damascus', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Dhaka', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Dili', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Dubai', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Dushanbe', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Gaza', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Harbin', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Hebron', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Ho_Chi_Minh', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Hong_Kong', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Hovd', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Irkutsk', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Istanbul', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Jakarta', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Jayapura', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Jerusalem', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Kabul', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Kamchatka', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Karachi', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Kashgar', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Kathmandu', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Katmandu', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Khandyga', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Kolkata', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Krasnoyarsk', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Kuala_Lumpur', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Kuching', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Kuwait', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Macao', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Macau', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Magadan', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Makassar', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Manila', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Muscat', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Nicosia', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Novokuznetsk', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Novosibirsk', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Omsk', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Oral', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Phnom_Penh', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Pontianak', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Pyongyang', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Qatar', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Qyzylorda', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Rangoon', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Riyadh', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Saigon', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Sakhalin', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Samarkand', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Seoul', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Shanghai', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Singapore', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Taipei', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Tashkent', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Tbilisi', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Tehran', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Tel_Aviv', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Thimbu', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Thimphu', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Tokyo', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Ujung_Pandang', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Ulaanbaatar', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Ulan_Bator', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Urumqi', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Ust-Nera', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Vientiane', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Vladivostok', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Yakutsk', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Yekaterinburg', '" . mysql_real_escape_string($current_timestamp) . "'), ('Asia/Yerevan', '" . mysql_real_escape_string($current_timestamp) . "'), ('Atlantic/Azores', '" . mysql_real_escape_string($current_timestamp) . "'), ('Atlantic/Bermuda', '" . mysql_real_escape_string($current_timestamp) . "'), ('Atlantic/Canary', '" . mysql_real_escape_string($current_timestamp) . "'), ('Atlantic/Cape_Verde', '" . mysql_real_escape_string($current_timestamp) . "'), ('Atlantic/Faeroe', '" . mysql_real_escape_string($current_timestamp) . "'), ('Atlantic/Faroe', '" . mysql_real_escape_string($current_timestamp) . "'), ('Atlantic/Jan_Mayen', '" . mysql_real_escape_string($current_timestamp) . "'), ('Atlantic/Madeira', '" . mysql_real_escape_string($current_timestamp) . "'), ('Atlantic/Reykjavik', '" . mysql_real_escape_string($current_timestamp) . "'), ('Atlantic/South_Georgia', '" . mysql_real_escape_string($current_timestamp) . "'), ('Atlantic/St_Helena', '" . mysql_real_escape_string($current_timestamp) . "'), ('Atlantic/Stanley', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/ACT', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Adelaide', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Brisbane', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Broken_Hill', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Canberra', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Currie', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Darwin', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Eucla', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Hobart', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/LHI', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Lindeman', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Lord_Howe', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Melbourne', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/North', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/NSW', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Perth', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Queensland', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/South', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Sydney', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Tasmania', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Victoria', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/West', '" . mysql_real_escape_string($current_timestamp) . "'), ('Australia/Yancowinna', '" . mysql_real_escape_string($current_timestamp) . "'), ('Brazil/Acre', '" . mysql_real_escape_string($current_timestamp) . "'), ('Brazil/DeNoronha', '" . mysql_real_escape_string($current_timestamp) . "'), ('Brazil/East', '" . mysql_real_escape_string($current_timestamp) . "'), ('Brazil/West', '" . mysql_real_escape_string($current_timestamp) . "'), ('Canada/Atlantic', '" . mysql_real_escape_string($current_timestamp) . "'), ('Canada/Central', '" . mysql_real_escape_string($current_timestamp) . "'), ('Canada/East-Saskatchewan', '" . mysql_real_escape_string($current_timestamp) . "'), ('Canada/Eastern', '" . mysql_real_escape_string($current_timestamp) . "'), ('Canada/Mountain', '" . mysql_real_escape_string($current_timestamp) . "'), ('Canada/Newfoundland', '" . mysql_real_escape_string($current_timestamp) . "'), ('Canada/Pacific', '" . mysql_real_escape_string($current_timestamp) . "'), ('Canada/Saskatchewan', '" . mysql_real_escape_string($current_timestamp) . "'), ('Canada/Yukon', '" . mysql_real_escape_string($current_timestamp) . "'), ('Chile/Continental', '" . mysql_real_escape_string($current_timestamp) . "'), ('Chile/EasterIsland', '" . mysql_real_escape_string($current_timestamp) . "'), ('Cuba', '" . mysql_real_escape_string($current_timestamp) . "'), ('Egypt', '" . mysql_real_escape_string($current_timestamp) . "'), ('Eire', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Amsterdam', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Andorra', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Athens', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Belfast', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Belgrade', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Berlin', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Bratislava', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Brussels', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Bucharest', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Budapest', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Busingen', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Chisinau', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Copenhagen', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Dublin', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Gibraltar', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Guernsey', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Helsinki', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Isle_of_Man', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Istanbul', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Jersey', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Kaliningrad', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Kiev', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Lisbon', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Ljubljana', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/London', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Luxembourg', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Madrid', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Malta', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Mariehamn', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Minsk', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Monaco', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Moscow', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Nicosia', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Oslo', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Paris', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Podgorica', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Prague', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Riga', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Rome', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Samara', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/San_Marino', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Sarajevo', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Simferopol', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Skopje', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Sofia', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Stockholm', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Tallinn', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Tirane', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Tiraspol', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Uzhgorod', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Vaduz', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Vatican', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Vienna', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Vilnius', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Volgograd', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Warsaw', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Zagreb', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Zaporozhye', '" . mysql_real_escape_string($current_timestamp) . "'), ('Europe/Zurich', '" . mysql_real_escape_string($current_timestamp) . "'), ('Greenwich', '" . mysql_real_escape_string($current_timestamp) . "'), ('Hongkong', '" . mysql_real_escape_string($current_timestamp) . "'), ('Iceland', '" . mysql_real_escape_string($current_timestamp) . "'), ('Indian/Antananarivo', '" . mysql_real_escape_string($current_timestamp) . "'), ('Indian/Chagos', '" . mysql_real_escape_string($current_timestamp) . "'), ('Indian/Christmas', '" . mysql_real_escape_string($current_timestamp) . "'), ('Indian/Cocos', '" . mysql_real_escape_string($current_timestamp) . "'), ('Indian/Comoro', '" . mysql_real_escape_string($current_timestamp) . "'), ('Indian/Kerguelen', '" . mysql_real_escape_string($current_timestamp) . "'), ('Indian/Mahe', '" . mysql_real_escape_string($current_timestamp) . "'), ('Indian/Maldives', '" . mysql_real_escape_string($current_timestamp) . "'), ('Indian/Mauritius', '" . mysql_real_escape_string($current_timestamp) . "'), ('Indian/Mayotte', '" . mysql_real_escape_string($current_timestamp) . "'), ('Indian/Reunion', '" . mysql_real_escape_string($current_timestamp) . "'), ('Iran', '" . mysql_real_escape_string($current_timestamp) . "'), ('Israel', '" . mysql_real_escape_string($current_timestamp) . "'), ('Jamaica', '" . mysql_real_escape_string($current_timestamp) . "'), ('Japan', '" . mysql_real_escape_string($current_timestamp) . "'), ('Kwajalein', '" . mysql_real_escape_string($current_timestamp) . "'), ('Libya', '" . mysql_real_escape_string($current_timestamp) . "'), ('Mexico/BajaNorte', '" . mysql_real_escape_string($current_timestamp) . "'), ('Mexico/BajaSur', '" . mysql_real_escape_string($current_timestamp) . "'), ('Mexico/General', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Apia', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Auckland', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Chatham', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Chuuk', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Easter', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Efate', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Enderbury', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Fakaofo', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Fiji', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Funafuti', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Galapagos', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Gambier', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Guadalcanal', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Guam', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Honolulu', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Johnston', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Kiritimati', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Kosrae', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Kwajalein', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Majuro', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Marquesas', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Midway', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Nauru', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Niue', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Norfolk', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Noumea', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Pago_Pago', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Palau', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Pitcairn', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Pohnpei', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Ponape', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Port_Moresby', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Rarotonga', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Saipan', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Samoa', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Tahiti', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Tarawa', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Tongatapu', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Truk', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Wake', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Wallis', '" . mysql_real_escape_string($current_timestamp) . "'), ('Pacific/Yap', '" . mysql_real_escape_string($current_timestamp) . "'), ('Poland', '" . mysql_real_escape_string($current_timestamp) . "'), ('Portugal', '" . mysql_real_escape_string($current_timestamp) . "'), ('Singapore', '" . mysql_real_escape_string($current_timestamp) . "'), ('Turkey', '" . mysql_real_escape_string($current_timestamp) . "'), ('US/Alaska', '" . mysql_real_escape_string($current_timestamp) . "'), ('US/Aleutian', '" . mysql_real_escape_string($current_timestamp) . "'), ('US/Arizona', '" . mysql_real_escape_string($current_timestamp) . "'), ('US/Central', '" . mysql_real_escape_string($current_timestamp) . "'), ('US/East-Indiana', '" . mysql_real_escape_string($current_timestamp) . "'), ('US/Eastern', '" . mysql_real_escape_string($current_timestamp) . "'), ('US/Hawaii', '" . mysql_real_escape_string($current_timestamp) . "'), ('US/Indiana-Starke', '" . mysql_real_escape_string($current_timestamp) . "'), ('US/Michigan', '" . mysql_real_escape_string($current_timestamp) . "'), ('US/Mountain', '" . mysql_real_escape_string($current_timestamp) . "'), ('US/Pacific', '" . mysql_real_escape_string($current_timestamp) . "'), ('US/Pacific-New', '" . mysql_real_escape_string($current_timestamp) . "'), ('US/Samoa', '" . mysql_real_escape_string($current_timestamp) . "'), ('Zulu', '" . mysql_real_escape_string($current_timestamp) . "');";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0023',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0023;
@@ -1023,11 +1023,11 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `settings` 
 					CHANGE `timezone` `timezone` VARCHAR(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'Canada/Pacific'";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0024',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0024;
@@ -1047,28 +1047,28 @@ if ($current_db_version < $most_recent_db_version) {
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
 				) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "INSERT INTO `hosting` 
 					(`name`, `default_host`, `insert_time`) VALUES 
-					('[no hosting]', 1, '$current_timestamp');";
-		$result = mysql_query($sql,$connection);
+					('[no hosting]', 1, '" . mysql_real_escape_string($current_timestamp) . "');";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `domains`  
 					ADD `hosting_id` int(10) NOT NULL default '1' AFTER `ip_id`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "SELECT id
 				FROM hosting
 				WHERE name = '[no hosting]'";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		while ($row = mysql_fetch_object($result)) {
 			$temp_hosting_id = $row->id;
 		}
 		
 		$sql = "UPDATE domains
-				SET hosting_id = '" . $temp_hosting_id . "'";
+				SET hosting_id = '" . mysql_real_escape_string($temp_hosting_id) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `domains` 
@@ -1089,7 +1089,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0025',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0025;
@@ -1101,11 +1101,11 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `user_settings` 
 					ADD `display_domain_host` INT(1) NOT NULL DEFAULT '0' AFTER `display_domain_dns`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0026',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0026;
@@ -1117,11 +1117,11 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `registrar_accounts`  
 					ADD `password` VARCHAR(100) NOT NULL AFTER `username`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0027',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0027;
@@ -1133,11 +1133,11 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "ALTER TABLE `ssl_accounts`  
 					ADD `password` VARCHAR(100) NOT NULL AFTER `username`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0028',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0028;
@@ -1158,18 +1158,149 @@ if ($current_db_version < $most_recent_db_version) {
 					ADD `ip8` VARCHAR(255) NOT NULL AFTER `ip7`,  
 					ADD `ip9` VARCHAR(255) NOT NULL AFTER `ip8`,  
 					ADD `ip10` VARCHAR(255) NOT NULL AFTER `ip9`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `settings`  
 					ADD `expiration_email_days` INT(3) NOT NULL DEFAULT '60' AFTER `timezone`";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0029',
-					update_time = '$current_timestamp'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0029;
+
+	}
+
+	// upgrade database from 2.0029 to 2.003
+	if ($current_db_version == 2.0029) {
+
+		$sql = "ALTER TABLE `domains`  
+					ADD `notes_fixed_temp` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "SELECT id, status, status_notes, notes
+				FROM domains";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		while ($row = mysql_fetch_object($result)) {
+
+			if ($row->status != "" || $row->status_notes != "" || $row->notes != "") {
+
+				$full_status = "";
+				$full_status_notes = "";
+				$new_notes = "";
+				
+				if ($row->status != "") {
+		
+					$full_status .= "--------------------\r\n";
+					$full_status .= "OLD STATUS - INSERTED " . $current_timestamp . "\r\n";
+					$full_status .= "The Status field was removed because it was redundant.\r\n";
+					$full_status .= "--------------------\r\n";
+					$full_status .= $row->status . "\r\n";
+					$full_status .= "--------------------";
+		
+				} else {
+					
+					$full_status = "";
+					
+				}
+		
+				if ($row->status_notes != "") {
+		
+					$full_status_notes .= "--------------------\r\n";
+					$full_status_notes .= "OLD STATUS NOTES - INSERTED " . $current_timestamp . "\r\n";
+					$full_status_notes .= "The Status Notes field was removed because it was redundant.\r\n";
+					$full_status_notes .= "--------------------\r\n";
+					$full_status_notes .= $row->status_notes . "\r\n";
+					$full_status_notes .= "--------------------";
+		
+				} else {
+					
+					$full_status_notes = "";
+					
+				}
+				
+				if ($row->notes != "") {
+					
+					if ($full_status != "" && $full_status_notes != "") {
+						
+						$new_notes = $full_status . "\r\n\r\n" . $full_status_notes . "\r\n\r\n" . $row->notes;
+	
+					} elseif ($full_status != "" && $full_status_notes == "") {
+						
+						$new_notes = $full_status . "\r\n\r\n" . $row->notes;
+	
+					} elseif ($full_status == "" && $full_status_notes != "") {
+						
+						$new_notes = $full_status_notes . "\r\n\r\n" . $row->notes;
+	
+					} elseif ($full_status == "" && $full_status_notes == "") {
+						
+						$new_notes = $row->notes;
+	
+					}
+					
+				} elseif ($row->notes == "") {
+	
+					if ($full_status != "" && $full_status_notes != "") {
+						
+						$new_notes = $full_status . "\r\n\r\n" . $full_status_notes;
+	
+					} elseif ($full_status != "" && $full_status_notes == "") {
+						
+						$new_notes = $full_status;
+	
+					} elseif ($full_status == "" && $full_status_notes != "") {
+						
+						$new_notes = $full_status_notes;
+	
+					}
+	
+				}
+				
+				$sql_update = "UPDATE domains
+							   SET notes = '" . trim(mysql_real_escape_string($new_notes)) . "',
+							   	   notes_fixed_temp = '1'
+							   WHERE id = '" . mysql_real_escape_string($row->id) . "'";
+				$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
+
+			} else {
+
+				$sql_update = "UPDATE domains
+							   SET notes_fixed_temp = '1'
+							   WHERE id = '" . mysql_real_escape_string($row->id) . "'";
+				$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
+			}
+
+		}
+		
+		$sql = "SELECT *
+				FROM domains
+				WHERE notes_fixed_temp = '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		if (mysql_num_rows($result) > 0) {
+			
+			echo "DATABASE UPDATE v2.003 FAILED: PLEASE CONTACT YOUR " . strtoupper($software_title) . " ADMINISTRATOR IMMEDIATELY";
+			exit;
+			
+		} else {
+
+			$sql = "ALTER TABLE `domains` 
+						DROP `status`, 
+						DROP `status_notes`,
+						DROP `notes_fixed_temp`";
+			$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		}
+		
+		$sql = "UPDATE settings
+				SET db_version = '2.003',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.003;
 
 	}
 
