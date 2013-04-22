@@ -114,7 +114,8 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE `domains` 
-				SET ip_id = '1'";
+				SET ip_id = '1',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "TRUNCATE `ip_addresses`";
@@ -206,7 +207,8 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings 
-				SET type =  'system'";
+				SET type =  'system',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "UPDATE settings
@@ -350,7 +352,8 @@ if ($current_db_version < $most_recent_db_version) {
 
 		if (mysql_num_rows($result) == 0) {
 			$sql2 = "UPDATE categories
-					 SET default_category = '1'
+					 SET default_category = '1',
+						 update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 					 WHERE name = '[no category]'";
 			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
 		}
@@ -371,7 +374,8 @@ if ($current_db_version < $most_recent_db_version) {
 
 		if (mysql_num_rows($result) == 0) {
 			$sql2 = "UPDATE dns
-					 SET default_dns = '1'
+					 SET default_dns = '1',
+						 update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 					 WHERE name = '[no dns]'";
 			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
 		}
@@ -392,7 +396,8 @@ if ($current_db_version < $most_recent_db_version) {
 
 		if (mysql_num_rows($result) == 0) {
 			$sql2 = "UPDATE owners
-					 SET default_owner = '1'
+					 SET default_owner = '1',
+						 update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 					 WHERE name = '[no owner]'";
 			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
 		}
@@ -408,7 +413,8 @@ if ($current_db_version < $most_recent_db_version) {
 
 		if (mysql_num_rows($result) == 0) {
 			$sql2 = "UPDATE ip_addresses
-					 SET default_ip_address = '1'
+					 SET default_ip_address = '1',
+						 update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 					 WHERE name = '[no ip address]'";
 			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
 		}
@@ -430,7 +436,8 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE `categories`
-					SET `stakeholder` = '[no stakeholder]' 
+					SET `stakeholder` = '[no stakeholder]',
+						`update_time` = '" . mysql_real_escape_string($current_timestamp) . "'
 				WHERE `stakeholder` = '[no category owner]';";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -459,11 +466,13 @@ if ($current_db_version < $most_recent_db_version) {
 		}
 		
 		$sql = "UPDATE currencies
-				SET default_currency = '0'";
+				SET default_currency = '0',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE currencies
-				SET default_currency = '1'
+				SET default_currency = '1',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 				WHERE currency = '" . mysql_real_escape_string($default_currency) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -491,12 +500,14 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE ssl_cert_functions
-				SET default_function = '1'
+				SET default_function = '1',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 				WHERE function = 'Web Server SSL/TLS Certificate'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE ssl_cert_types
-				SET default_type = '1'
+				SET default_type = '1',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 				WHERE type = 'Wildcard'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -1068,7 +1079,8 @@ if ($current_db_version < $most_recent_db_version) {
 		}
 		
 		$sql = "UPDATE domains
-				SET hosting_id = '" . mysql_real_escape_string($temp_hosting_id) . "'";
+				SET hosting_id = '" . mysql_real_escape_string($temp_hosting_id) . "',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `domains` 
@@ -1261,14 +1273,16 @@ if ($current_db_version < $most_recent_db_version) {
 				
 				$sql_update = "UPDATE domains
 							   SET notes = '" . trim(mysql_real_escape_string($new_notes)) . "',
-							   	   notes_fixed_temp = '1'
+							   	   notes_fixed_temp = '1',
+								   update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 							   WHERE id = '" . mysql_real_escape_string($row->id) . "'";
 				$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 
 			} else {
 
 				$sql_update = "UPDATE domains
-							   SET notes_fixed_temp = '1'
+							   SET notes_fixed_temp = '1',
+								   update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 							   WHERE id = '" . mysql_real_escape_string($row->id) . "'";
 				$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 			}
