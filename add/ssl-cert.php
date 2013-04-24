@@ -38,15 +38,9 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	function MyCheckDate( $postedDate ) {
-	   if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $postedDate, $datebit)) {
-		  return checkdate($datebit[2] , $datebit[3] , $datebit[1]);
-	   } else {
-		  return false;
-	   }
-	} 	
+	include("../_includes/system/functions/check-date-format.inc.php");
 
-	if (MyCheckDate($new_expiry_date) && $new_name != "" && $new_type_id != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "0" && $new_domain_id != "0" && $new_account_id != "0") {
+	if (CheckDateFormat($new_expiry_date) && $new_name != "" && $new_type_id != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "0" && $new_domain_id != "0" && $new_account_id != "0") {
 
 		$sql = "SELECT ssl_provider_id, owner_id
 				FROM ssl_accounts
@@ -77,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	} else {
 	
 		if ($new_name == "") { $_SESSION['session_result_message'] .= "Enter a name for the SSL certificate<BR>"; }
-		if (!MyCheckDate($new_expiry_date)) { $_SESSION['session_result_message'] .= "The expiry date you entered is invalid<BR>"; }
+		if (!CheckDateFormat($new_expiry_date)) { $_SESSION['session_result_message'] .= "The expiry date you entered is invalid<BR>"; }
 
 	}
 

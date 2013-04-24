@@ -49,15 +49,9 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	function MyCheckDate( $postedDate ) {
-	   if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $postedDate, $datebit)) {
-		  return checkdate($datebit[2] , $datebit[3] , $datebit[1]);
-	   } else {
-		  return false;
-	   }
-	} 	
+	include("_includes/system/functions/check-date-format.inc.php");
 
-	if (MyCheckDate($new_expiry_start) && MyCheckDate($new_expiry_end)) {
+	if (CheckDateFormat($new_expiry_start) && CheckDateFormat($new_expiry_end)) {
 	
 		$sql_currency = "SELECT currency
 						 FROM currencies
@@ -71,8 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	} else {
 
-		if (!MyCheckDate($new_expiry_start)) { $_SESSION['session_result_message'] .= "The starting expiry date you entered is invalid<BR>"; }
-		if (!MyCheckDate($new_expiry_end)) { $_SESSION['session_result_message'] .= "The ending expiry date you entered is invalid<BR>"; }
+		if (!CheckDateFormat($new_expiry_start)) { $_SESSION['session_result_message'] .= "The starting expiry date you entered is invalid<BR>"; }
+		if (!CheckDateFormat($new_expiry_end)) { $_SESSION['session_result_message'] .= "The ending expiry date you entered is invalid<BR>"; }
 
 	}
 

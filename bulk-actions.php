@@ -160,17 +160,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 			} elseif ($action == "AD") { 
 			
-				function MyCheckDate( $postedDate ) {
-				   if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $postedDate, $datebit)) {
-					  return checkdate($datebit[2] , $datebit[3] , $datebit[1]);
-				   } else {
-					  return false;
-				   }
-				} 	
+				include("_includes/system/functions/check-date-format.inc.php");
 	
-				if (!MyCheckDate($new_expiry_date) || $new_pcid == "" || $new_dnsid == "" || $new_ipid == "" || $new_whid == "" || $new_raid == "" || $new_pcid == "0" || $new_dnsid == "0" || $new_ipid == "0" || $new_whid == "0" || $new_raid == "0") {
+				if (!CheckDateFormat($new_expiry_date) || $new_pcid == "" || $new_dnsid == "" || $new_ipid == "" || $new_whid == "" || $new_raid == "" || $new_pcid == "0" || $new_dnsid == "0" || $new_ipid == "0" || $new_whid == "0" || $new_raid == "0") {
 	
-					if (!MyCheckDate($new_expiry_date)) $_SESSION['session_result_message'] .= "You have entered an invalid expiry date<BR>";
+					if (!CheckDateFormat($new_expiry_date)) $_SESSION['session_result_message'] .= "You have entered an invalid expiry date<BR>";
 					if ($new_pcid == "" || $new_pcid == "0") $_SESSION['session_result_message'] .= "Please choose the new Category<BR>";
 					if ($new_dnsid == "" || $new_dnsid == "0") $_SESSION['session_result_message'] .= "Please choose the new DNS Profile<BR>";
 					if ($new_ipid == "" || $new_ipid == "0") $_SESSION['session_result_message'] .= "Please choose the new IP Address<BR>";
@@ -698,15 +692,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 			} elseif ($action == "CED") { 
 	
-				function MyCheckDate( $postedDate ) {
-				   if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $postedDate, $datebit)) {
-					  return checkdate($datebit[2] , $datebit[3] , $datebit[1]);
-				   } else {
-					  return false;
-				   }
-				} 	
-	
-				if (!MyCheckDate($new_expiry_date)) {
+				include("_includes/system/functions/check-date-format.inc.php");
+
+				if (!CheckDateFormat($new_expiry_date)) {
 	
 					$_SESSION['session_result_message'] = "The expiry date you entered is invalid<BR>";
 					$submission_failed = 1;

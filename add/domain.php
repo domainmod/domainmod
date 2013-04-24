@@ -42,15 +42,9 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	function MyCheckDate( $postedDate ) {
-	   if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $postedDate, $datebit)) {
-		  return checkdate($datebit[2] , $datebit[3] , $datebit[1]);
-	   } else {
-		  return false;
-	   }
-	} 	
+	include("../_includes/system/functions/check-date-format.inc.php");
 
-	if (MyCheckDate($new_expiry_date) && preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0") {
+	if (CheckDateFormat($new_expiry_date) && preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0") {
 
 		$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 		
@@ -84,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	} else {
 	
 		if (!preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) { $_SESSION['session_result_message'] .= "The domain format is incorrect<BR>"; }
-		if (!MyCheckDate($new_expiry_date)) { $_SESSION['session_result_message'] .= "The expiry date you entered is invalid<BR>"; }
+		if (!CheckDateFormat($new_expiry_date)) { $_SESSION['session_result_message'] .= "The expiry date you entered is invalid<BR>"; }
 
 	}
 
