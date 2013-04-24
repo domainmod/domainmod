@@ -199,10 +199,12 @@ if ($_SESSION['session_quick_search'] != "") {
 	$lines = explode("\r\n", $_SESSION['session_quick_search']);
 	$invalid_domain_count = 0;
 	$invalid_domains_to_display = 5;
+	
+	include("_includes/system/functions/check-domain-format.inc.php");
 
 	while (list($key, $new_domain) = each($lines)) {
 
-		if (!preg_match("/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i", $new_domain)) {
+		if (!CheckDomainFormat($new_domain)) {
 			if ($invalid_domain_count < $invalid_domains_to_display) $temp_result_message .= "Line " . number_format($key + 1) . " contains an invalid domain<BR>";
 			$invalid_domains = 1;
 			$invalid_domain_count++;
