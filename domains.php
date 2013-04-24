@@ -22,6 +22,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
+include("_includes/system/functions/check-domain-format.inc.php");
 
 $page_title = "Domains";
 $software_section = "domains";
@@ -200,8 +201,6 @@ if ($_SESSION['session_quick_search'] != "") {
 	$invalid_domain_count = 0;
 	$invalid_domains_to_display = 5;
 	
-	include("_includes/system/functions/check-domain-format.inc.php");
-
 	while (list($key, $new_domain) = each($lines)) {
 
 		if (!CheckDomainFormat($new_domain)) {

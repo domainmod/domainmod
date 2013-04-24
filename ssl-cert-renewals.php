@@ -23,6 +23,7 @@ include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
 include("_includes/timestamps/current-timestamp-basic.inc.php");
+include("_includes/system/functions/check-date-format.inc.php");
 
 $page_title = "SSL Certificate Renewal Export";
 
@@ -45,8 +46,6 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date,
 		ORDER BY sslc.expiry_date asc, sslc.name asc";	
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-	include("_includes/system/functions/check-date-format.inc.php");
 
 	if (CheckDateFormat($new_expiry_start) && CheckDateFormat($new_expiry_end)) {
 

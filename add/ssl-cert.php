@@ -23,6 +23,7 @@ include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
+include("../_includes/system/functions/check-date-format.inc.php");
 
 $page_title = "Adding A New SSL Certificate";
 $software_section = "ssl-certs";
@@ -37,8 +38,6 @@ $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-	include("../_includes/system/functions/check-date-format.inc.php");
 
 	if (CheckDateFormat($new_expiry_date) && $new_name != "" && $new_type_id != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "0" && $new_domain_id != "0" && $new_account_id != "0") {
 

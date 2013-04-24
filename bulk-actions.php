@@ -24,6 +24,8 @@ include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp-basic.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
 include("_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
+include("_includes/system/functions/check-domain-format.inc.php");
+include("_includes/system/functions/check-date-format.inc.php");
 
 $page_title = "Bulk Actions";
 $software_section == "bulkactions";
@@ -62,8 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$invalid_domain_count = 0;
 		$invalid_domains_to_display = 5;
 		
-		include("_includes/system/functions/check-domain-format.inc.php");
-	
 		while (list($key, $new_domain) = each($lines)) {
 	
 			if (!CheckDomainFormat($new_domain)) {
@@ -109,8 +109,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$lines = explode("\r\n", $new_data);
 			$number_of_domains = count($lines);
 			
-			include("_includes/system/functions/check-domain-format.inc.php");
-	
 			while (list($key, $new_domain) = each($lines)) {
 	
 				if (!CheckDomainFormat($new_domain)) {
@@ -164,8 +162,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 			} elseif ($action == "AD") { 
 			
-				include("_includes/system/functions/check-date-format.inc.php");
-	
 				if (!CheckDateFormat($new_expiry_date) || $new_pcid == "" || $new_dnsid == "" || $new_ipid == "" || $new_whid == "" || $new_raid == "" || $new_pcid == "0" || $new_dnsid == "0" || $new_ipid == "0" || $new_whid == "0" || $new_raid == "0") {
 	
 					if (!CheckDateFormat($new_expiry_date)) $_SESSION['session_result_message'] .= "You have entered an invalid expiry date<BR>";
@@ -696,8 +692,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 			} elseif ($action == "CED") { 
 	
-				include("_includes/system/functions/check-date-format.inc.php");
-
 				if (!CheckDateFormat($new_expiry_date)) {
 	
 					$_SESSION['session_result_message'] = "The expiry date you entered is invalid<BR>";

@@ -22,6 +22,7 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+include("../_includes/system/functions/check-domain-format.inc.php");
 
 $page_title = "Editting A Segment";
 $software_section = "segments";
@@ -51,8 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$invalid_domain_count = 0;
 		$invalid_domains_to_display = 5;
 		
-		include("../_includes/system/functions/check-domain-format.inc.php");
-	
 		while (list($key, $new_domain) = each($lines)) {
 	
 			if (!CheckDomainFormat($new_domain)) {
@@ -94,8 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$lines = explode("\r\n", $new_segment);
 			$number_of_domains = count($lines);
 			
-			include("../_includes/system/functions/check-domain-format.inc.php");
-	
 			while (list($key, $new_domain) = each($lines)) {
 	
 				if (!CheckDomainFormat($new_domain)) {

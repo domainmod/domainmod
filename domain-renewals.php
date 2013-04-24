@@ -23,6 +23,7 @@ include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
 include("_includes/timestamps/current-timestamp-basic.inc.php");
+include("_includes/system/functions/check-date-format.inc.php");
 
 $page_title = "Domain Renewal Export";
 
@@ -48,8 +49,6 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
 		ORDER BY d.expiry_date asc, d.domain";	
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-	include("_includes/system/functions/check-date-format.inc.php");
 
 	if (CheckDateFormat($new_expiry_start) && CheckDateFormat($new_expiry_end)) {
 	

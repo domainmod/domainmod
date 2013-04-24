@@ -22,6 +22,7 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+include("../_includes/system/functions/check-date-format.inc.php");
 
 $page_title = "Editting An SSL Certificate";
 $software_section = "ssl-certs";
@@ -43,8 +44,6 @@ $new_notes = $_POST['new_notes'];
 $new_sslcid = $_POST['new_sslcid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-	include("../_includes/system/functions/check-date-format.inc.php");
 
 	if (CheckDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "" && $new_domain_id != "0" && $new_account_id != "0" && $new_type_id != "0") {
 
