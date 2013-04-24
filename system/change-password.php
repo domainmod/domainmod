@@ -96,14 +96,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 <?php include("../_includes/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("../_includes/header.inc.php"); ?>
+<?php if ($_SESSION['session_running_login_checks'] == 1) { ?>
+	<?php include("../_includes/header-login.inc.php"); ?>
+	<div align="center">
+<?php } else { ?>
+	<?php include("../_includes/header.inc.php"); ?>
+<?php } ?>
 <form name="change_password_form" method="post" action="<?=$PHP_SELF?>">
-New Password<BR><input type="password" name="new_password" size="20">
+<strong>New Password</strong><BR><input type="password" name="new_password" size="20">
 <BR><BR>
-Confirm New Password<BR><input type="password" name="new_password_confirmation" size="20">
+<strong>Confirm New Password</strong><BR><input type="password" name="new_password_confirmation" size="20">
 <BR><BR>
 <input type="submit" name="button" value="Change Password &raquo;">
 </form>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php if ($_SESSION['session_running_login_checks'] == 1) { ?>
+	</div>
+	<?php include("../_includes/footer-login.inc.php"); ?>
+<?php } else { ?>
+	<?php include("../_includes/footer.inc.php"); ?>
+<?php } ?>
 </body>
 </html>
