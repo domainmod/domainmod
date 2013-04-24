@@ -336,7 +336,7 @@ echo "<option value=\"1\""; if ($new_privacy == "1") echo " selected"; echo ">Ye
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Notes</strong><BR><BR>
+<strong>Notes</strong> [<a target="_blank" href="view-domain-notes.php?did=<?=$did?>">view full notes</a>]<BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_did" value="<?=$did?>">
