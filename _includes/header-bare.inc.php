@@ -15,3 +15,4 @@
 // You should have received a copy of the GNU General Public License along with Domain Manager. If not, please 
 // see http://www.gnu.org/licenses/
 ?>
+<a href="<?=$web_root?>/domains.php"><img border="0" src="<?=$web_root?>/images/logo.png"></a><BR><BR>
