@@ -1382,6 +1382,26 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0031 to 2.0032
+	if ($current_db_version == 2.0031) {
+
+		$sql = "ALTER TABLE `fees` 
+				ADD `transfer_fee` FLOAT NOT NULL AFTER `renewal_fee`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_fees` 
+				ADD `transfer_fee` FLOAT NOT NULL AFTER `renewal_fee`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0032',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0032;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
