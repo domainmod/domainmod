@@ -39,7 +39,7 @@ $software_section = "segments";
 
 if ($type == "inactive") { 
 
-	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
 			FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
 			WHERE d.account_id = ra.id
 			  AND ra.registrar_id = r.id
@@ -56,7 +56,7 @@ if ($type == "inactive") {
 
 } elseif ($type == "filtered") {
 
-	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.renewal_fee AS renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
 			FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
 			WHERE d.account_id = ra.id
 			  AND ra.registrar_id = r.id
@@ -108,7 +108,7 @@ if ($export == "1") {
 
 		$full_export .= "\"All fees are listed in " . $default_currency . "\"\n\n";
 	
-		$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Function\",\"Notes\"\n";
+		$full_export .= "\"Domain Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Function\",\"Notes\"\n";
 	
 	} elseif ($type == "missing") {
 	
@@ -120,6 +120,9 @@ if ($export == "1") {
 
 		while ($row = mysql_fetch_object($result)) {
 			
+			$temp_initial_fee = $row->initial_fee * $row->conversion;
+			$total_initial_fee_export = $total_initial_fee_export + $temp_initial_fee;
+
 			$temp_renewal_fee = $row->renewal_fee * $row->conversion;
 			$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 	
@@ -138,12 +141,17 @@ if ($export == "1") {
 				$privacy_status = "Public";
 			}
 	
+			$temp_input_amount = $temp_initial_fee;
+			$temp_input_conversion = "";
+			include("_includes/system/convert-and-format-currency.inc.php");
+			$export_initial_fee = $temp_output_amount;
+
 			$temp_input_amount = $temp_renewal_fee;
 			$temp_input_conversion = "";
 			include("_includes/system/convert-and-format-currency.inc.php");
 			$export_renewal_fee = $temp_output_amount;
 	
-			$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"" . $export_renewal_fee . "\",\"$row->domain\",\".$row->tld\",\"$privacy_status\",\"$row->registrar_name\",\"$row->username\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->wh_name\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->function\",\"$row->notes\"\n";
+			$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"" . $export_initial_fee . "\",\"" . $export_renewal_fee . "\",\"$row->domain\",\".$row->tld\",\"$privacy_status\",\"$row->registrar_name\",\"$row->username\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->wh_name\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->function\",\"$row->notes\"\n";
 
 		}
 		
@@ -160,12 +168,17 @@ if ($export == "1") {
 
 	if ($type == "inactive" || $type == "filtered") {
 
+		$temp_input_amount = $total_initial_fee_export;
+		$temp_input_conversion = "";
+		include("_includes/system/convert-and-format-currency.inc.php");
+		$total_export_initial_fee = $temp_output_amount;
+
 		$temp_input_amount = $total_renewal_fee_export;
 		$temp_input_conversion = "";
 		include("_includes/system/convert-and-format-currency.inc.php");
 		$total_export_renewal_fee = $temp_output_amount;
 	
-		$full_export .= "\"\",\"Total Cost:\",\"" . $total_export_renewal_fee . "\",\"" . $default_currency . "\"\n";
+		$full_export .= "\"\",\"Total Cost:\",\"" . $total_export_initial_fee . "\",\"" . $total_export_renewal_fee . "\"\n";
 
 	} elseif ($type == "missing") {
 
