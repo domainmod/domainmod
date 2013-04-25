@@ -188,7 +188,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `fees` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`registrar_id` int(5) NOT NULL,
+				`registrar_id` int(10) NOT NULL,
 				`tld` varchar(50) NOT NULL,
 				`initial_fee` float NOT NULL,
 				`renewal_fee` float NOT NULL,
@@ -203,8 +203,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_fees` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`ssl_provider_id` int(5) NOT NULL,
-				`type_id` int(5) NOT NULL,
+				`ssl_provider_id` int(10) NOT NULL,
+				`type_id` int(10) NOT NULL,
 				`initial_fee` float NOT NULL,
 				`renewal_fee` float NOT NULL,
 				`currency_id` int(10) NOT NULL,
@@ -217,9 +217,9 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `domains` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`owner_id` int(5) NOT NULL default '1',
-				`registrar_id` int(5) NOT NULL default '1',
-				`account_id` int(5) NOT NULL default '1',
+				`owner_id` int(10) NOT NULL default '1',
+				`registrar_id` int(10) NOT NULL default '1',
+				`account_id` int(10) NOT NULL default '1',
 				`domain` varchar(255) NOT NULL,
 				`tld` varchar(50) NOT NULL,
 				`expiry_date` date NOT NULL,
@@ -242,9 +242,9 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_certs` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`owner_id` int(5) NOT NULL,
-				`ssl_provider_id` int(5) NOT NULL,
-				`account_id` int(5) NOT NULL,
+				`owner_id` int(10) NOT NULL,
+				`ssl_provider_id` int(10) NOT NULL,
+				`account_id` int(10) NOT NULL,
 				`domain_id` int(10) NOT NULL,
 				`type_id` int(10) NOT NULL,
 				`name` varchar(255) NOT NULL,
@@ -342,7 +342,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `registrar_accounts` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`owner_id` int(5) NOT NULL,
+				`owner_id` int(10) NOT NULL,
 				`registrar_id` int(10) NOT NULL,
 				`username` varchar(255) NOT NULL,
 				`password` varchar(100) NOT NULL,
@@ -358,7 +358,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_accounts` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`owner_id` int(5) NOT NULL,
+				`owner_id` int(10) NOT NULL,
 				`ssl_provider_id` int(10) NOT NULL,
 				`username` varchar(255) NOT NULL,
 				`password` varchar(100) NOT NULL,

@@ -1418,6 +1418,66 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0033 to 2.0034
+	if ($current_db_version == 2.0033) {
+
+		$sql = "ALTER TABLE `domains` 
+				CHANGE `owner_id` `owner_id` INT(10) NOT NULL DEFAULT '1'";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `domains` 
+				CHANGE `registrar_id` `registrar_id` INT(10) NOT NULL DEFAULT '1'";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `domains` 
+				CHANGE `account_id` `account_id` INT(10) NOT NULL DEFAULT '1'";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `domains` 
+				CHANGE `dns_id` `dns_id` INT(10) NOT NULL DEFAULT '1'";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `fees` 
+				CHANGE `registrar_id` `registrar_id` INT(10) NOT NULL";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `registrar_accounts` 
+				CHANGE `owner_id` `owner_id` INT(10) NOT NULL";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_accounts` 
+				CHANGE `owner_id` `owner_id` INT(10) NOT NULL";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_certs` 
+				CHANGE `owner_id` `owner_id` INT(10) NOT NULL";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_certs` 
+				CHANGE `ssl_provider_id` `ssl_provider_id` INT(10) NOT NULL";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_certs` 
+				CHANGE `account_id` `account_id` INT(10) NOT NULL";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_fees` 
+				CHANGE `ssl_provider_id` `ssl_provider_id` INT(10) NOT NULL";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `ssl_fees` 
+				CHANGE `type_id` `type_id` INT(10) NOT NULL";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0034',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0034;
+
+	}
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['session_result_message'] .= "Database Updated<BR>";
