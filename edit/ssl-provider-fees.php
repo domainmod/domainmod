@@ -43,7 +43,7 @@ $new_sslpid = $_POST['new_sslpid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_sslpid == "" || $new_type_id == "" || $new_type_id == "0" || $new_initial_fee == "" || $new_renewal_fee == "" && $new_currency_id != "" && $new_currency_id != "0") {
+	if ($new_sslpid == "" || $new_type_id == "" || $new_type_id == "0" || $new_initial_fee == "" || $new_renewal_fee == "" || $new_currency_id == "" || $new_currency_id == "0") {
 		
 		if ($new_initial_fee == "") $_SESSION['session_result_message'] .= "Please enter the initial fee<BR>";
 		if ($new_renewal_fee == "") $_SESSION['session_result_message'] .= "Please enter the renewal fee<BR>";
