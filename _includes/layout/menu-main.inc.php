@@ -24,7 +24,6 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/categories.php">Categories</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/owners.php">Owners</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/currencies.php">Currencies</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/tlds.php">TLDs</a> ]&nbsp;
 <BR><BR>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-certs.php">SSL Certificates</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-providers.php">SSL Providers</a> ]&nbsp;
@@ -35,5 +34,6 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-actions.php">Perform Bulk Actions</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/domain-renewals.php">Domain Renewals</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-cert-renewals.php">SSL Renewals</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a> ]&nbsp;
 <?php include($full_server_path . "/_includes/layout/menu-sub.inc.php"); ?>

@@ -86,6 +86,10 @@ if ($software_section == "domains") {
 
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a><?php 
 
+} elseif ($software_section == "reporting") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a><?php 
+
 } elseif ($software_section == "bulkactions") { ?>
 
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/bulk-actions.php">Reset Bulk Action</a><?php 
