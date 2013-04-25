@@ -38,16 +38,18 @@ $tld = $_GET['tld'];
 $new_tld = $_POST['new_tld'];
 $new_initial_fee = $_POST['new_initial_fee'];
 $new_renewal_fee = $_POST['new_renewal_fee'];
+$new_transfer_fee = $_POST['new_transfer_fee'];
 $new_currency_id = $_POST['new_currency_id'];
 $new_rid = $_POST['new_rid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_rid == "" || $new_tld == "" || $new_initial_fee == "" || $new_renewal_fee == "" && $new_currency_id != "" && $new_currency_id != "0") {
+	if ($new_rid == "" || $new_tld == "" || $new_initial_fee == "" || $new_renewal_fee == "" || $new_transfer_fee == "" || $new_currency_id == "" || $new_currency_id == "0") {
 		
 		if ($new_tld == "") $_SESSION['session_result_message'] .= "Please enter the TLD<BR>";
 		if ($new_initial_fee == "") $_SESSION['session_result_message'] .= "Please enter the initial fee<BR>";
 		if ($new_renewal_fee == "") $_SESSION['session_result_message'] .= "Please enter the renewal fee<BR>";
+		if ($new_transfer_fee == "") $_SESSION['session_result_message'] .= "Please enter the transfer fee<BR>";
 		if ($new_currency_id == "" || $new_currency_id == "0") $_SESSION['session_result_message'] .= "There was a problem with the currency you chose<BR>";
 
 	} else {
@@ -65,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$sql = "UPDATE fees
 					SET initial_fee = '$new_initial_fee',
 						renewal_fee = '$new_renewal_fee',
+						transfer_fee = '$new_transfer_fee',
 						currency_id = '$new_currency_id',
 						update_time = '$current_timestamp'
 					WHERE registrar_id = '$new_rid'
@@ -101,8 +104,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		} else {
 			
 			$sql = "INSERT INTO fees 
-					(registrar_id, tld, initial_fee, renewal_fee, currency_id, insert_time) VALUES 
-					('$new_rid', '" . mysql_real_escape_string($new_tld) . "', '$new_initial_fee', '$new_renewal_fee', '$new_currency_id', '$current_timestamp')";
+					(registrar_id, tld, initial_fee, renewal_fee, transfer_fee, currency_id, insert_time) VALUES 
+					('$new_rid', '" . mysql_real_escape_string($new_tld) . "', '$new_initial_fee', '$new_renewal_fee', '$new_transfer_fee', '$new_currency_id', '$current_timestamp')";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 
 			$sql = "SELECT id
@@ -283,6 +286,10 @@ if (mysql_num_rows($result) != 0) {
         	<strong>Renewal Fee</strong><BR>
             <input name="new_renewal_fee" type="text" value="<?=$new_renewal_fee?>" size="10">
 		</td>
+		<td class="main_table_cell_heading_active">
+        	<strong>Transfer Fee</strong><BR>
+            <input name="new_transfer_fee" type="text" value="<?=$new_transfer_fee?>" size="10">
+		</td>
 	  	<td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
 		  <select name="new_currency_id" id="new_currency">
 		  	<?php
@@ -317,10 +324,11 @@ if (mysql_num_rows($result) != 0) {
     	<td class="main_table_cell_heading_active"><strong>TLD</strong></td>
         <td class="main_table_cell_heading_active"><strong>Initial Fee</strong></td>
         <td class="main_table_cell_heading_active"><strong>Renewal Fee</strong></td>
+        <td class="main_table_cell_heading_active"><strong>Transfer Fee</strong></td>
         <td class="main_table_cell_heading_active"><strong>Currency</strong></td>
 	</tr>
 <?php
-$sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, c.currency 
+$sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, c.currency 
 		FROM fees AS f, currencies AS c
 		WHERE f.currency_id = c.id
 		  AND f.registrar_id = '$rid'
@@ -341,6 +349,14 @@ while ($row = mysql_fetch_object($result)) {
         <td class="main_table_cell_active">
 			<?php
 			$temp_input_amount = $row->renewal_fee;
+			$temp_input_conversion = "";
+			include("../_includes/system/convert-and-format-currency.inc.php");
+			echo $temp_output_amount;
+            ?>
+		</td>
+        <td class="main_table_cell_active">
+			<?php
+			$temp_input_amount = $row->transfer_fee;
 			$temp_input_conversion = "";
 			include("../_includes/system/convert-and-format-currency.inc.php");
 			echo $temp_output_amount;
