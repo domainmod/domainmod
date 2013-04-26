@@ -62,15 +62,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
-		$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
+		$_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
 
 		include("../_includes/system/update-ssl-fees.inc.php");
 		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
 	} else {
 	
-		if ($new_name == "") { $_SESSION['session_result_message'] .= "Enter a name for the SSL certificate<BR>"; }
-		if (!CheckDateFormat($new_expiry_date)) { $_SESSION['session_result_message'] .= "The expiry date you entered is invalid<BR>"; }
+		if ($new_name == "") { $_SESSION['result_message'] .= "Enter a name for the SSL certificate<BR>"; }
+		if (!CheckDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }
 
 	}
 

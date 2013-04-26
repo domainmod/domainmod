@@ -23,15 +23,15 @@
             <a href="<?=$web_root?>/domains.php"><img border="0" src="<?=$web_root?>/images/logo.png"></a>
         </div>
         <div class="header-right">
-            <?php if ($_SESSION['session_is_logged_in'] == 1) { ?>
-                <em>logged in as <strong><?=$_SESSION['session_username']?></strong> (<a class="subtlelink" href="<?=$web_root?>/system/update-profile.php"><?=$_SESSION['session_first_name']?> <?=$_SESSION['session_last_name']?></a>)</em>&nbsp;&nbsp;[ <a target="_blank" href="http://aysmedia.com/contact/">Help</a> ]&nbsp;&nbsp;[ <a href="<?=$web_root?>/logout.php">Logout</a> ]
+            <?php if ($_SESSION['is_logged_in'] == 1) { ?>
+                <em>logged in as <strong><?=$_SESSION['username']?></strong> (<a class="subtlelink" href="<?=$web_root?>/system/update-profile.php"><?=$_SESSION['first_name']?> <?=$_SESSION['last_name']?></a>)</em>&nbsp;&nbsp;[ <a target="_blank" href="http://aysmedia.com/contact/">Help</a> ]&nbsp;&nbsp;[ <a href="<?=$web_root?>/logout.php">Logout</a> ]
             <?php } ?>
         </div>
     </div>
 
     <div class="main-outer">
         <div class="main-menu">
-            <?php if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['session_running_login_checks'] != 1) { ?>
+            <?php if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['running_login_checks'] != 1) { ?>
             <?php include($full_server_path . "/_includes/layout/menu-main.inc.php"); ?><BR>
             <hr width="100%" size="1" noshade>
             <?php } ?>
@@ -43,8 +43,8 @@
                 include($full_server_path . "/_includes/layout/table-maintenance.inc.php"); 
             ?>
             <?php 
-            if ($_SESSION['session_result_message'] != "") {
+            if ($_SESSION['result_message'] != "") {
                 include($full_server_path . "/_includes/layout/table-result-message.inc.php"); 
-                unset($_SESSION['session_result_message']);
+                unset($_SESSION['result_message']);
             }
             ?>

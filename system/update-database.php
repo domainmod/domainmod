@@ -1480,11 +1480,11 @@ if ($current_db_version < $most_recent_db_version) {
 
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
-	$_SESSION['session_result_message'] .= "Database Updated<BR>";
+	$_SESSION['result_message'] .= "Database Updated<BR>";
 
 } else {
 
-	$_SESSION['session_result_message'] .= "Your database is already up-to-date<BR>";
+	$_SESSION['result_message'] .= "Your database is already up-to-date<BR>";
 	
 }
 

@@ -54,9 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	} else {
 
-		if (!CheckDateFormat($new_expiry_start)) $_SESSION['session_result_message'] .= "The start date is invalid<BR>";
-		if (!CheckDateFormat($new_expiry_end)) $_SESSION['session_result_message'] .= "The end date is invalid<BR>";
-		if ($new_expiry_start > $new_expiry_end) $_SESSION['session_result_message'] .= "The end date proceeds the start date<BR>";
+		if (!CheckDateFormat($new_expiry_start)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
+		if (!CheckDateFormat($new_expiry_end)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
+		if ($new_expiry_start > $new_expiry_end) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
 
 	}
 
@@ -68,7 +68,7 @@ if ($export == "1") {
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
-	$full_export .= "\"All fees are listed in " . $_SESSION['session_default_currency'] . "\"\n\n";
+	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
 
 	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Initial Fee\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"Owner\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Notes\"\n";
 
@@ -183,12 +183,12 @@ Before exporting your SSL Certificates you should <a href="system/update-convers
 <BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
-<?php if ($_SESSION['session_display_ssl_expiry_date'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Expiry Date</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_fee'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Fee</font>
     </td>
@@ -196,27 +196,27 @@ Before exporting your SSL Certificates you should <a href="system/update-convers
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Host / Label</font>
     </td>
-<?php if ($_SESSION['session_display_ssl_domain'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_domain'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Domain</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_provider'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_provider'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">SSL Provider</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_account'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">SSL Account</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Type</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Owner</font>
     </td>
@@ -228,12 +228,12 @@ $renewal_fee_individual = $row->renewal_fee * $row->conversion;
 $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual; 
 ?>
 <tr class="main_table_row_active">
-<?php if ($_SESSION['session_display_ssl_expiry_date'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->expiry_date?>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_fee'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?php
 		$temp_input_amount = $row->renewal_fee;
@@ -246,7 +246,7 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 	<td class="main_table_cell_active">
 		<?=$row->name?>
 	</td>
-<?php if ($_SESSION['session_display_ssl_domain'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_domain'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?php
 		$sql_domain = "SELECT d.domain, ip.name, ip.ip, ip.rdns
@@ -265,22 +265,22 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 		<?=$full_domain_name?>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_provider'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_provider'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->ssl_provider_name?>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_account'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->ssl_provider_name?> (<?=substr($row->username, 0, 15);?><?php if (strlen($row->username) >= 16) echo "..."; ?>)
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->type?>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->owner_name?>
     </td>
@@ -294,7 +294,7 @@ $temp_input_conversion = "";
 include("_includes/system/convert-and-format-currency.inc.php");
 $total_cost = $temp_output_amount;
 ?>
-<BR><strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['session_default_currency']?><BR>
+<BR><strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR>
 <?php } else { ?>
 <BR>The results that will be shown below will display the same columns as you have on your <a href="ssl-certs.php">SSL Certificates</a> page, but when you export the results you will be given even more information.<BR><BR>
 The full list of fields in the export is:<BR><BR>

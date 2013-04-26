@@ -59,9 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('" . mysql_real_escape_string($new_ssl_provider) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_provider', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
-		$_SESSION['session_result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Added<BR>";
+		$_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Added<BR>";
 		
-		if ($_SESSION['session_need_ssl_provider'] == "1") {
+		if ($_SESSION['need_ssl_provider'] == "1") {
 			
  			include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 			header("Location: ../ssl-certs.php");
@@ -75,8 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	} else {
 	
-		if ($new_ssl_provider == "") $_SESSION['session_result_message'] .= "Please enter the SSL provider's name<BR>";
-		if ($new_url == "") $_SESSION['session_result_message'] .= "Please enter the SSL provider's URL<BR>";
+		if ($new_ssl_provider == "") $_SESSION['result_message'] .= "Please enter the SSL provider's name<BR>";
+		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the SSL provider's URL<BR>";
 
 	}
 

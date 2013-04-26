@@ -74,9 +74,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result = mysql_query($sql,$connection);
 		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
 
-		$_SESSION['session_result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar, $temp_owner)</font> Added<BR>";
+		$_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar, $temp_owner)</font> Added<BR>";
 
-		if ($_SESSION['session_need_registrar_account'] == "1") {
+		if ($_SESSION['need_registrar_account'] == "1") {
 			
 			include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 			header("Location: ../domains.php");
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	} else {
 	
-		if ($username == "") { $_SESSION['session_result_message'] .= "Please enter a username<BR>"; }
+		if ($username == "") { $_SESSION['result_message'] .= "Please enter a username<BR>"; }
 
 	}
 

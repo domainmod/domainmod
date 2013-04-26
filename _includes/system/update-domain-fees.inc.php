@@ -66,8 +66,8 @@ $result_find_missing_domain_fees = mysql_query($sql_find_missing_domain_fees,$co
 while ($row_find_missing_domain_fees = mysql_fetch_object($result_find_missing_domain_fees)) { $total_results_find_missing_domain_fees = $row_find_missing_domain_fees->total_count; }
 
 if ($total_results_find_missing_domain_fees != 0) { 
-    $_SESSION['session_missing_domain_fees'] = 1; 
+    $_SESSION['missing_domain_fees'] = 1; 
 } else {
-    $_SESSION['session_missing_domain_fees'] = 0; 
+    $_SESSION['missing_domain_fees'] = 0; 
 }
 ?>

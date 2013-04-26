@@ -75,11 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$whid = $new_whid;
 		
-		$_SESSION['session_result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Updated<BR>";
+		$_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Updated<BR>";
 
 	} else {
 	
-		$_SESSION['session_result_message'] = "Please enter the web host name<BR>";
+		$_SESSION['result_message'] = "Please enter the web host name<BR>";
 
 	}
 
@@ -111,11 +111,11 @@ if ($del == "1") {
 	
 	if ($existing_domains > 0) {
 
-		$_SESSION['session_result_message'] = "This Web Host has domains associated with it and cannot be deleted<BR>";
+		$_SESSION['result_message'] = "This Web Host has domains associated with it and cannot be deleted<BR>";
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are you sure you want to delete this Web Host?<BR><BR><a href=\"$PHP_SELF?whid=$whid&really_del=1\">YES, REALLY DELETE THIS WEB HOST</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Web Host?<BR><BR><a href=\"$PHP_SELF?whid=$whid&really_del=1\">YES, REALLY DELETE THIS WEB HOST</a><BR>";
 
 	}
 
@@ -127,7 +127,7 @@ if ($really_del == "1") {
 			WHERE id = '$whid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Deleted<BR>";
+	$_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Deleted<BR>";
 	
 	header("Location: ../hosting.php");
 	exit;

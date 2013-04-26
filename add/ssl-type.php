@@ -58,14 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('" . mysql_real_escape_string($new_type) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_type', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Added<BR>";
+		$_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Added<BR>";
 		
 		header("Location: ../ssl-types.php");
 		exit;
 
 	} else {
 	
-		$_SESSION['session_result_message'] .= "Please enter the SSL Type<BR>";
+		$_SESSION['result_message'] .= "Please enter the SSL Type<BR>";
 
 	}
 

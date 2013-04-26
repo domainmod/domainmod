@@ -38,7 +38,7 @@ $software_section = "currencies";
 $sql = "SELECT id, currency, name, conversion, default_currency
 		FROM currencies
 		ORDER BY name asc";
-$result = mysql_query($sql,$connection);
+$result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 The below conversion rates are used for accounting and reporting purposes, and at the very least they should be updated before you export your domains or SSL certificates.<BR><BR>
 <strong>NOTE:</strong> Thanks to Yahoo! Finance's free API, rate conversions have now been automated! Simply <a href="system/update-conversion-rates.php">click here to update the conversion rates</a>.<BR><BR>
@@ -61,7 +61,7 @@ while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/currency.php?curid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_currency == 1) echo "<a title=\"Default Currency\"><font class=\"default_highlight\">*</font></a>"; ?>
-<?php if ($row->currency == $_SESSION['session_default_currency']) echo ""; ?>
+<?php if ($row->currency == $_SESSION['default_currency']) echo ""; ?>
 	</td>
     <td class="main_table_cell_active">
 		<?php echo "$row->currency"; ?>

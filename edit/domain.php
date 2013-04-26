@@ -105,15 +105,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$did = $new_did;
 		
-		$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Updated<BR>";
+		$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Updated<BR>";
 
 		include("../_includes/system/update-domain-fees.inc.php");
 		include("../_includes/system/update-segments.inc.php");
 
 	} else {
 	
-		if (!CheckDomainFormat($new_domain)) { $_SESSION['session_result_message'] .= "The domain format is incorrect<BR>"; }
-		if (!CheckDateFormat($new_expiry_date)) { $_SESSION['session_result_message'] .= "The expiry date you entered is invalid<BR>"; }
+		if (!CheckDomainFormat($new_domain)) { $_SESSION['result_message'] .= "The domain format is incorrect<BR>"; }
+		if (!CheckDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }
 
 	}
 
@@ -156,11 +156,11 @@ if ($del == "1") {
 	
 	if ($existing_ssl_certs > 0) {
 
-		$_SESSION['session_result_message'] = "This Domain has SSL Certificates associated with it and cannot be deleted<BR>";
+		$_SESSION['result_message'] = "This Domain has SSL Certificates associated with it and cannot be deleted<BR>";
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are you sure you want to delete this Domain?<BR><BR><a href=\"$PHP_SELF?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN ACCOUNT</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Domain?<BR><BR><a href=\"$PHP_SELF?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN ACCOUNT</a><BR>";
 
 	}
 
@@ -172,7 +172,7 @@ if ($really_del == "1") {
 			WHERE id = '$did'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Deleted<BR>";
+	$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Deleted<BR>";
 
 	include("../_includes/system/update-domain-fees.inc.php");
 	include("../_includes/system/update-segments.inc.php");

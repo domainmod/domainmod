@@ -46,11 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_rid == "" || $new_tld == "" || $new_initial_fee == "" || $new_renewal_fee == "" || $new_transfer_fee == "" || $new_currency_id == "" || $new_currency_id == "0") {
 		
-		if ($new_tld == "") $_SESSION['session_result_message'] .= "Please enter the TLD<BR>";
-		if ($new_initial_fee == "") $_SESSION['session_result_message'] .= "Please enter the initial fee<BR>";
-		if ($new_renewal_fee == "") $_SESSION['session_result_message'] .= "Please enter the renewal fee<BR>";
-		if ($new_transfer_fee == "") $_SESSION['session_result_message'] .= "Please enter the transfer fee<BR>";
-		if ($new_currency_id == "" || $new_currency_id == "0") $_SESSION['session_result_message'] .= "There was a problem with the currency you chose<BR>";
+		if ($new_tld == "") $_SESSION['result_message'] .= "Please enter the TLD<BR>";
+		if ($new_initial_fee == "") $_SESSION['result_message'] .= "Please enter the initial fee<BR>";
+		if ($new_renewal_fee == "") $_SESSION['result_message'] .= "Please enter the renewal fee<BR>";
+		if ($new_transfer_fee == "") $_SESSION['result_message'] .= "Please enter the transfer fee<BR>";
+		if ($new_currency_id == "" || $new_currency_id == "0") $_SESSION['result_message'] .= "There was a problem with the currency you chose<BR>";
 
 	} else {
 		
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 			$rid = $new_rid;
 
-			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been updated<BR>";
+			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been updated<BR>";
 			
 			header("Location: registrar-fees.php?rid=$new_rid");
 			exit;
@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					  AND tld = '$new_tld'";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
+			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
 			
 			header("Location: registrar-fees.php?rid=$new_rid");
 			exit;
@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 }
 if ($del == "1") {
-	$_SESSION['session_result_message'] = "Are you sure you want to delete this Registrar Fee?<BR><BR><a href=\"$PHP_SELF?rid=$rid&tld=$tld&feeid=$feeid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR FEE</a><BR>";
+	$_SESSION['result_message'] = "Are you sure you want to delete this Registrar Fee?<BR><BR><a href=\"$PHP_SELF?rid=$rid&tld=$tld&feeid=$feeid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR FEE</a><BR>";
 }
 
 if ($really_del == "1") {
@@ -158,7 +158,7 @@ if ($really_del == "1") {
 	
 	if (mysql_num_rows($result) == 0) {
 
-		$_SESSION['session_result_message'] = "The fee you're trying to delete doesn't exist<BR>";
+		$_SESSION['result_message'] = "The fee you're trying to delete doesn't exist<BR>";
 
 		header("Location: registrar-fees.php?rid=$rid");
 		exit;
@@ -179,7 +179,7 @@ if ($really_del == "1") {
 				  AND tld = '$tld'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
+		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
 
 		header("Location: registrar-fees.php?rid=$rid");
 		exit;

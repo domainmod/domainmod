@@ -44,7 +44,7 @@ $begin = $_REQUEST['begin'];
 $num = $_REQUEST['num'];
 
 if ($search_for == "Search Term") $search_for = "";
-if ($result_limit == "") $result_limit = $_SESSION['session_number_of_ssl_certs'];
+if ($result_limit == "") $result_limit = $_SESSION['number_of_ssl_certs'];
 if ($is_active == "") $is_active = "LIVE";
 
 //
@@ -204,7 +204,7 @@ if ($export == "1") {
 
 	$result = mysql_query($sql,$connection);
 
-	$full_export .= "\"All fees are listed in " . $_SESSION['session_default_currency'] . "\"\n\n";
+	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
 
 	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"Owner\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Notes\"\n";
 
@@ -293,22 +293,22 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 <body onLoad="document.forms[0].elements[8].focus()";>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-if ($_SESSION['session_need_ssl_provider'] == "1") {
+if ($_SESSION['need_ssl_provider'] == "1") {
 	echo "<strong><font class=\"highlight\">0</font></strong> SSL Providers found. Please <a href=\"add/ssl-provider.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
 
-if ($_SESSION['session_need_ssl_account'] == "1" && $_SESSION['session_need_ssl_provider'] != "1") {
+if ($_SESSION['need_ssl_account'] == "1" && $_SESSION['need_ssl_provider'] != "1") {
 	echo "<strong><font class=\"highlight\">0</font></strong> SSL Provider Accounts found. Please <a href=\"add/ssl-account.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
 
-if ($_SESSION['session_need_ssl_cert'] == "1" && $_SESSION['session_need_ssl_provider'] != "1" && $_SESSION['session_need_ssl_account'] != "1" && $_SESSION['session_need_domain'] == "0") {
+if ($_SESSION['need_ssl_cert'] == "1" && $_SESSION['need_ssl_provider'] != "1" && $_SESSION['need_ssl_account'] != "1" && $_SESSION['need_domain'] == "0") {
 	echo "<strong><font class=\"highlight\">0</font></strong> SSL Certificates. Please <a href=\"add/ssl-cert.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
 
-if ($_SESSION['session_need_domain'] == "1" && $_SESSION['session_need_ssl_provider'] == "0" && $_SESSION['session_need_ssl_account'] == "0") {
+if ($_SESSION['need_domain'] == "1" && $_SESSION['need_ssl_provider'] == "0" && $_SESSION['need_ssl_account'] == "0") {
 	echo "Before you can add an SSL Certificate you must have at least one domain stored in your $software_title. Please <a href=\"domains.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
@@ -600,8 +600,8 @@ echo "</select>";
 // NUMBER OF SSL CERTS TO DISPLAY
 echo "<select name=\"result_limit\" onChange=\"MM_jumpMenu('parent',this,0)\">"; 
 
-if ($_SESSION['session_number_of_ssl_certs'] != "10" && $_SESSION['session_number_of_ssl_certs'] != "50" && $_SESSION['session_number_of_ssl_certs'] != "100" && $_SESSION['session_number_of_ssl_certs'] != "500" && $_SESSION['session_number_of_ssl_certs'] != "1000" && $_SESSION['session_number_of_ssl_certs'] != "1000000") {
-	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=" . $_SESSION['session_number_of_ssl_certs'] . "&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == $_SESSION['session_number_of_ssl_certs']) echo " selected"; echo ">"; echo "" . $_SESSION['session_number_of_ssl_certs'] . "</option>";
+if ($_SESSION['number_of_ssl_certs'] != "10" && $_SESSION['number_of_ssl_certs'] != "50" && $_SESSION['number_of_ssl_certs'] != "100" && $_SESSION['number_of_ssl_certs'] != "500" && $_SESSION['number_of_ssl_certs'] != "1000" && $_SESSION['number_of_ssl_certs'] != "1000000") {
+	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=" . $_SESSION['number_of_ssl_certs'] . "&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == $_SESSION['number_of_ssl_certs']) echo " selected"; echo ">"; echo "" . $_SESSION['number_of_ssl_certs'] . "</option>";
 }
 
 echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=10&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "10") echo " selected"; echo ">"; echo "10</option>";
@@ -655,12 +655,12 @@ echo "</select>";
 <?php if ($totalrows != '0') { ?>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
-<?php if ($_SESSION['session_display_ssl_expiry_date'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ed_a") { echo "ed_d"; } else { echo "ed_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Expiry Date</font></a>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_fee'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sf_a") { echo "sf_d"; } else { echo "sf_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Fee</font></a>
 	</td>
@@ -668,27 +668,27 @@ echo "</select>";
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslc_a") { echo "sslc_d"; } else { echo "sslc_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Host / Label</font></a>
 	</td>
-<?php if ($_SESSION['session_display_ssl_domain'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_domain'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Domain</font></a>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_provider'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_provider'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslp_a") { echo "sslp_d"; } else { echo "sslp_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">SSL Provider</font></a>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_account'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslpa_a") { echo "sslpa_d"; } else { echo "sslpa_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">SSL Account</font></a>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslf_a") { echo "sslf_d"; } else { echo "sslf_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Type</font></a>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
 		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Owner</font></a>
 	</td>
@@ -696,12 +696,12 @@ echo "</select>";
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
-<?php if ($_SESSION['session_display_ssl_expiry_date'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->expiry_date?></a>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_fee'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?=$row->sslp_id?>">
 		<?php
@@ -725,27 +725,27 @@ echo "</select>";
 				}
 			?><a class="invisiblelink" href="edit/ssl-cert.php?sslcid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
-<?php if ($_SESSION['session_display_ssl_domain'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_domain'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/domain.php?did=<?=$row->domain_id?>"><?=$row->domain?></a>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_provider'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_provider'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_account'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a> (<a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpa_id?>"><?=substr($row->username, 0, 15);?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_type'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?=$row->type_id?>"><?=$row->type?></a>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_ssl_owner'] == "1") { ?>
+<?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
 	</td>

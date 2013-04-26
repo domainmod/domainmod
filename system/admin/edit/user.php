@@ -55,9 +55,9 @@ $result = mysql_query($sql,$connection);
 
 while ($row = mysql_fetch_object($result)) {
 	
-	if ($row->username == "admin" && $_SESSION['session_username'] != "admin") {
+	if ($row->username == "admin" && $_SESSION['username'] != "admin") {
 
-		$_SESSION['session_result_message'] .= "You're trying to edit an invalid user<BR>";
+		$_SESSION['result_message'] .= "You're trying to edit an invalid user<BR>";
 
 		header("Location: ../users.php");
 		exit;
@@ -111,13 +111,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 			WHERE id = '$new_uid'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-	$_SESSION['session_result_message'] .= "User <font class=\"highlight\">$new_first_name $new_last_name ($new_username)</font> Updated<BR>";
+	$_SESSION['result_message'] .= "User <font class=\"highlight\">$new_first_name $new_last_name ($new_username)</font> Updated<BR>";
 	
-	if ($_SESSION['session_username'] == $new_username) {
+	if ($_SESSION['username'] == $new_username) {
 	
-		$_SESSION['session_first_name'] = $new_first_name;
-		$_SESSION['session_last_name'] = $new_last_name;
-		$_SESSION['session_email_address'] = $new_email_address;
+		$_SESSION['first_name'] = $new_first_name;
+		$_SESSION['last_name'] = $new_last_name;
+		$_SESSION['email_address'] = $new_email_address;
 		
 	}
 	
@@ -125,10 +125,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
-		if ($invalid_username == 1 || $new_username == "") $_SESSION['session_result_message'] .= "You have entered an invalid username<BR>";
-		if ($new_first_name == "") $_SESSION['session_result_message'] .= "Enter the user's first name<BR>";
-		if ($new_last_name == "") $_SESSION['session_result_message'] .= "Enter the user's last name<BR>";
-		if ($new_email_address == "") $_SESSION['session_result_message'] .= "Enter the user's email address<BR>";
+		if ($invalid_username == 1 || $new_username == "") $_SESSION['result_message'] .= "You have entered an invalid username<BR>";
+		if ($new_first_name == "") $_SESSION['result_message'] .= "Enter the user's first name<BR>";
+		if ($new_last_name == "") $_SESSION['result_message'] .= "Enter the user's last name<BR>";
+		if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the user's email address<BR>";
 		
 	} else {
 		
@@ -152,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 }
 if ($del == "1") {
 
-	$_SESSION['session_result_message'] = "Are you sure you want to delete this User?<BR><BR><a href=\"$PHP_SELF?uid=$uid&really_del=1\">YES, REALLY DELETE THIS USER</a><BR>";
+	$_SESSION['result_message'] = "Are you sure you want to delete this User?<BR><BR><a href=\"$PHP_SELF?uid=$uid&really_del=1\">YES, REALLY DELETE THIS USER</a><BR>";
 
 }
 
@@ -166,7 +166,7 @@ if ($really_del == "1") {
 			WHERE user_id = '$uid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "User <font class=\"highlight\">$new_first_name $new_last_name ($new_username)</font> Deleted<BR>";
+	$_SESSION['result_message'] = "User <font class=\"highlight\">$new_first_name $new_last_name ($new_username)</font> Deleted<BR>";
 	
 	header("Location: ../users.php");
 	exit;

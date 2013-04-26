@@ -73,12 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$sslpid = $new_sslpid;
 
-		$_SESSION['session_result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Updated<BR>";
+		$_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Updated<BR>";
 		
 	} else {
 
-		if ($new_ssl_provider == "") $_SESSION['session_result_message'] .= "Please enter the SSL provider's name<BR>";
-		if ($new_url == "") $_SESSION['session_result_message'] .= "Please enter the SSL provider's URL<BR>";
+		if ($new_ssl_provider == "") $_SESSION['result_message'] .= "Please enter the SSL provider's name<BR>";
+		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the SSL provider's URL<BR>";
 
 	}
 
@@ -121,12 +121,12 @@ if ($del == "1") {
 
 	if ($existing_ssl_provider_accounts > 0 || $existing_ssl_certs > 0) {
 		
-		if ($existing_ssl_provider_accounts > 0) $_SESSION['session_result_message'] .= "This SSL Provider has Accounts associated with it and cannot be deleted<BR>";
-		if ($existing_ssl_certs > 0) $_SESSION['session_result_message'] .= "This SSL Provider has SSL Certificates associated with it and cannot be deleted<BR>";
+		if ($existing_ssl_provider_accounts > 0) $_SESSION['result_message'] .= "This SSL Provider has Accounts associated with it and cannot be deleted<BR>";
+		if ($existing_ssl_certs > 0) $_SESSION['result_message'] .= "This SSL Provider has SSL Certificates associated with it and cannot be deleted<BR>";
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are you sure you want to delete this SSL Provider?<BR><BR><a href=\"$PHP_SELF?sslpid=$sslpid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this SSL Provider?<BR><BR><a href=\"$PHP_SELF?sslpid=$sslpid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER</a><BR>";
 
 	}
 
@@ -146,7 +146,7 @@ if ($really_del == "1") {
 			WHERE id = '$sslpid'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
-	$_SESSION['session_result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Deleted<BR>";
+	$_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Deleted<BR>";
 
 	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	

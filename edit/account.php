@@ -96,11 +96,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result = mysql_query($sql,$connection);
 		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
 		
-		$_SESSION['session_result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar, $temp_owner)</font> Updated<BR>";
+		$_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar, $temp_owner)</font> Updated<BR>";
 
 	} else {
 	
-		if ($username == "") { $_SESSION['session_result_message'] .= "Please enter the username<BR>"; }
+		if ($username == "") { $_SESSION['result_message'] .= "Please enter the username<BR>"; }
 
 	}
 
@@ -137,11 +137,11 @@ if ($del == "1") {
 	
 	if ($existing_domains > 0) {
 
-		$_SESSION['session_result_message'] = "This Registrar Account has domains associated with it and cannot be deleted<BR>";
+		$_SESSION['result_message'] = "This Registrar Account has domains associated with it and cannot be deleted<BR>";
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are you sure you want to delete this Registrar Account?<BR><BR><a href=\"$PHP_SELF?raid=$raid&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR ACCOUNT</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Registrar Account?<BR><BR><a href=\"$PHP_SELF?raid=$raid&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR ACCOUNT</a><BR>";
 
 	}
 
@@ -166,7 +166,7 @@ if ($really_del == "1") {
 			WHERE id = '$raid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "Registrar Account <font class=\"highlight\">$temp_username ($temp_registrar_name, $temp_owner_name)</font> Deleted<BR>";
+	$_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$temp_username ($temp_registrar_name, $temp_owner_name)</font> Deleted<BR>";
 
 	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	

@@ -26,7 +26,7 @@ include("_includes/software.inc.php");
 include("_includes/auth/login-check.inc.php");
 include("_includes/system/installation-check.inc.php");
 
-if ($_SESSION['session_installation_mode'] == 1) {
+if ($_SESSION['installation_mode'] == 1) {
 	
 //	$page_title = "Installation";
 	$software_section = "installation";
@@ -54,13 +54,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 	   
 	   while ($row = mysql_fetch_object($result)) {
 
-			$_SESSION['session_user_id'] = $row->id;
-			$_SESSION['session_first_name'] = $row->first_name;
-			$_SESSION['session_last_name'] = $row->last_name;
-			$_SESSION['session_username'] = $row->username;
-			$_SESSION['session_email_address'] = $row->email_address;
-			if ($row->admin == 1) $_SESSION['session_is_admin'] = 1;
-			$_SESSION['session_is_logged_in'] = 1;
+			$_SESSION['user_id'] = $row->id;
+			$_SESSION['first_name'] = $row->first_name;
+			$_SESSION['last_name'] = $row->last_name;
+			$_SESSION['username'] = $row->username;
+			$_SESSION['email_address'] = $row->email_address;
+			if ($row->admin == 1) $_SESSION['is_admin'] = 1;
+			$_SESSION['is_logged_in'] = 1;
 			
 			$sql_settings = "SELECT *
 							 FROM settings";
@@ -68,40 +68,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			
 			while ($row_settings = mysql_fetch_object($result_settings)) {
 				
-				$_SESSION['session_system_full_url'] = $row_settings->full_url;
-				$_SESSION['session_system_db_version'] = $row_settings->db_version;
-				$_SESSION['session_system_email_address'] = $row_settings->email_address;
-				$_SESSION['session_system_timezone'] = $row_settings->timezone;
-				$_SESSION['session_system_expiration_email_days'] = $row_settings->expiration_email_days;
+				$_SESSION['system_full_url'] = $row_settings->full_url;
+				$_SESSION['system_db_version'] = $row_settings->db_version;
+				$_SESSION['system_email_address'] = $row_settings->email_address;
+				$_SESSION['system_timezone'] = $row_settings->timezone;
+				$_SESSION['system_expiration_email_days'] = $row_settings->expiration_email_days;
 
 			}
 
 			$sql_user_settings = "SELECT *
 								  FROM user_settings
-								  WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
+								  WHERE user_id = '" . $_SESSION['user_id'] . "'";
 			$result_user_settings = mysql_query($sql_user_settings,$connection);
 
 			while ($row_user_settings = mysql_fetch_object($result_user_settings)) {
-				$_SESSION['session_number_of_domains'] = $row_user_settings->number_of_domains;
-				$_SESSION['session_number_of_ssl_certs'] = $row_user_settings->number_of_ssl_certs;
-				$_SESSION['session_display_domain_owner'] = $row_user_settings->display_domain_owner;
-				$_SESSION['session_display_domain_registrar'] = $row_user_settings->display_domain_registrar;
-				$_SESSION['session_display_domain_account'] = $row_user_settings->display_domain_account;
-				$_SESSION['session_display_domain_expiry_date'] = $row_user_settings->display_domain_expiry_date;
-				$_SESSION['session_display_domain_category'] = $row_user_settings->display_domain_category;
-				$_SESSION['session_display_domain_dns'] = $row_user_settings->display_domain_dns;
-				$_SESSION['session_display_domain_host'] = $row_user_settings->display_domain_host;
-				$_SESSION['session_display_domain_ip'] = $row_user_settings->display_domain_ip;
-				$_SESSION['session_display_domain_host'] = $row_user_settings->display_domain_host;
-				$_SESSION['session_display_domain_tld'] = $row_user_settings->display_domain_tld;
-				$_SESSION['session_display_domain_fee'] = $row_user_settings->display_domain_fee;
-				$_SESSION['session_display_ssl_owner'] = $row_user_settings->display_ssl_owner;
-				$_SESSION['session_display_ssl_provider'] = $row_user_settings->display_ssl_provider;
-				$_SESSION['session_display_ssl_account'] = $row_user_settings->display_ssl_account;
-				$_SESSION['session_display_ssl_domain'] = $row_user_settings->display_ssl_domain;
-				$_SESSION['session_display_ssl_type'] = $row_user_settings->display_ssl_type;
-				$_SESSION['session_display_ssl_expiry_date'] = $row_user_settings->display_ssl_expiry_date;
-				$_SESSION['session_display_ssl_fee'] = $row_user_settings->display_ssl_fee;
+				$_SESSION['number_of_domains'] = $row_user_settings->number_of_domains;
+				$_SESSION['number_of_ssl_certs'] = $row_user_settings->number_of_ssl_certs;
+				$_SESSION['display_domain_owner'] = $row_user_settings->display_domain_owner;
+				$_SESSION['display_domain_registrar'] = $row_user_settings->display_domain_registrar;
+				$_SESSION['display_domain_account'] = $row_user_settings->display_domain_account;
+				$_SESSION['display_domain_expiry_date'] = $row_user_settings->display_domain_expiry_date;
+				$_SESSION['display_domain_category'] = $row_user_settings->display_domain_category;
+				$_SESSION['display_domain_dns'] = $row_user_settings->display_domain_dns;
+				$_SESSION['display_domain_host'] = $row_user_settings->display_domain_host;
+				$_SESSION['display_domain_ip'] = $row_user_settings->display_domain_ip;
+				$_SESSION['display_domain_host'] = $row_user_settings->display_domain_host;
+				$_SESSION['display_domain_tld'] = $row_user_settings->display_domain_tld;
+				$_SESSION['display_domain_fee'] = $row_user_settings->display_domain_fee;
+				$_SESSION['display_ssl_owner'] = $row_user_settings->display_ssl_owner;
+				$_SESSION['display_ssl_provider'] = $row_user_settings->display_ssl_provider;
+				$_SESSION['display_ssl_account'] = $row_user_settings->display_ssl_account;
+				$_SESSION['display_ssl_domain'] = $row_user_settings->display_ssl_domain;
+				$_SESSION['display_ssl_type'] = $row_user_settings->display_ssl_type;
+				$_SESSION['display_ssl_expiry_date'] = $row_user_settings->display_ssl_expiry_date;
+				$_SESSION['display_ssl_fee'] = $row_user_settings->display_ssl_fee;
 			}
 
 			$sql_currencies = "SELECT name, currency
@@ -112,8 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			$result_currencies = mysql_query($sql_currencies,$connection);
 
 			while ($row_currencies = mysql_fetch_object($result_currencies)) {
-				$_SESSION['session_default_currency_name'] = $row_currencies->name;
-				$_SESSION['session_default_currency'] = $row_currencies->currency;
+				$_SESSION['default_currency_name'] = $row_currencies->name;
+				$_SESSION['default_currency'] = $row_currencies->currency;
 			}
 
 			include("_includes/system/update-domain-fees.inc.php");
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Login Failed<BR>";
+		$_SESSION['result_message'] = "Login Failed<BR>";
 	   
    }
 	
@@ -138,12 +138,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
 		if ($new_username == "" && $new_password == "") {
 
-			$_SESSION['session_result_message'] .= "Enter your username & password<BR>";
+			$_SESSION['result_message'] .= "Enter your username & password<BR>";
 
 		} elseif ($new_username == "" || $new_password == "") {
 
-			if ($new_username == "") $_SESSION['session_result_message'] .= "Enter your username<BR>";
-			if ($new_password == "") $_SESSION['session_result_message'] .= "Enter your password<BR>";
+			if ($new_username == "") $_SESSION['result_message'] .= "Enter your username<BR>";
+			if ($new_password == "") $_SESSION['result_message'] .= "Enter your password<BR>";
 
 		}
 	}
@@ -169,7 +169,7 @@ if ($new_username == "") { ?>
 } ?>
 <?php include("_includes/header-login.inc.php"); ?>
 <?php 
-if ($_SESSION['session_installation_mode'] != 1) { ?>
+if ($_SESSION['installation_mode'] != 1) { ?>
 <BR><form name="login_form" method="post" action="<?=$PHP_SELF?>">
     <div class="login_form">
 		<?php

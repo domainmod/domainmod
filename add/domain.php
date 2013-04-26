@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
-		$_SESSION['session_result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
+		$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
 
 		include("../_includes/system/update-domain-fees.inc.php");
 		include("../_includes/system/update-segments.inc.php");
@@ -77,8 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	} else {
 	
-		if (!CheckDomainFormat($new_domain)) { $_SESSION['session_result_message'] .= "The domain format is incorrect<BR>"; }
-		if (!CheckDateFormat($new_expiry_date)) { $_SESSION['session_result_message'] .= "The expiry date you entered is invalid<BR>"; }
+		if (!CheckDomainFormat($new_domain)) { $_SESSION['result_message'] .= "The domain format is incorrect<BR>"; }
+		if (!CheckDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }
 
 	}
 

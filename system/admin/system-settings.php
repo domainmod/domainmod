@@ -47,12 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 				update_time = '$current_timestamp'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
-	$_SESSION['session_system_full_url'] = $new_full_url;
-	$_SESSION['session_system_email_address'] = $new_email_address;
-	$_SESSION['session_system_timezone'] = $new_timezone;
-	$_SESSION['session_system_expiration_email_days'] = $new_expiration_email_days;
+	$_SESSION['system_full_url'] = $new_full_url;
+	$_SESSION['system_email_address'] = $new_email_address;
+	$_SESSION['system_timezone'] = $new_timezone;
+	$_SESSION['system_expiration_email_days'] = $new_expiration_email_days;
 	
-	$_SESSION['session_result_message'] = "The System Settings were updated<BR><BR>";
+	$_SESSION['result_message'] = "The System Settings were updated<BR><BR>";
 	
 	header("Location: ../index.php");
 	exit;
@@ -62,9 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
-		if ($new_email_address == "") $_SESSION['session_result_message'] .= "Enter the system email address<BR>";
-		if ($new_full_url == "") $_SESSION['session_result_message'] .= "Enter the full URL of your " . $software_title . " installation<BR>";
-		if ($new_expiration_email_days == "") $_SESSION['session_result_message'] .= "Enter the number of days to display in expiration emails<BR>";
+		if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the system email address<BR>";
+		if ($new_full_url == "") $_SESSION['result_message'] .= "Enter the full URL of your " . $software_title . " installation<BR>";
+		if ($new_expiration_email_days == "") $_SESSION['result_message'] .= "Enter the number of days to display in expiration emails<BR>";
 		
 	} else {
 		
@@ -115,7 +115,7 @@ $sql = "SELECT timezone
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->timezone?>"<?php if ($_SESSION['session_system_timezone'] == "$row->timezone") echo " selected"; ?>><?=$row->timezone?></option>
+	<option value="<?=$row->timezone?>"<?php if ($_SESSION['system_timezone'] == "$row->timezone") echo " selected"; ?>><?=$row->timezone?></option>
     <?php
 }
 ?>

@@ -131,13 +131,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$dnsid = $new_dnsid;
 		
-		$_SESSION['session_result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Updated<BR>";
+		$_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Updated<BR>";
 
 	} else {
 	
-		if ($new_name == "") $_SESSION['session_result_message'] .= "Please enter a name for the DNS profile<BR>";
-		if ($new_dns1 == "") $_SESSION['session_result_message'] .= "Please enter the first DNS server<BR>";
-		if ($new_dns2 == "") $_SESSION['session_result_message'] .= "Please enter the second DNS server<BR>";
+		if ($new_name == "") $_SESSION['result_message'] .= "Please enter a name for the DNS profile<BR>";
+		if ($new_dns1 == "") $_SESSION['result_message'] .= "Please enter the first DNS server<BR>";
+		if ($new_dns2 == "") $_SESSION['result_message'] .= "Please enter the second DNS server<BR>";
 
 	}
 
@@ -190,11 +190,11 @@ if ($del == "1") {
 	
 	if ($existing_domains > 0) {
 
-		$_SESSION['session_result_message'] = "This DNS Profile has domains associated with it and cannot be deleted<BR>";
+		$_SESSION['result_message'] = "This DNS Profile has domains associated with it and cannot be deleted<BR>";
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are you sure you want to delete this DNS Profile?<BR><BR><a href=\"$PHP_SELF?dnsid=$dnsid&really_del=1\">YES, REALLY DELETE THIS DNS PROFILE</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this DNS Profile?<BR><BR><a href=\"$PHP_SELF?dnsid=$dnsid&really_del=1\">YES, REALLY DELETE THIS DNS PROFILE</a><BR>";
 
 	}
 
@@ -206,7 +206,7 @@ if ($really_del == "1") {
 			WHERE id = '$dnsid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Deleted<BR>";
+	$_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Deleted<BR>";
 	
 	header("Location: ../dns.php");
 	exit;

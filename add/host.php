@@ -58,14 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('" . mysql_real_escape_string($new_host) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_host', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Added<BR>";
+		$_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Added<BR>";
 		
 		header("Location: ../hosting.php");
 		exit;
 
 	} else {
 	
-		$_SESSION['session_result_message'] .= "Please enter the web host name<BR>";
+		$_SESSION['result_message'] .= "Please enter the web host name<BR>";
 
 	}
 

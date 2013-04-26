@@ -37,9 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		if ((!CheckDateFormat($new_start_date) || !CheckDateFormat($new_end_date)) || $new_start_date > $new_end_date) { 
 
-			if (!CheckDateFormat($new_start_date)) $_SESSION['session_result_message'] .= "The starting date is invalid<BR>";
-			if (!CheckDateFormat($new_end_date)) $_SESSION['session_result_message'] .= "The ending date is invalid<BR>";
-			if ($new_start_date > $new_end_date) $_SESSION['session_result_message'] .= "The ending date proceeds the starting date<BR>";
+			if (!CheckDateFormat($new_start_date)) $_SESSION['result_message'] .= "The starting date is invalid<BR>";
+			if (!CheckDateFormat($new_end_date)) $_SESSION['result_message'] .= "The ending date is invalid<BR>";
+			if ($new_start_date > $new_end_date) $_SESSION['result_message'] .= "The ending date proceeds the starting date<BR>";
 
 			$submission_failed = "1";
 
@@ -74,7 +74,7 @@ if ($submission_failed != "1" && mysql_num_rows($result) > 0) {
 	if ($export == "1") {
 
 		$full_export = "";
-		$full_export .= "\"All fees are listed in " . $_SESSION['session_default_currency'] . "\"\n\n";
+		$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
 		$full_export .= "\"Year\",\"Month\",\"Cost\",\"By Year\"\n";
 	
 		$new_year = "";
@@ -215,7 +215,7 @@ Before running any reports you should <a href="../../system/update-conversion-ra
 if ($submission_failed != "1" && mysql_num_rows($result) > 0) { ?>
 
 	<BR>
-    All fees are listed in <strong><?=$_SESSION['session_default_currency']?></strong>.
+    All fees are listed in <strong><?=$_SESSION['default_currency']?></strong>.
     <BR><BR>
     <table class="main_table">
     <tr class="main_table_row_heading_active">

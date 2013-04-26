@@ -75,11 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$ssltid = $new_ssltid;
 		
-		$_SESSION['session_result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Updated<BR>";
+		$_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Updated<BR>";
 
 	} else {
 	
-		$_SESSION['session_result_message'] = "Please enter the Type name<BR>";
+		$_SESSION['result_message'] = "Please enter the Type name<BR>";
 
 	}
 
@@ -112,11 +112,11 @@ if ($del == "1") {
 	
 	if ($existing_ssl_cert > 0) {
 
-		$_SESSION['session_result_message'] = "This Type has SSL certificates associated with it and cannot be deleted<BR>";
+		$_SESSION['result_message'] = "This Type has SSL certificates associated with it and cannot be deleted<BR>";
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are you sure you want to delete this SSL Type?<BR><BR><a href=\"$PHP_SELF?ssltid=$ssltid&really_del=1\">YES, REALLY DELETE THIS TYPE</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this SSL Type?<BR><BR><a href=\"$PHP_SELF?ssltid=$ssltid&really_del=1\">YES, REALLY DELETE THIS TYPE</a><BR>";
 
 	}
 
@@ -128,7 +128,7 @@ if ($really_del == "1") {
 			WHERE id = '$ssltid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Deleted<BR>";
+	$_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Deleted<BR>";
 	
 	header("Location: ../ssl-types.php");
 	exit;

@@ -19,7 +19,7 @@
 <?php 
 if ($software_section == "domains") {
 
-	if ($_SESSION['session_need_registrar'] != "1" && $_SESSION['session_need_registrar_account'] != "1") { ?>
+	if ($_SESSION['need_registrar'] != "1" && $_SESSION['need_registrar_account'] != "1") { ?>
     	&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/domain.php">Add A New Domain</a><?php 
 	} 
 	
@@ -29,13 +29,13 @@ if ($software_section == "domains") {
 
 } elseif ($software_section == "ssl-accounts") {
 
-	if ($_SESSION['session_need_ssl_provider'] != "1") { ?>
+	if ($_SESSION['need_ssl_provider'] != "1") { ?>
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-account.php">Add A New SSL Account</a><?php 
 	} 
 	
 } elseif ($software_section == "ssl-certs") {
 	
-	if ($_SESSION['session_need_ssl_provider'] != "1" && $_SESSION['session_need_ssl_account'] != "1" && $_SESSION['session_need_domain'] != "1") { ?>
+	if ($_SESSION['need_ssl_provider'] != "1" && $_SESSION['need_ssl_account'] != "1" && $_SESSION['need_domain'] != "1") { ?>
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-cert.php">Add A New SSL Certificate</a><?php 
 	}
 
@@ -65,7 +65,7 @@ if ($software_section == "domains") {
 
 } elseif ($software_section == "accounts") {
 	
-	if ($_SESSION['session_need_registrar'] != "1") { ?>
+	if ($_SESSION['need_registrar'] != "1") { ?>
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/account.php">Add A New Registrar Account</a><?php 
 	}
 	

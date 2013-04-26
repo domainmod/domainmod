@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License along with Domain Manager. If not, please 
 // see http://www.gnu.org/licenses/
 ?>
-<?php if ($_SESSION['session_needs_database_upgrade'] == 1) { ?>
+<?php if ($_SESSION['needs_database_upgrade'] == 1) { ?>
 <div class="maintenance_warning_outer">
 	<div class="maintenance_warning_inner">
         <strong>Database Upgrade Available! (clear up the below issues to make this table disappear)</strong><BR><BR>
@@ -24,14 +24,14 @@
     </div>
 </div>
 <?php } ?>
-<?php if ($_SESSION['session_missing_domain_fees'] == 1 || $_SESSION['session_missing_ssl_fees'] == 1) { ?>
+<?php if ($_SESSION['missing_domain_fees'] == 1 || $_SESSION['missing_ssl_fees'] == 1) { ?>
 <div class="maintenance_warning_outer">
 	<div class="maintenance_warning_inner">
         <strong>Maintenance Warning! (clear up the below issues to make this table disappear)</strong><BR><BR>
-        <?php if ($_SESSION['session_missing_domain_fees'] == 1) { ?>
+        <?php if ($_SESSION['missing_domain_fees'] == 1) { ?>
 		        <LI>Some of your Registrars/TLDs are missing domain fees. <a href="<?=$web_root?>/missing-domain-fees.php">Click here to fix this</a>.</LI>
         <?php } ?>
-        <?php if ($_SESSION['session_missing_ssl_fees'] == 1) { ?>
+        <?php if ($_SESSION['missing_ssl_fees'] == 1) { ?>
 		        <LI>Some of your SSL Certificates are missing fees. <a href="<?=$web_root?>/missing-ssl-fees.php">Click here to fix this</a>.</LI>
         <?php } ?>
     </div>

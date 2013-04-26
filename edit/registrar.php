@@ -73,12 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$rid = $new_rid;
 
-		$_SESSION['session_result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Updated<BR>";
+		$_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Updated<BR>";
 		
 	} else {
 
-		if ($new_registrar == "") $_SESSION['session_result_message'] .= "Please enter the registrar name<BR>";
-		if ($new_url == "") $_SESSION['session_result_message'] .= "Please enter the registrar's URL<BR>";
+		if ($new_registrar == "") $_SESSION['result_message'] .= "Please enter the registrar name<BR>";
+		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the registrar's URL<BR>";
 
 	}
 
@@ -121,12 +121,12 @@ if ($del == "1") {
 
 	if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
 		
-		if ($existing_registrar_accounts > 0) $_SESSION['session_result_message'] .= "This Registrar has Registrar Accounts associated with it and cannot be deleted<BR>";
-		if ($existing_domains > 0) $_SESSION['session_result_message'] .= "This Registrar has domains associated with it and cannot be deleted<BR>";
+		if ($existing_registrar_accounts > 0) $_SESSION['result_message'] .= "This Registrar has Registrar Accounts associated with it and cannot be deleted<BR>";
+		if ($existing_domains > 0) $_SESSION['result_message'] .= "This Registrar has domains associated with it and cannot be deleted<BR>";
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are you sure you want to delete this Registrar?<BR><BR><a href=\"$PHP_SELF?rid=$rid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Registrar?<BR><BR><a href=\"$PHP_SELF?rid=$rid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
 
 	}
 
@@ -146,7 +146,7 @@ if ($really_del == "1") {
 			WHERE id = '$rid'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
-	$_SESSION['session_result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Deleted<BR>";
+	$_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Deleted<BR>";
 
 	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	

@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_data == "") {
 
-		$_SESSION['session_result_message'] = "Please enter the list of domains to apply the action to<BR>";
+		$_SESSION['result_message'] = "Please enter the list of domains to apply the action to<BR>";
 
 	} else {
 
@@ -80,26 +80,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 				if ($invalid_domain_count == 1) {
 
-					$_SESSION['session_result_message'] = "There is " . number_format($invalid_domain_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
+					$_SESSION['result_message'] = "There is " . number_format($invalid_domain_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
 
 				} else {
 
-					$_SESSION['session_result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
+					$_SESSION['result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
 
 					if (($invalid_domain_count-$invalid_domains_to_display) == 1) { 
 	
-						$_SESSION['session_result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " other<BR>";
+						$_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " other<BR>";
 	
 					} elseif (($invalid_domain_count-$invalid_domains_to_display) > 1) { 
 	
-						$_SESSION['session_result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
+						$_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
 					}
 
 				}
 	
 			} else {
 
-				$_SESSION['session_result_message'] = "Please enter the list of domains to apply the action to<BR>";
+				$_SESSION['result_message'] = "Please enter the list of domains to apply the action to<BR>";
 	
 			}
 			$submission_failed = 1;
@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				}
 
-				$_SESSION['session_result_message'] = "Domains Renewed<BR>";
+				$_SESSION['result_message'] = "Domains Renewed<BR>";
 
 				include("_includes/system/update-segments.inc.php");
 	
@@ -164,12 +164,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 				if (!CheckDateFormat($new_expiry_date) || $new_pcid == "" || $new_dnsid == "" || $new_ipid == "" || $new_whid == "" || $new_raid == "" || $new_pcid == "0" || $new_dnsid == "0" || $new_ipid == "0" || $new_whid == "0" || $new_raid == "0") {
 	
-					if (!CheckDateFormat($new_expiry_date)) $_SESSION['session_result_message'] .= "You have entered an invalid expiry date<BR>";
-					if ($new_pcid == "" || $new_pcid == "0") $_SESSION['session_result_message'] .= "Please choose the new Category<BR>";
-					if ($new_dnsid == "" || $new_dnsid == "0") $_SESSION['session_result_message'] .= "Please choose the new DNS Profile<BR>";
-					if ($new_ipid == "" || $new_ipid == "0") $_SESSION['session_result_message'] .= "Please choose the new IP Address<BR>";
-					if ($new_whid == "" || $new_whid == "0") $_SESSION['session_result_message'] .= "Please choose the new Web Hosting Provider<BR>";
-					if ($new_raid == "" || $new_raid == "0") $_SESSION['session_result_message'] .= "Please choose the new Registrar Account<BR>";
+					if (!CheckDateFormat($new_expiry_date)) $_SESSION['result_message'] .= "You have entered an invalid expiry date<BR>";
+					if ($new_pcid == "" || $new_pcid == "0") $_SESSION['result_message'] .= "Please choose the new Category<BR>";
+					if ($new_dnsid == "" || $new_dnsid == "0") $_SESSION['result_message'] .= "Please choose the new DNS Profile<BR>";
+					if ($new_ipid == "" || $new_ipid == "0") $_SESSION['result_message'] .= "Please choose the new IP Address<BR>";
+					if ($new_whid == "" || $new_whid == "0") $_SESSION['result_message'] .= "Please choose the new Web Hosting Provider<BR>";
+					if ($new_raid == "" || $new_raid == "0") $_SESSION['result_message'] .= "Please choose the new Registrar Account<BR>";
 					$submission_failed = 1;
 				
 				} else {
@@ -213,7 +213,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					// finish cycling through domains here
 					}
 
-					$_SESSION['session_result_message'] = "Domains Added<BR>";
+					$_SESSION['result_message'] = "Domains Added<BR>";
 
 					include("_includes/system/update-domain-fees.inc.php");
 					include("_includes/system/update-segments.inc.php");
@@ -269,13 +269,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 				include("_includes/system/update-segments.inc.php");
 
-				$_SESSION['session_result_message'] = "Domains Fully Renewed<BR>";
+				$_SESSION['result_message'] = "Domains Fully Renewed<BR>";
 				
 			} elseif ($action == "CPC") { 
 			
 				if ($new_pcid == "" || $new_pcid == 0) {
 	
-					$_SESSION['session_result_message'] = "Please choose the new Category<BR>";
+					$_SESSION['result_message'] = "Please choose the new Category<BR>";
 					$submission_failed = 1;
 	
 				} else {
@@ -298,7 +298,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					}
 					$result = mysql_query($sql,$connection) or die(mysql_error());
 					
-					$_SESSION['session_result_message'] = "Category Changed<BR>";
+					$_SESSION['result_message'] = "Category Changed<BR>";
 	
 				}
 	
@@ -306,7 +306,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 				if ($new_dnsid == "" || $new_dnsid == 0) {
 	
-					$_SESSION['session_result_message'] = "Please choose the new DNS Profile<BR>";
+					$_SESSION['result_message'] = "Please choose the new DNS Profile<BR>";
 					$submission_failed = 1;
 	
 				} else {
@@ -329,14 +329,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					}
 					$result = mysql_query($sql,$connection) or die(mysql_error());
 					
-					$_SESSION['session_result_message'] = "DNS Profile Changed<BR>";
+					$_SESSION['result_message'] = "DNS Profile Changed<BR>";
 				}
 	
 			} elseif ($action == "CIP") {
 	
 				if ($new_ipid == "" || $new_ipid == 0) {
 	
-					$_SESSION['session_result_message'] = "Please choose the new IP Address<BR>";
+					$_SESSION['result_message'] = "Please choose the new IP Address<BR>";
 					$submission_failed = 1;
 	
 				} else {
@@ -359,7 +359,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					}
 					$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-					$_SESSION['session_result_message'] = "IP Address Changed<BR>";
+					$_SESSION['result_message'] = "IP Address Changed<BR>";
 	
 				}
 	
@@ -367,7 +367,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				if ($new_notes == "") {
 	
-					$_SESSION['session_result_message'] = "Please enter the new Note<BR>";
+					$_SESSION['result_message'] = "Please enter the new Note<BR>";
 					$submission_failed = 1;
 	
 				} else {
@@ -378,7 +378,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								   WHERE domain IN ($new_data_formatted)";
 					$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 					
-					$_SESSION['session_result_message'] = "Note Added<BR>";
+					$_SESSION['result_message'] = "Note Added<BR>";
 	
 				}
 
@@ -386,7 +386,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 				if ($new_raid == "" || $new_raid == 0) {
 	
-					$_SESSION['session_result_message'] = "Please choose the new Registrar Account<BR>";
+					$_SESSION['result_message'] = "Please choose the new Registrar Account<BR>";
 					$submission_failed = 1;
 	
 				} else {
@@ -431,7 +431,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					}
 					$result = mysql_query($sql,$connection) or die(mysql_error());
 					
-					$_SESSION['session_result_message'] = "Registrar Account Changed<BR>";
+					$_SESSION['result_message'] = "Registrar Account Changed<BR>";
 
 					include("_includes/system/update-domain-fees.inc.php");
 	
@@ -441,7 +441,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 				if ($new_whid == "" || $new_whid == 0) {
 	
-					$_SESSION['session_result_message'] = "Please choose the new Web Hosting Provider<BR>";
+					$_SESSION['result_message'] = "Please choose the new Web Hosting Provider<BR>";
 					$submission_failed = 1;
 	
 				} else {
@@ -464,7 +464,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					}
 					$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-					$_SESSION['session_result_message'] = "Web Hosting Provider Changed<BR>";
+					$_SESSION['result_message'] = "Web Hosting Provider Changed<BR>";
 	
 				}
 
@@ -488,7 +488,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
-				$_SESSION['session_result_message'] = "Domains marked as expired<BR>";
+				$_SESSION['result_message'] = "Domains marked as expired<BR>";
 
 				include("_includes/system/update-domain-fees.inc.php");
 				include("_includes/system/update-segments.inc.php");
@@ -513,7 +513,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
-				$_SESSION['session_result_message'] = "Domains marked as sold<BR>";
+				$_SESSION['result_message'] = "Domains marked as sold<BR>";
 
 				include("_includes/system/update-domain-fees.inc.php");
 				include("_includes/system/update-segments.inc.php");
@@ -538,7 +538,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
-				$_SESSION['session_result_message'] = "Domains marked as active<BR>";
+				$_SESSION['result_message'] = "Domains marked as active<BR>";
 
 				include("_includes/system/update-domain-fees.inc.php");
 				include("_includes/system/update-segments.inc.php");
@@ -563,7 +563,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
-				$_SESSION['session_result_message'] = "Domains marked as 'In Transfer'<BR>";
+				$_SESSION['result_message'] = "Domains marked as 'In Transfer'<BR>";
 
 				include("_includes/system/update-domain-fees.inc.php");
 				include("_includes/system/update-segments.inc.php");
@@ -588,7 +588,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
-				$_SESSION['session_result_message'] = "Domains marked as 'Pending (Registration)'<BR>";
+				$_SESSION['result_message'] = "Domains marked as 'Pending (Registration)'<BR>";
 
 				include("_includes/system/update-domain-fees.inc.php");
 				include("_includes/system/update-segments.inc.php");
@@ -613,7 +613,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
-				$_SESSION['session_result_message'] = "Domains marked as 'Pending (Renewal)'<BR>";
+				$_SESSION['result_message'] = "Domains marked as 'Pending (Renewal)'<BR>";
 
 				include("_includes/system/update-domain-fees.inc.php");
 				include("_includes/system/update-segments.inc.php");
@@ -638,7 +638,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
-				$_SESSION['session_result_message'] = "Domains marked as 'Pending (Other)'<BR>";
+				$_SESSION['result_message'] = "Domains marked as 'Pending (Other)'<BR>";
 
 				include("_includes/system/update-domain-fees.inc.php");
 				include("_includes/system/update-segments.inc.php");
@@ -663,7 +663,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
-				$_SESSION['session_result_message'] = "Domains marked as 'Private WHOIS'<BR>";
+				$_SESSION['result_message'] = "Domains marked as 'Private WHOIS'<BR>";
 
 				include("_includes/system/update-domain-fees.inc.php");
 				include("_includes/system/update-segments.inc.php");
@@ -688,13 +688,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
-				$_SESSION['session_result_message'] = "Domains marked as 'Public WHOIS'<BR>";
+				$_SESSION['result_message'] = "Domains marked as 'Public WHOIS'<BR>";
 	
 			} elseif ($action == "CED") { 
 	
 				if (!CheckDateFormat($new_expiry_date)) {
 	
-					$_SESSION['session_result_message'] = "The expiry date you entered is invalid<BR>";
+					$_SESSION['result_message'] = "The expiry date you entered is invalid<BR>";
 					$submission_failed = 1;
 	
 				} else {
@@ -717,7 +717,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					}
 					$result = mysql_query($sql,$connection) or die(mysql_error());
 					
-					$_SESSION['session_result_message'] = "Expiry Date Updated<BR>";
+					$_SESSION['result_message'] = "Expiry Date Updated<BR>";
 	
 				}
 	

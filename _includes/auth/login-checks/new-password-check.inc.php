@@ -20,15 +20,15 @@ include("../../database.inc.php");
 
 $sql = "SELECT new_password 
 		FROM users
-		WHERE id = '" . $_SESSION['session_user_id'] . "' 
-		  AND email_address = '" . $_SESSION['session_email_address'] . "'";
+		WHERE id = '" . $_SESSION['user_id'] . "' 
+		  AND email_address = '" . $_SESSION['email_address'] . "'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) { $is_it_a_new_password = $row->new_password; }
 
 if ($is_it_a_new_password == 1) {
 
-	$_SESSION['session_result_message'] = "Since your password was recently generated you are required to change it for security purposes.<BR>";
+	$_SESSION['result_message'] = "Since your password was recently generated you are required to change it for security purposes.<BR>";
 
 	header("Location: ../../../system/change-password.php");
 	exit;

@@ -81,12 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$ipid = $new_ipid;
 		
-		$_SESSION['session_result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Updated<BR>";
+		$_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Updated<BR>";
 
 	} else {
 	
-		if ($new_name == "") $_SESSION['session_result_message'] .= "Please enter a name for the IP Address<BR>";
-		if ($new_ip == "") $_SESSION['session_result_message'] .= "Please enter the IP Address<BR>";
+		if ($new_name == "") $_SESSION['result_message'] .= "Please enter a name for the IP Address<BR>";
+		if ($new_ip == "") $_SESSION['result_message'] .= "Please enter the IP Address<BR>";
 
 	}
 
@@ -121,11 +121,11 @@ if ($del == "1") {
 	
 	if ($existing_domains > 0) {
 
-		$_SESSION['session_result_message'] = "This IP Address has domains associated with it and cannot be deleted<BR>";
+		$_SESSION['result_message'] = "This IP Address has domains associated with it and cannot be deleted<BR>";
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are you sure you want to delete this IP Address?<BR><BR><a href=\"$PHP_SELF?ipid=$ipid&really_del=1\">YES, REALLY DELETE THIS IP ADDRESS</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this IP Address?<BR><BR><a href=\"$PHP_SELF?ipid=$ipid&really_del=1\">YES, REALLY DELETE THIS IP ADDRESS</a><BR>";
 
 	}
 
@@ -137,7 +137,7 @@ if ($really_del == "1") {
 			WHERE id = '$ipid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Deleted<BR>";
+	$_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Deleted<BR>";
 	
 	header("Location: ../ip-addresses.php");
 	exit;

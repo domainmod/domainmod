@@ -77,13 +77,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$curid = $new_curid;
 		
-		$_SESSION['session_result_message'] = "Currency <font class=\"highlight\">$new_name ($new_abbreviation)</font> Updated<BR><BR><a href=\"../system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
+		$_SESSION['result_message'] = "Currency <font class=\"highlight\">$new_name ($new_abbreviation)</font> Updated<BR><BR><a href=\"../system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
 		
 	} else {
 	
-		if ($new_name == "") { $_SESSION['session_result_message'] .= "Please enter the currency name<BR>"; }
-		if ($new_abbreviation == "") { $_SESSION['session_result_message'] .= "Please enter the currency abbreviation<BR>"; }
-		if ($new_conversion == "") { $_SESSION['session_result_message'] .= "Please enter the conversion rate<BR>"; }
+		if ($new_name == "") { $_SESSION['result_message'] .= "Please enter the currency name<BR>"; }
+		if ($new_abbreviation == "") { $_SESSION['result_message'] .= "Please enter the currency abbreviation<BR>"; }
+		if ($new_conversion == "") { $_SESSION['result_message'] .= "Please enter the conversion rate<BR>"; }
 
 	}
 
@@ -127,12 +127,12 @@ if ($del == "1") {
 	
 	if ($existing_domain_fees > 0 || $existing_ssl_fees > 0) {
 
-		if ($existing_domain_fees > 0) $_SESSION['session_result_message'] .= "This Currency has domain fees associated with it and cannot be deleted<BR>";
-		if ($existing_ssl_fees > 0) $_SESSION['session_result_message'] .= "This Currency has SSL fees associated with it and cannot be deleted<BR>";
+		if ($existing_domain_fees > 0) $_SESSION['result_message'] .= "This Currency has domain fees associated with it and cannot be deleted<BR>";
+		if ($existing_ssl_fees > 0) $_SESSION['result_message'] .= "This Currency has SSL fees associated with it and cannot be deleted<BR>";
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are you sure you want to delete this Currency?<BR><BR><a href=\"$PHP_SELF?curid=$curid&really_del=1\">YES, REALLY DELETE THIS CURRENCY</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Currency?<BR><BR><a href=\"$PHP_SELF?curid=$curid&really_del=1\">YES, REALLY DELETE THIS CURRENCY</a><BR>";
 
 	}
 
@@ -144,7 +144,7 @@ if ($really_del == "1") {
 			WHERE id = '$curid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "Currency <font class=\"highlight\">$new_name ($new_abbreviation)</font> Deleted<BR>";
+	$_SESSION['result_message'] = "Currency <font class=\"highlight\">$new_name ($new_abbreviation)</font> Deleted<BR>";
 	
 	header("Location: ../currencies.php");
 	exit;
@@ -161,10 +161,10 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="edit_currency_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Name ("<em><?=$_SESSION['session_default_currency_name']?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Name ("<em><?=$_SESSION['default_currency_name']?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?=$new_name?>">
 <BR><BR>
-<strong>Abbreviation ("<em><?=$_SESSION['session_default_currency']?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Abbreviation ("<em><?=$_SESSION['default_currency']?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_abbreviation" type="text" size="50" maxlength="3" value="<?=$new_abbreviation?>">
 <BR><BR>
 <strong>Conversion Rate</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>

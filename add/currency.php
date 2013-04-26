@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		} else {
 
 			$from = $new_abbreviation;
-			$to = $_SESSION['session_default_currency'];
+			$to = $_SESSION['default_currency'];
 			$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
 			$handle = @fopen($full_url, "r");
 				 
@@ -82,15 +82,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('" . mysql_real_escape_string($new_abbreviation) . "', '" . mysql_real_escape_string($new_name) . "', '" . $value . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_currency', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "Currency <font class=\"highlight\">$new_name ($new_abbreviation)</font> Added<BR><BR><a href=\"system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
+		$_SESSION['result_message'] = "Currency <font class=\"highlight\">$new_name ($new_abbreviation)</font> Added<BR><BR><a href=\"system/update-conversion-rates.php\">You should click here to update the conversion rates</a><BR>";
 		
 		header("Location: ../currencies.php");
 		exit;
 
 	} else {
 	
-		if ($new_name == "") $_SESSION['session_result_message'] .= "Please enter the currency name<BR>";
-		if ($new_abbreviation == "") $_SESSION['session_result_message'] .= "Please enter the currency abbreviation<BR>";
+		if ($new_name == "") $_SESSION['result_message'] .= "Please enter the currency name<BR>";
+		if ($new_abbreviation == "") $_SESSION['result_message'] .= "Please enter the currency abbreviation<BR>";
 
 	}
 
@@ -106,10 +106,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
 <form name="add_currency_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Name ("<em><?=$_SESSION['session_default_currency_name']?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Name ("<em><?=$_SESSION['default_currency_name']?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" value="<?=$new_name?>" size="50" maxlength="255">
 <BR><BR>
-<strong>Abbreviation ("<em><?=$_SESSION['session_default_currency']?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Abbreviation ("<em><?=$_SESSION['default_currency']?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_abbreviation" type="text" value="<?=$new_abbreviation?>" size="50" maxlength="3">
 <BR><BR>
 <strong>Notes</strong><BR><BR>

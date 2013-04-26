@@ -30,8 +30,8 @@
                 include($full_server_path . "/_includes/layout/table-maintenance.inc.php"); 
             ?>
             <?php 
-            if ($_SESSION['session_result_message'] != "") {
+            if ($_SESSION['result_message'] != "") {
                 include($full_server_path . "/_includes/layout/table-result-message.inc.php"); 
-                unset($_SESSION['session_result_message']);
+                unset($_SESSION['result_message']);
             }
             ?>

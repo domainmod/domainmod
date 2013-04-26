@@ -61,19 +61,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 				if ($invalid_domain_count == 1) {
 	
-					$_SESSION['session_result_message'] = "There is " . number_format($invalid_domain_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
+					$_SESSION['result_message'] = "There is " . number_format($invalid_domain_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
 	
 				} else {
 	
-					$_SESSION['session_result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
+					$_SESSION['result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
 	
 					if (($invalid_domain_count-$invalid_domains_to_display) == 1) { 
 	
-						$_SESSION['session_result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " other<BR>";
+						$_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " other<BR>";
 	
 					} elseif (($invalid_domain_count-$invalid_domains_to_display) > 1) { 
 	
-						$_SESSION['session_result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
+						$_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
 					}
 	
 				}
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 			}
 	
-			$_SESSION['session_result_message'] = "Segment <font class=\"highlight\">$new_name</font> Added<BR>";
+			$_SESSION['result_message'] = "Segment <font class=\"highlight\">$new_name</font> Added<BR>";
 	
 			include("../_includes/system/update-segments.inc.php");
 	
@@ -138,8 +138,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	} else {
 	
-		if ($new_name == "") { $_SESSION['session_result_message'] .= "Please enter the segment name<BR>"; }
-		if ($new_segment == "") { $_SESSION['session_result_message'] .= "Please enter the segment<BR>"; }
+		if ($new_name == "") { $_SESSION['result_message'] .= "Please enter the segment name<BR>"; }
+		if ($new_segment == "") { $_SESSION['result_message'] .= "Please enter the segment<BR>"; }
 
 	}
 

@@ -92,14 +92,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Added<BR>";
+		$_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Added<BR>";
 		header("Location: ../dns.php");
 		exit;
 		
 	} else {
 	
-		if ($new_name == "") $_SESSION['session_result_message'] .= "Please enter a name for the DNS profile<BR>";
-		if ($new_dns1 == "" || $new_dns2 == "") $_SESSION['session_result_message'] .= "Please enter at least two DNS servers<BR>";
+		if ($new_name == "") $_SESSION['result_message'] .= "Please enter a name for the DNS profile<BR>";
+		if ($new_dns1 == "" || $new_dns2 == "") $_SESSION['result_message'] .= "Please enter at least two DNS servers<BR>";
 
 	}
 

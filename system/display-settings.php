@@ -70,31 +70,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 				display_ssl_fee = '$new_display_ssl_fee',
 				number_of_ssl_certs = '$new_number_of_ssl_certs',
 				update_time = '$current_timestamp'
-			WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
+			WHERE user_id = '" . $_SESSION['user_id'] . "'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
-	$_SESSION['session_number_of_domains'] = $new_number_of_domains;
-	$_SESSION['session_number_of_ssl_certs'] = $new_number_of_ssl_certs;
-	$_SESSION['session_display_domain_owner'] = $new_display_domain_owner;
-	$_SESSION['session_display_domain_registrar'] = $new_display_domain_registrar;
-	$_SESSION['session_display_domain_account'] = $new_display_domain_account;
-	$_SESSION['session_display_domain_category'] = $new_display_domain_category;
-	$_SESSION['session_display_domain_expiry_date'] = $new_display_domain_expiry_date;
-	$_SESSION['session_display_domain_dns'] = $new_display_domain_dns;
-	$_SESSION['session_display_domain_host'] = $new_display_domain_host;
-	$_SESSION['session_display_domain_ip'] = $new_display_domain_ip;
-	$_SESSION['session_display_domain_host'] = $new_display_domain_host;
-	$_SESSION['session_display_domain_tld'] = $new_display_domain_tld;
-	$_SESSION['session_display_domain_fee'] = $new_display_domain_fee;
-	$_SESSION['session_display_ssl_owner'] = $new_display_ssl_owner;
-	$_SESSION['session_display_ssl_provider'] = $new_display_ssl_provider;
-	$_SESSION['session_display_ssl_account'] = $new_display_ssl_account;
-	$_SESSION['session_display_ssl_domain'] = $new_display_ssl_domain;
-	$_SESSION['session_display_ssl_type'] = $new_display_ssl_type;
-	$_SESSION['session_display_ssl_expiry_date'] = $new_display_ssl_expiry_date;
-	$_SESSION['session_display_ssl_fee'] = $new_display_ssl_fee;
+	$_SESSION['number_of_domains'] = $new_number_of_domains;
+	$_SESSION['number_of_ssl_certs'] = $new_number_of_ssl_certs;
+	$_SESSION['display_domain_owner'] = $new_display_domain_owner;
+	$_SESSION['display_domain_registrar'] = $new_display_domain_registrar;
+	$_SESSION['display_domain_account'] = $new_display_domain_account;
+	$_SESSION['display_domain_category'] = $new_display_domain_category;
+	$_SESSION['display_domain_expiry_date'] = $new_display_domain_expiry_date;
+	$_SESSION['display_domain_dns'] = $new_display_domain_dns;
+	$_SESSION['display_domain_host'] = $new_display_domain_host;
+	$_SESSION['display_domain_ip'] = $new_display_domain_ip;
+	$_SESSION['display_domain_host'] = $new_display_domain_host;
+	$_SESSION['display_domain_tld'] = $new_display_domain_tld;
+	$_SESSION['display_domain_fee'] = $new_display_domain_fee;
+	$_SESSION['display_ssl_owner'] = $new_display_ssl_owner;
+	$_SESSION['display_ssl_provider'] = $new_display_ssl_provider;
+	$_SESSION['display_ssl_account'] = $new_display_ssl_account;
+	$_SESSION['display_ssl_domain'] = $new_display_ssl_domain;
+	$_SESSION['display_ssl_type'] = $new_display_ssl_type;
+	$_SESSION['display_ssl_expiry_date'] = $new_display_ssl_expiry_date;
+	$_SESSION['display_ssl_fee'] = $new_display_ssl_fee;
 
-	$_SESSION['session_result_message'] .= "Your Display Settings were updated<BR>";
+	$_SESSION['result_message'] .= "Your Display Settings were updated<BR>";
 	
 	header("Location: index.php");
 	exit;
@@ -104,14 +104,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
-		if ($new_number_of_domains == "") $_SESSION['session_result_message'] .= "Enter the default number of domains to display<BR>";
-		if ($new_number_of_ssl_certs == "") $_SESSION['session_result_message'] .= "Enter the default number of SSL certficates to display<BR>";
+		if ($new_number_of_domains == "") $_SESSION['result_message'] .= "Enter the default number of domains to display<BR>";
+		if ($new_number_of_ssl_certs == "") $_SESSION['result_message'] .= "Enter the default number of SSL certficates to display<BR>";
 		
 	} else {
 		
  		$sql = "SELECT number_of_domains, number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account, display_domain_account, display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_host, display_domain_ip, display_domain_tld, display_domain_fee, display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_account, display_ssl_domain, display_ssl_type, display_ssl_expiry_date, display_ssl_fee
 				FROM user_settings
-				WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
+				WHERE user_id = '" . $_SESSION['user_id'] . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		while ($row = mysql_fetch_object($result)) {

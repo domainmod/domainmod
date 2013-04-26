@@ -16,18 +16,19 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-if ($_SESSION['session_is_logged_in'] != 1) {
+if ($_SESSION['is_logged_in'] != 1) {
 	
-		$_SESSION['session_user_redirect'] = $_SERVER["REQUEST_URI"];
+	$_SESSION['user_redirect'] = $_SERVER["REQUEST_URI"];
 	
-		$_SESSION['session_result_message'] = "You must be logged in to access this area<BR>";
+	$_SESSION['result_message'] = "You must be logged in to access this area<BR>";
 	
-		// not logged in, send to login page
-		if ($web_root == "/") {
-			header("Location: /index.php");
-		} else {
-			header("Location: " . $web_root . "/index.php");
-		}
-		exit;
+	// not logged in, send to login page
+	if ($web_root == "/") {
+		header("Location: /index.php");
+	} else {
+		header("Location: " . $web_root . "/index.php");
+	}
+	exit;
+
 }
 ?>

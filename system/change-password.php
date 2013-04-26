@@ -34,8 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
 	$sql = "SELECT id 
 			FROM users 
-			WHERE id = '" . $_SESSION['session_user_id'] . "' 
-			  AND email_address = '" . $_SESSION['session_email_address'] . "'";
+			WHERE id = '" . $_SESSION['user_id'] . "' 
+			  AND email_address = '" . $_SESSION['email_address'] . "'";
 	$result = mysql_query($sql,$connection);
 
    if (mysql_num_rows($result) == 1) {
@@ -44,28 +44,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 					   SET password = password('$new_password'), 
 					   	   new_password = '0', 
 						   update_time = '$current_timestamp'
-					   WHERE id = '" . $_SESSION['session_user_id'] . "' 
-					     AND email_address = '" . $_SESSION['session_email_address'] . "'";
+					   WHERE id = '" . $_SESSION['user_id'] . "' 
+					     AND email_address = '" . $_SESSION['email_address'] . "'";
 		$result_update = mysql_query($sql_update,$connection) or die("Your password could not be updated. Please try again later.");
 
-		if ($_SESSION['session_running_login_checks'] == 1) {
+		if ($_SESSION['running_login_checks'] == 1) {
 
-		$_SESSION['session_result_message'] .= "Your password has been changed<BR>";
+		$_SESSION['result_message'] .= "Your password has been changed<BR>";
 
 			header("Location: ../_includes/auth/login-checks/main.inc.php");
 			exit;
 
 		}
 
-		$_SESSION['session_result_message'] .= "Your password has been changed<BR>";
+		$_SESSION['result_message'] .= "Your password has been changed<BR>";
 
 		header("Location: index.php");
 		exit;
 
    } else {
 
-		$_SESSION['session_result_message'] .= "Your password could not be updated<BR>";
-		$_SESSION['session_result_message'] .= "If the problem persists please contact your administrator<BR>";
+		$_SESSION['result_message'] .= "Your password could not be updated<BR>";
+		$_SESSION['result_message'] .= "If the problem persists please contact your administrator<BR>";
 
    }
 
@@ -77,11 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 	
 		if ($new_password == "" && $new_password_confirmation == "") {
 		
-			$_SESSION['session_result_message'] .= "Your passwords were left blank<BR>";
+			$_SESSION['result_message'] .= "Your passwords were left blank<BR>";
 
 		} else {
 
-			$_SESSION['session_result_message'] .= "Your passwords didn't match<BR>";
+			$_SESSION['result_message'] .= "Your passwords didn't match<BR>";
 		
 		}
 		
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 <?php include("../_includes/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php if ($_SESSION['session_running_login_checks'] == 1) { ?>
+<?php if ($_SESSION['running_login_checks'] == 1) { ?>
 	<?php include("../_includes/header-login.inc.php"); ?>
 	<div align="center">
 <?php } else { ?>
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 <BR><BR>
 <input type="submit" name="button" value="Change Password &raquo;">
 </form>
-<?php if ($_SESSION['session_running_login_checks'] == 1) { ?>
+<?php if ($_SESSION['running_login_checks'] == 1) { ?>
 	</div>
 	<?php include("../_includes/footer-login.inc.php"); ?>
 <?php } else { ?>

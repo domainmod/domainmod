@@ -22,9 +22,9 @@ $result_db_check = mysql_query($sql_db_check,$connection) or die(mysql_error());
 
 while ($row_db_check = mysql_fetch_object($result_db_check)) {
 	if ($row_db_check->db_version != $most_recent_db_version) { 
-		$_SESSION['session_needs_database_upgrade'] = "1";
+		$_SESSION['needs_database_upgrade'] = "1";
 	} else {
-		$_SESSION['session_needs_database_upgrade'] = "0";
+		$_SESSION['needs_database_upgrade'] = "0";
 	}
 }
 ?>

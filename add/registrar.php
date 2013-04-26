@@ -59,9 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('" . mysql_real_escape_string($new_registrar) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_registrar', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Added<BR>";
+		$_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Added<BR>";
 
-		if ($_SESSION['session_need_registrar'] == "1") {
+		if ($_SESSION['need_registrar'] == "1") {
 			
 			include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 			header("Location: ../domains.php");
@@ -75,8 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	} else {
 	
-		if ($new_registrar == "") $_SESSION['session_result_message'] .= "Please enter the registrar name<BR>";
-		if ($new_url == "") $_SESSION['session_result_message'] .= "Please enter the registrar's URL<BR>";
+		if ($new_registrar == "") $_SESSION['result_message'] .= "Please enter the registrar name<BR>";
+		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the registrar's URL<BR>";
 
 	}
 

@@ -92,14 +92,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$sslcid = $new_sslcid;
 
-		$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Updated<BR>";
+		$_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Updated<BR>";
 
 		include("../_includes/system/update-ssl-fees.inc.php");
 
 	} else {
 	
-		if ($new_name == "") { $_SESSION['session_result_message'] .= "Enter the SSL certificate name<BR>"; }
-		if (!CheckDateFormat($new_expiry_date)) { $_SESSION['session_result_message'] .= "The expiry date you entered is invalid<BR>"; }
+		if ($new_name == "") { $_SESSION['result_message'] .= "Enter the SSL certificate name<BR>"; }
+		if (!CheckDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }
 
 	}
 
@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del == "1") {
 
-	$_SESSION['session_result_message'] = "Are you sure you want to delete this SSL Certificate?<BR><BR><a href=\"$PHP_SELF?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE ACCOUNT</a><BR>";
+	$_SESSION['result_message'] = "Are you sure you want to delete this SSL Certificate?<BR><BR><a href=\"$PHP_SELF?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE ACCOUNT</a><BR>";
 
 }
 
@@ -145,7 +145,7 @@ if ($really_del == "1") {
 	$result = mysql_query($sql,$connection);
 	while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
 	
-	$_SESSION['session_result_message'] = "SSL Certificate <font class=\"highlight\">$new_name ($temp_type)</font> Deleted<BR>";
+	$_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name ($temp_type)</font> Deleted<BR>";
 
 	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	

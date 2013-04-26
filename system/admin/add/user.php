@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 	
 	if ($existing_username == 1) {
 
-		$_SESSION['session_result_message'] .= "You have entered an invalid username<BR>";
+		$_SESSION['result_message'] .= "You have entered an invalid username<BR>";
 		
 	} else {
 
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 				('$temp_user_id', '$current_timestamp');";
 		$result = mysql_query($sql,$connection);
 	
-		$_SESSION['session_result_message'] .= "User <font class=\"highlight\">$new_first_name $new_last_name ($new_username / $new_password)</font> Added<BR><BR>
+		$_SESSION['result_message'] .= "User <font class=\"highlight\">$new_first_name $new_last_name ($new_username / $new_password)</font> Added<BR><BR>
 		You can either manually email the above credentials to the user, or you can <a href=\"reset-password.php?new_username=$new_username\">click here</a> to have $software_title email them for you<BR>";
 		
 		header("Location: ../users.php");
@@ -89,10 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
-		if ($new_first_name == "") $_SESSION['session_result_message'] .= "Enter the new user's first name<BR>";
-		if ($new_last_name == "") $_SESSION['session_result_message'] .= "Enter the new user's last name<BR>";
-		if ($new_username == "") $_SESSION['session_result_message'] .= "Enter the new user's username<BR>";
-		if ($new_email_address == "") $_SESSION['session_result_message'] .= "Enter the new user's email address<BR>";
+		if ($new_first_name == "") $_SESSION['result_message'] .= "Enter the new user's first name<BR>";
+		if ($new_last_name == "") $_SESSION['result_message'] .= "Enter the new user's last name<BR>";
+		if ($new_username == "") $_SESSION['result_message'] .= "Enter the new user's username<BR>";
+		if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the new user's email address<BR>";
 		
 	}
 

@@ -57,9 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	} else {
 
-		if (!CheckDateFormat($new_expiry_start)) $_SESSION['session_result_message'] .= "The start date is invalid<BR>";
-		if (!CheckDateFormat($new_expiry_end)) $_SESSION['session_result_message'] .= "The end date is invalid<BR>";
-		if ($new_expiry_start > $new_expiry_end) $_SESSION['session_result_message'] .= "The end date proceeds the start date<BR>";
+		if (!CheckDateFormat($new_expiry_start)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
+		if (!CheckDateFormat($new_expiry_end)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
+		if ($new_expiry_start > $new_expiry_end) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
 
 	}
 
@@ -71,7 +71,7 @@ if ($export == "1") {
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
-	$full_export .= "\"All fees are listed in " . $_SESSION['session_default_currency'] . "\"\n\n";
+	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
 
 	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renew?\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\"\n";
 
@@ -181,12 +181,12 @@ Before exporting your domains you should <a href="system/update-conversion-rates
 <BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
-<?php if ($_SESSION['session_display_domain_expiry_date'] == "1") { ?>
+<?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Expiry Date</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_fee'] == "1") { ?>
+<?php if ($_SESSION['display_domain_fee'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Fee</font>
     </td>
@@ -194,42 +194,42 @@ Before exporting your domains you should <a href="system/update-conversion-rates
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Domain Name</font>
     </td>
-<?php if ($_SESSION['session_display_domain_tld'] == "1") { ?>
+<?php if ($_SESSION['display_domain_tld'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">TLD</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_registrar'] == "1") { ?>
+<?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Registrar</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
+<?php if ($_SESSION['display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Registrar Account</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_dns'] == "1") { ?>
+<?php if ($_SESSION['display_domain_dns'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">DNS Profile</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
+<?php if ($_SESSION['display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">IP Address</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_host'] == "1") { ?>
+<?php if ($_SESSION['display_domain_host'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Web Host</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_category'] == "1") { ?>
+<?php if ($_SESSION['display_domain_category'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Category</font>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_owner'] == "1") { ?>
+<?php if ($_SESSION['display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Owner</font>
     </td>
@@ -241,12 +241,12 @@ $renewal_fee_individual = $row->renewal_fee * $row->conversion;
 $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual; 
 ?>
 <tr class="main_table_row_active">
-<?php if ($_SESSION['session_display_domain_expiry_date'] == "1") { ?>
+<?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->expiry_date?>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_fee'] == "1") { ?>
+<?php if ($_SESSION['display_domain_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?php
 		$temp_input_amount = $row->renewal_fee;
@@ -259,42 +259,42 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 	<td class="main_table_cell_active">
 		<?=$row->domain?>
 	</td>
-<?php if ($_SESSION['session_display_domain_tld'] == "1") { ?>
+<?php if ($_SESSION['display_domain_tld'] == "1") { ?>
 	<td class="main_table_cell_active">
 		.<?=$row->tld?>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_registrar'] == "1") { ?>
+<?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->registrar_name?>
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_account'] == "1") { ?>
+<?php if ($_SESSION['display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->registrar_name?> (<?=substr($row->username, 0, 15);?><?php if (strlen($row->username) >= 16) echo "..."; ?>)
     </td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_dns'] == "1") { ?>
+<?php if ($_SESSION['display_domain_dns'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->dns_profile?>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_ip'] == "1") { ?>
+<?php if ($_SESSION['display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->name?> (<?=$row->ip?>)
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_host'] == "1") { ?>
+<?php if ($_SESSION['display_domain_host'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->wh_name?>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_category'] == "1") { ?>
+<?php if ($_SESSION['display_domain_category'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->category_name?>
 	</td>
 <?php } ?>
-<?php if ($_SESSION['session_display_domain_owner'] == "1") { ?>
+<?php if ($_SESSION['display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->owner_name?>
     </td>
@@ -308,7 +308,7 @@ $temp_input_conversion = "";
 include("_includes/system/convert-and-format-currency.inc.php");
 $total_cost = $temp_output_amount;
 ?>
-<BR><strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['session_default_currency']?><BR>
+<BR><strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR>
 <?php } else {?>
 <BR>The results that will be shown below will display the same columns as you have on your <a href="domains.php">Domains</a> page, but when you export the results you will be given even more information.<BR><BR>
 The full list of fields in the export is:<BR><BR>

@@ -34,12 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "UPDATE user_settings
 			SET expiration_emails = '$new_expiration_email',
 				update_time = '$current_timestamp'
-			WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
+			WHERE user_id = '" . $_SESSION['user_id'] . "'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
-	$_SESSION['session_expiration_email'] = $new_expiration_email;
+	$_SESSION['expiration_email'] = $new_expiration_email;
 
-	$_SESSION['session_result_message'] .= "Your Email Settings were updated<BR>";
+	$_SESSION['result_message'] .= "Your Email Settings were updated<BR>";
 	
 	header("Location: index.php");
 	exit;
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$sql = "SELECT expiration_emails
 			FROM user_settings
-			WHERE user_id = '" . $_SESSION['session_user_id'] . "'";
+			WHERE user_id = '" . $_SESSION['user_id'] . "'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	while ($row = mysql_fetch_object($result)) {

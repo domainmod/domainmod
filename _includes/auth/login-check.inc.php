@@ -16,9 +16,9 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-if ($_SESSION['session_is_logged_in'] == 1) {
+if ($_SESSION['is_logged_in'] == 1) {
 
-    if (isset($_SESSION['session_running_login_checks'])) {
+    if (isset($_SESSION['running_login_checks'])) {
 		header("Location: _includes/auth/login-checks/main.inc.php");
 	    exit;
 	}

@@ -75,11 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$oid = $new_oid;
 		
-		$_SESSION['session_result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Updated<BR>";
+		$_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Updated<BR>";
 
 	} else {
 	
-		$_SESSION['session_result_message'] = "Please enter the owner's name<BR>";
+		$_SESSION['result_message'] = "Please enter the owner's name<BR>";
 
 	}
 
@@ -140,14 +140,14 @@ if ($del == "1") {
 	
 	if ($existing_registrar_accounts > 0 || $existing_ssl_accounts > 0 || $existing_domains > 0 || $existing_ssl_certs > 0) {
 		
-		if ($existing_registrar_accounts > 0) $_SESSION['session_result_message'] .= "This Owner has registrar accounts associated with it and cannot be deleted<BR>";
-		if ($existing_domains > 0) $_SESSION['session_result_message'] .= "This Owner has domains associated with it and cannot be deleted<BR>";
-		if ($existing_ssl_accounts > 0) $_SESSION['session_result_message'] .= "This Owner has SSL accounts associated with it and cannot be deleted<BR>";
-		if ($existing_ssl_certs > 0) $_SESSION['session_result_message'] .= "This Owner has SSL certificates associated with it and cannot be deleted<BR>";
+		if ($existing_registrar_accounts > 0) $_SESSION['result_message'] .= "This Owner has registrar accounts associated with it and cannot be deleted<BR>";
+		if ($existing_domains > 0) $_SESSION['result_message'] .= "This Owner has domains associated with it and cannot be deleted<BR>";
+		if ($existing_ssl_accounts > 0) $_SESSION['result_message'] .= "This Owner has SSL accounts associated with it and cannot be deleted<BR>";
+		if ($existing_ssl_certs > 0) $_SESSION['result_message'] .= "This Owner has SSL certificates associated with it and cannot be deleted<BR>";
 
 	} else {
 
-		$_SESSION['session_result_message'] = "Are you sure you want to delete this Owner?<BR><BR><a href=\"$PHP_SELF?oid=$oid&really_del=1\">YES, REALLY DELETE THIS OWNER</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Owner?<BR><BR><a href=\"$PHP_SELF?oid=$oid&really_del=1\">YES, REALLY DELETE THIS OWNER</a><BR>";
 
 	}
 
@@ -159,7 +159,7 @@ if ($really_del == "1") {
 			WHERE id = '$oid'";
 	$result = mysql_query($sql,$connection);
 	
-	$_SESSION['session_result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Deleted<BR>";
+	$_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Deleted<BR>";
 	
 	header("Location: ../owners.php");
 	exit;

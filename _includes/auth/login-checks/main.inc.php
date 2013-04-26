@@ -23,7 +23,7 @@ include("../../software.inc.php");
 include("../../auth/auth-check.inc.php");
 include("../../timestamps/current-timestamp.inc.php");
 
-$_SESSION['session_running_login_checks'] = 1;
+$_SESSION['running_login_checks'] = 1;
 
 // Check to see if it's a new password
 include("../../auth/login-checks/new-password-check.inc.php");
@@ -34,20 +34,20 @@ include("../../auth/login-checks/database-version-check.inc.php");
 // Check if there are Domain and SSL assets
 include("../../auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
-unset($_SESSION['session_running_login_checks']);
+unset($_SESSION['running_login_checks']);
 
 $sql_user_update = "UPDATE users
 					SET last_login = '$current_timestamp',
 						number_of_logins = number_of_logins + 1,
 						update_time = '$current_timestamp'
-					WHERE id = '" . $_SESSION['session_user_id'] . "'
-					  AND email_address = '" . $_SESSION['session_email_address'] . "'";
+					WHERE id = '" . $_SESSION['user_id'] . "'
+					  AND email_address = '" . $_SESSION['email_address'] . "'";
 $result_user_update = mysql_query($sql_user_update,$connection);
 
-if (isset($_SESSION['session_user_redirect'])) {
+if (isset($_SESSION['user_redirect'])) {
 
-	$temp_redirect = $_SESSION['session_user_redirect'];
-	unset($_SESSION['session_user_redirect']);
+	$temp_redirect = $_SESSION['user_redirect'];
+	unset($_SESSION['user_redirect']);
 
 	header("Location: $temp_redirect");
 	exit;

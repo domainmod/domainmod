@@ -38,7 +38,7 @@ $sql = "SELECT currency
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) { 
 	$default_currency = $row->currency; 
-	$_SESSION['session_default_currency'] = $row->currency;
+	$_SESSION['default_currency'] = $row->currency;
 }
 
 $sql = "SELECT currency
@@ -71,7 +71,7 @@ while ($row = mysql_fetch_object($result)) {
 
 }
 
-$_SESSION['session_result_message'] .= "Conversion Rates Updated<BR>";
+$_SESSION['result_message'] .= "Conversion Rates Updated<BR>";
 
 header("Location: " . $_SERVER['HTTP_REFERER']);
 exit;

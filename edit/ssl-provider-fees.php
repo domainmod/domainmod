@@ -45,10 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_sslpid == "" || $new_type_id == "" || $new_type_id == "0" || $new_initial_fee == "" || $new_renewal_fee == "" || $new_currency_id == "" || $new_currency_id == "0") {
 		
-		if ($new_initial_fee == "") $_SESSION['session_result_message'] .= "Please enter the initial fee<BR>";
-		if ($new_renewal_fee == "") $_SESSION['session_result_message'] .= "Please enter the renewal fee<BR>";
-		if ($new_type_id == "" || $new_type_id == "0") $_SESSION['session_result_message'] .= "There was a problem with the SSL Type you chose<BR>";
-		if ($new_currency_id == "" || $new_currency_id == "0") $_SESSION['session_result_message'] .= "There was a problem with the currency you chose<BR>";
+		if ($new_initial_fee == "") $_SESSION['result_message'] .= "Please enter the initial fee<BR>";
+		if ($new_renewal_fee == "") $_SESSION['result_message'] .= "Please enter the renewal fee<BR>";
+		if ($new_type_id == "" || $new_type_id == "0") $_SESSION['result_message'] .= "There was a problem with the SSL Type you chose<BR>";
+		if ($new_currency_id == "" || $new_currency_id == "0") $_SESSION['result_message'] .= "There was a problem with the currency you chose<BR>";
 
 	} else {
 		
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 			$sslpid = $new_sslpid;
 
-			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been updated<BR>";
+			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been updated<BR>";
 			
 			header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
 			exit;
@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
 	
-			$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been added<BR>";
+			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been added<BR>";
 			
 			header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
 			exit;
@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 }
 if ($del == "1") {
-	$_SESSION['session_result_message'] = "Are you sure you want to delete this SSL Provider Fee?<BR><BR><a href=\"$PHP_SELF?sslpid=$sslpid&ssltid=$ssltid&sslfeeid=$sslfeeid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER FEE</a><BR>";
+	$_SESSION['result_message'] = "Are you sure you want to delete this SSL Provider Fee?<BR><BR><a href=\"$PHP_SELF?sslpid=$sslpid&ssltid=$ssltid&sslfeeid=$sslfeeid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER FEE</a><BR>";
 }
 if ($really_del == "1") {
 
@@ -164,7 +164,7 @@ if ($really_del == "1") {
 	
 	if (mysql_num_rows($result) == 0) {
 
-		$_SESSION['session_result_message'] = "The fee you're trying to delete doesn't exist<BR>";
+		$_SESSION['result_message'] = "The fee you're trying to delete doesn't exist<BR>";
 
 		header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
 		exit;
@@ -191,7 +191,7 @@ if ($really_del == "1") {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
 		
-		$_SESSION['session_result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been deleted<BR>";
+		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been deleted<BR>";
 
 		header("Location: ssl-provider-fees.php?sslpid=$sslpid");
 		exit;

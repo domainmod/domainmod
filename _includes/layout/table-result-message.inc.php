@@ -17,6 +17,6 @@
 ?>
 <div class="result_message_outer">
 	<div class="result_message_inner">
-		<?=$_SESSION['session_result_message']?>
+		<?=$_SESSION['result_message']?>
     </div>
 </div>

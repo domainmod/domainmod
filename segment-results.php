@@ -98,7 +98,7 @@ if ($export == "1") {
 			
 		}
 
-		$full_export .= "\"All fees are listed in " . $_SESSION['session_default_currency'] . "\"\n\n";
+		$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
 	
 		$full_export .= "\"Domain Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Function\",\"Notes\"\n";
 	

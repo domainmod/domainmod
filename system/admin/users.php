@@ -40,12 +40,12 @@ $software_section = "system";
 <body>
 <?php include("../../_includes/header.inc.php"); ?>
 <?php
-if ($_SESSION['session_username'] == "admin") {
+if ($_SESSION['username'] == "admin") {
 	$sql = "SELECT id, first_name, last_name, username, email_address, admin
 			FROM users
 			WHERE active = '1'
 			ORDER BY first_name, last_name, username, email_address";
-	$result = mysql_query($sql,$connection);
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 } else {
 	
@@ -54,7 +54,7 @@ if ($_SESSION['session_username'] == "admin") {
 			WHERE active = '1'
 			  AND username != 'admin'
 			ORDER BY first_name, last_name, username, email_address";
-	$result = mysql_query($sql,$connection);
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 }
 ?>
@@ -78,7 +78,7 @@ if (mysql_num_rows($result) > 0) { ?>
     
             <tr class="main_table_row_active">
                 <td class="main_table_cell_active">
-                    <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
+                    <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\">*</font></a>"; ?></a>
                 </td>
                 <td class="main_table_cell_active">
                     <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
@@ -96,7 +96,7 @@ $sql = "SELECT id, first_name, last_name, username, email_address, admin
 		FROM users
 		WHERE active = '0'
 		ORDER BY first_name, last_name, username, email_address";
-$result = mysql_query($sql,$connection);
+$result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 <?php
 if (mysql_num_rows($result) > 0) { ?>
@@ -117,7 +117,7 @@ if (mysql_num_rows($result) > 0) { ?>
     
             <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\"><strong>*</strong></font></a>"; ?></a>
+                    <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\">*</font></a>"; ?></a>
                 </td>
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
@@ -132,7 +132,7 @@ if (mysql_num_rows($result) > 0) { ?>
 	<?php 
 } ?>
 	</table>
-<BR><font class="default_highlight"><strong>*</strong></font> = Admin Account
+<BR><font class="default_highlight">*</font> = Admin Account
 <?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>

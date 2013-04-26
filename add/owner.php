@@ -58,14 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				('" . mysql_real_escape_string($new_owner) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_owner', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['session_result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Added<BR>";
+		$_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Added<BR>";
 		
 		header("Location: ../owners.php");
 		exit;
 
 	} else {
 	
-		$_SESSION['session_result_message'] .= "Please enter the owner's name<BR>";
+		$_SESSION['result_message'] .= "Please enter the owner's name<BR>";
 
 	}
 
