@@ -31,11 +31,11 @@ while ($row = mysql_fetch_object($result)) {
 	
 	$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $row->domain);
 	
-	$sql2 = "UPDATE domains
-			 SET tld = '$tld',
-			 	 update_time = '$current_timestamp'
-			 WHERE id = '$row->id'";
-	$result2 = mysql_query($sql2,$connection);
+	$sql_update = "UPDATE domains
+				   SET tld = '$tld',
+				   	   update_time = '$current_timestamp'
+				   WHERE id = '$row->id'";
+	$result_update = mysql_query($sql_update,$connection);
 
 }
 ?>

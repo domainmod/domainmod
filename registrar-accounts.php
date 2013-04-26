@@ -99,14 +99,14 @@ Below is a list of all the Domain Registrar Accounts that are stored in your <?=
 			</td>
 			<td class="main_table_cell_active">
 				<?php
-				$sql2 = "SELECT count(*) AS total_domain_count
-						 FROM domains
-						 WHERE account_id = '$row->raid'
-						   AND active NOT IN ('0', '10')";
-				$result2 = mysql_query($sql2,$connection);
+				$sql_domain_count = "SELECT count(*) AS total_domain_count
+									 FROM domains
+									 WHERE account_id = '$row->raid'
+									   AND active NOT IN ('0', '10')";
+				$result_domain_count = mysql_query($sql_domain_count,$connection);
 
-				while ($row2 = mysql_fetch_object($result2)) { 
-					echo "<a class=\"nobold\" href=\"domains.php?oid=$row->oid&rid=$row->rid&raid=$row->raid\">" . number_format($row2->total_domain_count) . "</a>"; 
+				while ($row_domain_count = mysql_fetch_object($result_domain_count)) { 
+					echo "<a class=\"nobold\" href=\"domains.php?oid=$row->oid&rid=$row->rid&raid=$row->raid\">" . number_format($row_domain_count->total_domain_count) . "</a>"; 
 				} ?>
 
 			</td>

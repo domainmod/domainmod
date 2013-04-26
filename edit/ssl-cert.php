@@ -54,16 +54,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		while ($row = mysql_fetch_object($result)) { $new_ssl_provider_id = $row->ssl_provider_id; $new_owner_id = $row->owner_id; }
 
-		$sql2 = "SELECT id
-				 FROM ssl_fees
-				 WHERE ssl_provider_id = '$new_ssl_provider_id'
-				   AND type_id = '$new_type_id'";
-		$result2 = mysql_query($sql2,$connection);
+		$sql_fee_id = "SELECT id
+					   FROM ssl_fees
+					   WHERE ssl_provider_id = '$new_ssl_provider_id'
+					     AND type_id = '$new_type_id'";
+		$result_fee_id = mysql_query($sql_fee_id,$connection);
 		
-		if (mysql_num_rows($result2) >= 1) { 
+		if (mysql_num_rows($result_fee_id) >= 1) { 
 		
-			while ($row2 = mysql_fetch_object($result2)) {
-				$temp_fee_id = $row2->id;
+			while ($row_fee_id = mysql_fetch_object($result_fee_id)) {
+				$temp_fee_id = $row_fee_id->id;
 			}
 			$temp_fee_fixed = "1"; 
 
@@ -74,21 +74,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		}
 
-		$sql2 = "UPDATE ssl_certs
-				 SET owner_id = '$new_owner_id',
-					ssl_provider_id = '$new_ssl_provider_id',
-					account_id = '$new_account_id',
-					domain_id = '$new_domain_id',
-					name = '" . mysql_real_escape_string($new_name) . "',
-					type_id = '$new_type_id',
-					expiry_date = '$new_expiry_date',
-					fee_id = '$temp_fee_id',
-					notes = '" . mysql_real_escape_string($new_notes) . "',
-					active = '$new_active',
-					fee_fixed = '$temp_fee_fixed',
-					update_time = '$current_timestamp'
-				WHERE id = '$new_sslcid'";
-		$result2 = mysql_query($sql2,$connection) or die(mysql_error());
+		$sql_update = "UPDATE ssl_certs
+					   SET owner_id = '$new_owner_id',
+					   	   ssl_provider_id = '$new_ssl_provider_id',
+						   account_id = '$new_account_id',
+						   domain_id = '$new_domain_id',
+						   name = '" . mysql_real_escape_string($new_name) . "',
+						   type_id = '$new_type_id',
+						   expiry_date = '$new_expiry_date',
+						   fee_id = '$temp_fee_id',
+						   notes = '" . mysql_real_escape_string($new_notes) . "',
+						   active = '$new_active',
+						   fee_fixed = '$temp_fee_fixed',
+						   update_time = '$current_timestamp'
+					   WHERE id = '$new_sslcid'";
+		$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 		
 		$sslcid = $new_sslcid;
 

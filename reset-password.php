@@ -43,13 +43,13 @@ if ($new_username != "") {
 	
 			$new_password = substr(md5(time()),0,8);
 			
-			$sql2 = "UPDATE users 
-					 SET password = password('$new_password'), 
-					 	 new_password = '1',
-					 	 update_time = '$current_timestamp'
-					 WHERE username = '$row->username'
-					   AND email_address = '$row->email_address'";
-			$result2 = mysql_query($sql2,$connection);
+			$sql_update = "UPDATE users 
+						   SET password = password('$new_password'), 
+						   	   new_password = '1',
+							   update_time = '$current_timestamp'
+						   WHERE username = '$row->username'
+						     AND email_address = '$row->email_address'";
+			$result_update = mysql_query($sql_update,$connection);
 			
 			include("_includes/email/send-new-password.inc.php");
 					

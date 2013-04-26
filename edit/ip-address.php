@@ -63,15 +63,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		}
 
-		$sql2 = "UPDATE ip_addresses
-				 SET name = '" . mysql_real_escape_string($new_name) . "',
-				 	ip = '" . mysql_real_escape_string($new_ip) . "',
-				 	rdns = '" . mysql_real_escape_string($new_rdns) . "',
-					notes = '" . mysql_real_escape_string($new_notes) . "',
-					default_ip_address = '" . $new_default_ip_address . "',
-					update_time = '$current_timestamp'
-				 WHERE id = '$new_ipid'";
-		$result2 = mysql_query($sql2,$connection) or die(mysql_error());
+		$sql_update = "UPDATE ip_addresses
+					   SET name = '" . mysql_real_escape_string($new_name) . "',
+					   	   ip = '" . mysql_real_escape_string($new_ip) . "',
+						   rdns = '" . mysql_real_escape_string($new_rdns) . "',
+						   notes = '" . mysql_real_escape_string($new_notes) . "',
+						   default_ip_address = '" . $new_default_ip_address . "',
+						   update_time = '$current_timestamp'
+					   WHERE id = '$new_ipid'";
+		$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 
 		$new_name = $new_name;
 		$new_ip = $new_ip;

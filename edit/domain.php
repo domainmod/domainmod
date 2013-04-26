@@ -62,16 +62,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		while ($row = mysql_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
 
-		$sql2 = "SELECT id
-				 FROM fees
-				 WHERE registrar_id = '$new_registrar_id'
-				   AND tld = '$tld'";
-		$result2 = mysql_query($sql2,$connection);
+		$sql_fee_id = "SELECT id
+					   FROM fees
+					   WHERE registrar_id = '$new_registrar_id'
+					     AND tld = '$tld'";
+		$result_fee_id = mysql_query($sql_fee_id,$connection);
 		
-		if (mysql_num_rows($result2) >= 1) { 
+		if (mysql_num_rows($result_fee_id) >= 1) { 
 		
-			while ($row2 = mysql_fetch_object($result2)) {
-				$temp_fee_id = $row2->id;
+			while ($row_fee_id = mysql_fetch_object($result_fee_id)) {
+				$temp_fee_id = $row_fee_id->id;
 			}
 			$temp_fee_fixed = "1"; 
 
@@ -82,26 +82,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		}
 
-		$sql2 = "UPDATE domains
-				 SET owner_id = '$new_owner_id',
-					registrar_id = '$new_registrar_id',
-					account_id = '$new_account_id',
-					domain = '" . mysql_real_escape_string($new_domain) . "',
-					tld = '$tld',
-					expiry_date = '$new_expiry_date',
-					cat_id = '$new_cat_id',
-					dns_id = '$new_dns_id',
-					ip_id = '$new_ip_id',
-					hosting_id = '$new_hosting_id',
-					fee_id = '$temp_fee_id',
-					function = '" . mysql_real_escape_string($new_function) . "',
-					notes = '" . mysql_real_escape_string($new_notes) . "',
-					privacy = '$new_privacy',
-					active = '$new_active',
-					fee_fixed = '$temp_fee_fixed',
-					update_time = '$current_timestamp'
-				WHERE id = '$new_did'";
-		$result2 = mysql_query($sql2,$connection) or die(mysql_error());
+		$sql_update = "UPDATE domains
+					   SET owner_id = '$new_owner_id',
+					   	   registrar_id = '$new_registrar_id',
+						   account_id = '$new_account_id',
+						   domain = '" . mysql_real_escape_string($new_domain) . "',
+						   tld = '$tld',
+						   expiry_date = '$new_expiry_date',
+						   cat_id = '$new_cat_id',
+						   dns_id = '$new_dns_id',
+						   ip_id = '$new_ip_id',
+						   hosting_id = '$new_hosting_id',
+						   fee_id = '$temp_fee_id',
+						   function = '" . mysql_real_escape_string($new_function) . "',
+						   notes = '" . mysql_real_escape_string($new_notes) . "',
+						   privacy = '$new_privacy',
+						   active = '$new_active',
+						   fee_fixed = '$temp_fee_fixed',
+						   update_time = '$current_timestamp'
+					   WHERE id = '$new_did'";
+		$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 		
 		$did = $new_did;
 		

@@ -59,12 +59,12 @@ Below is a list of all the types of SSL certificates that are stored in your <?=
 	</td>
 	<td class="main_table_cell_active">
     <?php
-	$sql2 = "SELECT count(*) AS total_count
-			 FROM ssl_certs
-			 WHERE type_id = '$row->id'
-			   AND active NOT IN ('0')";
-	$result2 = mysql_query($sql2,$connection);
-	while ($row2 = mysql_fetch_object($result2)) { $active_certs = $row2->total_count; }
+	$sql_total_count = "SELECT count(*) AS total_count
+						FROM ssl_certs
+						WHERE type_id = '$row->id'
+						  AND active NOT IN ('0')";
+	$result_total_count = mysql_query($sql_total_count,$connection);
+	while ($row_total_count = mysql_fetch_object($result_total_count)) { $active_certs = $row_total_count->total_count; }
 	?>
     	<?php if ($active_certs == "0") { ?>
 	        <?=number_format($active_certs)?>

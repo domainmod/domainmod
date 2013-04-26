@@ -69,11 +69,11 @@ Below is a list of all the Domain Registrar and SSL Provider Account Owners that
 	</td>
 	<td class="main_table_cell_active">
     <?php
-	$sql2 = "SELECT count(*) AS total_count
-			 FROM registrar_accounts
-			 WHERE owner_id = '$row->id'";
-	$result2 = mysql_query($sql2,$connection);
-	while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
+	$sql_total_count = "SELECT count(*) AS total_count
+						FROM registrar_accounts
+						WHERE owner_id = '$row->id'";
+	$result_total_count = mysql_query($sql_total_count,$connection);
+	while ($row_total_count = mysql_fetch_object($result_total_count)) { $total_accounts = $row_total_count->total_count; }
 	?>
     	<?php if ($total_accounts >= 1) { ?>
 
@@ -146,11 +146,11 @@ if ($has_active_domain != "1" && $has_inactive_domains == "1") echo "<table clas
 	</td>
 	<td class="main_table_cell_inactive">
     <?php
-	$sql2 = "SELECT count(*) AS total_count
-			 FROM registrar_accounts
-			 WHERE owner_id = '$row->id'";
-	$result2 = mysql_query($sql2,$connection);
-	while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
+	$sql_total_count = "SELECT count(*) AS total_count
+						FROM registrar_accounts
+						WHERE owner_id = '$row->id'";
+	$result_total_count = mysql_query($sql_total_count,$connection);
+	while ($row_total_count = mysql_fetch_object($result_total_count)) { $total_accounts = $row_total_count->total_count; }
 	?>
     	<?php if ($total_accounts >= 1) { ?>
 
@@ -198,11 +198,11 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 	</td>
 	<td class="main_table_cell_active">
     <?php
-	$sql2 = "SELECT count(*) AS total_count
-			 FROM ssl_accounts
-			 WHERE owner_id = '$row->id'";
-	$result2 = mysql_query($sql2,$connection);
-	while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
+	$sql_total_count = "SELECT count(*) AS total_count
+						FROM ssl_accounts
+						WHERE owner_id = '$row->id'";
+	$result_total_count = mysql_query($sql_total_count,$connection);
+	while ($row_total_count = mysql_fetch_object($result_total_count)) { $total_accounts = $row_total_count->total_count; }
 	?>
     	<?php if ($total_accounts >= 1) { ?>
 
@@ -275,11 +275,11 @@ if ($has_active_ssl != "1" && $has_inactive_ssl == "1") echo "<table class=\"mai
 	</td>
 	<td class="main_table_cell_inactive">
     <?php
-	$sql2 = "SELECT count(*) AS total_count
-			 FROM ssl_accounts
-			 WHERE owner_id = '$row->id'";
-	$result2 = mysql_query($sql2,$connection);
-	while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
+	$sql_total_count = "SELECT count(*) AS total_count 
+						FROM ssl_accounts
+						WHERE owner_id = '$row->id'";
+	$result_total_count = mysql_query($sql_total_count,$connection);
+	while ($row_total_count = mysql_fetch_object($result_total_count)) { $total_accounts = $row_total_count->total_count; }
 	?>
     	<?php if ($total_accounts >= 1) { ?>
 

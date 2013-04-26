@@ -66,11 +66,11 @@ Below is a list of all the SSL Certificate Providers that are stored in your <?=
             </td>
             <td class="main_table_cell_active">
                 <?php
-                $sql2 = "SELECT count(*) AS total_count
-                         FROM ssl_accounts
-                         WHERE ssl_provider_id = '$row->id'";
-                $result2 = mysql_query($sql2,$connection);
-                while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
+                $sql_total_count = "SELECT count(*) AS total_count
+									FROM ssl_accounts
+									WHERE ssl_provider_id = '$row->id'";
+                $result_total_count = mysql_query($sql_total_count,$connection);
+                while ($row_total_count = mysql_fetch_object($result_total_count)) { $total_accounts = $row_total_count->total_count; }
                 ?>
         
                 <?php if ($total_accounts >= 1) { ?>
@@ -141,11 +141,11 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
                 </td>
                 <td class="main_table_cell_inactive">
                     <?php
-                    $sql2 = "SELECT count(*) AS total_count
-                             FROM ssl_accounts
-                             WHERE ssl_provider_id = '$row->id'";
-                    $result2 = mysql_query($sql2,$connection);
-                    while ($row2 = mysql_fetch_object($result2)) { $total_accounts = $row2->total_count; }
+                    $sql_total_count = "SELECT count(*) AS total_count
+										FROM ssl_accounts
+										WHERE ssl_provider_id = '$row->id'";
+                    $result_total_count = mysql_query($sql_total_count,$connection);
+                    while ($row_total_count = mysql_fetch_object($result_total_count)) { $total_accounts = $row_total_count->total_count; }
                     ?>
             
                     <?php if ($total_accounts >= 1) { ?>

@@ -41,14 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 
    if (mysql_num_rows($result) == 1) {
 
-		$sql2 = "UPDATE users 
-				 SET first_name = '" . mysql_real_escape_string($new_first_name) . "',
-				 	 last_name = '" . mysql_real_escape_string($new_last_name) . "',
-					 email_address = '$new_email_address', 
-				 	 update_time = '$current_timestamp'
-				 WHERE id = '" . $_SESSION['session_user_id'] . "' 
-				   AND email_address = '" . $_SESSION['session_email_address'] . "'";
-		$result2 = mysql_query($sql2,$connection) or die("Your profile could not be updated. Please try again later.");
+		$sql_update = "UPDATE users 
+					   SET first_name = '" . mysql_real_escape_string($new_first_name) . "',
+					   	   last_name = '" . mysql_real_escape_string($new_last_name) . "',
+						   email_address = '$new_email_address', 
+						   update_time = '$current_timestamp'
+					   WHERE id = '" . $_SESSION['session_user_id'] . "' 
+					     AND email_address = '" . $_SESSION['session_email_address'] . "'";
+		$result_update = mysql_query($sql_update,$connection) or die("Your profile could not be updated. Please try again later.");
 		
 		$_SESSION['session_email_address'] = $new_email_address;
 		$_SESSION['session_first_name'] = $new_first_name;

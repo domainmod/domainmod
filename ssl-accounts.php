@@ -99,14 +99,14 @@ Below is a list of all the SSL Provider Accounts that are stored in your <?=$sof
 			</td>
 			<td class="main_table_cell_active">
 				<?php
-				$sql2 = "SELECT count(*) AS total_cert_count
-						 FROM ssl_certs
-						 WHERE account_id = '$row->sslpaid'
-						   AND active NOT IN ('0')";
-				$result2 = mysql_query($sql2,$connection);
+				$sql_total_count = "SELECT count(*) AS total_cert_count
+									FROM ssl_certs
+									WHERE account_id = '$row->sslpaid'
+									  AND active NOT IN ('0')";
+				$result_total_count = mysql_query($sql_total_count,$connection);
 
-				while ($row2 = mysql_fetch_object($result2)) { 
-					echo "<a class=\"nobold\" href=\"ssl-certs.php?oid=$row->oid&sslpid=$row->sslpid&sslpaid=$row->sslpaid\">" . number_format($row2->total_cert_count) . "</a>"; 
+				while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+					echo "<a class=\"nobold\" href=\"ssl-certs.php?oid=$row->oid&sslpid=$row->sslpid&sslpaid=$row->sslpaid\">" . number_format($row_total_count->total_cert_count) . "</a>"; 
 				} ?>
 
 			</td>

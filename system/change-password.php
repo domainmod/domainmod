@@ -40,13 +40,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
    if (mysql_num_rows($result) == 1) {
 
-		$sql2 = "UPDATE users 
-				 SET password = password('$new_password'), 
-				 	 new_password = '0', 
-				 	 update_time = '$current_timestamp'
-				 WHERE id = '" . $_SESSION['session_user_id'] . "' 
-				   AND email_address = '" . $_SESSION['session_email_address'] . "'";
-		$result2 = mysql_query($sql2,$connection) or die("Your password could not be updated. Please try again later.");
+		$sql_update = "UPDATE users 
+					   SET password = password('$new_password'), 
+					   	   new_password = '0', 
+						   update_time = '$current_timestamp'
+					   WHERE id = '" . $_SESSION['session_user_id'] . "' 
+					     AND email_address = '" . $_SESSION['session_email_address'] . "'";
+		$result_update = mysql_query($sql_update,$connection) or die("Your password could not be updated. Please try again later.");
 
 		if ($_SESSION['session_running_login_checks'] == 1) {
 

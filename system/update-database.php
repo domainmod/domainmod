@@ -351,11 +351,11 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		if (mysql_num_rows($result) == 0) {
-			$sql2 = "UPDATE categories
-					 SET default_category = '1',
-						 update_time = '" . mysql_real_escape_string($current_timestamp) . "'
-					 WHERE name = '[no category]'";
-			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
+			$sql_update = "UPDATE categories
+						   SET default_category = '1',
+						   	   update_time = '" . mysql_real_escape_string($current_timestamp) . "'
+						   WHERE name = '[no category]'";
+			$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 		}
 
 		$sql = "ALTER TABLE `dns` 
@@ -373,11 +373,11 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		if (mysql_num_rows($result) == 0) {
-			$sql2 = "UPDATE dns
-					 SET default_dns = '1',
-						 update_time = '" . mysql_real_escape_string($current_timestamp) . "'
-					 WHERE name = '[no dns]'";
-			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
+			$sql_update = "UPDATE dns
+						   SET default_dns = '1',
+						   	   update_time = '" . mysql_real_escape_string($current_timestamp) . "'
+						   WHERE name = '[no dns]'";
+			$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 		}
 
 		$sql = "ALTER TABLE `owners`  
@@ -395,11 +395,11 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		if (mysql_num_rows($result) == 0) {
-			$sql2 = "UPDATE owners
-					 SET default_owner = '1',
-						 update_time = '" . mysql_real_escape_string($current_timestamp) . "'
-					 WHERE name = '[no owner]'";
-			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
+			$sql_update = "UPDATE owners
+						   SET default_owner = '1',
+						   	   update_time = '" . mysql_real_escape_string($current_timestamp) . "'
+						   WHERE name = '[no owner]'";
+			$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 		}
 
 		$sql = "ALTER TABLE `ip_addresses` 
@@ -412,11 +412,11 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		if (mysql_num_rows($result) == 0) {
-			$sql2 = "UPDATE ip_addresses
-					 SET default_ip_address = '1',
-						 update_time = '" . mysql_real_escape_string($current_timestamp) . "'
-					 WHERE name = '[no ip address]'";
-			$result2 = mysql_query($sql2,$connection) or die(mysql_error());
+			$sql_update = "UPDATE ip_addresses
+						   SET default_ip_address = '1',
+						   	   update_time = '" . mysql_real_escape_string($current_timestamp) . "'
+						   WHERE name = '[no ip address]'";
+			$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 		}
 
 		$sql = "UPDATE settings

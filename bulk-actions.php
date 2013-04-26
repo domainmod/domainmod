@@ -138,21 +138,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					if ($new_notes != "") {
 
-						$sql2 = "UPDATE domains
-								 SET expiry_date = '$new_expiry',
-									 notes = CONCAT('$new_notes\r\n\r\n', notes),
-									 update_time = '$current_timestamp'
-								 WHERE domain = '$row->domain'";
+						$sql_update = "UPDATE domains
+									   SET expiry_date = '$new_expiry',
+									   	   notes = CONCAT('$new_notes\r\n\r\n', notes),
+										   update_time = '$current_timestamp'
+									   WHERE domain = '$row->domain'";
 						
 					} else {
 
-						$sql2 = "UPDATE domains
-								 SET expiry_date = '$new_expiry',
-									 update_time = '$current_timestamp'
-								 WHERE domain = '$row->domain'";
+						$sql_update = "UPDATE domains
+									   SET expiry_date = '$new_expiry',
+									   	   update_time = '$current_timestamp'
+									   WHERE domain = '$row->domain'";
 
 					}
-					$result2 = mysql_query($sql2,$connection);
+					$result_update = mysql_query($sql_update,$connection);
 				
 				}
 
@@ -244,26 +244,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 						$new_notes_renewal = "$current_timestamp_basic - Domain Renewed For $renewal_years_string";
 
-						$sql2 = "UPDATE domains
-								 SET expiry_date = '$new_expiry',
-									 notes = CONCAT('$new_notes\r\n\r\n', '$new_notes_renewal\r\n\r\n', notes),
-									 active = '1',
-									 update_time = '$current_timestamp'
-								 WHERE domain = '$row->domain'";
+						$sql_update = "UPDATE domains
+									   SET expiry_date = '$new_expiry',
+									   	   notes = CONCAT('$new_notes\r\n\r\n', '$new_notes_renewal\r\n\r\n', notes),
+										   active = '1',
+										   update_time = '$current_timestamp'
+									   WHERE domain = '$row->domain'";
 						
 					} else {
 
 						$new_notes_renewal = "$current_timestamp_basic - Domain Renewed For $renewal_years_string";
 
-						$sql2 = "UPDATE domains
-								 SET expiry_date = '$new_expiry',
-									 notes = CONCAT('$new_notes_renewal\r\n\r\n', notes),
-									 active = '1',
-									 update_time = '$current_timestamp'
-								 WHERE domain = '$row->domain'";
+						$sql_update = "UPDATE domains
+									   SET expiry_date = '$new_expiry',
+									   	   notes = CONCAT('$new_notes_renewal\r\n\r\n', notes),
+										   active = '1',
+										   update_time = '$current_timestamp'
+									   WHERE domain = '$row->domain'";
 
 					}
-					$result2 = mysql_query($sql2,$connection);
+					$result_update = mysql_query($sql_update,$connection);
 				
 				}
 
@@ -372,11 +372,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 				} else {
 
-					$sql2 = "UPDATE domains
-							SET notes = CONCAT('$new_notes\r\n\r\n', notes),
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
-					$result2 = mysql_query($sql2,$connection) or die(mysql_error());
+					$sql_update = "UPDATE domains
+								   SET notes = CONCAT('$new_notes\r\n\r\n', notes),
+								   	   update_time = '$current_timestamp'
+								   WHERE domain IN ($new_data_formatted)";
+					$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 					
 					$_SESSION['session_result_message'] = "Note Added<BR>";
 	

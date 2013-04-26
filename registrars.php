@@ -75,13 +75,13 @@ Below is a list of all the Domain Registrars that are stored in your <?=$softwar
             </td>
             <td class="main_table_cell_active">
                 <?php
-                $sql2 = "SELECT count(*) AS total_count
-                         FROM registrar_accounts
-                         WHERE registrar_id = '$row->rid'";
-                $result2 = mysql_query($sql2,$connection);
+                $sql_total_count = "SELECT count(*) AS total_count
+									FROM registrar_accounts
+									WHERE registrar_id = '$row->rid'";
+                $result_total_count = mysql_query($sql_total_count,$connection);
         
-                while ($row2 = mysql_fetch_object($result2)) { 
-                    $total_accounts = $row2->total_count;
+                while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+                    $total_accounts = $row_total_count->total_count;
                 }
                 
                     if ($total_accounts >= 1) { ?>
@@ -179,13 +179,13 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
             </td>
             <td class="main_table_cell_inactive">
                 <?php
-                $sql2 = "SELECT count(*) AS total_count
-                         FROM registrar_accounts
-                         WHERE registrar_id = '$row->rid'";
-                $result2 = mysql_query($sql2,$connection);
+                $sql_total_count = "SELECT count(*) AS total_count
+									FROM registrar_accounts
+									WHERE registrar_id = '$row->rid'";
+                $result_total_count = mysql_query($sql_total_count,$connection);
         
-                while ($row2 = mysql_fetch_object($result2)) { 
-                    $total_accounts = $row2->total_count;
+                while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+                    $total_accounts = $row_total_count->total_count;
                 }
                 
                     if ($total_accounts >= 1) { ?>

@@ -63,18 +63,18 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
             </td>
             <td class="main_table_cell_active">
                 <?php
-				$sql2 = "SELECT sslcf.type AS full_tf_string
-						FROM ssl_certs AS sslc, ssl_cert_types AS sslcf
-						WHERE sslc.type_id = sslcf.id
-						  AND sslc.ssl_provider_id = '$row->ssl_provider_id'
-						  AND sslc.fee_id = '0'
-						GROUP BY full_tf_string
-						ORDER BY full_tf_string asc";
-                $result2 = mysql_query($sql2,$connection);
+				$sql_missing_types = "SELECT sslcf.type
+									  FROM ssl_certs AS sslc, ssl_cert_types AS sslcf
+									  WHERE sslc.type_id = sslcf.id
+									    AND sslc.ssl_provider_id = '$row->ssl_provider_id'
+										AND sslc.fee_id = '0'
+									  GROUP BY sslcf.type
+									  ORDER BY sslcf.type asc";
+                $result_missing_types = mysql_query($sql_missing_types,$connection);
                 $full_type_list = "";
 
-                while ($row2 = mysql_fetch_object($result2)) {
-                    $full_type_list .= $row2->full_tf_string . " / ";
+                while ($row_missing_types = mysql_fetch_object($result_missing_types)) {
+                    $full_type_list .= $row_missing_types->type . " / ";
                 }
 
                 $full_type_list_formatted = substr($full_type_list, 0, -2); 

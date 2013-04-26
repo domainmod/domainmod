@@ -60,7 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		while ($row_currency = mysql_fetch_object($result_currency)) { $default_currency = $row_currency->currency; }
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
-		$result2 = mysql_query($sql,$connection) or die(mysql_error());
 
 	} else {
 
@@ -158,10 +157,8 @@ exit;
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-<?php 
-$result = $result2;
-if (mysql_num_rows($result) > 0) { ?>
-<strong>Number of Domains to Export:</strong> <?=number_format(mysql_num_rows($result))?><BR><BR>
+<?php if (mysql_num_rows($result) > 0) { ?>
+		<strong>Number of Domains to Export:</strong> <?=number_format(mysql_num_rows($result))?><BR><BR>
 <?php } ?>
 Before exporting your domains you should <a href="system/update-conversion-rates.php">update the conversion rates</a>.
 <BR><BR>

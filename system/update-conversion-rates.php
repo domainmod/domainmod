@@ -63,11 +63,11 @@ while ($row = mysql_fetch_object($result)) {
 	$data = explode(",",$handle_result);
 	$value = $data[1];
 	
-	$sql2 = "UPDATE currencies
-			 SET conversion = '$value', 
-			 	 update_time = '$current_timestamp'
-			 WHERE currency = '$row->currency'";
-	$result2 = mysql_query($sql2,$connection);
+	$sql_update = "UPDATE currencies
+				   SET conversion = '$value', 
+				   	   update_time = '$current_timestamp'
+				   WHERE currency = '$row->currency'";
+	$result_update = mysql_query($sql_update,$connection);
 
 }
 
