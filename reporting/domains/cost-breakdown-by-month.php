@@ -37,9 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		if ((!CheckDateFormat($new_start_date) || !CheckDateFormat($new_end_date)) || $new_start_date > $new_end_date) { 
 
-			if (!CheckDateFormat($new_start_date)) $_SESSION['session_result_message'] .= "The starting date is invalid<BR>";
-			if (!CheckDateFormat($new_end_date)) $_SESSION['session_result_message'] .= "The ending date is invalid<BR>";
-			if ($new_start_date > $new_end_date) $_SESSION['session_result_message'] .= "The ending date proceeds the starting date<BR>";
+			if (!CheckDateFormat($new_start_date)) $_SESSION['session_result_message'] .= "The start date is invalid<BR>";
+			if (!CheckDateFormat($new_end_date)) $_SESSION['session_result_message'] .= "The end date is invalid<BR>";
+			if ($new_start_date > $new_end_date) $_SESSION['session_result_message'] .= "The end date proceeds the start date<BR>";
 
 			$submission_failed = "1";
 
