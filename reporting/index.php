@@ -34,7 +34,10 @@ $software_section = "reporting";
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
-&raquo; <a href="tld-breakdown.php">TLD Breakdown</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="cost-breakdown-by-month.php">Cost Breakdown by Month</a><BR>
+<font class="subheadline">Domains</font><BR><BR>
+&raquo; <a href="tld-breakdown.php">TLD Breakdown</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="domain-cost-breakdown-by-month.php">Cost Breakdown by Month</a><BR><BR><BR>
+<font class="subheadline">SSL Certificates</font><BR><BR>
+&raquo; <!a href="ssl-cost-breakdown-by-month.php">Cost Breakdown by Month<!/a><BR><BR>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>
