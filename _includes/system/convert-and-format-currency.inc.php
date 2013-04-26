@@ -27,17 +27,14 @@
 // $xxxxx = $temp_output_amount;
 ?>
 <?php
-date_default_timezone_set($_SESSION['session_system_timezone']);
-setlocale(LC_MONETARY, 'en_CA');
-
 if ($temp_input_conversion == "") {
 
-	$temp_output_amount = money_format('%!i', $temp_input_amount);
+	$temp_output_amount = number_format($temp_input_amount, 2, '.', ',');
 
 } else {
 
 	$temp_full_fee = $temp_input_amount * $temp_input_conversion;
-	$temp_output_amount = money_format('%!i', $temp_full_fee);
-
+	$temp_output_amount = number_format($temp_input_amount * $temp_input_conversion, 2, '.', ',');
+	
 }
 ?>
