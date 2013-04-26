@@ -37,7 +37,7 @@ $software_section = "reporting";
 <font class="subheadline">Domains</font><BR><BR>
 &raquo; <a href="domains/tld-breakdown.php">TLD Breakdown</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="domains/cost-breakdown-by-month.php">Cost Breakdown by Month</a><BR><BR><BR>
 <font class="subheadline">SSL Certificates</font><BR><BR>
-&raquo; <!a href="ssl/cost-breakdown-by-month.php">Cost Breakdown by Month<!/a><BR><BR>
+&raquo; <a href="ssl/cost-breakdown-by-month.php">Cost Breakdown by Month</a><BR><BR>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>
