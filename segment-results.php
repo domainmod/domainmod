@@ -88,14 +88,6 @@ if ($export == "1") {
 
 	if ($type == "inactive" || $type == "filtered") { 
 	
-		$sql_currency = "SELECT currency
-						 FROM currencies
-						 WHERE default_currency = '1'";
-		$result_currency = mysql_query($sql_currency,$connection);
-		while ($row_currency = mysql_fetch_object($result_currency)) {
-			$default_currency = $row_currency->currency;
-		}
-	
 		if ($type == "inactive") {
 			
 			$full_export .= "\"INACTIVE DOMAINS\"\n\n";
@@ -106,7 +98,7 @@ if ($export == "1") {
 			
 		}
 
-		$full_export .= "\"All fees are listed in " . $default_currency . "\"\n\n";
+		$full_export .= "\"All fees are listed in " . $_SESSION['session_default_currency'] . "\"\n\n";
 	
 		$full_export .= "\"Domain Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Function\",\"Notes\"\n";
 	

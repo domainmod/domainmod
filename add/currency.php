@@ -60,16 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 		} else {
 
-			$sql = "SELECT currency
-					FROM currencies
-					WHERE default_currency = '1'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) {
-				$temp_default_currency = $row->currency;
-			}
-	
 			$from = $new_abbreviation;
-			$to = $temp_default_currency;
+			$to = $_SESSION['session_default_currency'];
 			$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
 			$handle = @fopen($full_url, "r");
 				 
@@ -113,22 +105,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/header.inc.php"); ?>
-<?php 
-$sql = "SELECT currency, name
-		FROM currencies
-		WHERE default_currency  = '1'";
-$result = mysql_query($sql,$connection);
-
-while ($row = mysql_fetch_object($result)) {
-	$default_currency = $row->currency;
-	$default_name = $row->name;
-}
-?>
 <form name="add_currency_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Name ("<em><?=$default_name?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Name ("<em><?=$_SESSION['session_default_currency_name']?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" value="<?=$new_name?>" size="50" maxlength="255">
 <BR><BR>
-<strong>Abbreviation ("<em><?=$default_currency?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Abbreviation ("<em><?=$_SESSION['session_default_currency']?></em>")</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_abbreviation" type="text" value="<?=$new_abbreviation?>" size="50" maxlength="3">
 <BR><BR>
 <strong>Notes</strong><BR><BR>

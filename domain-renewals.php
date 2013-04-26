@@ -52,13 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if (CheckDateFormat($new_expiry_start) && CheckDateFormat($new_expiry_end) && $new_expiry_start < $new_expiry_end) {
 	
-		$sql_currency = "SELECT currency
-						 FROM currencies
-						 WHERE default_currency = '1'
-						 LIMIT 1";
-		$result_currency = mysql_query($sql_currency,$connection);
-		while ($row_currency = mysql_fetch_object($result_currency)) { $default_currency = $row_currency->currency; }
-
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		$total_results = mysql_num_rows($result);
 
@@ -76,16 +69,9 @@ $full_export = "";
 
 if ($export == "1") {
 
-	$sql_currency = "SELECT currency
-					 FROM currencies
-					 WHERE default_currency = '1'
-					 LIMIT 1";
-	$result_currency = mysql_query($sql_currency,$connection);
-	while ($row_currency = mysql_fetch_object($result_currency)) { $default_currency = $row_currency->currency; }
-
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
-	$full_export .= "\"All fees are listed in " . $default_currency . "\"\n\n";
+	$full_export .= "\"All fees are listed in " . $_SESSION['session_default_currency'] . "\"\n\n";
 
 	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renew?\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\"\n";
 
@@ -202,13 +188,6 @@ Before exporting your domains you should <a href="system/update-conversion-rates
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_fee'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<?php
-        $sql_currency = "SELECT currency
-                         FROM currencies
-                         WHERE default_currency = '1'";
-        $result_currency = mysql_query($sql_currency,$connection);
-        while ($row_currency = mysql_fetch_object($result_currency)) { $temp_currency = $row_currency->currency; }
-        ?>
     	<font class="main_table_heading">Fee</font>
     </td>
 <?php } ?>
@@ -329,7 +308,7 @@ $temp_input_conversion = "";
 include("_includes/system/convert-and-format-currency.inc.php");
 $total_cost = $temp_output_amount;
 ?>
-<BR><strong>Total Cost:</strong> <?=$total_cost?> <?=$default_currency?><BR>
+<BR><strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['session_default_currency']?><BR>
 <?php } else {?>
 <BR>The results that will be shown below will display the same columns as you have on your <a href="domains.php">Domains</a> page, but when you export the results you will be given even more information.<BR><BR>
 The full list of fields in the export is:<BR><BR>

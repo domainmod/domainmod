@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['session_display_ssl_fee'] = $row_user_settings->display_ssl_fee;
 			}
 
-			$sql_currencies = "SELECT currency
+			$sql_currencies = "SELECT name, currency
 							   FROM currencies
 							   WHERE default_currency = '1'
 							   ORDER BY default_currency desc
@@ -112,6 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			$result_currencies = mysql_query($sql_currencies,$connection);
 
 			while ($row_currencies = mysql_fetch_object($result_currencies)) {
+				$_SESSION['session_default_currency_name'] = $row_currencies->name;
 				$_SESSION['session_default_currency'] = $row_currencies->currency;
 			}
 

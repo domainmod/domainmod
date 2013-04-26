@@ -338,14 +338,7 @@ if ($export == "1") {
 
 	$result = mysql_query($sql,$connection);
 
-	$sql_currency = "SELECT currency
-					 FROM currencies
-					 WHERE default_currency = '1'
-					 LIMIT 1";
-	$result_currency = mysql_query($sql_currency,$connection);
-	while ($row_currency = mysql_fetch_object($result_currency)) { $default_currency = $row_currency->currency; }
-
-	$full_export .= "\"All fees are listed in " . $default_currency . "\"\n\n";
+	$full_export .= "\"All fees are listed in " . $_SESSION['session_default_currency'] . "\"\n\n";
 
 	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\"\n";
 
@@ -1101,13 +1094,6 @@ $_SESSION['session_quick_search'] = preg_replace("/'/", "", $_SESSION['session_q
 <?php } ?>
 <?php if ($_SESSION['session_display_domain_fee'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<?php
-        $sql_currency = "SELECT currency
-                         FROM currencies
-                         WHERE default_currency = '1'";
-        $result_currency = mysql_query($sql_currency,$connection);
-        while ($row_currency = mysql_fetch_object($result_currency)) { $temp_currency = $row_currency->currency; }
-        ?>
 		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&whid=<?=$whid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "df_a") { echo "df_d"; } else { echo "df_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Fee</font></a>
 	</td>
 <?php } ?>
