@@ -47,7 +47,7 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date,
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (CheckDateFormat($new_expiry_start) && CheckDateFormat($new_expiry_end)) {
+	if (CheckDateFormat($new_expiry_start) && CheckDateFormat($new_expiry_end) && $new_expiry_start < $new_expiry_end) {
 
 		$sql_currency = "SELECT currency
 						 FROM currencies
@@ -57,11 +57,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		while ($row_currency = mysql_fetch_object($result_currency)) { $default_currency = $row_currency->currency; }
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$total_results = mysql_num_rows($result);
 
 	} else {
 
-		if (!CheckDateFormat($new_expiry_start)) { $_SESSION['session_result_message'] .= "The starting expiry date you entered is invalid<BR>"; }
-		if (!CheckDateFormat($new_expiry_end)) { $_SESSION['session_result_message'] .= "The ending expiry date you entered is invalid<BR>"; }
+		if (!CheckDateFormat($new_expiry_start)) $_SESSION['session_result_message'] .= "The start date is invalid<BR>";
+		if (!CheckDateFormat($new_expiry_end)) $_SESSION['session_result_message'] .= "The end date is invalid<BR>";
+		if ($new_expiry_start > $new_expiry_end) $_SESSION['session_result_message'] .= "The end date proceeds the start date<BR>";
 
 	}
 
@@ -160,8 +162,8 @@ exit;
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-<?php if (mysql_num_rows($result) > 0) { ?>
-		<strong>Number of SSL Certificates to Export:</strong> <?=number_format(mysql_num_rows($result))?><BR><BR>
+<?php if ($total_results > 0) { ?>
+		<strong>Number of SSL Certificates to Export:</strong> <?=number_format($total_results)?><BR><BR>
 <?php } ?>
 Before exporting your SSL Certificates you should <a href="system/update-conversion-rates.php">update the conversion rates</a>.
 <BR><BR>
@@ -181,7 +183,7 @@ Before exporting your SSL Certificates you should <a href="system/update-convers
                         </form><BR>
 					</td>
 					<td class="search-table-inside" width="200" valign="middle" align="center">
-						<?php if (mysql_num_rows($result) > 0) { ?>
+						<?php if ($total_results > 0) { ?>
                                 <a href="ssl-cert-renewals.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>">Export Results</a><BR>
                         <?php } ?>
 					</td>
@@ -191,7 +193,7 @@ Before exporting your SSL Certificates you should <a href="system/update-convers
 		</td>
 	</tr>
 </table>
-<?php if (mysql_num_rows($result) > 0) { ?>
+<?php if ($total_results > 0) { ?>
 <BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
