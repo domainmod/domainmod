@@ -42,6 +42,45 @@ $sql = "SELECT c.currency
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
+	
+	$exclude_string .= "'" . $row->currency . "', ";
+
+	$from = $row->currency;
+	$to = $_SESSION['default_currency'];
+	$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
+	$handle = @fopen($full_url, "r");
+
+	if ($handle) {
+
+		$handle_result = fgets($handle, 4096);
+		fclose($handle);
+
+	}
+	
+	$data = explode(",",$handle_result);
+	$value = $data[1];
+	
+	$sql_update = "UPDATE currencies
+				   SET conversion = '$value', 
+				   	   update_time = '$current_timestamp'
+				   WHERE currency = '$row->currency'";
+	$result_update = mysql_query($sql_update,$connection);
+
+}
+
+$exclude_string = substr($exclude_string, 0, -2);
+
+$sql = "SELECT c.currency
+		FROM currencies AS c, fees AS f, ssl_certs AS sslc
+		WHERE c.id = f.currency_id
+		  AND f.id = sslc.fee_id
+		  AND sslc.active not in ('0')
+		  AND c.currency != '" . $_SESSION['default_currency'] . "'
+		  AND c.currency NOT IN (" . $exclude_string . ")
+		GROUP BY currency";
+$result = mysql_query($sql,$connection) or die(mysql_error());
+
+while ($row = mysql_fetch_object($result)) {
 
 	$from = $row->currency;
 	$to = $_SESSION['default_currency'];
