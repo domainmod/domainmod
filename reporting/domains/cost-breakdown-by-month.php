@@ -328,7 +328,7 @@ if ($submission_failed != "1" && mysql_num_rows($result) > 0) { ?>
 	$temp_input_conversion = "";
 	include("../../_includes/system/convert-and-format-currency.inc.php");
 	$grand_total = $temp_output_amount;
-	echo "<BR><strong>Grand Total: </strong>" . $grand_total . "";
+	echo "<BR><strong>Grand Total: </strong>" . $grand_total . " " . $_SESSION['default_currency'] . "";
 
 } 
 ?>
