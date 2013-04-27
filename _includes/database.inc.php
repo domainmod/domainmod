@@ -18,4 +18,6 @@
 <?php
 $connection = mysql_connect($dbhostname,$dbusername,$dbpassword) or die(mysql_error());
 $database = mysql_select_db($dbname,$connection) or die(mysql_error());
+mysql_query("SET CHARACTER SET utf8", $connection) or die(mysql_error());
+mysql_query("SET COLLATION_CONNECTION = 'utf8_unicode_ci'", $connection) or die(mysql_error());
 ?>
