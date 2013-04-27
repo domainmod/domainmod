@@ -76,7 +76,7 @@ while ($row = mysql_fetch_object($result)) { ?>
 		<BR><font class="default_highlight">*</font> = Default Currency (for rate conversions, reporting, etc.)
 <?php } ?>
 <?php if (!$has_active) { ?>
-		You don't currently have any Currencies. <a href="add/currency.php">Click here to add one</a>.
+		You don't currently have any active Currencies.
 <?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
