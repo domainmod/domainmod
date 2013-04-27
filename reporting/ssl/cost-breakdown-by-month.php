@@ -159,7 +159,7 @@ if ($submission_failed != "1" && mysql_num_rows($result) > 0) {
 		include("../../_includes/system/convert-and-format-currency.inc.php");
 		$grand_total = $temp_output_amount;
 	
-		$full_export .= "\"\",\"\",\"Grand Total:\",\"" . $grand_total . "\"\n";
+		$full_export .= "\"\",\"\",\"Grand Total:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
 		
 		$export = "0";
 		
@@ -201,7 +201,7 @@ Before running any reports you should <a href="../../system/update-conversion-ra
 					</td>
 					<td class="search-table-inside" width="200" valign="middle" align="center">
 						<?php if (mysql_num_rows($result) > 0) { ?>
-                        <a href="<?=$PHP_SELF?>?export=1&new_start_date=<?=$new_start_date?>&new_end_date=<?=$new_end_date?>">Export Results</a><BR>
+                        <a href="<?=$PHP_SELF?>?export=1&new_start_date=<?=$new_start_date?>&new_end_date=<?=$new_end_date?>&all=<?=$all?>">Export Results</a><BR>
                         <?php } ?>
 					</td>
 				</tr>
