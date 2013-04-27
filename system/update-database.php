@@ -1883,6 +1883,37 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0036 to 2.0037
+	if ($current_db_version == 2.0036) {
+		
+		$sql = "SELECT currency
+				FROM currencies
+				WHERE default_currency = '1'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $temp_currency = $row->currency; }
+		
+		$sql = "UPDATE settings
+				SET default_currency = '" . $temp_currency . "'";
+		$result = mysql_query($sql,$connection);
+		
+		$_SESSION['default_currency'] = $temp_currency;
+
+		$sql = "ALTER TABLE `currencies` 
+				DROP `default_currency`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `user_settings` 
+				DROP `default_currency`;";
+		$result = mysql_query($sql,$connection);
+		
+		$sql = "UPDATE settings
+				SET db_version = '2.0037',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0037;
+
+	}
 
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
