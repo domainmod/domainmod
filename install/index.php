@@ -583,10 +583,12 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				PRIMARY KEY  (`id`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+	$full_url = substr($_SERVER["HTTP_REFERER"], 0, -1);
 
 	$sql = "INSERT INTO `settings` 
-			(`db_version`, `email_address`, `default_currency`, `insert_time`) VALUES 
-			('$most_recent_db_version', 'dm@aysmedia.com', 'CAD', '$current_timestamp');";
+			(`full_url`, `db_version`, `email_address`, `default_currency`, `insert_time`) VALUES 
+			('$full_url', '$most_recent_db_version', 'dm@aysmedia.com', 'CAD', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "CREATE TABLE IF NOT EXISTS `timezones` (
