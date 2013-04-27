@@ -186,7 +186,6 @@ if ($really_del == "1") {
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title><?=$software_title?> :: <?=$page_title?></title>
 <?php include("../_includes/head-tags.inc.php"); ?>
 </head>

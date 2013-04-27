@@ -41,7 +41,6 @@ function str_stop($string, $max_length){
 <?php include("_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title><?=$software_title?> :: <?=$page_title?></title>
 <?php include("_includes/head-tags.inc.php"); ?>
 </head>
@@ -61,7 +60,7 @@ Segment filters will tell you which domains match with domains that are saved in
 $sql_segment_check = "SELECT id
 					  FROM segments
 					  LIMIT 1";
-$result_segment_check = mysql_query($sql_segment_check,$connection);
+$result_segment_check = mysql_query($sql_segment_check,$connection) or die(mysql_error());
 if (mysql_num_rows($result_segment_check) == 0) {
 ?>
 	You don't currently have any Segments. <a href="add/segment.php">Click here to add one</a>.<BR><BR>

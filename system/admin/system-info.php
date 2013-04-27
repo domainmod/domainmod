@@ -34,7 +34,6 @@ $software_section = "system";
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title><?=$software_title?> :: <?=$page_title?></title>
 <?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
@@ -43,7 +42,7 @@ $software_section = "system";
 <?php
 $sql = "SELECT db_version
 		FROM settings";
-$result = mysql_query($sql,$connection);
+$result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) {
 	$db_version = $row->db_version;
 }
