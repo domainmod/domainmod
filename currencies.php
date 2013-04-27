@@ -35,7 +35,7 @@ $software_section = "currencies";
 <body>
 <?php include("_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT id, currency, name, conversion, default_currency
+$sql = "SELECT id, currency, name, conversion
 		FROM currencies
 		ORDER BY name asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
@@ -60,8 +60,7 @@ The below conversion rates are used for accounting and reporting purposes, and a
 while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/currency.php?curid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_currency == 1) echo "<a title=\"Default Currency\"><font class=\"default_highlight\">*</font></a>"; ?>
-<?php if ($row->currency == $_SESSION['default_currency']) echo ""; ?>
+		<a class="invisiblelink" href="edit/currency.php?curid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_currency'] == $row->currency) echo "<a title=\"Default Currency\"><font class=\"default_highlight\">*</font></a>"; ?>
 	</td>
     <td class="main_table_cell_active">
 		<?php echo "$row->currency"; ?>
