@@ -77,10 +77,6 @@ if ($software_section == "domains") {
 
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/segment.php">Add A New Segment</a><?php 
 
-} elseif ($software_section == "currencies") { ?>
-
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/update-conversion-rates.php">Update Conversion Rates</a><?php 
-		
 } elseif ($software_section == "system") { ?>
 
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a><?php 
