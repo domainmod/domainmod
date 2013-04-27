@@ -138,7 +138,8 @@ if ($current_db_version < $most_recent_db_version) {
 	// upgrade database from 1.6 to 1.7
 	if ($current_db_version == 1.6) {
 
-		$sql = "ALTER TABLE `ssl_certs` DROP `ip`;";
+		$sql = "ALTER TABLE `ssl_certs` 
+				DROP `ip`;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "UPDATE settings
@@ -224,7 +225,8 @@ if ($current_db_version < $most_recent_db_version) {
 	// upgrade database from 1.92 to 1.93
 	if ($current_db_version == 1.92) {
 
-		$sql = "ALTER TABLE `settings` DROP `type`;";
+		$sql = "ALTER TABLE `settings` 
+				DROP `type`;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
@@ -476,7 +478,8 @@ if ($current_db_version < $most_recent_db_version) {
 				WHERE currency = '" . mysql_real_escape_string($default_currency) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
-		$sql = "ALTER TABLE `settings` DROP `default_currency`";
+		$sql = "ALTER TABLE `settings` 
+				DROP `default_currency`";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
@@ -526,10 +529,12 @@ if ($current_db_version < $most_recent_db_version) {
 		$sql = "DROP TABLE `ssl_cert_types`;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
-		$sql = "ALTER TABLE `ssl_certs` DROP `type_id`;";
+		$sql = "ALTER TABLE `ssl_certs` 
+				DROP `type_id`;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
-		$sql = "ALTER TABLE `ssl_fees` DROP `type_id`;";
+		$sql = "ALTER TABLE `ssl_fees` 
+				DROP `type_id`;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
@@ -1617,6 +1622,264 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0035;
+
+	}
+
+	// upgrade database from 2.0035 to 2.0036
+	if ($current_db_version == 2.0035) {
+
+		$sql = "DROP TABLE `currency_data`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER DATABASE " . $dbname . " 
+				CHARACTER SET utf8 
+				DEFAULT CHARACTER SET utf8 
+				COLLATE utf8_unicode_ci
+				DEFAULT COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `currencies`  
+				ADD `symbol` VARCHAR(4) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `conversion`,  
+				ADD `symbol_order` INT(1) NOT NULL DEFAULT '0' AFTER `symbol`,  
+				ADD `symbol_space` INT(1) NOT NULL DEFAULT '0' AFTER `symbol_order`,
+				ADD `newly_inserted` INT(1) NOT NULL DEFAULT '1' AFTER `symbol_space`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE currencies
+				SET newly_inserted = '0',
+					update_time = '" . $current_timestamp . "'";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `settings`  
+				ADD `default_currency` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `email_address`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE `user_settings`  
+				ADD `default_currency` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `user_id`";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET default_currency = '" . $_SESSION['default_currency'] . "',
+					update_time = '" . $current_timestamp . "'";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE user_settings
+				SET default_currency = '" . $_SESSION['default_currency'] . "',
+					update_time = '" . $current_timestamp . "'";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "INSERT INTO currencies
+				(name, currency, symbol, insert_time) VALUES 
+				('Albania Lek', 'ALL', 'Lek', '" . $current_timestamp . "'),
+				('Afghanistan Afghani', 'AFN', '؋', '" . $current_timestamp . "'),
+				('Argentina Peso', 'ARS', '$', '" . $current_timestamp . "'),
+				('Aruba Guilder', 'AWG', 'ƒ', '" . $current_timestamp . "'),
+				('Australia Dollar', 'AUD', '$', '" . $current_timestamp . "'),
+				('Azerbaijan New Manat', 'AZN', '" . 'ман' . "', '" . $current_timestamp . "'),
+				('Bahamas Dollar', 'BSD', '$', '" . $current_timestamp . "'),
+				('Barbados Dollar', 'BBD', '$', '" . $current_timestamp . "'),
+				('Belarus Ruble', 'BYR', 'p.', '" . $current_timestamp . "'),
+				('Belize Dollar', 'BZD', 'BZ$', '" . $current_timestamp . "'),
+				('Bermuda Dollar', 'BMD', '$', '" . $current_timestamp . "'),
+				('Bolivia Boliviano', 'BOB', '\$b', '" . $current_timestamp . "'),
+				('Bosnia and Herzegovina Convertible Marka', 'BAM', 'KM', '" . $current_timestamp . "'),
+				('Botswana Pula', 'BWP', 'P', '" . $current_timestamp . "'),
+				('Bulgaria Lev', 'BGN', 'лв', '" . $current_timestamp . "'),
+				('Brazil Real', 'BRL', 'R$', '" . $current_timestamp . "'),
+				('Brunei Darussalam Dollar', 'BND', '$', '" . $current_timestamp . "'),
+				('Cambodia Riel', 'KHR', '៛', '" . $current_timestamp . "'),
+				('Canada Dollar', 'CAD', '$', '" . $current_timestamp . "'),
+				('Cayman Islands Dollar', 'KYD', '$', '" . $current_timestamp . "'),
+				('Chile Peso', 'CLP', '$', '" . $current_timestamp . "'),
+				('China Yuan Renminbi', 'CNY', '¥', '" . $current_timestamp . "'),
+				('Colombia Peso', 'COP', '$', '" . $current_timestamp . "'),
+				('Costa Rica Colon', 'CRC', '₡', '" . $current_timestamp . "'),
+				('Croatia Kuna', 'HRK', 'kn', '" . $current_timestamp . "'),
+				('Cuba Peso', 'CUP', '₱', '" . $current_timestamp . "'),
+				('Czech Republic Koruna', 'CZK', 'Kč', '" . $current_timestamp . "'),
+				('Denmark Krone', 'DKK', 'kr', '" . $current_timestamp . "'),
+				('Dominican Republic Peso', 'DOP', 'RD$', '" . $current_timestamp . "'),
+				('East Caribbean Dollar', 'XCD', '$', '" . $current_timestamp . "'),
+				('Egypt Pound', 'EGP', '£', '" . $current_timestamp . "'),
+				('El Salvador Colon', 'SVC', '$', '" . $current_timestamp . "'),
+				('Estonia Kroon', 'EEK', 'kr', '" . $current_timestamp . "'),
+				('Euro Member Countries', 'EUR', '€', '" . $current_timestamp . "'),
+				('Falkland Islands (Malvinas) Pound', 'FKP', '£', '" . $current_timestamp . "'),
+				('Fiji Dollar', 'FJD', '$', '" . $current_timestamp . "'),
+				('Ghana Cedis', 'GHC', '¢', '" . $current_timestamp . "'),
+				('Gibraltar Pound', 'GIP', '£', '" . $current_timestamp . "'),
+				('Guatemala Quetzal', 'GTQ', 'Q', '" . $current_timestamp . "'),
+				('Guernsey Pound', 'GGP', '£', '" . $current_timestamp . "'),
+				('Guyana Dollar', 'GYD', '$', '" . $current_timestamp . "'),
+				('Honduras Lempira', 'HNL', 'L', '" . $current_timestamp . "'),
+				('Hong Kong Dollar', 'HKD', '$', '" . $current_timestamp . "'),
+				('Hungary Forint', 'HUF', 'Ft', '" . $current_timestamp . "'),
+				('Iceland Krona', 'ISK', 'kr', '" . $current_timestamp . "'),
+				('India Rupee', 'INR', 'Rs', '" . $current_timestamp . "'),
+				('Indonesia Rupiah', 'IDR', 'Rp', '" . $current_timestamp . "'),
+				('Iran Rial', 'IRR', '﷼', '" . $current_timestamp . "'),
+				('Isle of Man Pound', 'IMP', '£', '" . $current_timestamp . "'),
+				('Israel Shekel', 'ILS', '₪', '" . $current_timestamp . "'),
+				('Jamaica Dollar', 'JMD', 'J$', '" . $current_timestamp . "'),
+				('Japan Yen', 'JPY', '¥', '" . $current_timestamp . "'),
+				('Jersey Pound', 'JEP', '£', '" . $current_timestamp . "'),
+				('Kazakhstan Tenge', 'KZT', 'лв', '" . $current_timestamp . "'),
+				('Korea (North) Won', 'KPW', '₩', '" . $current_timestamp . "'),
+				('Korea (South) Won', 'KRW', '₩', '" . $current_timestamp . "'),
+				('Kyrgyzstan Som', 'KGS', 'лв', '" . $current_timestamp . "'),
+				('Laos Kip', 'LAK', '₭', '" . $current_timestamp . "'),
+				('Latvia Lat', 'LVL', 'Ls', '" . $current_timestamp . "'),
+				('Lebanon Pound', 'LBP', '£', '" . $current_timestamp . "'),
+				('Liberia Dollar', 'LRD', '$', '" . $current_timestamp . "'),
+				('Lithuania Litas', 'LTL', 'Lt', '" . $current_timestamp . "'),
+				('Macedonia Denar', 'MKD', 'ден', '" . $current_timestamp . "'),
+				('Malaysia Ringgit', 'RM', 'RM', '" . $current_timestamp . "'),
+				('Mauritius Rupee', 'MUR', '₨', '" . $current_timestamp . "'),
+				('Mexico Peso', 'MXN', '$', '" . $current_timestamp . "'),
+				('Mongolia Tughrik', 'MNT', '₮', '" . $current_timestamp . "'),
+				('Mozambique Metical', 'MZN', 'MT', '" . $current_timestamp . "'),
+				('Namibia Dollar', 'NAD', '$', '" . $current_timestamp . "'),
+				('Nepal Rupee', 'NPR', '₨', '" . $current_timestamp . "'),
+				('Netherlands Antilles Guilder', 'ANG', 'ƒ', '" . $current_timestamp . "'),
+				('New Zealand Dollar', 'NZD', '$', '" . $current_timestamp . "'),
+				('Nicaragua Cordoba', 'NIO', 'C$', '" . $current_timestamp . "'),
+				('Nigeria Naira', 'NGN', '₦', '" . $current_timestamp . "'),
+				('Norway Krone', 'NOK', 'kr', '" . $current_timestamp . "'),
+				('Oman Rial', 'OMR', '﷼', '" . $current_timestamp . "'),
+				('Pakistan Rupee', 'PKR', '₨', '" . $current_timestamp . "'),
+				('Panama Balboa', 'PAB', 'B/.', '" . $current_timestamp . "'),
+				('Paraguay Guarani', 'PYG', 'Gs', '" . $current_timestamp . "'),
+				('Peru Nuevo Sol', 'PEN', 'S/.', '" . $current_timestamp . "'),
+				('Philippines Peso', 'PHP', '₱', '" . $current_timestamp . "'),
+				('Poland Zloty', 'PLN', 'zł', '" . $current_timestamp . "'),
+				('Qatar Riyal', 'QAR', '﷼', '" . $current_timestamp . "'),
+				('Romania New Leu', 'RON', 'lei', '" . $current_timestamp . "'),
+				('Russia Ruble', 'RUB', 'руб', '" . $current_timestamp . "'),
+				('Saint Helena Pound', 'SHP', '£', '" . $current_timestamp . "'),
+				('Saudi Arabia Riyal', 'SAR', '﷼', '" . $current_timestamp . "'),
+				('Serbia Dinar', 'RSD', 'Дин.', '" . $current_timestamp . "'),
+				('Seychelles Rupee', 'SCR', '₨', '" . $current_timestamp . "'),
+				('Singapore Dollar', 'SGD', '$', '" . $current_timestamp . "'),
+				('Solomon Islands Dollar', 'SBD', '$', '" . $current_timestamp . "'),
+				('Somalia Shilling', 'SOS', 'S', '" . $current_timestamp . "'),
+				('South Africa Rand', 'ZAR', 'R', '" . $current_timestamp . "'),
+				('Sri Lanka Rupee', 'LKR', '₨', '" . $current_timestamp . "'),
+				('Sweden Krona', 'SEK', 'kr', '" . $current_timestamp . "'),
+				('Switzerland Franc', 'CHF', 'CHF', '" . $current_timestamp . "'),
+				('Suriname Dollar', 'SRD', '$', '" . $current_timestamp . "'),
+				('Syria Pound', 'SYP', '£', '" . $current_timestamp . "'),
+				('Taiwan New Dollar', 'TWD', 'NT$', '" . $current_timestamp . "'),
+				('Thailand Baht', 'THB', '฿', '" . $current_timestamp . "'),
+				('Trinidad and Tobago Dollar', 'TTD', 'TT$', '" . $current_timestamp . "'),
+				('Turkey Lira', 'TRY', '₤', '" . $current_timestamp . "'),
+				('Tuvalu Dollar', 'TVD', '$', '" . $current_timestamp . "'),
+				('Ukraine Hryvna', 'UAH', '₴', '" . $current_timestamp . "'),
+				('United Kingdom Pound', 'GBP', '£', '" . $current_timestamp . "'),
+				('United States Dollar', 'USD', '$', '" . $current_timestamp . "'),
+				('Uruguay Peso', 'UYU', '\$U', '" . $current_timestamp . "'),
+				('Uzbekistan Som', 'UZS', 'лв', '" . $current_timestamp . "'),
+				('Venezuela Bolivar', 'VEF', 'Bs', '" . $current_timestamp . "'),
+				('Viet Nam Dong', 'VND', '₫', '" . $current_timestamp . "'),
+				('Yemen Rial', 'YER', '﷼', '" . $current_timestamp . "'),
+				('Zimbabwe Dollar', 'ZWD', 'Z$', '" . $current_timestamp . "'),
+				('Emirati Dirham', 'AED', 'د.إ', '" . $current_timestamp . "'),
+				('Malaysian Ringgit', 'MYR', 'RM', '" . $current_timestamp . "'),
+				('Kuwaiti Dinar', 'KWD', 'ك', '" . $current_timestamp . "'),
+				('Moroccan Dirham', 'MAD', 'م.', '" . $current_timestamp . "'),
+				('Iraqi Dinar', 'IQD', 'د.ع', '" . $current_timestamp . "'),
+				('Bangladeshi Taka', 'BDT', 'Tk', '" . $current_timestamp . "'),
+				('Bahraini Dinar', 'BHD', 'BD', '" . $current_timestamp . "'),
+				('Kenyan Shilling', 'KES', 'KSh', '" . $current_timestamp . "'),
+				('CFA Franc', 'XOF', 'CFA', '" . $current_timestamp . "'),
+				('Jordanian Dinar', 'JOD', 'JD', '" . $current_timestamp . "'),
+				('Tunisian Dinar', 'TND', 'د.ت', '" . $current_timestamp . "'),
+				('Ghanaian Cedi', 'GHS', 'GH¢', '" . $current_timestamp . "'),
+				('Central African CFA Franc BEAC', 'XAF', 'FCFA', '" . $current_timestamp . "'),
+				('Algerian Dinar', 'DZD', 'دج', '" . $current_timestamp . "'),
+				('CFP Franc', 'XPF', 'F', '" . $current_timestamp . "'),
+				('Ugandan Shilling', 'UGX', 'USh', '" . $current_timestamp . "'),
+				('Tanzanian Shilling', 'TZS', 'TZS', '" . $current_timestamp . "'),
+				('Ethiopian Birr', 'ETB', 'Br', '" . $current_timestamp . "'),
+				('Georgian Lari', 'GEL', 'GEL', '" . $current_timestamp . "'),
+				('Cuban Convertible Peso', 'CUC', 'CUC$', '" . $current_timestamp . "'),
+				('Burmese Kyat', 'MMK', 'K', '" . $current_timestamp . "'),
+				('Libyan Dinar', 'LYD', 'LD', '" . $current_timestamp . "'),
+				('Zambian Kwacha', 'ZMK', 'ZK', '" . $current_timestamp . "'),
+				('Zambian Kwacha', 'ZMW', 'ZK', '" . $current_timestamp . "'),
+				('Macau Pataca', 'MOP', 'MOP$', '" . $current_timestamp . "'),
+				('Armenian Dram', 'AMD', 'AMD', '" . $current_timestamp . "'),
+				('Angolan Kwanza', 'AOA', 'Kz', '" . $current_timestamp . "'),
+				('Papua New Guinean Kina', 'PGK', 'K', '" . $current_timestamp . "'),
+				('Malagasy Ariary', 'MGA', 'Ar', '" . $current_timestamp . "'),
+				('Ni-Vanuatu Vatu', 'VUV', 'VT', '" . $current_timestamp . "'),
+				('Sudanese Pound', 'SDG', 'SDG', '" . $current_timestamp . "'),
+				('Malawian Kwacha', 'MWK', 'MK', '" . $current_timestamp . "'),
+				('Rwandan Franc', 'RWF', 'FRw', '" . $current_timestamp . "'),
+				('Gambian Dalasi', 'GMD', 'D', '" . $current_timestamp . "'),
+				('Maldivian Rufiyaa', 'MVR', 'Rf', '" . $current_timestamp . "'),
+				('Congolese Franc', 'CDF', 'FC', '" . $current_timestamp . "'),
+				('Djiboutian Franc', 'DJF', 'Fdj', '" . $current_timestamp . "'),
+				('Haitian Gourde', 'HTG', 'G', '" . $current_timestamp . "'),
+				('Samoan Tala', 'WST', '$', '" . $current_timestamp . "'),
+				('Guinean Franc', 'GNF', 'FG', '" . $current_timestamp . "'),
+				('Cape Verdean Escudo', 'CVE', '$', '" . $current_timestamp . "'),
+				('Tongan Pa\'anga', 'TOP', 'T$', '" . $current_timestamp . "'),
+				('Moldovan Leu', 'MDL', 'MDL', '" . $current_timestamp . "'),
+				('Sierra Leonean Leone', 'SLL', 'Le', '" . $current_timestamp . "'),
+				('Burundian Franc', 'BIF', 'FBu', '" . $current_timestamp . "'),
+				('Mauritanian Ouguiya', 'MRO', 'UM', '" . $current_timestamp . "'),
+				('Bhutanese Ngultrum', 'BTN', 'Nu.', '" . $current_timestamp . "'),
+				('Swazi Lilangeni', 'SZL', 'SZL', '" . $current_timestamp . "'),
+				('Tajikistani Somoni', 'TJS', 'TJS', '" . $current_timestamp . "'),
+				('Turkmenistani Manat', 'TMT', 'm', '" . $current_timestamp . "'),
+				('Basotho Loti', 'LSL', 'LSL', '" . $current_timestamp . "'),
+				('Comoran Franc', 'KMF', 'CF', '" . $current_timestamp . "'),
+				('Sao Tomean Dobra', 'STD', 'STD', '" . $current_timestamp . "'),
+				('Seborgan Luigino', 'SPL', 'SPL', '" . $current_timestamp . "')";
+		$result = mysql_query($sql,$connection);
+		
+		$sql = "SELECT id, currency
+				FROM currencies
+				WHERE newly_inserted = '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		while ($row = mysql_fetch_object($result)) {
+			
+			$sql_find_new = "SELECT id, symbol
+							 FROM currencies
+							 WHERE newly_inserted = '1'
+							   AND currency = '" . $row->currency . "'";
+			$result_find_new = mysql_query($sql_find_new,$connection);
+			$total_results = mysql_num_rows($result_find_new);
+			
+			while ($row_find_new = mysql_fetch_object($result_find_new)) {
+			
+				if ($total_results > 0) {
+					
+					$sql_update_old = "UPDATE currencies
+									   SET symbol = '" . $row_find_new->symbol . "'
+									   WHERE id = '" . $row->id . "'";
+					$result_update_old = mysql_query($sql_update_old,$connection);
+
+					$sql_delete_new = "DELETE FROM currencies
+									   WHERE id = '" . $row_find_new->id . "'";
+					$result_delete_new = mysql_query($sql_delete_new,$connection);
+
+				}
+				
+			}
+
+		}
+
+		$sql = "ALTER TABLE `currencies` 
+				DROP `newly_inserted`;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0036',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0036;
 
 	}
 
