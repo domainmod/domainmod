@@ -29,8 +29,33 @@ $page_title = "Domain Renewal Export";
 
 // Form Variables
 $export = $_GET['export'];
+$all = $_GET['all'];
 $new_expiry_start = $_REQUEST['new_expiry_start'];
 $new_expiry_end = $_REQUEST['new_expiry_end'];
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+	if (!CheckDateFormat($new_expiry_start) || !CheckDateFormat($new_expiry_end) || $new_expiry_start > $new_expiry_end) {
+
+		if (!CheckDateFormat($new_expiry_start)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
+		if (!CheckDateFormat($new_expiry_end)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
+		if ($new_expiry_start > $new_expiry_end) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
+
+	}
+
+	$all = "0";
+
+}
+
+if ($all == "1") {
+
+	$range_string = "";
+	
+} else {
+
+	$range_string = " AND d.expiry_date between '$new_expiry_start' AND '$new_expiry_end' ";
+	
+}
 
 $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
 		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
@@ -45,25 +70,10 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
 		  AND d.ip_id = ip.id
 		  AND d.hosting_id = h.id
 		  AND d.active NOT IN ('0', '10')
-		  AND d.expiry_date between '$new_expiry_start' AND '$new_expiry_end'
+		  " . $range_string . "
 		ORDER BY d.expiry_date asc, d.domain";	
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-	if (CheckDateFormat($new_expiry_start) && CheckDateFormat($new_expiry_end) && $new_expiry_start < $new_expiry_end) {
-	
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-		$total_results = mysql_num_rows($result);
-
-	} else {
-
-		if (!CheckDateFormat($new_expiry_start)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
-		if (!CheckDateFormat($new_expiry_end)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
-		if ($new_expiry_start > $new_expiry_end) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
-
-	}
-
-}
+$result = mysql_query($sql,$connection) or die(mysql_error());
+$total_results = mysql_num_rows($result);
 
 $full_export = "";
 
@@ -145,9 +155,6 @@ exit;
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-<?php if ($total_results > 0) { ?>
-		<strong>Number of Domains to Export:</strong> <?=number_format($total_results)?><BR><BR>
-<?php } ?>
 Before exporting your domains you should <a href="system/update-conversion-rates.php">update the conversion rates</a>.
 <BR><BR>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -158,16 +165,16 @@ Before exporting your domains you should <a href="system/update-conversion-rates
 				<tr>
 					<td class="search-table-inside">
                         <form name="export_domains_form" method="post" action="<?=$PHP_SELF?>">
-                        Expiring Between 
+                        <a href="<?=$PHP_SELF?>?all=1">View All</a> or Expiring Between 
                           <input name="new_expiry_start" type="text" size="10" maxlength="10" <?php if ($new_expiry_start == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_start\""; } ?>> 
                           and 
                           <input name="new_expiry_end" type="text" size="10" maxlength="10" <?php if ($new_expiry_end == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_end\""; } ?>> 
-                          &nbsp;&nbsp;<input type="submit" name="button" value="List Domains &raquo;">
+                          &nbsp;&nbsp;<input type="submit" name="button" value="Show Expiring &raquo;">
                         </form><BR>
 					</td>
 					<td class="search-table-inside" width="200" valign="middle" align="center">
 						<?php if ($total_results > 0) { ?>
-                        <a href="domain-renewals.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>">Export Results</a><BR>
+                        <a href="domain-renewals.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>&all=<?=$all?>">Export Results</a><BR>
                         <?php } ?>
 					</td>
 				</tr>
@@ -178,7 +185,7 @@ Before exporting your domains you should <a href="system/update-conversion-rates
 </table>
 
 <?php if ($total_results > 0) { ?>
-<BR>
+<BR><strong>Number of Domains to Export:</strong> <?=number_format($total_results)?><BR><BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
