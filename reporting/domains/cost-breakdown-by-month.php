@@ -21,6 +21,7 @@ include("../../_includes/config.inc.php");
 include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
+include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/timestamps/current-timestamp-basic.inc.php");
 include("../../_includes/system/functions/check-date-format.inc.php");
 
@@ -164,7 +165,12 @@ if ($submission_failed != "1" && mysql_num_rows($result) > 0) {
 		$export = "0";
 		
 	header('Content-Type: text/plain');
-	$full_content_disposition = "Content-Disposition: attachment; filename=\"cost_breakdown_by_month_$new_start_date--$new_end_date.csv\"";
+	$unixtime_timestamp = strtotime($current_timestamp);
+	if ($all == "1") {
+		$full_content_disposition = "Content-Disposition: attachment; filename=\"domain_cost_breakdown_by_month_all_$unixtime_timestamp.csv\"";
+	} else {
+		$full_content_disposition = "Content-Disposition: attachment; filename=\"domain_cost_breakdown_by_month_$new_start_date--$new_end_date.csv\"";
+	}
 	header("$full_content_disposition");
 	header('Content-Transfer-Encoding: binary');
 	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
