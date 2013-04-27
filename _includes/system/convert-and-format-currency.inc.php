@@ -29,12 +29,63 @@
 <?php
 if ($temp_input_conversion == "") {
 
-	$temp_output_amount = number_format($temp_input_amount, 2, '.', ',');
+	if ($_SESSION['default_currency_symbol_order'] == "0") {
+
+		if ($_SESSION['default_currency_symbol_space'] == "0") {
+
+			$temp_output_amount = $_SESSION['default_currency_symbol'] . number_format($temp_input_amount, 2, '.', ',');
+
+		} else {
+
+			$temp_output_amount = $_SESSION['default_currency_symbol'] . " " . number_format($temp_input_amount, 2, '.', ',');
+
+		}
+
+	} else {
+
+		if ($_SESSION['default_currency_symbol_space'] == "0") {
+
+			$temp_output_amount = number_format($temp_input_amount, 2, '.', ',') . $_SESSION['default_currency_symbol'];
+		
+		} else {
+
+			$temp_output_amount = number_format($temp_input_amount, 2, '.', ',') . " " . $_SESSION['default_currency_symbol'];
+		
+		}
+
+	}
 
 } else {
 
-	$temp_full_fee = $temp_input_amount * $temp_input_conversion;
-	$temp_output_amount = number_format($temp_input_amount * $temp_input_conversion, 2, '.', ',');
-	
+	if ($_SESSION['default_currency_symbol_order'] == "0") {
+
+		if ($_SESSION['default_currency_symbol_space'] == "0") {
+
+			$temp_converted_fee = $temp_input_amount * $temp_input_conversion;
+			$temp_output_amount = $_SESSION['default_currency_symbol'] . number_format($temp_converted_fee, 2, '.', ',');
+
+		} else {
+
+			$temp_converted_fee = $temp_input_amount * $temp_input_conversion;
+			$temp_output_amount = $_SESSION['default_currency_symbol'] . " " . number_format($temp_converted_fee, 2, '.', ',');
+
+		}
+
+	} else {
+
+		if ($_SESSION['default_currency_symbol_space'] == "0") {
+
+			$temp_converted_fee = $temp_input_amount * $temp_input_conversion;
+			$temp_output_amount = number_format($temp_converted_fee, 2, '.', ',') . $_SESSION['default_currency_symbol'];
+		
+		} else {
+
+			$temp_converted_fee = $temp_input_amount * $temp_input_conversion;
+			$temp_output_amount = number_format($temp_converted_fee, 2, '.', ',') . " " . $_SESSION['default_currency_symbol'];
+		
+		}
+
+	}
+
 }
 ?>
