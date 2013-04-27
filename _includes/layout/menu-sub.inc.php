@@ -79,8 +79,7 @@ if ($software_section == "domains") {
 
 } elseif ($software_section == "currencies") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/currency.php">Add A New Currency</a>
-		&nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/update-conversion-rates.php">Update Conversion Rates</a><?php 
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/update-conversion-rates.php">Update Conversion Rates</a><?php 
 		
 } elseif ($software_section == "system") { ?>
 
