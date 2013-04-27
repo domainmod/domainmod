@@ -36,4 +36,7 @@ $number_of_temp_domains = 100;
 // DO NOT CHANGE THIS - CHANGING THIS LINE CAN MESS UP YOUR DATABASE
 //
 $most_recent_db_version = "2.0037";
+
+// Set the character set to UTF-8
+header('Content-Type: text/html; charset=utf-8');
 ?>
