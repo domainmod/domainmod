@@ -293,7 +293,7 @@ if (mysql_num_rows($result) != 0) {
 	  	<td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
 		  <select name="new_currency_id" id="new_currency">
 		  	<?php
-			$sql = "SELECT id, currency, name 
+			$sql = "SELECT id, currency, name, symbol
 					FROM currencies
 					ORDER BY currency";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -301,11 +301,11 @@ if (mysql_num_rows($result) != 0) {
 			
 			if ($row->currency == $_SESSION['default_currency']) {
 			?>
-			    <option value="<?=$row->id?>" selected><?php echo "$row->currency - $row->name"; ?></option>
+			    <option value="<?=$row->id?>" selected><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
 			<?php
 			} else {
 			?>
-			    <option value="<?=$row->id?>"><?php echo "$row->currency - $row->name"; ?></option>
+			    <option value="<?=$row->id?>"><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
 			<?php
 			}
 			}
