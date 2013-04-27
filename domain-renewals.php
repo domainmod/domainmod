@@ -138,9 +138,9 @@ if ($export == "1") {
 	$export = "0";
 	
 header('Content-Type: text/plain');
-$unixtime_timestamp = strtotime($current_timestamp);
+$current_timestamp_unix = strtotime($current_timestamp);
 if ($all == "1") {
-	$full_content_disposition = "Content-Disposition: attachment; filename=\"domain_renewals_all_$unixtime_timestamp.csv\"";
+	$full_content_disposition = "Content-Disposition: attachment; filename=\"domain_renewals_all_$current_timestamp_unix.csv\"";
 } else {
 	$full_content_disposition = "Content-Disposition: attachment; filename=\"domain_renewals_$new_expiry_start--$new_expiry_end.csv\"";
 }

@@ -165,9 +165,9 @@ if ($submission_failed != "1" && mysql_num_rows($result) > 0) {
 		$export = "0";
 		
 	header('Content-Type: text/plain');
-	$unixtime_timestamp = strtotime($current_timestamp);
+	$current_timestamp_unix = strtotime($current_timestamp);
 	if ($all == "1") {
-		$full_content_disposition = "Content-Disposition: attachment; filename=\"ssl_cost_breakdown_by_month_all_$unixtime_timestamp.csv\"";
+		$full_content_disposition = "Content-Disposition: attachment; filename=\"ssl_cost_breakdown_by_month_all_$current_timestamp_unix.csv\"";
 	} else {
 		$full_content_disposition = "Content-Disposition: attachment; filename=\"ssl_cost_breakdown_by_month_$new_start_date--$new_end_date.csv\"";
 	}
