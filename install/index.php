@@ -34,13 +34,17 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 
 	$_SESSION['installation_mode'] = 1;
 
+	$sql = "ALTER DATABASE " . $dbname . " 
+			CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+	$result = mysql_query($sql,$connection);
+
 	$sql = "CREATE TABLE IF NOT EXISTS `users` (
 				`id` int(10) NOT NULL auto_increment,
-				`first_name` varchar(50) NOT NULL,
-				`last_name` varchar(50) NOT NULL,
-				`username` varchar(20) NOT NULL,
-				`email_address` varchar(255) NOT NULL,
-				`password` varchar(255) NOT NULL,
+				`first_name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+				`last_name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+				`username` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+				`email_address` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`new_password` int(1) NOT NULL default '1',
 				`admin` int(1) NOT NULL default '0',
 				`active` int(1) NOT NULL default '1',
@@ -49,7 +53,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "INSERT INTO `users` 
@@ -83,7 +87,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "SELECT id
@@ -99,14 +103,14 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 
 	$sql = "CREATE TABLE IF NOT EXISTS `categories` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) NOT NULL,
-				`stakeholder` varchar(255) NOT NULL,
+				`name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`stakeholder` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_category` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "INSERT INTO `categories` 
@@ -116,13 +120,13 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 
 	$sql = "CREATE TABLE IF NOT EXISTS `hosting` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) NOT NULL,
+				`name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_host` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "INSERT INTO `hosting` 
@@ -132,14 +136,14 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 
 	$sql = "CREATE TABLE IF NOT EXISTS `owners` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) NOT NULL,
+				`name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_owner` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`),
 				KEY `name` (`name`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "INSERT INTO `owners` 
@@ -149,15 +153,15 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 
 	$sql = "CREATE TABLE IF NOT EXISTS `currencies` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`currency` varchar(3) NOT NULL,
-				`name` varchar(75) NOT NULL,
+				`currency` varchar(3) COLLATE utf8_unicode_ci NOT NULL,
+				`name` varchar(75) COLLATE utf8_unicode_ci NOT NULL,
 				`conversion` float NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_currency` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "INSERT INTO `currencies` 
@@ -189,7 +193,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	$sql = "CREATE TABLE IF NOT EXISTS `fees` ( 
 				`id` int(10) NOT NULL auto_increment,
 				`registrar_id` int(10) NOT NULL,
-				`tld` varchar(50) NOT NULL,
+				`tld` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
 				`initial_fee` float NOT NULL,
 				`renewal_fee` float NOT NULL,
 				`transfer_fee` float NOT NULL,
@@ -198,7 +202,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_fees` ( 
@@ -212,7 +216,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `domains` ( 
@@ -220,15 +224,15 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`owner_id` int(10) NOT NULL default '1',
 				`registrar_id` int(10) NOT NULL default '1',
 				`account_id` int(10) NOT NULL default '1',
-				`domain` varchar(255) NOT NULL,
-				`tld` varchar(50) NOT NULL,
+				`domain` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`tld` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
 				`expiry_date` date NOT NULL,
 				`cat_id` int(10) NOT NULL default '1',
 				`fee_id` int(10) NOT NULL default '0',
 				`dns_id` int(10) NOT NULL default '1',
 				`ip_id` int(10) NOT NULL default '1',
 				`hosting_id` int(10) NOT NULL default '1',
-				`function` varchar(255) NOT NULL,
+				`function` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext NOT NULL,
 				`privacy` int(1) NOT NULL default '0',
 				`active` int(2) NOT NULL default '1',
@@ -237,7 +241,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`),
 				KEY `domain` (`domain`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_certs` ( 
@@ -247,7 +251,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`account_id` int(10) NOT NULL,
 				`domain_id` int(10) NOT NULL,
 				`type_id` int(10) NOT NULL,
-				`name` varchar(255) NOT NULL,
+				`name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`expiry_date` date NOT NULL,
 				`fee_id` int(10) NOT NULL,
 				`notes` longtext NOT NULL,
@@ -256,18 +260,18 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_types` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`type` varchar(255) NOT NULL,
+				`type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_type` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "INSERT INTO `ssl_cert_types` 
@@ -280,34 +284,34 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `dns` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) NOT NULL,
-				`dns1` varchar(255) NOT NULL,
-				`dns2` varchar(255) NOT NULL,
-				`dns3` varchar(255) NOT NULL,
-				`dns4` varchar(255) NOT NULL,
-				`dns5` varchar(255) NOT NULL,
-				`dns6` varchar(255) NOT NULL,
-				`dns7` varchar(255) NOT NULL,
-				`dns8` varchar(255) NOT NULL,
-				`dns9` varchar(255) NOT NULL,
-				`dns10` varchar(255) NOT NULL,
-				`ip1` varchar(255) NOT NULL,
-				`ip2` varchar(255) NOT NULL,
-				`ip3` varchar(255) NOT NULL,
-				`ip4` varchar(255) NOT NULL,
-				`ip5` varchar(255) NOT NULL,
-				`ip6` varchar(255) NOT NULL,
-				`ip7` varchar(255) NOT NULL,
-				`ip8` varchar(255) NOT NULL,
-				`ip9` varchar(255) NOT NULL,
-				`ip10` varchar(255) NOT NULL,
+				`name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`dns1` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`dns2` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`dns3` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`dns4` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`dns5` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`dns6` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`dns7` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`dns8` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`dns9` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`dns10` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`ip1` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`ip2` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`ip3` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`ip4` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`ip5` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`ip6` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`ip7` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`ip8` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`ip9` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`ip10` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext NOT NULL,
 				`number_of_servers` int(2) NOT NULL default '0',
 				`default_dns` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "INSERT INTO `dns` 
@@ -317,35 +321,35 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `registrars` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) NOT NULL,
-				`url` varchar(255) NOT NULL,
+				`name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`url` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_registrar` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`),
 				KEY `name` (`name`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_providers` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) NOT NULL,
-				`url` varchar(255) NOT NULL,
+				`name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`url` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext NOT NULL,
 				`default_provider` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `registrar_accounts` ( 
 				`id` int(10) NOT NULL auto_increment,
 				`owner_id` int(10) NOT NULL,
 				`registrar_id` int(10) NOT NULL,
-				`username` varchar(255) NOT NULL,
-				`password` varchar(100) NOT NULL,
+				`username` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`password` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext NOT NULL,
 				`reseller` int(1) NOT NULL default '0',
 				`default_account` int(1) NOT NULL default '0',
@@ -353,15 +357,15 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`),
 				KEY `registrar_id` (`registrar_id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_accounts` ( 
 				`id` int(10) NOT NULL auto_increment,
 				`owner_id` int(10) NOT NULL,
 				`ssl_provider_id` int(10) NOT NULL,
-				`username` varchar(255) NOT NULL,
-				`password` varchar(100) NOT NULL,
+				`username` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`password` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext NOT NULL,
 				`reseller` int(1) NOT NULL default '0',
 				`default_account` int(1) NOT NULL default '0',
@@ -369,12 +373,12 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`),
 				KEY `ssl_provider_id` (`ssl_provider_id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `segments` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) NOT NULL,
+				`name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`description` longtext NOT NULL,
 				`segment` longtext NOT NULL,
 				`number_of_domains` int(6) NOT NULL,
@@ -382,13 +386,13 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "CREATE TABLE IF NOT EXISTS `segment_data` (
 			`id` int(10) NOT NULL auto_increment,
 			`segment_id` int(10) NOT NULL,
-			`domain` varchar(255) NOT NULL,
+			`domain` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 			`active` int(1) NOT NULL default '0',
 			`inactive` int(1) NOT NULL default '0',
 			`missing` int(1) NOT NULL default '0',
@@ -396,20 +400,20 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 			`insert_time` datetime NOT NULL,
 			`update_time` datetime NOT NULL,
 			PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ip_addresses` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) NOT NULL,
-				`ip` varchar(255) NOT NULL,
-				`rdns` varchar(255) NOT NULL default '-',
+				`name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`ip` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`rdns` varchar(255) COLLATE utf8_unicode_ci NOT NULL default '-',
 				`notes` longtext NOT NULL,
 				`default_ip_address` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "INSERT INTO `ip_addresses` 
@@ -419,15 +423,15 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `settings` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`full_url` varchar(100) NOT NULL default 'http://',
+				`full_url` varchar(100) COLLATE utf8_unicode_ci NOT NULL default 'http://',
 				`db_version` float NOT NULL,
-				`email_address` varchar(255) NOT NULL,
-				`timezone` varchar(50) NOT NULL default 'Canada/Pacific',
+				`email_address` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+				`timezone` varchar(50) COLLATE utf8_unicode_ci NOT NULL default 'Canada/Pacific',
 				`expiration_email_days` int(3) NOT NULL default '60',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "INSERT INTO `settings` 
@@ -437,10 +441,10 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 
 	$sql = "CREATE TABLE IF NOT EXISTS `timezones` (
 				`id` int(5) NOT NULL auto_increment,
-				`timezone` varchar(50) NOT NULL,
+				`timezone` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
 				`insert_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "INSERT INTO `timezones` 

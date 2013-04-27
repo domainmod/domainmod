@@ -1478,6 +1478,149 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0034 to 2.0035
+	if ($current_db_version == 2.0034) {
+
+		$sql = "ALTER DATABASE " . $dbname . " 
+				CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE categories CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE currencies CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE dns CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE domains CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE fees CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE hosting CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE ip_addresses CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE owners CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE registrars CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE registrar_accounts CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE segments CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE segment_data CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE settings CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE ssl_accounts CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE ssl_certs CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE ssl_cert_types CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE ssl_fees CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE ssl_providers CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE timezones CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE users CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE user_settings CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE categories CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE currencies CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE dns CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE domains CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE fees CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE hosting CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE ip_addresses CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE owners CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE registrars CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE registrar_accounts CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE segments CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE segment_data CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE settings CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE ssl_accounts CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE ssl_certs CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE ssl_cert_types CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE ssl_fees CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE ssl_providers CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE timezones CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE users CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "ALTER TABLE user_settings CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0035',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0035;
+
+	}
+
+
 	include("../_includes/auth/login-checks/database-version-check.inc.php");
 
 	$_SESSION['result_message'] .= "Database Updated<BR>";
