@@ -39,6 +39,7 @@ $new_timezone = $_POST['new_timezone'];
 $new_expiration_email_days = $_POST['new_expiration_email_days'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "" && $new_expiration_email_days != "") {
+
 	$sql = "UPDATE settings
 			SET full_url = '$new_full_url',
 				email_address = '$new_email_address',
@@ -53,8 +54,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 	$_SESSION['default_currency'] = $new_default_currency;
 	$_SESSION['system_timezone'] = $new_timezone;
 	$_SESSION['system_expiration_email_days'] = $new_expiration_email_days;
+
+	$sql_currencies = "SELECT name, symbol, symbol_order, symbol_space
+					   FROM currencies
+					   WHERE currency = '" . $_SESSION['default_currency'] . "'";
+	$result_currencies = mysql_query($sql_currencies,$connection);
+
+	while ($row_currencies = mysql_fetch_object($result_currencies)) {
+		$_SESSION['default_currency_name'] = $row_currencies->name;
+		$_SESSION['default_currency_symbol'] = $row_currencies->symbol;
+		$_SESSION['default_currency_symbol_order'] = $row_currencies->symbol_order;
+		$_SESSION['default_currency_symbol_space'] = $row_currencies->symbol_space;
+	}
 	
-	$_SESSION['result_message'] = "The System Settings were updated<BR><BR>";
+	$_SESSION['result_message'] .= "The System Settings were updated<BR><BR>";
+	$_SESSION['result_message'] .= "If you changed your default currency you should <a href=\"update-conversion-rates.php\">update the conversion rates</a><BR>";
 	
 	header("Location: ../index.php");
 	exit;
