@@ -34,14 +34,15 @@ $software_section = "system";
 // Form Variables
 $new_email_address = $_POST['new_email_address'];
 $new_full_url = $_POST['new_full_url'];
+$new_default_currency = $_POST['new_default_currency'];
 $new_timezone = $_POST['new_timezone'];
 $new_expiration_email_days = $_POST['new_expiration_email_days'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "" && $new_expiration_email_days != "") {
-
 	$sql = "UPDATE settings
 			SET full_url = '$new_full_url',
 				email_address = '$new_email_address',
+				default_currency = '$new_default_currency',
 				timezone = '$new_timezone',
 				expiration_email_days = '$new_expiration_email_days',
 				update_time = '$current_timestamp'";
@@ -49,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
 	$_SESSION['system_full_url'] = $new_full_url;
 	$_SESSION['system_email_address'] = $new_email_address;
+	$_SESSION['default_currency'] = $new_default_currency;
 	$_SESSION['system_timezone'] = $new_timezone;
 	$_SESSION['system_expiration_email_days'] = $new_expiration_email_days;
 	
@@ -68,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 		
 	} else {
 		
-		$sql = "SELECT full_url, email_address, timezone, expiration_email_days
+		$sql = "SELECT full_url, email_address, default_currency, timezone, expiration_email_days
 				FROM settings";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -76,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 			
 			$new_full_url = $row->full_url;
 			$new_email_address = $row->email_address;
+			$new_default_currency = $row->default_currency;
 			$new_timezone = $row->timezone;
 			$new_expiration_email_days = $row->expiration_email_days;
 
@@ -106,6 +109,21 @@ This should be a valid email address that is able to receive mail. It will be us
 This is the number of days in the future to display in the expiration emails.<BR><BR>
 <input name="new_expiration_email_days" type="text" size="4" maxlength="3" value="<?php if ($new_expiration_email_days != "") echo $new_expiration_email_days; ?>">
 <BR><BR>
+<strong>Default Currency:</strong><BR><BR>
+<select name="new_default_currency">
+<?php
+$sql = "SELECT currency, name, symbol
+		FROM currencies
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	?>
+	<option value="<?=$row->currency?>"<?php if ($_SESSION['default_currency'] == $row->currency) echo " selected"; ?>><?=$row->name?> (<?=$row->currency?> <?=$row->symbol?>)</option>
+    <?php
+}
+?>
+</select>
+<BR><BR>
 <strong>Default Timezone:</strong><BR><BR>
 <select name="new_timezone">
 <?php
@@ -115,7 +133,7 @@ $sql = "SELECT timezone
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->timezone?>"<?php if ($_SESSION['system_timezone'] == "$row->timezone") echo " selected"; ?>><?=$row->timezone?></option>
+	<option value="<?=$row->timezone?>"<?php if ($_SESSION['system_timezone'] == $row->timezone) echo " selected"; ?>><?=$row->timezone?></option>
     <?php
 }
 ?>
