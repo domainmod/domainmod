@@ -23,6 +23,7 @@
         <BR>&nbsp;&nbsp;&nbsp;<a href="<?=$web_root?>/system/update-database.php">Click here to upgrade your database</a>
     </div>
 </div>
+<?php exit; ?>
 <?php } ?>
 <?php if ($_SESSION['missing_domain_fees'] == 1 || $_SESSION['missing_ssl_fees'] == 1) { ?>
 <div class="maintenance_warning_outer">
