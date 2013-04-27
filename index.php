@@ -71,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['system_full_url'] = $row_settings->full_url;
 				$_SESSION['system_db_version'] = $row_settings->db_version;
 				$_SESSION['system_email_address'] = $row_settings->email_address;
+				$_SESSION['default_currency'] = $row_settings->default_currency;
 				$_SESSION['system_timezone'] = $row_settings->timezone;
 				$_SESSION['system_expiration_email_days'] = $row_settings->expiration_email_days;
 
@@ -104,16 +105,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['display_ssl_fee'] = $row_user_settings->display_ssl_fee;
 			}
 
-			$sql_currencies = "SELECT name, currency
+			$sql_currencies = "SELECT name, symbol, symbol_order, symbol_space
 							   FROM currencies
-							   WHERE default_currency = '1'
-							   ORDER BY default_currency desc
-							   LIMIT 1";
+							   WHERE currency = '" . $_SESSION['default_currency'] . "'";
 			$result_currencies = mysql_query($sql_currencies,$connection);
 
 			while ($row_currencies = mysql_fetch_object($result_currencies)) {
 				$_SESSION['default_currency_name'] = $row_currencies->name;
-				$_SESSION['default_currency'] = $row_currencies->currency;
+				$_SESSION['default_currency_symbol'] = $row_currencies->symbol;
+				$_SESSION['default_currency_symbol_order'] = $row_currencies->symbol_order;
+				$_SESSION['default_currency_symbol_space'] = $row_currencies->symbol_space;
 			}
 
 			include("_includes/system/update-domain-fees.inc.php");
