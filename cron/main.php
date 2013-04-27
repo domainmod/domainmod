@@ -16,5 +16,6 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
+include("currencies.php");
 include("expirations.php");
 ?>

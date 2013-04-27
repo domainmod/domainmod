@@ -47,11 +47,23 @@ NOTE: Whenever possible we recommend that you use option #1, the git repository 
 
 
 # Cron Job Installation (Optional)
-Included with Domain Manger is a cron job that will send out an email reminder about Domains and SSL Certificates that are expiring in the next 60 days. This feature is completely optional, and it can be triggered at whatever frequency you wish.
+Included with Domain Manger are multiple cron jobs to help keep things running smoothly. The cron jobs are completely optional, and they can be triggered at whatever frequency you wish.
 
-The file to execute with the cron job is:
+The first cron job will update the conversion rates for all active currencies.
+
+The file to execute is:
+
+    /SERVER-PATH-TO-DOMAIN-MANAGER/cron/currencies.php  
+
+The second cron job will send out an email reminder about Domains and SSL Certificates that are coming up for renewal.
+
+The file to execute is:
 
     /SERVER-PATH-TO-DOMAIN-MANAGER/cron/expirations.php  
+
+If you want to run both of the above cron jobs, simply run this script instead and it will run both of them for you:
+
+    /SERVER-PATH-TO-DOMAIN-MANAGER/cron/main.php  
 
 # Usage
 After installation just load the URL in a web browser and play around in the UI, it's pretty self explanatory.  
