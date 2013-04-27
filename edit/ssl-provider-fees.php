@@ -329,11 +329,11 @@ if (mysql_num_rows($result) != 0) {
 		  	<?php
 			$sql = "SELECT id, currency, name 
 					FROM currencies
-					ORDER BY default_currency desc, currency";
+					ORDER BY currency";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			while ($row = mysql_fetch_object($result)) {
 			
-			if ($row->id == $new_currency_id) {
+			if ($row->currency == $_SESSION['default_currency']) {
 			?>
 			    <option value="<?=$row->id?>" selected><?php echo "$row->currency - $row->name"; ?></option>
 			<?php
