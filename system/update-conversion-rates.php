@@ -37,16 +37,17 @@ $sql = "SELECT c.currency
 		WHERE c.id = f.currency_id
 		  AND f.id = d.fee_id
 		  AND d.active not in ('0', '10')
-		  AND c.currency != '" . $_SESSION['default_currency'] . "'";
+		  AND c.currency != '" . $_SESSION['default_currency'] . "'
+		GROUP BY currency";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 while ($row = mysql_fetch_object($result)) {
-	
+
 	$from = $row->currency;
 	$to = $_SESSION['default_currency'];
 	$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
 	$handle = @fopen($full_url, "r");
-	 
+
 	if ($handle) {
 
 		$handle_result = fgets($handle, 4096);
