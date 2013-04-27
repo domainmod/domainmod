@@ -1898,6 +1898,18 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$_SESSION['default_currency'] = $temp_currency;
 
+		$sql = "SELECT name, symbol, symbol_order, symbol_space
+				FROM currencies
+				WHERE currency = '" . $_SESSION['default_currency'] . "'";
+		$result = mysql_query($sql,$connection);
+	
+		while ($row = mysql_fetch_object($result)) {
+			$_SESSION['default_currency_name'] = $row->name;
+			$_SESSION['default_currency_symbol'] = $row->symbol;
+			$_SESSION['default_currency_symbol_order'] = $row->symbol_order;
+			$_SESSION['default_currency_symbol_space'] = $row->symbol_space;
+		}
+
 		$sql = "ALTER TABLE `currencies` 
 				DROP `default_currency`;";
 		$result = mysql_query($sql,$connection);
