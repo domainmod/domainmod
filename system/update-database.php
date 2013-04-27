@@ -983,6 +983,12 @@ if ($current_db_version < $most_recent_db_version) {
 		$sql = "ALTER TABLE `settings` 
 					ADD `full_url` VARCHAR(100) NOT NULL DEFAULT 'http://' AFTER `id`";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$full_url = substr($_SERVER["HTTP_REFERER"], 0, -1);
+		
+		$sql = "UPDATE settings
+				SET full_url = '" . $full_url . "'";
+		$result = mysql_query($sql,$connection);
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0021',
