@@ -69,8 +69,9 @@ $sql = "SELECT d.id, YEAR(d.expiry_date) AS year, MONTH(d.expiry_date) AS month
 		GROUP BY year, month
 		ORDER BY year, month";
 $result = mysql_query($sql,$connection) or die(mysql_error());
+$total_rows = mysql_num_rows($result);
 
-if ($submission_failed != "1" && mysql_num_rows($result) > 0) {
+if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
@@ -200,7 +201,7 @@ Before running any reports you should <a href="../../system/update-conversion-ra
                         </form><BR>
 					</td>
 					<td class="search-table-inside" width="200" valign="middle" align="center">
-						<?php if (mysql_num_rows($result) > 0) { ?>
+						<?php if ($total_rows > 0) { ?>
                         <a href="<?=$PHP_SELF?>?export=1&new_start_date=<?=$new_start_date?>&new_end_date=<?=$new_end_date?>&all=<?=$all?>">Export Results</a><BR>
                         <?php } ?>
 					</td>
@@ -211,7 +212,7 @@ Before running any reports you should <a href="../../system/update-conversion-ra
 	</tr>
 </table>
 <?php
-if ($submission_failed != "1" && mysql_num_rows($result) > 0) { ?>
+if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 	<BR>
     All fees are listed in <strong><?=$_SESSION['default_currency']?></strong>.
