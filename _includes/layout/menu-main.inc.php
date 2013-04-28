@@ -27,10 +27,10 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-certs.php">SSL Certificates</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-providers.php">SSL Providers</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-accounts.php">SSL Accounts</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-types.php">SSL Types</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-types.php">SSL Cert Types</a> ]&nbsp;
 <BR><BR>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/segments.php">Segment Filters</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-actions.php">Perform Bulk Actions</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a> ]&nbsp;
 <?php include($full_server_path . "/_includes/layout/menu-sub.inc.php"); ?>
