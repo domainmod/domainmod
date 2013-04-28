@@ -144,6 +144,7 @@ if ($total_rows > 0) {
     &nbsp;&nbsp;[<a href="<?=$PHP_SELF?>?export=1&all=<?=$all?>">Export Report</a>]
     <?php } ?>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
+<BR><font class="headline"><?=$page_subtitle?></font><BR>
 <BR>
 <?php if ($all == "1") { ?>
 	<strong>All SSL Provider Fees</strong><BR><BR>

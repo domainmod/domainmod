@@ -211,6 +211,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
 
+	<BR><font class="headline"><?=$page_subtitle?></font><BR>
 	<BR>
     All fees are listed in <strong><?=$_SESSION['default_currency']?></strong>.
     <BR><BR>
