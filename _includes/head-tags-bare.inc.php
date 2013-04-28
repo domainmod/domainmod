@@ -20,7 +20,7 @@ body {
 	background-color: #FFFFFF;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #000000;
-	font-size: 10pt;
+	font-size: 8pt;
 }
 a:link {
 	font-weight: bold;
