@@ -305,7 +305,7 @@ $total_cost = $temp_output_amount;
 ?>
 <BR><strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR>
 <?php } else { ?>
-<BR>The results that will be shown below will display the same columns as you have on your <a href="ssl-certs.php">SSL Certificates</a> page, but when you export the results you will be given even more information.<BR><BR>
+The results that will be shown below will display the same columns as you have on your <a href="ssl-certs.php">SSL Certificates</a> page, but when you export the results you will be given even more information.<BR><BR>
 The full list of fields in the export is:<BR><BR>
 Certificate Status<BR>
 Expiry Date<BR>
