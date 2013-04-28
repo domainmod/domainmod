@@ -98,11 +98,11 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 		$full_export = "";
 		$full_export .= "\"" . $page_subtitle . "\"\n\n";
-		$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
+		$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n";
 		if ($all != "1") {
-		    $full_export .= "\"Date Range:\",\"" . $new_start_date . "\",\"" . $new_end_date . "\"\n\n";
+		    $full_export .= "\"Date Range:\",\"" . $new_start_date . "\",\"" . $new_end_date . "\"\n";
         } else {
-		    $full_export .= "\"Date Range:\",\"ALL\"\n\n";
+		    $full_export .= "\"Date Range:\",\"ALL\"\n";
         }
 		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\"\n\n";
 		$full_export .= "\"Year\",\"Month\",\"Cost\",\"By Year\"\n";

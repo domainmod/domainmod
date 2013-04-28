@@ -99,13 +99,13 @@ if ($export == "1") {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$full_export .= "\"" . $page_subtitle . "\"\n\n";
-	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
+	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n";
 	if ($all != "1") {
-		$full_export .= "\"Date Range:\",\"" . $new_expiry_start . "\",\"" . $new_expiry_end . "\"\n\n";
+		$full_export .= "\"Date Range:\",\"" . $new_expiry_start . "\",\"" . $new_expiry_end . "\"\n";
 	} else {
-		$full_export .= "\"Date Range:\",\"ALL\"\n\n";
+		$full_export .= "\"Date Range:\",\"ALL\"\n";
 	}
-	$full_export .= "\"Number of Domains:\",\"" . number_format($total_results) . "\"\n\n";
+	$full_export .= "\"Number of Domains:\",\"" . number_format($total_results) . "\"\n";
 	$full_export .= "\"Total Renewal Cost:\",\"" . $total_cost . "\"\n\n";
 	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\"\n";
 
