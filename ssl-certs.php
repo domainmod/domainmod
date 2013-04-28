@@ -265,12 +265,14 @@ if ($export == "1") {
 	
 	$export = "0";
 	
-header('Content-Type: text/plain');
+header('Content-Encoding: UTF-8');
+header('Content-Type: text/csv; charset=UTF-8');
 $current_timestamp_unix = strtotime($current_timestamp);
 $full_content_disposition = "Content-Disposition: attachment; filename=\"ssl_results_$current_timestamp_unix.csv\"";
 header("$full_content_disposition");
 header('Content-Transfer-Encoding: binary');
 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+echo "\xEF\xBB\xBF";
 echo $full_export;
 exit;
 }
