@@ -79,16 +79,13 @@ if ($software_section == "domains") {
 
 } elseif ($software_section == "system") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a><?php 
-
+<?php
 } elseif ($software_section == "reporting") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a><?php 
-
+<?php
 } elseif ($software_section == "bulkactions") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/bulk-actions.php">Reset Bulk Action</a><?php 
-
+<?php
 } elseif ($software_section == "help") { ?>
 
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/">Main</a>  /  <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/getting-started/">Getting Started</a><?php
