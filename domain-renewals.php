@@ -81,8 +81,12 @@ if ($export == "1") {
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
+	$full_export .= "\"" . $page_title . "\"\n\n";
 	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
-
+	if ($all != "1") {
+		$full_export .= "\"Date Range:\",\"" . $new_expiry_start . "\",\"" . $new_expiry_end . "\"\n\n";
+	}
+	$full_export .= "\"Number of Domains:\",\"" . number_format($total_results) . "\"\n\n";
 	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renew?\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
@@ -180,7 +184,10 @@ Before exporting your domains you should <a href="system/update-conversion-rates
     </form>
 <?php include("_includes/layout/table-export-bottom.inc.php"); ?>
 <?php if ($total_results > 0) { ?>
-<BR><strong>Number of Domains to Export:</strong> <?=number_format($total_results)?><BR><BR>
+<?php if ($all != "1") { ?>
+	<strong>Date Range:</strong> <?=$new_expiry_start?> - <?=$new_expiry_end?><BR>
+<?php } ?>
+<BR><strong>Number of Domains:</strong> <?=number_format($total_results)?><BR><BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>

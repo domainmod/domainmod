@@ -78,8 +78,12 @@ if ($export == "1") {
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
+	$full_export .= "\"" . $page_title . "\"\n\n";
 	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
-
+	if ($all != "1") {
+		$full_export .= "\"Date Range:\",\"" . $new_expiry_start . "\",\"" . $new_expiry_end . "\"\n\n";
+	}
+	$full_export .= "\"Number of SSL Certificates:\",\"" . number_format($total_results) . "\"\n\n";
 	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Initial Fee\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"Owner\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
@@ -183,7 +187,10 @@ Before exporting your SSL Certificates you should <a href="system/update-convers
     </form>
 <?php include("_includes/layout/table-export-bottom.inc.php"); ?>
 <?php if ($total_results > 0) { ?>
-<BR><strong>Number of SSL Certificates to Export:</strong> <?=number_format($total_results)?><BR><BR>
+<?php if ($all != "1") { ?>
+	<strong>Date Range:</strong> <?=$new_expiry_start?> - <?=$new_expiry_end?><BR>
+<?php } ?>
+<BR><strong>Number of SSL Certificates:</strong> <?=number_format($total_results)?><BR><BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
