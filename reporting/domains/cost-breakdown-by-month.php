@@ -78,7 +78,11 @@ if ($submission_failed != "1" && $total_rows > 0) {
 	if ($export == "1") {
 
 		$full_export = "";
+		$full_export .= "\"" . $page_subtitle . "\"\n\n";
 		$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
+		if ($all != "1") {
+		    $full_export .= "\"Date Range:\",\"" . $new_start_date . "\",\"" . $new_end_date . "\"\n\n";
+        }
 		$full_export .= "\"Year\",\"Month\",\"Cost\",\"By Year\"\n";
 	
 		$new_year = "";
@@ -212,8 +216,10 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 	<BR><font class="headline"><?=$page_subtitle?></font><BR>
 	<BR>
-    All fees are listed in <strong><?=$_SESSION['default_currency']?></strong>.
-    <BR><BR>
+    All fees are listed in <?=$_SESSION['default_currency']?><BR><BR>
+    <?php if ($all != "1") { ?>
+	    Date Range: <?=$new_start_date?> - <?=$new_end_date?><BR><BR>
+    <?php } ?>
     <table class="main_table">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">

@@ -60,6 +60,8 @@ if ($total_rows > 0) {
 
 		$full_export = "";
 
+		$full_export .= "\"" . $page_subtitle . "\"\n\n";
+
 		if ($all == "1") {
 			$full_export .= "\"All SSL Provider Fees\"\n\n";
 		} else {
