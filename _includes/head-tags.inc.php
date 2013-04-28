@@ -329,7 +329,7 @@ div.result_message_inner {
 }
 div.export-outer {
 	float: left;
-	dislay: table;
+	line-height: 30px;
 	border-top: 0px;
 	border-bottom: 0px;
 	border-right: 0px;
@@ -353,8 +353,8 @@ div.export-inner {
 	background-color: #fafafa;
 	padding-top: 18px;
 	padding-bottom: 18px;
-	padding-left: 18px;
-	padding-right: 18px; 
+	padding-left: 22px;
+	padding-right: 22px; 
 }
 div.login_form {
 	text-align: center;
