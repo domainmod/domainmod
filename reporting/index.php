@@ -35,11 +35,11 @@ $software_section = "reporting";
 <?php include("../_includes/header.inc.php"); ?>
 Before running any reports you should <a href="../system/update-conversion-rates.php">update the conversion rates</a>.<BR><BR>
 <font class="subheadline">Domains</font><BR><BR>
-&raquo; <a href="domains/cost-breakdown-by-month.php">Cost Breakdown by Month</a><BR>
-&raquo; <a href="domains/registrar-fee-breakdown.php">Registrar Fee Breakdown</a><BR>
-&raquo; <a href="domains/tld-breakdown.php">TLD Breakdown</a><BR><BR>
+&raquo; <a href="domains/cost-breakdown-by-month.php">Cost Breakdown by Month</a><BR><BR>
+&raquo; <a href="domains/registrar-fee-breakdown.php">Registrar Fee Breakdown</a><BR><BR>
+&raquo; <a href="domains/tld-breakdown.php">TLD Breakdown</a><BR><BR><BR>
 <font class="subheadline">SSL Certificates</font><BR><BR>
-&raquo; <a href="ssl/cost-breakdown-by-month.php">Cost Breakdown by Month</a><BR>
+&raquo; <a href="ssl/cost-breakdown-by-month.php">Cost Breakdown by Month</a><BR><BR>
 &raquo; <a href="ssl/ssl-provider-fee-breakdown.php">SSL Provider Fee Breakdown</a><BR>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>
