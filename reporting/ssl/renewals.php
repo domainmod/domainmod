@@ -190,6 +190,7 @@ exit;
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 <?php if ($total_results > 0) { ?>
 <BR><font class="headline"><?=$page_subtitle?></font><BR><BR>
+All fees are listed in <?=$_SESSION['default_currency']?><BR><BR>
 <?php if ($all != "1") { ?>
 	<strong>Date Range:</strong> <?=$new_expiry_start?> - <?=$new_expiry_end?><BR><BR>
 <?php } ?>
