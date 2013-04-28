@@ -58,7 +58,7 @@ if ($all == "1") {
 	
 } else {
 
-	$range_string = " AND sslc.expiry_date between '$new_start_date' AND '$new_end_date' ";
+	$range_string = " AND sslc.expiry_date between '" . $new_start_date . "' AND '" . $new_end_date . "' ";
 	
 }
 
@@ -73,6 +73,25 @@ $sql = "SELECT sslc.id, YEAR(sslc.expiry_date) AS year, MONTH(sslc.expiry_date) 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_rows = mysql_num_rows($result);
 
+$sql_grand_total = "SELECT SUM(f.renewal_fee * c.conversion) as grand_total
+					FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c
+					WHERE sslc.fee_id = f.id
+					  AND f.currency_id = c.id
+					  AND sslc.active NOT IN ('0')
+					  " . $range_string . "";
+$result_grand_total = mysql_query($sql_grand_total,$connection) or die(mysql_error());
+while ($row_grand_total = mysql_fetch_object($result_grand_total)) {
+	$grand_total = $row_grand_total->grand_total;
+}
+
+$temp_input_amount = $grand_total;
+$temp_input_conversion = "";
+$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+include("../../_includes/system/convert-and-format-currency.inc.php");
+$grand_total = $temp_output_amount;
+
 if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
@@ -85,6 +104,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
         } else {
 		    $full_export .= "\"Date Range:\",\"ALL\"\n\n";
         }
+		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\"\n\n";
 		$full_export .= "\"Year\",\"Month\",\"Cost\",\"By Year\"\n";
 	
 		$new_year = "";
@@ -103,7 +123,8 @@ if ($submission_failed != "1" && $total_rows > 0) {
 								   AND f.currency_id = c.id
 								   AND sslc.active NOT IN ('0')
 								   AND YEAR(sslc.expiry_date) = '" . $row->year . "'
-								   AND MONTH(sslc.expiry_date) = '" . $row->month . "'";
+								   AND MONTH(sslc.expiry_date) = '" . $row->month . "'
+		  						   " . $range_string . "";
 			$result_monthly_cost = mysql_query($sql_monthly_cost,$connection) or die(mysql_error());
 			
 			while ($row_monthly_cost = mysql_fetch_object($result_monthly_cost)) {
@@ -138,12 +159,12 @@ if ($submission_failed != "1" && $total_rows > 0) {
 									WHERE sslc.fee_id = f.id
 									  AND f.currency_id = c.id
 									  AND sslc.active NOT IN ('0')
-									  AND YEAR(sslc.expiry_date) = '" . $row->year . "'";
+									  AND YEAR(sslc.expiry_date) = '" . $row->year . "'
+		  							  " . $range_string . "";
 				$result_yearly_cost = mysql_query($sql_yearly_cost,$connection) or die(mysql_error());
 				
 				while ($row_yearly_cost = mysql_fetch_object($result_yearly_cost)) {
 					$yearly_cost = $row_yearly_cost->yearly_cost;
-					$grand_total = $grand_total + $yearly_cost;
 				}
 	
 				$temp_input_amount = $yearly_cost;
@@ -170,16 +191,6 @@ if ($submission_failed != "1" && $total_rows > 0) {
 	
 		$full_export .= "\n";
 	
-		$temp_input_amount = $grand_total;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include("../../_includes/system/convert-and-format-currency.inc.php");
-		$grand_total = $temp_output_amount;
-	
-		$full_export .= "\"\",\"\",\"Grand Total:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
-		
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
 			$export_filename = "ssl_cost_breakdown_by_month_all_" . $current_timestamp_unix . ".csv";
@@ -225,6 +236,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <?php } else { ?>
 	    <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
+	<strong>Total Cost:</strong> <?=$grand_total?><BR><BR>
     <table class="main_table">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
@@ -256,7 +268,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 							   AND f.currency_id = c.id
 							   AND sslc.active NOT IN ('0', '10')
 							   AND YEAR(sslc.expiry_date) = '" . $row->year . "'
-							   AND MONTH(sslc.expiry_date) = '" . $row->month . "'";
+							   AND MONTH(sslc.expiry_date) = '" . $row->month . "'
+		  					   " . $range_string . "";
 		$result_monthly_cost = mysql_query($sql_monthly_cost,$connection) or die(mysql_error());
 		
 		while ($row_monthly_cost = mysql_fetch_object($result_monthly_cost)) {
@@ -291,12 +304,12 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 								WHERE sslc.fee_id = f.id
 								  AND f.currency_id = c.id
 								  AND sslc.active NOT IN ('0', '10')
-								  AND YEAR(sslc.expiry_date) = '" . $row->year . "'";
+								  AND YEAR(sslc.expiry_date) = '" . $row->year . "'
+		  						  " . $range_string . "";
 			$result_yearly_cost = mysql_query($sql_yearly_cost,$connection) or die(mysql_error());
 			
 			while ($row_yearly_cost = mysql_fetch_object($result_yearly_cost)) {
 				$yearly_cost = $row_yearly_cost->yearly_cost;
-				$grand_total = $grand_total + $yearly_cost;
 			}
 
 			$temp_input_amount = $yearly_cost;
@@ -337,17 +350,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     }
 	?>
     </table>
-	
 	<?php
-	$temp_input_amount = $grand_total;
-	$temp_input_conversion = "";
-	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-	include("../../_includes/system/convert-and-format-currency.inc.php");
-	$grand_total = $temp_output_amount;
-	echo "<BR><strong>Grand Total: </strong>" . $grand_total . " " . $_SESSION['default_currency'] . "";
-
 } 
 ?>
 <?php include("../../_includes/footer.inc.php"); ?>
