@@ -309,9 +309,47 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
 		  $quick_search_string
 		  $sort_by_string";	
 
+$sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) AS grand_total
+				    FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
+					WHERE d.account_id = ra.id
+					  AND ra.registrar_id = r.id
+					  AND ra.owner_id = o.id
+					  AND d.cat_id = cat.id
+					  AND d.fee_id = f.id
+					  AND d.dns_id = dns.id
+					  AND d.ip_id = ip.id
+					  AND d.hosting_id = h.id
+					  AND f.currency_id = cc.id
+					  $is_active_string
+					  $segid_string
+					  $pcid_string
+					  $oid_string
+					  $dnsid_string
+					  $ipid_string
+					  $whid_string
+					  $rid_string
+					  $raid_string
+					  $tld_string
+					  $search_string
+					  $quick_search_string
+					  $sort_by_string";	
+$result_grand_total = mysql_query($sql_grand_total,$connection) or die(mysql_error());
+while ($row_grand_total = mysql_fetch_object($result_grand_total)) {
+	$grand_total = $row_grand_total->grand_total;
+}
+
+$temp_input_amount = $grand_total;
+$temp_input_conversion = "";
+$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+include("_includes/system/convert-and-format-currency.inc.php");
+$grand_total = $temp_output_amount;
+
 if ($segid != "") {
 	
 	$result = mysql_query($sql,$connection);
+
 	$active_domains = "'";
 	while ($row = mysql_fetch_object($result)) { $active_domains .= $row->domain . "', '";	}
 	$active_domains .= "'";
@@ -337,18 +375,20 @@ $full_export = "";
 if ($export == "1") {
 
 	$result = mysql_query($sql,$connection);
+	$total_rows = number_format(mysql_num_rows($result));
 
 	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
+
+	$full_export .= "\"Number of Domains:\",\"" . $total_rows . "\"\n";
+	$full_export .= "\"Total Cost:\",\"" . $grand_total . "\"\n\n";
 
 	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
 		$temp_initial_fee = $row->initial_fee * $row->conversion;
-		$total_initial_fee_export = $total_initial_fee_export + $temp_initial_fee;
 
 		$temp_renewal_fee = $row->renewal_fee * $row->conversion;
-		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
 		if ($row->active == "0") { $domain_status = "EXPIRED"; } 
 		elseif ($row->active == "1") { $domain_status = "ACTIVE"; } 
@@ -386,24 +426,6 @@ if ($export == "1") {
 
 	$full_export .= "\n";
 
-	$temp_input_amount = $total_initial_fee_export;
-	$temp_input_conversion = "";
-	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-	include("_includes/system/convert-and-format-currency.inc.php");
-	$total_export_initial_fee = $temp_output_amount;
-
-	$temp_input_amount = $total_renewal_fee_export;
-	$temp_input_conversion = "";
-	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-	include("_includes/system/convert-and-format-currency.inc.php");
-	$total_export_renewal_fee = $temp_output_amount;
-
-	$full_export .= "\"\",\"Total Cost:\",\"" . $total_export_initial_fee . "\",\"" . $total_export_renewal_fee . "\"\n";
-	
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "domain_results_" . $current_timestamp_unix . ".csv";
 	include("_includes/system/export-to-csv.inc.php");
@@ -445,6 +467,7 @@ $totalrows = mysql_num_rows(mysql_query($sql));
 $navigate = pageBrowser($totalrows,15,$result_limit, "&pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by",$_GET[numBegin],$_GET[begin],$_GET[num]);
 $sql = $sql.$navigate[0];
 $result = mysql_query($sql,$connection);
+$total_rows = number_format(mysql_num_rows($result));
 
 if ($segid != "") {
 
@@ -1054,7 +1077,7 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 		$totalrows_filtered = mysql_num_rows($result_segment);
 		?>
 		<strong>Domains in Segment:</strong> <?=number_format($number_of_domains)?>
-		<BR><BR><strong>Matching Domains:</strong> <?=number_format($totalrows)?>
+		<BR><BR><strong>Matching Domains:</strong> <?=$totalrows?>
         <?php if ($totalrows_inactive > 0) { ?>
 			<BR><BR><strong>Matching But Inactive Domains:</strong> <?=number_format($totalrows_inactive)?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=inactive&segid=<?=$segid?>">view</a>]
 		<?php } ?>
@@ -1067,12 +1090,15 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 
 <?php } else { ?>
 
-		<strong>Number of Domains:</strong> <?=number_format($totalrows)?>
+		<strong>Number of Domains:</strong> <?=number_format($totalrows)?><BR><BR>
 
 <?php } ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR>
-<?php if ($totalrows == '0') echo "<BR"; ?>
+<?php if ($segid != "") { ?>
+	<BR><BR><strong>Total Cost:</strong> <?=$grand_total?><BR><BR>
+<?php } else { ?>
+	<strong>Total Cost:</strong> <?=$grand_total?><BR><BR>
+<?php } ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
 	<td align="left" valign="top">

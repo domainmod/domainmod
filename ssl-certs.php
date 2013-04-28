@@ -198,23 +198,55 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes,
 		  $search_string
 		  $sort_by_string";	
 
+$sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) AS grand_total
+					FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS cc, domains AS d, ssl_cert_types AS sslcf
+					WHERE sslc.account_id = sslpa.id
+					  AND sslpa.ssl_provider_id = sslp.id
+					  AND sslpa.owner_id = o.id
+					  AND sslc.fee_id = f.id
+					  AND f.currency_id = cc.id
+					  AND sslc.domain_id = d.id
+					  AND sslc.type_id = sslcf.id
+					  $is_active_string
+					  $oid_string
+					  $did_string
+					  $sslpid_string
+					  $sslpaid_string
+					  $ssltid_string
+					  $search_string
+					  $sort_by_string";	
+$result_grand_total = mysql_query($sql_grand_total,$connection) or die(mysql_error());
+while ($row_grand_total = mysql_fetch_object($result_grand_total)) {
+	$grand_total = $row_grand_total->grand_total;
+}
+
+$temp_input_amount = $grand_total;
+$temp_input_conversion = "";
+$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+include("_includes/system/convert-and-format-currency.inc.php");
+$grand_total = $temp_output_amount;
+
 $full_export = "";
 
 if ($export == "1") {
 
 	$result = mysql_query($sql,$connection);
+	$total_rows = number_format(mysql_num_rows($result));
 
-	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
+	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n";
+
+	$full_export .= "\"Number of SSL Certs:\",\"" . $total_rows . "\"\n";
+	$full_export .= "\"Total Cost:\",\"" . $grand_total . "\"\n\n";
 
 	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"Owner\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
 		$temp_initial_fee = $row->initial_fee * $row->conversion;
-		$total_initial_fee_export = $total_initial_fee_export + $temp_initial_fee;
 
 		$temp_renewal_fee = $row->renewal_fee * $row->conversion;
-		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
 		if ($row->active == "0") { $ssl_status = "EXPIRED"; } 
 		elseif ($row->active == "1") { $ssl_status = "ACTIVE"; } 
@@ -257,24 +289,6 @@ if ($export == "1") {
 	
 	$full_export .= "\n";
 
-	$temp_input_amount = $total_initial_fee_export;
-	$temp_input_conversion = "";
-	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-	include("_includes/system/convert-and-format-currency.inc.php");
-	$total_export_initial_fee = $temp_output_amount;
-
-	$temp_input_amount = $total_renewal_fee_export;
-	$temp_input_conversion = "";
-	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-	include("_includes/system/convert-and-format-currency.inc.php");
-	$total_export_renewal_fee = $temp_output_amount;
-
-	$full_export .= "\"\",\"Total Cost:\",\"" . $total_export_initial_fee . "\",\"" . $total_export_renewal_fee . "\"\n";
-	
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "ssl_results_" . $current_timestamp_unix . ".csv";
 	include("_includes/system/export-to-csv.inc.php");
@@ -321,6 +335,7 @@ $totalrows = mysql_num_rows(mysql_query($sql));
 $navigate = pageBrowser($totalrows,15,$result_limit, "&oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for",$_GET[numBegin],$_GET[begin],$_GET[num]);
 $sql = $sql.$navigate[0];
 $result = mysql_query($sql,$connection);
+$total_rows = number_format(mysql_num_rows($result));
 ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -637,12 +652,10 @@ echo "</select>";
 </form><BR></td>
 </tr>
 </table>
-<BR>
-<strong>Number of SSL Certs:</strong> <?=number_format($totalrows)?>
-
+<BR><strong>Number of SSL Certs:</strong> <?=number_format($totalrows)?>
 <?php if (mysql_num_rows($result) > 0) { ?>
+<BR><BR><strong>Total Cost:</strong> <?=$grand_total?>
 <BR><BR>
-<?php if ($totalrows == '0') echo "<BR"; ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
 	<td align="left" valign="top">
