@@ -137,11 +137,11 @@ if ($total_rows > 0) {
 <?php include("../../_includes/header.inc.php"); ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td class="search-table"><BR>
+		<td class="export-table"><BR>
 
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td class="search-table-inside">
+					<td class="export-table-inside">
                         <a href="<?=$PHP_SELF?>?all=1">View All</a> or <a href="<?=$PHP_SELF?>?all=0">Active Only</a>
 						<?php if ($total_rows > 0) { ?>
                         &nbsp;&nbsp;[<a href="<?=$PHP_SELF?>?export=1&all=<?=$all?>">Export Report</a>]<BR><BR>
