@@ -180,12 +180,10 @@ Before exporting your domains you should <a href="system/update-conversion-rates
                           and 
                           <input name="new_expiry_end" type="text" size="10" maxlength="10" <?php if ($new_expiry_end == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_end\""; } ?>> 
                           &nbsp;&nbsp;<input type="submit" name="button" value="Show Expiring &raquo;">
+						  <?php if ($total_results > 0) { ?>
+                          &nbsp;&nbsp;[<a href="domain-renewals.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>&all=<?=$all?>">Export Results</a>]
+						  <?php } ?>
                         </form><BR>
-					</td>
-					<td class="search-table-inside" width="200" valign="middle" align="center">
-						<?php if ($total_results > 0) { ?>
-                        <a href="domain-renewals.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>&all=<?=$all?>">Export Results</a><BR>
-                        <?php } ?>
 					</td>
 				</tr>
 			</table>

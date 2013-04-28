@@ -207,12 +207,10 @@ Before running any reports you should <a href="../../system/update-conversion-ra
                           and 
                           <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_end_date\""; } ?>> 
                           &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
+						  <?php if ($total_rows > 0) { ?>
+                          &nbsp;&nbsp;[<a href="<?=$PHP_SELF?>?export=1&new_start_date=<?=$new_start_date?>&new_end_date=<?=$new_end_date?>&all=<?=$all?>">Export Results</a>]<BR>
+						  <?php } ?>
                         </form><BR>
-					</td>
-					<td class="search-table-inside" width="200" valign="middle" align="center">
-						<?php if ($total_rows > 0) { ?>
-                        <a href="<?=$PHP_SELF?>?export=1&new_start_date=<?=$new_start_date?>&new_end_date=<?=$new_end_date?>&all=<?=$all?>">Export Results</a><BR>
-                        <?php } ?>
 					</td>
 				</tr>
 			</table>

@@ -142,11 +142,9 @@ if ($total_rows > 0) {
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td class="search-table-inside">
-                        <a href="<?=$PHP_SELF?>?all=1">View All</a> or <a href="<?=$PHP_SELF?>?all=0">Active Only</a><BR><BR>
-					</td>
-					<td class="search-table-inside" width="200" valign="middle" align="center">
+                        <a href="<?=$PHP_SELF?>?all=1">View All</a> or <a href="<?=$PHP_SELF?>?all=0">Active Only</a>
 						<?php if ($total_rows > 0) { ?>
-                        <a href="<?=$PHP_SELF?>?export=1&all=<?=$all?>">Export Report</a><BR><BR>
+                        &nbsp;&nbsp;[<a href="<?=$PHP_SELF?>?export=1&all=<?=$all?>">Export Report</a>]<BR><BR>
                         <?php } ?>
 					</td>
 				</tr>
