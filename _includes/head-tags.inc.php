@@ -327,7 +327,18 @@ div.result_message_inner {
 	padding-left: 8px;
 	padding-right: 8px; 
 }
-div.export-container {
+div.export-outer {
+	width: 100%;
+	border-top: 0px;
+	border-bottom: 0px;
+	border-right: 0px;
+	border-left: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px; 
+}
+div.export-inner {
 	text-align: left;
 	vertical-align: center; 
 	border-top: 1px #6699CC ridge;

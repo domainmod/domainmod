@@ -135,11 +135,13 @@ if ($total_rows > 0) {
 </head>
 <body>
 <?php include("../../_includes/header.inc.php"); ?>
-<div class="export-container">
-	<a href="<?=$PHP_SELF?>?all=1">View All</a> or <a href="<?=$PHP_SELF?>?all=0">Active Only</a>
-    <?php if ($total_rows > 0) { ?>
-    &nbsp;&nbsp;[<a href="<?=$PHP_SELF?>?export=1&all=<?=$all?>">Export Report</a>]
-    <?php } ?>
+<div class="export-outer">
+    <div class="export-inner">
+        <a href="<?=$PHP_SELF?>?all=1">View All</a> or <a href="<?=$PHP_SELF?>?all=0">Active Only</a>
+        <?php if ($total_rows > 0) { ?>
+        &nbsp;&nbsp;[<a href="<?=$PHP_SELF?>?export=1&all=<?=$all?>">Export Report</a>]
+        <?php } ?>
+    </div>
 </div>
 <BR>
 <?php if ($all == "1") { ?>
