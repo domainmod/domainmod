@@ -167,7 +167,7 @@ if ($export == "1") {
 <?php include("_includes/header.inc.php"); ?>
 Before exporting your domains you should <a href="system/update-conversion-rates.php">update the conversion rates</a>.<BR>
 <BR>
-<?php include("../../_includes/layout/table-export-top.inc.php"); ?>
+<?php include("_includes/layout/table-export-top.inc.php"); ?>
     <form name="export_domains_form" method="post" action="<?=$PHP_SELF?>"> 
         <a href="<?=$PHP_SELF?>?all=1">View All</a> or Expiring Between 
         <input name="new_expiry_start" type="text" size="10" maxlength="10" <?php if ($new_expiry_start == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_start\""; } ?>> 
@@ -178,7 +178,7 @@ Before exporting your domains you should <a href="system/update-conversion-rates
         &nbsp;&nbsp;[<a href="domain-renewals.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>&all=<?=$all?>">Export Results</a>]
         <?php } ?>
     </form>
-<?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
+<?php include("_includes/layout/table-export-bottom.inc.php"); ?>
 <?php if ($total_results > 0) { ?>
 <BR><strong>Number of Domains to Export:</strong> <?=number_format($total_results)?><BR><BR>
 <table class="main_table">
