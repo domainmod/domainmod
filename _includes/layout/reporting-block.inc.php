@@ -29,9 +29,9 @@ Before running any reports you should <a href="<?=$web_root?>//system/update-con
 <option value="<?=$web_root?>/reporting/"<?php if ($report_name == "") echo " selected" ?>>Click here to choose a report</option>
 <option value="<?=$web_root?>/reporting/domains/cost-breakdown-by-month.php"<?php if ($report_name == "domains-cost-breakdown-by-month") echo " selected" ?>>Domains &raquo; Cost Breakdown by Month</option>
 <option value="<?=$web_root?>/reporting/domains/registrar-fee-breakdown.php"<?php if ($report_name == "registrar-fee-breakdown") echo " selected" ?>>Domains &raquo; Registrar Fee Breakdown</option>
-<option value="<?=$web_root?>/reporting/domains/renewals.php"<?php if ($report_name == "domain-renewals") echo " selected" ?>>Domains &raquo; Renewals</option>
+<option value="<?=$web_root?>/reporting/domains/renewals.php"<?php if ($report_name == "domains-renewals") echo " selected" ?>>Domains &raquo; Renewal Report</option>
 <option value="<?=$web_root?>/reporting/ssl/cost-breakdown-by-month.php"<?php if ($report_name == "ssl-cost-breakdown-by-month") echo " selected" ?>>SSL Certs &raquo; Cost Breakdown by Month</option>
 <option value="<?=$web_root?>/reporting/ssl/ssl-provider-fee-breakdown.php"<?php if ($report_name == "ssl-provider-fee-breakdown") echo " selected" ?>>SSL Certs &raquo; SSL Provider Fee Breakdown</option>
-<option value="<?=$web_root?>/reporting/ssl/renewals.php"<?php if ($report_name == "ssl-renewals") echo " selected" ?>>SSL Certs &raquo; Renewals</option>
+<option value="<?=$web_root?>/reporting/ssl/renewals.php"<?php if ($report_name == "ssl-renewals") echo " selected" ?>>SSL Certs &raquo; Renewal Report</option>
 </select><BR><BR />
 <?php if ($report_name != "") echo "<BR>"; ?>
