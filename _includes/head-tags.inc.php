@@ -328,7 +328,8 @@ div.result_message_inner {
 	padding-right: 8px; 
 }
 div.export-outer {
-	width: 100%;
+	float: left;
+	dislay: table;
 	border-top: 0px;
 	border-bottom: 0px;
 	border-right: 0px;

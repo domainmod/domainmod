@@ -142,14 +142,12 @@ if ($total_rows > 0) {
 </head>
 <body>
 <?php include("../../_includes/header.inc.php"); ?>
-<div class="export-outer">
-    <div class="export-inner">
-        <a href="<?=$PHP_SELF?>?all=1">View All</a> or <a href="<?=$PHP_SELF?>?all=0">Active Only</a>
-        <?php if ($total_rows > 0) { ?>
-        &nbsp;&nbsp;[<a href="<?=$PHP_SELF?>?export=1&all=<?=$all?>">Export Report</a>]
-        <?php } ?>
-    </div>
-</div>
+<?php include("../../_includes/layout/table-export-top.inc.php"); ?>
+    <a href="<?=$PHP_SELF?>?all=1">View All</a> or <a href="<?=$PHP_SELF?>?all=0">Active Only</a>
+    <?php if ($total_rows > 0) { ?>
+    &nbsp;&nbsp;[<a href="<?=$PHP_SELF?>?export=1&all=<?=$all?>">Export Report</a>]
+    <?php } ?>
+<?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 <BR>
 <?php if ($all == "1") { ?>
 	<strong>All Registrar Fees</strong><BR><BR>
