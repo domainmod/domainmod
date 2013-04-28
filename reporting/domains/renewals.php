@@ -1,5 +1,5 @@
 <?php
-// /domain-renewals.php
+// /reporting/domains/renewals.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,16 +16,19 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
-include("_includes/timestamps/current-timestamp.inc.php");
-include("_includes/timestamps/current-timestamp-basic.inc.php");
-include("_includes/system/functions/check-date-format.inc.php");
+include("../../_includes/start-session.inc.php");
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
+include("../../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/timestamps/current-timestamp-basic.inc.php");
+include("../../_includes/system/functions/check-date-format.inc.php");
 
-$page_title = "Domain Renewal Export";
+$page_title = $reporting_section_title;
+$page_subtitle = "Domain Renewal Report";
+$software_section = "reporting";
+$report_name = "domains-renewals";
 
 // Form Variables
 $export = $_GET['export'];
@@ -81,7 +84,7 @@ if ($export == "1") {
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
-	$full_export .= "\"" . $page_title . "\"\n\n";
+	$full_export .= "\"" . $page_subtitle . "\"\n\n";
 	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
 	if ($all != "1") {
 		$full_export .= "\"Date Range:\",\"" . $new_expiry_start . "\",\"" . $new_expiry_end . "\"\n\n";
@@ -117,7 +120,7 @@ if ($export == "1") {
 		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include("_includes/system/convert-and-format-currency.inc.php");
+		include("../../_includes/system/convert-and-format-currency.inc.php");
 		$export_initial_fee = $temp_output_amount;
 
 		$temp_input_amount = $temp_renewal_fee;
@@ -125,7 +128,7 @@ if ($export == "1") {
 		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include("_includes/system/convert-and-format-currency.inc.php");
+		include("../../_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
 		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"\",\"" . $export_initial_fee . "\",\"" . $export_renewal_fee . "\",\"$row->domain\",\".$row->tld\",\"$row->function\",\"$privacy_status\",\"$row->registrar_name\",\"$row->username\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->wh_name\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->notes\"\n";
@@ -138,7 +141,7 @@ if ($export == "1") {
 	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-	include("_includes/system/convert-and-format-currency.inc.php");
+	include("../../_includes/system/convert-and-format-currency.inc.php");
 	$total_export_initial_fee = $temp_output_amount;
 
 	$temp_input_amount = $total_renewal_fee_export;
@@ -146,7 +149,7 @@ if ($export == "1") {
 	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-	include("_includes/system/convert-and-format-currency.inc.php");
+	include("../../_includes/system/convert-and-format-currency.inc.php");
 	$total_export_renewal_fee = $temp_output_amount;
 
 	$full_export .= "\"\",\"\",\"Total Cost:\",\"" . $total_export_initial_fee . "\",\"" . $total_export_renewal_fee . "\",\n";
@@ -157,21 +160,20 @@ if ($export == "1") {
 	} else {
 		$export_filename = "domain_renewals_" . $new_expiry_start . "--" . $new_expiry_end . ".csv";
 	}
-	include("_includes/system/export-to-csv.inc.php");
+	include("../../_includes/system/export-to-csv.inc.php");
 	exit;
 }
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/header.inc.php"); ?>
-Before exporting your domains you should <a href="system/update-conversion-rates.php">update the conversion rates</a>.<BR>
-<BR>
-<?php include("_includes/layout/table-export-top.inc.php"); ?>
+<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/reporting-block.inc.php"); ?>
+<?php include("../../_includes/layout/table-export-top.inc.php"); ?>
     <form name="export_domains_form" method="post" action="<?=$PHP_SELF?>"> 
         <a href="<?=$PHP_SELF?>?all=1">View All</a> or Expiring Between 
         <input name="new_expiry_start" type="text" size="10" maxlength="10" <?php if ($new_expiry_start == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_start\""; } ?>> 
@@ -179,15 +181,16 @@ Before exporting your domains you should <a href="system/update-conversion-rates
         <input name="new_expiry_end" type="text" size="10" maxlength="10" <?php if ($new_expiry_end == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_end\""; } ?>> 
         &nbsp;&nbsp;<input type="submit" name="button" value="Show Expiring &raquo;"> 
         <?php if ($total_results > 0) { ?>
-        &nbsp;&nbsp;[<a href="domain-renewals.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>&all=<?=$all?>">Export Results</a>]
+        &nbsp;&nbsp;[<a href="<?=$PHP_SELF?>?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>&all=<?=$all?>">Export Results</a>]
         <?php } ?>
     </form>
-<?php include("_includes/layout/table-export-bottom.inc.php"); ?>
+<?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 <?php if ($total_results > 0) { ?>
+<BR><font class="headline"><?=$page_subtitle?></font><BR><BR>
 <?php if ($all != "1") { ?>
-	<strong>Date Range:</strong> <?=$new_expiry_start?> - <?=$new_expiry_end?><BR>
+	<strong>Date Range:</strong> <?=$new_expiry_start?> - <?=$new_expiry_end?><BR><BR>
 <?php } ?>
-<BR><strong>Number of Domains:</strong> <?=number_format($total_results)?><BR><BR>
+<strong>Number of Domains:</strong> <?=number_format($total_results)?><BR><BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
@@ -263,7 +266,7 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include("_includes/system/convert-and-format-currency.inc.php");
+		include("../../_includes/system/convert-and-format-currency.inc.php");
 		echo $temp_output_amount;
 		?>
 	</td>
@@ -320,7 +323,7 @@ $temp_input_conversion = "";
 $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-include("_includes/system/convert-and-format-currency.inc.php");
+include("../../_includes/system/convert-and-format-currency.inc.php");
 $total_cost = $temp_output_amount;
 ?>
 <BR><strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR>
@@ -349,6 +352,6 @@ Category Stakeholder<BR>
 Owner<BR>
 Notes<BR>
 <?php } ?>
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>
