@@ -60,7 +60,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion
+$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, (f.renewal_fee * cc.conversion) AS converted_renewal_fee, cc.conversion
 		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS cc, ssl_cert_types AS sslcf
 		WHERE sslc.account_id = sslpa.id
 		  AND sslc.type_id = sslcf.id
@@ -74,6 +74,20 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date,
 		ORDER BY sslc.expiry_date asc, sslc.name asc";	
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_results = mysql_num_rows($result);
+
+$result_cost = mysql_query($sql,$connection) or die(mysql_error());
+$total_cost = 0;
+while ($row_cost = mysql_fetch_object($result_cost)) {
+	$temp_total_cost = $temp_total_cost + $row_cost->converted_renewal_fee;
+}
+
+$temp_input_amount = $temp_total_cost;
+$temp_input_conversion = "";
+$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+include("../../_includes/system/convert-and-format-currency.inc.php");
+$total_cost = $temp_output_amount;
 
 $full_export = "";
 
@@ -89,16 +103,11 @@ if ($export == "1") {
 		$full_export .= "\"Date Range:\",\"ALL\"\n\n";
 	}
 	$full_export .= "\"Number of SSL Certificates:\",\"" . number_format($total_results) . "\"\n\n";
-	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Initial Fee\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"Owner\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Notes\"\n";
+	$full_export .= "\"Total Renewal Cost:\",\"" . $total_cost . "\"\n\n";
+	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"Owner\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
-		$temp_initial_fee = $row->initial_fee * $row->conversion;
-		$total_initial_fee_export = $total_initial_fee_export + $temp_initial_fee;
-
-		$temp_renewal_fee = $row->renewal_fee * $row->conversion;
-		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
-
 		if ($row->active == "0") { $ssl_status = "EXPIRED"; } 
 		elseif ($row->active == "1") { $ssl_status = "ACTIVE"; } 
 		elseif ($row->active == "3") { $ssl_status = "PENDING (RENEWAL)"; } 
@@ -119,15 +128,7 @@ if ($export == "1") {
 			$full_ip_rdns = $row_domain->rdns;
 		}
 
-		$temp_input_amount = $temp_initial_fee;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include("../../_includes/system/convert-and-format-currency.inc.php");
-		$export_initial_fee = $temp_output_amount;
-
-		$temp_input_amount = $temp_renewal_fee;
+		$temp_input_amount = $row->converted_renewal_fee;
 		$temp_input_conversion = "";
 		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
@@ -135,38 +136,20 @@ if ($export == "1") {
 		include("../../_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
-		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"\",\"" . $export_initial_fee . "\",\"" . $export_renewal_fee . "\",\"$row->name\",\"$full_domain_name\",\"$row->ssl_provider_name\",\"$row->username\",\"$row->type\",\"$row->owner_name\",\"$full_ip_name\",\"$full_ip_address\",\"$full_ip_rdns\",\"$row->notes\"\n";
+		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"\",\"" . $export_renewal_fee . "\",\"$row->name\",\"$full_domain_name\",\"$row->ssl_provider_name\",\"$row->username\",\"$row->type\",\"$row->owner_name\",\"$full_ip_name\",\"$full_ip_address\",\"$full_ip_rdns\",\"$row->notes\"\n";
 
 	}
 	
 	$full_export .= "\n";
 
-	$temp_input_amount = $total_initial_fee_export;
-	$temp_input_conversion = "";
-	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-	include("../../_includes/system/convert-and-format-currency.inc.php");
-	$total_export_initial_fee = $temp_output_amount;
-
-	$temp_input_amount = $total_renewal_fee_export;
-	$temp_input_conversion = "";
-	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-	include("../../_includes/system/convert-and-format-currency.inc.php");
-	$total_export_renewal_fee = $temp_output_amount;
-
-	$full_export .= "\"\",\"\",\"Total Cost:\",\"" . $total_export_initial_fee . "\",\"" . $total_export_renewal_fee . "\"\n";
-	
-$current_timestamp_unix = strtotime($current_timestamp);
-if ($all == "1") {
-	$export_filename = "ssl_renewals_all_" . $current_timestamp_unix . ".csv";
-} else {
-	$export_filename = "ssl_renewals_" . $new_expiry_start . "--" . $new_expiry_end . ".csv";
-}
-include("../../_includes/system/export-to-csv.inc.php");
-exit;
+	$current_timestamp_unix = strtotime($current_timestamp);
+	if ($all == "1") {
+		$export_filename = "ssl_renewals_all_" . $current_timestamp_unix . ".csv";
+	} else {
+		$export_filename = "ssl_renewals_" . $new_expiry_start . "--" . $new_expiry_end . ".csv";
+	}
+	include("../../_includes/system/export-to-csv.inc.php");
+	exit;
 }
 ?>
 <?php include("../../_includes/doctype.inc.php"); ?>
@@ -199,6 +182,7 @@ All fees are listed in <?=$_SESSION['default_currency']?><BR><BR>
 	<strong>Date Range:</strong> ALL<BR><BR>
 <?php } ?>
 <strong>Number of SSL Certificates:</strong> <?=number_format($total_results)?><BR><BR>
+<strong>Total Renewal Cost:</strong> <?=$total_cost?><BR><BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
@@ -254,8 +238,8 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 <?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?php
-		$temp_input_amount = $row->renewal_fee;
-		$temp_input_conversion = $row->conversion;
+		$temp_input_amount = $row->converted_renewal_fee;
+		$temp_input_conversion = "";
 		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
@@ -309,23 +293,11 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 </tr>
 <?php } ?>
 </table>
-<?php
-$temp_input_amount = $total_renewal_cost;
-$temp_input_conversion = "";
-$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-include("../../_includes/system/convert-and-format-currency.inc.php");
-$total_cost = $temp_output_amount;
-?>
-<BR><strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR>
 <?php } else { ?>
 <BR>The results that will be shown below will display the same columns as you have on your <a href="ssl-certs.php">SSL Certificates</a> page, but when you export the results you will be given even more information.<BR><BR>
 The full list of fields in the export is:<BR><BR>
 Certificate Status<BR>
 Expiry Date<BR>
-Initial Fee<BR>
-Total Initial Cost<BR>
 Renewal Fee<BR>
 Total Renewal Cost<BR>
 SSL Cert Name<BR>

@@ -60,7 +60,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, (f.renewal_fee * cc.conversion) AS converted_renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
 		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
 		WHERE d.account_id = ra.id
 		  AND ra.registrar_id = r.id
@@ -78,6 +78,20 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_results = mysql_num_rows($result);
 
+$result_cost = mysql_query($sql,$connection) or die(mysql_error());
+$total_cost = 0;
+while ($row_cost = mysql_fetch_object($result_cost)) {
+	$temp_total_cost = $temp_total_cost + $row_cost->converted_renewal_fee;
+}
+
+$temp_input_amount = $temp_total_cost;
+$temp_input_conversion = "";
+$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+include("../../_includes/system/convert-and-format-currency.inc.php");
+$total_cost = $temp_output_amount;
+
 $full_export = "";
 
 if ($export == "1") {
@@ -92,15 +106,10 @@ if ($export == "1") {
 		$full_export .= "\"Date Range:\",\"ALL\"\n\n";
 	}
 	$full_export .= "\"Number of Domains:\",\"" . number_format($total_results) . "\"\n\n";
-	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renew?\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\"\n";
+	$full_export .= "\"Total Renewal Cost:\",\"" . $total_cost . "\"\n\n";
+	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
-
-		$temp_initial_fee = $row->initial_fee * $row->conversion;
-		$total_initial_fee_export = $total_initial_fee_export + $temp_initial_fee;
-
-		$temp_renewal_fee = $row->renewal_fee * $row->conversion;
-		$total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
 		if ($row->active == "0") { $domain_status = "EXPIRED"; } 
 		elseif ($row->active == "1") { $domain_status = "ACTIVE"; } 
@@ -117,15 +126,7 @@ if ($export == "1") {
 			$privacy_status = "Public";
 		}
 
-		$temp_input_amount = $temp_initial_fee;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include("../../_includes/system/convert-and-format-currency.inc.php");
-		$export_initial_fee = $temp_output_amount;
-
-		$temp_input_amount = $temp_renewal_fee;
+		$temp_input_amount = $row->converted_renewal_fee;
 		$temp_input_conversion = "";
 		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
@@ -133,28 +134,10 @@ if ($export == "1") {
 		include("../../_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
-		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"\",\"" . $export_initial_fee . "\",\"" . $export_renewal_fee . "\",\"$row->domain\",\".$row->tld\",\"$row->function\",\"$privacy_status\",\"$row->registrar_name\",\"$row->username\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->wh_name\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->notes\"\n";
+		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"\",\"" . $export_renewal_fee . "\",\"$row->domain\",\".$row->tld\",\"$row->function\",\"$privacy_status\",\"$row->registrar_name\",\"$row->username\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->wh_name\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->notes\"\n";
 	}
 	
 	$full_export .= "\n";
-
-	$temp_input_amount = $total_initial_fee_export;
-	$temp_input_conversion = "";
-	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-	include("../../_includes/system/convert-and-format-currency.inc.php");
-	$total_export_initial_fee = $temp_output_amount;
-
-	$temp_input_amount = $total_renewal_fee_export;
-	$temp_input_conversion = "";
-	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-	include("../../_includes/system/convert-and-format-currency.inc.php");
-	$total_export_renewal_fee = $temp_output_amount;
-
-	$full_export .= "\"\",\"\",\"Total Cost:\",\"" . $total_export_initial_fee . "\",\"" . $total_export_renewal_fee . "\",\n";
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	if ($all == "1") {
@@ -196,6 +179,7 @@ All fees are listed in <?=$_SESSION['default_currency']?><BR><BR>
 	<strong>Date Range:</strong> ALL<BR><BR>
 <?php } ?>
 <strong>Number of Domains:</strong> <?=number_format($total_results)?><BR><BR>
+<strong>Total Renewal Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR><BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
@@ -253,10 +237,6 @@ All fees are listed in <?=$_SESSION['default_currency']?><BR><BR>
 <?php } ?>
 </tr>
 <?php while ($row = mysql_fetch_object($result)) { ?>
-<?php 
-$renewal_fee_individual = $row->renewal_fee * $row->conversion;
-$total_renewal_cost = $total_renewal_cost + $renewal_fee_individual; 
-?>
 <tr class="main_table_row_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
@@ -266,8 +246,8 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?php
-		$temp_input_amount = $row->renewal_fee;
-		$temp_input_conversion = $row->conversion;
+		$temp_input_amount = $row->converted_renewal_fee;
+		$temp_input_conversion = "";
 		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
@@ -322,23 +302,11 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 </tr>
 <?php } ?>
 </table>
-<?php
-$temp_input_amount = $total_renewal_cost;
-$temp_input_conversion = "";
-$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-include("../../_includes/system/convert-and-format-currency.inc.php");
-$total_cost = $temp_output_amount;
-?>
-<BR><strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR>
 <?php } else {?>
 <BR>The results that will be shown below will display the same columns as you have on your <a href="domains.php">Domains</a> page, but when you export the results you will be given even more information.<BR><BR>
 The full list of fields in the export is:<BR><BR>
 Domain Status<BR>
 Expiry Date<BR>
-Initial Fee<BR>
-Total Initial Cost<BR>
 Renewal Fee<BR>
 Total Renewal Cost<BR>
 Domain<BR>
