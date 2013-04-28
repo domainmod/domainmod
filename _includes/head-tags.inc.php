@@ -335,7 +335,7 @@ div.export-outer {
 	border-right: 0px;
 	border-left: 0px;
 	padding-top: 0px;
-	padding-bottom: 0px;
+	padding-bottom: 12px;
 	padding-left: 0px;
 	padding-right: 0px; 
 }

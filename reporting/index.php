@@ -22,13 +22,14 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
-$page_title = $software_title . " Reporting";
+$page_title = $reporting_section_title;
+$page_subtitle = "Reporting Main";
 $software_section = "reporting";
 ?>
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?=$software_title?> :: <?=$page_title?> :: <?=$page_subtitle?></title>
 <?php include("../_includes/head-tags.inc.php"); ?>
 </head>
 <body>

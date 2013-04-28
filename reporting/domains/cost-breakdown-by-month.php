@@ -25,7 +25,8 @@ include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/timestamps/current-timestamp-basic.inc.php");
 include("../../_includes/system/functions/check-date-format.inc.php");
 
-$page_title = "Domain Cost Breakdown by Month";
+$page_title = $reporting_section_title;
+$page_subtitle = "Domain Cost Breakdown by Month";
 $software_section = "reporting";
 $report_name = "domains-cost-breakdown-by-month";
 
@@ -188,7 +189,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?=$software_title?> :: <?=$page_title?> :: <?=$page_subtitle?></title>
 <?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
@@ -208,7 +209,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
-
+<BR><font class="headline"><?=$page_subtitle?></font><BR>
 	<BR>
     All fees are listed in <strong><?=$_SESSION['default_currency']?></strong>.
     <BR><BR>

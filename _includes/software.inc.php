@@ -16,27 +16,12 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-// Software Title
 $software_title = "Domain Manager"; 
-
-// Software Version
+$reporting_section_title = "Domain & SSL Certificate Reporting"; 
 $software_version = "1.0"; 
-
-// Site Width
 $site_width = "96%";
-
-// Site Width (Login Form)
 $site_width_login = "550";
-
-// Number of 'Test Data' domains to generate
 $number_of_temp_domains = 100;
-
-// This is the newest, most recent version of the database
-// 
-// DO NOT CHANGE THIS - CHANGING THIS LINE CAN MESS UP YOUR DATABASE
-//
 $most_recent_db_version = "2.0037";
-
-// Set the character set to UTF-8
 header('Content-Type: text/html; charset=utf-8');
 ?>

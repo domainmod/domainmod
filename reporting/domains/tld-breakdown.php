@@ -22,19 +22,22 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 
-$page_title = "Top Level Domain Breakdown";
+$page_title = $reporting_section_title;
+$page_subtitle = "Top Level Domain Breakdown";
 $software_section = "reporting";
 $report_name = "tld-breakdown";
 ?>
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?=$software_title?> :: <?=$page_title?> :: <?=$page_subtitle?></title>
 <?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/header.inc.php"); ?>
 <?php include("../../_includes/layout/reporting-block.inc.php"); ?>
+<font class="headline"><?=$page_subtitle?></font><BR>
+
 This is a breakdown of the Top Level Domains that are currently active in your <?=$software_title?>.
 <BR><BR>
 <?php

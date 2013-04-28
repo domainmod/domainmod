@@ -23,7 +23,8 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "SSL Provider Fee Breakdown";
+$page_title = $reporting_section_title;
+$page_subtitle = "SSL Provider Fee Breakdown";
 $software_section = "reporting";
 $report_name = "ssl-provider-fee-breakdown";
 
@@ -131,7 +132,7 @@ if ($total_rows > 0) {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?=$software_title?> :: <?=$page_title?> :: <?=$page_subtitle?></title>
 <?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
