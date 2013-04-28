@@ -104,6 +104,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 	
 			$temp_input_amount = $monthly_cost;
 			$temp_input_conversion = "";
+			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 			include("../../_includes/system/convert-and-format-currency.inc.php");
 			$monthly_cost = $temp_output_amount;
 	
@@ -137,6 +140,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 	
 				$temp_input_amount = $yearly_cost;
 				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 				include("../../_includes/system/convert-and-format-currency.inc.php");
 				$yearly_cost = $temp_output_amount;
 	
@@ -158,6 +164,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 	
 		$temp_input_amount = $grand_total;
 		$temp_input_conversion = "";
+		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 		include("../../_includes/system/convert-and-format-currency.inc.php");
 		$grand_total = $temp_output_amount;
 	
@@ -257,6 +266,9 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 		$temp_input_amount = $monthly_cost;
 		$temp_input_conversion = "";
+		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 		include("../../_includes/system/convert-and-format-currency.inc.php");
 		$monthly_cost = $temp_output_amount;
 
@@ -290,6 +302,9 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 			$temp_input_amount = $yearly_cost;
 			$temp_input_conversion = "";
+			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 			include("../../_includes/system/convert-and-format-currency.inc.php");
 			$yearly_cost = $temp_output_amount;
 			?>
@@ -327,6 +342,9 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 	<?php
 	$temp_input_amount = $grand_total;
 	$temp_input_conversion = "";
+	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 	include("../../_includes/system/convert-and-format-currency.inc.php");
 	$grand_total = $temp_output_amount;
 	echo "<BR><strong>Grand Total: </strong>" . $grand_total . " " . $_SESSION['default_currency'] . "";

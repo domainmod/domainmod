@@ -238,11 +238,17 @@ if ($export == "1") {
 
 		$temp_input_amount = $temp_initial_fee;
 		$temp_input_conversion = "";
+		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 		include("_includes/system/convert-and-format-currency.inc.php");
 		$export_initial_fee = $temp_output_amount;
 
 		$temp_input_amount = $temp_renewal_fee;
 		$temp_input_conversion = "";
+		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 		include("_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
@@ -253,11 +259,17 @@ if ($export == "1") {
 
 	$temp_input_amount = $total_initial_fee_export;
 	$temp_input_conversion = "";
+	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 	include("_includes/system/convert-and-format-currency.inc.php");
 	$total_export_initial_fee = $temp_output_amount;
 
 	$temp_input_amount = $total_renewal_fee_export;
 	$temp_input_conversion = "";
+	$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+	$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+	$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 	include("_includes/system/convert-and-format-currency.inc.php");
 	$total_export_renewal_fee = $temp_output_amount;
 
@@ -700,6 +712,9 @@ echo "</select>";
 		<?php
 		$temp_input_amount = $row->renewal_fee;
 		$temp_input_conversion = $row->conversion;
+		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 		include("_includes/system/convert-and-format-currency.inc.php");
 		echo $temp_output_amount;
 		?>

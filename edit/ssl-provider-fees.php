@@ -375,6 +375,9 @@ while ($row = mysql_fetch_object($result)) {
 			<?php
 			$temp_input_amount = $row->initial_fee;
 			$temp_input_conversion = "";
+			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 			include("../_includes/system/convert-and-format-currency.inc.php");
 			echo $temp_output_amount;
             ?>
@@ -383,6 +386,9 @@ while ($row = mysql_fetch_object($result)) {
 			<?php
 			$temp_input_amount = $row->renewal_fee;
 			$temp_input_conversion = "";
+			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 			include("../_includes/system/convert-and-format-currency.inc.php");
 			echo $temp_output_amount;
             ?>
