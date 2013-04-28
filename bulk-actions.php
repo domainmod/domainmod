@@ -801,7 +801,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 	<?php } ?>
 
 <?php } ?>
-Instead of having to waste time editing domains one-by-one, you can use the below form to execute actions on multiple domains.<BR><BR><BR>
+Instead of having to waste time editing domains one-by-one, you can use the below form to execute actions on multiple domains.<BR><BR>
 <form name="bulk_actions_forum" method="post" action="<?=$PHP_SELF?>">
   <select name="jumpMenu" id="jumpMenu" onChange="MM_jumpMenu('parent',this,0)">
     <option value="bulk-actions.php"<?php if ($action == "") { echo " selected"; } ?>>Click to Choose Action</option>
