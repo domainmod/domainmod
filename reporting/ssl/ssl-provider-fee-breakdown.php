@@ -25,6 +25,7 @@ include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "SSL Provider Fee Breakdown";
 $software_section = "reporting";
+$report_name = "ssl-provider-fee-breakdown";
 
 // Form Variables
 $export = $_GET['export'];

@@ -27,6 +27,7 @@ include("../../_includes/system/functions/check-date-format.inc.php");
 
 $page_title = "Domain Cost Breakdown by Month";
 $software_section = "reporting";
+$report_name = "domains-cost-breakdown-by-month";
 
 // Form Variables
 $export = $_GET['export'];

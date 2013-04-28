@@ -25,6 +25,7 @@ include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Registrar Fee Breakdown";
 $software_section = "reporting";
+$report_name = "registrar-fee-breakdown";
 
 // Form Variables
 $export = $_GET['export'];

@@ -24,6 +24,7 @@ include("../../_includes/auth/auth-check.inc.php");
 
 $page_title = "Top Level Domain Breakdown";
 $software_section = "reporting";
+$report_name = "tld-breakdown";
 ?>
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
