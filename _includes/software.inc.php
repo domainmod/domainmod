@@ -21,7 +21,6 @@ $reporting_section_title = "Domain & SSL Certificate Reporting";
 $software_version = "1.0"; 
 $site_width = "96%";
 $site_width_login = "550";
-$number_of_temp_domains = 100;
 $most_recent_db_version = "2.0037";
 header('Content-Type: text/html; charset=utf-8');
 ?>
