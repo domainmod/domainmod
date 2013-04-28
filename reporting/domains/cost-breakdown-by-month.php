@@ -162,22 +162,14 @@ if ($submission_failed != "1" && mysql_num_rows($result) > 0) {
 	
 		$full_export .= "\"\",\"\",\"Grand Total:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
 		
-		$export = "0";
-		
-	header('Content-Encoding: UTF-8');
-	header('Content-Type: text/csv; charset=UTF-8');
-	$current_timestamp_unix = strtotime($current_timestamp);
-	if ($all == "1") {
-		$full_content_disposition = "Content-Disposition: attachment; filename=\"domain_cost_breakdown_by_month_all_$current_timestamp_unix.csv\"";
-	} else {
-		$full_content_disposition = "Content-Disposition: attachment; filename=\"domain_cost_breakdown_by_month_$new_start_date--$new_end_date.csv\"";
-	}
-	header("$full_content_disposition");
-	header('Content-Transfer-Encoding: binary');
-	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-	echo "\xEF\xBB\xBF";
-	echo $full_export;
-	exit;
+		$current_timestamp_unix = strtotime($current_timestamp);
+		if ($all == "1") {
+			$export_filename = "domain_cost_breakdown_by_month_all_" . $current_timestamp_unix . ".csv";
+		} else {
+			$export_filename = "domain_cost_breakdown_by_month_" . $new_start_date . "--" . $new_end_date . ".csv";
+		}
+		include("../../_includes/system/export-to-csv.inc.php");
+		exit;
 	}
 
 }

@@ -138,21 +138,13 @@ if ($export == "1") {
 
 	$full_export .= "\"\",\"\",\"Total Cost:\",\"" . $total_export_initial_fee . "\",\"" . $total_export_renewal_fee . "\"\n";
 	
-	$export = "0";
-
-header('Content-Encoding: UTF-8');
-header('Content-Type: text/csv; charset=UTF-8');
 $current_timestamp_unix = strtotime($current_timestamp);
 if ($all == "1") {
-	$full_content_disposition = "Content-Disposition: attachment; filename=\"ssl_renewals_all_$current_timestamp_unix.csv\"";
+	$export_filename = "ssl_renewals_all_" . $current_timestamp_unix . ".csv";
 } else {
-	$full_content_disposition = "Content-Disposition: attachment; filename=\"ssl_renewals_$new_expiry_start--$new_expiry_end.csv\"";
+	$export_filename = "ssl_renewals_" . $new_expiry_start . "--" . $new_expiry_end . ".csv";
 }
-header("$full_content_disposition");
-header('Content-Transfer-Encoding: binary');
-header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-echo "\xEF\xBB\xBF";
-echo $full_export;
+include("_includes/system/export-to-csv.inc.php");
 exit;
 }
 ?>

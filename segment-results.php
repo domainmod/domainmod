@@ -21,7 +21,7 @@ include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
-include("_includes/timestamps/current-timestamp-basic.inc.php");
+include("_includes/timestamps/current-timestamp.inc.php");
 
 $segid = $_GET['segid'];
 $export = $_GET['export'];
@@ -172,24 +172,17 @@ if ($export == "1") {
 	
 		$full_export .= "\"\",\"Total Cost:\",\"" . $total_export_initial_fee . "\",\"" . $total_export_renewal_fee . "\"\n";
 
-	} elseif ($type == "missing") {
-
 	}
 
-	$export = "0";
-	
-	header('Content-Type: text/plain');
+	$current_timestamp_unix = strtotime($current_timestamp);
 	if ($type == "inactive") { 
-		$full_content_disposition = "Content-Disposition: attachment; filename=\"export_inactive_$current_timestamp_basic.csv\"";
+		$export_filename = "export_inactive_" . $current_timestamp_unix . ".csv";
 	} elseif ($type == "filtered") {
-		$full_content_disposition = "Content-Disposition: attachment; filename=\"export_filtered_$current_timestamp_basic.csv\"";
+		$export_filename = "export_filtered_" . $current_timestamp_unix . ".csv";
 	} elseif ($type == "missing") {
-		$full_content_disposition = "Content-Disposition: attachment; filename=\"export_missing_$current_timestamp_basic.csv\"";
+		$export_filename = "export_missing_" . $current_timestamp_unix . ".csv";
 	}
-	header("$full_content_disposition");
-	header('Content-Transfer-Encoding: binary');
-	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-	echo $full_export;
+	include("_includes/system/export-to-csv.inc.php");
 	exit;
 }
 ?>
