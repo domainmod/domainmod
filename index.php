@@ -28,12 +28,12 @@ include("_includes/system/installation-check.inc.php");
 
 if ($_SESSION['installation_mode'] == 1) {
 	
-//	$page_title = "Installation";
+	// $page_title = "Installation";
 	$software_section = "installation";
 
 } else {
 
-//	$page_title = "Please Login";
+	// $page_title = "Please Login";
 	$software_section = "login";
 
 }
@@ -41,10 +41,14 @@ if ($_SESSION['installation_mode'] == 1) {
 $new_username = $_POST['new_username'];
 $new_password = $_POST['new_password'];
 
-if ($_SERVER['HTTP_HOST'] == "demos.aysmedia.com") {
+include("_includes/demo-settings.inc.php"); // $demo_url, $demo_username, $demo_password
+
+if ($_SERVER['HTTP_HOST'] == $demo_url) $demo_install = "1";
+
+if ($demo_install == "1" && !stripos($_SERVER['HTTP_REFERER'], "" . $demo_url . "")) {
 	$_SERVER['REQUEST_METHOD'] = 'POST';
-	$new_username = "demo";
-	$new_password = "demo";	
+	$new_username = $demo_username;
+	$new_password = $demo_password;
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
@@ -161,13 +165,14 @@ $new_password = "";
 <?php include("_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<?php if ($page_title != "") { ?>
-	<title><?=$software_title?> :: <?=$page_title?></title>
-<?php } else { ?>
-	<title><?=$software_title?></title>
-<?php } ?>
+<?php 
+if ($page_title != "") { ?>
+	<title><?=$software_title?> :: <?=$page_title?></title><?php 
+} else { ?>
+	<title><?=$software_title?></title><?php 
+} ?>
 <?php include("_includes/head-tags.inc.php"); ?>
-</head> <?php 
+</head><?php 
 if ($new_username == "") { ?>
 	<body onLoad="document.forms[0].elements[0].focus()";><?php 
 } else { ?>
@@ -176,20 +181,22 @@ if ($new_username == "") { ?>
 <?php include("_includes/header-login.inc.php"); ?>
 <?php 
 if ($_SESSION['installation_mode'] != 1) { ?>
-<BR><form name="login_form" method="post" action="<?=$PHP_SELF?>">
-    <div class="login_form">
-        <strong>Username:</strong>&nbsp;
-        <input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
-        &nbsp;<strong>Password:</strong>&nbsp;
-        <input name="new_password" type="password" id="new_password" size="20" maxlength="20"><br>
-	</div>
-    <div class="login_form">
-    	<BR><font size="1"><a class="invisiblelink" href="reset-password.php">Forgot your Password?</a></font><BR>
-        <BR><BR>
-        <input type="submit" name="button" value="Manage Your Domains &raquo;">
-	</div>
-</form>
-<?php 
+
+    <BR>
+    <form name="login_form" method="post" action="<?=$PHP_SELF?>">
+		<?php if ($demo_install == "1") { ?><div align="center"><strong>Demo Username & Password:</strong> "demo"</div><BR><BR><?php } ?>
+        <div class="login_form">
+            <strong>Username:</strong>&nbsp;
+            <input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
+            &nbsp;<strong>Password:</strong>&nbsp;
+            <input name="new_password" type="password" id="new_password" size="20" maxlength="20"><br>
+        </div>
+        <div class="login_form">
+            <?php if ($demo_install != "1") { ?><BR><font size="1"><a class="invisiblelink" href="reset-password.php">Forgot your Password?</a></font><BR><?php } ?>
+            <BR><BR>
+            <input type="submit" name="button" value="Manage Your Domains &raquo;">
+        </div>
+    </form><?php 
 } ?>
 <?php include("_includes/footer-login.inc.php"); ?>
 </body>
