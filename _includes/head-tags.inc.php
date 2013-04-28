@@ -49,27 +49,6 @@ td.search-table-inside {
 	vertical-align: top; 
 	background-color: #fafafa;
 }
-td.export-table {
-	text-align: left;
-	vertical-align: center; 
-	border-top: 1px #6699CC ridge;
-	border-bottom: 1px #6699CC ridge;
-	border-right: 1px #6699CC ridge;
-	border-left: 1px #6699CC ridge;
-	font-family: Verdana, sans-serif, Arial;
-	font-weight: normal;
-	font-size: 8pt;
-	color: #404040;
-	background-color: #fafafa;
-	padding-top: 8px;
-	padding-bottom: 8px;
-	padding-left: 8px;
-	padding-right: 8px; 
-}
-td.export-table-inside {
-	vertical-align: top; 
-	background-color: #fafafa;
-}
 td.footer-table-login {
 	text-align: center;
 	vertical-align: center; 
@@ -347,6 +326,23 @@ div.result_message_inner {
 	padding-bottom: 21px;
 	padding-left: 8px;
 	padding-right: 8px; 
+}
+div.export-container {
+	text-align: left;
+	vertical-align: center; 
+	border-top: 1px #6699CC ridge;
+	border-bottom: 1px #6699CC ridge;
+	border-right: 1px #6699CC ridge;
+	border-left: 1px #6699CC ridge;
+	font-family: Verdana, sans-serif, Arial;
+	font-weight: normal;
+	font-size: 8pt;
+	color: #404040;
+	background-color: #fafafa;
+	padding-top: 18px;
+	padding-bottom: 18px;
+	padding-left: 18px;
+	padding-right: 18px; 
 }
 div.login_form {
 	text-align: center;
