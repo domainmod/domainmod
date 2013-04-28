@@ -41,9 +41,9 @@ td.search-table {
 	color: #404040;
 	background-color: #fafafa;
 	padding-top: 8px;
+	padding-right: 8px; 
 	padding-bottom: 8px;
 	padding-left: 8px;
-	padding-right: 8px; 
 }
 td.search-table-inside {
 	vertical-align: top; 
@@ -60,28 +60,34 @@ td.footer-table-login {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 0px;
+	padding-right: 10px; 
 	padding-bottom: 15px;
 	padding-left: 10px;
-	padding-right: 10px; 
 }
 table.main_table {
 	border-spacing: 0px;
 	padding-top: 0px;
+	padding-right: 0px; 
 	padding-bottom: 0px;
 	padding-left: 0px;
-	padding-right: 0px; 
 }
 tr.main_table_row_heading_active {
 	line-height: 30px; 
 }
 td.main_table_cell_heading_active {
+	padding-top: 0px;
 	padding-right: 29px;
+	padding-bottom: 0px;
+	padding-left: 0px;
 }
 tr.main_table_row_active {
 	line-height: 18px; 
 }
 td.main_table_cell_active {
+	padding-top: 0px; 
 	padding-right: 29px; 
+	padding-bottom: 0px; 
+	padding-left: 0px; 
 }
 tr.main_table_row_heading_inactive {
 	line-height: 30px; 
@@ -89,27 +95,38 @@ tr.main_table_row_heading_inactive {
 td.main_table_cell_heading_inactive {
 	padding-top: 15px;
 	padding-right: 29px;
+	padding-bottom: 0px;
+	padding-left: 0px;
 }
 tr.main_table_row_inactive {
 	line-height: 18px; 
 }
 td.main_table_cell_inactive {
+	padding-top: 0px; 
 	padding-right: 29px; 
+	padding-bottom: 0px; 
+	padding-left: 0px; 
 }
 td.main_table_cell_heading_active_centered {
+	padding-top: 0px;
 	padding-right: 29px;
+	padding-bottom: 0px;
+	padding-left: 0px;
 	text-align: center;
 }
 td.main_table_cell_active_centered {
+	padding-top: 0px; 
 	padding-right: 29px; 
+	padding-bottom: 0px; 
+	padding-left: 0px; 
 	text-align: center;
 }
 table.dns_table {
 	border-spacing: 0px;
 	padding-top: 0px;
+	padding-right: 0px; 
 	padding-bottom: 0px;
 	padding-left: 0px;
-	padding-right: 0px; 
 }
 td.dns_table_left {
 	text-align: left;
@@ -122,9 +139,9 @@ td.dns_table_left {
 	font-weight: normal;
 	font-size: 8pt;
 	padding-top: 0px;
+	padding-right: 15px; 
 	padding-bottom: 14px;
 	padding-left: 0px;
-	padding-right: 15px; 
 }
 td.dns_table_right {
 	text-align: left;
@@ -137,9 +154,9 @@ td.dns_table_right {
 	font-weight: normal;
 	font-size: 8pt;
 	padding-top: 0px;
+	padding-right: 0px; 
 	padding-bottom: 14px;
 	padding-left: 0px;
-	padding-right: 0px; 
 }
 div.main-container {
 	width: <?=$site_width?>;
@@ -163,9 +180,9 @@ div.main-outer {
 	border-right: 1px #6699CC ridge;
 	border-left: 1px #6699CC ridge;
 	padding-top: 0px;
+	padding-right: 0px; 
 	padding-bottom: 0px;
 	padding-left: 0px;
-	padding-right: 0px; 
 }
 div.main-outer-login {
 	width: 100%;
@@ -179,9 +196,9 @@ div.main-outer-login {
 	border-right: 1px #6699CC ridge;
 	border-left: 1px #6699CC ridge;
 	padding-top: 0px;
+	padding-right: 0px; 
 	padding-bottom: 0px;
 	padding-left: 0px;
-	padding-right: 0px; 
 }
 div.main-inner {
 	text-align: left;
@@ -194,15 +211,15 @@ div.main-inner {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 12px;
+	padding-right: 23px; 
 	padding-bottom: 23px;
 	padding-left: 23px;
-	padding-right: 23px; 
 }
 div.header-container {
 	padding-top: 0px;
+	padding-right: 0px; 
 	padding-bottom: 0px;
 	padding-left: 0px;
-	padding-right: 0px; 
 }
 div.header-left {
 	width: 50%;
@@ -218,9 +235,9 @@ div.header-left {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 3px;
+	padding-right: 0px; 
 	padding-bottom: 5px;
 	padding-left: 20px;
-	padding-right: 0px; 
 }
 div.header-right {
 	width: 40%;
@@ -236,9 +253,9 @@ div.header-right {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 33px;
+	padding-right: 8px; 
 	padding-bottom: 8px;
 	padding-left: 0px;
-	padding-right: 8px; 
 }
 div.header-center {
 	text-align: center;
@@ -252,9 +269,9 @@ div.header-center {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 33px;
+	padding-right: 0px; 
 	padding-bottom: 8px;
 	padding-left: 0px;
-	padding-right: 0px; 
 }
 div.main-menu {
 	text-align: left;
@@ -267,9 +284,9 @@ div.main-menu {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 15px;
+	padding-right: 15px; 
 	padding-bottom: 0px;
 	padding-left: 15px;
-	padding-right: 15px; 
 }
 div.maintenance_warning_outer {
 	width: 100%;
@@ -278,9 +295,9 @@ div.maintenance_warning_outer {
 	border-right: 0px;
 	border-left: 0px;
 	padding-top: 0px;
+	padding-right: 0px; 
 	padding-bottom: 13px;
 	padding-left: 0px;
-	padding-right: 0px; 
 }
 div.maintenance_warning_inner {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -295,9 +312,9 @@ div.maintenance_warning_inner {
 	color: #000000;
 	background-color: #fafafa;
 	padding-top: 23px;
+	padding-right: 8px; 
 	padding-bottom: 23px;
 	padding-left: 20px;
-	padding-right: 8px; 
 }
 div.result_message_outer {
 	width: 100%;
@@ -306,9 +323,9 @@ div.result_message_outer {
 	border-right: 0px;
 	border-left: 0px;
 	padding-top: 0px;
+	padding-right: 0px; 
 	padding-bottom: 13px;
 	padding-left: 0px;
-	padding-right: 0px; 
 }
 div.result_message_inner {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -323,9 +340,31 @@ div.result_message_inner {
 	color: #000000;
 	background-color: #fafafa;
 	padding-top: 21px;
+	padding-right: 8px; 
 	padding-bottom: 21px;
 	padding-left: 8px;
-	padding-right: 8px; 
+}
+div.reporting-block-outer {
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 65px;
+	padding-left: 0px;
+}
+div.reporting-block-left {
+	float: left;
+	width: 275px; 
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
+div.reporting-block-right {
+	float: left;
+	width: 275px; 
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
 }
 div.export-outer {
 	float: left;
@@ -335,9 +374,9 @@ div.export-outer {
 	border-right: 0px;
 	border-left: 0px;
 	padding-top: 0px;
+	padding-right: 0px; 
 	padding-bottom: 12px;
 	padding-left: 0px;
-	padding-right: 0px; 
 }
 div.export-inner {
 	text-align: left;
@@ -352,9 +391,9 @@ div.export-inner {
 	color: #404040;
 	background-color: #fafafa;
 	padding-top: 18px;
+	padding-right: 22px; 
 	padding-bottom: 18px;
 	padding-left: 22px;
-	padding-right: 22px; 
 }
 div.login_form {
 	text-align: center;
@@ -366,9 +405,9 @@ div.reset-password {
 	border-right: 0px;
 	border-left: 0px;
 	padding-top: 10px;
+	padding-right: 0px; 
 	padding-bottom: 10px;
 	padding-left: 0px;
-	padding-right: 0px; 
 }
 div.footer-container {
 	text-align: right;
@@ -382,9 +421,9 @@ div.footer-container {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 10px;
+	padding-right: 8px; 
 	padding-bottom: 10px;
 	padding-left: 0px;
-	padding-right: 8px; 
 }
 div.footer-container-center {
 	text-align: center;
@@ -398,9 +437,9 @@ div.footer-container-center {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 10px;
+	padding-right: 0px; 
 	padding-bottom: 10px;
 	padding-left: 0px;
-	padding-right: 0px; 
 }
 font.headline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
