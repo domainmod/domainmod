@@ -168,32 +168,20 @@ exit;
 </head>
 <body>
 <?php include("_includes/header.inc.php"); ?>
-Before exporting your SSL Certificates you should <a href="system/update-conversion-rates.php">update the conversion rates</a>.
-<BR><BR>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>
-		<td class="export-table"><BR>
-
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td class="export-table-inside">
-                        <form name="export_ssl_certs_form" method="post" action="<?=$PHP_SELF?>">
-                        <a href="<?=$PHP_SELF?>?all=1">View All</a> or Expiring Between 
-                          <input name="new_expiry_start" type="text" size="10" maxlength="10" <?php if ($new_expiry_start == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_start\""; } ?>> 
-                          and 
-                          <input name="new_expiry_end" type="text" size="10" maxlength="10" <?php if ($new_expiry_end == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_end\""; } ?>> 
-                          &nbsp;&nbsp;<input type="submit" name="button" value="Show Expiring &raquo;">
-						  <?php if ($total_results > 0) { ?>
-                          &nbsp;&nbsp;[<a href="ssl-cert-renewals.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>&all=<?=$all?>">Export Results</a>]<BR>
-						  <?php } ?>
-                        </form><BR>
-					</td>
-				</tr>
-			</table>
-
-		</td>
-	</tr>
-</table>
+Before exporting your SSL Certificates you should <a href="system/update-conversion-rates.php">update the conversion rates</a>.<BR>
+<BR>
+<div class="export-container">
+    <form name="export_ssl_certs_form" method="post" action="<?=$PHP_SELF?>"> 
+    	<a href="<?=$PHP_SELF?>?all=1">View All</a> or Expiring Between 
+        <input name="new_expiry_start" type="text" size="10" maxlength="10" <?php if ($new_expiry_start == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_start\""; } ?>> 
+        and 
+        <input name="new_expiry_end" type="text" size="10" maxlength="10" <?php if ($new_expiry_end == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_end\""; } ?>> 
+        &nbsp;&nbsp;<input type="submit" name="button" value="Show Expiring &raquo;"> 
+		<?php if ($total_results > 0) { ?>
+        &nbsp;&nbsp;[<a href="ssl-cert-renewals.php?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>&all=<?=$all?>">Export Results</a>]
+        <?php } ?>
+    </form>
+</div>
 <?php if ($total_results > 0) { ?>
 <BR><strong>Number of SSL Certificates to Export:</strong> <?=number_format($total_results)?><BR><BR>
 <table class="main_table">
