@@ -193,8 +193,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 </head>
 <body>
 <?php include("../../_includes/header.inc.php"); ?>
-Before running any reports you should <a href="../../system/update-conversion-rates.php">update the conversion rates</a>.<BR>
-<BR>
+<?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
     <form name="export_domains_form" method="post" action="<?=$PHP_SELF?>"> 
         <a href="<?=$PHP_SELF?>?all=1">View All</a> or Enter a Date Range 

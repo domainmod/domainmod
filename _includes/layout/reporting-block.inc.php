@@ -1,0 +1,36 @@
+<?php
+// /_includes/layout/reporting-block.inc.php
+// 
+// Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
+// Copyright (C) 2010 Greg Chetcuti
+// 
+// Domain Manager is free software; you can redistribute it and/or modify it under the terms of the GNU General
+// Public License as published by the Free Software Foundation; either version 2 of the License, or (at your
+// option) any later version.
+// 
+// Domain Manager is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+// implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+// for more details.
+// 
+// You should have received a copy of the GNU General Public License along with Domain Manager. If not, please 
+// see http://www.gnu.org/licenses/
+?>
+<script type="text/javascript">
+<!--
+function MM_jumpMenu(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
+//-->
+</script>
+Before running any reports you should <a href="../system/update-conversion-rates.php">update the conversion rates</a>.<BR><BR>
+<font class="subheadline">Domain & SSL Reporting</font><BR><BR>
+<select name="reporting_menu" onChange="MM_jumpMenu('parent',this,0)">
+<option value="" selected>Choose the Report to Run</option>
+<option value="<?=$web_root?>/reporting/domains/cost-breakdown-by-month.php">DOMAINS-&gt; Cost Breakdown by Month</option>
+<option value="<?=$web_root?>/reporting/domains/registrar-fee-breakdown.php">DOMAINS-&gt; Registrar Fee Breakdown</option>
+<option value="<?=$web_root?>/reporting/domains/tld-breakdown.php">DOMAINS-&gt; TLD Breakdown</option>
+<option value="<?=$web_root?>/reporting/ssl/cost-breakdown-by-month.php">SSL CERTS-&gt; Cost Breakdown by Month</option>
+<option value="<?=$web_root?>/reporting/ssl/ssl-provider-fee-breakdown.php">SSL CERTS-&gt; SSL Provider Fee Breakdown</option>
+</select>
+<BR><BR>

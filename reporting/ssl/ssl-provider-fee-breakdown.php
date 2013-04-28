@@ -135,6 +135,7 @@ if ($total_rows > 0) {
 </head>
 <body>
 <?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
     <a href="<?=$PHP_SELF?>?all=1">View All</a> or <a href="<?=$PHP_SELF?>?all=0">Active Only</a>
     <?php if ($total_rows > 0) { ?>

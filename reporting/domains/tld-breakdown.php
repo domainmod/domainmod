@@ -33,6 +33,7 @@ $software_section = "reporting";
 </head>
 <body>
 <?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 This is a breakdown of the Top Level Domains that are currently active in your <?=$software_title?>.
 <BR><BR>
 <?php
