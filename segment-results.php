@@ -225,11 +225,11 @@ if ($type == "inactive") {
 ?>
 <?php
 if ($type == "inactive") { 
-	echo "[<a href=\"" . $PHP_SELF . "?type=inactive&segid=" . $segid . "&export=1\">Export Results</a>]<BR><BR>";
+	echo "[<a href=\"" . $PHP_SELF . "?type=inactive&segid=" . $segid . "&export=1\">EXPORT RESULTS</a>]<BR><BR>";
 } elseif ($type == "filtered") {
-	echo "[<a href=\"" . $PHP_SELF . "?type=filtered&segid=" . $segid . "&export=1\">Export Results</a>]<BR><BR>";
+	echo "[<a href=\"" . $PHP_SELF . "?type=filtered&segid=" . $segid . "&export=1\">EXPORT RESULTS</a>]<BR><BR>";
 } elseif ($type == "missing") {
-	echo "[<a href=\"" . $PHP_SELF . "?type=missing&segid=" . $segid . "&export=1\">Export Results</a>]<BR><BR>";
+	echo "[<a href=\"" . $PHP_SELF . "?type=missing&segid=" . $segid . "&export=1\">EXPORT RESULTS</a>]<BR><BR>";
 }
 ?>
 <?php
