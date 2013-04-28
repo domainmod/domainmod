@@ -27,8 +27,8 @@ include("_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
 include("_includes/system/functions/check-domain-format.inc.php");
 include("_includes/system/functions/check-date-format.inc.php");
 
-$page_title = "Bulk Actions";
-$software_section == "bulkactions";
+$page_title = "Perform Bulk Actions";
+$software_section = "bulkactions";
 
 // Form Variables
 $jumpMenu = $_GET['jumpMenu'];
