@@ -235,8 +235,8 @@ if ($export == "1") {
 	$result = mysql_query($sql,$connection);
 	$total_rows = number_format(mysql_num_rows($result));
 
+	$full_export .= "\"SSL Certificate Search Results Export\"\n\n";
 	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n";
-
 	$full_export .= "\"Number of SSL Certs:\",\"" . $total_rows . "\"\n";
 	$full_export .= "\"Total Cost:\",\"" . $grand_total . "\"\n\n";
 
