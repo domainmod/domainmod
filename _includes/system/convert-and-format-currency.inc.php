@@ -23,33 +23,36 @@
 // // Output: $temp_output_amount
 // $temp_input_amount = $xxxxx;
 // $temp_input_conversion = "";
+// $temp_input_currency_symbol = "";
+// $temp_input_currency_symbol_order = "";
+// $temp_input_currency_symbol_space = "";
 // include("_includes/system/convert-and-format-currency.inc.php");
 // $xxxxx = $temp_output_amount;
 ?>
 <?php
 if ($temp_input_conversion == "") {
 
-	if ($_SESSION['default_currency_symbol_order'] == "0") {
+	if ($temp_input_currency_symbol_order == "0") {
 
-		if ($_SESSION['default_currency_symbol_space'] == "0") {
+		if ($temp_input_currency_symbol_space == "0") {
 
-			$temp_output_amount = $_SESSION['default_currency_symbol'] . number_format($temp_input_amount, 2, '.', ',');
+			$temp_output_amount = $temp_input_currency_symbol . number_format($temp_input_amount, 2, '.', ',');
 
 		} else {
 
-			$temp_output_amount = $_SESSION['default_currency_symbol'] . " " . number_format($temp_input_amount, 2, '.', ',');
+			$temp_output_amount = $temp_input_currency_symbol . " " . number_format($temp_input_amount, 2, '.', ',');
 
 		}
 
 	} else {
 
-		if ($_SESSION['default_currency_symbol_space'] == "0") {
+		if ($temp_input_currency_symbol_space == "0") {
 
-			$temp_output_amount = number_format($temp_input_amount, 2, '.', ',') . $_SESSION['default_currency_symbol'];
+			$temp_output_amount = number_format($temp_input_amount, 2, '.', ',') . $temp_input_currency_symbol;
 		
 		} else {
 
-			$temp_output_amount = number_format($temp_input_amount, 2, '.', ',') . " " . $_SESSION['default_currency_symbol'];
+			$temp_output_amount = number_format($temp_input_amount, 2, '.', ',') . " " . $temp_input_currency_symbol;
 		
 		}
 
@@ -57,31 +60,31 @@ if ($temp_input_conversion == "") {
 
 } else {
 
-	if ($_SESSION['default_currency_symbol_order'] == "0") {
+	if ($temp_input_currency_symbol_order == "0") {
 
-		if ($_SESSION['default_currency_symbol_space'] == "0") {
+		if ($temp_input_currency_symbol_space == "0") {
 
 			$temp_converted_fee = $temp_input_amount * $temp_input_conversion;
-			$temp_output_amount = $_SESSION['default_currency_symbol'] . number_format($temp_converted_fee, 2, '.', ',');
+			$temp_output_amount = $temp_input_currency_symbol . number_format($temp_converted_fee, 2, '.', ',');
 
 		} else {
 
 			$temp_converted_fee = $temp_input_amount * $temp_input_conversion;
-			$temp_output_amount = $_SESSION['default_currency_symbol'] . " " . number_format($temp_converted_fee, 2, '.', ',');
+			$temp_output_amount = $temp_input_currency_symbol . " " . number_format($temp_converted_fee, 2, '.', ',');
 
 		}
 
 	} else {
 
-		if ($_SESSION['default_currency_symbol_space'] == "0") {
+		if ($temp_input_currency_symbol_space == "0") {
 
 			$temp_converted_fee = $temp_input_amount * $temp_input_conversion;
-			$temp_output_amount = number_format($temp_converted_fee, 2, '.', ',') . $_SESSION['default_currency_symbol'];
+			$temp_output_amount = number_format($temp_converted_fee, 2, '.', ',') . $temp_input_currency_symbol;
 		
 		} else {
 
 			$temp_converted_fee = $temp_input_amount * $temp_input_conversion;
-			$temp_output_amount = number_format($temp_converted_fee, 2, '.', ',') . " " . $_SESSION['default_currency_symbol'];
+			$temp_output_amount = number_format($temp_converted_fee, 2, '.', ',') . " " . $temp_input_currency_symbol;
 		
 		}
 
