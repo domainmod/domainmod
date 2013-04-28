@@ -142,139 +142,141 @@ if ($total_rows > 0) {
 <?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
     <a href="<?=$PHP_SELF?>?all=1">View All</a> or <a href="<?=$PHP_SELF?>?all=0">Active Only</a>
-    <?php if ($total_rows > 0) { ?>
+    <?php if ($total_rows > 0 && $all != "") { ?>
     &nbsp;&nbsp;[<a href="<?=$PHP_SELF?>?export=1&all=<?=$all?>">Export Report</a>]
     <?php } ?>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
-<BR><font class="headline"><?=$page_subtitle?></font><BR>
-<BR>
-<?php if ($all == "1") { ?>
-	<strong>All SSL Provider Fees</strong><BR><BR>
-<?php } else { ?>
-	<strong>Active SSL Provider Fees</strong><BR><BR>
-<?php } ?>
-<?php
-if ($total_rows > 0) { ?>
-
-    <table class="main_table">
-    <tr class="main_table_row_heading_active">
-        <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">SSL Provider</font></td>
-        <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Certificate Type</font></td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Initial Fee</font>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Renewal Fee</font>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Currency</font>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Last Updated</font>
-        </td>
-    </tr>
+<?php if ($all != "") { ?>
+    <BR><font class="headline"><?=$page_subtitle?></font><BR>
+    <BR>
+    <?php if ($all == "1") { ?>
+        <strong>All SSL Provider Fees</strong><BR><BR>
+    <?php } else { ?>
+        <strong>Active SSL Provider Fees</strong><BR><BR>
+    <?php } ?>
     <?php
-
-	$new_ssl_provider = "";
-	$last_ssl_provider = "";
-	$new_type = "";
-	$last_type = "";
-
-    while ($row = mysql_fetch_object($result)) {
-		
-		$new_ssl_provider = $row->ssl_provider;
-		$new_type = $row->type;
-
-		if ($row->update_time == "0000-00-00 00:00:00") {
-			$row->update_time = $row->insert_time;	
-		}
-		$last_updated = date('Y-m-d', strtotime($row->update_time));
-
-		if ($new_ssl_provider != $last_ssl_provider || $new_ssl_provider == "") { ?>
-
-			<tr class="main_table_row_active">
-				<td class="main_table_cell_active"><strong><?=$row->ssl_provider?></strong></td>
-				<td class="main_table_cell_active"><?=$row->type?></td>
-				<td class="main_table_cell_active">
-                	<?php
-					$temp_input_amount = $row->initial_fee;
-					$temp_input_conversion = "";
-					$temp_input_currency_symbol = $row->symbol;
-					$temp_input_currency_symbol_order = $row->symbol_order;
-					$temp_input_currency_symbol_space = $row->symbol_space;
-					include("../../_includes/system/convert-and-format-currency.inc.php");
-					$row->initial_fee = $temp_output_amount;
-					?>
-					<?=$row->initial_fee?>
-                </td>
-				<td class="main_table_cell_active">
-                	<?php
-					$temp_input_amount = $row->renewal_fee;
-					$temp_input_conversion = "";
-					$temp_input_currency_symbol = $row->symbol;
-					$temp_input_currency_symbol_order = $row->symbol_order;
-					$temp_input_currency_symbol_space = $row->symbol_space;
-					include("../../_includes/system/convert-and-format-currency.inc.php");
-					$row->renewal_fee = $temp_output_amount;
-					?>
-					<?=$row->renewal_fee?>
-                </td>
-				<td class="main_table_cell_active"><?=$row->currency?></td>
-				<td class="main_table_cell_active"><?=$last_updated?></td>
-			</tr>
-
-            <?php
-			$last_ssl_provider = $row->ssl_provider;
-			$last_type = $row->type;
-			
-		} else { ?>
-		
-			<tr class="main_table_row_active">
-				<td class="main_table_cell_active">&nbsp;</td>
-				<td class="main_table_cell_active"><?=$row->type?></td>
-				<td class="main_table_cell_active">
-                	<?php
-					$temp_input_amount = $row->initial_fee;
-					$temp_input_conversion = "";
-					$temp_input_currency_symbol = $row->symbol;
-					$temp_input_currency_symbol_order = $row->symbol_order;
-					$temp_input_currency_symbol_space = $row->symbol_space;
-					include("../../_includes/system/convert-and-format-currency.inc.php");
-					$row->initial_fee = $temp_output_amount;
-					?>
-					<?=$row->initial_fee?>
-                </td>
-				<td class="main_table_cell_active">
-                	<?php
-					$temp_input_amount = $row->renewal_fee;
-					$temp_input_conversion = "";
-					$temp_input_currency_symbol = $row->symbol;
-					$temp_input_currency_symbol_order = $row->symbol_order;
-					$temp_input_currency_symbol_space = $row->symbol_space;
-					include("../../_includes/system/convert-and-format-currency.inc.php");
-					$row->renewal_fee = $temp_output_amount;
-					?>
-					<?=$row->renewal_fee?>
-                </td>
-				<td class="main_table_cell_active"><?=$row->currency?></td>
-				<td class="main_table_cell_active"><?=$last_updated?></td>
-			</tr>
-
-            <?php
-			$last_ssl_provider = $row->ssl_provider;
-			$last_type = $row->type;
-
-		}
-
-    }
-	?>
-    </table>
-	
-	<?php
-} 
-?>
+    if ($total_rows > 0) { ?>
+    
+        <table class="main_table">
+        <tr class="main_table_row_heading_active">
+            <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">SSL Provider</font></td>
+            <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">Certificate Type</font></td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Initial Fee</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Renewal Fee</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Currency</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Last Updated</font>
+            </td>
+        </tr>
+        <?php
+    
+        $new_ssl_provider = "";
+        $last_ssl_provider = "";
+        $new_type = "";
+        $last_type = "";
+    
+        while ($row = mysql_fetch_object($result)) {
+            
+            $new_ssl_provider = $row->ssl_provider;
+            $new_type = $row->type;
+    
+            if ($row->update_time == "0000-00-00 00:00:00") {
+                $row->update_time = $row->insert_time;	
+            }
+            $last_updated = date('Y-m-d', strtotime($row->update_time));
+    
+            if ($new_ssl_provider != $last_ssl_provider || $new_ssl_provider == "") { ?>
+    
+                <tr class="main_table_row_active">
+                    <td class="main_table_cell_active"><strong><?=$row->ssl_provider?></strong></td>
+                    <td class="main_table_cell_active"><?=$row->type?></td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $temp_input_amount = $row->initial_fee;
+                        $temp_input_conversion = "";
+                        $temp_input_currency_symbol = $row->symbol;
+                        $temp_input_currency_symbol_order = $row->symbol_order;
+                        $temp_input_currency_symbol_space = $row->symbol_space;
+                        include("../../_includes/system/convert-and-format-currency.inc.php");
+                        $row->initial_fee = $temp_output_amount;
+                        ?>
+                        <?=$row->initial_fee?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $temp_input_amount = $row->renewal_fee;
+                        $temp_input_conversion = "";
+                        $temp_input_currency_symbol = $row->symbol;
+                        $temp_input_currency_symbol_order = $row->symbol_order;
+                        $temp_input_currency_symbol_space = $row->symbol_space;
+                        include("../../_includes/system/convert-and-format-currency.inc.php");
+                        $row->renewal_fee = $temp_output_amount;
+                        ?>
+                        <?=$row->renewal_fee?>
+                    </td>
+                    <td class="main_table_cell_active"><?=$row->currency?></td>
+                    <td class="main_table_cell_active"><?=$last_updated?></td>
+                </tr>
+    
+                <?php
+                $last_ssl_provider = $row->ssl_provider;
+                $last_type = $row->type;
+                
+            } else { ?>
+            
+                <tr class="main_table_row_active">
+                    <td class="main_table_cell_active">&nbsp;</td>
+                    <td class="main_table_cell_active"><?=$row->type?></td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $temp_input_amount = $row->initial_fee;
+                        $temp_input_conversion = "";
+                        $temp_input_currency_symbol = $row->symbol;
+                        $temp_input_currency_symbol_order = $row->symbol_order;
+                        $temp_input_currency_symbol_space = $row->symbol_space;
+                        include("../../_includes/system/convert-and-format-currency.inc.php");
+                        $row->initial_fee = $temp_output_amount;
+                        ?>
+                        <?=$row->initial_fee?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $temp_input_amount = $row->renewal_fee;
+                        $temp_input_conversion = "";
+                        $temp_input_currency_symbol = $row->symbol;
+                        $temp_input_currency_symbol_order = $row->symbol_order;
+                        $temp_input_currency_symbol_space = $row->symbol_space;
+                        include("../../_includes/system/convert-and-format-currency.inc.php");
+                        $row->renewal_fee = $temp_output_amount;
+                        ?>
+                        <?=$row->renewal_fee?>
+                    </td>
+                    <td class="main_table_cell_active"><?=$row->currency?></td>
+                    <td class="main_table_cell_active"><?=$last_updated?></td>
+                </tr>
+    
+                <?php
+                $last_ssl_provider = $row->ssl_provider;
+                $last_type = $row->type;
+    
+            }
+    
+        }
+        ?>
+        </table>
+        
+        <?php
+    } 
+    ?>
+<?php } ?>
 <?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>
