@@ -150,7 +150,7 @@ if ($total_rows > 0) {
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
     <a href="<?=$PHP_SELF?>?all=1">View All</a> or <a href="<?=$PHP_SELF?>?all=0">Active Only</a>
     <?php if ($total_rows > 0 && $all != "") { ?>
-    &nbsp;&nbsp;[<a href="<?=$PHP_SELF?>?export=1&all=<?=$all?>">Export Report</a>]
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?=$PHP_SELF?>?export=1&all=<?=$all?>">EXPORT REPORT</a>]</strong>
     <?php } ?>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 

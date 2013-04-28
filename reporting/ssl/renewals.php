@@ -186,7 +186,7 @@ exit;
         <input name="new_expiry_end" type="text" size="10" maxlength="10" <?php if ($new_expiry_end == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_end\""; } ?>> 
         &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
         <?php if ($total_results > 0) { ?>
-        &nbsp;&nbsp;[<a href="<?=$PHP_SELF?>?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>&all=<?=$all?>">Export Results</a>]
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?=$PHP_SELF?>?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>&all=<?=$all?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
     </form>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
