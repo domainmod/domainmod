@@ -88,6 +88,8 @@ if ($export == "1") {
 	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
 	if ($all != "1") {
 		$full_export .= "\"Date Range:\",\"" . $new_expiry_start . "\",\"" . $new_expiry_end . "\"\n\n";
+	} else {
+		$full_export .= "\"Date Range:\",\"ALL\"\n\n";
 	}
 	$full_export .= "\"Number of Domains:\",\"" . number_format($total_results) . "\"\n\n";
 	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renew?\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\"\n";
@@ -190,6 +192,8 @@ if ($export == "1") {
 All fees are listed in <?=$_SESSION['default_currency']?><BR><BR>
 <?php if ($all != "1") { ?>
 	<strong>Date Range:</strong> <?=$new_expiry_start?> - <?=$new_expiry_end?><BR><BR>
+<?php } else { ?>
+	<strong>Date Range:</strong> ALL<BR><BR>
 <?php } ?>
 <strong>Number of Domains:</strong> <?=number_format($total_results)?><BR><BR>
 <table class="main_table">

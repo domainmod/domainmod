@@ -82,6 +82,8 @@ if ($submission_failed != "1" && $total_rows > 0) {
 		$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
 		if ($all != "1") {
 		    $full_export .= "\"Date Range:\",\"" . $new_start_date . "\",\"" . $new_end_date . "\"\n\n";
+        } else {
+		    $full_export .= "\"Date Range:\",\"ALL\"\n\n";
         }
 		$full_export .= "\"Year\",\"Month\",\"Cost\",\"By Year\"\n";
 	
@@ -219,6 +221,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     All fees are listed in <?=$_SESSION['default_currency']?><BR><BR>
     <?php if ($all != "1") { ?>
 	    <strong>Date Range:</strong> <?=$new_start_date?> - <?=$new_end_date?><BR><BR>
+    <?php } else { ?>
+	    <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
     <table class="main_table">
     <tr class="main_table_row_heading_active">

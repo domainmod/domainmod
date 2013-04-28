@@ -85,6 +85,8 @@ if ($export == "1") {
 	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
 	if ($all != "1") {
 		$full_export .= "\"Date Range:\",\"" . $new_expiry_start . "\",\"" . $new_expiry_end . "\"\n\n";
+	} else {
+		$full_export .= "\"Date Range:\",\"ALL\"\n\n";
 	}
 	$full_export .= "\"Number of SSL Certificates:\",\"" . number_format($total_results) . "\"\n\n";
 	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Initial Fee\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"Owner\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Notes\"\n";
@@ -193,6 +195,8 @@ exit;
 All fees are listed in <?=$_SESSION['default_currency']?><BR><BR>
 <?php if ($all != "1") { ?>
 	<strong>Date Range:</strong> <?=$new_expiry_start?> - <?=$new_expiry_end?><BR><BR>
+<?php } else { ?>
+	<strong>Date Range:</strong> ALL<BR><BR>
 <?php } ?>
 <strong>Number of SSL Certificates:</strong> <?=number_format($total_results)?><BR><BR>
 <table class="main_table">
