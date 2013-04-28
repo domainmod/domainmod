@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License along with Domain Manager. If not, please 
 // see http://www.gnu.org/licenses/
 ?>
-<div style="clear: both;"></div>
 <div class="export-outer">
     <div class="export-inner">
     	
