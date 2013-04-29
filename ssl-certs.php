@@ -37,13 +37,25 @@ $is_active = $_REQUEST['is_active'];
 $result_limit = $_REQUEST['result_limit'];
 $sort_by = $_REQUEST['sort_by'];
 $search_for = $_REQUEST['search_for'];
+$from_dropdown = $_REQUEST['from_dropdown'];
 
 // Search Navigation Variables
 $numBegin = $_REQUEST['numBegin'];
 $begin = $_REQUEST['begin'];
 $num = $_REQUEST['num'];
 
-if ($search_for == "Search Term") $search_for = "";
+if ($_SERVER['REQUEST_METHOD'] == 'POST') $from_dropdown = 0;
+
+if ($export != "1") {
+
+	if ($from_dropdown != "1") {
+
+		if ($search_for != "") { $_SESSION['search_for_ssl'] = $search_for; } else { $_SESSION['search_for_ssl'] = ""; }
+
+	}
+
+}
+
 if ($result_limit == "") $result_limit = $_SESSION['number_of_ssl_certs'];
 if ($is_active == "") $is_active = "LIVE";
 
@@ -159,7 +171,7 @@ if ($did != "") { $did_string = " AND d.id = '$did' "; } else { $did_string = ""
 if ($sslpid != "") { $sslpid_string = " AND sslp.id = '$sslpid' "; } else { $sslpid_string = ""; }
 if ($sslpaid != "") { $sslpaid_string = " AND sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
 if ($ssltid != "") { $ssltid_string = " AND sslc.type_id = '$ssltid' "; } else { $ssltid_string = ""; }
-if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
+if ($_SESSION['search_for_ssl'] != "") { $search_string = " AND (sslc.name LIKE '%" . $_SESSION['search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['search_for_ssl'] . "%')"; } else { $search_string = ""; }
 
 if ($sort_by == "") $sort_by = "ed_a";
 
@@ -239,6 +251,91 @@ if ($export == "1") {
 	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n";
 	$full_export .= "\"Number of SSL Certs:\",\"" . $total_rows . "\"\n";
 	$full_export .= "\"Total Cost:\",\"" . $grand_total . "\"\n\n";
+
+	$full_export .= "\"[Search Filters]\"\n";
+
+	if ($_SESSION['search_for_ssl'] != "") { 
+
+		$full_export .= "\"Keyword Search:\",\"" . $_SESSION['search_for_ssl'] . "\"\n"; 
+
+	}
+
+	if ($did > 0) {
+
+		$sql_filter = "SELECT domain
+					   FROM domains
+					   WHERE id = '" . $did . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"Associated Domain:\",\"" . $row_filter->domain . "\"\n"; 
+		}
+
+	}
+
+	if ($sslpid > 0) {
+
+		$sql_filter = "SELECT name
+					   FROM ssl_providers
+					   WHERE id = '" . $sslpid . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"SSL Provider:\",\"" . $row_filter->name . "\"\n"; 
+		}
+
+	}
+
+	if ($sslpaid > 0) { 
+
+		$sql_filter = "SELECT sslp.name AS ssl_provider_name, o.name AS owner_name, sslpa.username
+					   FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o
+					   WHERE sslpa.ssl_provider_id = sslp.id
+						 AND sslpa.owner_id = o.id
+						 AND sslpa.id = '" . $sslpaid . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"SSL Provider Account:\",\"" . $row_filter->ssl_provider_name . " - " . $row_filter->owner_name . " - " . $row_filter->username . "\"\n"; 
+		}
+
+	}
+
+	if ($ssltid > 0) {
+
+		$sql_filter = "SELECT type
+					   FROM ssl_cert_types
+					   WHERE id = '" . $ssltid . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"SSL Type:\",\"" . $row_filter->type . "\"\n"; 
+		}
+
+	}
+
+	if ($oid > 0) { 
+
+		$sql_filter = "SELECT name
+					   FROM owners
+					   WHERE id = '" . $oid . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"Owner:\",\"" . $row_filter->name . "\"\n"; 
+		}
+
+	}
+
+	if ($is_active == "ALL") { $full_export .= "\"SSL Status:\",\"ALL\"\n"; } 
+	elseif ($is_active == "LIVE" || $is_active == "") { $full_export .= "\"SSL Status:\",\"LIVE (Active / Pending)\"\n"; } 
+	elseif ($is_active == "0") { $full_export .= "\"SSL Status:\",\"Expired\"\n"; } 
+	elseif ($is_active == "1") { $full_export .= "\"SSL Status:\",\"Active\"\n"; } 
+	elseif ($is_active == "3") { $full_export .= "\"SSL Status:\",\"Pending (Renewal)\"\n"; } 
+	elseif ($is_active == "4") { $full_export .= "\"SSL Status:\",\"Pending (Other)\"\n"; } 
+	elseif ($is_active == "5") { $full_export .= "\"SSL Status:\",\"Pending (Registration)\"\n"; } 
+
+	$full_export .= "\n";
 
 	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"Owner\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Notes\"\n";
 
@@ -332,7 +429,7 @@ if ($_SESSION['need_domain'] == "1" && $_SESSION['need_ssl_provider'] == "0" && 
 	exit;
 }
 $totalrows = mysql_num_rows(mysql_query($sql));
-$navigate = pageBrowser($totalrows,15,$result_limit, "&oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for",$_GET[numBegin],$_GET[begin],$_GET[num]);
+$navigate = pageBrowser($totalrows,15,$result_limit, "&oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=" . $_SESSION['search_for_ssl'] . "",$_GET[numBegin],$_GET[begin],$_GET[num]);
 $sql = $sql.$navigate[0];
 $result = mysql_query($sql,$connection);
 $total_rows = number_format(mysql_num_rows($result));
@@ -366,7 +463,7 @@ if ($oid != "") { $oid_string = " AND sslc.owner_id = '$oid' "; } else { $oid_st
 if ($sslpid != "") { $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
 if ($sslpaid != "") { $sslpaid_string = " AND sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
 if ($ssltid != "") { $ssltid_string = " AND sslc.type_id = '$ssltid' "; } else { $ssltid_string = ""; }
-if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
+if ($_SESSION['search_for_ssl'] != "") { $search_string = " AND (sslc.name LIKE '%" . $_SESSION['search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['search_for_ssl'] . "%')"; } else { $search_string = ""; }
 
 $sql_domain = "SELECT d.id, d.domain 
 			   FROM domains AS d, ssl_certs AS sslc
@@ -382,9 +479,9 @@ $sql_domain = "SELECT d.id, d.domain
 			   ORDER BY d.domain asc"; 
 $result_domain = mysql_query($sql_domain,$connection);
 echo "<select name=\"did\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?oid=$oid&did=&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Domain - ALL</option>";
+echo "<option value=\"$PHP_SELF?oid=$oid&did=&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">Domain - ALL</option>";
 while ($row_domain = mysql_fetch_object($result_domain)) { 
-	echo "<option value=\"$PHP_SELF?oid=$oid&did=$row_domain->id&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_domain->id == $did) echo " selected"; echo ">"; echo "$row_domain->domain</option>";
+	echo "<option value=\"$PHP_SELF?oid=$oid&did=$row_domain->id&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_domain->id == $did) echo " selected"; echo ">"; echo "$row_domain->domain</option>";
 } 
 echo "</select>";
 ?>
@@ -411,7 +508,7 @@ if ($oid != "") { $oid_string = " AND sslc.owner_id = '$oid' "; } else { $oid_st
 if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
 if ($sslpaid != "") { $sslpaid_string = " AND sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
 if ($ssltid != "") { $ssltid_string = " AND sslc.type_id = '$ssltid' "; } else { $ssltid_string = ""; }
-if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
+if ($_SESSION['search_for_ssl'] != "") { $search_string = " AND (sslc.name LIKE '%" . $_SESSION['search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['search_for_ssl'] . "%')"; } else { $search_string = ""; }
 
 $sql_ssl_provider = "SELECT sslp.id, sslp.name 
 					 FROM ssl_providers AS sslp, ssl_certs AS sslc, domains AS d
@@ -427,9 +524,9 @@ $sql_ssl_provider = "SELECT sslp.id, sslp.name
 					 ORDER BY sslp.name asc";
 $result_ssl_provider = mysql_query($sql_ssl_provider,$connection);
 echo "<select name=\"sslpid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">SSL Provider - ALL</option>";
+echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">SSL Provider - ALL</option>";
 while ($row_ssl_provider = mysql_fetch_object($result_ssl_provider)) { 
-	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$row_ssl_provider->id&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_ssl_provider->id == $sslpid) echo " selected"; echo ">"; echo "$row_ssl_provider->name</option>";
+	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$row_ssl_provider->id&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_ssl_provider->id == $sslpid) echo " selected"; echo ">"; echo "$row_ssl_provider->name</option>";
 } 
 echo "</select>";
 ?>
@@ -456,7 +553,7 @@ if ($oid != "") { $oid_string = " AND sslc.owner_id = '$oid' "; } else { $oid_st
 if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
 if ($sslpid != "") { $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
 if ($ssltid != "") { $ssltid_string = " AND sslc.type_id = '$ssltid' "; } else { $ssltid_string = ""; }
-if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
+if ($_SESSION['search_for_ssl'] != "") { $search_string = " AND (sslc.name LIKE '%" . $_SESSION['search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['search_for_ssl'] . "%')"; } else { $search_string = ""; }
 
 $sql_account = "SELECT sslpa.id AS sslpa_id, sslpa.username, sslp.name AS sslp_name, o.name AS owner_name
 				FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_certs AS sslc, domains AS d
@@ -474,9 +571,9 @@ $sql_account = "SELECT sslpa.id AS sslpa_id, sslpa.username, sslp.name AS sslp_n
 				ORDER BY sslp.name asc, o.name asc, sslpa.username asc";
 $result_account = mysql_query($sql_account,$connection);
 echo "<select name=\"sslpaid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">SSL Provider Account - ALL</option>";
+echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">SSL Provider Account - ALL</option>";
 while ($row_account = mysql_fetch_object($result_account)) { 
-	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$row_account->sslpa_id&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_account->sslpa_id == $sslpaid) echo " selected"; echo ">"; echo "$row_account->sslp_name :: $row_account->owner_name ($row_account->username)</option>";
+	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$row_account->sslpa_id&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_account->sslpa_id == $sslpaid) echo " selected"; echo ">"; echo "$row_account->sslp_name :: $row_account->owner_name ($row_account->username)</option>";
 } 
 echo "</select>";
 ?>
@@ -503,7 +600,7 @@ if ($oid != "") { $oid_string = " AND sslc.owner_id = '$oid' "; } else { $oid_st
 if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
 if ($sslpid != "") { $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
 if ($sslpaid != "") { $sslpaid_string = " AND sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
-if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
+if ($_SESSION['search_for_ssl'] != "") { $search_string = " AND (sslc.name LIKE '%" . $_SESSION['search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['search_for_ssl'] . "%')"; } else { $search_string = ""; }
 
 $sql_type = "SELECT sslc.type_id, sslcf.type
 			 FROM ssl_certs AS sslc, domains AS d, ssl_cert_types AS sslcf
@@ -519,9 +616,9 @@ $sql_type = "SELECT sslc.type_id, sslcf.type
 			 ORDER BY sslcf.type asc";
 $result_type = mysql_query($sql_type,$connection);
 echo "<select name=\"ssltid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">SSL Type - ALL</option>";
+echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">SSL Type - ALL</option>";
 while ($row_type = mysql_fetch_object($result_type)) { 
-	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$row_type->type_id&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_type->type_id == $ssltid) echo " selected"; echo ">"; echo "$row_type->type</option>";
+	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$row_type->type_id&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_type->type_id == $ssltid) echo " selected"; echo ">"; echo "$row_type->type</option>";
 } 
 echo "</select>";
 ?>
@@ -548,7 +645,7 @@ if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_s
 if ($sslpid != "") { $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
 if ($sslpaid != "") { $sslpaid_string = " AND sslc.account_id = '$sslpaid' "; } else { $sslpaid_string = ""; }
 if ($ssltid != "") { $ssltid_string = " AND sslc.type_id = '$ssltid' "; } else { $ssltid_string = ""; }
-if ($search_for != "") { $search_string = " AND (sslc.name LIKE '%$search_for%' OR d.domain LIKE '%$search_for%')"; } else { $search_string = ""; }
+if ($_SESSION['search_for_ssl'] != "") { $search_string = " AND (sslc.name LIKE '%" . $_SESSION['search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['search_for_ssl'] . "%')"; } else { $search_string = ""; }
 
 $sql_owner = "SELECT o.id, o.name 
 			  FROM owners AS o, ssl_certs AS sslc, domains AS d
@@ -564,9 +661,9 @@ $sql_owner = "SELECT o.id, o.name
 			  ORDER BY o.name asc";
 $result_owner = mysql_query($sql_owner,$connection);
 echo "<select name=\"oid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?oid=&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\">Owner - ALL</option>";
+echo "<option value=\"$PHP_SELF?oid=&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">Owner - ALL</option>";
 while ($row_owner = mysql_fetch_object($result_owner)) { 
-	echo "<option value=\"$PHP_SELF?oid=$row_owner->id&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
+	echo "<option value=\"$PHP_SELF?oid=$row_owner->id&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
 } 
 echo "</select>";
 ?>
@@ -607,11 +704,11 @@ $sql_active = "SELECT active, count(*) AS total_count
 			   ORDER BY active asc";
 $result_active = mysql_query($sql_active,$connection);
 echo "<select name=\"is_active\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Pending)</option>";
+echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Pending)</option>";
 while ($row_active = mysql_fetch_object($result_active)) {
-	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$row_active->active&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($row_active->active == $is_active) echo " selected"; echo ">"; if ($row_active->active == "0") { echo "Expired"; } elseif ($row_active->active == "1") { echo "Active"; } elseif ($row_active->active == "3") { echo "Pending (Renewal)"; } elseif ($row_active->active == "4") { echo "Pending (Other)"; } elseif ($row_active->active == "5") { echo "Pending (Registration)"; } echo "</option>";
+	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$row_active->active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_active->active == $is_active) echo " selected"; echo ">"; if ($row_active->active == "0") { echo "Expired"; } elseif ($row_active->active == "1") { echo "Active"; } elseif ($row_active->active == "3") { echo "Pending (Renewal)"; } elseif ($row_active->active == "4") { echo "Pending (Other)"; } elseif ($row_active->active == "5") { echo "Pending (Registration)"; } echo "</option>";
 } 
-echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=ALL&result_limit=$result_limit&sort_by=$sort_by&search_for=$search_for\""; if ($is_active == "ALL") echo " selected"; echo ">"; echo "ALL</option>";
+echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=ALL&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($is_active == "ALL") echo " selected"; echo ">"; echo "ALL</option>";
 echo "</select>";
 ?>
 
@@ -621,15 +718,15 @@ echo "</select>";
 echo "<select name=\"result_limit\" onChange=\"MM_jumpMenu('parent',this,0)\">"; 
 
 if ($_SESSION['number_of_ssl_certs'] != "10" && $_SESSION['number_of_ssl_certs'] != "50" && $_SESSION['number_of_ssl_certs'] != "100" && $_SESSION['number_of_ssl_certs'] != "500" && $_SESSION['number_of_ssl_certs'] != "1000" && $_SESSION['number_of_ssl_certs'] != "1000000") {
-	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=" . $_SESSION['number_of_ssl_certs'] . "&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == $_SESSION['number_of_ssl_certs']) echo " selected"; echo ">"; echo "" . $_SESSION['number_of_ssl_certs'] . "</option>";
+	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=" . $_SESSION['number_of_ssl_certs'] . "&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($result_limit == $_SESSION['number_of_ssl_certs']) echo " selected"; echo ">"; echo "" . $_SESSION['number_of_ssl_certs'] . "</option>";
 }
 
-echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=10&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "10") echo " selected"; echo ">"; echo "10</option>";
-echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=50&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "50") echo " selected"; echo ">"; echo "50</option>";
-echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=100&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "100") echo " selected"; echo ">"; echo "100</option>";
-echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=500&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "500") echo " selected"; echo ">"; echo "500</option>";
-echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=1000&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "1000") echo " selected"; echo ">"; echo "1,000</option>";
-echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=1000000&sort_by=$sort_by&search_for=$search_for\""; if ($result_limit == "1000000") echo " selected"; echo ">"; echo "ALL</option>";
+echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=10&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($result_limit == "10") echo " selected"; echo ">"; echo "10</option>";
+echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=50&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($result_limit == "50") echo " selected"; echo ">"; echo "50</option>";
+echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=100&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($result_limit == "100") echo " selected"; echo ">"; echo "100</option>";
+echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=500&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($result_limit == "500") echo " selected"; echo ">"; echo "500</option>";
+echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=1000&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($result_limit == "1000") echo " selected"; echo ">"; echo "1,000</option>";
+echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&is_active=$is_active&result_limit=1000000&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($result_limit == "1000000") echo " selected"; echo ">"; echo "ALL</option>";
 echo "</select>";
 ?>
 <BR>
@@ -638,7 +735,7 @@ echo "</select>";
 </td>
 <td class="search-table-inside">
 <strong>Keyword Search:</strong><BR><BR>
-<input name="search_for" type="text" id="textfield" value="<?=$search_for?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" id="button" value="Search &raquo;">
+<input name="search_for" type="text" id="textfield" value="<?=$_SESSION['search_for_ssl']?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" id="button" value="Search &raquo;">
 <input type="hidden" name="oid" value="<?=$oid?>">
 <input type="hidden" name="did" value="<?=$did?>">
 <input type="hidden" name="sslpid" value="<?=$sslpid?>">
@@ -675,40 +772,40 @@ echo "</select>";
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ed_a") { echo "ed_d"; } else { echo "ed_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Expiry Date</font></a>
+		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ed_a") { echo "ed_d"; } else { echo "ed_a"; } ?>&from_dropdown=1&search_for=<?=$_SESSION['search_for_ssl']?>"><font class="main_table_heading">Expiry Date</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sf_a") { echo "sf_d"; } else { echo "sf_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Fee</font></a>
+		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sf_a") { echo "sf_d"; } else { echo "sf_a"; } ?>&from_dropdown=1&search_for=<?=$_SESSION['search_for_ssl']?>"><font class="main_table_heading">Fee</font></a>
 	</td>
 <?php } ?>
 	<td class="main_table_cell_heading_active">
-		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslc_a") { echo "sslc_d"; } else { echo "sslc_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Host / Label</font></a>
+		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslc_a") { echo "sslc_d"; } else { echo "sslc_a"; } ?>&from_dropdown=1&search_for=<?=$_SESSION['search_for_ssl']?>"><font class="main_table_heading">Host / Label</font></a>
 	</td>
 <?php if ($_SESSION['display_ssl_domain'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Domain</font></a>
+		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&from_dropdown=1&search_for=<?=$_SESSION['search_for_ssl']?>"><font class="main_table_heading">Domain</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_provider'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslp_a") { echo "sslp_d"; } else { echo "sslp_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">SSL Provider</font></a>
+		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslp_a") { echo "sslp_d"; } else { echo "sslp_a"; } ?>&from_dropdown=1&search_for=<?=$_SESSION['search_for_ssl']?>"><font class="main_table_heading">SSL Provider</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslpa_a") { echo "sslpa_d"; } else { echo "sslpa_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">SSL Account</font></a>
+		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslpa_a") { echo "sslpa_d"; } else { echo "sslpa_a"; } ?>&from_dropdown=1&search_for=<?=$_SESSION['search_for_ssl']?>"><font class="main_table_heading">SSL Account</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslf_a") { echo "sslf_d"; } else { echo "sslf_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Type</font></a>
+		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "sslf_a") { echo "sslf_d"; } else { echo "sslf_a"; } ?>&from_dropdown=1&search_for=<?=$_SESSION['search_for_ssl']?>"><font class="main_table_heading">Type</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&search_for=<?=$search_for?>"><font class="main_table_heading">Owner</font></a>
+		<a href="ssl-certs.php?oid=<?=$oid?>&did=<?=$did?>&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&from_dropdown=1&search_for=<?=$_SESSION['search_for_ssl']?>"><font class="main_table_heading">Owner</font></a>
 	</td>
 <?php } ?>
 </tr>

@@ -382,6 +382,146 @@ if ($export == "1") {
 	$full_export .= "\"Number of Domains:\",\"" . $total_rows . "\"\n";
 	$full_export .= "\"Total Cost:\",\"" . $grand_total . "\"\n\n";
 
+	$full_export .= "\"[Search Filters]\"\n";
+
+	if ($_SESSION['search_for'] != "") { 
+
+		$full_export .= "\"Keyword Search:\",\"" . $_SESSION['search_for'] . "\"\n"; 
+
+	}
+
+	if ($_SESSION['quick_search'] != "") { 
+	
+		$formatted_quick_search = str_replace("'", "", $_SESSION['quick_search']);
+		$formatted_quick_search = str_replace(",", ", ", $formatted_quick_search);
+		$full_export .= "\"Quick Domain Search:\",\"" . $formatted_quick_search . "\"\n"; 
+
+	}
+
+	if ($rid > 0) { 
+
+		$sql_filter = "SELECT name
+					   FROM registrars
+					   WHERE id = '" . $rid . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"Registrar:\",\"" . $row_filter->name . "\"\n"; 
+		}
+
+	}
+
+	if ($raid > 0) { 
+
+		$sql_filter = "SELECT r.name AS registrar_name, o.name AS owner_name, ra.username
+					   FROM registrar_accounts AS ra, registrars AS r, owners AS o
+					   WHERE ra.registrar_id = r.id
+						 AND ra.owner_id = o.id
+						 AND ra.id = '" . $raid . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"Registrar Account:\",\"" . $row_filter->registrar_name . " - " . $row_filter->owner_name . " - " . $row_filter->username . "\"\n"; 
+		}
+
+	}
+
+	if ($dnsid > 0) { 
+
+		$sql_filter = "SELECT name
+					   FROM dns
+					   WHERE id = '" . $dnsid . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"DNS Profile:\",\"" . $row_filter->name . "\"\n"; 
+		}
+
+	}
+
+	if ($ipid > 0) { 
+
+		$sql_filter = "SELECT name, ip
+					   FROM ip_addresses
+					   WHERE id = '" . $ipid . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"IP Address:\",\"" . $row_filter->name . " (" . $row_filter->ip . ")\"\n"; 
+		}
+
+	}
+
+	if ($whid > 0) { 
+
+		$sql_filter = "SELECT name
+					   FROM hosting
+					   WHERE id = '" . $whid . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"Web Host:\",\"" . $row_filter->name . "\"\n"; 
+		}
+
+	}
+
+	if ($pcid > 0) { 
+
+		$sql_filter = "SELECT name
+					   FROM categories
+					   WHERE id = '" . $pcid . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"Category:\",\"" . $row_filter->name . "\"\n"; 
+		}
+
+	}
+
+	if ($oid > 0) { 
+
+		$sql_filter = "SELECT name
+					   FROM owners
+					   WHERE id = '" . $oid . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"Owner:\",\"" . $row_filter->name . "\"\n"; 
+		}
+
+	}
+
+	if ($segid > 0) { 
+
+		$sql_filter = "SELECT name
+					   FROM segments
+					   WHERE id = '" . $segid . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"Segment Filter:\",\"" . $row_filter->name . "\"\n"; 
+		}
+
+	}
+
+	if ($tld != "") { 
+
+		$full_export .= "\"TLD:\",\"." . $tld . "\"\n"; 
+
+	}
+	
+	if ($is_active == "ALL") { $full_export .= "\"Domain Status:\",\"ALL\"\n"; } 
+	elseif ($is_active == "LIVE" || $is_active == "") { $full_export .= "\"Domain Status:\",\"LIVE (Active / Transfers / Pending)\"\n"; } 
+	elseif ($is_active == "0") { $full_export .= "\"Domain Status:\",\"Expired\"\n"; } 
+	elseif ($is_active == "1") { $full_export .= "\"Domain Status:\",\"Active\"\n"; } 
+	elseif ($is_active == "2") { $full_export .= "\"Domain Status:\",\"In Transfer\"\n"; } 
+	elseif ($is_active == "3") { $full_export .= "\"Domain Status:\",\"Pending (Renewal)\"\n"; } 
+	elseif ($is_active == "4") { $full_export .= "\"Domain Status:\",\"Pending (Other)\"\n"; } 
+	elseif ($is_active == "5") { $full_export .= "\"Domain Status:\",\"Pending (Registration)\"\n"; } 
+	elseif ($is_active == "10") { $full_export .= "\"Domain Status:\",\"Sold\"\n"; }
+
+	$full_export .= "\n";
+
 	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
@@ -932,8 +1072,8 @@ $sql_tld = "SELECT tld, count(*) AS total_tld_count
 			$rid_string
 			$raid_string
 			$search_string
+			$quick_search_string
 			$segment_string
-			$quick_segment_string
 			GROUP BY tld
 			ORDER BY tld asc";
 $result_tld = mysql_query($sql_tld,$connection);
@@ -992,7 +1132,7 @@ $sql_active = "SELECT active, count(*) AS total_count
 			   ORDER BY active asc";
 $result_active = mysql_query($sql_active,$connection);
 echo "<select name=\"is_active\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Transfer / Pending)</option>";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Transfers / Pending)</option>";
 while ($row_active = mysql_fetch_object($result_active)) { 
 	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$row_active->active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_active->active == $is_active) echo " selected"; echo ">"; if ($row_active->active == "0") { echo "Expired"; } elseif ($row_active->active == "10") { echo "Sold"; } elseif ($row_active->active == "1") { echo "Active"; } elseif ($row_active->active == "2") { echo "In Transfer"; } elseif ($row_active->active == "3") { echo "Pending (Renewal)"; } elseif ($row_active->active == "4") { echo "Pending (Other)"; } elseif ($row_active->active == "5") { echo "Pending (Registration)"; } echo "</option>";
 } 
