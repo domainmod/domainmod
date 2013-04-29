@@ -379,8 +379,81 @@ if ($export == "1") {
 
 	$full_export .= "\"Domain Search Results Export\"\n\n";
 	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n";
-	$full_export .= "\"Number of Domains:\",\"" . $total_rows . "\"\n";
-	$full_export .= "\"Total Cost:\",\"" . $grand_total . "\"\n\n";
+	$full_export .= "\"Total Cost:\",\"" . $grand_total . "\"\n";
+	if ($segid == "") {
+		$full_export .= "\"Number of Domains:\",\"" . number_format($total_rows) . "\"\n\n";
+	}
+
+	if ($tld != "") { 
+
+		$full_export .= "\"TLD:\",\"." . $tld . "\"\n"; 
+
+	}
+
+	if ($segid != "") {
+
+		$sql_segment = "SELECT domain
+						FROM segment_data
+						WHERE segment_id = '$segid'
+						  AND inactive = '1'
+						ORDER BY domain";
+		$result_segment = mysql_query($sql_segment,$connection);
+		$totalrows_inactive = mysql_num_rows($result_segment);
+	
+		$sql_segment = "SELECT domain
+						FROM segment_data
+						WHERE segment_id = '$segid'
+						  AND missing = '1'
+						ORDER BY domain";
+		$result_segment = mysql_query($sql_segment,$connection);
+		$totalrows_missing = mysql_num_rows($result_segment);
+	
+		$sql_segment = "SELECT domain
+						FROM segment_data
+						WHERE segment_id = '$segid'
+						  AND filtered = '1'
+						ORDER BY domain";
+		$result_segment = mysql_query($sql_segment,$connection);
+		$totalrows_filtered = mysql_num_rows($result_segment);
+
+		if ($segid != "") {
+		
+			$sql_segment = "SELECT number_of_domains
+							FROM segments
+							WHERE id = '$segid'";
+			$result_segment = mysql_query($sql_segment,$connection);
+			while ($row_segment = mysql_fetch_object($result_segment)) { $number_of_domains = $row_segment->number_of_domains; }
+		
+		}
+
+		$full_export .= "\n\"[Segment Results]\"\n";
+
+		$sql_filter = "SELECT name
+					   FROM segments
+					   WHERE id = '" . $segid . "'";
+		$result_filter = mysql_query($sql_filter,$connection);
+
+		while ($row_filter = mysql_fetch_object($result_filter)) {
+			$full_export .= "\"Segment Filter:\",\"" . $row_filter->name . "\"\n"; 
+		}
+
+		$full_export .= "\"Domains in Segment:\",\"" . number_format($number_of_domains) . "\"\n";
+	
+		$full_export .= "\"Matching Domains:\",\"" . number_format($total_rows) . "\"\n";
+		
+		if ($totalrows_inactive > 0) {
+			$full_export .= "\"Matching But Inactive Domains:\",\"" . number_format($totalrows_inactive) . "\"\n";
+		}
+		if ($totalrows_filtered > 0) {
+			$full_export .= "\"Matching But Filtered Domains:\",\"" . number_format($totalrows_filtered) . "\"\n";
+		}
+		if ($totalrows_missing > 0) {
+			$full_export .= "\"Missing Domains:\",\"" . number_format($totalrows_missing) . "\"\n";
+		}
+
+		$full_export .= "\n";
+
+	}
 
 	$full_export .= "\"[Search Filters]\"\n";
 
@@ -491,25 +564,6 @@ if ($export == "1") {
 
 	}
 
-	if ($segid > 0) { 
-
-		$sql_filter = "SELECT name
-					   FROM segments
-					   WHERE id = '" . $segid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
-
-		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"Segment Filter:\",\"" . $row_filter->name . "\"\n"; 
-		}
-
-	}
-
-	if ($tld != "") { 
-
-		$full_export .= "\"TLD:\",\"." . $tld . "\"\n"; 
-
-	}
-	
 	if ($is_active == "ALL") { $full_export .= "\"Domain Status:\",\"ALL\"\n"; } 
 	elseif ($is_active == "LIVE" || $is_active == "") { $full_export .= "\"Domain Status:\",\"LIVE (Active / Transfers / Pending)\"\n"; } 
 	elseif ($is_active == "0") { $full_export .= "\"Domain Status:\",\"Expired\"\n"; } 
