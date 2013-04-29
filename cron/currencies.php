@@ -35,6 +35,12 @@ $sql = "UPDATE currencies
 		WHERE currency = '" . $temp_default_currency . "'";
 $result = mysql_query($sql,$connection);
 
+$sql = "UPDATE currencies
+		SET conversion = '0', 
+			update_time = '" . $current_timestamp . "'
+		WHERE currency != '" . $temp_default_currency . "'";
+$result = mysql_query($sql,$connection);
+
 $sql = "SELECT c.currency
 		FROM currencies AS c, fees AS f, domains AS d
 		WHERE c.id = f.currency_id
