@@ -21,10 +21,17 @@ $sql_db_check = "SELECT db_version
 $result_db_check = mysql_query($sql_db_check,$connection) or die(mysql_error());
 
 while ($row_db_check = mysql_fetch_object($result_db_check)) {
+
 	if ($row_db_check->db_version != $most_recent_db_version) { 
-		$_SESSION['needs_database_upgrade'] = "1";
+
+		header("Location: ../../../system/update-database.php");
+		exit;
+
 	} else {
+
 		$_SESSION['needs_database_upgrade'] = "0";
+
 	}
+
 }
 ?>
