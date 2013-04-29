@@ -81,7 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['system_full_url'] = $row_settings->full_url;
 				$_SESSION['system_db_version'] = $row_settings->db_version;
 				$_SESSION['system_email_address'] = $row_settings->email_address;
-				$_SESSION['default_currency'] = $row_settings->default_currency;
 				$_SESSION['system_timezone'] = $row_settings->timezone;
 				$_SESSION['system_expiration_email_days'] = $row_settings->expiration_email_days;
 
@@ -93,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			$result_user_settings = mysql_query($sql_user_settings,$connection);
 
 			while ($row_user_settings = mysql_fetch_object($result_user_settings)) {
+				$_SESSION['default_currency'] = $row_settings->default_currency;
 				$_SESSION['number_of_domains'] = $row_user_settings->number_of_domains;
 				$_SESSION['number_of_ssl_certs'] = $row_user_settings->number_of_ssl_certs;
 				$_SESSION['display_domain_owner'] = $row_user_settings->display_domain_owner;
