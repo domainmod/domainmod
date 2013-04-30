@@ -98,14 +98,13 @@ if ($export == "1") {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$full_export .= "\"" . $page_subtitle . "\"\n\n";
-	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n";
+	$full_export .= "\"Total Renewal Cost:\",\"" . $total_cost . "\",\"" . $_SESSION['default_currency'] . "\"\n";
 	if ($all != "1") {
 		$full_export .= "\"Date Range:\",\"" . $new_expiry_start . "\",\"" . $new_expiry_end . "\"\n";
 	} else {
 		$full_export .= "\"Date Range:\",\"ALL\"\n";
 	}
-	$full_export .= "\"Number of SSL Certificates:\",\"" . number_format($total_results) . "\"\n";
-	$full_export .= "\"Total Renewal Cost:\",\"" . $total_cost . "\"\n\n";
+	$full_export .= "\"Number of SSL Certificates:\",\"" . number_format($total_results) . "\"\n\n";
 	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"Owner\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
@@ -177,14 +176,13 @@ if ($export == "1") {
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 <?php if ($total_results > 0) { ?>
 <BR><font class="headline"><?=$page_subtitle?></font><BR><BR>
-All fees are listed in <?=$_SESSION['default_currency']?><BR><BR>
+<strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR><BR>
 <?php if ($all != "1") { ?>
 	<strong>Date Range:</strong> <?=$new_expiry_start?> - <?=$new_expiry_end?><BR><BR>
 <?php } else { ?>
 	<strong>Date Range:</strong> ALL<BR><BR>
 <?php } ?>
 <strong>Number of SSL Certificates:</strong> <?=number_format($total_results)?><BR><BR>
-<strong>Total Renewal Cost:</strong> <?=$total_cost?><BR><BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
