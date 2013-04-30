@@ -371,7 +371,7 @@ div.search-block-inner {
 }
 div.search-block-left {
 	float: left;
-	width: 550px; 
+	width: 490px; 
 	padding-top: 0px;
 	padding-right: 0px; 
 	padding-bottom: 0px;
