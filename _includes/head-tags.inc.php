@@ -317,7 +317,7 @@ div.result_message_inner {
 	border-right: 1px #6699CC ridge;
 	border-left: 1px #6699CC ridge;
 	color: #000000;
-	background-color: #fafafa;
+	background-color: #E0E0E0;
 	padding-top: 21px;
 	padding-right: 8px; 
 	padding-bottom: 21px;
@@ -331,7 +331,15 @@ div.reporting-block-outer {
 }
 div.reporting-block-left {
 	float: left;
-	width: 300px; 
+	width: 275px; 
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
+div.reporting-block-center {
+	float: left;
+	width: 275px; 
 	padding-top: 0px;
 	padding-right: 0px; 
 	padding-bottom: 0px;
@@ -339,7 +347,7 @@ div.reporting-block-left {
 }
 div.reporting-block-right {
 	float: left;
-	width: 300px; 
+	width: 275px; 
 	padding-top: 0px;
 	padding-right: 0px; 
 	padding-bottom: 0px;

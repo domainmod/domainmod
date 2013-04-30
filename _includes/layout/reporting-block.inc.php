@@ -30,20 +30,29 @@ Before running any reports you should <a href="<?=$web_root?>/_includes/system/u
         <form name="reporting_menu_domain_form" method="post" action="<?=$PHP_SELF?>">
             <select name="reporting_menu_domains" onChange="MM_jumpMenu('parent',this,0)">
             <option value="<?=$web_root?>/reporting/"<?php if ($report_name == "") echo " selected" ?>>Click to select a Domain Report</option>
-            <option value="<?=$web_root?>/reporting/domains/cost-breakdown-by-month.php"<?php if ($report_name == "domains-cost-breakdown-by-month") echo " selected" ?>>Cost Breakdown by Month</option>
-            <option value="<?=$web_root?>/reporting/domains/registrar-fee-breakdown.php"<?php if ($report_name == "registrar-fee-breakdown") echo " selected" ?>>Registrar Fee Breakdown</option>
-            <option value="<?=$web_root?>/reporting/domains/renewals.php"<?php if ($report_name == "domains-renewals") echo " selected" ?>>Renewal Report</option>
+            <option value="<?=$web_root?>/reporting/domains/cost-breakdown-by-month.php"<?php if ($report_name == "domains-cost-by-month") echo " selected" ?>>Cost by Month</option>
+            <option value="<?=$web_root?>/reporting/domains/registrar-fee-breakdown.php"<?php if ($report_name == "domains-registrar-fees") echo " selected" ?>>Registrar Fees</option>
+            <option value="<?=$web_root?>/reporting/domains/renewals.php"<?php if ($report_name == "domains-renewals") echo " selected" ?>>Renewals</option>
             </select>
 		</form>
 	</div>
-	<div class="reporting-block-right">
+	<div class="reporting-block-center">
         <font class="subheadline">SSL Certificate Reports</font><BR><BR>
         <form name="reporting_menu_domain_form" method="post" action="<?=$PHP_SELF?>">
             <select name="reporting_menu_ssl" onChange="MM_jumpMenu('parent',this,0)">
             <option value="<?=$web_root?>/reporting/"<?php if ($report_name == "") echo " selected" ?>>Click to select an SSL Report</option>
-            <option value="<?=$web_root?>/reporting/ssl/cost-breakdown-by-month.php"<?php if ($report_name == "ssl-cost-breakdown-by-month") echo " selected" ?>>Cost Breakdown by Month</option>
-            <option value="<?=$web_root?>/reporting/ssl/ssl-provider-fee-breakdown.php"<?php if ($report_name == "ssl-provider-fee-breakdown") echo " selected" ?>>SSL Provider Fee Breakdown</option>
-            <option value="<?=$web_root?>/reporting/ssl/renewals.php"<?php if ($report_name == "ssl-renewals") echo " selected" ?>>Renewal Report</option>
+            <option value="<?=$web_root?>/reporting/ssl/cost-breakdown-by-month.php"<?php if ($report_name == "ssl-cost-by-month") echo " selected" ?>>Cost by Month</option>
+            <option value="<?=$web_root?>/reporting/ssl/ssl-provider-fee-breakdown.php"<?php if ($report_name == "ssl-provider-fees") echo " selected" ?>>SSL Provider Fees</option>
+            <option value="<?=$web_root?>/reporting/ssl/renewals.php"<?php if ($report_name == "ssl-renewals") echo " selected" ?>>Renewals</option>
+            </select>
+		</form>
+	</div>
+	<div class="reporting-block-right">
+        <font class="subheadline">General Reports</font><BR><BR>
+        <form name="reporting_menu_domain_form" method="post" action="<?=$PHP_SELF?>">
+            <select name="reporting_menu_ssl" onChange="MM_jumpMenu('parent',this,0)">
+            <option value="<?=$web_root?>/reporting/"<?php if ($report_name == "") echo " selected" ?>>Click to select a General Report</option>
+            <option value="<?=$web_root?>/reporting/"<?php if ($report_name == "error-report") echo " selected" ?>>Error Report</option>
             </select>
 		</form>
 	</div>
