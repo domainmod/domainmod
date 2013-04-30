@@ -28,7 +28,7 @@ include("../../_includes/system/functions/check-date-format.inc.php");
 $page_title = $reporting_section_title;
 $page_subtitle = "Domain Renewal Report";
 $software_section = "reporting";
-$report_name = "domains-renewals";
+$report_name = "domain-renewal-report";
 
 // Form Variables
 $export = $_GET['export'];
@@ -98,8 +98,6 @@ $full_export = "";
 
 if ($export == "1") {
 
-	$result = mysql_query($sql,$connection) or die(mysql_error());
-
 	$full_export .= "\"" . $page_subtitle . "\"\n\n";
 	$full_export .= "\"Total Cost:\",\"" . $total_cost . "\",\"" . $_SESSION['default_currency'] . "\"\n";
 
@@ -144,9 +142,9 @@ if ($export == "1") {
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	if ($all == "1") {
-		$export_filename = "domain_renewals_all_" . $current_timestamp_unix . ".csv";
+		$export_filename = "domain_renewal_report_all_" . $current_timestamp_unix . ".csv";
 	} else {
-		$export_filename = "domain_renewals_" . $new_expiry_start . "--" . $new_expiry_end . ".csv";
+		$export_filename = "domain_renewal_report_" . $new_expiry_start . "--" . $new_expiry_end . ".csv";
 	}
 	include("../../_includes/system/export-to-csv.inc.php");
 	exit;

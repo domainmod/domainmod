@@ -24,9 +24,9 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = $reporting_section_title;
-$page_subtitle = "Registrar Fee Breakdown";
+$page_subtitle = "Registrar Fee Report";
 $software_section = "reporting";
-$report_name = "domains-registrar-fees";
+$report_name = "domain-registrar-fee-report";
 
 // Form Variables
 $export = $_GET['export'];
@@ -128,9 +128,9 @@ if ($total_rows > 0) {
 
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
-			$export_filename = "registrar_fee_breakdown_all_" . $current_timestamp_unix . ".csv";
+			$export_filename = "registrar_fee_report_all_" . $current_timestamp_unix . ".csv";
 		} else {
-			$export_filename = "registrar_fee_breakdown_active_" . $current_timestamp_unix . ".csv";
+			$export_filename = "registrar_fee_report_active_" . $current_timestamp_unix . ".csv";
 		}
 		include("../../_includes/system/export-to-csv.inc.php");
 		exit;

@@ -26,9 +26,9 @@ include("../../_includes/timestamps/current-timestamp-basic.inc.php");
 include("../../_includes/system/functions/check-date-format.inc.php");
 
 $page_title = $reporting_section_title;
-$page_subtitle = "SSL Certificate Cost Breakdown by Month";
+$page_subtitle = "SSL Certificate Cost by Month Report";
 $software_section = "reporting";
-$report_name = "ssl-cost-by-month";
+$report_name = "ssl-cost-by-month-report";
 
 // Form Variables
 $export = $_GET['export'];
@@ -198,9 +198,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
-			$export_filename = "ssl_cost_breakdown_by_month_all_" . $current_timestamp_unix . ".csv";
+			$export_filename = "ssl_cost_by_month_report_all_" . $current_timestamp_unix . ".csv";
 		} else {
-			$export_filename = "ssl_cost_breakdown_by_month_" . $new_start_date . "--" . $new_end_date . ".csv";
+			$export_filename = "ssl_cost_by_month_report_" . $new_start_date . "--" . $new_end_date . ".csv";
 		}
 		include("../../_includes/system/export-to-csv.inc.php");
 		exit;

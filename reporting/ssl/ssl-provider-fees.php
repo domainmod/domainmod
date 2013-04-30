@@ -24,9 +24,9 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = $reporting_section_title;
-$page_subtitle = "SSL Provider Fee Breakdown";
+$page_subtitle = "SSL Provider Fee Report";
 $software_section = "reporting";
-$report_name = "ssl-provider-fees";
+$report_name = "ssl-provider-fee-report";
 
 // Form Variables
 $export = $_GET['export'];
@@ -121,9 +121,9 @@ if ($total_rows > 0) {
 
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
-			$export_filename = "ssl_provider_fee_breakdown_all_" . $current_timestamp_unix . ".csv";
+			$export_filename = "ssl_provider_fee_report_all_" . $current_timestamp_unix . ".csv";
 		} else {
-			$export_filename = "ssl_provider_fee_breakdown_active_" . $current_timestamp_unix . ".csv";
+			$export_filename = "ssl_provider_fee_report_active_" . $current_timestamp_unix . ".csv";
 		}
 		include("../../_includes/system/export-to-csv.inc.php");
 		exit;

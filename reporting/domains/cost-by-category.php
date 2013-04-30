@@ -26,9 +26,9 @@ include("../../_includes/timestamps/current-timestamp-basic.inc.php");
 include("../../_includes/system/functions/check-date-format.inc.php");
 
 $page_title = $reporting_section_title;
-$page_subtitle = "Domain Cost by Category";
+$page_subtitle = "Domain Cost by Category Report";
 $software_section = "reporting";
-$report_name = "domains-cost-by-category";
+$report_name = "domain-cost-by-category-report";
 
 // Form Variables
 $export = $_GET['export'];
@@ -130,9 +130,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
-			$export_filename = "domain_cost_by_category_all_" . $current_timestamp_unix . ".csv";
+			$export_filename = "domain_cost_by_category_report_all_" . $current_timestamp_unix . ".csv";
 		} else {
-			$export_filename = "domain_cost_by_category_" . $new_start_date . "--" . $new_end_date . ".csv";
+			$export_filename = "domain_cost_by_category_report_" . $new_start_date . "--" . $new_end_date . ".csv";
 		}
 		include("../../_includes/system/export-to-csv.inc.php");
 		exit;
