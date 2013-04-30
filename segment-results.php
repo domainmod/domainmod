@@ -102,8 +102,6 @@ if ($export == "1") {
 			
 		}
 
-		$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n\n";
-	
 		$full_export .= "\"Domain Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Function\",\"Notes\"\n";
 	
 	} elseif ($type == "missing") {
@@ -185,8 +183,6 @@ if ($export == "1") {
 		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 		include("_includes/system/convert-and-format-currency.inc.php");
 		$total_export_renewal_fee = $temp_output_amount;
-	
-		$full_export .= "\"\",\"Total Cost:\",\"" . $total_export_initial_fee . "\",\"" . $total_export_renewal_fee . "\"\n";
 
 	}
 
