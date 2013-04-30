@@ -32,6 +32,7 @@ Before running any reports you should <a href="<?=$web_root?>/_includes/system/u
             <option value="<?=$web_root?>/reporting/"<?php if ($report_name == "") echo " selected" ?>>Click to select a Domain Report</option>
             <option value="<?=$web_root?>/reporting/domains/cost-by-category.php"<?php if ($report_name == "domain-cost-by-category-report") echo " selected" ?>>Cost by Category</option>
             <option value="<?=$web_root?>/reporting/domains/cost-by-month.php"<?php if ($report_name == "domain-cost-by-month-report") echo " selected" ?>>Cost by Month</option>
+            <option value="<?=$web_root?>/reporting/domains/cost-by-registrar.php"<?php if ($report_name == "domain-cost-by-registrar-report") echo " selected" ?>>Cost by Registrar</option>
             <option value="<?=$web_root?>/reporting/domains/registrar-fees.php"<?php if ($report_name == "domain-registrar-fee-report") echo " selected" ?>>Registrar Fees</option>
             <option value="<?=$web_root?>/reporting/domains/renewals.php"<?php if ($report_name == "domain-renewal-report") echo " selected" ?>>Renewals</option>
             </select>
@@ -44,6 +45,7 @@ Before running any reports you should <a href="<?=$web_root?>/_includes/system/u
             <option value="<?=$web_root?>/reporting/"<?php if ($report_name == "") echo " selected" ?>>Click to select an SSL Report</option>
             <option value="<?=$web_root?>/reporting/ssl/cost-by-category.php"<?php if ($report_name == "ssl-cost-by-category-report") echo " selected" ?>>Cost by Category</option>
             <option value="<?=$web_root?>/reporting/ssl/cost-by-month.php"<?php if ($report_name == "ssl-cost-by-month-report") echo " selected" ?>>Cost by Month</option>
+            <option value="<?=$web_root?>/reporting/ssl/cost-by-provider.php"<?php if ($report_name == "ssl-cost-by-provider-report") echo " selected" ?>>Cost by Provider</option>
             <option value="<?=$web_root?>/reporting/ssl/ssl-provider-fees.php"<?php if ($report_name == "ssl-provider-fee-report") echo " selected" ?>>SSL Provider Fees</option>
             <option value="<?=$web_root?>/reporting/ssl/renewals.php"<?php if ($report_name == "ssl-renewal-report") echo " selected" ?>>Renewals</option>
             </select>
