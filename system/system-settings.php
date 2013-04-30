@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	if ($saved_default_currency != $new_default_currency) {
 
 		$temp_input_user_id = $_SESSION['user_id'];
-		$temp_input_default_currency = $_SESSION['default_currency'];
+		$temp_input_default_currency = $new_default_currency;
 		include("../_includes/system/update-conversion-rates.inc.php");
 
 	}
