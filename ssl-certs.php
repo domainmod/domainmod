@@ -252,9 +252,8 @@ if ($export == "1") {
 	$total_rows = number_format(mysql_num_rows($result));
 
 	$full_export .= "\"SSL Certificate Search Results Export\"\n\n";
-	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n";
-	$full_export .= "\"Number of SSL Certs:\",\"" . $total_rows . "\"\n";
-	$full_export .= "\"Total Cost:\",\"" . $grand_total . "\"\n\n";
+	$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
+	$full_export .= "\"Number of SSL Certs:\",\"" . $total_rows . "\"\n\n";
 
 	$full_export .= "\"[Search Filters]\"\n";
 
@@ -747,10 +746,9 @@ echo "</select>";
 </div>
 </form>
 <div style="clear: both;"></div>
-<BR><strong>Number of SSL Certs:</strong> <?=number_format($totalrows)?>
 <?php if (mysql_num_rows($result) > 0) { ?>
-<BR><BR><strong>Total Cost:</strong> <?=$grand_total?>
-<BR><BR>
+<BR><strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
+<strong>Number of SSL Certs:</strong> <?=number_format($totalrows)?><BR><BR>
 <?php include("_includes/layout/search-options-block.inc.php"); ?>
 <BR>
 <?php if ($totalrows != '0') { ?>
