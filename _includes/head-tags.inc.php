@@ -415,6 +415,20 @@ div.export-inner {
 div.login_form {
 	text-align: center;
 }
+div.search_options_block {
+	text-align: left;
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
+div.search_options_block_inner {
+	text-align: left;
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
 div.reset-password {
 	text-align: center;
 	border-top: 0px;

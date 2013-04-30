@@ -751,19 +751,7 @@ echo "</select>";
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR><strong>Total Cost:</strong> <?=$grand_total?>
 <BR><BR>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-	<td align="left" valign="top">
-		<?php echo $navigate[2]; ?>
-        &nbsp;[<a href="ssl-certs.php?<?=$_SERVER['QUERY_STRING']?>&export=1">export results</a>]&nbsp;[<a href="system/system-settings.php">display settings</a>]
-	</td>
-	<td width="280" align="right" valign="top">
-		<?php if ($totalrows != '0') { ?>
-				<?php echo "&nbsp;&nbsp;(Listing $navigate[1] of " . number_format($totalrows) . ")"; ?>
-		<?php } ?>
-	</td>
-  </tr>
-</table>
+<?php include("_includes/layout/search-options-block.inc.php"); ?>
 <BR>
 <?php if ($totalrows != '0') { ?>
 <table class="main_table">
@@ -870,20 +858,9 @@ echo "</select>";
 <?php } ?>
 </table>
 <BR>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-	<td align="left" valign="top">
-		<?php echo $navigate[2]; ?>
-        &nbsp;[<a href="ssl-certs.php?<?=$_SERVER['QUERY_STRING']?>&export=1">export results</a>]&nbsp;[<a href="system/system-settings.php">display settings</a>]
-    </td>
-	<td width="280" align="right" valign="top"><?php 
-		echo "&nbsp;&nbsp;(Listing $navigate[1] of " . number_format($totalrows) . ")";
-		?>
-	</td>
-  </tr>
-</table>
 <?php } ?>
 <?php } ?>
+<?php include("_includes/layout/search-options-block.inc.php"); ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>
