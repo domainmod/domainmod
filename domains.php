@@ -382,10 +382,15 @@ if ($export == "1") {
 	$total_rows = number_format(mysql_num_rows($result));
 
 	$full_export .= "\"Domain Search Results Export\"\n\n";
-	$full_export .= "\"All fees are listed in " . $_SESSION['default_currency'] . "\"\n";
-	$full_export .= "\"Total Cost:\",\"" . $grand_total . "\"\n";
 	if ($segid == "") {
+
+		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
 		$full_export .= "\"Number of Domains:\",\"" . number_format($total_rows) . "\"\n\n";
+
+	} else {
+
+		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n\n";
+
 	}
 
 	if ($tld != "") { 
@@ -430,7 +435,7 @@ if ($export == "1") {
 		
 		}
 
-		$full_export .= "\n\"[Segment Results]\"\n";
+		$full_export .= "\"[Segment Results]\"\n";
 
 		$sql_filter = "SELECT name
 					   FROM segments
@@ -1281,16 +1286,13 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 	        <BR><BR><strong>Missing Domains:</strong> <?=number_format($totalrows_missing)?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=missing&segid=<?=$segid?>">view</a>]
 		<?php } ?>
 
-<?php } else { ?>
-
-		<strong>Number of Domains:</strong> <?=number_format($totalrows)?><BR><BR>
-
 <?php } ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php if ($segid != "") { ?>
-	<BR><BR><strong>Total Cost:</strong> <?=$grand_total?><BR><BR>
+	<BR><BR><strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
 <?php } else { ?>
-	<strong>Total Cost:</strong> <?=$grand_total?><BR><BR>
+	<strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
+	<strong>Number of Domains:</strong> <?=number_format($totalrows)?><BR><BR>
 <?php } ?>
 <?php
 // RIGHT HERE
