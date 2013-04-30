@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ($new_currency_id == "" || $new_currency_id == "0") $_SESSION['result_message'] .= "There was a problem with the currency you chose<BR>";
 
 	} else {
-		
+
 		$sql = "SELECT *
 				FROM ssl_fees
 				WHERE ssl_provider_id = '$new_sslpid'
@@ -99,8 +99,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been updated<BR>";
 			
-			header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
-			exit;
+			include("../_includes/system/update-ssl-fees.inc.php");
+
+			$temp_input_user_id = $_SESSION['user_id'];
+			$temp_input_default_currency = $_SESSION['default_currency'];
+			include("../_includes/system/update-conversion-rates.inc.php");
 
 		} else {
 			
@@ -116,7 +119,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					  AND currency_id = '$new_currency_id'
 					ORDER BY id desc
 					LIMIT 1";
-	
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			while ($row = mysql_fetch_object($result)) {
@@ -134,22 +136,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					FROM ssl_cert_types
 					WHERE id = '$new_type_id'";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
+
 			while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
 	
 			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been added<BR>";
-			
-			header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
-			exit;
+
+			include("../_includes/system/update-ssl-fees.inc.php");
+
+			$temp_input_user_id = $_SESSION['user_id'];
+			$temp_input_default_currency = $_SESSION['default_currency'];
+			include("../_includes/system/update-conversion-rates.inc.php");
 
 		}
 
 	}
 
-} else {
-
-	include("../_includes/system/update-ssl-fees.inc.php");
-	
 }
+
 if ($del == "1") {
 	$_SESSION['result_message'] = "Are you sure you want to delete this SSL Provider Fee?<BR><BR><a href=\"$PHP_SELF?sslpid=$sslpid&ssltid=$ssltid&sslfeeid=$sslfeeid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER FEE</a><BR>";
 }
@@ -192,6 +195,12 @@ if ($really_del == "1") {
 		while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
 		
 		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been deleted<BR>";
+
+		include("../_includes/system/update-ssl-fees.inc.php");
+
+		$temp_input_user_id = $_SESSION['user_id'];
+		$temp_input_default_currency = $_SESSION['default_currency'];
+		include("../_includes/system/update-conversion-rates.inc.php");
 
 		header("Location: ssl-provider-fees.php?sslpid=$sslpid");
 		exit;
@@ -360,7 +369,7 @@ if (mysql_num_rows($result) != 0) {
         <td class="main_table_cell_heading_active"><strong>Currency</strong></td>
 	</tr>
 <?php
-$sql = "SELECT f.id as sslfeeid, f.initial_fee, f.renewal_fee, c.currency, t.id as ssltid, t.type
+$sql = "SELECT f.id as sslfeeid, f.initial_fee, f.renewal_fee, c.currency, c.symbol, c.symbol_order, c.symbol_space, t.id as ssltid, t.type
 		FROM ssl_fees AS f, currencies AS c, ssl_cert_types AS t
 		WHERE f.currency_id = c.id
 		  AND f.type_id = t.id
@@ -375,9 +384,9 @@ while ($row = mysql_fetch_object($result)) {
 			<?php
 			$temp_input_amount = $row->initial_fee;
 			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+			$temp_input_currency_symbol = $row->symbol;
+			$temp_input_currency_symbol_order = $row->symbol_order;
+			$temp_input_currency_symbol_space = $row->symbol_space;
 			include("../_includes/system/convert-and-format-currency.inc.php");
 			echo $temp_output_amount;
             ?>
@@ -386,9 +395,9 @@ while ($row = mysql_fetch_object($result)) {
 			<?php
 			$temp_input_amount = $row->renewal_fee;
 			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+			$temp_input_currency_symbol = $row->symbol;
+			$temp_input_currency_symbol_order = $row->symbol_order;
+			$temp_input_currency_symbol_space = $row->symbol_space;
 			include("../_includes/system/convert-and-format-currency.inc.php");
 			echo $temp_output_amount;
             ?>

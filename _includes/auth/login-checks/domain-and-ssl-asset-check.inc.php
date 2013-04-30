@@ -70,9 +70,14 @@ $sql_asset_check = "SELECT id
 					FROM ssl_certs
 					LIMIT 1";
 $result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
+
 if (mysql_num_rows($result_asset_check) == 0) { 
+
 	$_SESSION['need_ssl_cert'] = "1";
+
 } else {
+
 	$_SESSION['need_ssl_cert'] = "0";
+
 }
 ?>

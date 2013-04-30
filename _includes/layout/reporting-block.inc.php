@@ -23,7 +23,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 }
 //-->
 </script>
-Before running any reports you should <a href="<?=$web_root?>//system/update-conversion-rates.php">update the conversion rates</a>.<BR><BR><BR>
+Before running any reports you should <a href="<?=$web_root?>/_includes/system/update-conversion-rates.inc.php?direct=1">update the conversion rates</a>.<BR><BR><BR>
 <div class="reporting-block-outer">
 	<div class="reporting-block-left">
         <font class="subheadline">Domain Reports</font><BR><BR>

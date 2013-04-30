@@ -25,6 +25,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/login-check.inc.php");
 include("_includes/system/installation-check.inc.php");
+include("_includes/timestamps/current-timestamp.inc.php");
 
 if ($_SESSION['installation_mode'] == 1) {
 	
@@ -53,7 +54,7 @@ if ($demo_install == "1" && !stripos($_SERVER['HTTP_REFERER'], "" . $demo_url . 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
 	
-	$sql = "SELECT id, first_name, last_name, username, email_address, password, admin
+	$sql = "SELECT id, first_name, last_name, username, email_address, password, admin, number_of_logins, last_login
 			FROM users
 			WHERE username = '$new_username'
 			  AND password = password('$new_password')
@@ -69,6 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			$_SESSION['last_name'] = $row->last_name;
 			$_SESSION['username'] = $row->username;
 			$_SESSION['email_address'] = $row->email_address;
+			$_SESSION['number_of_logins'] = $row->number_of_logins;
 			if ($row->admin == 1) $_SESSION['is_admin'] = 1;
 			$_SESSION['is_logged_in'] = 1;
 			
@@ -81,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['system_full_url'] = $row_settings->full_url;
 				$_SESSION['system_db_version'] = $row_settings->db_version;
 				$_SESSION['system_email_address'] = $row_settings->email_address;
+				$_SESSION['system_default_currency'] = $row_settings->default_currency;
 				$_SESSION['system_timezone'] = $row_settings->timezone;
 				$_SESSION['system_expiration_email_days'] = $row_settings->expiration_email_days;
 
@@ -126,14 +129,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['default_currency_symbol_order'] = $row_currencies->symbol_order;
 				$_SESSION['default_currency_symbol_space'] = $row_currencies->symbol_space;
 			}
+			
+			$current_date = date("Y-m-d", strtotime($current_timestamp));
+			$last_login_date = date("Y-m-d", strtotime($row->last_login));
 
-			include("_includes/system/update-domain-fees.inc.php");
-			include("_includes/system/update-ssl-fees.inc.php");
-			include("_includes/system/update-segments.inc.php");
-			include("_includes/system/update-tlds.inc.php");
+			include("_includes/auth/login-checks/main.inc.php");
 
-			header("Location: _includes/auth/login-checks/main.inc.php");
-			exit;
+			if (($_SESSION['run_update_includes'] == "1" || $last_login_date < $current_date) && $_SESSION['need_domain'] == "0") {
+				
+				include("_includes/system/update-domain-fees.inc.php");
+				include("_includes/system/update-ssl-fees.inc.php");
+				include("_includes/system/update-segments.inc.php");
+				include("_includes/system/update-tlds.inc.php");
+
+			}
+			
+			$_SESSION['run_update_includes'] = "";
+
+			if (isset($_SESSION['user_redirect'])) {
+			
+				$temp_redirect = $_SESSION['user_redirect'];
+				unset($_SESSION['user_redirect']);
+			
+				header("Location: $temp_redirect");
+				exit;
+			
+			} else {
+			
+				header("Location: domains.php");
+				exit;
+			
+			}
+
 	   }
 
 	} else {

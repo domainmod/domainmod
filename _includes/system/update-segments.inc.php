@@ -16,6 +16,9 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
+$direct = $_GET['direct'];
+if ($direct == "1") { session_start(); }
+
 include($_SESSION['full_server_path'] . "/_includes/config.inc.php");
 include($_SESSION['full_server_path'] . "/_includes/database.inc.php");
 include($_SESSION['full_server_path'] . "/_includes/software.inc.php");
@@ -39,4 +42,17 @@ $sql_segment3 = "UPDATE segment_data
 				 	 update_time = '$current_timestamp'
 				 WHERE domain NOT IN (SELECT domain FROM domains)";
 $result_segment3 = mysql_query($sql_segment3,$connection);
+
+if ($direct == "1") {
+
+	$_SESSION['result_message'] .= "Segments Updated<BR>";
+	
+	header("Location: " . $_SERVER['HTTP_REFERER']);
+	exit;
+
+} else {
+	
+	$_SESSION['result_message'] .= "Segments Updated<BR>";
+
+}
 ?>

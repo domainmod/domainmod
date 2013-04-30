@@ -48,15 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 					     AND email_address = '" . $_SESSION['email_address'] . "'";
 		$result_update = mysql_query($sql_update,$connection) or die("Your password could not be updated. Please try again later.");
 
-		if ($_SESSION['running_login_checks'] == 1) {
-
-		$_SESSION['result_message'] .= "Your password has been changed<BR>";
-
-			header("Location: ../_includes/auth/login-checks/main.inc.php");
-			exit;
-
-		}
-
 		$_SESSION['result_message'] .= "Your password has been changed<BR>";
 
 		header("Location: index.php");
@@ -95,12 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 <?php include("../_includes/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php if ($_SESSION['running_login_checks'] == 1) { ?>
-	<?php include("../_includes/header-login.inc.php"); ?>
-	<div align="center">
-<?php } else { ?>
-	<?php include("../_includes/header.inc.php"); ?>
-<?php } ?>
+<?php include("../_includes/header.inc.php"); ?>
 <form name="change_password_form" method="post" action="<?=$PHP_SELF?>">
 <strong>New Password</strong><BR><input type="password" name="new_password" size="20">
 <BR><BR>
@@ -108,11 +94,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 <BR><BR>
 <input type="submit" name="button" value="Change Password &raquo;">
 </form>
-<?php if ($_SESSION['running_login_checks'] == 1) { ?>
-	</div>
-	<?php include("../_includes/footer-login.inc.php"); ?>
-<?php } else { ?>
-	<?php include("../_includes/footer.inc.php"); ?>
-<?php } ?>
+<?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

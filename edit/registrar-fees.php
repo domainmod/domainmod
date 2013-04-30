@@ -98,8 +98,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been updated<BR>";
 			
-			header("Location: registrar-fees.php?rid=$new_rid");
-			exit;
+			include("../_includes/system/update-domain-fees.inc.php");
+
+			$temp_input_user_id = $_SESSION['user_id'];
+			$temp_input_default_currency = $_SESSION['default_currency'];
+			include("../_includes/system/update-conversion-rates.inc.php");
 
 		} else {
 			
@@ -115,7 +118,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					  AND currency_id = '$new_currency_id'
 					ORDER BY id desc
 					LIMIT 1";
-	
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			while ($row = mysql_fetch_object($result)) {
@@ -130,19 +132,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
-			
-			header("Location: registrar-fees.php?rid=$new_rid");
-			exit;
+
+			include("../_includes/system/update-domain-fees.inc.php");
+
+			$temp_input_user_id = $_SESSION['user_id'];
+			$temp_input_default_currency = $_SESSION['default_currency'];
+			include("../_includes/system/update-conversion-rates.inc.php");
 
 		}
 
 	}
 
-} else {
-
-	include("../_includes/system/update-domain-fees.inc.php");
-	
 }
+
 if ($del == "1") {
 	$_SESSION['result_message'] = "Are you sure you want to delete this Registrar Fee?<BR><BR><a href=\"$PHP_SELF?rid=$rid&tld=$tld&feeid=$feeid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR FEE</a><BR>";
 }
@@ -180,6 +182,12 @@ if ($really_del == "1") {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
+
+		include("../_includes/system/update-domain-fees.inc.php");
+
+		$temp_input_user_id = $_SESSION['user_id'];
+		$temp_input_default_currency = $_SESSION['default_currency'];
+		include("../_includes/system/update-conversion-rates.inc.php");
 
 		header("Location: registrar-fees.php?rid=$rid");
 		exit;
@@ -327,7 +335,7 @@ if (mysql_num_rows($result) != 0) {
         <td class="main_table_cell_heading_active"><strong>Currency</strong></td>
 	</tr>
 <?php
-$sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, c.currency 
+$sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, c.currency, c.symbol, c.symbol_order, c.symbol_space
 		FROM fees AS f, currencies AS c
 		WHERE f.currency_id = c.id
 		  AND f.registrar_id = '$rid'
@@ -341,9 +349,9 @@ while ($row = mysql_fetch_object($result)) {
 			<?php
 			$temp_input_amount = $row->initial_fee;
 			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+			$temp_input_currency_symbol = $row->symbol;
+			$temp_input_currency_symbol_order = $row->symbol_order;
+			$temp_input_currency_symbol_space = $row->symbol_space;
 			include("../_includes/system/convert-and-format-currency.inc.php");
 			echo $temp_output_amount;
             ?>
@@ -352,9 +360,9 @@ while ($row = mysql_fetch_object($result)) {
 			<?php
 			$temp_input_amount = $row->renewal_fee;
 			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+			$temp_input_currency_symbol = $row->symbol;
+			$temp_input_currency_symbol_order = $row->symbol_order;
+			$temp_input_currency_symbol_space = $row->symbol_space;
 			include("../_includes/system/convert-and-format-currency.inc.php");
 			echo $temp_output_amount;
             ?>
@@ -363,9 +371,9 @@ while ($row = mysql_fetch_object($result)) {
 			<?php
 			$temp_input_amount = $row->transfer_fee;
 			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+			$temp_input_currency_symbol = $row->symbol;
+			$temp_input_currency_symbol_order = $row->symbol_order;
+			$temp_input_currency_symbol_space = $row->symbol_space;
 			include("../_includes/system/convert-and-format-currency.inc.php");
 			echo $temp_output_amount;
             ?>

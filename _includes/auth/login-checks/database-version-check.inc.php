@@ -23,9 +23,9 @@ $result_db_check = mysql_query($sql_db_check,$connection) or die(mysql_error());
 while ($row_db_check = mysql_fetch_object($result_db_check)) {
 
 	if ($row_db_check->db_version != $most_recent_db_version) { 
-
-		header("Location: ../../../system/update-database.php");
-		exit;
+	
+		include($_SESSION['full_server_path'] . "/_includes/system/update-database.inc.php");
+		$_SESSION['run_update_includes'] = "1";
 
 	} else {
 

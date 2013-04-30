@@ -284,8 +284,8 @@ elseif ($sort_by == "r_d") { $sort_by_string = " ORDER BY r.name desc, d.domain 
 elseif ($sort_by == "ra_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc "; } 
 elseif ($sort_by == "ra_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
 
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.initial_fee, f.renewal_fee, cc.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name
-		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.initial_fee, f.renewal_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name
+		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
 		WHERE d.account_id = ra.id
 		  AND ra.registrar_id = r.id
 		  AND ra.owner_id = o.id
@@ -294,7 +294,9 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
 		  AND d.dns_id = dns.id
 		  AND d.ip_id = ip.id
 		  AND d.hosting_id = h.id
-		  AND f.currency_id = cc.id
+		  AND f.currency_id = c.id
+		  AND c.id = cc.currency_id
+		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 		  $is_active_string
 		  $segid_string
 		  $pcid_string
@@ -310,7 +312,7 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
 		  $sort_by_string";	
 
 $sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) AS grand_total
-				    FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
+				    FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
 					WHERE d.account_id = ra.id
 					  AND ra.registrar_id = r.id
 					  AND ra.owner_id = o.id
@@ -319,7 +321,9 @@ $sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) AS grand_total
 					  AND d.dns_id = dns.id
 					  AND d.ip_id = ip.id
 					  AND d.hosting_id = h.id
-					  AND f.currency_id = cc.id
+					  AND f.currency_id = c.id
+					  AND c.id = cc.currency_id
+					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 					  $is_active_string
 					  $segid_string
 					  $pcid_string

@@ -1,5 +1,5 @@
 <?php
-// /system/update-conversion-rates.php
+// /_includes/system/update-conversion-rates.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,105 +16,240 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
-include("../_includes/auth/auth-check.inc.php");
+// // CODE TO USE
+// // 
+// // Update all conversion rates for the specified user
+// // Input: $temp_input_user_id / $temp_input_default_currency
+// $temp_input_user_id = $xxxxx;
+// $temp_input_default_currency = $xxxxx;
+// include("_includes/system/update-conversion-rates.inc.php");
+?>
+<?php
+$direct = $_GET['direct'];
+if ($direct == "1") { session_start(); }
 
-$page_title = "Update Conversion Rates";
-$software_section = "system";
+include($_SESSION['full_server_path'] . "/_includes/config.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/database.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/software.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/auth/auth-check.inc.php");
 
-$sql = "UPDATE currencies
-		SET conversion = '1', 
-			update_time = '" . $current_timestamp . "'
-		WHERE currency = '" . $_SESSION['default_currency'] . "'";
-$result = mysql_query($sql,$connection);
+$sql_ucr = "SELECT c.id, c.currency
+			FROM currencies AS c, fees AS f, domains AS d
+			WHERE c.id = f.currency_id
+			  AND f.id = d.fee_id
+			  AND d.active NOT IN ('0', '10')
+			GROUP BY c.currency";
+$result_ucr = mysql_query($sql_ucr,$connection) or die(mysql_error());
 
-$sql = "UPDATE currencies
-		SET conversion = '0',
-			update_time = '" . $current_timestamp . "'
-		WHERE currency != '" . $_SESSION['default_currency'] . "'";
-$result = mysql_query($sql,$connection);
+while ($row_ucr = mysql_fetch_object($result_ucr)) {
 
-$sql = "SELECT c.currency
-		FROM currencies AS c, fees AS f, domains AS d
-		WHERE c.id = f.currency_id
-		  AND f.id = d.fee_id
-		  AND d.active NOT IN ('0', '10')
-		  AND c.currency != '" . $_SESSION['default_currency'] . "'
-		GROUP BY c.currency";
-$result = mysql_query($sql,$connection) or die(mysql_error());
-
-while ($row = mysql_fetch_object($result)) {
+	$sql_ucr_existing = "SELECT id
+						 FROM currency_conversions
+						 WHERE currency_id = '" . $row_ucr->id . "'
+						   AND user_id = '" . $temp_input_user_id . "'";
+	$result_ucr_existing = mysql_query($sql_ucr_existing,$connection) or die(mysql_error());
 	
-	$exclude_string .= "'" . $row->currency . "', ";
+	if (mysql_num_rows($result_ucr_existing) == 0) {
+		
+		$existing_currency = "";
+		
+	} else {
+		
+		$existing_currency = "1";
+		
+	}
 
-	$from = $row->currency;
-	$to = $_SESSION['default_currency'];
-	$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
-	$api_call = @fopen($full_url, "r");
+	$exclude_string .= "'" . $row_ucr->currency . "', ";
+	
+	if ($existing_currency == "1") {
 
-	if ($api_call) {
+		if ($row_ucr->currency == $temp_input_default_currency) {
 
-		$api_call_result = fgets($api_call, 4096);
-		fclose($api_call);
+			$sql_ucr_update = "UPDATE currency_conversions
+							   SET conversion = '1',
+							   	   update_time = '" . $current_timestamp . "'
+							   WHERE currency_id = '" . $row_ucr->id . "'
+							     AND user_id = '" . $temp_input_user_id . "'";
+			$result_ucr_update = mysql_query($sql_ucr_update,$connection) or die(mysql_error());
+
+		} else {
+
+			$from = $row_ucr->currency;
+			$to = $temp_input_default_currency;
+			$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
+			$api_call = @fopen($full_url, "r");
+		
+			if ($api_call) {
+		
+				$api_call_result = fgets($api_call, 4096);
+				fclose($api_call);
+		
+			}
+			
+			$api_call_split = explode(",",$api_call_result);
+			$conversion_rate = $api_call_split[1];
+
+			$sql_ucr_update = "UPDATE currency_conversions
+							   SET conversion = '" . $conversion_rate . "',
+							   	   update_time = '" . $current_timestamp . "'
+							   WHERE currency_id = '" . $row_ucr->id . "'
+							     AND user_id = '" . $temp_input_user_id . "'";
+			$result_ucr_update = mysql_query($sql_ucr_update,$connection) or die(mysql_error());
+
+		}
+
+	} else {
+
+		if ($row_ucr->currency == $temp_input_default_currency) {
+
+			$sql_ucr_insert = "INSERT INTO currency_conversions
+							   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
+							   ('" . $row_ucr->id . "', '" . $temp_input_user_id . "', '1', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+			$result_ucr_insert = mysql_query($sql_ucr_insert,$connection) or die(mysql_error());
+
+		} else {
+
+			$from = $row_ucr->currency;
+			$to = $temp_input_default_currency;
+			$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
+			$api_call = @fopen($full_url, "r");
+		
+			if ($api_call) {
+		
+				$api_call_result = fgets($api_call, 4096);
+				fclose($api_call);
+		
+			}
+			
+			$api_call_split = explode(",",$api_call_result);
+			$conversion_rate = $api_call_split[1];
+		
+			$sql_ucr_insert = "INSERT INTO currency_conversions
+							   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
+							   ('" . $row_ucr->id . "', '" . $temp_input_user_id . "', '" . $conversion_rate . "', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+			$result_ucr_insert = mysql_query($sql_ucr_insert,$connection) or die(mysql_error());
+
+		}
 
 	}
-	
-	$api_call_split = explode(",",$api_call_result);
-	$conversion_rate = $api_call_split[1];
-	
-	$sql_update = "UPDATE currencies
-				   SET conversion = '" . $conversion_rate . "', 
-				   	   update_time = '" . $current_timestamp . "'
-				   WHERE currency = '" . $row->currency . "'";
-	$result_update = mysql_query($sql_update,$connection);
 
 }
 
 $exclude_string = substr($exclude_string, 0, -2);
 
-$sql = "SELECT c.currency
-		FROM currencies AS c, ssl_fees AS f, ssl_certs AS sslc
-		WHERE c.id = f.currency_id
-		  AND f.id = sslc.fee_id
-		  AND sslc.active NOT IN ('0')
-		  AND c.currency != '" . $_SESSION['default_currency'] . "'
-		  AND c.currency NOT IN (" . $exclude_string . ")
-		GROUP BY c.currency";
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$sql_ucr = "SELECT c.id, c.currency
+			FROM currencies AS c, ssl_fees AS f, ssl_certs AS sslc
+			WHERE c.id = f.currency_id
+			  AND f.id = sslc.fee_id
+			  AND sslc.active NOT IN ('0')
+			  AND c.currency NOT IN (" . $exclude_string . ")
+			GROUP BY c.currency";
+$result_ucr = mysql_query($sql_ucr,$connection) or die(mysql_error());
 
-while ($row = mysql_fetch_object($result)) {
-	
-	$exclude_string .= "'" . $row->currency . "', ";
 
-	$from = $row->currency;
-	$to = $_SESSION['default_currency'];
-	$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
-	$api_call = @fopen($full_url, "r");
+while ($row_ucr = mysql_fetch_object($result_ucr)) {
 
-	if ($api_call) {
+	$sql_ucr_existing = "SELECT id
+						 FROM currency_conversions
+						 WHERE currency_id = '" . $row_ucr->id . "'
+						   AND user_id = '" . $temp_input_user_id . "'";
+	$result_ucr_existing = mysql_query($sql_ucr_existing,$connection) or die(mysql_error());
 
-		$api_call_result = fgets($api_call, 4096);
-		fclose($api_call);
+	if (mysql_num_rows($result_ucr_existing) == 0) {
+		
+		$existing_currency = "";
+		
+	} else {
+		
+		$existing_currency = "1";
+		
+	}
+
+	if ($existing_currency == "1") {
+
+		if ($row_ucr->currency == $temp_input_default_currency) {
+
+			$sql_ucr_update = "UPDATE currency_conversions
+							   SET conversion = '1',
+							   	   update_time = '" . $current_timestamp . "'
+							   WHERE currency_id = '" . $row_ucr->id . "'
+							     AND user_id = '" . $temp_input_user_id . "'";
+			$result_ucr_update = mysql_query($sql_ucr_update,$connection) or die(mysql_error());
+
+		} else {
+
+			$from = $row_ucr->currency;
+			$to = $temp_input_default_currency;
+			$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
+			$api_call = @fopen($full_url, "r");
+		
+			if ($api_call) {
+		
+				$api_call_result = fgets($api_call, 4096);
+				fclose($api_call);
+		
+			}
+			
+			$api_call_split = explode(",",$api_call_result);
+			$conversion_rate = $api_call_split[1];
+
+			$sql_ucr_update = "UPDATE currency_conversions
+							   SET conversion = '" . $conversion_rate . "',
+							   	   update_time = '" . $current_timestamp . "'
+							   WHERE currency_id = '" . $row_ucr->id . "'
+							     AND user_id = '" . $temp_input_user_id . "'";
+			$result_ucr_update = mysql_query($sql_ucr_update,$connection) or die(mysql_error());
+
+		}
+
+	} else {
+
+		if ($row_ucr->currency == $temp_input_default_currency) {
+
+			$sql_ucr_insert = "INSERT INTO currency_conversions
+							   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
+							   ('" . $row_ucr->id . "', '" . $temp_input_user_id . "', '1', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+			$result_ucr_insert = mysql_query($sql_ucr_insert,$connection) or die(mysql_error());
+
+		} else {
+
+			$from = $row_ucr->currency;
+			$to = $temp_input_default_currency;
+			$full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from . $to ."=X";
+			$api_call = @fopen($full_url, "r");
+		
+			if ($api_call) {
+		
+				$api_call_result = fgets($api_call, 4096);
+				fclose($api_call);
+		
+			}
+			
+			$api_call_split = explode(",",$api_call_result);
+			$conversion_rate = $api_call_split[1];
+		
+			$sql_ucr_insert = "INSERT INTO currency_conversions
+							   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
+							   ('" . $row_ucr->id . "', '" . $temp_input_user_id . "', '" . $conversion_rate . "', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+			$result_ucr_insert = mysql_query($sql_ucr_insert,$connection) or die(mysql_error());
+
+		}
 
 	}
-	
-	$api_call_split = explode(",",$api_call_result);
-	$conversion_rate = $api_call_split[1];
-	
-	$sql_update = "UPDATE currencies
-				   SET conversion = '" . $conversion_rate . "', 
-				   	   update_time = '" . $current_timestamp . "'
-				   WHERE currency = '" . $row->currency . "'";
-	$result_update = mysql_query($sql_update,$connection);
 
 }
 
-$_SESSION['result_message'] .= "Conversion Rates Updated<BR>";
+if ($direct == "1") {
 
-header("Location: " . $_SERVER['HTTP_REFERER']);
-exit;
+	$_SESSION['result_message'] .= "Conversion Rates Updated<BR>";
+	
+	header("Location: " . $_SERVER['HTTP_REFERER']);
+	exit;
+
+} else {
+	
+	$_SESSION['result_message'] .= "Conversion Rates Updated<BR>";
+
+}
 ?>

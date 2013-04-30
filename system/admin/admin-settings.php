@@ -1,5 +1,5 @@
 <?php
-// /system/admin/system-settings.php
+// /system/admin/admin-settings.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -28,7 +28,7 @@ include("../../_includes/software.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 
-$page_title = "Edit System Settings";
+$page_title = "Edit Admin Settings";
 $software_section = "system";
 
 // Form Variables
@@ -51,25 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
 	$_SESSION['system_full_url'] = $new_full_url;
 	$_SESSION['system_email_address'] = $new_email_address;
-	$_SESSION['default_currency'] = $new_default_currency;
+	$_SESSION['system_default_currency'] = $new_default_currency;
 	$_SESSION['system_timezone'] = $new_timezone;
 	$_SESSION['system_expiration_email_days'] = $new_expiration_email_days;
 
-	$sql_currencies = "SELECT name, symbol, symbol_order, symbol_space
-					   FROM currencies
-					   WHERE currency = '" . $_SESSION['default_currency'] . "'";
-	$result_currencies = mysql_query($sql_currencies,$connection);
+	$_SESSION['result_message'] .= "The Admin Settings were updated<BR><BR>";
 
-	while ($row_currencies = mysql_fetch_object($result_currencies)) {
-		$_SESSION['default_currency_name'] = $row_currencies->name;
-		$_SESSION['default_currency_symbol'] = $row_currencies->symbol;
-		$_SESSION['default_currency_symbol_order'] = $row_currencies->symbol_order;
-		$_SESSION['default_currency_symbol_space'] = $row_currencies->symbol_space;
-	}
-	
-	$_SESSION['result_message'] .= "The System Settings were updated<BR><BR>";
-	$_SESSION['result_message'] .= "If you changed your default currency you should <a href=\"update-conversion-rates.php\">update the conversion rates</a><BR>";
-	
 	header("Location: ../index.php");
 	exit;
 
@@ -109,12 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 </head>
 <body>
 <?php include("../../_includes/header.inc.php"); ?>
-<form name="system_settings_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Full URL:</strong><BR><BR>
+<form name="admin_settings_form" method="post" action="<?=$PHP_SELF?>">
+<strong>Full <?=$software_title?> URL:</strong><BR><BR>
 Enter the full URL of your <?=$software_title?> installation, excluding the trailing slash (Example: http://yourdomain.com/domainmanager).<BR><BR>
 <input name="new_full_url" type="text" size="50" maxlength="100" value="<?php if ($new_full_url != "") echo $new_full_url; ?>">
 <BR><BR>
-<strong>Email Address:</strong><BR><BR>
+<strong>System Email Address:</strong><BR><BR>
 This should be a valid email address that is able to receive mail. It will be used in various system locations, such as the FROM address for emails sent by <?=$software_title?>.<BR><BR>
 <input name="new_email_address" type="text" size="50" maxlength="255" value="<?php if ($new_email_address != "") echo $new_email_address; ?>">
 <BR><BR>
@@ -131,7 +118,7 @@ $sql = "SELECT currency, name, symbol
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->currency?>"<?php if ($_SESSION['default_currency'] == $row->currency) echo " selected"; ?>><?=$row->name?> (<?=$row->currency?> <?=$row->symbol?>)</option>
+	<option value="<?=$row->currency?>"<?php if ($_SESSION['system_default_currency'] == $row->currency) echo " selected"; ?>><?=$row->name?> (<?=$row->currency?> <?=$row->symbol?>)</option>
     <?php
 }
 ?>
@@ -152,7 +139,7 @@ while ($row = mysql_fetch_object($result)) {
 ?>
 </select>
 <BR><BR><BR>
-<input type="submit" name="button" value="Update System Settings&raquo;">
+<input type="submit" name="button" value="Update Admin Settings&raquo;">
 </form>
 <?php include("../../_includes/footer.inc.php"); ?>
 </body>

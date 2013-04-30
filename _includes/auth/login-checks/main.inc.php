@@ -16,25 +16,24 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("../../start-session.inc.php");
-include("../../config.inc.php");
-include("../../database.inc.php");
-include("../../software.inc.php");
-include("../../auth/auth-check.inc.php");
-include("../../timestamps/current-timestamp.inc.php");
+include("_includes/start-session.inc.php");
+include("_includes/config.inc.php");
+include("_includes/database.inc.php");
+include("_includes/software.inc.php");
+include("_includes/auth/auth-check.inc.php");
+include("_includes/timestamps/current-timestamp.inc.php");
 
 $_SESSION['running_login_checks'] = 1;
 
-// Check to see if it's a new password
-include("../../auth/login-checks/new-password-check.inc.php");
-
 // Check the database version
-include("../../auth/login-checks/database-version-check.inc.php");
+include("_includes/auth/login-checks/database-version-check.inc.php");
 
 // Check if there are Domain and SSL assets
-include("../../auth/login-checks/domain-and-ssl-asset-check.inc.php");
+include("_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
 unset($_SESSION['running_login_checks']);
+
+unset($_SESSION['installation_mode']);
 
 $sql_user_update = "UPDATE users
 					SET last_login = '$current_timestamp',
@@ -42,20 +41,7 @@ $sql_user_update = "UPDATE users
 						update_time = '$current_timestamp'
 					WHERE id = '" . $_SESSION['user_id'] . "'
 					  AND email_address = '" . $_SESSION['email_address'] . "'";
-$result_user_update = mysql_query($sql_user_update,$connection);
+$result_user_update = mysql_query($sql_user_update,$connection) or die(mysql_error());
 
-if (isset($_SESSION['user_redirect'])) {
-
-	$temp_redirect = $_SESSION['user_redirect'];
-	unset($_SESSION['user_redirect']);
-
-	header("Location: $temp_redirect");
-	exit;
-
-} else {
-
- 	header("Location: ../../../domains.php");
-	exit;
-
-}
+$_SESSION['last_login'] = $current_timestamp;
 ?>

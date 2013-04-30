@@ -352,7 +352,7 @@ div.reporting-block-outer {
 }
 div.reporting-block-left {
 	float: left;
-	width: 275px; 
+	width: 300px; 
 	padding-top: 0px;
 	padding-right: 0px; 
 	padding-bottom: 0px;
@@ -360,7 +360,7 @@ div.reporting-block-left {
 }
 div.reporting-block-right {
 	float: left;
-	width: 275px; 
+	width: 300px; 
 	padding-top: 0px;
 	padding-right: 0px; 
 	padding-bottom: 0px;

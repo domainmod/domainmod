@@ -73,10 +73,12 @@ $sql = "SELECT sslc.id, YEAR(sslc.expiry_date) AS year, MONTH(sslc.expiry_date) 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_rows = mysql_num_rows($result);
 
-$sql_grand_total = "SELECT SUM(f.renewal_fee * c.conversion) as grand_total
-					FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c
+$sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) as grand_total
+					FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
 					WHERE sslc.fee_id = f.id
 					  AND f.currency_id = c.id
+					  AND c.id = cc.currency_id
+					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 					  AND sslc.active NOT IN ('0')
 					  " . $range_string . "";
 $result_grand_total = mysql_query($sql_grand_total,$connection) or die(mysql_error());
@@ -117,10 +119,12 @@ if ($submission_failed != "1" && $total_rows > 0) {
 			$new_year = $row->year;
 			$new_month = $row->month;
 	
-			$sql_monthly_cost = "SELECT SUM(f.renewal_fee * c.conversion) AS monthly_cost
-								 FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c
+			$sql_monthly_cost = "SELECT SUM(f.renewal_fee * cc.conversion) AS monthly_cost
+								 FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
 								 WHERE sslc.fee_id = f.id
 								   AND f.currency_id = c.id
+								   AND c.id = cc.currency_id
+								   AND cc.user_id = '" . $_SESSION['user_id'] . "'
 								   AND sslc.active NOT IN ('0')
 								   AND YEAR(sslc.expiry_date) = '" . $row->year . "'
 								   AND MONTH(sslc.expiry_date) = '" . $row->month . "'
@@ -154,10 +158,12 @@ if ($submission_failed != "1" && $total_rows > 0) {
 	
 			if ($new_year > $last_year || $new_year == "") {
 	
-				$sql_yearly_cost = "SELECT SUM(f.renewal_fee * c.conversion) AS yearly_cost
-									FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c
+				$sql_yearly_cost = "SELECT SUM(f.renewal_fee * cc.conversion) AS yearly_cost
+									FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
 									WHERE sslc.fee_id = f.id
 									  AND f.currency_id = c.id
+									  AND c.id = cc.currency_id
+									  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 									  AND sslc.active NOT IN ('0')
 									  AND YEAR(sslc.expiry_date) = '" . $row->year . "'
 		  							  " . $range_string . "";
@@ -262,10 +268,12 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		$new_year = $row->year;
 		$new_month = $row->month;
 
-		$sql_monthly_cost = "SELECT SUM(f.renewal_fee * c.conversion) AS monthly_cost
-							 FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c
+		$sql_monthly_cost = "SELECT SUM(f.renewal_fee * cc.conversion) AS monthly_cost
+							 FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
 							 WHERE sslc.fee_id = f.id
 							   AND f.currency_id = c.id
+							   AND c.id = cc.currency_id
+							   AND cc.user_id = '" . $_SESSION['user_id'] . "'
 							   AND sslc.active NOT IN ('0', '10')
 							   AND YEAR(sslc.expiry_date) = '" . $row->year . "'
 							   AND MONTH(sslc.expiry_date) = '" . $row->month . "'
@@ -299,10 +307,12 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 		if ($new_year > $last_year || $new_year == "") {
 
-			$sql_yearly_cost = "SELECT SUM(f.renewal_fee * c.conversion) AS yearly_cost
-								FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c
+			$sql_yearly_cost = "SELECT SUM(f.renewal_fee * cc.conversion) AS yearly_cost
+								FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
 								WHERE sslc.fee_id = f.id
 								  AND f.currency_id = c.id
+								  AND c.id = cc.currency_id
+								  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 								  AND sslc.active NOT IN ('0', '10')
 								  AND YEAR(sslc.expiry_date) = '" . $row->year . "'
 		  						  " . $range_string . "";

@@ -1,5 +1,5 @@
 <?php
-// /system/display-settings.php
+// /system/system-settings.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -23,10 +23,11 @@ include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
-$page_title = "Edit Display Settings";
+$page_title = "Edit System Settings";
 $software_section = "system";
 
 // Form Variables
+$new_default_currency = $_POST['new_default_currency'];
 $new_number_of_domains = $_POST['new_number_of_domains'];
 $new_number_of_ssl_certs = $_POST['new_number_of_ssl_certs'];
 $new_display_domain_owner = $_POST['new_display_domain_owner'];
@@ -49,8 +50,25 @@ $new_display_ssl_fee = $_POST['new_display_ssl_fee'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new_number_of_ssl_certs != "") {
 
+	$_SESSION['result_message'] .= "Your System Settings were updated<BR>";
+
+	$sql = "SELECT default_currency
+			FROM user_settings
+			WHERE user_id = '" . $_SESSION['user_id'] . "'";
+	$result = mysql_query($sql,$connection);
+	while ($row = mysql_fetch_object($result)) { $saved_default_currency = $row->default_currency; }
+	
+	if ($saved_default_currency != $new_default_currency) {
+
+		$temp_input_user_id = $_SESSION['user_id'];
+		$temp_input_default_currency = $_SESSION['default_currency'];
+		include("../_includes/system/update-conversion-rates.inc.php");
+
+	}
+
 	$sql = "UPDATE user_settings
-			SET number_of_domains = '$new_number_of_domains',
+			SET default_currency = '$new_default_currency',
+				number_of_domains = '$new_number_of_domains',
 				display_domain_owner = '$new_display_domain_owner',
 				display_domain_registrar = '$new_display_domain_registrar',
 				display_domain_account = '$new_display_domain_account',
@@ -73,6 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
+	$_SESSION['default_currency'] = $new_default_currency;
 	$_SESSION['number_of_domains'] = $new_number_of_domains;
 	$_SESSION['number_of_ssl_certs'] = $new_number_of_ssl_certs;
 	$_SESSION['display_domain_owner'] = $new_display_domain_owner;
@@ -94,8 +113,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	$_SESSION['display_ssl_expiry_date'] = $new_display_ssl_expiry_date;
 	$_SESSION['display_ssl_fee'] = $new_display_ssl_fee;
 
-	$_SESSION['result_message'] .= "Your Display Settings were updated<BR>";
+	$sql_currencies = "SELECT name, symbol, symbol_order, symbol_space
+					   FROM currencies
+					   WHERE currency = '" . $new_default_currency . "'";
+	$result_currencies = mysql_query($sql_currencies,$connection);
 	
+	while ($row_currencies = mysql_fetch_object($result_currencies)) {
+		$_SESSION['default_currency_name'] = $row_currencies->name;
+		$_SESSION['default_currency_symbol'] = $row_currencies->symbol;
+		$_SESSION['default_currency_symbol_order'] = $row_currencies->symbol_order;
+		$_SESSION['default_currency_symbol_space'] = $row_currencies->symbol_space;
+	}
+
 	header("Location: index.php");
 	exit;
 
@@ -109,13 +138,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 		
 	} else {
 		
- 		$sql = "SELECT number_of_domains, number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account, display_domain_account, display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_host, display_domain_ip, display_domain_tld, display_domain_fee, display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_account, display_ssl_domain, display_ssl_type, display_ssl_expiry_date, display_ssl_fee
+ 		$sql = "SELECT default_currency, number_of_domains, number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account, display_domain_account, display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_host, display_domain_ip, display_domain_tld, display_domain_fee, display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_account, display_ssl_domain, display_ssl_type, display_ssl_expiry_date, display_ssl_fee
 				FROM user_settings
 				WHERE user_id = '" . $_SESSION['user_id'] . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		while ($row = mysql_fetch_object($result)) {
 			
+			$new_default_currency = $row->default_currency;
 			$new_number_of_domains = $row->number_of_domains;
 			$new_number_of_ssl_certs = $row->number_of_ssl_certs;
 			$new_display_domain_owner = $row->display_domain_owner;
@@ -149,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
-<form name="display_settings_form" method="post" action="<?=$PHP_SELF?>">
+<form name="system_settings_form" method="post" action="<?=$PHP_SELF?>">
 <BR>
 <font class="headline">Main Domain Page</font><BR><BR>
 <strong>Number of domains per page:</strong> <input name="new_number_of_domains" type="text" size="3" maxlength="5" value="<?php if ($new_number_of_domains != "") echo $new_number_of_domains; ?>">
@@ -207,7 +237,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     </tr>
 </table>        
 <BR><BR>
-<input type="submit" name="button" value="Update Display Settings&raquo;">
+<strong>Default Currency:</strong><BR><BR>
+<select name="new_default_currency">
+<?php
+$sql = "SELECT currency, name, symbol
+		FROM currencies
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	?>
+	<option value="<?=$row->currency?>"<?php if ($_SESSION['default_currency'] == $row->currency) echo " selected"; ?>><?=$row->name?> (<?=$row->currency?> <?=$row->symbol?>)</option>
+    <?php
+}
+?>
+</select>
+<BR><BR>
+<input type="submit" name="button" value="Update System Settings&raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>

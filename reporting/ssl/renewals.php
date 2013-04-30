@@ -61,14 +61,16 @@ if ($all == "1") {
 }
 
 $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, (f.renewal_fee * cc.conversion) AS converted_renewal_fee, cc.conversion
-		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS cc, ssl_cert_types AS sslcf
+		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_cert_types AS sslcf
 		WHERE sslc.account_id = sslpa.id
 		  AND sslc.type_id = sslcf.id
 		  AND sslpa.ssl_provider_id = sslp.id
 		  AND sslpa.owner_id = o.id
 		  AND sslc.ssl_provider_id = f.ssl_provider_id
 		  AND sslc.type_id = f.type_id
-		  AND f.currency_id = cc.id
+		  AND f.currency_id = c.id
+		  AND c.id = cc.currency_id
+		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 		  AND sslc.active NOT IN ('0')
 		  " . $range_string . "
 		ORDER BY sslc.expiry_date asc, sslc.name asc";	

@@ -61,17 +61,19 @@ if ($all == "1") {
 }
 
 $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, (f.renewal_fee * cc.conversion) AS converted_renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
-		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
+		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
 		WHERE d.account_id = ra.id
 		  AND ra.registrar_id = r.id
 		  AND ra.owner_id = o.id
 		  AND d.registrar_id = f.registrar_id
 		  AND d.tld = f.tld
-		  AND f.currency_id = cc.id
+		  AND f.currency_id = c.id
+		  AND c.id = cc.currency_id
 		  AND d.cat_id = cat.id
 		  AND d.dns_id = dns.id
 		  AND d.ip_id = ip.id
 		  AND d.hosting_id = h.id
+		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 		  AND d.active NOT IN ('0', '10')
 		  " . $range_string . "
 		ORDER BY d.expiry_date asc, d.domain";	

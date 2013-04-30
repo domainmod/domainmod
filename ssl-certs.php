@@ -193,14 +193,16 @@ elseif ($sort_by == "sf_a") { $sort_by_string = " ORDER BY f.renewal_fee asc "; 
 elseif ($sort_by == "sf_d") { $sort_by_string = " ORDER BY f.renewal_fee desc "; }
  
 $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, o.id AS o_id, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, d.domain, sslcf.id as type_id, sslcf.type
-		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS cc, domains AS d, ssl_cert_types AS sslcf
+		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf
 		WHERE sslc.account_id = sslpa.id
 		  AND sslpa.ssl_provider_id = sslp.id
 		  AND sslpa.owner_id = o.id
 		  AND sslc.fee_id = f.id
-		  AND f.currency_id = cc.id
+		  AND f.currency_id = c.id
+		  AND c.id = cc.currency_id
 		  AND sslc.domain_id = d.id
 		  AND sslc.type_id = sslcf.id
+		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 		  $is_active_string
 		  $oid_string
 		  $did_string
@@ -211,14 +213,16 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes,
 		  $sort_by_string";	
 
 $sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) AS grand_total
-					FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS cc, domains AS d, ssl_cert_types AS sslcf
+					FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf
 					WHERE sslc.account_id = sslpa.id
 					  AND sslpa.ssl_provider_id = sslp.id
 					  AND sslpa.owner_id = o.id
 					  AND sslc.fee_id = f.id
-					  AND f.currency_id = cc.id
+					  AND f.currency_id = c.id
+					  AND c.id = cc.currency_id
 					  AND sslc.domain_id = d.id
 					  AND sslc.type_id = sslcf.id
+					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 					  $is_active_string
 					  $oid_string
 					  $did_string
