@@ -1,5 +1,5 @@
 <?php
-// /reporting/domains/registrar-fee-breakdown.php
+// /reporting/domains/registrar-fees.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -26,7 +26,7 @@ include("../../_includes/timestamps/current-timestamp.inc.php");
 $page_title = $reporting_section_title;
 $page_subtitle = "Registrar Fee Breakdown";
 $software_section = "reporting";
-$report_name = "registrar-fee-breakdown";
+$report_name = "domains-registrar-fees";
 
 // Form Variables
 $export = $_GET['export'];

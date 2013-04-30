@@ -1,5 +1,5 @@
 <?php
-// /reporting/domains/cost-breakdown-by-month.php
+// /reporting/domains/cost-by-month.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -28,7 +28,7 @@ include("../../_includes/system/functions/check-date-format.inc.php");
 $page_title = $reporting_section_title;
 $page_subtitle = "Domain Cost Breakdown by Month";
 $software_section = "reporting";
-$report_name = "domains-cost-breakdown-by-month";
+$report_name = "domains-cost-by-month";
 
 // Form Variables
 $export = $_GET['export'];
