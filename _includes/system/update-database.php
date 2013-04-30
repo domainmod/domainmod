@@ -1,5 +1,5 @@
 <?php
-// /system/update-database.php
+// /_includes/system/update-database.inc.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,15 +16,14 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
-include("../_includes/auth/auth-check.inc.php");
+$direct = $_GET['direct'];
+if ($direct == "1") { session_start(); }
 
-$page_title = "Update Database";
-$software_section = "system";
+include($_SESSION['full_server_path'] . "/_includes/config.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/database.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/software.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp.inc.php");
+include($_SESSION['full_server_path'] . "/_includes/auth/auth-check.inc.php");
 
 $sql = "SELECT db_version
 		FROM settings";
@@ -1933,16 +1932,112 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
-	include("../_includes/auth/login-checks/database-version-check.inc.php");
+	// upgrade database from 2.0037 to 2.0038
+	if ($current_db_version == 2.0037) {
 
-	$_SESSION['result_message'] .= "Database Updated<BR>";
+		$sql = "ALTER TABLE `user_settings`  
+				ADD `default_currency` varchar(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL after user_id";
+		$result = mysql_query($sql,$connection);
+		
+		$sql = "SELECT default_currency
+				FROM settings";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) {
+			$temp_default_currency = $row->default_currency;
+			$_SESSION['default_currency'] = $row->default_currency;
+		}
+		
+		$sql = "SELECT name, symbol, symbol_order, symbol_space
+				FROM currencies
+				WHERE currency = '" . $_SESSION['default_currency'] . "'";
+		$result = mysql_query($sql,$connection);
+		
+		while ($row = mysql_fetch_object($result)) {
+
+			$_SESSION['default_currency_name'] = $row->name; 
+			$_SESSION['default_currency_symbol'] = $row->symbol; 
+			$_SESSION['default_currency_symbol_order'] = $row->symbol_order; 
+			$_SESSION['default_currency_symbol_space'] = $row->symbol_space; 
+
+		}
+
+		$sql = "UPDATE user_settings
+				SET default_currency = '" . $temp_default_currency . "'";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "CREATE TABLE IF NOT EXISTS `currency_conversions` (
+				`id` int(10) NOT NULL auto_increment,
+				`currency_id` int(10) NOT NULL,
+				`user_id` int(10) NOT NULL,
+				`conversion` float NOT NULL,
+				`insert_time` datetime NOT NULL,
+				`update_time` datetime NOT NULL,
+				PRIMARY KEY  (`id`)
+				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+		$result = mysql_query($sql,$connection);
+		
+		$sql = "SELECT id
+				FROM users";
+		$result = mysql_query($sql,$connection);
+			
+		while ($row = mysql_fetch_object($result)) {
+			
+			$sql_conversion = "SELECT id, conversion
+							   FROM currencies
+							   WHERE conversion != '0'";
+			$result_conversion = mysql_query($sql_conversion,$connection);
+			
+			while ($row_conversion = mysql_fetch_object($result_conversion)) {
+				
+				$sql_insert = "INSERT INTO currency_conversions
+							   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
+							   ('" . $row_conversion->id . "', '" . $row->id . "', '" . $row_conversion->conversion . "', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+				$result_insert = mysql_query($sql_insert,$connection);
+				
+			}
+			
+		}
+
+		$sql = "ALTER TABLE `currencies` 
+				DROP `conversion`;";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0038',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0038;
+
+	}
+
+	if ($direct == "1") {
+	
+		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
+			
+		header("Location: " . $_SERVER['HTTP_REFERER']);
+		exit;
+		
+	} else {
+			
+		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
+		
+	}
 
 } else {
 
-	$_SESSION['result_message'] .= "Your database is already up-to-date<BR>";
+	if ($direct == "1") {
+	
+		$_SESSION['result_message'] .= "Your Database is already up-to-date<BR>";
+		
+		header("Location: " . $_SERVER['HTTP_REFERER']);
+		exit;
+	
+	} else {
+		
+		$_SESSION['result_message'] .= "Your Database is already up-to-date<BR>";
+	
+	}
 	
 }
-
-header("Location: " . $_SERVER['HTTP_REFERER']);
-exit;
 ?>
