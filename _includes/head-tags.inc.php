@@ -28,27 +28,6 @@ td {
 	color: #000000;
 	font-size: 8pt;
 }
-td.search-table {
-	text-align: left;
-	vertical-align: center; 
-	border-top: 1px #6699CC ridge;
-	border-bottom: 1px #6699CC ridge;
-	border-right: 1px #6699CC ridge;
-	border-left: 1px #6699CC ridge;
-	font-family: Verdana, sans-serif, Arial;
-	font-weight: normal;
-	font-size: 8pt;
-	color: #404040;
-	background-color: #fafafa;
-	padding-top: 8px;
-	padding-right: 8px; 
-	padding-bottom: 8px;
-	padding-left: 8px;
-}
-td.search-table-inside {
-	vertical-align: top; 
-	background-color: #fafafa;
-}
 td.footer-table-login {
 	text-align: center;
 	vertical-align: center; 
@@ -366,6 +345,45 @@ div.reporting-block-right {
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
+div.search-block-outer {
+	float: left;
+	border-top: 1px #6699CC ridge;
+	border-bottom: 1px #6699CC ridge;
+	border-right: 1px #6699CC ridge;
+	border-left: 1px #6699CC ridge;
+	padding-top: 20px;
+	padding-right: 20px; 
+	padding-bottom: 20px;
+	padding-left: 20px;
+	background-color: #E0E0E0;
+}
+div.search-block-inner {
+	text-align: left;
+	vertical-align: center; 
+	font-family: Verdana, sans-serif, Arial;
+	font-weight: normal;
+	font-size: 8pt;
+	color: #404040;
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
+div.search-block-left {
+	float: left;
+	width: 550px; 
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
+div.search-block-right {
+	float: left;
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
 div.export-outer {
 	float: left;
 	line-height: 30px;
@@ -388,8 +406,7 @@ div.export-inner {
 	font-family: Verdana, sans-serif, Arial;
 	font-weight: normal;
 	font-size: 8pt;
-	color: #404040;
-	background-color: #fafafa;
+	background-color: #E0E0E0;
 	padding-top: 18px;
 	padding-right: 22px; 
 	padding-bottom: 18px;

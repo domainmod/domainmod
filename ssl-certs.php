@@ -438,14 +438,10 @@ $sql = $sql.$navigate[0];
 $result = mysql_query($sql,$connection);
 $total_rows = number_format(mysql_num_rows($result));
 ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="100%" class="search-table"><BR>
 <form name="ssl_cert_search_form" method="post" action="<?=$PHP_SELF?>">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td class="search-table-inside" width="560">
-
+<div class="search-block-outer">
+<div class="search-block-inner">
+<div class="search-block-left">
 &nbsp;&nbsp;
 <?php 
 // DOMAIN
@@ -734,10 +730,9 @@ echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpai
 echo "</select>";
 ?>
 <BR>
-
 <input type="hidden" name="sort_by" value="<?=$sort_by?>">
-</td>
-<td class="search-table-inside">
+</div>
+<div class="search-block-right">
 <strong>Keyword Search:</strong><BR><BR>
 <input name="search_for" type="text" id="textfield" value="<?=$_SESSION['search_for_ssl']?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" id="button" value="Search &raquo;">
 <input type="hidden" name="oid" value="<?=$oid?>">
@@ -747,12 +742,11 @@ echo "</select>";
 <input type="hidden" name="ssltid" value="<?=$ssltid?>">
 <input type="hidden" name="is_active" value="<?=$is_active?>">
 <input type="hidden" name="result_limit" value="<?=$result_limit?>">
-</td>
-</tr>
-</table>
-</form><BR></td>
-</tr>
-</table>
+</div>
+</div>
+</div>
+</form>
+<div style="clear: both;"></div>
 <BR><strong>Number of SSL Certs:</strong> <?=number_format($totalrows)?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><BR><strong>Total Cost:</strong> <?=$grand_total?>

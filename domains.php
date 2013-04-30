@@ -677,14 +677,10 @@ if ($segid != "") {
 
 }
 ?>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="100%" class="search-table"><BR>
 <form name="domain_search_form" method="post" action="<?=$PHP_SELF?>">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td class="search-table-inside" width="560">
-
+<div class="search-block-outer">
+<div class="search-block-inner">
+<div class="search-block-left">
 &nbsp;&nbsp;
 <?php 
 // REGISTRAR
@@ -1217,8 +1213,8 @@ echo "</select>";
 ?>
 <BR>
 <input type="hidden" name="sort_by" value="<?=$sort_by?>">
-</td>
-<td class="search-table-inside">
+</div>
+<div class="search-block-right">
 <strong>Keyword Search:</strong><BR><BR>
 <input name="search_for" type="text" value="<?=$_SESSION['search_for']?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" value="Search &raquo;">&nbsp;&nbsp;<BR><BR>
 <?php
@@ -1241,12 +1237,11 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 <input type="hidden" name="segid" value="<?=$segid?>">
 <input type="hidden" name="is_active" value="<?=$is_active?>">
 <input type="hidden" name="result_limit" value="<?=$result_limit?>">
-</td>
-</tr>
-</table>
-</form><BR></td>
-</tr>
-</table>
+</div>
+</div>
+</div>
+</form>
+<div style="clear: both;"></div>
 <BR>
 <?php if ($segid != "") {
 	
