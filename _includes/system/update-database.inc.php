@@ -2011,6 +2011,50 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0038 to 2.0039
+	if ($current_db_version == 2.0038) {
+
+
+		$sql = "ALTER TABLE `ssl_certs`  
+				ADD `ip_id` int(10) NOT NULL AFTER `type_id`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `ssl_certs`  
+				ADD `cat_id` int(10) NOT NULL AFTER `ip_id`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "SELECT id, cat_id, ip_id
+				FROM domains";
+		$result = mysql_query($sql,$connection);
+		
+		while ($row = mysql_fetch_object($result)) {
+			
+			$sql_update = "UPDATE ssl_certs
+						   SET cat_id = '" . $row->cat_id . "',
+						   	   ip_id = '" . $row->ip_id . "',
+							   update_time = '" . $current_timestamp . "'
+						   WHERE domain_id = '" . $row->id . "'";
+			$result_update = mysql_query($sql_update,$connection);
+			
+		}
+
+		$sql = "ALTER TABLE `user_settings`  
+				ADD `display_ssl_ip` int(1) NOT NULL default '0' AFTER `display_ssl_expiry_date`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `user_settings`  
+				ADD `display_ssl_category` int(1) NOT NULL default '0' AFTER `display_ssl_ip`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0039',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0039;
+
+	}
+
 	if ($direct == "1") {
 	
 		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";

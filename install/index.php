@@ -87,6 +87,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`display_ssl_domain` int(1) NOT NULL default '1',
 				`display_ssl_type` int(1) NOT NULL default '1',
 				`display_ssl_expiry_date` int(1) NOT NULL default '1',
+				`display_ssl_ip` int(1) NOT NULL default '0',
+				`display_ssl_category` int(1) NOT NULL default '0',
 				`display_ssl_fee` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -403,7 +405,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				KEY `domain` (`domain`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
-	
+
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_certs` ( 
 				`id` int(10) NOT NULL auto_increment,
 				`owner_id` int(10) NOT NULL,
@@ -411,6 +413,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`account_id` int(10) NOT NULL,
 				`domain_id` int(10) NOT NULL,
 				`type_id` int(10) NOT NULL,
+				`ip_id` int(10) NOT NULL,
+				`cat_id` int(10) NOT NULL,
 				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`expiry_date` date NOT NULL,
 				`fee_id` int(10) NOT NULL,
