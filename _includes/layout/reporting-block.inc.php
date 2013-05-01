@@ -46,7 +46,7 @@ Before running any reports you should <a href="<?=$web_root?>/_includes/system/u
             <option value="<?=$web_root?>/reporting/ssl/cost-by-category.php"<?php if ($report_name == "ssl-cost-by-category-report") echo " selected" ?>>Cost by Category</option>
             <option value="<?=$web_root?>/reporting/ssl/cost-by-month.php"<?php if ($report_name == "ssl-cost-by-month-report") echo " selected" ?>>Cost by Month</option>
             <option value="<?=$web_root?>/reporting/ssl/cost-by-provider.php"<?php if ($report_name == "ssl-cost-by-provider-report") echo " selected" ?>>Cost by Provider</option>
-            <option value="<?=$web_root?>/reporting/ssl/ssl-provider-fees.php"<?php if ($report_name == "ssl-provider-fee-report") echo " selected" ?>>SSL Provider Fees</option>
+            <option value="<?=$web_root?>/reporting/ssl/ssl-provider-fees.php"<?php if ($report_name == "ssl-provider-fee-report") echo " selected" ?>>Provider Fees</option>
             <option value="<?=$web_root?>/reporting/ssl/renewals.php"<?php if ($report_name == "ssl-renewal-report") echo " selected" ?>>Renewals</option>
             </select>
 		</form>
