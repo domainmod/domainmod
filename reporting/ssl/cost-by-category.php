@@ -72,8 +72,8 @@ $sql = "SELECT cat.name, SUM(f.renewal_fee * cc.conversion) as total_cost, count
 		  AND sslc.active NOT IN ('0')
 		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 		  " . $range_string . "
-		GROUP BY name
-		ORDER BY name";
+		GROUP BY cat.name
+		ORDER BY cat.name";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_rows = mysql_num_rows($result);
 
