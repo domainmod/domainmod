@@ -78,7 +78,7 @@ $total_rows = mysql_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) as grand_total
 					FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
-					WHERE d.fee_id = f.id 
+					WHERE d.fee_id = f.id
 					  AND f.currency_id = c.id
 					  AND c.id = cc.currency_id
 					  AND d.active NOT IN ('0', '10')

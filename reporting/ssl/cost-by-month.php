@@ -271,7 +271,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 							   AND f.currency_id = c.id
 							   AND c.id = cc.currency_id
 							   AND cc.user_id = '" . $_SESSION['user_id'] . "'
-							   AND sslc.active NOT IN ('0', '10')
+							   AND sslc.active NOT IN ('0')
 							   AND YEAR(sslc.expiry_date) = '" . $row->year . "'
 							   AND MONTH(sslc.expiry_date) = '" . $row->month . "'
 		  					   " . $range_string . "";
@@ -310,7 +310,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 								  AND f.currency_id = c.id
 								  AND c.id = cc.currency_id
 								  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-								  AND sslc.active NOT IN ('0', '10')
+								  AND sslc.active NOT IN ('0')
 								  AND YEAR(sslc.expiry_date) = '" . $row->year . "'
 		  						  " . $range_string . "";
 			$result_yearly_cost = mysql_query($sql_yearly_cost,$connection) or die(mysql_error());
