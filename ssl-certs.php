@@ -857,8 +857,10 @@ echo "</select>";
 </table>
 <BR>
 <?php } ?>
-<?php } ?>
 <?php include("_includes/layout/search-options-block.inc.php"); ?>
+<?php } else { ?>
+			<BR>Your search returned zero results.
+<?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>

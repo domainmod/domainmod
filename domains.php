@@ -1441,8 +1441,10 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 </table>
 <BR>
 <?php } ?>
-<?php } ?>
 <?php include("_includes/layout/search-options-block.inc.php"); ?>
+<?php } else { ?>
+			Your search returned zero results.
+<?php } ?>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
 </html>
