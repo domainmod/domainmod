@@ -112,9 +112,19 @@ if ($submission_failed != "1" && $total_rows > 0) {
 		    $full_export .= "\"Date Range:\",\"ALL\"\n";
         }
 		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n\n";
-		$full_export .= "\"Category\",\"SSL Certs\",\"Cost\"\n";
+		$full_export .= "\"Category\",\"SSL Certs\",\"Cost\",\"Per Cert\"\n";
 	
 		while ($row = mysql_fetch_object($result)) {
+
+			$per_cert = $row->total_cost / $row->number_of_certs;
+	
+			$temp_input_amount = $per_cert;
+			$temp_input_conversion = "";
+			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+			include("../../_includes/system/convert-and-format-currency.inc.php");
+			$per_cert = $temp_output_amount;
 
 			$temp_input_amount = $row->total_cost;
 			$temp_input_conversion = "";
@@ -124,7 +134,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 			include("../../_includes/system/convert-and-format-currency.inc.php");
 			$row->total_cost = $temp_output_amount;
 
-			$full_export .= "\"" . $row->name . "\",\"" . $row->number_of_certs . "\",\"" . $row->total_cost . "\"\n";
+			$full_export .= "\"" . $row->name . "\",\"" . $row->number_of_certs . "\",\"" . $row->total_cost . "\",\"" . $per_cert . "\"\n";
 
 		}
 
@@ -183,10 +193,22 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         <font class="main_table_heading">SSL Certs</font></td>
         <td class="main_table_cell_heading_active">
         <font class="main_table_heading">Cost</font></td>
+        <td class="main_table_cell_heading_active">
+        <font class="main_table_heading">Per Cert</font></td>
     </tr>
 
 	<?php
 	while ($row = mysql_fetch_object($result)) {
+
+		$per_cert = $row->total_cost / $row->number_of_certs;
+
+		$temp_input_amount = $per_cert;
+		$temp_input_conversion = "";
+		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+		include("../../_includes/system/convert-and-format-currency.inc.php");
+		$per_cert = $temp_output_amount;
 
 		$temp_input_amount = $row->total_cost;
 		$temp_input_conversion = "";
@@ -200,6 +222,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 			<td class="main_table_cell_active"><strong><?=$row->name?></strong></td>
 			<td class="main_table_cell_active"><?=$row->number_of_certs?></td>
 			<td class="main_table_cell_active"><?=$row->total_cost?></td>
+			<td class="main_table_cell_active"><?=$per_cert?></td>
 		</tr><?php
 
 	}
