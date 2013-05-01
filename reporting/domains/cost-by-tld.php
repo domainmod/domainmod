@@ -130,7 +130,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 			include("../../_includes/system/convert-and-format-currency.inc.php");
 			$row->total_cost = $temp_output_amount;
 
-			$full_export .= "\"" . $row->tld . "\",\"" . $row->number_of_domains . "\",\"" . $row->total_cost . "\",\"" . $per_domain . "\"\n";
+			$full_export .= "\"." . $row->tld . "\",\"" . $row->number_of_domains . "\",\"" . $row->total_cost . "\",\"" . $per_domain . "\"\n";
 
 		}
 
@@ -215,7 +215,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		$row->total_cost = $temp_output_amount; ?>
 	
 		<tr class="main_table_row_active">
-			<td class="main_table_cell_active"><strong><?=$row->tld?></strong></td>
+			<td class="main_table_cell_active"><strong><a href="../../domains.php?tld=<?=$row->tld?>">.<?=$row->tld?></a></strong></td>
 			<td class="main_table_cell_active"><?=$row->number_of_domains?></td>
 			<td class="main_table_cell_active"><?=$row->total_cost?></td>
 			<td class="main_table_cell_active"><?=$per_domain?></td>

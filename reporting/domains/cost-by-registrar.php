@@ -62,7 +62,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT r.name, SUM(f.renewal_fee * cc.conversion) as total_cost, count(*) AS number_of_domains
+$sql = "SELECT r.id, r.name, SUM(f.renewal_fee * cc.conversion) as total_cost, count(*) AS number_of_domains
 		FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r
 		WHERE d.fee_id = f.id
 		  AND f.currency_id = c.id
@@ -216,7 +216,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		$row->total_cost = $temp_output_amount; ?>
 	
 		<tr class="main_table_row_active">
-			<td class="main_table_cell_active"><strong><?=$row->name?></strong></td>
+			<td class="main_table_cell_active"><strong><a href="../../domains.php?rid=<?=$row->id?>"><?=$row->name?></a></strong></td>
 			<td class="main_table_cell_active"><?=$row->number_of_domains?></td>
 			<td class="main_table_cell_active"><?=$row->total_cost?></td>
 			<td class="main_table_cell_active"><?=$per_domain?></td>
