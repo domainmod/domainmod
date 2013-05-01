@@ -45,8 +45,8 @@ $software_section = "assets";
 <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-types.php">SSL Certificate Types</a><BR>
 <BR>
 <font class="subheadline">Shared</font><BR>
-<a href="<?php if ($web_root != "/") echo $web_root; ?>/ip-addresses.php">IP Addresses</a><BR>
-<a href="<?php if ($web_root != "/") echo $web_root; ?>/categories.php">Categories</a><BR>
+<a href="<?php if ($web_root != "/") echo $web_root; ?>/categories.php">Categories</a> (in transition, currently inherits from domain)<BR>
+<a href="<?php if ($web_root != "/") echo $web_root; ?>/ip-addresses.php">IP Addresses</a> (in transition, currently inherits from domain)<BR>
 <a href="<?php if ($web_root != "/") echo $web_root; ?>/owners.php">Owners</a><BR>
 <?php include("_includes/footer.inc.php"); ?>
 </body>
