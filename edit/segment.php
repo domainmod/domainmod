@@ -29,6 +29,11 @@ $software_section = "segments";
 
 $segid = $_GET['segid'];
 
+if ($_SESSION['http_referer_set'] != "1") {
+	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
+	$_SESSION['http_referer_set'] = "1";
+}
+
 // 'Delete Domain' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
@@ -135,7 +140,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 			$_SESSION['result_message'] = "Segment <font class=\"highlight\">$new_name</font> Updated<BR>";
 	
-			include("../_includes/system/update-segments.inc.php");
+			$_SESSION['http_referer_set'] = "";
+			header("Location: " . $_SESSION['http_referer']);
+			exit;
 		
 		}
 

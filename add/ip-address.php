@@ -33,6 +33,11 @@ $new_rdns = $_POST['new_rdns'];
 $new_notes = $_POST['new_notes'];
 $new_default_ip_address = $_POST['new_default_ip_address'];
 
+if ($_SESSION['http_referer_set'] != "1") {
+	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
+	$_SESSION['http_referer_set'] = "1";
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != '' && $new_ip != '') {
@@ -62,7 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Added<BR>";
-		header("Location: ../ip-addresses.php");
+
+		$_SESSION['http_referer_set'] = "";
+		header("Location: " . $_SESSION['http_referer']);
 		exit;
 		
 	} else {

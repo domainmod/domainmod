@@ -43,6 +43,11 @@ $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 $new_sslcid = $_POST['new_sslcid'];
 
+if ($_SESSION['http_referer_set'] != "1") {
+	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
+	$_SESSION['http_referer_set'] = "1";
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if (CheckDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "" && $new_domain_id != "0" && $new_account_id != "0" && $new_type_id != "0") {
@@ -95,6 +100,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Updated<BR>";
 
 		include("../_includes/system/update-ssl-fees.inc.php");
+
+		$_SESSION['http_referer_set'] = "";
+		header("Location: " . $_SESSION['http_referer']);
+		exit;
 
 	} else {
 	

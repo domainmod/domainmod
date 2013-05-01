@@ -38,6 +38,11 @@ $new_notes = $_POST['new_notes'];
 $new_default_owner = $_REQUEST['new_default_owner'];
 $new_oid = $_POST['new_oid'];
 
+if ($_SESSION['http_referer_set'] != "1") {
+	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
+	$_SESSION['http_referer_set'] = "1";
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_owner != "") {
@@ -76,6 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$oid = $new_oid;
 		
 		$_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Updated<BR>";
+
+		$_SESSION['http_referer_set'] = "";
+		header("Location: " . $_SESSION['http_referer']);
+		exit;
 
 	} else {
 	

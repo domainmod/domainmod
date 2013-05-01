@@ -48,6 +48,11 @@ $new_display_ssl_type = $_POST['new_display_ssl_type'];
 $new_display_ssl_expiry_date = $_POST['new_display_ssl_expiry_date'];
 $new_display_ssl_fee = $_POST['new_display_ssl_fee'];
 
+if ($_SESSION['http_referer_set'] != "1") {
+	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
+	$_SESSION['http_referer_set'] = "1";
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new_number_of_ssl_certs != "") {
 
 	$_SESSION['result_message'] .= "Your System Settings were updated<BR>";
@@ -125,7 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 		$_SESSION['default_currency_symbol_space'] = $row_currencies->symbol_space;
 	}
 
-	header("Location: index.php");
+	$_SESSION['http_referer_set'] = "";
+	header("Location: " . $_SESSION['http_referer']);
 	exit;
 
 } else {

@@ -29,6 +29,11 @@ $software_section = "system";
 // Form Variables
 $new_expiration_email = $_POST['new_expiration_email'];
 
+if ($_SESSION['http_referer_set'] != "1") {
+	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
+	$_SESSION['http_referer_set'] = "1";
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$sql = "UPDATE user_settings
@@ -40,8 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$_SESSION['expiration_email'] = $new_expiration_email;
 
 	$_SESSION['result_message'] .= "Your Email Settings were updated<BR>";
-	
-	header("Location: index.php");
+
+	$_SESSION['http_referer_set'] = "";
+	header("Location: " . $_SESSION['http_referer']);
 	exit;
 
 } else {

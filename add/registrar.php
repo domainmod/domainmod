@@ -32,6 +32,11 @@ $new_url = $_POST['new_url'];
 $new_notes = $_POST['new_notes'];
 $new_default_registrar = $_POST['new_default_registrar'];
 
+if ($_SESSION['http_referer_set'] != "1") {
+	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
+	$_SESSION['http_referer_set'] = "1";
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_registrar != "" && $new_url != "") {
@@ -68,8 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		} else {
 
-			header("Location: ../registrars.php");
-			
+			$_SESSION['http_referer_set'] = "";
+			header("Location: " . $_SESSION['http_referer']);
+
 		}
 		exit;
 

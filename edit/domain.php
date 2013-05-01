@@ -48,6 +48,11 @@ $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 $new_did = $_POST['new_did'];
 
+if ($_SESSION['http_referer_set'] != "1") {
+	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
+	$_SESSION['http_referer_set'] = "1";
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
@@ -109,6 +114,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		include("../_includes/system/update-domain-fees.inc.php");
 		include("../_includes/system/update-segments.inc.php");
+
+		$_SESSION['http_referer_set'] = "";
+		header("Location: " . $_SESSION['http_referer']);
+		exit;
 
 	} else {
 	

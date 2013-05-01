@@ -32,6 +32,11 @@ $really_del = $_GET['really_del'];
 
 $rid = $_GET['rid'];
 
+if ($_SESSION['http_referer_set'] != "1") {
+	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
+	$_SESSION['http_referer_set'] = "1";
+}
+
 // Form Variables
 $new_registrar = $_POST['new_registrar'];
 $new_url = $_POST['new_url'];
@@ -74,6 +79,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$rid = $new_rid;
 
 		$_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Updated<BR>";
+
+		$_SESSION['http_referer_set'] = "";
+		header("Location: " . $_SESSION['http_referer']);
+		exit;
 		
 	} else {
 

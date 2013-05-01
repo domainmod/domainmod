@@ -31,6 +31,11 @@ include("../../../_includes/auth/auth-check.inc.php");
 $page_title = "Add A New User";
 $software_section = "system";
 
+if ($_SESSION['http_referer_set'] != "1") {
+	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
+	$_SESSION['http_referer_set'] = "1";
+}
+
 // Form Variables
 $new_first_name = $_POST['new_first_name'];
 $new_last_name = $_POST['new_last_name'];
@@ -83,10 +88,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		$temp_input_user_id = $temp_user_id;
 		$temp_input_default_currency = $_SESSION['system_default_currency'];
 		include("../../../_includes/system/update-conversion-rates.inc.php");
-		
-		header("Location: ../users.php");
+
+		$_SESSION['http_referer_set'] = "";
+		header("Location: " . $_SESSION['http_referer']);
 		exit;
-		
+
 	}
 
 } else {

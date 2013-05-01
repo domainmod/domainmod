@@ -58,6 +58,11 @@ $new_dnsid = $_POST['new_dnsid'];
 $new_notes = $_POST['new_notes'];
 $new_default_dns = $_REQUEST['new_default_dns'];
 
+if ($_SESSION['http_referer_set'] != "1") {
+	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
+	$_SESSION['http_referer_set'] = "1";
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != "" && $new_dns1 != "" && $new_dns2 != "") {
@@ -132,6 +137,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$dnsid = $new_dnsid;
 		
 		$_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Updated<BR>";
+
+		$_SESSION['http_referer_set'] = "";
+		header("Location: " . $_SESSION['http_referer']);
+		exit;
 
 	} else {
 	

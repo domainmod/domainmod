@@ -40,6 +40,11 @@ $new_ipid = $_POST['new_ipid'];
 $new_notes = $_POST['new_notes'];
 $new_default_ip_address = $_REQUEST['new_default_ip_address'];
 
+if ($_SESSION['http_referer_set'] != "1") {
+	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
+	$_SESSION['http_referer_set'] = "1";
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != "" && $new_ip != "") {
@@ -82,6 +87,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$ipid = $new_ipid;
 		
 		$_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Updated<BR>";
+
+		$_SESSION['http_referer_set'] = "";
+		header("Location: " . $_SESSION['http_referer']);
+		exit;
 
 	} else {
 	

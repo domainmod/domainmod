@@ -42,6 +42,11 @@ $new_notes = $_POST['new_notes'];
 $new_raid = $_POST['new_raid'];
 $new_default_account = $_POST['new_default_account'];
 
+if ($_SESSION['http_referer_set'] != "1") {
+	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
+	$_SESSION['http_referer_set'] = "1";
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" && $new_registrar_id != "0") {
@@ -97,6 +102,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
 		
 		$_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar, $temp_owner)</font> Updated<BR>";
+
+		$_SESSION['http_referer_set'] = "";
+		header("Location: " . $_SESSION['http_referer']);
+		exit;
 
 	} else {
 	
