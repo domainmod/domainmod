@@ -308,7 +308,7 @@ echo "<option value=\"0\""; if ($new_active == "0") echo " selected"; echo ">Exp
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Notes</strong> [<a target="_blank" href="view-ssl-cert-notes.php?sslcid=<?=$sslcid?>">view full notes</a>]<BR><BR>
+<strong>Notes</strong> [<a target="_blank" href="ssl-cert-notes.php?sslcid=<?=$sslcid?>">view full notes</a>]<BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR><BR>
 <input type="hidden" name="new_sslcid" value="<?=$sslcid?>">
