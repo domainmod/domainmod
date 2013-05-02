@@ -22,7 +22,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 
-$page_title = "Domain Categories";
+$page_title = "Domain & SSL Categories";
 $software_section = "categories";
 ?>
 <?php include("_includes/doctype.inc.php"); ?>
@@ -41,7 +41,7 @@ $sql = "SELECT id, name, stakeholder, default_category
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $number_of_categories = mysql_num_rows($result);
 ?>
-Below is a list of all the Domain Categories that are stored in your <?=$software_title?>.<BR>
+Below is a list of all the Domain & SSL Categories that are stored in your <?=$software_title?>.<BR>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php $has_active = "1"; ?>
 <table class="main_table">
