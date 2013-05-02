@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ($_SESSION['need_ssl_account'] == "1") {
 			
 			include("../../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
-			header("Location: ../ssl-certs.php");
+			header("Location: ../../ssl-certs.php");
 
 		} else {
 
