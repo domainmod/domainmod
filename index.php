@@ -95,7 +95,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			$result_user_settings = mysql_query($sql_user_settings,$connection);
 
 			while ($row_user_settings = mysql_fetch_object($result_user_settings)) {
+
 				$_SESSION['default_currency'] = $row_user_settings->default_currency;
+				$_SESSION['default_category'] = $row_user_settings->default_category;
+				$_SESSION['default_dns'] = $row_user_settings->default_dns;
+				$_SESSION['default_host'] = $row_user_settings->default_host;
+				$_SESSION['default_ip_address'] = $row_user_settings->default_ip_address;
+				$_SESSION['default_owner'] = $row_user_settings->default_owner;
+				$_SESSION['default_registrar'] = $row_user_settings->default_registrar;
+				$_SESSION['default_registrar_account'] = $row_user_settings->default_registrar_account;
+				$_SESSION['default_ssl_provider_account'] = $row_user_settings->default_ssl_provider_account;
+				$_SESSION['default_ssl_type'] = $row_user_settings->default_ssl_type;
+				$_SESSION['default_ssl_provider'] = $row_user_settings->default_ssl_provider;
 				$_SESSION['number_of_domains'] = $row_user_settings->number_of_domains;
 				$_SESSION['number_of_ssl_certs'] = $row_user_settings->number_of_ssl_certs;
 				$_SESSION['display_domain_owner'] = $row_user_settings->display_domain_owner;
@@ -118,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['display_ssl_category'] = $row_user_settings->display_ssl_category;
 				$_SESSION['display_ssl_expiry_date'] = $row_user_settings->display_ssl_expiry_date;
 				$_SESSION['display_ssl_fee'] = $row_user_settings->display_ssl_fee;
+
 			}
 
 			$sql_currencies = "SELECT name, symbol, symbol_order, symbol_space
