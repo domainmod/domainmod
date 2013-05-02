@@ -1,5 +1,5 @@
 <?php
-// /dns.php
+// /assets/dns.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,23 +16,23 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
+include("../_includes/start-session.inc.php");
+include("../_includes/config.inc.php");
+include("../_includes/database.inc.php");
+include("../_includes/software.inc.php");
+include("../_includes/auth/auth-check.inc.php");
 
 $page_title = "DNS Profiles";
 $software_section = "dns";
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/header.inc.php"); ?>
+<?php include("../_includes/header.inc.php"); ?>
 <?php
 $sql = "SELECT id, name, number_of_servers, default_dns
 		FROM dns
@@ -129,6 +129,6 @@ if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 <?php if (!$has_active && !$has_inactive) { ?>
 		<BR>You don't currently have any DNS Profiles. <a href="add/dns.php">Click here to add one</a>.
 <?php } ?>
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

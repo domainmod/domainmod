@@ -1,5 +1,5 @@
 <?php
-// /registrar-accounts.php
+// /assets/registrar-accounts.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,11 +16,11 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
+include("../_includes/start-session.inc.php");
+include("../_includes/config.inc.php");
+include("../_includes/database.inc.php");
+include("../_includes/software.inc.php");
+include("../_includes/auth/auth-check.inc.php");
 
 $page_title = "Domains Registrar Accounts";
 $software_section = "accounts";
@@ -30,14 +30,14 @@ $rid = $_GET['rid'];
 $raid = $_GET['raid'];
 $oid = $_GET['oid'];
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/header.inc.php"); ?>
+<?php include("../_includes/header.inc.php"); ?>
 <?php
 
 if ($rid != "") { $rid_string = " AND ra.registrar_id = '$rid' "; } else { $rid_string = ""; }
@@ -196,6 +196,6 @@ if ($has_active == "1" || $has_inactive == "1") echo "</table>";
                     <BR>You don't currently have any Registrar Accounts. <a href="add/account.php">Click here to add one</a>.<BR>
 			<?php } ?>
 <?php } ?>
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

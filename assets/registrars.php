@@ -1,5 +1,5 @@
 <?php
-// /registrars.php
+// /assets/registrars.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,23 +16,23 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
+include("../_includes/start-session.inc.php");
+include("../_includes/config.inc.php");
+include("../_includes/database.inc.php");
+include("../_includes/software.inc.php");
+include("../_includes/auth/auth-check.inc.php");
 
 $page_title = "Domain Registrars";
 $software_section = "registrars";
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/header.inc.php"); ?>
+<?php include("../_includes/header.inc.php"); ?>
 <?php
 $sql = "SELECT r.id AS rid, r.name AS rname, r.default_registrar, r.url
 		FROM registrars AS r, domains AS d
@@ -109,7 +109,7 @@ Below is a list of all the Domain Registrars that are stored in your <?=$softwar
         
                     if ($total_accounts >= 1) { ?>
             
-                        <a class="nobold" href="domains.php?rid=<?=$row->rid?>"><?=number_format($total_domains)?></a>
+                        <a class="nobold" href="../domains.php?rid=<?=$row->rid?>"><?=number_format($total_domains)?></a>
                         <?php 
             
                     } else { ?>
@@ -218,6 +218,6 @@ if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 <?php if (!$has_active && !$has_inactive) { ?>
 		<BR>You don't currently have any Domain Registrars. <a href="add/registrar.php">Click here to add one</a>.
 <?php } ?>
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

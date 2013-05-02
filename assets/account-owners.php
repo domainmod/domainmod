@@ -1,5 +1,5 @@
 <?php
-// /account-owners.php
+// /assets/account-owners.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,11 +16,11 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
+include("../_includes/start-session.inc.php");
+include("../_includes/config.inc.php");
+include("../_includes/database.inc.php");
+include("../_includes/software.inc.php");
+include("../_includes/auth/auth-check.inc.php");
 
 $page_title = "Domain Registrar & SSL Provider Account Owners";
 $software_section = "owners";
@@ -30,14 +30,14 @@ $sql = "SELECT id
 $result = mysql_query($sql,$connection);
 if (mysql_num_rows($result) == 0) $zero_owners = "1";
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>	
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/header.inc.php"); ?>
+<?php include("../_includes/header.inc.php"); ?>
 <?php
 $sql = "SELECT id, name, default_owner
 		FROM owners
@@ -302,6 +302,6 @@ if ($has_active_ssl == "1" || $has_inactive_ssl == "1") echo "</table>";
 <?php if (!$has_active_domain && !$has_inactive_domain && !$has_active_ssl && !$has_inactive_ssl) { ?>
         <BR><BR>You don't currently have any Owners. <a href="add/owner.php">Click here to add one</a>.
 <?php } ?>
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>

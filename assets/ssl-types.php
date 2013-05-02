@@ -1,5 +1,5 @@
 <?php
-// /ssl-types.php
+// /assets/ssl-types.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,23 +16,23 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
+include("../_includes/start-session.inc.php");
+include("../_includes/config.inc.php");
+include("../_includes/database.inc.php");
+include("../_includes/software.inc.php");
+include("../_includes/auth/auth-check.inc.php");
 
 $page_title = "SSL Certificate Types";
 $software_section = "ssl-types";
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/header.inc.php"); ?>
+<?php include("../_includes/header.inc.php"); ?>
 <?php
 $sql = "SELECT id, type, default_type
 		FROM ssl_cert_types
@@ -117,6 +117,6 @@ if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 <?php if (!$has_active && !$has_inactive) { ?>
 		<BR>You don't currently have any SSL Types. <a href="add/ssl-type.php">Click here to add one</a>.
 <?php } ?>
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("../_includes/footer.inc.php"); ?>
 </body>
 </html>
