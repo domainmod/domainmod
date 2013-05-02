@@ -312,7 +312,7 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
 		  $sort_by_string";	
 
 $sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) AS grand_total
-				    FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
+					FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
 					WHERE d.account_id = ra.id
 					  AND ra.registrar_id = r.id
 					  AND ra.owner_id = o.id
@@ -337,6 +337,7 @@ $sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) AS grand_total
 					  $search_string
 					  $quick_search_string
 					  $sort_by_string";	
+
 $result_grand_total = mysql_query($sql_grand_total,$connection) or die(mysql_error());
 while ($row_grand_total = mysql_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;

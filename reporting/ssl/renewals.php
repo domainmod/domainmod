@@ -60,8 +60,8 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, (f.renewal_fee * cc.conversion) AS converted_renewal_fee, cc.conversion
-		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_cert_types AS sslcf
+$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, (f.renewal_fee * cc.conversion) AS converted_renewal_fee, cc.conversion, d.domain, ip.name AS ip_name, ip.ip, ip.rdns, cat.name AS cat_name
+		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat
 		WHERE sslc.account_id = sslpa.id
 		  AND sslc.type_id = sslcf.id
 		  AND sslpa.ssl_provider_id = sslp.id
@@ -70,6 +70,9 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date,
 		  AND sslc.type_id = f.type_id
 		  AND f.currency_id = c.id
 		  AND c.id = cc.currency_id
+		  AND sslc.domain_id = d.id
+		  AND sslc.ip_id = ip.id
+		  AND sslc.cat_id = cat.id
 		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 		  AND sslc.active NOT IN ('0')
 		  " . $range_string . "
@@ -103,7 +106,7 @@ if ($export == "1") {
 		$full_export .= "\"Date Range:\",\"ALL\"\n";
 	}
 	$full_export .= "\"Number of SSL Certificates:\",\"" . number_format($total_results) . "\"\n\n";
-	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"Owner\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Notes\"\n";
+	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Category\",\"Owner\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
@@ -114,19 +117,6 @@ if ($export == "1") {
 		elseif ($row->active == "5") { $ssl_status = "PENDING (REGISTRATION)"; } 
 		else { $ssl_status = "ERROR -- PROBLEM WITH CODE IN SSL-CERT-RENEWALS.PHP"; } 
 		
-		$sql_domain = "SELECT d.domain, ip.name, ip.ip, ip.rdns
-					   FROM domains AS d, ip_addresses AS ip
-					   WHERE d.ip_id = ip.id
-					     AND d.id = '$row->domain_id'";
-		$result_domain = mysql_query($sql_domain,$connection);
-		
-		while ($row_domain = mysql_fetch_object($result_domain)) {
-			$full_domain_name = $row_domain->domain;
-			$full_ip_name = $row_domain->name;
-			$full_ip_address = $row_domain->ip;
-			$full_ip_rdns = $row_domain->rdns;
-		}
-
 		$temp_input_amount = $row->converted_renewal_fee;
 		$temp_input_conversion = "";
 		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
@@ -135,7 +125,7 @@ if ($export == "1") {
 		include("../../_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
-		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"\",\"" . $export_renewal_fee . "\",\"$row->name\",\"$full_domain_name\",\"$row->ssl_provider_name\",\"$row->username\",\"$row->type\",\"$row->owner_name\",\"$full_ip_name\",\"$full_ip_address\",\"$full_ip_rdns\",\"$row->notes\"\n";
+		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"\",\"" . $export_renewal_fee . "\",\"$row->name\",\"$row->domain\",\"$row->ssl_provider_name\",\"$row->username\",\"$row->type\",\"$row->ip_name\",\"$row->ip\",\"$row->rdns\",\"$row->cat_name\",\"$row->owner_name\",\"$row->notes\"\n";
 
 	}
 	
@@ -216,6 +206,16 @@ if ($export == "1") {
     	<font class="main_table_heading">Type</font>
     </td>
 <?php } ?>
+<?php if ($_SESSION['display_ssl_ip'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+    	<font class="main_table_heading">IP Address</font>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['display_ssl_category'] == "1") { ?>
+	<td class="main_table_cell_heading_active">
+    	<font class="main_table_heading">Category</font>
+    </td>
+<?php } ?>
 <?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Owner</font>
@@ -251,21 +251,7 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 	</td>
 <?php if ($_SESSION['display_ssl_domain'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?php
-		$sql_domain = "SELECT d.domain, ip.name, ip.ip, ip.rdns
-					   FROM domains AS d, ip_addresses AS ip
-					   WHERE d.ip_id = ip.id
-					     AND d.id = '$row->domain_id'";
-		$result_domain = mysql_query($sql_domain,$connection);
-		
-		while ($row_domain = mysql_fetch_object($result_domain)) {
-			$full_domain_name = $row_domain->domain;
-			$full_ip_name = $row_domain->name;
-			$full_ip_address = $row_domain->ip;
-			$full_ip_rdns = $row_domain->rdns;
-		}
-		?>		
-		<?=$full_domain_name?>
+		<?=$row->domain?>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_provider'] == "1") { ?>
@@ -281,6 +267,16 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 <?php if ($_SESSION['display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?=$row->type?>
+    </td>
+<?php } ?>
+<?php if ($_SESSION['display_ssl_ip'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=$row->ip_name?> (<?=$row->ip?>)
+    </td>
+<?php } ?>
+<?php if ($_SESSION['display_ssl_category'] == "1") { ?>
+	<td class="main_table_cell_active">
+		<?=$row->cat_name?>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
@@ -303,10 +299,11 @@ Associated Domain<BR>
 SSL Provider<BR>
 SSL Account<BR>
 SSL Type<BR>
-Owner<BR>
 IP Address Name<BR>
 IP Address<BR>
 IP Address rDNS<BR>
+Category<BR>
+Owner<BR>
 Notes<BR>
 <?php } ?>
 <?php include("../../_includes/footer.inc.php"); ?>

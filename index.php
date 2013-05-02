@@ -114,6 +114,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['display_ssl_account'] = $row_user_settings->display_ssl_account;
 				$_SESSION['display_ssl_domain'] = $row_user_settings->display_ssl_domain;
 				$_SESSION['display_ssl_type'] = $row_user_settings->display_ssl_type;
+				$_SESSION['display_ssl_ip'] = $row_user_settings->display_ssl_ip;
+				$_SESSION['display_ssl_category'] = $row_user_settings->display_ssl_category;
 				$_SESSION['display_ssl_expiry_date'] = $row_user_settings->display_ssl_expiry_date;
 				$_SESSION['display_ssl_fee'] = $row_user_settings->display_ssl_fee;
 			}

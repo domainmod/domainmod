@@ -1,5 +1,5 @@
 <?php
-// /owners.php
+// /account-owners.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -22,7 +22,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 
-$page_title = "Owner Breakdown";
+$page_title = "Domain Registrar & SSL Provider Account Owners";
 $software_section = "owners";
 
 $sql = "SELECT id

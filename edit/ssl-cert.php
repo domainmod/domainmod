@@ -37,6 +37,8 @@ $sslcid = $_GET['sslcid'];
 $new_domain_id = $_POST['new_domain_id'];
 $new_name = $_POST['new_name'];
 $new_type_id = $_POST['new_type_id'];
+$new_ip_id = $_POST['new_ip_id'];
+$new_cat_id = $_POST['new_cat_id'];
 $new_expiry_date = $_POST['new_expiry_date'];
 $new_account_id = $_POST['new_account_id'];
 $new_active = $_POST['new_active'];
@@ -50,7 +52,7 @@ if ($_SESSION['http_referer_set'] != "1") {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (CheckDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "" && $new_domain_id != "0" && $new_account_id != "0" && $new_type_id != "0") {
+	if (CheckDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "" && $new_ip_id != "" && $new_cat_id != "" && $new_domain_id != "0" && $new_account_id != "0" && $new_type_id != "0" && $new_ip_id != "0" && $new_cat_id != "0") {
 
 		$sql = "SELECT ssl_provider_id, owner_id
 				FROM ssl_accounts
@@ -86,6 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   domain_id = '$new_domain_id',
 						   name = '" . mysql_real_escape_string($new_name) . "',
 						   type_id = '$new_type_id',
+						   ip_id = '$new_ip_id',
+						   cat_id = '$new_cat_id',
 						   expiry_date = '$new_expiry_date',
 						   fee_id = '$temp_fee_id',
 						   notes = '" . mysql_real_escape_string($new_notes) . "',
@@ -114,10 +118,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS account_id, sslcf.id AS type_id, sslcf.type
-			FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_cert_types AS sslcf
+	$sql = "SELECT sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS account_id, sslcf.id AS type_id, ip.id AS ip_id, cat.id AS cat_id
+			FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat
 			WHERE sslc.account_id = sslpa.id
 			  AND sslc.type_id = sslcf.id
+			  AND sslc.ip_id = ip.id
+			  AND sslc.cat_id = cat.id
 			  AND sslc.id = '$sslcid'";
 	$result = mysql_query($sql,$connection);
 	
@@ -126,7 +132,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_domain_id = $row->domain_id;
 		$new_name = $row->name;
 		$new_type_id = $row->type_id;
-		$new_type = $row->type;
+		$new_ip_id = $row->ip_id;
+		$new_cat_id = $row->cat_id;
 		$new_expiry_date = $row->expiry_date;
 		$new_notes = $row->notes;
 		$new_active = $row->active;
@@ -240,6 +247,50 @@ while ($row_type = mysql_fetch_object($result_type)) {
 	} else {
 
 		echo "<option value=\"$row_type->id\">$row_type->type</option>";
+	
+	}
+}
+echo "</select>";
+?>
+<BR><BR>
+<strong>IP Address</strong><BR><BR>
+<?php
+$sql_ip = "SELECT id, ip, name
+		   FROM ip_addresses
+		   ORDER BY name, ip";
+$result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
+echo "<select name=\"new_ip_id\">";
+while ($row_ip = mysql_fetch_object($result_ip)) {
+
+	if ($row_ip->id == $new_ip_id) {
+
+		echo "<option value=\"$row_ip->id\" selected>$row_ip->name ($row_ip->ip)</option>";
+	
+	} else {
+
+		echo "<option value=\"$row_ip->id\">$row_ip->name ($row_ip->ip)</option>";
+	
+	}
+}
+echo "</select>";
+?>
+<BR><BR>
+<strong>Category</strong><BR><BR>
+<?php
+$sql_cat = "SELECT id, name
+			FROM categories
+			ORDER BY name";
+$result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
+echo "<select name=\"new_cat_id\">";
+while ($row_cat = mysql_fetch_object($result_cat)) {
+
+	if ($row_cat->id == $new_cat_id) {
+
+		echo "<option value=\"$row_cat->id\" selected>$row_cat->name</option>";
+	
+	} else {
+
+		echo "<option value=\"$row_cat->id\">$row_cat->name</option>";
 	
 	}
 }
