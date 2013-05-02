@@ -20,7 +20,7 @@
 if ($software_section == "domains") {
 
 	if ($_SESSION['need_registrar'] != "1" && $_SESSION['need_registrar_account'] != "1") { ?>
-    	&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/domain.php">Add A New Domain</a><?php 
+    	&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/domain.php">Add A New Domain</a><?php 
 	} 
 	
 } elseif ($software_section == "ssl-providers") { ?>
@@ -36,7 +36,7 @@ if ($software_section == "domains") {
 } elseif ($software_section == "ssl-certs") {
 	
 	if ($_SESSION['need_ssl_provider'] != "1" && $_SESSION['need_ssl_account'] != "1" && $_SESSION['need_domain'] != "1") { ?>
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/ssl-cert.php">Add A New SSL Certificate</a><?php 
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-cert.php">Add A New SSL Certificate</a><?php 
 	}
 
 } elseif ($software_section == "ssl-types") { ?>
