@@ -1,5 +1,5 @@
 <?php
-// /add/registrar.php
+// /assets/add/registrar.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,12 +16,12 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/start-session.inc.php");
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
+include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Adding A New Registrar";
 $software_section = "registrars";
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		if ($_SESSION['need_registrar'] == "1") {
 			
-			include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
+			include("../../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 			header("Location: ../domains.php");
 
 		} else {
@@ -88,14 +88,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 ?>
-<?php include("../_includes/doctype.inc.php"); ?>
+<?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../../_includes/header.inc.php"); ?>
 <form name="add_registrar_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Registrar Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_registrar" type="text" value="<?=$new_registrar?>" size="50" maxlength="255">
@@ -111,6 +111,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR><BR>
 <input type="submit" name="button" value="Add This Registrar &raquo;">
 </form>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>

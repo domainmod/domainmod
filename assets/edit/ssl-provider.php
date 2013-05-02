@@ -1,5 +1,5 @@
 <?php
-// /edit/ssl-provider.php
+// /assets/edit/ssl-provider.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,12 +16,12 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/start-session.inc.php");
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
+include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Editting An SSL Provider";
 $software_section = "ssl-providers";
@@ -157,21 +157,21 @@ if ($really_del == "1") {
 
 	$_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Deleted<BR>";
 
-	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
+	include("../../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
 	header("Location: ../ssl-providers.php");
 	exit;
 
 }
 ?>
-<?php include("../_includes/doctype.inc.php"); ?>
+<?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../../_includes/header.inc.php"); ?>
 <form name="edit_ssl_provider_form" method="post" action="<?=$PHP_SELF?>">
 <strong>SSL Provider Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_ssl_provider" type="text" value="<?=$new_ssl_provider?>" size="50" maxlength="255">
@@ -190,6 +190,6 @@ if ($really_del == "1") {
 </form>
 <BR><BR><a href="ssl-provider-fees.php?sslpid=<?=$sslpid?>">EDIT THIS SSL PROVIDER'S FEES</a><BR>
 <BR><a href="<?=$PHP_SELF?>?sslpid=<?=$sslpid?>&del=1">DELETE THIS SSL PROVIDER</a>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>

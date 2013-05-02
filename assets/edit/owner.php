@@ -1,5 +1,5 @@
 <?php
-// /edit/owner.php
+// /assets/edit/owner.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,12 +16,12 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/start-session.inc.php");
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
+include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Editting An Owner";
 $software_section = "owners";
@@ -175,14 +175,14 @@ if ($really_del == "1") {
 
 }
 ?>
-<?php include("../_includes/doctype.inc.php"); ?>
+<?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../../_includes/header.inc.php"); ?>
 <form name="edit_owner_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Owner Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_owner" type="text" value="<?php if ($new_owner != "") echo $new_owner; ?>
@@ -198,6 +198,6 @@ if ($really_del == "1") {
 <input type="submit" name="button" value="Update This Owner &raquo;">
 </form>
 <BR><BR><a href="<?=$PHP_SELF?>?oid=<?=$oid?>&del=1">DELETE THIS OWNER</a>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>

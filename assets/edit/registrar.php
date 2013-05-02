@@ -1,5 +1,5 @@
 <?php
-// /edit/registrar.php
+// /assets/edit/registrar.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,12 +16,12 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/start-session.inc.php");
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
+include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Editting A Registrar";
 $software_section = "registrars";
@@ -157,21 +157,21 @@ if ($really_del == "1") {
 
 	$_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Deleted<BR>";
 
-	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
+	include("../../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
 	header("Location: ../registrars.php");
 	exit;
 
 }
 ?>
-<?php include("../_includes/doctype.inc.php"); ?>
+<?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../../_includes/header.inc.php"); ?>
 <form name="edit_registrar_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Registrar Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_registrar" type="text" value="<?=$new_registrar?>" size="50" maxlength="255">
@@ -190,6 +190,6 @@ if ($really_del == "1") {
 </form>
 <BR><BR><a href="registrar-fees.php?rid=<?=$rid?>">EDIT THIS REGISTRAR'S FEES</a><BR>
 <BR><a href="<?=$PHP_SELF?>?rid=<?=$rid?>&del=1">DELETE THIS REGISTRAR</a>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>

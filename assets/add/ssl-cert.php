@@ -1,5 +1,5 @@
 <?php
-// /add/ssl-cert.php
+// /assets/add/ssl-cert.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,14 +16,14 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
-include("../_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
-include("../_includes/system/functions/check-date-format.inc.php");
+include("../../_includes/start-session.inc.php");
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
+include("../../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
+include("../../_includes/system/functions/check-date-format.inc.php");
 
 $page_title = "Adding A New SSL Certificate";
 $software_section = "ssl-certs";
@@ -71,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
 
-		include("../_includes/system/update-ssl-fees.inc.php");
-		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
+		include("../../_includes/system/update-ssl-fees.inc.php");
+		include("../../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
 		$_SESSION['http_referer_set'] = "";
 		header("Location: " . $_SESSION['http_referer']);
@@ -87,14 +87,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 ?>
-<?php include("../_includes/doctype.inc.php"); ?>
+<?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../../_includes/header.inc.php"); ?>
 <form name="add_ssl_cert_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Host / Label</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?=$new_name?>">
@@ -230,6 +230,6 @@ echo "</select>";
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This SSL Certificate &raquo;">
 </form>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>

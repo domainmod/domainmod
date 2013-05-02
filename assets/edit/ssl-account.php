@@ -1,5 +1,5 @@
 <?php
-// /edit/ssl-account.php
+// /assets/edit/ssl-account.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,12 +16,12 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/start-session.inc.php");
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
+include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Editting An SSL Provider Account";
 $software_section = "ssl-accounts";
@@ -172,22 +172,22 @@ if ($really_del == "1") {
 
 	$_SESSION['result_message'] = "SSL Account <font class=\"highlight\">$temp_username ($temp_ssl_provider_name, $temp_owner_name)</font> Deleted<BR>";
 
-	include("../_includes/system/update-ssl-fees.inc.php");
-	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
+	include("../../_includes/system/update-ssl-fees.inc.php");
+	include("../../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
 	header("Location: ../ssl-accounts.php");
 	exit;
 
 }
 ?>
-<?php include("../_includes/doctype.inc.php"); ?>
+<?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../../_includes/header.inc.php"); ?>
 <form name="edit_ssl_account_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Owner</strong><BR><BR>
 <?php
@@ -255,6 +255,6 @@ echo "</select>";
 <input type="submit" name="button" value="Update This SSL Provider Account &raquo;">
 </form>
 <BR><BR><a href="<?=$PHP_SELF?>?sslpaid=<?=$sslpaid?>&del=1">DELETE THIS SSL PROVIDER ACCOUNT</a>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>

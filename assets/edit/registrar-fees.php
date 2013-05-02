@@ -1,5 +1,5 @@
 <?php
-// /edit/registrar-fees.php
+// /assets/edit/registrar-fees.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,12 +16,12 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/start-session.inc.php");
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
+include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Editting A Registrar's Fees";
 $software_section = "registrars";
@@ -98,11 +98,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been updated<BR>";
 			
-			include("../_includes/system/update-domain-fees.inc.php");
+			include("../../_includes/system/update-domain-fees.inc.php");
 
 			$temp_input_user_id = $_SESSION['user_id'];
 			$temp_input_default_currency = $_SESSION['default_currency'];
-			include("../_includes/system/update-conversion-rates.inc.php");
+			include("../../_includes/system/update-conversion-rates.inc.php");
 
 		} else {
 			
@@ -133,11 +133,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
 
-			include("../_includes/system/update-domain-fees.inc.php");
+			include("../../_includes/system/update-domain-fees.inc.php");
 
 			$temp_input_user_id = $_SESSION['user_id'];
 			$temp_input_default_currency = $_SESSION['default_currency'];
-			include("../_includes/system/update-conversion-rates.inc.php");
+			include("../../_includes/system/update-conversion-rates.inc.php");
 
 		}
 
@@ -183,11 +183,11 @@ if ($really_del == "1") {
 		
 		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
 
-		include("../_includes/system/update-domain-fees.inc.php");
+		include("../../_includes/system/update-domain-fees.inc.php");
 
 		$temp_input_user_id = $_SESSION['user_id'];
 		$temp_input_default_currency = $_SESSION['default_currency'];
-		include("../_includes/system/update-conversion-rates.inc.php");
+		include("../../_includes/system/update-conversion-rates.inc.php");
 
 		header("Location: registrar-fees.php?rid=$rid");
 		exit;
@@ -196,14 +196,14 @@ if ($really_del == "1") {
 
 }
 ?>
-<?php include("../_includes/doctype.inc.php"); ?>
+<?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../../_includes/header.inc.php"); ?>
 <?php
 $sql = "SELECT name
 		FROM registrars
@@ -352,7 +352,7 @@ while ($row = mysql_fetch_object($result)) {
 			$temp_input_currency_symbol = $row->symbol;
 			$temp_input_currency_symbol_order = $row->symbol_order;
 			$temp_input_currency_symbol_space = $row->symbol_space;
-			include("../_includes/system/convert-and-format-currency.inc.php");
+			include("../../_includes/system/convert-and-format-currency.inc.php");
 			echo $temp_output_amount;
             ?>
 		</td>
@@ -363,7 +363,7 @@ while ($row = mysql_fetch_object($result)) {
 			$temp_input_currency_symbol = $row->symbol;
 			$temp_input_currency_symbol_order = $row->symbol_order;
 			$temp_input_currency_symbol_space = $row->symbol_space;
-			include("../_includes/system/convert-and-format-currency.inc.php");
+			include("../../_includes/system/convert-and-format-currency.inc.php");
 			echo $temp_output_amount;
             ?>
 		</td>
@@ -374,7 +374,7 @@ while ($row = mysql_fetch_object($result)) {
 			$temp_input_currency_symbol = $row->symbol;
 			$temp_input_currency_symbol_order = $row->symbol_order;
 			$temp_input_currency_symbol_space = $row->symbol_space;
-			include("../_includes/system/convert-and-format-currency.inc.php");
+			include("../../_includes/system/convert-and-format-currency.inc.php");
 			echo $temp_output_amount;
             ?>
 		</td>
@@ -386,6 +386,6 @@ while ($row = mysql_fetch_object($result)) {
 }
 ?>
 </table>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>
