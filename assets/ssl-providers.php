@@ -95,7 +95,7 @@ Below is a list of all the SSL Certificate Providers that are stored in your <?=
         
                 <?php if ($total_certs >= 1) { ?>
         
-                    <a class="nobold" href="ssl-certs.php?sslpid=<?=$row->id?>"><?=number_format($total_certs)?></a>
+                    <a class="nobold" href="../ssl-certs.php?sslpid=<?=$row->id?>"><?=number_format($total_certs)?></a>
         
                 <?php } else { ?>
         

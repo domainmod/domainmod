@@ -654,12 +654,12 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 <?php include("_includes/header.inc.php"); ?>
 <?php
 if ($_SESSION['need_registrar'] == "1") {
-	echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrars found. Please <a href=\"add/registrar.php\">click here</a> to add one.<BR><BR>";
+	echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrars found. Please <a href=\"assets/add/registrar.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
 
 if ($_SESSION['need_registrar_account'] == "1" && $_SESSION['need_registrar'] != "1") {
-	echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrar Accounts found. Please <a href=\"add/account.php\">click here</a> to add one.<BR><BR>";
+	echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrar Accounts found. Please <a href=\"assets/add/account.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
 
@@ -1367,7 +1367,7 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 <?php } ?>
 <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/registrar-fees.php?rid=<?=$row->r_id?>">
+		<a class="invisiblelink" href="assets/edit/registrar-fees.php?rid=<?=$row->r_id?>">
 		<?php
 		$temp_input_amount = $row->renewal_fee;
 		$temp_input_conversion = $row->conversion;
@@ -1404,37 +1404,37 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 <?php } ?>
 <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a>
+		<a class="invisiblelink" href="assets/edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a> (<a class="invisiblelink" href="edit/account.php?raid=<?=$row->ra_id?>"><?=substr($row->username, 0, 15);?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
+		<a class="invisiblelink" href="assets/edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a> (<a class="invisiblelink" href="assets/edit/account.php?raid=<?=$row->ra_id?>"><?=substr($row->username, 0, 15);?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->dnsid?>"><?=$row->dns_name?></a>
+		<a class="invisiblelink" href="assets/edit/dns.php?dnsid=<?=$row->dnsid?>"><?=$row->dns_name?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->ipid?>"><?=$row->ip_name?> (<?=$row->ip?>)</a>
+		<a class="invisiblelink" href="assets/edit/ip-address.php?ipid=<?=$row->ipid?>"><?=$row->ip_name?> (<?=$row->ip?>)</a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_host'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/host.php?whid=<?=$row->whid?>"><?=$row->wh_name?></a>
+		<a class="invisiblelink" href="assets/edit/host.php?whid=<?=$row->whid?>"><?=$row->wh_name?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_category'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->pcid?>"><?=$row->category_name?></a>
+		<a class="invisiblelink" href="assets/edit/category.php?pcid=<?=$row->pcid?>"><?=$row->category_name?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
+		<a class="invisiblelink" href="assets/edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
 	</td>
 <?php } ?>
 </tr>

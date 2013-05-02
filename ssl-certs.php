@@ -443,12 +443,12 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 <?php include("_includes/header.inc.php"); ?>
 <?php
 if ($_SESSION['need_ssl_provider'] == "1") {
-	echo "<strong><font class=\"highlight\">0</font></strong> SSL Providers found. Please <a href=\"add/ssl-provider.php\">click here</a> to add one.<BR><BR>";
+	echo "<strong><font class=\"highlight\">0</font></strong> SSL Providers found. Please <a href=\"assets/add/ssl-provider.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
 
 if ($_SESSION['need_ssl_account'] == "1" && $_SESSION['need_ssl_provider'] != "1") {
-	echo "<strong><font class=\"highlight\">0</font></strong> SSL Provider Accounts found. Please <a href=\"add/ssl-account.php\">click here</a> to add one.<BR><BR>";
+	echo "<strong><font class=\"highlight\">0</font></strong> SSL Provider Accounts found. Please <a href=\"assets/add/ssl-account.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
 
@@ -966,7 +966,7 @@ echo "</select>";
 <?php } ?>
 <?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?=$row->sslp_id?>">
+		<a class="invisiblelink" href="assets/edit/ssl-provider-fees.php?sslpid=<?=$row->sslp_id?>">
 		<?php
 		$temp_input_amount = $row->renewal_fee;
 		$temp_input_conversion = $row->conversion;
@@ -998,32 +998,32 @@ echo "</select>";
 <?php } ?>
 <?php if ($_SESSION['display_ssl_provider'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a>
+		<a class="invisiblelink" href="assets/edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a> (<a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpa_id?>"><?=substr($row->username, 0, 15);?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
+		<a class="invisiblelink" href="assets/edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a> (<a class="invisiblelink" href="assets/edit/ssl-account.php?sslpaid=<?=$row->sslpa_id?>"><?=substr($row->username, 0, 15);?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_type'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?=$row->type_id?>"><?=$row->type?></a>
+		<a class="invisiblelink" href="assets/edit/ssl-type.php?ssltid=<?=$row->type_id?>"><?=$row->type?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_ip'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->ip_id?>"><?=$row->ip_name?> (<?=$row->ip?>)</a>
+		<a class="invisiblelink" href="assets/edit/ip-address.php?ipid=<?=$row->ip_id?>"><?=$row->ip_name?> (<?=$row->ip?>)</a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_category'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->cat_id?>"><?=$row->cat_name?></a>
+		<a class="invisiblelink" href="assets/edit/category.php?pcid=<?=$row->cat_id?>"><?=$row->cat_name?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
+		<a class="invisiblelink" href="assets/edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
 	</td>
 <?php } ?>
 </tr>

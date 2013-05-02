@@ -69,7 +69,7 @@ Below is a list of all the Web Hosting Providers that are stored in your <?=$sof
     	<?php if ($active_domains == "0") { ?>
 	        <?=number_format($active_domains)?>
         <?php } else { ?>
-	        <a class="nobold" href="domains.php?whid=<?=$row->id?>"><?=number_format($active_domains)?></a>
+	        <a class="nobold" href="../domains.php?whid=<?=$row->id?>"><?=number_format($active_domains)?></a>
         <?php } ?>
     </td>
 </tr>

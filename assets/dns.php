@@ -74,7 +74,7 @@ Below is a list of all the DNS Profiles that are stored in your <?=$software_tit
 			$total_dns_count = $row_total_count->total_count;
 		}
 		?>
-        <a class="nobold" href="domains.php?dnsid=<?=$row->id?>"><?=number_format($total_dns_count)?></a>
+        <a class="nobold" href="../domains.php?dnsid=<?=$row->id?>"><?=number_format($total_dns_count)?></a>
     </td>
 </tr>
 <?php } ?>

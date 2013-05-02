@@ -105,7 +105,7 @@ Below is a list of all the Domain Registrar Accounts that are stored in your <?=
 				$result_domain_count = mysql_query($sql_domain_count,$connection);
 
 				while ($row_domain_count = mysql_fetch_object($result_domain_count)) { 
-					echo "<a class=\"nobold\" href=\"domains.php?oid=$row->oid&rid=$row->rid&raid=$row->raid\">" . number_format($row_domain_count->total_domain_count) . "</a>"; 
+					echo "<a class=\"nobold\" href=\"../domains.php?oid=$row->oid&rid=$row->rid&raid=$row->raid\">" . number_format($row_domain_count->total_domain_count) . "</a>"; 
 				} ?>
 
 			</td>

@@ -96,7 +96,7 @@ Below is a list of all the Domain Registrar and SSL Provider Account Owners that
 
     	<?php if ($total_domains >= 1) { ?>
 
-	    	<a class="nobold" href="domains.php?oid=<?=$row->id?>"><?=number_format($total_domains)?></a>
+	    	<a class="nobold" href="../domains.php?oid=<?=$row->id?>"><?=number_format($total_domains)?></a>
 
         <?php } else { ?>
 
@@ -225,7 +225,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 
     	<?php if ($total_certs >= 1) { ?>
 
-	    	<a class="nobold" href="ssl-certs.php?oid=<?=$row->id?>"><?=number_format($total_certs)?></a>
+	    	<a class="nobold" href="../ssl-certs.php?oid=<?=$row->id?>"><?=number_format($total_certs)?></a>
 
         <?php } else { ?>
 

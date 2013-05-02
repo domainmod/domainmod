@@ -105,7 +105,7 @@ Below is a list of all the SSL Provider Accounts that are stored in your <?=$sof
 				$result_total_count = mysql_query($sql_total_count,$connection);
 
 				while ($row_total_count = mysql_fetch_object($result_total_count)) { 
-					echo "<a class=\"nobold\" href=\"ssl-certs.php?oid=$row->oid&sslpid=$row->sslpid&sslpaid=$row->sslpaid\">" . number_format($row_total_count->total_cert_count) . "</a>"; 
+					echo "<a class=\"nobold\" href=\"../ssl-certs.php?oid=$row->oid&sslpid=$row->sslpid&sslpaid=$row->sslpaid\">" . number_format($row_total_count->total_cert_count) . "</a>"; 
 				} ?>
 
 			</td>

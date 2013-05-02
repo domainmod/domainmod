@@ -68,7 +68,7 @@ Below is a list of all the types of SSL certificates that are stored in your <?=
     	<?php if ($active_certs == "0") { ?>
 	        <?=number_format($active_certs)?>
         <?php } else { ?>
-	        <a class="nobold" href="ssl-certs.php?ssltid=<?=$row->id?>"><?=number_format($active_certs)?></a>
+	        <a class="nobold" href="../ssl-certs.php?ssltid=<?=$row->id?>"><?=number_format($active_certs)?></a>
         <?php } ?>
     </td>
 </tr>

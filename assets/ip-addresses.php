@@ -87,7 +87,7 @@ Below is a list of all the Domain & SSL IP Addresses that are stored in your <?=
 
     	<?php if ($total_domains >= 1) { ?>
 
-	    	<a class="nobold" href="domains.php?ipid=<?=$row->id?>"><?=number_format($total_domains)?></a>
+	    	<a class="nobold" href="../domains.php?ipid=<?=$row->id?>"><?=number_format($total_domains)?></a>
 
         <?php } else { ?>
 
@@ -198,7 +198,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 
     	<?php if ($total_certs >= 1) { ?>
 
-	    	<a class="nobold" href="ssl-certs.php?sslipid=<?=$row->id?>"><?=number_format($total_certs)?></a>
+	    	<a class="nobold" href="../ssl-certs.php?sslipid=<?=$row->id?>"><?=number_format($total_certs)?></a>
 
         <?php } else { ?>
 
