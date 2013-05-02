@@ -28,6 +28,16 @@ $software_section = "system";
 
 // Form Variables
 $new_default_currency = $_POST['new_default_currency'];
+$new_default_category = $_POST['new_default_category'];
+$new_default_dns = $_POST['new_default_dns'];
+$new_default_host = $_POST['new_default_host'];
+$new_default_ip_address = $_POST['new_default_ip_address'];
+$new_default_owner = $_POST['new_default_owner'];
+$new_default_registrar = $_POST['new_default_registrar'];
+$new_default_registrar_account = $_POST['new_default_registrar_account'];
+$new_default_ssl_provider_account = $_POST['new_default_ssl_provider_account'];
+$new_default_ssl_type = $_POST['new_default_ssl_type'];
+$new_default_ssl_provider = $_POST['new_default_ssl_provider'];
 $new_number_of_domains = $_POST['new_number_of_domains'];
 $new_number_of_ssl_certs = $_POST['new_number_of_ssl_certs'];
 $new_display_domain_owner = $_POST['new_display_domain_owner'];
@@ -59,11 +69,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 
 	$_SESSION['result_message'] .= "Your System Settings were updated<BR>";
 
-	$sql = "SELECT default_currency
+	$sql = "SELECT *
 			FROM user_settings
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
 	$result = mysql_query($sql,$connection);
-	while ($row = mysql_fetch_object($result)) { $saved_default_currency = $row->default_currency; }
+	while ($row = mysql_fetch_object($result)) { 
+	
+		$saved_default_currency = $row->default_currency; 
+		$saved_default_category = $row->default_category; 
+		$saved_default_dns = $row->default_dns; 
+		$saved_default_host = $row->default_host; 
+		$saved_default_ip_address = $row->default_ip_address; 
+		$saved_default_owner = $row->default_owner; 
+		$saved_default_registrar = $row->default_registrar; 
+		$saved_default_registrar_account = $row->default_registrar_account; 
+		$saved_default_ssl_provider_account = $row->default_ssl_provider_account; 
+		$saved_default_ssl_type = $row->default_ssl_type; 
+		$saved_default_ssl_provider = $row->default_ssl_provider; 
+
+	}
 	
 	if ($saved_default_currency != $new_default_currency) {
 
@@ -75,6 +99,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 
 	$sql = "UPDATE user_settings
 			SET default_currency = '$new_default_currency',
+				default_category = '$new_default_category',
+				default_dns = '$new_default_dns',
+				default_host = '$new_default_host',
+				default_ip_address = '$new_default_ip_address',
+				default_owner = '$new_default_owner',
+				default_registrar = '$new_default_registrar',
+				default_registrar_account = '$new_default_registrar_account',
+				default_ssl_provider_account = '$new_default_ssl_provider_account',
+				default_ssl_type = '$new_default_ssl_type',
+				default_ssl_provider = '$new_default_ssl_provider',
 				number_of_domains = '$new_number_of_domains',
 				display_domain_owner = '$new_display_domain_owner',
 				display_domain_registrar = '$new_display_domain_registrar',
@@ -101,6 +135,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$_SESSION['default_currency'] = $new_default_currency;
+	$_SESSION['default_category'] = $new_default_category;
+	$_SESSION['default_dns'] = $new_default_dns;
+	$_SESSION['default_host'] = $new_default_host;
+	$_SESSION['default_ip_address'] = $new_default_ip_address;
+	$_SESSION['default_owner'] = $new_default_owner;
+	$_SESSION['default_registrar'] = $new_default_registrar;
+	$_SESSION['default_registrar_account'] = $new_default_registrar_account;
+	$_SESSION['default_ssl_provider_account'] = $new_default_ssl_provider_account;
+	$_SESSION['default_ssl_type'] = $new_default_ssl_type;
+	$_SESSION['default_ssl_provider'] = $new_default_ssl_provider;
 	$_SESSION['number_of_domains'] = $new_number_of_domains;
 	$_SESSION['number_of_ssl_certs'] = $new_number_of_ssl_certs;
 	$_SESSION['display_domain_owner'] = $new_display_domain_owner;
@@ -150,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 		
 	} else {
 		
- 		$sql = "SELECT default_currency, number_of_domains, number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account, display_domain_account, display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_host, display_domain_ip, display_domain_tld, display_domain_fee, display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_account, display_ssl_domain, display_ssl_type, display_ssl_ip, display_ssl_category, display_ssl_expiry_date, display_ssl_fee
+ 		$sql = "SELECT *
 				FROM user_settings
 				WHERE user_id = '" . $_SESSION['user_id'] . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -158,6 +202,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 		while ($row = mysql_fetch_object($result)) {
 			
 			$new_default_currency = $row->default_currency;
+			$new_default_category = $row->default_category;
+			$new_default_dns = $row->default_dns;
+			$new_default_host = $row->default_host;
+			$new_default_ip_address = $row->default_ip_address;
+			$new_default_owner = $row->default_owner;
+			$new_default_registrar = $row->default_registrar;
+			$new_default_registrar_account = $row->default_registrar_account;
+			$new_default_ssl_provider_account = $row->default_ssl_provider_account;
+			$new_default_ssl_type = $row->default_ssl_type;
+			$new_default_ssl_provider = $row->default_ssl_provider;
 			$new_number_of_domains = $row->number_of_domains;
 			$new_number_of_ssl_certs = $row->number_of_ssl_certs;
 			$new_display_domain_owner = $row->display_domain_owner;
@@ -255,6 +309,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     </tr>
 </table>        
 <BR><BR>
+<font class="headline">Domain & SSL Defaults</font><BR><BR>
 <strong>Default Currency:</strong><BR><BR>
 <select name="new_default_currency">
 <?php
@@ -265,6 +320,160 @@ $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
 	<option value="<?=$row->currency?>"<?php if ($_SESSION['default_currency'] == $row->currency) echo " selected"; ?>><?=$row->name?> (<?=$row->currency?> <?=$row->symbol?>)</option>
+    <?php
+}
+?>
+</select>
+<BR><BR>
+<strong>Default Category:</strong><BR><BR>
+<select name="new_default_category">
+<?php
+$sql = "SELECT id, name
+		FROM categories
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	?>
+	<option value="<?=$row->id?>"<?php if ($_SESSION['default_category'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
+    <?php
+}
+?>
+</select>
+<BR><BR>
+<strong>Default DNS Profile:</strong><BR><BR>
+<select name="new_default_dns">
+<?php
+$sql = "SELECT id, name
+		FROM dns
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	?>
+	<option value="<?=$row->id?>"<?php if ($_SESSION['default_dns'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
+    <?php
+}
+?>
+</select>
+<BR><BR>
+<strong>Default Web Hosting Provider:</strong><BR><BR>
+<select name="new_default_host">
+<?php
+$sql = "SELECT id, name
+		FROM hosting
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	?>
+	<option value="<?=$row->id?>"<?php if ($_SESSION['default_host'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
+    <?php
+}
+?>
+</select>
+<BR><BR>
+<strong>Default IP Address:</strong><BR><BR>
+<select name="new_default_ip_address">
+<?php
+$sql = "SELECT id, ip, name
+		FROM ip_addresses
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	?>
+	<option value="<?=$row->id?>"<?php if ($_SESSION['default_ip_address'] == $row->id) echo " selected"; ?>><?=$row->name?> (<?=$row->ip?>)</option>
+    <?php
+}
+?>
+</select>
+<BR><BR>
+<strong>Default Domain Registrar:</strong><BR><BR>
+<select name="new_default_registrar">
+<?php
+$sql = "SELECT id, name
+		FROM registrars
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	?>
+	<option value="<?=$row->id?>"<?php if ($_SESSION['default_registrar'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
+    <?php
+}
+?>
+</select>
+<BR><BR>
+<strong>Default Domain Registrar Account:</strong><BR><BR>
+<select name="new_default_registrar_account">
+<?php
+$sql = "SELECT ra.id, ra.username, r.name AS r_name, o.name AS o_name
+		FROM registrars AS r, registrar_accounts AS ra, owners AS o
+		WHERE r.id = ra.registrar_id
+		  AND ra.owner_id = o.id
+		ORDER BY r.name, o.name, ra.username";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	?>
+	<option value="<?=$row->id?>"<?php if ($_SESSION['default_registrar_account'] == $row->id) echo " selected"; ?>><?=$row->r_name?> :: <?=$row->o_name?> :: <?=$row->username?></option>
+    <?php
+}
+?>
+</select>
+<BR><BR>
+<strong>Default SSL Provider:</strong><BR><BR>
+<select name="new_default_ssl_provider">
+<?php
+$sql = "SELECT id, name
+		FROM ssl_providers
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	?>
+	<option value="<?=$row->id?>"<?php if ($_SESSION['default_ssl_provider'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
+    <?php
+}
+?>
+</select>
+<BR><BR>
+<strong>Default SSL Provider Account:</strong><BR><BR>
+<select name="new_default_ssl_provider_account">
+<?php
+$sql = "SELECT sslpa.id, sslpa.username, sslp.name AS p_name, o.name AS o_name
+		FROM ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
+		WHERE sslp.id = sslpa.ssl_provider_id
+		  AND sslpa.owner_id = o.id
+		ORDER BY sslp.name, o.name, sslpa.username";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	?>
+	<option value="<?=$row->id?>"<?php if ($_SESSION['default_ssl_provider_account'] == $row->id) echo " selected"; ?>><?=$row->p_name?> :: <?=$row->o_name?> :: <?=$row->username?></option>
+    <?php
+}
+?>
+</select>
+<BR><BR>
+<strong>Default SSL Type:</strong><BR><BR>
+<select name="new_default_ssl_type">
+<?php
+$sql = "SELECT id, type
+		FROM ssl_cert_types
+		ORDER BY type";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	?>
+	<option value="<?=$row->id?>"<?php if ($_SESSION['default_ssl_type'] == $row->id) echo " selected"; ?>><?=$row->type?></option>
+    <?php
+}
+?>
+</select>
+<BR><BR>
+<strong>Default Account Owner:</strong><BR><BR>
+<select name="new_default_owner">
+<?php
+$sql = "SELECT id, name
+		FROM owners
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+while ($row = mysql_fetch_object($result)) {
+	?>
+	<option value="<?=$row->id?>"<?php if ($_SESSION['default_owner'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
     <?php
 }
 ?>
