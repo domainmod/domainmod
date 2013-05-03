@@ -225,8 +225,8 @@ echo "</select>";
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR><BR>
 <input type="hidden" name="new_sslpaid" value="<?=$sslpaid?>">
+<BR><BR>
 <input type="submit" name="button" value="Update This SSL Provider Account &raquo;">
 </form>
 <BR><BR><a href="<?=$PHP_SELF?>?sslpaid=<?=$sslpaid?>&del=1">DELETE THIS SSL PROVIDER ACCOUNT</a>

@@ -226,8 +226,8 @@ if ($really_del == "1") {
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR><BR>
 <input type="hidden" name="new_segid" value="<?=$segid?>">
+<BR><BR>
 <input type="submit" name="button" value="Update This Segment &raquo;">
 </form>
 <BR><BR><a href="<?=$PHP_SELF?>?segid=<?=$segid?>&del=1">DELETE THIS SEGMENT</a>

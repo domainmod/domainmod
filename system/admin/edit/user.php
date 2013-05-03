@@ -232,7 +232,6 @@ if ($really_del == "1") {
         <option value="0">No</option>
         <option value="1"<?php if ($new_is_active == "1") echo " selected"; ?>>Yes</option>
     </select>
-    <BR><BR><BR>
 
 <?php } ?>
 
@@ -243,6 +242,7 @@ if ($really_del == "1") {
 <?php } ?>
 
 <input type="hidden" name="new_uid" value="<?=$uid?>">
+<BR><BR>
 <input type="submit" name="button" value="Update User &raquo;">
 </form>
 <BR><BR><a href="../reset-password.php?new_username=<?=$new_username?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>

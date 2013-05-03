@@ -375,7 +375,7 @@ while ($row = mysql_fetch_object($result)) {
 }
 ?>
 </select>
-<BR><BR><BR>
+<BR><BR>
 <input type="submit" name="button" value="Update User Defaults &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>

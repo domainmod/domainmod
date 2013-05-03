@@ -87,7 +87,7 @@ if ($new_username != "") {
     <font class="headline">Reset Your Password</font>
     <BR><BR><BR>
     <form name="reset_password_form" method="post" action="<?=$PHP_SELF?>">
-    <strong>Username:</strong>&nbsp;<input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR><BR>
+    <strong>Username:</strong>&nbsp;<input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
     <input type="submit" name="button" value="Reset Password &raquo;">
     </form>
     <BR><BR>[<a class="invisiblelink" href="index.php">Cancel Password Reset</a>]

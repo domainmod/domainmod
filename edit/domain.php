@@ -346,8 +346,8 @@ echo "</select>";
 <BR><BR>
 <strong>Notes</strong><?php if ($new_notes != "") { ?> [<a target="_blank" href="domain-notes.php?did=<?=$did?>">view full notes</a>]<?php } ?><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR><BR>
 <input type="hidden" name="new_did" value="<?=$did?>">
+<BR><BR>
 <input type="submit" name="button" value="Update This Domain &raquo;">
 </form>
 <BR><BR><a href="<?=$PHP_SELF?>?did=<?=$did?>&del=1">DELETE THIS DOMAIN</a>

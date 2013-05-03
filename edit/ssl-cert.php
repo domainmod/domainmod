@@ -310,8 +310,8 @@ echo "</select>";
 <BR><BR>
 <strong>Notes</strong><?php if ($new_notes != "") { ?> [<a target="_blank" href="ssl-cert-notes.php?sslcid=<?=$sslcid?>">view full notes</a>]<?php } ?><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR><BR>
 <input type="hidden" name="new_sslcid" value="<?=$sslcid?>">
+<BR><BR>
 <input type="submit" name="button" value="Update This SSL Certificate &raquo;">
 </form>
 <BR><BR>

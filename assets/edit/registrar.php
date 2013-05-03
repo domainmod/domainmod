@@ -159,8 +159,8 @@ if ($really_del == "1") {
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR><BR>
 <input type="hidden" name="new_rid" value="<?=$rid?>">
+<BR><BR>
 <input type="submit" name="button" value="Update This Registrar &raquo;">
 </form>
 <BR><BR><a href="registrar-fees.php?rid=<?=$rid?>">EDIT THIS REGISTRAR'S FEES</a><BR>

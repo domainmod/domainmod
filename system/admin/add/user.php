@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <option value="0"<?php if ($new_active == 0) echo " selected"; ?>>No</option>
 <option value="1"<?php if ($new_active == 1) echo " selected"; ?>>Yes</option>
 </select>
-<BR><BR><BR>
+<BR><BR>
 <input type="submit" name="button" value="Add New User &raquo;">
 </form>
 <?php include("../../../_includes/footer.inc.php"); ?>

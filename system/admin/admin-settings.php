@@ -106,7 +106,7 @@ This should be a valid email address that is able to receive mail. It will be us
 <strong>Days to Display in Expiration Emails:</strong><BR><BR>
 This is the number of days in the future to display in the expiration emails.<BR><BR>
 <input name="new_expiration_email_days" type="text" size="4" maxlength="3" value="<?php if ($new_expiration_email_days != "") echo $new_expiration_email_days; ?>">
-<BR><BR><BR>
+<BR><BR>
 <input type="submit" name="button" value="Update Admin Settings&raquo;">
 </form>
 <?php include("../../_includes/footer.inc.php"); ?>

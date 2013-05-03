@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 <BR><BR>
 <strong>Email Address:</strong><BR><BR>
 <input name="new_email_address" type="text" size="50" maxlength="255" value="<?php if ($new_email_address != "") { echo $new_email_address; } else { echo $_SESSION['email_address']; }?>">
-<BR><BR><BR>
+<BR><BR>
 <input type="submit" name="button" value="Update Profile &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>

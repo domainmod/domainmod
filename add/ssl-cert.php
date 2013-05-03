@@ -227,7 +227,7 @@ echo "</select>";
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR><BR>
+<BR><BR>
 <input type="submit" name="button" value="Add This SSL Certificate &raquo;">
 </form>
 <?php include("../_includes/footer.inc.php"); ?>

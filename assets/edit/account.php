@@ -229,9 +229,9 @@ echo "</select>";
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR><BR>
+<BR><BR>
 <input type="hidden" name="new_raid" value="<?=$raid?>">
-<input type="submit" name="button" value="Update This Account &raquo;">
+<input type="submit" name="button" value="Update This Registrar Account &raquo;">
 </form>
 <BR><BR><a href="<?=$PHP_SELF?>?raid=<?=$raid?>&del=1">DELETE THIS REGISTRAR ACCOUNT</a>
 <?php include("../../_includes/footer.inc.php"); ?>

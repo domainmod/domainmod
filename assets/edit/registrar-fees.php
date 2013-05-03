@@ -321,8 +321,8 @@ if (mysql_num_rows($result) != 0) {
 	    </td>
 	</tr>
 </table>
-<input type="hidden" name="new_rid" value="<?=$rid?>">
-<BR><input type="submit" name="button" value="Add/Update This TLD Fee &raquo;">
+<input type="hidden" name="new_rid" value="<?=$rid?>"><BR>
+<input type="submit" name="button" value="Add/Update This TLD Fee &raquo;">
 </form>
 <BR><BR>
 <font class="subheadline">TLD Fees</font><BR><BR>
