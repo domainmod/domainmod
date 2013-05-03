@@ -30,11 +30,11 @@ $software_section = "reporting";
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?> :: <?=$page_subtitle?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../_includes/layout/header.inc.php"); ?>
 <?php include("../_includes/layout/reporting-block.inc.php"); ?>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

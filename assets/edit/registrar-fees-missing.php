@@ -28,10 +28,10 @@ $page_title = "Missing Domain Fees";
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <?php
 $sql = "SELECT r.id AS registrar_id, r.name AS registrar_name
 		FROM registrars r, domains d
@@ -83,6 +83,6 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
 	} ?>
 
 </table>
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

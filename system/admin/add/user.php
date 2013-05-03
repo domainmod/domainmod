@@ -112,10 +112,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../../_includes/head-tags.inc.php"); ?>
+<?php include("../../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("../../../_includes/header.inc.php"); ?>
+<?php include("../../../_includes/layout/header.inc.php"); ?>
 <form name="add_user_form" method="post" action="<?=$PHP_SELF?>">
 <strong>First Name</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?=$new_first_name?>"><BR><BR>
 <strong>Last Name</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?=$new_last_name?>"><BR><BR>
@@ -135,6 +135,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <BR><BR>
 <input type="submit" name="button" value="Add New User &raquo;">
 </form>
-<?php include("../../../_includes/footer.inc.php"); ?>
+<?php include("../../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

@@ -142,10 +142,10 @@ if ($total_rows > 0) {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?> :: <?=$page_subtitle?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
     <a href="<?=$PHP_SELF?>?all=1">View All</a> or <a href="<?=$PHP_SELF?>?all=0">Active Only</a>
@@ -312,6 +312,6 @@ if ($total_rows > 0) {
     } 
     ?>
 <?php } ?>
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

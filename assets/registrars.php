@@ -29,10 +29,10 @@ $software_section = "registrars";
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../_includes/layout/header.inc.php"); ?>
 <?php
 $sql = "SELECT r.id AS rid, r.name AS rname, r.url
 		FROM registrars AS r, domains AS d
@@ -218,6 +218,6 @@ if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 <?php if (!$has_active && !$has_inactive) { ?>
 		<BR>You don't currently have any Domain Registrars. <a href="add/registrar.php">Click here to add one</a>.
 <?php } ?>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

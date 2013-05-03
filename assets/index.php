@@ -29,10 +29,10 @@ $software_section = "assets";
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../_includes/layout/header.inc.php"); ?>
 <font class="subheadline">Domains</font><BR>
 <a href="registrars.php">Domain Registrars</a><BR>
 <a href="registrar-accounts.php">Domain Registrar Accounts</a><BR>
@@ -48,6 +48,6 @@ $software_section = "assets";
 <a href="account-owners.php">Account Owners</a><BR>
 <a href="categories.php">Categories</a><BR>
 <a href="ip-addresses.php">IP Addresses</a><BR>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

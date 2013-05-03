@@ -153,10 +153,10 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?> :: <?=$page_subtitle?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
     <form name="export_ssl_form" method="post" action="<?=$PHP_SELF?>"> 
@@ -228,6 +228,6 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 } 
 ?>
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

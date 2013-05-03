@@ -191,10 +191,10 @@ if ($really_del == "1") {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../../_includes/head-tags.inc.php"); ?>
+<?php include("../../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../../_includes/header.inc.php"); ?>
+<?php include("../../../_includes/layout/header.inc.php"); ?>
 <form name="edit_user_form" method="post" action="<?=$PHP_SELF?>">
 <strong>First Name</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") echo $new_first_name; ?>"><BR><BR>
 <strong>Last Name</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") echo $new_last_name; ?>"><BR><BR>
@@ -247,6 +247,6 @@ if ($really_del == "1") {
 </form>
 <BR><BR><a href="../reset-password.php?new_username=<?=$new_username?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
 <BR><a href="<?=$PHP_SELF?>?uid=<?=$uid?>&del=1">DELETE THIS USER</a>
-<?php include("../../../_includes/footer.inc.php"); ?>
+<?php include("../../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

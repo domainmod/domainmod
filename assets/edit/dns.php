@@ -203,10 +203,10 @@ if ($really_del == "1") {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="edit_dns_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Profile Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo $new_name; ?>">
@@ -320,6 +320,6 @@ if ($really_del == "1") {
 <input type="submit" name="button" value="Update This DNS Profile &raquo;">
 </form>
 <BR><BR><a href="<?=$PHP_SELF?>?dnsid=<?=$dnsid?>&del=1">DELETE THIS DNS PROFILE</a>
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

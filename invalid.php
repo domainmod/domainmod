@@ -27,11 +27,11 @@ $software_section = "invalid";
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/header.inc.php"); ?>
+<?php include("_includes/layout/header.inc.php"); ?>
 The page you're trying to access is invalid.
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

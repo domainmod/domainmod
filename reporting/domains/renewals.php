@@ -154,10 +154,10 @@ if ($export == "1") {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
     <form name="export_domains_form" method="post" action="<?=$PHP_SELF?>"> 
@@ -325,6 +325,6 @@ Category Stakeholder<BR>
 Owner<BR>
 Notes<BR>
 <?php } ?>
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

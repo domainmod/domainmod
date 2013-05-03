@@ -146,10 +146,10 @@ if ($really_del == "1") {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="edit_ssl_provider_form" method="post" action="<?=$PHP_SELF?>">
 <strong>SSL Provider Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_ssl_provider" type="text" value="<?=$new_ssl_provider?>" size="50" maxlength="255">
@@ -165,6 +165,6 @@ if ($really_del == "1") {
 </form>
 <BR><BR><a href="ssl-provider-fees.php?sslpid=<?=$sslpid?>">EDIT THIS SSL PROVIDER'S FEES</a><BR>
 <BR><a href="<?=$PHP_SELF?>?sslpid=<?=$sslpid?>&del=1">DELETE THIS SSL PROVIDER</a>
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

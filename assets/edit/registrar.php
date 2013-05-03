@@ -146,10 +146,10 @@ if ($really_del == "1") {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="edit_registrar_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Registrar Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_registrar" type="text" value="<?=$new_registrar?>" size="50" maxlength="255">
@@ -165,6 +165,6 @@ if ($really_del == "1") {
 </form>
 <BR><BR><a href="registrar-fees.php?rid=<?=$rid?>">EDIT THIS REGISTRAR'S FEES</a><BR>
 <BR><a href="<?=$PHP_SELF?>?rid=<?=$rid?>&del=1">DELETE THIS REGISTRAR</a>
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

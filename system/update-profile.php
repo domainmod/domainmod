@@ -89,10 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../_includes/layout/header.inc.php"); ?>
 <form name="change_email_address_form" method="post" action="<?=$PHP_SELF?>">
 <strong>First Name:</strong><BR><BR>
 <input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") { echo $new_first_name; } else { echo $_SESSION['first_name']; }?>">
@@ -105,6 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 <BR><BR>
 <input type="submit" name="button" value="Update Profile &raquo;">
 </form>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

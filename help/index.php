@@ -29,13 +29,13 @@ $software_section = "help";
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../_includes/layout/header.inc.php"); ?>
 There is a LOT of work that needs to be done in this help section, but the focus right now is the software itself.<BR>
 <BR>
 For now, please check out the <a href="getting-started/">Getting Started</a> section.<BR>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

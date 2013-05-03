@@ -35,10 +35,10 @@ $software_section = "system";
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <?php
 $sql = "SELECT db_version
 		FROM settings";
@@ -49,6 +49,6 @@ while ($row = mysql_fetch_object($result)) {
 ?>
 <strong>Database Version:</strong> v<?=number_format($db_version, 4)?>
 
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

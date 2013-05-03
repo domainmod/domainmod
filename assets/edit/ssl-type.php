@@ -125,10 +125,10 @@ if ($really_del == "1") {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="edit_type_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Type Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_type" type="text" value="<?php if ($new_type != "") echo $new_type; ?>
@@ -141,6 +141,6 @@ if ($really_del == "1") {
 <input type="submit" name="button" value="Update This SSL Type &raquo;">
 </form>
 <BR><BR><a href="<?=$PHP_SELF?>?ssltid=<?=$ssltid?>&del=1">DELETE THIS TYPE</a>
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

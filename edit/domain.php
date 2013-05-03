@@ -196,10 +196,10 @@ if ($really_del == "1") {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../_includes/layout/header.inc.php"); ?>
 <form name="edit_domain_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Domain</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_domain" type="text" size="50" maxlength="255" value="<?php if ($new_domain != "") echo $new_domain; ?>">
@@ -351,6 +351,6 @@ echo "</select>";
 <input type="submit" name="button" value="Update This Domain &raquo;">
 </form>
 <BR><BR><a href="<?=$PHP_SELF?>?did=<?=$did?>&del=1">DELETE THIS DOMAIN</a>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

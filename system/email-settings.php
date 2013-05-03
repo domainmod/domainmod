@@ -69,15 +69,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../_includes/layout/header.inc.php"); ?>
 <form name="email_settings_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Receive email notifications for upcoming Domain & SSL Certificate expirations?</strong> <input type="checkbox" name="new_expiration_email" value="1"<?php if ($new_expiration_email == "1") echo " checked"; ?>>
 <BR><BR>
 <input type="submit" name="button" value="Update Email Settings&raquo;">
 </form>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

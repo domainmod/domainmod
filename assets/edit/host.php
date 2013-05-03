@@ -124,10 +124,10 @@ if ($really_del == "1") {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="edit_host_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Web Host Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_host" type="text" value="<?php if ($new_host != "") echo $new_host; ?>
@@ -140,6 +140,6 @@ if ($really_del == "1") {
 <input type="submit" name="button" value="Update This Web Host &raquo;">
 </form>
 <BR><BR><a href="<?=$PHP_SELF?>?whid=<?=$whid?>&del=1">DELETE THIS WEB HOST</a>
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

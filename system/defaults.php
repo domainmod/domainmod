@@ -183,10 +183,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../_includes/layout/header.inc.php"); ?>
 <form name="default_user_settings_form" method="post" action="<?=$PHP_SELF?>">
 <font class="headline">System Defaults</font><BR><BR>
 <strong>Default Currency:</strong><BR><BR>
@@ -378,6 +378,6 @@ while ($row = mysql_fetch_object($result)) {
 <BR><BR>
 <input type="submit" name="button" value="Update User Defaults &raquo;">
 </form>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

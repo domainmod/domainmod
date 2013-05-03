@@ -29,10 +29,10 @@ $software_section = "ssl-types";
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../_includes/layout/header.inc.php"); ?>
 <?php
 $sql = "SELECT id, type
 		FROM ssl_cert_types
@@ -117,6 +117,6 @@ if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 <?php if (!$has_active && !$has_inactive) { ?>
 		<BR>You don't currently have any SSL Types. <a href="add/ssl-type.php">Click here to add one</a>.
 <?php } ?>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

@@ -202,10 +202,10 @@ if ($export == "1") {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags-bare.inc.php"); ?>
+<?php include("_includes/layout/head-tags-bare.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/header-bare.inc.php"); ?>
+<?php include("_includes/layout/header-bare.inc.php"); ?>
 <?php
 $sql_name = "SELECT name
 			 FROM segments
@@ -237,6 +237,6 @@ while ($row = mysql_fetch_object($result)) {
 	echo $row->domain . "<BR>";
 }
 ?>
-<?php include("_includes/footer-bare.inc.php"); ?>
+<?php include("_includes/layout/footer-bare.inc.php"); ?>
 </body>
 </html>

@@ -741,7 +741,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("_includes/layout/head-tags.inc.php"); ?>
 <script type="text/javascript">
 <!--
 function MM_jumpMenu(targ,selObj,restore){ //v3.0
@@ -752,7 +752,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 </script>
 </head>
 <body>
-<?php include("_includes/header.inc.php"); ?>
+<?php include("_includes/layout/header.inc.php"); ?>
 <?php if ($done == "1") { ?>
 
 	<?php if ($submission_failed != "1") { ?>
@@ -1112,6 +1112,6 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <input type="submit" name="button" value="Perform Bulk Action &raquo;">
 <?php } ?>
 </form>
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

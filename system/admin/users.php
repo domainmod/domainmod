@@ -34,10 +34,10 @@ $software_section = "user-list";
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <?php
 if ($_SESSION['username'] == "admin") {
 	$sql = "SELECT id, first_name, last_name, username, email_address, admin
@@ -132,6 +132,6 @@ if (mysql_num_rows($result) > 0) { ?>
 } ?>
 	</table>
 <BR><font class="default_highlight">*</font> = Admin Account
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

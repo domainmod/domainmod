@@ -34,10 +34,10 @@ if (mysql_num_rows($result) == 0) $zero_categories = "1";
 <html>
 <head>	
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../_includes/head-tags.inc.php"); ?>
+<?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/header.inc.php"); ?>
+<?php include("../_includes/layout/header.inc.php"); ?>
 <?php
 $sql = "SELECT id, name, stakeholder
 		FROM categories
@@ -242,6 +242,6 @@ if ($has_active_ssl == "1" || $has_inactive_ssl == "1") echo "</table>";
 <?php if (!$has_active_domain && !$has_inactive_domain && !$has_active_ssl && !$has_inactive_ssl) { ?>
         <BR><BR>You don't currently have any Categories. <a href="add/category.php">Click here to add one</a>.
 <?php } ?>
-<?php include("../_includes/footer.inc.php"); ?>
+<?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

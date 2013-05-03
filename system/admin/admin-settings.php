@@ -90,10 +90,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="admin_settings_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Full <?=$software_title?> URL:</strong><BR><BR>
 Enter the full URL of your <?=$software_title?> installation, excluding the trailing slash (Example: http://yourdomain.com/domainmanager).<BR><BR>
@@ -109,6 +109,6 @@ This is the number of days in the future to display in the expiration emails.<BR
 <BR><BR>
 <input type="submit" name="button" value="Update Admin Settings&raquo;">
 </form>
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

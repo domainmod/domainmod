@@ -18,7 +18,7 @@
 <?php
 $sql_settings = "SELECT full_url, email_address
 				 FROM settings";
-$result_settings = mysql_query($sql_settings,$connection);
+$result_settings = mysql_query($sql_settings,$connection) or die(mysql_error());
 
 while ($row_settings = mysql_fetch_object($result_settings)) {
 	$full_url = $row_settings->full_url;

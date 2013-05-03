@@ -28,10 +28,10 @@ $page_title = "Missing SSL Fees";
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <?php
 $sql = "SELECT sp.id AS ssl_provider_id, sp.name AS ssl_provider_name
 		FROM ssl_providers sp, ssl_certs sc
@@ -84,6 +84,6 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
     <?php 
 	} ?>
 </table>
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

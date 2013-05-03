@@ -79,10 +79,10 @@ if ($new_username != "") {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("_includes/header-login.inc.php"); ?>
+<?php include("_includes/layout/header-login.inc.php"); ?>
 <div class="reset-password">
     <font class="headline">Reset Your Password</font>
     <BR><BR><BR>
@@ -92,6 +92,6 @@ if ($new_username != "") {
     </form>
     <BR><BR>[<a class="invisiblelink" href="index.php">Cancel Password Reset</a>]
 </div>
-<?php include("_includes/footer-login.inc.php"); ?>
+<?php include("_includes/layout/footer-login.inc.php"); ?>
 </body>
 </html>

@@ -62,10 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("../../_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("../../_includes/header.inc.php"); ?>
+<?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="add_owner_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Owner Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_owner" type="text" value="<?=$new_owner?>" size="50" maxlength="255">
@@ -75,6 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR><BR>
 <input type="submit" name="button" value="Add This Account Owner &raquo;">
 </form>
-<?php include("../../_includes/footer.inc.php"); ?>
+<?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>
