@@ -129,7 +129,7 @@ $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysql_fetch_object($result_account)) {
 
-	if ($row_account->id == $new_account_id) {
+	if ($row_account->id == $_SESSION['default_ssl_provider_account']) {
 
 		echo "<option value=\"$row_account->id\" selected>$row_account->sslp_name :: $row_account->o_name :: $row_account->username</option>";
 	
@@ -151,7 +151,7 @@ $result_type = mysql_query($sql_type,$connection) or die(mysql_error());
 echo "<select name=\"new_type_id\">";
 while ($row_type = mysql_fetch_object($result_type)) {
 
-	if ($row_type->id == $new_type_id) {
+	if ($row_type->id == $_SESSION['default_ssl_type']) {
 
 		echo "<option value=\"$row_type->id\" selected>$row_type->type</option>";
 	
@@ -173,7 +173,7 @@ $result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
 echo "<select name=\"new_ip_id\">";
 while ($row_ip = mysql_fetch_object($result_ip)) {
 
-	if ($row_ip->id == $new_ip_id) {
+	if ($row_ip->id == $_SESSION['default_ip_address_ssl']) {
 
 		echo "<option value=\"$row_ip->id\" selected>$row_ip->name ($row_ip->ip)</option>";
 	
@@ -195,7 +195,7 @@ $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
 echo "<select name=\"new_cat_id\">";
 while ($row_cat = mysql_fetch_object($result_cat)) {
 
-	if ($row_cat->id == $new_cat_id) {
+	if ($row_cat->id == $_SESSION['default_category_ssl']) {
 
 		echo "<option value=\"$row_cat->id\" selected>$row_cat->name</option>";
 	

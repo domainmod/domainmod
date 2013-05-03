@@ -158,8 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
 <form name="display_settings_form" method="post" action="<?=$PHP_SELF?>">
-<BR>
-<font class="headline">Main Domain Page</font><BR><BR>
+<font class="subheadline">Main Domain Page</font><BR><BR>
 <strong>Number of domains per page:</strong> <input name="new_number_of_domains" type="text" size="3" maxlength="5" value="<?php if ($new_number_of_domains != "") echo $new_number_of_domains; ?>">
 <BR><BR>
 <strong>Columns to display: </strong><BR><BR>
@@ -190,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     </tr>
 </table>        
 <BR><BR>
-<font class="headline">Main SSL Certificate Page</font><BR><BR>
+<font class="subheadline">Main SSL Certificate Page</font><BR><BR>
 <strong>Number of SSL certificates per page:</strong> <input name="new_number_of_ssl_certs" type="text" size="3" maxlength="5" value="<?php if ($new_number_of_ssl_certs != "") echo $new_number_of_ssl_certs; ?>">
 <BR><BR>
 <strong>Columns to display: </strong><BR><BR>
@@ -218,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_owner" value="1"<?php if ($new_display_ssl_owner == "1") echo " checked"; ?>></td>
     </tr>
 </table>        
-<BR><BR>
+<BR>
 <input type="submit" name="button" value="Update Display Settings&raquo;">
 </form>
 <?php include("../_includes/layout/footer.inc.php"); ?>

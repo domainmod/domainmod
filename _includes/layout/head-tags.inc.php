@@ -28,21 +28,6 @@ td {
 	color: #000000;
 	font-size: 8pt;
 }
-td.footer-table-login {
-	text-align: center;
-	vertical-align: center; 
-	font-family: Verdana, sans-serif, Arial;
-	font-weight: normal;
-	color: #404040;
-	border-top: 0px #6699CC ridge;
-	border-bottom: 0px #6699CC ridge;
-	border-right: 0px #6699CC ridge;
-	border-left: 0px #6699CC ridge;
-	padding-top: 0px;
-	padding-right: 10px; 
-	padding-bottom: 15px;
-	padding-left: 10px;
-}
 table.main_table {
 	border-spacing: 0px;
 	padding-top: 0px;
@@ -484,13 +469,14 @@ font.headline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	font-size: 10pt;
-	color: #CC0000;
+	color: #AA0000;
 }
 font.subheadline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	font-size: 9pt;
 	color: #CC0000;
+	color: #BB0000;
 }
 font.main_table_heading {
 	font-family: Verdana, Arial, Helvetica, sans-serif;

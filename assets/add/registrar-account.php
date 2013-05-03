@@ -95,7 +95,7 @@ $result_owner = mysql_query($sql_owner,$connection) or die(mysql_error());
 echo "<select name=\"new_owner_id\">";
 while ($row_owner = mysql_fetch_object($result_owner)) {
 
-	if ($row_owner->id == $new_owner_id) {
+	if ($row_owner->id == $_SESSION['default_owner_domains']) {
 
 		echo "<option value=\"$row_owner->id\" selected>$row_owner->name</option>";
 	
@@ -117,7 +117,7 @@ $result_registrar = mysql_query($sql_registrar,$connection) or die(mysql_error()
 echo "<select name=\"new_registrar_id\">";
 while ($row_registrar = mysql_fetch_object($result_registrar)) {
 
-	if ($row_registrar->id == $new_registrar_id) {
+	if ($row_registrar->id == $_SESSION['default_registrar']) {
 
 		echo "<option value=\"$row_registrar->id\" selected>$row_registrar->name</option>";
 	

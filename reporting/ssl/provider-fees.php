@@ -147,7 +147,7 @@ if ($total_rows > 0) {
     <?php } ?>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 <?php if ($all != "") { ?>
-    <BR><font class="headline"><?=$page_subtitle?></font><BR>
+    <BR><font class="subheadline"><?=$page_subtitle?></font><BR>
     <BR>
     <?php if ($all == "1") { ?>
         <strong>All SSL Provider Fees</strong><BR><BR>

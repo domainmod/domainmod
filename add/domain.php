@@ -174,7 +174,7 @@ echo "<select name=\"new_ip_id\">";
 
 while ($row_ip = mysql_fetch_object($result_ip)) {
 
-	if ($row_ip->id == $_SESSION['default_ip_address']) {
+	if ($row_ip->id == $_SESSION['default_ip_address_domains']) {
 
 		echo "<option value=\"$row_ip->id\" selected>$row_ip->name ($row_ip->ip)</option>";
 	
@@ -218,7 +218,7 @@ $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
 echo "<select name=\"new_cat_id\">";
 while ($row_cat = mysql_fetch_object($result_cat)) {
 
-	if ($row_cat->id == $_SESSION['default_category']) {
+	if ($row_cat->id == $_SESSION['default_category_domains']) {
 
 		echo "<option value=\"$row_cat->id\" selected>$row_cat->name</option>";
 	

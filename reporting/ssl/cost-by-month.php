@@ -233,7 +233,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
 
-	<BR><font class="headline"><?=$page_subtitle?></font><BR><BR>
+	<BR><font class="subheadline"><?=$page_subtitle?></font><BR><BR>
 	<strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
     <?php if ($all != "1") { ?>
 	    <strong>Date Range:</strong> <?=$new_start_date?> - <?=$new_end_date?><BR><BR>

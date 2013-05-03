@@ -871,7 +871,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_raid\">";
     while ($row_account = mysql_fetch_object($result_account)) {
     
-        if ($row_account->id == $new_raid) {
+        if ($row_account->id == $_SESSION['default_registrar_account']) {
     
             echo "<option value=\"$row_account->id\" selected>[ $row_account->r_name :: $row_account->o_name :: $row_account->username ]</option>";
         
@@ -893,7 +893,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_dnsid\">";
     while ($row_dns = mysql_fetch_object($result_dns)) {
     
-        if ($row_dns->id == $new_dnsid) {
+        if ($row_dns->id == $_SESSION['default_dns']) {
     
             echo "<option value=\"$row_dns->id\" selected>[ $row_dns->name ]</option>";
         
@@ -915,7 +915,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_ipid\">";
     while ($row_ip = mysql_fetch_object($result_ip)) {
     
-        if ($row_ip->id == $new_ipid) {
+        if ($row_ip->id == $_SESSION['default_ip_address_domains']) {
     
             echo "<option value=\"$row_ip->id\" selected>[ $row_ip->name ($row_ip->ip) ]</option>";
         
@@ -938,7 +938,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_whid\">";
     while ($row_host = mysql_fetch_object($result_host)) {
     
-        if ($row_host->id == $new_whid) {
+        if ($row_host->id == $_SESSION['default_host']) {
     
             echo "<option value=\"$row_host->id\" selected>[ $row_host->name ]</option>";
         
@@ -961,7 +961,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_pcid\">";
     while ($row_cat = mysql_fetch_object($result_cat)) {
     
-        if ($row_cat->id == $new_pcid) {
+        if ($row_cat->id == $_SESSION['default_category_domains']) {
     
             echo "<option value=\"$row_cat->id\" selected>[ $row_cat->name ]</option>";
         
@@ -1006,7 +1006,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 	echo "<select name=\"new_pcid\">";
     echo "<option value=\"\""; if ($new_pcid == "") echo " selected"; echo ">"; echo "$choose_text Category</option>";
 	while ($row_cat = mysql_fetch_object($result_cat)) { 
-    echo "<option value=\"$row_cat->id\""; if ($row_cat->id == $new_pcid) echo " selected"; echo ">"; echo "$row_cat->name</option>";
+    echo "<option value=\"$row_cat->id\""; if ($row_cat->id == $_SESSION['default_category_domains']) echo " selected"; echo ">"; echo "$row_cat->name</option>";
     } 
     echo "</select>";
     ?>
@@ -1022,7 +1022,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_dnsid\">";
     echo "<option value=\"\""; if ($new_dnsid == "") echo " selected"; echo ">"; echo "$choose_text DNS Profile</option>";
     while ($row_dns = mysql_fetch_object($result_dns)) { 
-    echo "<option value=\"$row_dns->id\""; if ($row_dns->id == $new_dnsid) echo " selected"; echo ">"; echo "$row_dns->name</option>";
+    echo "<option value=\"$row_dns->id\""; if ($row_dns->id == $_SESSION['default_dns']) echo " selected"; echo ">"; echo "$row_dns->name</option>";
     } 
     echo "</select>";
     ?>
@@ -1038,7 +1038,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_ipid\">";
     echo "<option value=\"\""; if ($new_ipid == "") echo " selected"; echo ">"; echo "$choose_text IP Address</option>";
     while ($row_ip = mysql_fetch_object($result_ip)) { 
-    echo "<option value=\"$row_ip->id\""; if ($row_ip->id == $new_ipid) echo " selected"; echo ">"; echo "$row_ip->name ($row_ip->ip)</option>";
+    echo "<option value=\"$row_ip->id\""; if ($row_ip->id == $_SESSION['default_ip_address_domains']) echo " selected"; echo ">"; echo "$row_ip->name ($row_ip->ip)</option>";
     } 
     echo "</select>";
     ?>
@@ -1060,7 +1060,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_raid\">";
     echo "<option value=\"\""; if ($new_raid == "") echo " selected"; echo ">"; echo "$choose_text Registrar Account</option>";
 	while ($row_account = mysql_fetch_object($result_account)) { 
-	    echo "<option value=\"$row_account->ra_id\""; if ($row_account->ra_id == $new_raid) echo " selected"; echo ">"; echo "$row_account->r_name :: $row_account->o_name ($row_account->username)</option>";
+	    echo "<option value=\"$row_account->ra_id\""; if ($row_account->ra_id == $_SESSION['default_registrar_account']) echo " selected"; echo ">"; echo "$row_account->r_name :: $row_account->o_name ($row_account->username)</option>";
     } 
     echo "</select>";
     ?>
@@ -1076,7 +1076,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_whid\">";
     echo "<option value=\"\""; if ($new_whid == "") echo " selected"; echo ">"; echo "$choose_text Web Hosting Provider</option>";
     while ($row_host = mysql_fetch_object($result_host)) { 
-    echo "<option value=\"$row_host->id\""; if ($row_host->id == $new_whid) echo " selected"; echo ">"; echo "$row_host->name</option>";
+    echo "<option value=\"$row_host->id\""; if ($row_host->id == $_SESSION['default_host']) echo " selected"; echo ">"; echo "$row_host->name</option>";
     } 
     echo "</select>";
     ?>

@@ -83,11 +83,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['system_full_url'] = $row_settings->full_url;
 				$_SESSION['system_db_version'] = $row_settings->db_version;
 				$_SESSION['system_email_address'] = $row_settings->email_address;
-				$_SESSION['system_default_category'] = $row_settings->default_category;
+				$_SESSION['system_default_category_domains'] = $row_settings->default_category_domains;
+				$_SESSION['system_default_category_ssl'] = $row_settings->default_category_ssl;
 				$_SESSION['system_default_dns'] = $row_settings->default_dns;
 				$_SESSION['system_default_host'] = $row_settings->default_host;
-				$_SESSION['system_default_ip_address'] = $row_settings->default_ip_address;
-				$_SESSION['system_default_owner'] = $row_settings->default_owner;
+				$_SESSION['system_default_ip_address_domains'] = $row_settings->default_ip_address_domains;
+				$_SESSION['system_default_ip_address_ssl'] = $row_settings->default_ip_address_ssl;
+				$_SESSION['system_default_owner_domains'] = $row_settings->default_owner_domains;
+				$_SESSION['system_default_owner_ssl'] = $row_settings->default_owner_ssl;
 				$_SESSION['system_default_registrar'] = $row_settings->default_registrar;
 				$_SESSION['system_default_registrar_account'] = $row_settings->default_registrar_account;
 				$_SESSION['system_default_ssl_provider_account'] = $row_settings->default_ssl_provider_account;
@@ -106,11 +109,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
 				$_SESSION['default_currency'] = $row_user_settings->default_currency;
 				$_SESSION['default_timezone'] = $row_user_settings->default_timezone;
-				$_SESSION['default_category'] = $row_user_settings->default_category;
+				$_SESSION['default_category_domains'] = $row_user_settings->default_category_domains;
+				$_SESSION['default_category_ssl'] = $row_user_settings->default_category_ssl;
 				$_SESSION['default_dns'] = $row_user_settings->default_dns;
 				$_SESSION['default_host'] = $row_user_settings->default_host;
-				$_SESSION['default_ip_address'] = $row_user_settings->default_ip_address;
-				$_SESSION['default_owner'] = $row_user_settings->default_owner;
+				$_SESSION['default_ip_address_domains'] = $row_user_settings->default_ip_address_domains;
+				$_SESSION['default_ip_address_ssl'] = $row_user_settings->default_ip_address_ssl;
+				$_SESSION['default_owner_domains'] = $row_user_settings->default_owner_domains;
+				$_SESSION['default_owner_ssl'] = $row_user_settings->default_owner_ssl;
 				$_SESSION['default_registrar'] = $row_user_settings->default_registrar;
 				$_SESSION['default_registrar_account'] = $row_user_settings->default_registrar_account;
 				$_SESSION['default_ssl_provider_account'] = $row_user_settings->default_ssl_provider_account;

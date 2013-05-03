@@ -70,7 +70,7 @@ Below is a list of all the Domain & SSL IP Addresses that are stored in your <?=
 		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?><?php if ($_SESSION['default_ip_address'] == $row->id) echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?><?php if ($_SESSION['default_ip_address_domains'] == $row->id) echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
     <td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
@@ -138,7 +138,7 @@ if ($has_active_domain != "1" && $has_inactive_domains == "1") echo "<table clas
 		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?><?php if ($_SESSION['default_ip_address'] == $row->id) echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?><?php if ($_SESSION['default_ip_address_domains'] == $row->id) echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
     <td class="main_table_cell_inactive">
 		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
@@ -181,7 +181,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?><?php if ($_SESSION['default_ip_address'] == $row->id) echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?><?php if ($_SESSION['default_ip_address_ssl'] == $row->id) echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
     <td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
@@ -249,7 +249,7 @@ if ($has_active_ssl != "1" && $has_inactive_ssl == "1") echo "<table class=\"mai
 		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?><?php if ($_SESSION['default_ip_address'] == $row->id) echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?><?php if ($_SESSION['default_ip_address_ssl'] == $row->id) echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
     <td class="main_table_cell_inactive">
 		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>

@@ -95,7 +95,7 @@ $result_owner = mysql_query($sql_owner,$connection) or die(mysql_error());
 echo "<select name=\"new_owner_id\">";
 while ($row_owner = mysql_fetch_object($result_owner)) {
 
-	if ($row_owner->id == $new_owner_id) {
+	if ($row_owner->id == $_SESSION['default_owner_ssl']) {
 
 		echo "<option value=\"$row_owner->id\" selected>$row_owner->name</option>";
 	
@@ -117,7 +117,7 @@ $result_ssl_provider = mysql_query($sql_ssl_provider,$connection) or die(mysql_e
 echo "<select name=\"new_ssl_provider_id\">";
 while ($row_ssl_provider = mysql_fetch_object($result_ssl_provider)) {
 
-	if ($row_ssl_provider->id == $new_ssl_provider_id) {
+	if ($row_ssl_provider->id == $_SESSION['default_ssl_provider']) {
 
 		echo "<option value=\"$row_ssl_provider->id\" selected>$row_ssl_provider->name</option>";
 	
