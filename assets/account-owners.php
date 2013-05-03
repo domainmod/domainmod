@@ -23,7 +23,7 @@ include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
 $page_title = "Domain Registrar & SSL Provider Account Owners";
-$software_section = "owners";
+$software_section = "account-owners";
 
 $sql = "SELECT id
 		FROM owners";
@@ -64,7 +64,7 @@ Below is a list of all the Domain Registrar and SSL Provider Account Owners that
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/account-owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
 	<td class="main_table_cell_active">
     <?php
@@ -141,7 +141,7 @@ if ($has_active_domain != "1" && $has_inactive_domains == "1") echo "<table clas
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/account-owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
 	<td class="main_table_cell_inactive">
     <?php
@@ -193,7 +193,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/account-owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
 	<td class="main_table_cell_active">
     <?php
@@ -270,7 +270,7 @@ if ($has_active_ssl != "1" && $has_inactive_ssl == "1") echo "<table class=\"mai
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/account-owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
 	<td class="main_table_cell_inactive">
     <?php
@@ -300,7 +300,7 @@ if ($has_active_ssl == "1" || $has_inactive_ssl == "1") echo "</table>";
 		<BR><font class="default_highlight">*</font> = Default Owner
 <?php } ?>
 <?php if (!$has_active_domain && !$has_inactive_domain && !$has_active_ssl && !$has_inactive_ssl) { ?>
-        <BR><BR>You don't currently have any Owners. <a href="add/owner.php">Click here to add one</a>.
+        <BR><BR>You don't currently have any Owners. <a href="add/account-owner.php">Click here to add one</a>.
 <?php } ?>
 <?php include("../_includes/footer.inc.php"); ?>
 </body>

@@ -448,7 +448,7 @@ if ($_SESSION['need_ssl_provider'] == "1") {
 }
 
 if ($_SESSION['need_ssl_account'] == "1" && $_SESSION['need_ssl_provider'] != "1") {
-	echo "<strong><font class=\"highlight\">0</font></strong> SSL Provider Accounts found. Please <a href=\"assets/add/ssl-account.php\">click here</a> to add one.<BR><BR>";
+	echo "<strong><font class=\"highlight\">0</font></strong> SSL Provider Accounts found. Please <a href=\"assets/add/ssl-provider-account.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
 
@@ -1003,7 +1003,7 @@ echo "</select>";
 <?php } ?>
 <?php if ($_SESSION['display_ssl_account'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="assets/edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a> (<a class="invisiblelink" href="assets/edit/ssl-account.php?sslpaid=<?=$row->sslpa_id?>"><?=substr($row->username, 0, 15);?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
+		<a class="invisiblelink" href="assets/edit/ssl-provider.php?sslpid=<?=$row->sslp_id?>"><?=$row->ssl_provider_name?></a> (<a class="invisiblelink" href="assets/edit/ssl-provider-account.php?sslpaid=<?=$row->sslpa_id?>"><?=substr($row->username, 0, 15);?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_type'] == "1") { ?>
@@ -1023,7 +1023,7 @@ echo "</select>";
 <?php } ?>
 <?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="assets/edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
+		<a class="invisiblelink" href="assets/edit/account-owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
 	</td>
 <?php } ?>
 </tr>

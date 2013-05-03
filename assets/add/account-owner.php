@@ -1,5 +1,5 @@
 <?php
-// /assets/add/owner.php
+// /assets/add/account-owner.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -24,7 +24,7 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Adding A New Owner";
-$software_section = "owners";
+$software_section = "account-owners";
 
 // Form Variables
 $new_owner = $_POST['new_owner'];

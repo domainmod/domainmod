@@ -1,5 +1,5 @@
 <?php
-// /assets/edit/owner.php
+// /assets/edit/account-owner.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -24,7 +24,7 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Editting An Owner";
-$software_section = "owners";
+$software_section = "account-owners";
 
 // 'Delete Owner' Confirmation Variables
 $del = $_GET['del'];

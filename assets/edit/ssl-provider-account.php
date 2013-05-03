@@ -1,5 +1,5 @@
 <?php
-// /assets/edit/ssl-account.php
+// /assets/edit/ssl-provider-account.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -24,7 +24,7 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Editting An SSL Provider Account";
-$software_section = "ssl-accounts";
+$software_section = "ssl-provider-accounts";
 
 // 'Delete SSL Provider Account' Confirmation Variables
 $del = $_GET['del'];

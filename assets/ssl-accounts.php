@@ -23,7 +23,7 @@ include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
 $page_title = "SSL Provider Accounts";
-$software_section = "ssl-accounts";
+$software_section = "ssl-provider-accounts";
 
 // Form Variables
 $sslpid = $_GET['sslpid'];
@@ -88,13 +88,13 @@ Below is a list of all the SSL Provider Accounts that are stored in your <?=$sof
 
 		<tr class="main_table_row_active">
 			<td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
 			</td>
 			<td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
 			</td>
 			<td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>
 			</td>
 			<td class="main_table_cell_active">
 				<?php
@@ -157,13 +157,13 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
+                <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
             </td>
             <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                    <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>
+                <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>
             </td>
             <td class="main_table_cell_inactive">&nbsp;
                 
@@ -191,7 +191,7 @@ if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 			?>
                     <BR>Before adding an SSL Provider Account you must add at least one SSL Provider. <a href="add/ssl-provider.php">Click here to add an SSL Provider</a>.<BR>
 			<?php } else { ?>
-                    <BR>You don't currently have any SSL Provider Accounts. <a href="add/ssl-account.php">Click here to add one</a>.<BR>
+                    <BR>You don't currently have any SSL Provider Accounts. <a href="add/ssl-provider-account.php">Click here to add one</a>.<BR>
 			<?php } ?>
 <?php } ?>
 <?php include("../_includes/footer.inc.php"); ?>

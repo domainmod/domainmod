@@ -88,13 +88,13 @@ Below is a list of all the Domain Registrar Accounts that are stored in your <?=
 
 		<tr class="main_table_row_active">
 			<td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
+				<a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
 			</td>
 			<td class="main_table_cell_active" valign="top">
-				<a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+				<a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
 			</td>
 			<td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
+				<a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
 			</td>
 			<td class="main_table_cell_active">
 				<?php
@@ -157,13 +157,13 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
+                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
             </td>
             <td class="main_table_cell_inactive" valign="top">
-                    <a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                    <a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
+                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
             </td>
             <td class="main_table_cell_inactive">&nbsp;
                 
@@ -193,7 +193,7 @@ if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 			?>
                     <BR>Before adding a Registrar Account you must add at least one Registrar. <a href="add/registrar.php">Click here to add a Registrar</a>.<BR>
 			<?php } else { ?>
-                    <BR>You don't currently have any Registrar Accounts. <a href="add/account.php">Click here to add one</a>.<BR>
+                    <BR>You don't currently have any Registrar Accounts. <a href="add/registrar-account.php">Click here to add one</a>.<BR>
 			<?php } ?>
 <?php } ?>
 <?php include("../_includes/footer.inc.php"); ?>

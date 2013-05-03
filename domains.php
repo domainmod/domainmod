@@ -659,7 +659,7 @@ if ($_SESSION['need_registrar'] == "1") {
 }
 
 if ($_SESSION['need_registrar_account'] == "1" && $_SESSION['need_registrar'] != "1") {
-	echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrar Accounts found. Please <a href=\"assets/add/account.php\">click here</a> to add one.<BR><BR>";
+	echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrar Accounts found. Please <a href=\"assets/add/registrar-account.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
 
@@ -1409,7 +1409,7 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 <?php } ?>
 <?php if ($_SESSION['display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="assets/edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a> (<a class="invisiblelink" href="assets/edit/account.php?raid=<?=$row->ra_id?>"><?=substr($row->username, 0, 15);?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
+		<a class="invisiblelink" href="assets/edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a> (<a class="invisiblelink" href="assets/edit/registrar-account.php?raid=<?=$row->ra_id?>"><?=substr($row->username, 0, 15);?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
@@ -1434,7 +1434,7 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 <?php } ?>
 <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="assets/edit/owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
+		<a class="invisiblelink" href="assets/edit/account-owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
 	</td>
 <?php } ?>
 </tr>
