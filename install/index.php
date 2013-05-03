@@ -68,6 +68,17 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`id` int(10) NOT NULL auto_increment,
 				`user_id` int(10) NOT NULL,
 				`default_currency` varchar(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`default_timezone` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default 'Canada/Pacific',
+				`default_category` int(10) NOT NULL default '1',
+				`default_dns` int(10) NOT NULL default '1',
+				`default_host` int(10) NOT NULL default '1',
+				`default_ip_address` int(10) NOT NULL default '1',
+				`default_owner` int(10) NOT NULL default '1',
+				`default_registrar` int(10) NOT NULL default '1',
+				`default_registrar_account` int(10) NOT NULL default '1',
+				`default_ssl_provider_account` int(10) NOT NULL default '1',
+				`default_ssl_type` int(10) NOT NULL default '1',
+				`default_ssl_provider` int(10) NOT NULL default '1',
 				`expiration_emails` int(1) NOT NULL default '1',
 				`number_of_domains` int(5) NOT NULL default '50',
 				`number_of_ssl_certs` int(5) NOT NULL default '50',
@@ -112,7 +123,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`stakeholder` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`default_category` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -120,15 +130,14 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "INSERT INTO `categories` 
-			(`name`, `stakeholder`, `default_category`, `insert_time`) VALUES 
-			('[no category]', '[no stakeholder]', 1, '$current_timestamp');";
+			(`name`, `stakeholder`, `insert_time`) VALUES 
+			('[no category]', '[no stakeholder]', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "CREATE TABLE IF NOT EXISTS `hosting` ( 
 				`id` int(10) NOT NULL auto_increment,
 				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`default_host` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -136,15 +145,14 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "INSERT INTO `hosting` 
-			(`name`, `default_host`, `insert_time`) VALUES 
-			('[no hosting]', 1, '$current_timestamp');";
+			(`name`, `insert_time`) VALUES 
+			('[no hosting]', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "CREATE TABLE IF NOT EXISTS `owners` ( 
 				`id` int(10) NOT NULL auto_increment,
 				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`default_owner` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`),
@@ -153,8 +161,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "INSERT INTO `owners` 
-			(`name`, `default_owner`, `insert_time`) VALUES 
-			('[no owner]', 1, '$current_timestamp');";
+			(`name`, `insert_time`) VALUES 
+			('[no owner]', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "CREATE TABLE IF NOT EXISTS `currencies` ( 
@@ -431,7 +439,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`id` int(10) NOT NULL auto_increment,
 				`type` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`default_type` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -439,11 +446,11 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "INSERT INTO `ssl_cert_types` 
-			(`id`, `type`, `default_type`, `insert_time`) VALUES 
-			(1, 'Web Server SSL/TLS Certificate', 1, '$current_timestamp'),
-			(2, 'S/MIME and Authentication Certificate', 0, '$current_timestamp'),
-			(3, 'Object Code Signing Certificate', 0, '$current_timestamp'),
-			(4, 'Digital ID', 0, '$current_timestamp');";
+			(`id`, `type`, `insert_time`) VALUES 
+			(1, 'Web Server SSL/TLS Certificate', '$current_timestamp'),
+			(2, 'S/MIME and Authentication Certificate', '$current_timestamp'),
+			(3, 'Object Code Signing Certificate', '$current_timestamp'),
+			(4, 'Digital ID', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `dns` ( 
@@ -471,7 +478,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`ip10` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`number_of_servers` int(2) NOT NULL default '0',
-				`default_dns` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -479,8 +485,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "INSERT INTO `dns` 
-			(`name`, `dns1`, `dns2`, `number_of_servers`, `default_dns`, `insert_time`) VALUES 
-			('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', 1, '$current_timestamp');";
+			(`name`, `dns1`, `dns2`, `number_of_servers`, `insert_time`) VALUES 
+			('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `registrars` ( 
@@ -488,7 +494,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`url` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`default_registrar` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`),
@@ -501,7 +506,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`url` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`default_provider` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -516,7 +520,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`password` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`reseller` int(1) NOT NULL default '0',
-				`default_account` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`),
@@ -532,7 +535,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`password` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`reseller` int(1) NOT NULL default '0',
-				`default_account` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`),
@@ -573,7 +575,6 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`ip` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`rdns` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default '-',
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`default_ip_address` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -581,8 +582,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "INSERT INTO `ip_addresses` 
-			(`id`, `name`, `ip`, `rdns`, `default_ip_address`, `insert_time`) VALUES 
-			('1', '[no ip address]', '-', '-', 1, '$current_timestamp');";
+			(`id`, `name`, `ip`, `rdns`, `insert_time`) VALUES 
+			('1', '[no ip address]', '-', '-', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `settings` ( 
@@ -590,8 +591,16 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`full_url` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default 'http://',
 				`db_version` float NOT NULL,
 				`email_address` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`default_currency` varchar(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`timezone` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default 'Canada/Pacific',
+				`default_category` int(10) NOT NULL default '1',
+				`default_dns` int(10) NOT NULL default '1',
+				`default_host` int(10) NOT NULL default '1',
+				`default_ip_address` int(10) NOT NULL default '1',
+				`default_owner` int(10) NOT NULL default '1',
+				`default_registrar` int(10) NOT NULL default '1',
+				`default_registrar_account` int(10) NOT NULL default '1',
+				`default_ssl_provider_account` int(10) NOT NULL default '1',
+				`default_ssl_type` int(10) NOT NULL default '1',
+				`default_ssl_provider` int(10) NOT NULL default '1',
 				`expiration_email_days` int(3) NOT NULL default '60',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -602,8 +611,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	$full_url = substr($_SERVER["HTTP_REFERER"], 0, -1);
 
 	$sql = "INSERT INTO `settings` 
-			(`full_url`, `db_version`, `email_address`, `default_currency`, `insert_time`) VALUES 
-			('$full_url', '$most_recent_db_version', 'dm@aysmedia.com', 'CAD', '$current_timestamp');";
+			(`full_url`, `db_version`, `email_address`, `insert_time`) VALUES 
+			('$full_url', '$most_recent_db_version', 'dm@aysmedia.com', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "CREATE TABLE IF NOT EXISTS `timezones` (
@@ -618,6 +627,86 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 			(`timezone`, `insert_time`) VALUES 
 			('Africa/Abidjan', '$current_timestamp'), ('Africa/Accra', '$current_timestamp'), ('Africa/Addis_Ababa', '$current_timestamp'), ('Africa/Algiers', '$current_timestamp'), ('Africa/Asmara', '$current_timestamp'), ('Africa/Asmera', '$current_timestamp'), ('Africa/Bamako', '$current_timestamp'), ('Africa/Bangui', '$current_timestamp'), ('Africa/Banjul', '$current_timestamp'), ('Africa/Bissau', '$current_timestamp'), ('Africa/Blantyre', '$current_timestamp'), ('Africa/Brazzaville', '$current_timestamp'), ('Africa/Bujumbura', '$current_timestamp'), ('Africa/Cairo', '$current_timestamp'), ('Africa/Casablanca', '$current_timestamp'), ('Africa/Ceuta', '$current_timestamp'), ('Africa/Conakry', '$current_timestamp'), ('Africa/Dakar', '$current_timestamp'), ('Africa/Dar_es_Salaam', '$current_timestamp'), ('Africa/Djibouti', '$current_timestamp'), ('Africa/Douala', '$current_timestamp'), ('Africa/El_Aaiun', '$current_timestamp'), ('Africa/Freetown', '$current_timestamp'), ('Africa/Gaborone', '$current_timestamp'), ('Africa/Harare', '$current_timestamp'), ('Africa/Johannesburg', '$current_timestamp'), ('Africa/Juba', '$current_timestamp'), ('Africa/Kampala', '$current_timestamp'), ('Africa/Khartoum', '$current_timestamp'), ('Africa/Kigali', '$current_timestamp'), ('Africa/Kinshasa', '$current_timestamp'), ('Africa/Lagos', '$current_timestamp'), ('Africa/Libreville', '$current_timestamp'), ('Africa/Lome', '$current_timestamp'), ('Africa/Luanda', '$current_timestamp'), ('Africa/Lubumbashi', '$current_timestamp'), ('Africa/Lusaka', '$current_timestamp'), ('Africa/Malabo', '$current_timestamp'), ('Africa/Maputo', '$current_timestamp'), ('Africa/Maseru', '$current_timestamp'), ('Africa/Mbabane', '$current_timestamp'), ('Africa/Mogadishu', '$current_timestamp'), ('Africa/Monrovia', '$current_timestamp'), ('Africa/Nairobi', '$current_timestamp'), ('Africa/Ndjamena', '$current_timestamp'), ('Africa/Niamey', '$current_timestamp'), ('Africa/Nouakchott', '$current_timestamp'), ('Africa/Ouagadougou', '$current_timestamp'), ('Africa/Porto-Novo', '$current_timestamp'), ('Africa/Sao_Tome', '$current_timestamp'), ('Africa/Timbuktu', '$current_timestamp'), ('Africa/Tripoli', '$current_timestamp'), ('Africa/Tunis', '$current_timestamp'), ('Africa/Windhoek', '$current_timestamp'), ('America/Adak', '$current_timestamp'), ('America/Anchorage', '$current_timestamp'), ('America/Anguilla', '$current_timestamp'), ('America/Antigua', '$current_timestamp'), ('America/Araguaina', '$current_timestamp'), ('America/Argentina/Buenos_Aires', '$current_timestamp'), ('America/Argentina/Catamarca', '$current_timestamp'), ('America/Argentina/ComodRivadavia', '$current_timestamp'), ('America/Argentina/Cordoba', '$current_timestamp'), ('America/Argentina/Jujuy', '$current_timestamp'), ('America/Argentina/La_Rioja', '$current_timestamp'), ('America/Argentina/Mendoza', '$current_timestamp'), ('America/Argentina/Rio_Gallegos', '$current_timestamp'), ('America/Argentina/Salta', '$current_timestamp'), ('America/Argentina/San_Juan', '$current_timestamp'), ('America/Argentina/San_Luis', '$current_timestamp'), ('America/Argentina/Tucuman', '$current_timestamp'), ('America/Argentina/Ushuaia', '$current_timestamp'), ('America/Aruba', '$current_timestamp'), ('America/Asuncion', '$current_timestamp'), ('America/Atikokan', '$current_timestamp'), ('America/Atka', '$current_timestamp'), ('America/Bahia', '$current_timestamp'), ('America/Bahia_Banderas', '$current_timestamp'), ('America/Barbados', '$current_timestamp'), ('America/Belem', '$current_timestamp'), ('America/Belize', '$current_timestamp'), ('America/Blanc-Sablon', '$current_timestamp'), ('America/Boa_Vista', '$current_timestamp'), ('America/Bogota', '$current_timestamp'), ('America/Boise', '$current_timestamp'), ('America/Buenos_Aires', '$current_timestamp'), ('America/Cambridge_Bay', '$current_timestamp'), ('America/Campo_Grande', '$current_timestamp'), ('America/Cancun', '$current_timestamp'), ('America/Caracas', '$current_timestamp'), ('America/Catamarca', '$current_timestamp'), ('America/Cayenne', '$current_timestamp'), ('America/Cayman', '$current_timestamp'), ('America/Chicago', '$current_timestamp'), ('America/Chihuahua', '$current_timestamp'), ('America/Coral_Harbour', '$current_timestamp'), ('America/Cordoba', '$current_timestamp'), ('America/Costa_Rica', '$current_timestamp'), ('America/Creston', '$current_timestamp'), ('America/Cuiaba', '$current_timestamp'), ('America/Curacao', '$current_timestamp'), ('America/Danmarkshavn', '$current_timestamp'), ('America/Dawson', '$current_timestamp'), ('America/Dawson_Creek', '$current_timestamp'), ('America/Denver', '$current_timestamp'), ('America/Detroit', '$current_timestamp'), ('America/Dominica', '$current_timestamp'), ('America/Edmonton', '$current_timestamp'), ('America/Eirunepe', '$current_timestamp'), ('America/El_Salvador', '$current_timestamp'), ('America/Ensenada', '$current_timestamp'), ('America/Fort_Wayne', '$current_timestamp'), ('America/Fortaleza', '$current_timestamp'), ('America/Glace_Bay', '$current_timestamp'), ('America/Godthab', '$current_timestamp'), ('America/Goose_Bay', '$current_timestamp'), ('America/Grand_Turk', '$current_timestamp'), ('America/Grenada', '$current_timestamp'), ('America/Guadeloupe', '$current_timestamp'), ('America/Guatemala', '$current_timestamp'), ('America/Guayaquil', '$current_timestamp'), ('America/Guyana', '$current_timestamp'), ('America/Halifax', '$current_timestamp'), ('America/Havana', '$current_timestamp'), ('America/Hermosillo', '$current_timestamp'), ('America/Indiana/Indianapolis', '$current_timestamp'), ('America/Indiana/Knox', '$current_timestamp'), ('America/Indiana/Marengo', '$current_timestamp'), ('America/Indiana/Petersburg', '$current_timestamp'), ('America/Indiana/Tell_City', '$current_timestamp'), ('America/Indiana/Vevay', '$current_timestamp'), ('America/Indiana/Vincennes', '$current_timestamp'), ('America/Indiana/Winamac', '$current_timestamp'), ('America/Indianapolis', '$current_timestamp'), ('America/Inuvik', '$current_timestamp'), ('America/Iqaluit', '$current_timestamp'), ('America/Jamaica', '$current_timestamp'), ('America/Jujuy', '$current_timestamp'), ('America/Juneau', '$current_timestamp'), ('America/Kentucky/Louisville', '$current_timestamp'), ('America/Kentucky/Monticello', '$current_timestamp'), ('America/Knox_IN', '$current_timestamp'), ('America/Kralendijk', '$current_timestamp'), ('America/La_Paz', '$current_timestamp'), ('America/Lima', '$current_timestamp'), ('America/Los_Angeles', '$current_timestamp'), ('America/Louisville', '$current_timestamp'), ('America/Lower_Princes', '$current_timestamp'), ('America/Maceio', '$current_timestamp'), ('America/Managua', '$current_timestamp'), ('America/Manaus', '$current_timestamp'), ('America/Marigot', '$current_timestamp'), ('America/Martinique', '$current_timestamp'), ('America/Matamoros', '$current_timestamp'), ('America/Mazatlan', '$current_timestamp'), ('America/Mendoza', '$current_timestamp'), ('America/Menominee', '$current_timestamp'), ('America/Merida', '$current_timestamp'), ('America/Metlakatla', '$current_timestamp'), ('America/Mexico_City', '$current_timestamp'), ('America/Miquelon', '$current_timestamp'), ('America/Moncton', '$current_timestamp'), ('America/Monterrey', '$current_timestamp'), ('America/Montevideo', '$current_timestamp'), ('America/Montreal', '$current_timestamp'), ('America/Montserrat', '$current_timestamp'), ('America/Nassau', '$current_timestamp'), ('America/New_York', '$current_timestamp'), ('America/Nipigon', '$current_timestamp'), ('America/Nome', '$current_timestamp'), ('America/Noronha', '$current_timestamp'), ('America/North_Dakota/Beulah', '$current_timestamp'), ('America/North_Dakota/Center', '$current_timestamp'), ('America/North_Dakota/New_Salem', '$current_timestamp'), ('America/Ojinaga', '$current_timestamp'), ('America/Panama', '$current_timestamp'), ('America/Pangnirtung', '$current_timestamp'), ('America/Paramaribo', '$current_timestamp'), ('America/Phoenix', '$current_timestamp'), ('America/Port-au-Prince', '$current_timestamp'), ('America/Port_of_Spain', '$current_timestamp'), ('America/Porto_Acre', '$current_timestamp'), ('America/Porto_Velho', '$current_timestamp'), ('America/Puerto_Rico', '$current_timestamp'), ('America/Rainy_River', '$current_timestamp'), ('America/Rankin_Inlet', '$current_timestamp'), ('America/Recife', '$current_timestamp'), ('America/Regina', '$current_timestamp'), ('America/Resolute', '$current_timestamp'), ('America/Rio_Branco', '$current_timestamp'), ('America/Rosario', '$current_timestamp'), ('America/Santa_Isabel', '$current_timestamp'), ('America/Santarem', '$current_timestamp'), ('America/Santiago', '$current_timestamp'), ('America/Santo_Domingo', '$current_timestamp'), ('America/Sao_Paulo', '$current_timestamp'), ('America/Scoresbysund', '$current_timestamp'), ('America/Shiprock', '$current_timestamp'), ('America/Sitka', '$current_timestamp'), ('America/St_Barthelemy', '$current_timestamp'), ('America/St_Johns', '$current_timestamp'), ('America/St_Kitts', '$current_timestamp'), ('America/St_Lucia', '$current_timestamp'), ('America/St_Thomas', '$current_timestamp'), ('America/St_Vincent', '$current_timestamp'), ('America/Swift_Current', '$current_timestamp'), ('America/Tegucigalpa', '$current_timestamp'), ('America/Thule', '$current_timestamp'), ('America/Thunder_Bay', '$current_timestamp'), ('America/Tijuana', '$current_timestamp'), ('America/Toronto', '$current_timestamp'), ('America/Tortola', '$current_timestamp'), ('America/Vancouver', '$current_timestamp'), ('America/Virgin', '$current_timestamp'), ('America/Whitehorse', '$current_timestamp'), ('America/Winnipeg', '$current_timestamp'), ('America/Yakutat', '$current_timestamp'), ('America/Yellowknife', '$current_timestamp'), ('Antarctica/Casey', '$current_timestamp'), ('Antarctica/Davis', '$current_timestamp'), ('Antarctica/DumontDUrville', '$current_timestamp'), ('Antarctica/Macquarie', '$current_timestamp'), ('Antarctica/Mawson', '$current_timestamp'), ('Antarctica/McMurdo', '$current_timestamp'), ('Antarctica/Palmer', '$current_timestamp'), ('Antarctica/Rothera', '$current_timestamp'), ('Antarctica/South_Pole', '$current_timestamp'), ('Antarctica/Syowa', '$current_timestamp'), ('Antarctica/Vostok', '$current_timestamp'), ('Arctic/Longyearbyen', '$current_timestamp'), ('Asia/Aden', '$current_timestamp'), ('Asia/Almaty', '$current_timestamp'), ('Asia/Amman', '$current_timestamp'), ('Asia/Anadyr', '$current_timestamp'), ('Asia/Aqtau', '$current_timestamp'), ('Asia/Aqtobe', '$current_timestamp'), ('Asia/Ashgabat', '$current_timestamp'), ('Asia/Ashkhabad', '$current_timestamp'), ('Asia/Baghdad', '$current_timestamp'), ('Asia/Bahrain', '$current_timestamp'), ('Asia/Baku', '$current_timestamp'), ('Asia/Bangkok', '$current_timestamp'), ('Asia/Beirut', '$current_timestamp'), ('Asia/Bishkek', '$current_timestamp'), ('Asia/Brunei', '$current_timestamp'), ('Asia/Calcutta', '$current_timestamp'), ('Asia/Choibalsan', '$current_timestamp'), ('Asia/Chongqing', '$current_timestamp'), ('Asia/Chungking', '$current_timestamp'), ('Asia/Colombo', '$current_timestamp'), ('Asia/Dacca', '$current_timestamp'), ('Asia/Damascus', '$current_timestamp'), ('Asia/Dhaka', '$current_timestamp'), ('Asia/Dili', '$current_timestamp'), ('Asia/Dubai', '$current_timestamp'), ('Asia/Dushanbe', '$current_timestamp'), ('Asia/Gaza', '$current_timestamp'), ('Asia/Harbin', '$current_timestamp'), ('Asia/Hebron', '$current_timestamp'), ('Asia/Ho_Chi_Minh', '$current_timestamp'), ('Asia/Hong_Kong', '$current_timestamp'), ('Asia/Hovd', '$current_timestamp'), ('Asia/Irkutsk', '$current_timestamp'), ('Asia/Istanbul', '$current_timestamp'), ('Asia/Jakarta', '$current_timestamp'), ('Asia/Jayapura', '$current_timestamp'), ('Asia/Jerusalem', '$current_timestamp'), ('Asia/Kabul', '$current_timestamp'), ('Asia/Kamchatka', '$current_timestamp'), ('Asia/Karachi', '$current_timestamp'), ('Asia/Kashgar', '$current_timestamp'), ('Asia/Kathmandu', '$current_timestamp'), ('Asia/Katmandu', '$current_timestamp'), ('Asia/Khandyga', '$current_timestamp'), ('Asia/Kolkata', '$current_timestamp'), ('Asia/Krasnoyarsk', '$current_timestamp'), ('Asia/Kuala_Lumpur', '$current_timestamp'), ('Asia/Kuching', '$current_timestamp'), ('Asia/Kuwait', '$current_timestamp'), ('Asia/Macao', '$current_timestamp'), ('Asia/Macau', '$current_timestamp'), ('Asia/Magadan', '$current_timestamp'), ('Asia/Makassar', '$current_timestamp'), ('Asia/Manila', '$current_timestamp'), ('Asia/Muscat', '$current_timestamp'), ('Asia/Nicosia', '$current_timestamp'), ('Asia/Novokuznetsk', '$current_timestamp'), ('Asia/Novosibirsk', '$current_timestamp'), ('Asia/Omsk', '$current_timestamp'), ('Asia/Oral', '$current_timestamp'), ('Asia/Phnom_Penh', '$current_timestamp'), ('Asia/Pontianak', '$current_timestamp'), ('Asia/Pyongyang', '$current_timestamp'), ('Asia/Qatar', '$current_timestamp'), ('Asia/Qyzylorda', '$current_timestamp'), ('Asia/Rangoon', '$current_timestamp'), ('Asia/Riyadh', '$current_timestamp'), ('Asia/Saigon', '$current_timestamp'), ('Asia/Sakhalin', '$current_timestamp'), ('Asia/Samarkand', '$current_timestamp'), ('Asia/Seoul', '$current_timestamp'), ('Asia/Shanghai', '$current_timestamp'), ('Asia/Singapore', '$current_timestamp'), ('Asia/Taipei', '$current_timestamp'), ('Asia/Tashkent', '$current_timestamp'), ('Asia/Tbilisi', '$current_timestamp'), ('Asia/Tehran', '$current_timestamp'), ('Asia/Tel_Aviv', '$current_timestamp'), ('Asia/Thimbu', '$current_timestamp'), ('Asia/Thimphu', '$current_timestamp'), ('Asia/Tokyo', '$current_timestamp'), ('Asia/Ujung_Pandang', '$current_timestamp'), ('Asia/Ulaanbaatar', '$current_timestamp'), ('Asia/Ulan_Bator', '$current_timestamp'), ('Asia/Urumqi', '$current_timestamp'), ('Asia/Ust-Nera', '$current_timestamp'), ('Asia/Vientiane', '$current_timestamp'), ('Asia/Vladivostok', '$current_timestamp'), ('Asia/Yakutsk', '$current_timestamp'), ('Asia/Yekaterinburg', '$current_timestamp'), ('Asia/Yerevan', '$current_timestamp'), ('Atlantic/Azores', '$current_timestamp'), ('Atlantic/Bermuda', '$current_timestamp'), ('Atlantic/Canary', '$current_timestamp'), ('Atlantic/Cape_Verde', '$current_timestamp'), ('Atlantic/Faeroe', '$current_timestamp'), ('Atlantic/Faroe', '$current_timestamp'), ('Atlantic/Jan_Mayen', '$current_timestamp'), ('Atlantic/Madeira', '$current_timestamp'), ('Atlantic/Reykjavik', '$current_timestamp'), ('Atlantic/South_Georgia', '$current_timestamp'), ('Atlantic/St_Helena', '$current_timestamp'), ('Atlantic/Stanley', '$current_timestamp'), ('Australia/ACT', '$current_timestamp'), ('Australia/Adelaide', '$current_timestamp'), ('Australia/Brisbane', '$current_timestamp'), ('Australia/Broken_Hill', '$current_timestamp'), ('Australia/Canberra', '$current_timestamp'), ('Australia/Currie', '$current_timestamp'), ('Australia/Darwin', '$current_timestamp'), ('Australia/Eucla', '$current_timestamp'), ('Australia/Hobart', '$current_timestamp'), ('Australia/LHI', '$current_timestamp'), ('Australia/Lindeman', '$current_timestamp'), ('Australia/Lord_Howe', '$current_timestamp'), ('Australia/Melbourne', '$current_timestamp'), ('Australia/North', '$current_timestamp'), ('Australia/NSW', '$current_timestamp'), ('Australia/Perth', '$current_timestamp'), ('Australia/Queensland', '$current_timestamp'), ('Australia/South', '$current_timestamp'), ('Australia/Sydney', '$current_timestamp'), ('Australia/Tasmania', '$current_timestamp'), ('Australia/Victoria', '$current_timestamp'), ('Australia/West', '$current_timestamp'), ('Australia/Yancowinna', '$current_timestamp'), ('Brazil/Acre', '$current_timestamp'), ('Brazil/DeNoronha', '$current_timestamp'), ('Brazil/East', '$current_timestamp'), ('Brazil/West', '$current_timestamp'), ('Canada/Atlantic', '$current_timestamp'), ('Canada/Central', '$current_timestamp'), ('Canada/East-Saskatchewan', '$current_timestamp'), ('Canada/Eastern', '$current_timestamp'), ('Canada/Mountain', '$current_timestamp'), ('Canada/Newfoundland', '$current_timestamp'), ('Canada/Pacific', '$current_timestamp'), ('Canada/Saskatchewan', '$current_timestamp'), ('Canada/Yukon', '$current_timestamp'), ('Chile/Continental', '$current_timestamp'), ('Chile/EasterIsland', '$current_timestamp'), ('Cuba', '$current_timestamp'), ('Egypt', '$current_timestamp'), ('Eire', '$current_timestamp'), ('Europe/Amsterdam', '$current_timestamp'), ('Europe/Andorra', '$current_timestamp'), ('Europe/Athens', '$current_timestamp'), ('Europe/Belfast', '$current_timestamp'), ('Europe/Belgrade', '$current_timestamp'), ('Europe/Berlin', '$current_timestamp'), ('Europe/Bratislava', '$current_timestamp'), ('Europe/Brussels', '$current_timestamp'), ('Europe/Bucharest', '$current_timestamp'), ('Europe/Budapest', '$current_timestamp'), ('Europe/Busingen', '$current_timestamp'), ('Europe/Chisinau', '$current_timestamp'), ('Europe/Copenhagen', '$current_timestamp'), ('Europe/Dublin', '$current_timestamp'), ('Europe/Gibraltar', '$current_timestamp'), ('Europe/Guernsey', '$current_timestamp'), ('Europe/Helsinki', '$current_timestamp'), ('Europe/Isle_of_Man', '$current_timestamp'), ('Europe/Istanbul', '$current_timestamp'), ('Europe/Jersey', '$current_timestamp'), ('Europe/Kaliningrad', '$current_timestamp'), ('Europe/Kiev', '$current_timestamp'), ('Europe/Lisbon', '$current_timestamp'), ('Europe/Ljubljana', '$current_timestamp'), ('Europe/London', '$current_timestamp'), ('Europe/Luxembourg', '$current_timestamp'), ('Europe/Madrid', '$current_timestamp'), ('Europe/Malta', '$current_timestamp'), ('Europe/Mariehamn', '$current_timestamp'), ('Europe/Minsk', '$current_timestamp'), ('Europe/Monaco', '$current_timestamp'), ('Europe/Moscow', '$current_timestamp'), ('Europe/Nicosia', '$current_timestamp'), ('Europe/Oslo', '$current_timestamp'), ('Europe/Paris', '$current_timestamp'), ('Europe/Podgorica', '$current_timestamp'), ('Europe/Prague', '$current_timestamp'), ('Europe/Riga', '$current_timestamp'), ('Europe/Rome', '$current_timestamp'), ('Europe/Samara', '$current_timestamp'), ('Europe/San_Marino', '$current_timestamp'), ('Europe/Sarajevo', '$current_timestamp'), ('Europe/Simferopol', '$current_timestamp'), ('Europe/Skopje', '$current_timestamp'), ('Europe/Sofia', '$current_timestamp'), ('Europe/Stockholm', '$current_timestamp'), ('Europe/Tallinn', '$current_timestamp'), ('Europe/Tirane', '$current_timestamp'), ('Europe/Tiraspol', '$current_timestamp'), ('Europe/Uzhgorod', '$current_timestamp'), ('Europe/Vaduz', '$current_timestamp'), ('Europe/Vatican', '$current_timestamp'), ('Europe/Vienna', '$current_timestamp'), ('Europe/Vilnius', '$current_timestamp'), ('Europe/Volgograd', '$current_timestamp'), ('Europe/Warsaw', '$current_timestamp'), ('Europe/Zagreb', '$current_timestamp'), ('Europe/Zaporozhye', '$current_timestamp'), ('Europe/Zurich', '$current_timestamp'), ('Greenwich', '$current_timestamp'), ('Hongkong', '$current_timestamp'), ('Iceland', '$current_timestamp'), ('Indian/Antananarivo', '$current_timestamp'), ('Indian/Chagos', '$current_timestamp'), ('Indian/Christmas', '$current_timestamp'), ('Indian/Cocos', '$current_timestamp'), ('Indian/Comoro', '$current_timestamp'), ('Indian/Kerguelen', '$current_timestamp'), ('Indian/Mahe', '$current_timestamp'), ('Indian/Maldives', '$current_timestamp'), ('Indian/Mauritius', '$current_timestamp'), ('Indian/Mayotte', '$current_timestamp'), ('Indian/Reunion', '$current_timestamp'), ('Iran', '$current_timestamp'), ('Israel', '$current_timestamp'), ('Jamaica', '$current_timestamp'), ('Japan', '$current_timestamp'), ('Kwajalein', '$current_timestamp'), ('Libya', '$current_timestamp'), ('Mexico/BajaNorte', '$current_timestamp'), ('Mexico/BajaSur', '$current_timestamp'), ('Mexico/General', '$current_timestamp'), ('Pacific/Apia', '$current_timestamp'), ('Pacific/Auckland', '$current_timestamp'), ('Pacific/Chatham', '$current_timestamp'), ('Pacific/Chuuk', '$current_timestamp'), ('Pacific/Easter', '$current_timestamp'), ('Pacific/Efate', '$current_timestamp'), ('Pacific/Enderbury', '$current_timestamp'), ('Pacific/Fakaofo', '$current_timestamp'), ('Pacific/Fiji', '$current_timestamp'), ('Pacific/Funafuti', '$current_timestamp'), ('Pacific/Galapagos', '$current_timestamp'), ('Pacific/Gambier', '$current_timestamp'), ('Pacific/Guadalcanal', '$current_timestamp'), ('Pacific/Guam', '$current_timestamp'), ('Pacific/Honolulu', '$current_timestamp'), ('Pacific/Johnston', '$current_timestamp'), ('Pacific/Kiritimati', '$current_timestamp'), ('Pacific/Kosrae', '$current_timestamp'), ('Pacific/Kwajalein', '$current_timestamp'), ('Pacific/Majuro', '$current_timestamp'), ('Pacific/Marquesas', '$current_timestamp'), ('Pacific/Midway', '$current_timestamp'), ('Pacific/Nauru', '$current_timestamp'), ('Pacific/Niue', '$current_timestamp'), ('Pacific/Norfolk', '$current_timestamp'), ('Pacific/Noumea', '$current_timestamp'), ('Pacific/Pago_Pago', '$current_timestamp'), ('Pacific/Palau', '$current_timestamp'), ('Pacific/Pitcairn', '$current_timestamp'), ('Pacific/Pohnpei', '$current_timestamp'), ('Pacific/Ponape', '$current_timestamp'), ('Pacific/Port_Moresby', '$current_timestamp'), ('Pacific/Rarotonga', '$current_timestamp'), ('Pacific/Saipan', '$current_timestamp'), ('Pacific/Samoa', '$current_timestamp'), ('Pacific/Tahiti', '$current_timestamp'), ('Pacific/Tarawa', '$current_timestamp'), ('Pacific/Tongatapu', '$current_timestamp'), ('Pacific/Truk', '$current_timestamp'), ('Pacific/Wake', '$current_timestamp'), ('Pacific/Wallis', '$current_timestamp'), ('Pacific/Yap', '$current_timestamp'), ('Poland', '$current_timestamp'), ('Portugal', '$current_timestamp'), ('Singapore', '$current_timestamp'), ('Turkey', '$current_timestamp'), ('US/Alaska', '$current_timestamp'), ('US/Aleutian', '$current_timestamp'), ('US/Arizona', '$current_timestamp'), ('US/Central', '$current_timestamp'), ('US/East-Indiana', '$current_timestamp'), ('US/Eastern', '$current_timestamp'), ('US/Hawaii', '$current_timestamp'), ('US/Indiana-Starke', '$current_timestamp'), ('US/Michigan', '$current_timestamp'), ('US/Mountain', '$current_timestamp'), ('US/Pacific', '$current_timestamp'), ('US/Pacific-New', '$current_timestamp'), ('US/Samoa', '$current_timestamp'), ('Zulu', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$sql_settings = "SELECT *
+					 FROM settings";
+	$result_settings = mysql_query($sql_settings,$connection);
+	
+	while ($row_settings = mysql_fetch_object($result_settings)) {
+		
+		$_SESSION['system_full_url'] = $row_settings->full_url;
+		$_SESSION['system_db_version'] = $row_settings->db_version;
+		$_SESSION['system_email_address'] = $row_settings->email_address;
+		$_SESSION['system_default_category'] = $row_settings->default_category;
+		$_SESSION['system_default_dns'] = $row_settings->default_dns;
+		$_SESSION['system_default_host'] = $row_settings->default_host;
+		$_SESSION['system_default_ip_address'] = $row_settings->default_ip_address;
+		$_SESSION['system_default_owner'] = $row_settings->default_owner;
+		$_SESSION['system_default_registrar'] = $row_settings->default_registrar;
+		$_SESSION['system_default_registrar_account'] = $row_settings->default_registrar_account;
+		$_SESSION['system_default_ssl_provider_account'] = $row_settings->default_ssl_provider_account;
+		$_SESSION['system_default_ssl_type'] = $row_settings->default_ssl_type;
+		$_SESSION['system_default_ssl_provider'] = $row_settings->default_ssl_provider;
+		$_SESSION['system_expiration_email_days'] = $row_settings->expiration_email_days;
+
+	}
+
+	$sql_user_settings = "SELECT *
+						  FROM user_settings
+						  ORDER BY id desc
+						  LIMIT 1";
+	$result_user_settings = mysql_query($sql_user_settings,$connection);
+
+	while ($row_user_settings = mysql_fetch_object($result_user_settings)) {
+
+		$_SESSION['default_currency'] = $row_user_settings->default_currency;
+		$_SESSION['default_timezone'] = $row_user_settings->default_timezone;
+		$_SESSION['default_category'] = $row_user_settings->default_category;
+		$_SESSION['default_dns'] = $row_user_settings->default_dns;
+		$_SESSION['default_host'] = $row_user_settings->default_host;
+		$_SESSION['default_ip_address'] = $row_user_settings->default_ip_address;
+		$_SESSION['default_owner'] = $row_user_settings->default_owner;
+		$_SESSION['default_registrar'] = $row_user_settings->default_registrar;
+		$_SESSION['default_registrar_account'] = $row_user_settings->default_registrar_account;
+		$_SESSION['default_ssl_provider_account'] = $row_user_settings->default_ssl_provider_account;
+		$_SESSION['default_ssl_type'] = $row_user_settings->default_ssl_type;
+		$_SESSION['default_ssl_provider'] = $row_user_settings->default_ssl_provider;
+		$_SESSION['number_of_domains'] = $row_user_settings->number_of_domains;
+		$_SESSION['number_of_ssl_certs'] = $row_user_settings->number_of_ssl_certs;
+		$_SESSION['display_domain_owner'] = $row_user_settings->display_domain_owner;
+		$_SESSION['display_domain_registrar'] = $row_user_settings->display_domain_registrar;
+		$_SESSION['display_domain_account'] = $row_user_settings->display_domain_account;
+		$_SESSION['display_domain_expiry_date'] = $row_user_settings->display_domain_expiry_date;
+		$_SESSION['display_domain_category'] = $row_user_settings->display_domain_category;
+		$_SESSION['display_domain_dns'] = $row_user_settings->display_domain_dns;
+		$_SESSION['display_domain_host'] = $row_user_settings->display_domain_host;
+		$_SESSION['display_domain_ip'] = $row_user_settings->display_domain_ip;
+		$_SESSION['display_domain_host'] = $row_user_settings->display_domain_host;
+		$_SESSION['display_domain_tld'] = $row_user_settings->display_domain_tld;
+		$_SESSION['display_domain_fee'] = $row_user_settings->display_domain_fee;
+		$_SESSION['display_ssl_owner'] = $row_user_settings->display_ssl_owner;
+		$_SESSION['display_ssl_provider'] = $row_user_settings->display_ssl_provider;
+		$_SESSION['display_ssl_account'] = $row_user_settings->display_ssl_account;
+		$_SESSION['display_ssl_domain'] = $row_user_settings->display_ssl_domain;
+		$_SESSION['display_ssl_type'] = $row_user_settings->display_ssl_type;
+		$_SESSION['display_ssl_ip'] = $row_user_settings->display_ssl_ip;
+		$_SESSION['display_ssl_category'] = $row_user_settings->display_ssl_category;
+		$_SESSION['display_ssl_expiry_date'] = $row_user_settings->display_ssl_expiry_date;
+		$_SESSION['display_ssl_fee'] = $row_user_settings->display_ssl_fee;
+
+	}
+
+	$sql_currencies = "SELECT name, symbol, symbol_order, symbol_space
+					   FROM currencies
+					   WHERE currency = '" . $_SESSION['default_currency'] . "'";
+	$result_currencies = mysql_query($sql_currencies,$connection);
+
+	while ($row_currencies = mysql_fetch_object($result_currencies)) {
+		$_SESSION['default_currency_name'] = $row_currencies->name;
+		$_SESSION['default_currency_symbol'] = $row_currencies->symbol;
+		$_SESSION['default_currency_symbol_order'] = $row_currencies->symbol_order;
+		$_SESSION['default_currency_symbol_space'] = $row_currencies->symbol_space;
+	}
 
 	$_SESSION['institallation_mode'] = 0;
 	$_SESSION['result_message'] = "$software_title has been installed<BR><BR>The default username and password are both set to \"admin\"<BR>";
