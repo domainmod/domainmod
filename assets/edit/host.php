@@ -37,11 +37,6 @@ $new_host = $_REQUEST['new_host'];
 $new_notes = $_REQUEST['new_notes'];
 $new_whid = $_REQUEST['new_whid'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_host != "") {
@@ -60,8 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Updated<BR>";
 
-		$_SESSION['http_referer_set'] = "";
-		header("Location: " . $_SESSION['http_referer']);
+		header("Location: ../hosting.php");
 		exit;
 
 	} else {

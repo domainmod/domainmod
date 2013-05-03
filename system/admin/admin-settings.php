@@ -31,11 +31,6 @@ include("../../_includes/auth/auth-check.inc.php");
 $page_title = "Edit Admin Settings";
 $software_section = "system";
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 // Form Variables
 $new_email_address = $_POST['new_email_address'];
 $new_full_url = $_POST['new_full_url'];
@@ -56,8 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
 	$_SESSION['result_message'] .= "The Admin Settings were updated<BR>";
 
-	$_SESSION['http_referer_set'] = "";
-	header("Location: " . $_SESSION['http_referer']);
+	header("Location: ../index.php");
 	exit;
 
 } else {

@@ -37,11 +37,6 @@ $new_owner = $_POST['new_owner'];
 $new_notes = $_POST['new_notes'];
 $new_oid = $_POST['new_oid'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_owner != "") {
@@ -60,8 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Updated<BR>";
 
-		$_SESSION['http_referer_set'] = "";
-		header("Location: " . $_SESSION['http_referer']);
+		header("Location: ../account-owners.php");
 		exit;
 
 	} else {
@@ -147,7 +141,7 @@ if ($really_del == "1") {
 	
 	$_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Deleted<BR>";
 	
-	header("Location: ../owners.php");
+	header("Location: ../account-owners.php");
 	exit;
 
 }

@@ -21,7 +21,7 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ip-addresses.php">IPs</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/hosting.php">Hosting</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/categories.php">Categories</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/owners.php">Owners</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/account-owners.php">Owners</a> ]&nbsp;
 <BR><BR>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-providers.php">SSL Providers</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-accounts.php">SSL Accounts</a> ]&nbsp;

@@ -31,11 +31,6 @@ $new_category = $_POST['new_category'];
 $new_stakeholder = $_POST['new_stakeholder'];
 $new_notes = $_POST['new_notes'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_category != "") {
@@ -47,8 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Added<BR>";
 		
-		$_SESSION['http_referer_set'] = "";
-		header("Location: " . $_SESSION['http_referer']);
+		header("Location: ../categories.php");
 		exit;
 
 	} else {

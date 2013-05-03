@@ -31,11 +31,6 @@ $new_ssl_provider = $_POST['new_ssl_provider'];
 $new_url = $_POST['new_url'];
 $new_notes = $_POST['new_notes'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_ssl_provider != "" && $new_url != "") {
@@ -54,8 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		} else {
 
-			$_SESSION['http_referer_set'] = "";
-			header("Location: " . $_SESSION['http_referer']);
+			header("Location: ../ssl-providers.php");
 
 		}
 		exit;

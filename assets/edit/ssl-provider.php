@@ -32,11 +32,6 @@ $really_del = $_GET['really_del'];
 
 $sslpid = $_GET['sslpid'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 // Form Variables
 $new_ssl_provider = $_POST['new_ssl_provider'];
 $new_url = $_POST['new_url'];
@@ -59,8 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Updated<BR>";
 
-		$_SESSION['http_referer_set'] = "";
-		header("Location: " . $_SESSION['http_referer']);
+		header("Location: ../ssl-providers.php");
 		exit;
 
 	} else {

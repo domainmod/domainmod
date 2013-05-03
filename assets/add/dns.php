@@ -50,11 +50,6 @@ $new_ip8 = $_POST['new_ip8'];
 $new_ip9 = $_POST['new_ip9'];
 $new_ip10 = $_POST['new_ip10'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != '' && $new_dns1 != "" && $new_dns2 != "") {
@@ -80,8 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Added<BR>";
 
-		$_SESSION['http_referer_set'] = "";
-		header("Location: " . $_SESSION['http_referer']);
+		header("Location: ../dns.php");
 		exit;
 		
 	} else {

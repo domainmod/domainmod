@@ -30,11 +30,6 @@ $software_section = "system";
 $new_password = $_POST['new_password'];
 $new_password_confirmation = $_POST['new_password_confirmation'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password_confirmation != "" && $new_password == $new_password_confirmation) {
 
 	$sql = "SELECT id 
@@ -55,8 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
 		$_SESSION['result_message'] .= "Your password has been changed<BR>";
 
-		$_SESSION['http_referer_set'] = "";
-		header("Location: " . $_SESSION['http_referer']);
+		header("Location: index.php");
 		exit;
 
    } else {

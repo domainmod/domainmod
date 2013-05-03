@@ -48,11 +48,6 @@ $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 $new_did = $_POST['new_did'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
@@ -70,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql_fee_id = "SELECT id
 					   FROM fees
 					   WHERE registrar_id = '$new_registrar_id'
-					     AND tld = '$tld'";
+						 AND tld = '$tld'";
 		$result_fee_id = mysql_query($sql_fee_id,$connection);
 		
 		if (mysql_num_rows($result_fee_id) >= 1) { 
@@ -89,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql_update = "UPDATE domains
 					   SET owner_id = '$new_owner_id',
-					   	   registrar_id = '$new_registrar_id',
+						   registrar_id = '$new_registrar_id',
 						   account_id = '$new_account_id',
 						   domain = '" . mysql_real_escape_string($new_domain) . "',
 						   tld = '$tld',
@@ -115,8 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		include("../_includes/system/update-domain-fees.inc.php");
 		include("../_includes/system/update-segments.inc.php");
 
-		$_SESSION['http_referer_set'] = "";
-		header("Location: " . $_SESSION['http_referer']);
+		header("Location: ../domains.php");
 		exit;
 
 	} else {

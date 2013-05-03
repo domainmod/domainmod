@@ -31,11 +31,6 @@ $new_first_name = $_POST['new_first_name'];
 $new_last_name = $_POST['new_last_name'];
 $new_email_address = $_POST['new_email_address'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_first_name != "" && $new_last_name != "") {
 
 	$sql = "SELECT id 
@@ -61,8 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 
 		$_SESSION['result_message'] .= "Your profile was updated<BR>";
 
-		$_SESSION['http_referer_set'] = "";
-		header("Location: " . $_SESSION['http_referer']);
+		header("Location: index.php");
 		exit;
 
    } else {

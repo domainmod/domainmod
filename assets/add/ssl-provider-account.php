@@ -34,11 +34,6 @@ $new_password = $_POST['new_password'];
 $new_reseller = $_POST['new_reseller'];
 $new_notes = $_POST['new_notes'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_username != "" && $new_owner_id != "" && $new_ssl_provider_id != "" && $new_owner_id != "0" && $new_ssl_provider_id != "0") {
@@ -69,8 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		} else {
 
-			$_SESSION['http_referer_set'] = "";
-			header("Location: " . $_SESSION['http_referer']);
+			header("Location: ../ssl-accounts.php");
 			
 		}
 		exit;

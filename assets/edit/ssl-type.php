@@ -32,11 +32,6 @@ $really_del = $_GET['really_del'];
 
 $ssltid = $_GET['ssltid'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 // Form Variables
 $new_type = $_REQUEST['new_type'];
 $new_notes = $_REQUEST['new_notes'];
@@ -60,8 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Updated<BR>";
 
-		$_SESSION['http_referer_set'] = "";
-		header("Location: " . $_SESSION['http_referer']);
+		header("Location: ../ssl-types.php");
 		exit;
 
 	} else {

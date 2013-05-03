@@ -42,47 +42,54 @@ $new_privacy = $_POST['new_privacy'];
 $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if (CheckDateFormat($new_expiry_date) && CheckDomainFormat($new_domain) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0") {
-
-		$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 		
-		$sql = "SELECT registrar_id, owner_id
-				FROM registrar_accounts
-				WHERE id = '$new_account_id'";
+		$sql = "SELECT domain
+				FROM domains
+				WHERE domain = '" . $new_domain . "'";
 		$result = mysql_query($sql,$connection);
 		
-		while ($row = mysql_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
+		if (mysql_num_rows($result) == 0) {
 
-		$sql = "SELECT id
-				FROM fees
-				WHERE registrar_id = '$new_registrar_id' 
-				  AND tld = '$tld'";
-		$result = mysql_query($sql,$connection);
-		
-		while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
+			$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
+			
+			$sql = "SELECT registrar_id, owner_id
+					FROM registrar_accounts
+					WHERE id = '$new_account_id'";
+			$result = mysql_query($sql,$connection);
+			
+			while ($row = mysql_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
+	
+			$sql = "SELECT id
+					FROM fees
+					WHERE registrar_id = '$new_registrar_id' 
+					  AND tld = '$tld'";
+			$result = mysql_query($sql,$connection);
+			
+			while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
+	
+			$sql = "INSERT INTO domains
+					(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id, fee_id, function, notes, privacy, active, insert_time) VALUES 
+					('$new_owner_id', '$new_registrar_id', '$new_account_id', '" . mysql_real_escape_string($new_domain) . "', '$tld', '$new_expiry_date', '$new_cat_id', '$new_dns_id', '$new_ip_id', '$new_hosting_id', '$new_fee_id', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_privacy', '$new_active', '$current_timestamp')";
+	
+			$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+			$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
+	
+			include("../_includes/system/update-domain-fees.inc.php");
+			include("../_includes/system/update-segments.inc.php");
+			include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
+	
+			header("Location: ../domains.php");
+			exit;
+			
+		} else {
+			
+			$_SESSION['result_message'] .= "The domain you entered is already in your $software_title<BR>";
 
-		$sql = "INSERT INTO domains
-				(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id, fee_id, function, notes, privacy, active, insert_time) VALUES 
-				('$new_owner_id', '$new_registrar_id', '$new_account_id', '" . mysql_real_escape_string($new_domain) . "', '$tld', '$new_expiry_date', '$new_cat_id', '$new_dns_id', '$new_ip_id', '$new_hosting_id', '$new_fee_id', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_privacy', '$new_active', '$current_timestamp')";
-
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-
-		$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
-
-		include("../_includes/system/update-domain-fees.inc.php");
-		include("../_includes/system/update-segments.inc.php");
-		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
-
-		$_SESSION['http_referer_set'] = "";
-		header("Location: " . $_SESSION['http_referer']);
-		exit;
+		}
 
 	} else {
 	

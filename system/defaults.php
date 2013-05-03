@@ -40,11 +40,6 @@ $new_default_ssl_provider_account = $_POST['new_default_ssl_provider_account'];
 $new_default_ssl_type = $_POST['new_default_ssl_type'];
 $new_default_ssl_provider = $_POST['new_default_ssl_provider'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$_SESSION['result_message'] .= "Your Defaults were updated<BR>";
@@ -141,8 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$_SESSION['default_currency_symbol_space'] = $row_currencies->symbol_space;
 	}
 	
-	$_SESSION['http_referer_set'] = "";
-	header("Location: " . $_SESSION['http_referer']);
+	header("Location: index.php");
 	exit;
 
 } else {

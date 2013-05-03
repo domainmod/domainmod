@@ -33,11 +33,6 @@ $new_description = $_POST['new_description'];
 $new_segment = $_POST['new_segment'];
 $new_notes = $_POST['new_notes'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$temp_input_string = $new_segment;
@@ -136,8 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 			include("../_includes/system/update-segments.inc.php");
 	
-			$_SESSION['http_referer_set'] = "";
-			header("Location: " . $_SESSION['http_referer']);
+			header("Location: ../segments.php");
 			exit;
 			
 		}

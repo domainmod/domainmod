@@ -31,11 +31,6 @@ include("../../../_includes/auth/auth-check.inc.php");
 $page_title = "Edit User";
 $software_section = "system";
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 // 'Delete User' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
@@ -52,11 +47,6 @@ $new_email_address = $_POST['new_email_address'];
 $new_is_admin = $_POST['new_is_admin'];
 $new_is_active = $_POST['new_is_active'];
 $new_uid = $_POST['new_uid'];
-
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
 
 $sql = "SELECT username
 		FROM users
@@ -131,8 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		
 	}
 
-	$_SESSION['http_referer_set'] = "";
-	header("Location: " . $_SESSION['http_referer']);
+	header("Location: ../users.php");
 	exit;
 
 } else {

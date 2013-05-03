@@ -39,11 +39,6 @@ $new_account_id = $_POST['new_account_id'];
 $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if (CheckDateFormat($new_expiry_date) && $new_name != "" && $new_type_id != "" && $new_ip_id != "" && $new_cat_id != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "0" && $new_ip_id != "0" && $new_cat_id != "0" && $new_domain_id != "0" && $new_account_id != "0") {
@@ -74,8 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		include("../_includes/system/update-ssl-fees.inc.php");
 		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
-		$_SESSION['http_referer_set'] = "";
-		header("Location: " . $_SESSION['http_referer']);
+		header("Location: ../ssl-certs.php");
 		exit;
 
 	} else {

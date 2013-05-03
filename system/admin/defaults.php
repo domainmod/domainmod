@@ -43,11 +43,6 @@ $new_default_ssl_provider_account = $_POST['new_default_ssl_provider_account'];
 $new_default_ssl_type = $_POST['new_default_ssl_type'];
 $new_default_ssl_provider = $_POST['new_default_ssl_provider'];
 
-if ($_SESSION['http_referer_set'] != "1") {
-	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
-	$_SESSION['http_referer_set'] = "1";
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$_SESSION['result_message'] .= "The System Defaults were updated<BR>";
@@ -77,8 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$_SESSION['system_default_ssl_type'] = $new_default_ssl_type;
 	$_SESSION['system_default_ssl_provider'] = $new_default_ssl_provider;
 	
-	$_SESSION['http_referer_set'] = "";
-	header("Location: " . $_SESSION['http_referer']);
+	header("Location: ../index.php");
 	exit;
 
 }
