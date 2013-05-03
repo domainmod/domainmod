@@ -1002,7 +1002,7 @@ if ($current_db_version < $most_recent_db_version) {
 	if ($current_db_version == 2.0021) {
 
 		$sql = "ALTER TABLE `settings`  
-					ADD `timezone` VARCHAR(10) NOT NULL DEFAULT 'Etc/GMT' AFTER `email_address`";
+					ADD `timezone` VARCHAR(10) NOT NULL DEFAULT 'Canada/Pacific' AFTER `email_address`";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
@@ -2379,7 +2379,7 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `settings`  
-				ADD `default_timezone` VARCHAR(50) NOT NULL DEFAULT 'Etc/GMT' AFTER `default_currency`";
+				ADD `default_timezone` VARCHAR(50) NOT NULL DEFAULT 'Canada/Pacific' AFTER `default_currency`";
 		$result = mysql_query($sql,$connection);
 
 		$sql = "UPDATE settings
@@ -2391,7 +2391,7 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "ALTER TABLE `user_settings`  
-				ADD `default_timezone` VARCHAR(50) NOT NULL DEFAULT 'Etc/GMT' AFTER `default_currency`";
+				ADD `default_timezone` VARCHAR(50) NOT NULL DEFAULT 'Canada/Pacific' AFTER `default_currency`";
 		$result = mysql_query($sql,$connection);
 		
 		$sql = "SELECT default_timezone
@@ -2422,6 +2422,182 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.004;
+
+	}
+
+	// upgrade database from 2.004 to 2.0041
+	if ($current_db_version == 2.004) {
+
+		$sql = "ALTER TABLE `user_settings` 
+				CHANGE `default_category` `default_category_domains` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "ALTER TABLE `user_settings` 
+				CHANGE `default_ip_address` `default_ip_address_domains` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `user_settings` 
+				CHANGE `default_owner` `default_owner_domains` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `user_settings` 
+				ADD `default_category_ssl` INT(10) NOT NULL DEFAULT '0' AFTER `default_category_domains`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "ALTER TABLE `user_settings` 
+				ADD `default_ip_address_ssl` INT(10) NOT NULL DEFAULT '0' AFTER `default_ip_address_domains`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `user_settings` 
+				ADD `default_owner_ssl` INT(10) NOT NULL DEFAULT '0' AFTER `default_owner_domains`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "SELECT id, default_category_domains, default_ip_address_domains, default_owner_domains
+				FROM user_settings";
+		$result = mysql_query($sql,$connection);
+		
+		while ($row = mysql_fetch_object($result)) {
+
+			$sql_update = "UPDATE user_settings
+						   SET default_category_ssl = '" . $row->default_category_domains . "',
+						   	   default_ip_address_ssl = '" . $row->default_ip_address_domains . "',
+							   default_owner_ssl = '" . $row->default_owner_domains . "'
+						   WHERE id = '" . $row->id . "'";
+			$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
+
+		}
+
+		$sql = "SELECT default_category_domains, default_ip_address_domains, default_owner_domains
+				FROM user_settings
+				WHERE user_id = '" . $_SESSION['user_id'] . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		while ($row = mysql_fetch_object($result)) {
+
+			$default_category_domains = $row->default_category_domains;
+			$default_ip_address_domains = $row->default_ip_address_domains;
+			$default_owner_domains = $row->default_owner_domains;
+
+		}
+
+		$_SESSION['default_category_domains'] = $default_category_domains;
+		$_SESSION['default_category_ssl'] = $default_category_domains;
+		$_SESSION['default_ip_address_domains'] = $default_ip_address_domains;
+		$_SESSION['default_ip_address_ssl'] = $default_ip_address_domains;
+		$_SESSION['default_owner_domains'] = $default_owner_domains;
+		$_SESSION['default_owner_ssl'] = $default_owner_domains;
+
+		$sql = "ALTER TABLE `settings` 
+				CHANGE `default_category` `default_category_domains` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "ALTER TABLE `settings` 
+				CHANGE `default_ip_address` `default_ip_address_domains` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `settings` 
+				CHANGE `default_owner` `default_owner_domains` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `settings` 
+				ADD `default_category_ssl` INT(10) NOT NULL DEFAULT '0' AFTER `default_category_domains`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "ALTER TABLE `settings` 
+				ADD `default_ip_address_ssl` INT(10) NOT NULL DEFAULT '0' AFTER `default_ip_address_domains`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `settings` 
+				ADD `default_owner_ssl` INT(10) NOT NULL DEFAULT '0' AFTER `default_owner_domains`";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "SELECT default_category_domains, default_ip_address_domains, default_owner_domains
+				FROM settings";
+		$result = mysql_query($sql,$connection);
+		
+		while ($row = mysql_fetch_object($result)) {
+
+			$default_category_domains = $row->default_category_domains;
+			$default_ip_address_domains = $row->default_ip_address_domains;
+			$default_owner_domains = $row->default_owner_domains;
+
+		}
+
+		$sql = "UPDATE settings
+				SET default_category_ssl = '" . $default_category_domains . "',
+					default_ip_address_ssl = '" . $default_ip_address_domains . "',
+					default_owner_ssl = '" . $default_owner_domains . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$_SESSION['system_default_category_domains'] = $default_category_domains;
+		$_SESSION['system_default_category_ssl'] = $default_category_domains;
+		$_SESSION['system_default_ip_address_domains'] = $default_ip_address_domains;
+		$_SESSION['system_default_ip_address_ssl'] = $default_ip_address_domains;
+		$_SESSION['system_default_owner_domains'] = $default_owner_domains;
+		$_SESSION['system_default_owner_ssl'] = $default_owner_domains;
+
+		$sql = "ALTER TABLE `settings` 
+				CHANGE `default_dns` `default_dns` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `settings` 
+				CHANGE `default_host` `default_host` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `settings` 
+				CHANGE `default_registrar` `default_registrar` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `settings` 
+				CHANGE `default_registrar_account` `default_registrar_account` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `settings` 
+				CHANGE `default_ssl_provider_account` `default_ssl_provider_account` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `settings` 
+				CHANGE `default_ssl_type` `default_ssl_type` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `settings` 
+				CHANGE `default_ssl_provider` `default_ssl_provider` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `user_settings` 
+				CHANGE `default_dns` `default_dns` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `user_settings` 
+				CHANGE `default_host` `default_host` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `user_settings` 
+				CHANGE `default_registrar` `default_registrar` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `user_settings` 
+				CHANGE `default_registrar_account` `default_registrar_account` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `user_settings` 
+				CHANGE `default_ssl_provider_account` `default_ssl_provider_account` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `user_settings` 
+				CHANGE `default_ssl_type` `default_ssl_type` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "ALTER TABLE `user_settings` 
+				CHANGE `default_ssl_provider` `default_ssl_provider` INT(10) NOT NULL DEFAULT '0'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0041',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0041;
 
 	}
 

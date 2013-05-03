@@ -69,16 +69,19 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`user_id` int(10) NOT NULL,
 				`default_currency` varchar(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`default_timezone` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default 'Canada/Pacific',
-				`default_category` int(10) NOT NULL default '1',
-				`default_dns` int(10) NOT NULL default '1',
-				`default_host` int(10) NOT NULL default '1',
-				`default_ip_address` int(10) NOT NULL default '1',
-				`default_owner` int(10) NOT NULL default '1',
-				`default_registrar` int(10) NOT NULL default '1',
-				`default_registrar_account` int(10) NOT NULL default '1',
-				`default_ssl_provider_account` int(10) NOT NULL default '1',
-				`default_ssl_type` int(10) NOT NULL default '1',
-				`default_ssl_provider` int(10) NOT NULL default '1',
+				`default_category_domains` int(10) NOT NULL default '0',
+				`default_category_ssl` int(10) NOT NULL default '0',
+				`default_dns` int(10) NOT NULL default '0',
+				`default_host` int(10) NOT NULL default '0',
+				`default_ip_address_domains` int(10) NOT NULL default '0',
+				`default_ip_address_ssl` int(10) NOT NULL default '0',
+				`default_owner_domains` int(10) NOT NULL default '0',
+				`default_owner_ssl` int(10) NOT NULL default '0',
+				`default_registrar` int(10) NOT NULL default '0',
+				`default_registrar_account` int(10) NOT NULL default '0',
+				`default_ssl_provider_account` int(10) NOT NULL default '0',
+				`default_ssl_type` int(10) NOT NULL default '0',
+				`default_ssl_provider` int(10) NOT NULL default '0',
 				`expiration_emails` int(1) NOT NULL default '1',
 				`number_of_domains` int(5) NOT NULL default '50',
 				`number_of_ssl_certs` int(5) NOT NULL default '50',
@@ -591,16 +594,19 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`full_url` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default 'http://',
 				`db_version` float NOT NULL,
 				`email_address` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`default_category` int(10) NOT NULL default '1',
-				`default_dns` int(10) NOT NULL default '1',
-				`default_host` int(10) NOT NULL default '1',
-				`default_ip_address` int(10) NOT NULL default '1',
-				`default_owner` int(10) NOT NULL default '1',
-				`default_registrar` int(10) NOT NULL default '1',
-				`default_registrar_account` int(10) NOT NULL default '1',
-				`default_ssl_provider_account` int(10) NOT NULL default '1',
-				`default_ssl_type` int(10) NOT NULL default '1',
-				`default_ssl_provider` int(10) NOT NULL default '1',
+				`default_category_domains` int(10) NOT NULL default '0',
+				`default_category_ssl` int(10) NOT NULL default '0',
+				`default_dns` int(10) NOT NULL default '0',
+				`default_host` int(10) NOT NULL default '0',
+				`default_ip_address_domains` int(10) NOT NULL default '0',
+				`default_ip_address_ssl` int(10) NOT NULL default '0',
+				`default_owner_domains` int(10) NOT NULL default '0',
+				`default_owner_ssl` int(10) NOT NULL default '0',
+				`default_registrar` int(10) NOT NULL default '0',
+				`default_registrar_account` int(10) NOT NULL default '0',
+				`default_ssl_provider_account` int(10) NOT NULL default '0',
+				`default_ssl_type` int(10) NOT NULL default '0',
+				`default_ssl_provider` int(10) NOT NULL default '0',
 				`expiration_email_days` int(3) NOT NULL default '60',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -637,11 +643,14 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 		$_SESSION['system_full_url'] = $row_settings->full_url;
 		$_SESSION['system_db_version'] = $row_settings->db_version;
 		$_SESSION['system_email_address'] = $row_settings->email_address;
-		$_SESSION['system_default_category'] = $row_settings->default_category;
+		$_SESSION['system_default_category_domains'] = $row_settings->default_category_domains;
+		$_SESSION['system_default_category_ssl'] = $row_settings->default_category_ssl;
 		$_SESSION['system_default_dns'] = $row_settings->default_dns;
 		$_SESSION['system_default_host'] = $row_settings->default_host;
-		$_SESSION['system_default_ip_address'] = $row_settings->default_ip_address;
-		$_SESSION['system_default_owner'] = $row_settings->default_owner;
+		$_SESSION['system_default_ip_address_domains'] = $row_settings->default_ip_address_domains;
+		$_SESSION['system_default_ip_address_ssl'] = $row_settings->default_ip_address_ssl;
+		$_SESSION['system_default_owner_domains'] = $row_settings->default_owner_domains;
+		$_SESSION['system_default_owner_ssl'] = $row_settings->default_owner_ssl;
 		$_SESSION['system_default_registrar'] = $row_settings->default_registrar;
 		$_SESSION['system_default_registrar_account'] = $row_settings->default_registrar_account;
 		$_SESSION['system_default_ssl_provider_account'] = $row_settings->default_ssl_provider_account;
@@ -661,11 +670,14 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 
 		$_SESSION['default_currency'] = $row_user_settings->default_currency;
 		$_SESSION['default_timezone'] = $row_user_settings->default_timezone;
-		$_SESSION['default_category'] = $row_user_settings->default_category;
+		$_SESSION['default_category_domains'] = $row_user_settings->default_category_domains;
+		$_SESSION['default_category_ssl'] = $row_user_settings->default_category_ssl;
 		$_SESSION['default_dns'] = $row_user_settings->default_dns;
 		$_SESSION['default_host'] = $row_user_settings->default_host;
-		$_SESSION['default_ip_address'] = $row_user_settings->default_ip_address;
-		$_SESSION['default_owner'] = $row_user_settings->default_owner;
+		$_SESSION['default_ip_address_domains'] = $row_user_settings->default_ip_address_domains;
+		$_SESSION['default_ip_address_ssl'] = $row_user_settings->default_ip_address_ssl;
+		$_SESSION['default_owner_domains'] = $row_user_settings->default_owner_domains;
+		$_SESSION['default_owner_ssl'] = $row_user_settings->default_owner_ssl;
 		$_SESSION['default_registrar'] = $row_user_settings->default_registrar;
 		$_SESSION['default_registrar_account'] = $row_user_settings->default_registrar_account;
 		$_SESSION['default_ssl_provider_account'] = $row_user_settings->default_ssl_provider_account;
