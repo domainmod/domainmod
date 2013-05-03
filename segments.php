@@ -42,10 +42,10 @@ function str_stop($string, $max_length){
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/header.inc.php"); ?>
+<?php include("_includes/layout/header.inc.php"); ?>
 <?php
 $sql = "SELECT id, name, description, segment, number_of_domains
 		FROM segments
@@ -105,6 +105,6 @@ if (mysql_num_rows($result) > 0) { ?>
 <?php 
 } ?>
     </table>
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

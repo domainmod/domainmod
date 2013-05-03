@@ -42,7 +42,7 @@ if ($_SESSION['installation_mode'] == 1) {
 $new_username = $_POST['new_username'];
 $new_password = $_POST['new_password'];
 
-include("_includes/demo-settings.inc.php"); // $demo_url, $demo_username, $demo_password
+include("_includes/config-demo.inc.php"); // $demo_url, $demo_username, $demo_password
 
 if ($_SERVER['HTTP_HOST'] == $demo_url) $demo_install = "1";
 
@@ -221,14 +221,14 @@ if ($page_title != "") { ?>
 } else { ?>
 	<title><?=$software_title?></title><?php 
 } ?>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("_includes/layout/head-tags.inc.php"); ?>
 </head><?php 
 if ($new_username == "") { ?>
 	<body onLoad="document.forms[0].elements[0].focus()";><?php 
 } else { ?>
 	<body onLoad="document.forms[0].elements[1].focus()";><?php 
 } ?>
-<?php include("_includes/header-login.inc.php"); ?>
+<?php include("_includes/layout/header-login.inc.php"); ?>
 <?php 
 if ($_SESSION['installation_mode'] != 1) { ?>
 
@@ -248,6 +248,6 @@ if ($_SESSION['installation_mode'] != 1) { ?>
         </div>
     </form><?php 
 } ?>
-<?php include("_includes/footer-login.inc.php"); ?>
+<?php include("_includes/layout/footer-login.inc.php"); ?>
 </body>
 </html>

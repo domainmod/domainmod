@@ -429,7 +429,7 @@ if ($export == "1") {
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("_includes/layout/head-tags.inc.php"); ?>
 <script type="text/javascript">
 <!--
 function MM_jumpMenu(targ,selObj,restore){ //v3.0
@@ -440,7 +440,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 </script>
 </head>
 <body onLoad="document.forms[0].elements[10].focus()";>
-<?php include("_includes/header.inc.php"); ?>
+<?php include("_includes/layout/header.inc.php"); ?>
 <?php
 if ($_SESSION['need_ssl_provider'] == "1") {
 	echo "<strong><font class=\"highlight\">0</font></strong> SSL Providers found. Please <a href=\"assets/add/ssl-provider.php\">click here</a> to add one.<BR><BR>";
@@ -1035,6 +1035,6 @@ echo "</select>";
 <?php } else { ?>
 			<BR>Your search returned zero results.
 <?php } ?>
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("_includes/layout/footer.inc.php"); ?>
 </body>
 </html>
