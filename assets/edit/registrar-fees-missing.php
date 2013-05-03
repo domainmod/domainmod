@@ -1,5 +1,5 @@
 <?php
-// /missing-domain-fees.php
+// /assets/edit/registrar-fees-missing.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,22 +16,22 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
+include("../../_includes/start-session.inc.php");
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
 
 $page_title = "Missing Domain Fees";
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/header.inc.php"); ?>
+<?php include("../../_includes/header.inc.php"); ?>
 <?php
 $sql = "SELECT r.id AS registrar_id, r.name AS registrar_name
 		FROM registrars r, domains d
@@ -75,7 +75,7 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
                 }
                 $full_tld_list_formatted = substr($full_tld_list, 0, -2); 
                 ?>
-                <a class="nobold" href="edit/registrar-fees.php?rid=<?=$row->registrar_id?>"><?=$full_tld_list_formatted?></a>
+                <a class="nobold" href="registrar-fees.php?rid=<?=$row->registrar_id?>"><?=$full_tld_list_formatted?></a>
             </td>
         </tr>
 
@@ -83,6 +83,6 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
 	} ?>
 
 </table>
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>

@@ -30,10 +30,10 @@
 	<div class="maintenance_warning_inner">
         <strong>Maintenance Warning! (clear up the below issues to make this table disappear)</strong><BR><BR>
         <?php if ($_SESSION['missing_domain_fees'] == 1) { ?>
-		        <LI>Some of your Registrars/TLDs are missing domain fees. <a href="<?=$web_root?>/missing-domain-fees.php">Click here to fix this</a>.</LI>
+		        <LI>Some of your Registrars/TLDs are missing domain fees. <a href="<?=$web_root?>/assets/edit/registrar-fees-missing.php">Click here to fix this</a>.</LI>
         <?php } ?>
         <?php if ($_SESSION['missing_ssl_fees'] == 1) { ?>
-		        <LI>Some of your SSL Certificates are missing fees. <a href="<?=$web_root?>/missing-ssl-fees.php">Click here to fix this</a>.</LI>
+		        <LI>Some of your SSL Certificate Types are missing fees. <a href="<?=$web_root?>/assets/edit/ssl-provider-fees-missing.php">Click here to fix this</a>.</LI>
         <?php } ?>
     </div>
 </div>

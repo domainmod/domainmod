@@ -1,5 +1,5 @@
 <?php
-// /missing-ssl-fees.php
+// /assets/edit/ssl-provider-fees-missing.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,22 +16,22 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
+include("../../_includes/start-session.inc.php");
+include("../../_includes/config.inc.php");
+include("../../_includes/database.inc.php");
+include("../../_includes/software.inc.php");
+include("../../_includes/auth/auth-check.inc.php");
 
 $page_title = "Missing SSL Fees";
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
-<?php include("_includes/head-tags.inc.php"); ?>
+<?php include("../../_includes/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/header.inc.php"); ?>
+<?php include("../../_includes/header.inc.php"); ?>
 <?php
 $sql = "SELECT sp.id AS ssl_provider_id, sp.name AS ssl_provider_name
 		FROM ssl_providers sp, ssl_certs sc
@@ -78,12 +78,12 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
 
                 $full_type_list_formatted = substr($full_type_list, 0, -2); 
                 ?>
-                <a class="nobold" href="edit/ssl-provider-fees.php?sslpid=<?=$row->ssl_provider_id?>"><?=$full_type_list_formatted?></a>
+                <a class="nobold" href="ssl-provider-fees.php?sslpid=<?=$row->ssl_provider_id?>"><?=$full_type_list_formatted?></a>
             </td>
         </tr>
     <?php 
 	} ?>
 </table>
-<?php include("_includes/footer.inc.php"); ?>
+<?php include("../../_includes/footer.inc.php"); ?>
 </body>
 </html>
