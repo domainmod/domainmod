@@ -27,7 +27,7 @@ if ($software_section == "domains") {
 
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/ssl-provider.php">Add A New SSL Provider</a><?php 
 
-} elseif ($software_section == "ssl-accounts") {
+} elseif ($software_section == "ssl-provider-accounts") {
 
 	if ($_SESSION['need_ssl_provider'] != "1") { ?>
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/ssl-account.php">Add A New SSL Account</a><?php 
