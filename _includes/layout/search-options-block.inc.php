@@ -29,7 +29,7 @@ if ($software_section == "domains") {
 <div class="search_options_block">
 	<div class="search_options_block_inner">
 		<?php echo $navigate[2]; ?>&nbsp;<?php if ($totalrows != '0') { ?><?php echo "(Listing $navigate[1] of " . number_format($totalrows) . ")"; ?><?php } ?>&nbsp;
-        [<a href="<?=$export_filename?>?<?=$_SERVER['QUERY_STRING']?>&export=1">export results</a>]&nbsp;[<a href="system/system-settings.php">display settings</a>]
+        [<a href="<?=$export_filename?>?<?=$_SERVER['QUERY_STRING']?>&export=1">export results</a>]&nbsp;[<a href="system/display-settings.php">display settings</a>]
 	</div>
 </div>
 <div style="clear: both;"></div>

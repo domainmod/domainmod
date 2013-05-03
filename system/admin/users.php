@@ -28,7 +28,7 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 
 $page_title = "User List";
-$software_section = "system";
+$software_section = "user-list";
 ?>
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>

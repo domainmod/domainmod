@@ -31,7 +31,6 @@ $new_name = $_POST['new_name'];
 $new_ip = $_POST['new_ip'];
 $new_rdns = $_POST['new_rdns'];
 $new_notes = $_POST['new_notes'];
-$new_default_ip_address = $_POST['new_default_ip_address'];
 
 if ($_SESSION['http_referer_set'] != "1") {
 	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
@@ -42,27 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != '' && $new_ip != '') {
 
-		if ($new_default_ip_address == "1") {
-			
-			$sql = "UPDATE ip_addresses
-					SET default_ip_address = '0',
-						update_time = '$current_timestamp'";
-			$result = mysql_query($sql,$connection);
-			
-		} else { 
-		
-			$sql = "SELECT count(*) as total_count
-					FROM ip_addresses
-					WHERE default_ip_address = '1'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_total = $row->total_count; }
-			if ($temp_total == "0") $new_default_ip_address = "1";
-		
-		}
-		
 		$sql = "INSERT INTO ip_addresses
-				(name, ip, rdns, notes, default_ip_address, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_ip) . "', '" . mysql_real_escape_string($new_rdns) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_ip_address', '$current_timestamp')";
+				(name, ip, rdns, notes, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_ip) . "', '" . mysql_real_escape_string($new_rdns) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -101,9 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR>
-<strong>Default IP Address?</strong>&nbsp;
-<input name="new_default_ip_address" type="checkbox" id="new_default_ip_address" value="1"<?php if ($new_default_ip_address == "1") echo " checked";?>>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This IP Address &raquo;">
 </form>

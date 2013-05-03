@@ -40,43 +40,21 @@ if ($_SESSION['http_referer_set'] != "1") {
 // Form Variables
 $new_type = $_REQUEST['new_type'];
 $new_notes = $_REQUEST['new_notes'];
-$new_default_type = $_REQUEST['new_default_type'];
 $new_ssltid = $_REQUEST['new_ssltid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_type != "") {
 
-		if ($new_default_type == "1") {
-			
-			$sql = "UPDATE ssl_cert_types
-					SET default_type = '0',
-					    update_time = '$current_timestamp'";
-			$result = mysql_query($sql,$connection);
-			
-		} else { 
-		
-			$sql = "SELECT default_type
-					FROM ssl_cert_types
-					WHERE default_type = '1'
-					  AND id != '$new_ssltid'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_default_type = $row->default_type; }
-			if ($temp_default_type == "") { $new_default_type = "1"; }
-		
-		}
-
 		$sql = "UPDATE ssl_cert_types
 				SET type = '" . mysql_real_escape_string($new_type) . "', 
 					notes = '" . mysql_real_escape_string($new_notes) . "',
-					default_type = '$new_default_type',
 					update_time = '$current_timestamp'
 				WHERE id = '$new_ssltid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$new_type = $new_type;
 		$new_notes = $new_notes;
-		$new_default_type = $new_default_type;
 
 		$ssltid = $new_ssltid;
 		
@@ -94,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT type, notes, default_type
+	$sql = "SELECT type, notes
 			FROM ssl_cert_types
 			WHERE id = '$ssltid'";
 	$result = mysql_query($sql,$connection);
@@ -103,7 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		$new_type = $row->type;
 		$new_notes = $row->notes;
-		$new_default_type = $row->default_type;
 
 	}
 
@@ -159,9 +136,6 @@ if ($really_del == "1") {
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR>
-<strong>Default Type?</strong>&nbsp;
-<input name="new_default_type" type="checkbox" value="1"<?php if ($new_default_type == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_ssltid" value="<?=$ssltid?>">
 <input type="submit" name="button" value="Update This Type &raquo;">

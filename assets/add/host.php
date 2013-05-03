@@ -29,7 +29,6 @@ $software_section = "hosting";
 // Form Variables
 $new_host = $_POST['new_host'];
 $new_notes = $_POST['new_notes'];
-$new_default_host = $_POST['new_default_host'];
 
 if ($_SESSION['http_referer_set'] != "1") {
 	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
@@ -40,27 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_host != "") {
 		
-		if ($new_default_host == "1") {
-			
-			$sql = "UPDATE hosting
-					SET default_host = '0',
-						update_time = '$current_timestamp'";
-			$result = mysql_query($sql,$connection);
-			
-		} else { 
-		
-			$sql = "SELECT count(*) as total_count
-					FROM hosting
-					WHERE default_host = '1'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_total = $row->total_count; }
-			if ($temp_total == "0") $new_default_host = "1";
-		
-		}
-
 		$sql = "INSERT INTO hosting 
-				(name, notes, default_host, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_host) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_default_host', '$current_timestamp')";
+				(name, notes, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_host) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Added<BR>";
@@ -91,9 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR>
-<strong>Default Host?</strong>&nbsp;
-<input name="new_default_host" type="checkbox" id="new_default_host" value="1"<?php if ($new_default_host == "1") echo " checked";?>>
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This Web Host &raquo;">
 </form>

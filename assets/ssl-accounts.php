@@ -44,7 +44,7 @@ if ($sslpid != "") { $sslpid_string = " AND sa.ssl_provider_id = '$sslpid' "; } 
 if ($sslpaid != "") { $sslpaid_string = " AND sa.id = '$sslpaid' "; } else { $sslpaid_string = ""; }
 if ($oid != "") { $oid_string = " AND sa.owner_id = '$oid' "; } else { $oid_string = ""; }
 
-$sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, sa.default_account, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname
+$sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname
 		FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp, ssl_certs as sslc
 		WHERE sa.owner_id = o.id
 		  AND sa.ssl_provider_id = sslp.id
@@ -91,7 +91,7 @@ Below is a list of all the SSL Provider Accounts that are stored in your <?=$sof
 				<a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
 			</td>
 			<td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+				<a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
 			</td>
 			<td class="main_table_cell_active">
 				<a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>
@@ -121,7 +121,7 @@ $exclude_account_string = substr($exclude_account_string_raw, 0, -2);
 
 if ($exclude_account_string != "") { $sslpaid_string = " AND sa.id not in ($exclude_account_string) "; } else { $sslpaid_string = ""; }
 
-$sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, sa.default_account, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname
+$sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname
 		FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
 		WHERE sa.owner_id = o.id
 		  AND sa.ssl_provider_id = sslp.id
@@ -160,7 +160,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
                 <a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
             </td>
             <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                    <a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
                 <a class="invisiblelink" href="edit/ssl-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>

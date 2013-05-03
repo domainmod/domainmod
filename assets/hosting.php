@@ -34,7 +34,7 @@ $software_section = "hosting";
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT id, name, default_host
+$sql = "SELECT id, name
 		FROM hosting
 		WHERE id IN (SELECT hosting_id FROM domains WHERE hosting_id != '0' AND active NOT IN ('0','10') GROUP BY hosting_id)
 		ORDER BY name";
@@ -55,7 +55,7 @@ Below is a list of all the Web Hosting Providers that are stored in your <?=$sof
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/host.php?whid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_host == "1") echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
+		<a class="invisiblelink" href="edit/host.php?whid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_host'] == $row->id) echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
 	</td>
 	<td class="main_table_cell_active">
     <?php
@@ -78,14 +78,14 @@ Below is a list of all the Web Hosting Providers that are stored in your <?=$sof
 <?php
 if ($has_active == "1") {
 
-	$sql = "SELECT id, name, default_host
+	$sql = "SELECT id, name
 			FROM hosting
 			WHERE id NOT IN (SELECT hosting_id FROM domains WHERE hosting_id != '0' AND active NOT IN ('0','10') GROUP BY hosting_id)
 			ORDER BY name";
 
 } else {
 	
-	$sql = "SELECT id, name, default_host
+	$sql = "SELECT id, name
 			FROM hosting
 			ORDER BY name";
 	
@@ -105,7 +105,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/host.php?whid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_host == "1") echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
+		<a class="invisiblelink" href="edit/host.php?whid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_host'] == "1") echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
 	</td>
 	</td>
 </tr>

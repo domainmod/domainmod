@@ -36,7 +36,6 @@ $pcid = $_GET['pcid'];
 $new_category = $_REQUEST['new_category'];
 $new_stakeholder = $_REQUEST['new_stakeholder'];
 $new_notes = $_REQUEST['new_notes'];
-$new_default_category = $_REQUEST['new_default_category'];
 $new_pcid = $_REQUEST['new_pcid'];
 
 if ($_SESSION['http_referer_set'] != "1") {
@@ -48,37 +47,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_category != "") {
 
-		if ($new_default_category == "1") {
-			
-			$sql = "UPDATE categories
-					SET default_category = '0',
-					    update_time = '$current_timestamp'";
-			$result = mysql_query($sql,$connection);
-			
-		} else { 
-		
-			$sql = "SELECT default_category
-					FROM categories
-					WHERE default_category = '1'
-					  AND id != '$new_pcid'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_default_category = $row->default_category; }
-			if ($temp_default_category == "") { $new_default_category = "1"; }
-		
-		}
-
 		$sql = "UPDATE categories
 				SET name = '" . mysql_real_escape_string($new_category) . "', 
 					stakeholder = '" . mysql_real_escape_string($new_stakeholder) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
-					default_category = '$new_default_category',
 					update_time = '$current_timestamp'
 				WHERE id = '$new_pcid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$new_category = $new_category;
 		$new_stakeholder = $new_stakeholder;
-		$new_default_category = $new_default_category;
 		$new_notes = $new_notes;
 
 		$pcid = $new_pcid;
@@ -97,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT name, stakeholder, notes, default_category
+	$sql = "SELECT name, stakeholder, notes
 			FROM categories
 			WHERE id = '$pcid'";
 	$result = mysql_query($sql,$connection);
@@ -106,7 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		$new_category = $row->name;
 		$new_stakeholder = $row->stakeholder;
-		$new_default_category = $row->default_category;
 		$new_notes = $row->notes;
 	}
 
@@ -166,9 +143,6 @@ if ($really_del == "1") {
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR>
-<strong>Default Category?</strong>&nbsp;
-<input name="new_default_category" type="checkbox" value="1"<?php if ($new_default_category == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_pcid" value="<?=$pcid?>">
 <input type="submit" name="button" value="Update This Category &raquo;">

@@ -34,7 +34,7 @@ $software_section = "registrars";
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT r.id AS rid, r.name AS rname, r.default_registrar, r.url
+$sql = "SELECT r.id AS rid, r.name AS rname, r.url
 		FROM registrars AS r, domains AS d
 		WHERE r.id = d.registrar_id
 		  AND d.domain NOT IN ('0', '10')
@@ -70,7 +70,7 @@ Below is a list of all the Domain Registrars that are stored in your <?=$softwar
     
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td class="main_table_cell_active">
                 <?php
@@ -134,7 +134,7 @@ $exclude_registrar_string = substr($exclude_registrar_string_raw, 0, -2);
 
 if ($exclude_registrar_string == "") {
 
-	$sql = "SELECT r.id AS rid, r.name AS rname, r.default_registrar, r.url
+	$sql = "SELECT r.id AS rid, r.name AS rname, r.url
 			FROM registrars AS r
 			WHERE r.id
 			GROUP BY r.name
@@ -142,7 +142,7 @@ if ($exclude_registrar_string == "") {
 
 } else {
 	
-	$sql = "SELECT r.id AS rid, r.name AS rname, r.default_registrar, r.url
+	$sql = "SELECT r.id AS rid, r.name AS rname, r.url
 			FROM registrars AS r
 			WHERE r.id
 			  AND r.id NOT IN ($exclude_registrar_string)
@@ -174,7 +174,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
     
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($row->default_registrar == "1") echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td class="main_table_cell_inactive">
                 <?php

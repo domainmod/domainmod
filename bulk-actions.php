@@ -866,7 +866,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
                     FROM registrar_accounts AS ra, owners AS o, registrars AS r
                     WHERE ra.owner_id = o.id
                       AND ra.registrar_id = r.id
-                    ORDER BY ra.default_account desc, r_name asc, o_name asc, ra.username asc";
+                    ORDER BY r_name, o_name, ra.username";
     $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
     echo "<select name=\"new_raid\">";
     while ($row_account = mysql_fetch_object($result_account)) {
@@ -888,7 +888,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <?php
     $sql_dns = "SELECT id, name
 				FROM dns
-				ORDER BY default_dns desc, name asc";
+				ORDER BY name";
     $result_dns = mysql_query($sql_dns,$connection) or die(mysql_error());
     echo "<select name=\"new_dnsid\">";
     while ($row_dns = mysql_fetch_object($result_dns)) {
@@ -910,7 +910,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <?php
     $sql_ip = "SELECT id, name, ip
 			   FROM ip_addresses
-			   ORDER BY default_ip_address desc, name asc, ip asc";
+			   ORDER BY name, ip";
     $result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
     echo "<select name=\"new_ipid\">";
     while ($row_ip = mysql_fetch_object($result_ip)) {
@@ -932,7 +932,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <?php
     $sql_host = "SELECT id, name
 				 FROM hosting
-				 ORDER BY default_host desc, name asc";
+				 ORDER BY name";
 
     $result_host = mysql_query($sql_host,$connection) or die(mysql_error());
     echo "<select name=\"new_whid\">";
@@ -955,7 +955,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <?php
     $sql_cat = "SELECT id, name
 				FROM categories
-				ORDER BY default_category desc, name asc";
+				ORDER BY name";
 
     $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
     echo "<select name=\"new_pcid\">";
@@ -1000,7 +1000,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 	<?php
     $sql_cat = "SELECT id, name
 				FROM categories
-				ORDER BY default_category desc, name asc";
+				ORDER BY name";
     $result_cat = mysql_query($sql_cat,$connection);
     echo "<strong>New Category</strong><a title=\"Required Field\"><font class=\"default_highlight\">*</font></a><BR><BR>";
 	echo "<select name=\"new_pcid\">";

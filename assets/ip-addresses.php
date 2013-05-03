@@ -39,7 +39,7 @@ if (mysql_num_rows($result) == 0) $zero_ip_addresses = "1";
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT id, ip, name, rdns, default_ip_address
+$sql = "SELECT id, ip, name, rdns
 		FROM ip_addresses
 		WHERE id IN (SELECT ip_id FROM domains WHERE ip_id != '0' AND active NOT IN ('0','10') GROUP BY ip_id)
 		ORDER BY name asc";
@@ -67,10 +67,10 @@ Below is a list of all the Domain & SSL IP Addresses that are stored in your <?=
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
+		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?><?php if ($_SESSION['default_ip_address'] == $row->id) echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
     <td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
@@ -102,14 +102,14 @@ Below is a list of all the Domain & SSL IP Addresses that are stored in your <?=
 <?php
 if ($has_active_domain == "1") {
 
-	$sql = "SELECT id, ip, name, rdns, default_ip_address
+	$sql = "SELECT id, ip, name, rdns
 			FROM ip_addresses
 			WHERE id NOT IN (SELECT ip_id FROM domains WHERE ip_id != '0' AND active NOT IN ('0','10') GROUP BY ip_id)
 			ORDER BY name asc";
 
 } else {
 	
-	$sql = "SELECT id, ip, name, rdns, default_ip_address
+	$sql = "SELECT id, ip, name, rdns
 			FROM ip_addresses
 			ORDER BY name asc";
 	
@@ -135,10 +135,10 @@ if ($has_active_domain != "1" && $has_inactive_domains == "1") echo "<table clas
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
+		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?><?php if ($_SESSION['default_ip_address'] == $row->id) echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
     <td class="main_table_cell_inactive">
 		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
@@ -151,7 +151,7 @@ if ($has_active_domain == "1" || $has_inactive_domains == "1") echo "</table>";
 ?>
 
 <?php
-$sql = "SELECT id, ip, name, rdns, default_ip_address
+$sql = "SELECT id, ip, name, rdns
 		FROM ip_addresses
 		WHERE id IN (SELECT ip_id FROM ssl_certs WHERE ip_id != '0' AND active NOT IN ('0') GROUP BY ip_id)
 		ORDER BY name asc";
@@ -178,10 +178,10 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
+		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?><?php if ($_SESSION['default_ip_address'] == $row->id) echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
     <td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>
@@ -213,14 +213,14 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php
 if ($has_active_ssl == "1") {
 
-	$sql = "SELECT id, ip, name, rdns, default_ip_address
+	$sql = "SELECT id, ip, name, rdns
 			FROM ip_addresses
 			WHERE id NOT IN (SELECT ip_id FROM ssl_certs WHERE ip_id != '0' AND active NOT IN ('0') GROUP BY ip_id)
 			ORDER BY name asc";
 
 } else {
 	
-	$sql = "SELECT id, ip, name, rdns, default_ip_address
+	$sql = "SELECT id, ip, name, rdns
 			FROM ip_addresses
 			ORDER BY name asc";
 	
@@ -246,10 +246,10 @@ if ($has_active_ssl != "1" && $has_inactive_ssl == "1") echo "<table class=\"mai
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_ip_address == "1") echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->name?></a>
 	</td>
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?></a>
+		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->ip?><?php if ($_SESSION['default_ip_address'] == $row->id) echo "<a title=\"Default IP Address\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
     <td class="main_table_cell_inactive">
 		<a class="invisiblelink" href="edit/ip-address.php?ipid=<?=$row->id?>"><?=$row->rdns?></a>

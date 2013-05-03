@@ -38,7 +38,6 @@ $new_ip = $_POST['new_ip'];
 $new_rdns = $_POST['new_rdns'];
 $new_ipid = $_POST['new_ipid'];
 $new_notes = $_POST['new_notes'];
-$new_default_ip_address = $_REQUEST['new_default_ip_address'];
 
 if ($_SESSION['http_referer_set'] != "1") {
 	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
@@ -49,31 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != "" && $new_ip != "") {
 
-		if ($new_default_ip_address == "1") {
-			
-			$sql = "UPDATE ip_addresses
-					SET default_ip_address = '0',
-					    update_time = '$current_timestamp'";
-			$result = mysql_query($sql,$connection);
-
-		} else { 
-		
-			$sql = "SELECT default_ip_address
-					FROM ip_addresses
-					WHERE default_ip_address = '1'
-					  AND id != '$new_ipid'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_default_ip = $row->default_ip_address; }
-			if ($temp_default_ip == "") { $new_default_ip_address = "1"; }
-
-		}
-
 		$sql_update = "UPDATE ip_addresses
 					   SET name = '" . mysql_real_escape_string($new_name) . "',
 					   	   ip = '" . mysql_real_escape_string($new_ip) . "',
 						   rdns = '" . mysql_real_escape_string($new_rdns) . "',
 						   notes = '" . mysql_real_escape_string($new_notes) . "',
-						   default_ip_address = '" . $new_default_ip_address . "',
 						   update_time = '$current_timestamp'
 					   WHERE id = '$new_ipid'";
 		$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
@@ -82,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_ip = $new_ip;
 		$new_rdns = $new_rdns;
 		$new_notes = $new_notes;
-		$new_default_ip_address = $new_default_ip_address;
 		
 		$ipid = $new_ipid;
 		
@@ -101,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT name, ip, rdns, notes, default_ip_address
+	$sql = "SELECT name, ip, rdns, notes
 			FROM ip_addresses
 			WHERE id = '$ipid'";
 	$result = mysql_query($sql,$connection);
@@ -112,7 +90,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_ip = $row->ip;
 		$new_rdns = $row->rdns;
 		$new_notes = $row->notes;
-		$new_default_ip_address = $row->default_ip_address;
 	
 	}
 
@@ -173,9 +150,6 @@ if ($really_del == "1") {
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR>
-<strong>Default IP Address?</strong>&nbsp;
-<input name="new_default_ip_address" type="checkbox" value="1"<?php if ($new_default_ip_address == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_ipid" value="<?=$ipid?>">
 <input type="submit" name="button" value="Update This IP Address &raquo;">

@@ -33,12 +33,12 @@ $software_section = "system";
 </head>
 <body>
 <?php include("../_includes/header.inc.php"); ?>
-&raquo; <a href="system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="email-settings.php">Email Settings</a><BR><BR>
+&raquo; <a href="display-settings.php">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="email-settings.php">Email Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="defaults.php">User Defaults</a><BR><BR>
 &raquo; <a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="change-password.php">Change Password</a><BR><BR>
 &raquo; <a href="../_includes/system/update-conversion-rates.inc.php?direct=1">Update Conversion Rates</a><BR>
 <?php if ($_SESSION['is_admin'] == 1) { ?>
 	<BR><BR><font class="headline">Admin Tools</font><BR><BR>
-	&raquo; <a href="admin/admin-settings.php">Admin Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/system-info.php">System Info</a><BR><BR>
+	&raquo; <a href="admin/admin-settings.php">Admin Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/defaults.php">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/system-info.php">System Info</a><BR><BR>
 	&raquo; <a href="admin/users.php">User List</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/add/user.php">Add New User</a><BR>
 <?php } ?>
 <?php include("../_includes/footer.inc.php"); ?>

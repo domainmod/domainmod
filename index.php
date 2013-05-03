@@ -83,8 +83,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['system_full_url'] = $row_settings->full_url;
 				$_SESSION['system_db_version'] = $row_settings->db_version;
 				$_SESSION['system_email_address'] = $row_settings->email_address;
-				$_SESSION['system_default_currency'] = $row_settings->default_currency;
-				$_SESSION['system_timezone'] = $row_settings->timezone;
+				$_SESSION['system_default_category'] = $row_settings->default_category;
+				$_SESSION['system_default_dns'] = $row_settings->default_dns;
+				$_SESSION['system_default_host'] = $row_settings->default_host;
+				$_SESSION['system_default_ip_address'] = $row_settings->default_ip_address;
+				$_SESSION['system_default_owner'] = $row_settings->default_owner;
+				$_SESSION['system_default_registrar'] = $row_settings->default_registrar;
+				$_SESSION['system_default_registrar_account'] = $row_settings->default_registrar_account;
+				$_SESSION['system_default_ssl_provider_account'] = $row_settings->default_ssl_provider_account;
+				$_SESSION['system_default_ssl_type'] = $row_settings->default_ssl_type;
+				$_SESSION['system_default_ssl_provider'] = $row_settings->default_ssl_provider;
 				$_SESSION['system_expiration_email_days'] = $row_settings->expiration_email_days;
 
 			}
@@ -97,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			while ($row_user_settings = mysql_fetch_object($result_user_settings)) {
 
 				$_SESSION['default_currency'] = $row_user_settings->default_currency;
+				$_SESSION['default_timezone'] = $row_user_settings->default_timezone;
 				$_SESSION['default_category'] = $row_user_settings->default_category;
 				$_SESSION['default_dns'] = $row_user_settings->default_dns;
 				$_SESSION['default_host'] = $row_user_settings->default_host;

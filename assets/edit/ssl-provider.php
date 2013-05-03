@@ -42,36 +42,15 @@ $new_ssl_provider = $_POST['new_ssl_provider'];
 $new_url = $_POST['new_url'];
 $new_notes = $_POST['new_notes'];
 $new_sslpid = $_POST['new_sslpid'];
-$new_default_ssl_provider = $_POST['new_default_ssl_provider'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_ssl_provider != "" && $new_url != "") {
 
-		if ($new_default_ssl_provider == "1") {
-
-			$sql = "UPDATE ssl_providers
-					SET default_provider = '0',
-					    update_time = '$current_timestamp'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			
-		} else { 
-		
-			$sql = "SELECT default_provider
-					FROM ssl_providers
-					WHERE default_provider = '1'
-					  AND id != '$new_sslpid'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			while ($row = mysql_fetch_object($result)) { $temp_default_ssl_provider = $row->default_ssl_provider; }
-			if ($temp_default_ssl_provider == "") { $new_default_ssl_provider = "1"; }
-		
-		}
-
 		$sql = "UPDATE ssl_providers
 				SET name = '" . mysql_real_escape_string($new_ssl_provider) . "', 
 					url = '" . mysql_real_escape_string($new_url) . "', 
 					notes = '" . mysql_real_escape_string($new_notes) . "',
-					default_provider = '$new_default_ssl_provider',
 					update_time = '$current_timestamp'
 				WHERE id = '$new_sslpid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -93,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT name, url, notes, default_provider
+	$sql = "SELECT name, url, notes
 			FROM ssl_providers
 			WHERE id = '$sslpid'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -103,7 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_ssl_provider = $row->name;
 		$new_url = $row->url;
 		$new_notes = $row->notes;
-		$new_default_ssl_provider = $row->default_provider;
 	
 	}
 
@@ -181,9 +159,6 @@ if ($really_del == "1") {
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR>
-<strong>Default SSL Provider?</strong>&nbsp;
-<input name="new_default_ssl_provider" type="checkbox" value="1"<?php if ($new_default_ssl_provider == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_sslpid" value="<?=$sslpid?>">
 <input type="submit" name="button" value="Update This SSL Provider &raquo;">

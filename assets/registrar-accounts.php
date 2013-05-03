@@ -23,7 +23,7 @@ include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
 $page_title = "Domains Registrar Accounts";
-$software_section = "accounts";
+$software_section = "registrar-accounts";
 
 // Form Variables
 $rid = $_GET['rid'];
@@ -44,7 +44,7 @@ if ($rid != "") { $rid_string = " AND ra.registrar_id = '$rid' "; } else { $rid_
 if ($raid != "") { $raid_string = " AND ra.id = '$raid' "; } else { $raid_string = ""; }
 if ($oid != "") { $oid_string = " AND ra.owner_id = '$oid' "; } else { $oid_string = ""; }
 
-$sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, ra.default_account, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
+$sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
 		FROM registrar_accounts AS ra, owners AS o, registrars AS r, domains AS d
 		WHERE ra.owner_id = o.id
 		  AND ra.registrar_id = r.id
@@ -91,7 +91,7 @@ Below is a list of all the Domain Registrar Accounts that are stored in your <?=
 				<a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
 			</td>
 			<td class="main_table_cell_active" valign="top">
-				<a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+				<a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
 			</td>
 			<td class="main_table_cell_active">
 				<a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
@@ -121,7 +121,7 @@ $exclude_account_string = substr($exclude_account_string_raw, 0, -2);
 
 if ($exclude_account_string != "") { $raid_string = " AND ra.id not in ($exclude_account_string) "; } else { $raid_string = ""; }
 
-$sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, ra.default_account, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
+$sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
 		FROM registrar_accounts AS ra, owners AS o, registrars AS r
 		WHERE ra.owner_id = o.id
 		  AND ra.registrar_id = r.id
@@ -160,7 +160,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
                 <a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
             </td>
             <td class="main_table_cell_inactive" valign="top">
-                    <a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($row->default_account == "1") echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                    <a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
                 <a class="invisiblelink" href="edit/account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>

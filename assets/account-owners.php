@@ -39,7 +39,7 @@ if (mysql_num_rows($result) == 0) $zero_owners = "1";
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT id, name, default_owner
+$sql = "SELECT id, name
 		FROM owners
 		WHERE id IN (SELECT owner_id FROM domains WHERE owner_id != '0' AND active NOT IN ('0','10') GROUP BY owner_id)
 		ORDER BY name asc";
@@ -64,7 +64,7 @@ Below is a list of all the Domain Registrar and SSL Provider Account Owners that
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
 	<td class="main_table_cell_active">
     <?php
@@ -111,14 +111,14 @@ Below is a list of all the Domain Registrar and SSL Provider Account Owners that
 <?php
 if ($has_active_domain == "1") {
 
-	$sql = "SELECT id, name, default_owner
+	$sql = "SELECT id, name
 			FROM owners
 			WHERE id NOT IN (SELECT owner_id FROM domains WHERE owner_id != '0' AND active NOT IN ('0','10') GROUP BY owner_id)
 			ORDER BY name asc";
 
 } else {
 	
-	$sql = "SELECT id, name, default_owner
+	$sql = "SELECT id, name
 			FROM owners
 			ORDER BY name asc";
 	
@@ -141,7 +141,7 @@ if ($has_active_domain != "1" && $has_inactive_domains == "1") echo "<table clas
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
 	<td class="main_table_cell_inactive">
     <?php
@@ -169,7 +169,7 @@ if ($has_active_domain == "1" || $has_inactive_domains == "1") echo "</table>";
 ?>
 
 <?php
-$sql = "SELECT id, name, default_owner
+$sql = "SELECT id, name
 		FROM owners
 		WHERE id IN (SELECT owner_id FROM ssl_certs WHERE owner_id != '0' AND active NOT IN ('0') GROUP BY owner_id)
 		ORDER BY name asc";
@@ -193,7 +193,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
 	<td class="main_table_cell_active">
     <?php
@@ -240,14 +240,14 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php
 if ($has_active_ssl == "1") {
 
-	$sql = "SELECT id, name, default_owner
+	$sql = "SELECT id, name
 			FROM owners
 			WHERE id NOT IN (SELECT owner_id FROM ssl_certs WHERE owner_id != '0' AND active NOT IN ('0') GROUP BY owner_id)
 			ORDER BY name asc";
 
 } else {
 	
-	$sql = "SELECT id, name, default_owner
+	$sql = "SELECT id, name
 			FROM owners
 			ORDER BY name asc";
 	
@@ -270,7 +270,7 @@ if ($has_active_ssl != "1" && $has_inactive_ssl == "1") echo "<table class=\"mai
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_owner == "1") echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
 	<td class="main_table_cell_inactive">
     <?php

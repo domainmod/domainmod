@@ -39,7 +39,7 @@ if (mysql_num_rows($result) == 0) $zero_categories = "1";
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT id, name, stakeholder, default_category
+$sql = "SELECT id, name, stakeholder
 		FROM categories
 		WHERE id IN (SELECT cat_id FROM domains WHERE cat_id != '0' AND active NOT IN ('0','10') GROUP BY cat_id)
 		ORDER BY name asc";
@@ -64,7 +64,7 @@ Below is a list of all the Domain & SSL Categories that are stored in your <?=$s
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_category'] == $row->id) echo "<a title=\"Default Category\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
     <td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
@@ -96,14 +96,14 @@ Below is a list of all the Domain & SSL Categories that are stored in your <?=$s
 <?php
 if ($has_active_domain == "1") {
 
-	$sql = "SELECT id, name, stakeholder, default_category
+	$sql = "SELECT id, name, stakeholder
 			FROM categories
 			WHERE id NOT IN (SELECT cat_id FROM domains WHERE cat_id != '0' AND active NOT IN ('0','10') GROUP BY cat_id)
 			ORDER BY name asc";
 
 } else {
 	
-	$sql = "SELECT id, name, stakeholder, default_category
+	$sql = "SELECT id, name, stakeholder
 			FROM categories
 			ORDER BY name asc";
 	
@@ -126,7 +126,7 @@ if ($has_active_domain != "1" && $has_inactive_domains == "1") echo "<table clas
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_category'] == $row->id) echo "<a title=\"Default Category\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
     <td class="main_table_cell_inactive">
 		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
@@ -139,7 +139,7 @@ if ($has_active_domain == "1" || $has_inactive_domains == "1") echo "</table>";
 ?>
 
 <?php
-$sql = "SELECT id, name, stakeholder, default_category
+$sql = "SELECT id, name, stakeholder
 		FROM categories
 		WHERE id IN (SELECT cat_id FROM ssl_certs WHERE cat_id != '0' AND active NOT IN ('0') GROUP BY cat_id)
 		ORDER BY name asc";
@@ -163,7 +163,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_category'] == $row->id) echo "<a title=\"Default Category\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
     <td class="main_table_cell_active">
 		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
@@ -195,14 +195,14 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 <?php
 if ($has_active_ssl == "1") {
 
-	$sql = "SELECT id, name, stakeholder, default_category
+	$sql = "SELECT id, name, stakeholder
 			FROM categories
 			WHERE id NOT IN (SELECT cat_id FROM ssl_certs WHERE cat_id != '0' AND active NOT IN ('0') GROUP BY cat_id)
 			ORDER BY name asc";
 
 } else {
 	
-	$sql = "SELECT id, name, stakeholder, default_category
+	$sql = "SELECT id, name, stakeholder
 			FROM categories
 			ORDER BY name asc";
 	
@@ -225,7 +225,7 @@ if ($has_active_ssl != "1" && $has_inactive_ssl == "1") echo "<table class=\"mai
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?><?php if ($row->default_category == "1") echo "<a title=\"Default Category\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_category'] == $row->id) echo "<a title=\"Default Category\"><font class=\"default_highlight\">*</font></a>"; ?></a>
 	</td>
     <td class="main_table_cell_inactive">
 		<a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>

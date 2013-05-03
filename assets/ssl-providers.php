@@ -34,7 +34,7 @@ $software_section = "ssl-providers";
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT id, name, url, default_provider
+$sql = "SELECT id, name, url
 		FROM ssl_providers
 		WHERE id IN (SELECT ssl_provider_id FROM ssl_certs WHERE ssl_provider_id != '0' AND active != '0' GROUP BY ssl_provider_id)
 		ORDER BY name asc";
@@ -61,7 +61,7 @@ Below is a list of all the SSL Certificate Providers that are stored in your <?=
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
             <td class="main_table_cell_active">
                 <?php
@@ -111,7 +111,7 @@ Below is a list of all the SSL Certificate Providers that are stored in your <?=
 } ?>
 
 <?php
-$sql = "SELECT id, name, url, default_provider
+$sql = "SELECT id, name, url
 		FROM ssl_providers
 		WHERE id NOT IN (SELECT ssl_provider_id FROM ssl_certs WHERE ssl_provider_id != '0' AND active != '0' GROUP BY ssl_provider_id)
 		ORDER BY name asc";
@@ -136,7 +136,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
     
             <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_provider == "1") echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
+                    <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
                 </td>
                 <td class="main_table_cell_inactive">
                     <?php

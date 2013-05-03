@@ -305,7 +305,7 @@ if (mysql_num_rows($result) != 0) {
                 <?php
                 $sql = "SELECT id, type
                         FROM ssl_cert_types
-                        ORDER BY default_type desc, type asc";
+                        ORDER BY type";
                 $result = mysql_query($sql,$connection);
                 while ($row = mysql_fetch_object($result)) {
 

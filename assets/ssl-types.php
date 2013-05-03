@@ -34,7 +34,7 @@ $software_section = "ssl-types";
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT id, type, default_type
+$sql = "SELECT id, type
 		FROM ssl_cert_types
 		WHERE id IN (SELECT type_id FROM ssl_certs WHERE type_id != '0' AND active NOT IN ('0') GROUP BY type_id)
 		ORDER BY type asc";
@@ -54,7 +54,7 @@ Below is a list of all the types of SSL certificates that are stored in your <?=
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\">*</font></a>"; ?>
+		<a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\">*</font></a>"; ?>
 	</td>
 	<td class="main_table_cell_active">
     <?php
@@ -77,14 +77,14 @@ Below is a list of all the types of SSL certificates that are stored in your <?=
 <?php
 if ($has_active == "1") {
 
-	$sql = "SELECT id, type, default_type
+	$sql = "SELECT id, type
 			FROM ssl_cert_types
 			WHERE id NOT IN (SELECT type_id FROM ssl_certs WHERE type_id != '0' AND active NOT IN ('0') GROUP BY type_id)
 			ORDER BY type asc";
 
 } else {
 	
-	$sql = "SELECT id, type, default_type
+	$sql = "SELECT id, type
 			FROM ssl_cert_types
 			ORDER BY type asc";
 	
@@ -103,7 +103,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($row->default_type == "1") echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\">*</font></a>"; ?>
+		<a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?=$row->id?>"><?=$row->type?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\">*</font></a>"; ?>
 	</td>
 </tr>
 <?php } ?>

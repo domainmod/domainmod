@@ -34,7 +34,7 @@ $software_section = "dns";
 <body>
 <?php include("../_includes/header.inc.php"); ?>
 <?php
-$sql = "SELECT id, name, number_of_servers, default_dns
+$sql = "SELECT id, name, number_of_servers
 		FROM dns
 		WHERE id IN (SELECT dns_id FROM domains WHERE dns_id != '0' AND active NOT IN ('0','10') GROUP BY dns_id)
 		ORDER BY name, number_of_servers desc";
@@ -58,7 +58,7 @@ Below is a list of all the DNS Profiles that are stored in your <?=$software_tit
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
     <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_dns == "1") echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\">*</font></a>"; ?>
+		<a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_dns'] == $row->id) echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\">*</font></a>"; ?>
 	</td>
     <td class="main_table_cell_active">
         <a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->number_of_servers?></a>
@@ -82,14 +82,14 @@ Below is a list of all the DNS Profiles that are stored in your <?=$software_tit
 <?php
 if ($has_active == "1") {
 
-	$sql = "SELECT id, name, number_of_servers, default_dns
+	$sql = "SELECT id, name, number_of_servers
 			FROM dns
 			WHERE id NOT IN (SELECT dns_id FROM domains WHERE dns_id != '0' AND active NOT IN ('0','10') GROUP BY dns_id)
 			ORDER BY name, number_of_servers desc";
 
 } else {
 	
-	$sql = "SELECT id, name, number_of_servers, default_dns
+	$sql = "SELECT id, name, number_of_servers
 			FROM dns
 			ORDER BY name, number_of_servers desc";
 	
@@ -112,7 +112,7 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
 <?php while ($row = mysql_fetch_object($result)) { ?>
 <tr class="main_table_row_inactive">
     <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a><?php if ($row->default_dns == "1") echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\">*</font></a>"; ?>
+		<a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_dns'] == $row->id) echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\">*</font></a>"; ?>
 	</td>
     <td class="main_table_cell_inactive">
         <a class="invisiblelink" href="edit/dns.php?dnsid=<?=$row->id?>"><?=$row->number_of_servers?></a>

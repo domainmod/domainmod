@@ -49,7 +49,6 @@ $new_ip7 = $_POST['new_ip7'];
 $new_ip8 = $_POST['new_ip8'];
 $new_ip9 = $_POST['new_ip9'];
 $new_ip10 = $_POST['new_ip10'];
-$new_default_dns = $_POST['new_default_dns'];
 
 if ($_SESSION['http_referer_set'] != "1") {
 	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
@@ -60,24 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != '' && $new_dns1 != "" && $new_dns2 != "") {
 
-		if ($new_default_dns == "1") {
-			
-			$sql = "UPDATE dns
-					SET default_dns = '0',
-						update_time = '$current_timestamp'";
-			$result = mysql_query($sql,$connection);
-			
-		} else { 
-		
-			$sql = "SELECT count(*) as total_count
-					FROM dns
-					WHERE default_dns = '1'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_total = $row->total_count; }
-			if ($temp_total == "0") $new_default_dns = "1";
-		
-		}
-		
 		$new_number_of_servers = 10;
 		
 		if ($new_dns10 == '') { $new_number_of_servers = '9'; }
@@ -92,8 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ($new_dns1 == '') { $new_number_of_servers = '0'; }
 
 		$sql = "INSERT INTO dns 
-				(name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, number_of_servers, default_dns, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_dns1) . "', '" . mysql_real_escape_string($new_dns2) . "', '" . mysql_real_escape_string($new_dns3) . "', '" . mysql_real_escape_string($new_dns4) . "', '" . mysql_real_escape_string($new_dns5) . "', '" . mysql_real_escape_string($new_dns6) . "', '" . mysql_real_escape_string($new_dns7) . "', '" . mysql_real_escape_string($new_dns8) . "', '" . mysql_real_escape_string($new_dns9) . "', '" . mysql_real_escape_string($new_dns10) . "', '" . mysql_real_escape_string($new_ip1) . "', '" . mysql_real_escape_string($new_ip2) . "', '" . mysql_real_escape_string($new_ip3) . "', '" . mysql_real_escape_string($new_ip4) . "', '" . mysql_real_escape_string($new_ip5) . "', '" . mysql_real_escape_string($new_ip6) . "', '" . mysql_real_escape_string($new_ip7) . "', '" . mysql_real_escape_string($new_ip8) . "', '" . mysql_real_escape_string($new_ip9) . "', '" . mysql_real_escape_string($new_ip10) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_number_of_servers', '$new_default_dns', '$current_timestamp')";
+				(name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, number_of_servers, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_dns1) . "', '" . mysql_real_escape_string($new_dns2) . "', '" . mysql_real_escape_string($new_dns3) . "', '" . mysql_real_escape_string($new_dns4) . "', '" . mysql_real_escape_string($new_dns5) . "', '" . mysql_real_escape_string($new_dns6) . "', '" . mysql_real_escape_string($new_dns7) . "', '" . mysql_real_escape_string($new_dns8) . "', '" . mysql_real_escape_string($new_dns9) . "', '" . mysql_real_escape_string($new_dns10) . "', '" . mysql_real_escape_string($new_ip1) . "', '" . mysql_real_escape_string($new_ip2) . "', '" . mysql_real_escape_string($new_ip3) . "', '" . mysql_real_escape_string($new_ip4) . "', '" . mysql_real_escape_string($new_ip5) . "', '" . mysql_real_escape_string($new_ip6) . "', '" . mysql_real_escape_string($new_ip7) . "', '" . mysql_real_escape_string($new_ip8) . "', '" . mysql_real_escape_string($new_ip9) . "', '" . mysql_real_escape_string($new_ip10) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_number_of_servers', '$current_timestamp')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
@@ -228,9 +209,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </table>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR>
-<strong>Default DNS Profile?</strong>&nbsp;
-<input name="new_default_dns" type="checkbox" id="new_default_dns" value="1">
 <BR><BR><BR>
 <input type="submit" name="button" value="Add This DNS Profile &raquo;">
 </form>

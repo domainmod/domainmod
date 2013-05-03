@@ -63,7 +63,7 @@ if ($software_section == "domains") {
 
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/registrar.php">Add A New Registrar</a><?php 
 
-} elseif ($software_section == "accounts") {
+} elseif ($software_section == "registrar-accounts") {
 	
 	if ($_SESSION['need_registrar'] != "1") { ?>
 		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/account.php">Add A New Registrar Account</a><?php 
@@ -80,6 +80,10 @@ if ($software_section == "domains") {
 } elseif ($software_section == "system") { ?>
 
 <?php
+} elseif ($software_section == "user-list") { ?>
+
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/add/user.php">Add A New User</a><?php 
+
 } elseif ($software_section == "reporting") { ?>
 
 <?php

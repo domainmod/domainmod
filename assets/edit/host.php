@@ -35,7 +35,6 @@ $whid = $_GET['whid'];
 // Form Variables
 $new_host = $_REQUEST['new_host'];
 $new_notes = $_REQUEST['new_notes'];
-$new_default_host = $_REQUEST['new_default_host'];
 $new_whid = $_REQUEST['new_whid'];
 
 if ($_SESSION['http_referer_set'] != "1") {
@@ -47,35 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_host != "") {
 
-		if ($new_default_host == "1") {
-			
-			$sql = "UPDATE hosting
-					SET default_host = '0',
-					    update_time = '$current_timestamp'";
-			$result = mysql_query($sql,$connection);
-			
-		} else { 
-		
-			$sql = "SELECT default_host
-					FROM hosting
-					WHERE default_host = '1'
-					  AND id != '$new_whid'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_default_host = $row->default_host; }
-			if ($temp_default_host == "") { $new_default_host = "1"; }
-		
-		}
-
 		$sql = "UPDATE hosting
 				SET name = '" . mysql_real_escape_string($new_host) . "', 
 					notes = '" . mysql_real_escape_string($new_notes) . "',
-					default_host = '$new_default_host',
 					update_time = '$current_timestamp'
 				WHERE id = '$new_whid'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$new_host = $new_host;
-		$new_default_host = $new_default_host;
 		$new_notes = $new_notes;
 
 		$whid = $new_whid;
@@ -94,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT name, notes, default_host
+	$sql = "SELECT name, notes
 			FROM hosting
 			WHERE id = '$whid'";
 	$result = mysql_query($sql,$connection);
@@ -102,7 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	while ($row = mysql_fetch_object($result)) { 
 	
 		$new_host = $row->name;
-		$new_default_host = $row->default_host;
 		$new_notes = $row->notes;
 	}
 
@@ -158,9 +135,6 @@ if ($really_del == "1") {
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR>
-<strong>Default Web Host?</strong>&nbsp;
-<input name="new_default_host" type="checkbox" value="1"<?php if ($new_default_host == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_whid" value="<?=$whid?>">
 <input type="submit" name="button" value="Update This Web Host &raquo;">

@@ -130,7 +130,7 @@ $sql_account = "SELECT sslpa.id, sslpa.username, o.name as o_name, sslp.name as 
 				FROM ssl_accounts as sslpa, owners as o, ssl_providers as sslp
 				WHERE sslpa.owner_id = o.id
 				  AND sslpa.ssl_provider_id = sslp.id
-				ORDER BY sslpa.default_account desc, sslp_name asc, o_name asc, sslpa.username asc";
+				ORDER BY sslp_name, o_name, sslpa.username";
 $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysql_fetch_object($result_account)) {
@@ -152,7 +152,7 @@ echo "</select>";
 <?php
 $sql_type = "SELECT id, type
 			 FROM ssl_cert_types
-			 ORDER BY default_type desc, type asc";
+			 ORDER BY type";
 $result_type = mysql_query($sql_type,$connection) or die(mysql_error());
 echo "<select name=\"new_type_id\">";
 while ($row_type = mysql_fetch_object($result_type)) {
@@ -174,7 +174,7 @@ echo "</select>";
 <?php
 $sql_ip = "SELECT id, ip, name
 		   FROM ip_addresses
-		   ORDER BY default_ip_address desc, name, ip";
+		   ORDER BY name, ip";
 $result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
 echo "<select name=\"new_ip_id\">";
 while ($row_ip = mysql_fetch_object($result_ip)) {
@@ -196,7 +196,7 @@ echo "</select>";
 <?php
 $sql_cat = "SELECT id, name
 			FROM categories
-			ORDER BY default_category desc, name";
+			ORDER BY name";
 $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
 echo "<select name=\"new_cat_id\">";
 while ($row_cat = mysql_fetch_object($result_cat)) {

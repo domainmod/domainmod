@@ -76,17 +76,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		while ($row = mysql_fetch_object($result)) {
 			$temp_user_id = $row->id;
 		}
-		
+
 		$sql = "INSERT INTO user_settings
-				(user_id, default_currency, insert_time) VALUES 
-				('$temp_user_id', '" . $_SESSION['system_default_currency'] . "', '" . $current_timestamp . "');";
+				(user_id, default_currency, default_category, default_dns, default_host, default_ip_address, default_owner, default_registrar, default_registrar_account, default_ssl_provider, default_ssl_provider_account, default_ssl_type, insert_time) VALUES 
+				('$temp_user_id', 'CAD', '" . $_SESSION['system_default_category'] . "', '" . $_SESSION['system_default_dns'] . "', '" . $_SESSION['system_default_host'] . "', '" . $_SESSION['system_default_ip_address'] . "', '" . $_SESSION['system_default_owner'] . "', '" . $_SESSION['system_default_registrar'] . "', '" . $_SESSION['system_default_registrar_account'] . "', '" . $_SESSION['system_default_ssl_provider'] . "', '" . $_SESSION['system_default_ssl_provider_account'] . "', '" . $_SESSION['system_default_ssl_type'] . "', '" . $current_timestamp . "');";
 		$result = mysql_query($sql,$connection);
 
 		$_SESSION['result_message'] .= "User <font class=\"highlight\">$new_first_name $new_last_name ($new_username / $new_password)</font> Added<BR><BR>
 		You can either manually email the above credentials to the user, or you can <a href=\"reset-password.php?new_username=$new_username\">click here</a> to have $software_title email them for you<BR>";
 
 		$temp_input_user_id = $temp_user_id;
-		$temp_input_default_currency = $_SESSION['system_default_currency'];
+		$temp_input_default_currency = 'CAD';
 		include("../../../_includes/system/update-conversion-rates.inc.php");
 
 		$_SESSION['http_referer_set'] = "";

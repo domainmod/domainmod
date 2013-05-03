@@ -56,7 +56,6 @@ $new_ip9 = $_POST['new_ip9'];
 $new_ip10 = $_POST['new_ip10'];
 $new_dnsid = $_POST['new_dnsid'];
 $new_notes = $_POST['new_notes'];
-$new_default_dns = $_REQUEST['new_default_dns'];
 
 if ($_SESSION['http_referer_set'] != "1") {
 	$_SESSION['http_referer'] = $_SERVER['HTTP_REFERER'];
@@ -67,25 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != "" && $new_dns1 != "" && $new_dns2 != "") {
 
-		if ($new_default_dns == "1") {
-			
-			$sql = "UPDATE dns
-					SET default_dns = '0',
-					    update_time = '$current_timestamp'";
-			$result = mysql_query($sql,$connection);
-			
-		} else { 
-		
-			$sql = "SELECT default_dns
-					FROM dns
-					WHERE default_dns = '1'
-					  AND id != '$new_dnsid'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_default_dns = $row->default_dns; }
-			if ($temp_default_dns == "") { $new_default_dns = "1"; }
-		
-		}
-	
 		$new_number_of_servers = 10;
 		
 		if ($new_dns10 == '') { $new_number_of_servers = '9'; }
@@ -123,7 +103,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   ip10 = '" . mysql_real_escape_string($new_ip10) . "',
 						   notes = '" . mysql_real_escape_string($new_notes) . "',
 						   number_of_servers = '$new_number_of_servers',
-						   default_dns = '$new_default_dns',
 						   update_time = '$current_timestamp'
 					   WHERE id = '$new_dnsid'";
 		$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
@@ -132,7 +111,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_dns1 = $new_dns1;
 		$new_notes = $new_notes;
 		$new_number_of_servers = $new_number_of_servers;
-		$new_default_dns = $new_default_dns;
 		
 		$dnsid = $new_dnsid;
 		
@@ -152,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, default_dns
+	$sql = "SELECT name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes
 			FROM dns
 			WHERE id = '$dnsid'";
 	$result = mysql_query($sql,$connection);
@@ -181,7 +159,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_ip9 = $row->ip9;
 		$new_ip10 = $row->ip10;
 		$new_notes = $row->notes;
-		$new_default_dns = $row->default_dns;
 	
 	}
 
@@ -338,9 +315,6 @@ if ($really_del == "1") {
 </table>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<BR><BR>
-<strong>Default DNS Profile?</strong>&nbsp;
-<input name="new_default_dns" type="checkbox" value="1"<?php if ($new_default_dns == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="hidden" name="new_dnsid" value="<?=$dnsid?>">
 <input type="submit" name="button" value="Update This DNS Profile &raquo;">

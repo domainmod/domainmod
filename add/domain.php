@@ -117,12 +117,12 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
 				FROM registrar_accounts AS ra, owners AS o, registrars AS r
 				WHERE ra.owner_id = o.id
 				  AND ra.registrar_id = r.id
-				ORDER BY ra.default_account desc, r_name asc, o_name asc, ra.username asc";
+				ORDER BY r_name, o_name, ra.username";
 $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysql_fetch_object($result_account)) {
 
-	if ($row_account->id == $new_account_id) {
+	if ($row_account->id == $_SESSION['default_registrar_account']) {
 
 		echo "<option value=\"$row_account->id\" selected>$row_account->r_name :: $row_account->o_name :: $row_account->username</option>";
 	
@@ -139,12 +139,12 @@ echo "</select>";
 <?php
 $sql_dns = "SELECT id, name
 			FROM dns
-			ORDER BY default_dns desc, name asc";
+			ORDER BY name";
 $result_dns = mysql_query($sql_dns,$connection) or die(mysql_error());
 echo "<select name=\"new_dns_id\">";
 while ($row_dns = mysql_fetch_object($result_dns)) {
 
-	if ($row_dns->id == $new_dns_id) {
+	if ($row_dns->id == $_SESSION['default_dns']) {
 
 		echo "<option value=\"$row_dns->id\" selected>$row_dns->name</option>";
 	
@@ -161,13 +161,13 @@ echo "</select>";
 <?php
 $sql_ip = "SELECT id, name, ip
 		   FROM ip_addresses
-		   ORDER BY default_ip_address desc, name asc, ip asc";
+		   ORDER BY name, ip";
 $result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
 echo "<select name=\"new_ip_id\">";
 
 while ($row_ip = mysql_fetch_object($result_ip)) {
 
-	if ($row_ip->id == $new_ip_id) {
+	if ($row_ip->id == $_SESSION['default_ip_address']) {
 
 		echo "<option value=\"$row_ip->id\" selected>$row_ip->name ($row_ip->ip)</option>";
 	
@@ -184,12 +184,12 @@ echo "</select>";
 <?php
 $sql_hosting = "SELECT id, name
 				FROM hosting
-				ORDER BY default_host desc, name asc";
+				ORDER BY name";
 $result_hosting = mysql_query($sql_hosting,$connection) or die(mysql_error());
 echo "<select name=\"new_hosting_id\">";
 while ($row_hosting = mysql_fetch_object($result_hosting)) {
 
-	if ($row_hosting->id == $new_hosting_id) {
+	if ($row_hosting->id == $_SESSION['default_host']) {
 
 		echo "<option value=\"$row_hosting->id\" selected>$row_hosting->name</option>";
 	
@@ -206,12 +206,12 @@ echo "</select>";
 <?php
 $sql_cat = "SELECT id, name
 			FROM categories
-			ORDER BY default_category desc, name asc";
+			ORDER BY name";
 $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
 echo "<select name=\"new_cat_id\">";
 while ($row_cat = mysql_fetch_object($result_cat)) {
 
-	if ($row_cat->id == $new_cat_id) {
+	if ($row_cat->id == $_SESSION['default_category']) {
 
 		echo "<option value=\"$row_cat->id\" selected>$row_cat->name</option>";
 	
