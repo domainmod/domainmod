@@ -216,7 +216,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		$row->total_cost = $temp_output_amount; ?>
 	
 		<tr class="main_table_row_active">
-			<td class="main_table_cell_active"><strong><?=$row->type?></strong></td>
+			<td class="main_table_cell_active"><?=$row->type?></td>
 			<td class="main_table_cell_active"><?=$row->number_of_certs?></td>
 			<td class="main_table_cell_active"><?=$row->total_cost?></td>
 			<td class="main_table_cell_active"><?=$per_cert?></td>

@@ -207,7 +207,7 @@ if ($total_rows > 0) {
             if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
     
                 <tr class="main_table_row_active">
-                    <td class="main_table_cell_active"><strong><?=$row->registrar?></strong></td>
+                    <td class="main_table_cell_active"><?=$row->registrar?></td>
                     <td class="main_table_cell_active">.<?=$row->tld?></td>
                     <td class="main_table_cell_active">
                         <?php

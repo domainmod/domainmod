@@ -329,8 +329,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 			?>
 
 			<tr class="main_table_row_active">
-				<td class="main_table_cell_active"><strong><?=$row->year?></strong></td>
-				<td class="main_table_cell_active"><strong><?=$display_month?></strong></td>
+				<td class="main_table_cell_active"><?=$row->year?></td>
+				<td class="main_table_cell_active"><?=$display_month?></td>
 				<td class="main_table_cell_active"><?=$monthly_cost?></td>
 				<td class="main_table_cell_active"><?=$yearly_cost?></td>
 			</tr>
@@ -343,7 +343,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		
 			<tr class="main_table_row_active">
 				<td class="main_table_cell_active">&nbsp;</td>
-				<td class="main_table_cell_active"><strong><?=$display_month?></strong></td>
+				<td class="main_table_cell_active"><?=$display_month?></td>
 				<td class="main_table_cell_active"><?=$monthly_cost?></td>
 				<td class="main_table_cell_active">&nbsp;</td>
 			</tr>

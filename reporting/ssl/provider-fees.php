@@ -196,7 +196,7 @@ if ($total_rows > 0) {
             if ($new_ssl_provider != $last_ssl_provider || $new_ssl_provider == "") { ?>
     
                 <tr class="main_table_row_active">
-                    <td class="main_table_cell_active"><strong><?=$row->ssl_provider?></strong></td>
+                    <td class="main_table_cell_active"><?=$row->ssl_provider?></td>
                     <td class="main_table_cell_active"><?=$row->type?></td>
                     <td class="main_table_cell_active">
                         <?php
