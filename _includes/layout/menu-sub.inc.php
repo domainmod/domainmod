@@ -30,7 +30,7 @@ if ($software_section == "domains") {
 } elseif ($software_section == "ssl-provider-accounts") {
 
 	if ($_SESSION['need_ssl_provider'] != "1") { ?>
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/ssl-account.php">Add A New SSL Account</a><?php 
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/ssl-provider-account.php">Add A New SSL Provider Account</a><?php 
 	} 
 	
 } elseif ($software_section == "ssl-certs") {
@@ -66,12 +66,12 @@ if ($software_section == "domains") {
 } elseif ($software_section == "registrar-accounts") {
 	
 	if ($_SESSION['need_registrar'] != "1") { ?>
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/account.php">Add A New Registrar Account</a><?php 
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/registrar-account.php">Add A New Registrar Account</a><?php 
 	}
 	
-} elseif ($software_section == "owners") { ?>
+} elseif ($software_section == "account-owners") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/owner.php">Add A New Owner</a><?php 
+		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/account-owner.php">Add A New Account Owner</a><?php 
 		
 } elseif ($software_section == "segments") { ?>
 
