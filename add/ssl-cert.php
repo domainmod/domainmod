@@ -103,17 +103,10 @@ $sql_domain = "SELECT id, domain
 			   ORDER BY domain asc";
 $result_domain = mysql_query($sql_domain,$connection) or die(mysql_error());
 echo "<select name=\"new_domain_id\">";
-while ($row_domain = mysql_fetch_object($result_domain)) {
+while ($row_domain = mysql_fetch_object($result_domain)) { ?>
 
-	if ($row_domain->id == $new_domain_id) {
+	<option value="<?=$row_domain->id?>"<?php if ($row_domain->id == $new_domain_id) echo " selected";?>><?=$row_domain->domain?></option><?php
 
-		echo "<option value=\"$row_domain->id\" selected>$row_domain->domain</option>";
-	
-	} else {
-
-		echo "<option value=\"$row_domain->id\">$row_domain->domain</option>";
-	
-	}
 }
 echo "</select>";
 ?>
@@ -127,17 +120,10 @@ $sql_account = "SELECT sslpa.id, sslpa.username, o.name as o_name, sslp.name as 
 				ORDER BY sslp_name, o_name, sslpa.username";
 $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
-while ($row_account = mysql_fetch_object($result_account)) {
+while ($row_account = mysql_fetch_object($result_account)) { ?>
 
-	if ($row_account->id == $_SESSION['default_ssl_provider_account']) {
+	<option value="<?=$row_account->id?>"<?php if ($row_account->id == $_SESSION['default_ssl_provider_account']) echo " selected";?>><?=$row_account->sslp_name?>, <?=$row_account->o_name?> (<?=$row_account->username?>)</option><?php
 
-		echo "<option value=\"$row_account->id\" selected>$row_account->sslp_name :: $row_account->o_name :: $row_account->username</option>";
-	
-	} else {
-
-		echo "<option value=\"$row_account->id\">$row_account->sslp_name :: $row_account->o_name :: $row_account->username</option>";
-	
-	}
 }
 echo "</select>";
 ?>
@@ -149,17 +135,10 @@ $sql_type = "SELECT id, type
 			 ORDER BY type";
 $result_type = mysql_query($sql_type,$connection) or die(mysql_error());
 echo "<select name=\"new_type_id\">";
-while ($row_type = mysql_fetch_object($result_type)) {
+while ($row_type = mysql_fetch_object($result_type)) { ?>
 
-	if ($row_type->id == $_SESSION['default_ssl_type']) {
+	<option value="<?=$row_type->id?>"<?php if ($row_type->id == $_SESSION['default_ssl_type']) echo " selected";?>><?=$row_type->type?></option><?php
 
-		echo "<option value=\"$row_type->id\" selected>$row_type->type</option>";
-	
-	} else {
-
-		echo "<option value=\"$row_type->id\">$row_type->type</option>";
-	
-	}
 }
 echo "</select>";
 ?>
@@ -171,17 +150,10 @@ $sql_ip = "SELECT id, ip, name
 		   ORDER BY name, ip";
 $result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
 echo "<select name=\"new_ip_id\">";
-while ($row_ip = mysql_fetch_object($result_ip)) {
+while ($row_ip = mysql_fetch_object($result_ip)) { ?>
 
-	if ($row_ip->id == $_SESSION['default_ip_address_ssl']) {
+	<option value="<?=$row_ip->id?>"<?php if ($row_ip->id == $_SESSION['default_ip_address_ssl']) echo " selected";?>><?=$row_ip->name?> (<?=$row_ip->ip?>)</option><?php
 
-		echo "<option value=\"$row_ip->id\" selected>$row_ip->name ($row_ip->ip)</option>";
-	
-	} else {
-
-		echo "<option value=\"$row_ip->id\">$row_ip->name ($row_ip->ip)</option>";
-	
-	}
 }
 echo "</select>";
 ?>
@@ -193,17 +165,10 @@ $sql_cat = "SELECT id, name
 			ORDER BY name";
 $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
 echo "<select name=\"new_cat_id\">";
-while ($row_cat = mysql_fetch_object($result_cat)) {
+while ($row_cat = mysql_fetch_object($result_cat)) { ?>
 
-	if ($row_cat->id == $_SESSION['default_category_ssl']) {
+	<option value="<?=$row_cat->id?>"<?php if ($row_cat->id == $_SESSION['default_category_ssl']) echo " selected";?>><?=$row_cat->name?></option><?php
 
-		echo "<option value=\"$row_cat->id\" selected>$row_cat->name</option>";
-	
-	} else {
-
-		echo "<option value=\"$row_cat->id\">$row_cat->name</option>";
-	
-	}
 }
 echo "</select>";
 ?>
