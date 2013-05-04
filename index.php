@@ -54,7 +54,7 @@ if ($demo_install == "1" && !stripos($_SERVER['HTTP_REFERER'], "" . $demo_url . 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
 	
-	$sql = "SELECT id, first_name, last_name, username, email_address, password, admin, number_of_logins, last_login
+	$sql = "SELECT id, first_name, last_name, username, email_address, new_password, admin, number_of_logins, last_login
 			FROM users
 			WHERE username = '$new_username'
 			  AND password = password('$new_password')
@@ -70,6 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			$_SESSION['last_name'] = $row->last_name;
 			$_SESSION['username'] = $row->username;
 			$_SESSION['email_address'] = $row->email_address;
+			$_SESSION['is_new_password'] = $row->new_password;
 			$_SESSION['number_of_logins'] = $row->number_of_logins;
 			if ($row->admin == 1) $_SESSION['is_admin'] = 1;
 			$_SESSION['is_logged_in'] = 1;
@@ -171,6 +172,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				include("_includes/system/update-segments.inc.php");
 				include("_includes/system/update-tlds.inc.php");
 
+			}
+			
+			if ($_SESSION['is_new_password'] == 1) {
+				
+				$_SESSION['result_message'] .= "Your password should be changed for security purposes<BR>";
+				header("Location: system/change-password.php");
+				exit;
+				
 			}
 			
 			$_SESSION['run_update_includes'] = "";
