@@ -162,7 +162,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
     <form name="export_ssl_form" method="post" action="<?=$PHP_SELF?>"> 
-        <a href="<?=$PHP_SELF?>?all=1">View All</a> or enter an Expiry Date Range between 
+        <a href="<?=$PHP_SELF?>?all=1">View All</a> or Expiring Between 
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_start_date\""; } ?>> 
         and 
         <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_end_date\""; } ?>> 
