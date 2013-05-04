@@ -42,7 +42,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT r.name AS registrar, d.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
+$sql = "SELECT r.name AS registrar, d.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
 		FROM registrars AS r, domains AS d, fees AS f, currencies AS c
 		WHERE r.id = d.registrar_id
 		  AND d.fee_id = f.id
@@ -150,8 +150,8 @@ if ($total_rows > 0) {
         <strong>All Registrar Fees</strong><BR><BR>
     <?php } else { ?>
         <strong>Active Registrar Fees</strong><BR><BR>
-    <?php } ?>
-    <?php
+    <?php }
+
     if ($total_rows > 0) { ?>
     
         <table class="main_table">

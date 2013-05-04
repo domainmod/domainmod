@@ -99,15 +99,13 @@ $full_export = "";
 if ($export == "1") {
 
 	$full_export .= "\"" . $page_subtitle . "\"\n\n";
-	$full_export .= "\"Total Cost:\",\"" . $total_cost . "\",\"" . $_SESSION['default_currency'] . "\"\n";
-
-	$full_export .= "\"Number of Domains:\",\"" . number_format($total_results) . "\"\n";
 	if ($all != "1") {
-		$full_export .= "\"Date Range:\",\"" . $new_expiry_start . "\",\"" . $new_expiry_end . "\"\n\n";
+		$full_export .= "\"Date Range:\",\"" . $new_expiry_start . "\",\"" . $new_expiry_end . "\"\n";
 	} else {
-		$full_export .= "\"Date Range:\",\"ALL\"\n\n";
+		$full_export .= "\"Date Range:\",\"ALL\"\n";
 	}
-
+	$full_export .= "\"Total Cost:\",\"" . $total_cost . "\",\"" . $_SESSION['default_currency'] . "\"\n";
+	$full_export .= "\"Number of Domains:\",\"" . number_format($total_results) . "\"\n\n";
 	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
@@ -173,12 +171,12 @@ if ($export == "1") {
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 <?php if ($total_results > 0) { ?>
 <BR><font class="subheadline"><?=$page_subtitle?></font><BR><BR>
-<strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR><BR>
 <?php if ($all != "1") { ?>
 	<strong>Date Range:</strong> <?=$new_expiry_start?> - <?=$new_expiry_end?><BR><BR>
 <?php } else { ?>
 	<strong>Date Range:</strong> ALL<BR><BR>
 <?php } ?>
+<strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR><BR>
 <strong>Number of Domains:</strong> <?=number_format($total_results)?><BR><BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">

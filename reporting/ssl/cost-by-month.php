@@ -73,7 +73,7 @@ $sql = "SELECT sslc.id, YEAR(sslc.expiry_date) AS year, MONTH(sslc.expiry_date) 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_rows = mysql_num_rows($result);
 
-$sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) as grand_total
+$sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) as grand_total, count(*) AS number_of_certs_total
 					FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
 					WHERE sslc.fee_id = f.id
 					  AND f.currency_id = c.id
@@ -84,6 +84,7 @@ $sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) as grand_total
 $result_grand_total = mysql_query($sql_grand_total,$connection) or die(mysql_error());
 while ($row_grand_total = mysql_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
+	$number_of_certs_total = $row_grand_total->number_of_certs_total;
 }
 
 $temp_input_amount = $grand_total;
@@ -100,12 +101,13 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 		$full_export = "";
 		$full_export .= "\"" . $page_subtitle . "\"\n\n";
-		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
 		if ($all != "1") {
-		    $full_export .= "\"Date Range:\",\"" . $new_start_date . "\",\"" . $new_end_date . "\"\n\n";
+		    $full_export .= "\"Date Range:\",\"" . $new_start_date . "\",\"" . $new_end_date . "\"\n";
         } else {
-		    $full_export .= "\"Date Range:\",\"ALL\"\n\n";
+		    $full_export .= "\"Date Range:\",\"ALL\"\n";
         }
+		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
+		$full_export .= "\"Number of SSL Certs:\",\"" . $number_of_certs_total . "\"\n\n";
 		$full_export .= "\"Year\",\"Month\",\"Cost\",\"By Year\"\n";
 	
 		$new_year = "";
@@ -209,7 +211,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
-    <form name="export_domains_form" method="post" action="<?=$PHP_SELF?>"> 
+    <form name="export_ssl_form" method="post" action="<?=$PHP_SELF?>"> 
         <a href="<?=$PHP_SELF?>?all=1">View All</a> or Enter a Date Range 
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_start_date\""; } ?>> 
         and 
@@ -224,12 +226,13 @@ if ($submission_failed != "1" && $total_rows > 0) {
 if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 	<BR><font class="subheadline"><?=$page_subtitle?></font><BR><BR>
-	<strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
     <?php if ($all != "1") { ?>
 	    <strong>Date Range:</strong> <?=$new_start_date?> - <?=$new_end_date?><BR><BR>
     <?php } else { ?>
 	    <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
+	<strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
+	<strong>Number of SSL Certs:</strong> <?=$number_of_certs_total?><BR><BR>
     <table class="main_table">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">

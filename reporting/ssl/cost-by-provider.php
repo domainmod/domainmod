@@ -78,7 +78,7 @@ $sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_rows = mysql_num_rows($result);
 
-$sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) as grand_total
+$sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) as grand_total, count(*) AS number_of_certs_total
 					FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
 					WHERE sslc.fee_id = f.id
 					  AND f.currency_id = c.id
@@ -89,6 +89,7 @@ $sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) as grand_total
 $result_grand_total = mysql_query($sql_grand_total,$connection) or die(mysql_error());
 while ($row_grand_total = mysql_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
+	$number_of_certs_total = $row_grand_total->number_of_certs_total;
 }
 
 $temp_input_amount = $grand_total;
@@ -110,7 +111,8 @@ if ($submission_failed != "1" && $total_rows > 0) {
         } else {
 		    $full_export .= "\"Date Range:\",\"ALL\"\n";
         }
-		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n\n";
+		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
+		$full_export .= "\"Number of SSL Certs:\",\"" . $number_of_certs_total . "\"\n\n";
 		$full_export .= "\"Provider\",\"Certs\",\"Cost\",\"Per Cert\",\"Provider Account\",\"Certs\",\"Cost\",\"Per Cert\"\n";
 
 		$new_provider = "";
@@ -224,8 +226,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <?php } else { ?>
 	    <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
-
     <strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
+    <strong>Number of SSL Certs:</strong> <?=$number_of_certs_total?><BR><BR>
     <table class="main_table">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">

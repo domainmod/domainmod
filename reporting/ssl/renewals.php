@@ -99,12 +99,12 @@ $full_export = "";
 if ($export == "1") {
 
 	$full_export .= "\"" . $page_subtitle . "\"\n\n";
-	$full_export .= "\"Total Renewal Cost:\",\"" . $total_cost . "\",\"" . $_SESSION['default_currency'] . "\"\n";
 	if ($all != "1") {
 		$full_export .= "\"Date Range:\",\"" . $new_expiry_start . "\",\"" . $new_expiry_end . "\"\n";
 	} else {
 		$full_export .= "\"Date Range:\",\"ALL\"\n";
 	}
+	$full_export .= "\"Total Renewal Cost:\",\"" . $total_cost . "\",\"" . $_SESSION['default_currency'] . "\"\n";
 	$full_export .= "\"Number of SSL Certificates:\",\"" . number_format($total_results) . "\"\n\n";
 	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"Username\",\"SSL Type\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Category\",\"Owner\",\"Notes\"\n";
 
@@ -164,12 +164,12 @@ if ($export == "1") {
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 <?php if ($total_results > 0) { ?>
 <BR><font class="subheadline"><?=$page_subtitle?></font><BR><BR>
-<strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR><BR>
 <?php if ($all != "1") { ?>
 	<strong>Date Range:</strong> <?=$new_expiry_start?> - <?=$new_expiry_end?><BR><BR>
 <?php } else { ?>
 	<strong>Date Range:</strong> ALL<BR><BR>
 <?php } ?>
+<strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR><BR>
 <strong>Number of SSL Certificates:</strong> <?=number_format($total_results)?><BR><BR>
 <table class="main_table">
 <tr class="main_table_row_heading_active">
