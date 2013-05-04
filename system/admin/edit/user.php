@@ -212,7 +212,6 @@ if ($really_del == "1") {
 <?php if ($new_username == "admin" || $new_username == "administrator") { ?>
 
     <strong>Active Account?</strong>&nbsp;&nbsp;Yes
-    <BR><BR><BR>
 
 <?php } else { ?>
 
