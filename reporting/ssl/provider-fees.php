@@ -101,20 +101,10 @@ if ($total_rows > 0) {
 			include("../../_includes/system/convert-and-format-currency.inc.php");
 			$row->renewal_fee = $temp_output_amount;
 
-			if ($new_ssl_provider != $last_ssl_provider || $new_ssl_provider == "") {
-	
-				$full_export .= "\"" . $row->ssl_provider . "\",\"" . $row->type . "\",\"" . $row->initial_fee . "\",\"" . $row->renewal_fee . "\",\"" . $row->currency . "\",\"" . $last_updated . "\"\n";
-				$last_ssl_provider = $row->ssl_provider;
-				$last_type = $row->type;
-				
-			} else {
-	
-				$full_export .= "\"\",\"" . $row->type . "\",\"" . $row->initial_fee . "\",\"" . $row->renewal_fee . "\",\"" . $row->currency . "\",\"" . $last_updated . "\"\n";
-				$last_ssl_provider = $row->ssl_provider;
-				$last_type = $row->type;
-	
-			}
-	
+			$full_export .= "\"" . $row->ssl_provider . "\",\"" . $row->type . "\",\"" . $row->initial_fee . "\",\"" . $row->renewal_fee . "\",\"" . $row->currency . "\",\"" . $last_updated . "\"\n";
+			$last_ssl_provider = $row->ssl_provider;
+			$last_type = $row->type;
+
 		}
 	
 		$full_export .= "\n";

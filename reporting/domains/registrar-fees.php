@@ -108,20 +108,9 @@ if ($total_rows > 0) {
 			include("../../_includes/system/convert-and-format-currency.inc.php");
 			$row->transfer_fee = $temp_output_amount;
 
-			if ($new_registrar != $last_registrar || $new_registrar == "") {
-	
-				$full_export .= "\"" . $row->registrar . "\",\"." . $row->tld . "\",\"" . $row->initial_fee . "\",\"" . $row->renewal_fee . "\",\"" . $row->transfer_fee . "\",\"" . $row->currency . "\",\"" . $last_updated . "\"\n";
-				$last_registrar = $row->registrar;
-				$last_tld = $row->tld;
-				
-			} else {
-	
-				$full_export .= "\"\",\"." . $row->tld . "\",\"" . $row->initial_fee . "\",\"" . $row->renewal_fee . "\",\"" . $row->transfer_fee . "\",\"" . $row->currency . "\",\"" . $last_updated . "\"\n";
-				$last_registrar = $row->registrar;
-				$last_tld = $row->tld;
-	
-			}
-	
+			$full_export .= "\"" . $row->registrar . "\",\"." . $row->tld . "\",\"" . $row->initial_fee . "\",\"" . $row->renewal_fee . "\",\"" . $row->transfer_fee . "\",\"" . $row->currency . "\",\"" . $last_updated . "\"\n";
+			$last_registrar = $row->registrar;
+
 		}
 	
 		$full_export .= "\n";

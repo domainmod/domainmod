@@ -155,43 +155,33 @@ if ($submission_failed != "1" && $total_rows > 0) {
 			elseif ($row->month == "11") { $display_month = "November"; }
 			elseif ($row->month == "12") { $display_month = "December"; }
 	
-			if ($new_year > $last_year || $new_year == "") {
-	
-				$sql_yearly_cost = "SELECT SUM(f.renewal_fee * cc.conversion) AS yearly_cost
-									FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
-									WHERE d.fee_id = f.id
-									  AND f.currency_id = c.id
-									  AND c.id = cc.currency_id
-									  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-									  AND d.active NOT IN ('0', '10')
-									  AND YEAR(d.expiry_date) = '" . $row->year . "'
-		  							  " . $range_string . "";
-				$result_yearly_cost = mysql_query($sql_yearly_cost,$connection) or die(mysql_error());
-				
-				while ($row_yearly_cost = mysql_fetch_object($result_yearly_cost)) {
-					$yearly_cost = $row_yearly_cost->yearly_cost;
-				}
-	
-				$temp_input_amount = $yearly_cost;
-				$temp_input_conversion = "";
-				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-				include("../../_includes/system/convert-and-format-currency.inc.php");
-				$yearly_cost = $temp_output_amount;
-	
-				$full_export .= "\"" . $row->year . "\",\"" . $display_month . "\",\"" . $monthly_cost . "\",\"" . $yearly_cost . "\"\n";
-				$last_year = $row->year;
-				$last_month = $row->month;
-				
-			} else {
-	
-				$full_export .= "\"\",\"" . $display_month . "\",\"" . $monthly_cost . "\",\"\"\n";
-				$last_year = $row->year;
-				$last_month = $row->month;
-	
+			$sql_yearly_cost = "SELECT SUM(f.renewal_fee * cc.conversion) AS yearly_cost
+								FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
+								WHERE d.fee_id = f.id
+								  AND f.currency_id = c.id
+								  AND c.id = cc.currency_id
+								  AND cc.user_id = '" . $_SESSION['user_id'] . "'
+								  AND d.active NOT IN ('0', '10')
+								  AND YEAR(d.expiry_date) = '" . $row->year . "'
+								  " . $range_string . "";
+			$result_yearly_cost = mysql_query($sql_yearly_cost,$connection) or die(mysql_error());
+			
+			while ($row_yearly_cost = mysql_fetch_object($result_yearly_cost)) {
+				$yearly_cost = $row_yearly_cost->yearly_cost;
 			}
-	
+
+			$temp_input_amount = $yearly_cost;
+			$temp_input_conversion = "";
+			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+			include("../../_includes/system/convert-and-format-currency.inc.php");
+			$yearly_cost = $temp_output_amount;
+
+			$full_export .= "\"" . $row->year . "\",\"" . $display_month . "\",\"" . $monthly_cost . "\",\"" . $yearly_cost . "\"\n";
+			$last_year = $row->year;
+			$last_month = $row->month;
+
 		}
 	
 		$full_export .= "\n";
