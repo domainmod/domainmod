@@ -20,69 +20,80 @@
 if ($software_section == "domains") {
 
 	if ($_SESSION['need_registrar'] != "1" && $_SESSION['need_registrar_account'] != "1") { ?>
-    	&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/domain.php">Add A New Domain</a><?php 
+    	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/add/domain.php">Add A New Domain</a>&nbsp;<?php 
 	} 
 	
 } elseif ($software_section == "ssl-providers") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/ssl-provider.php">Add A New SSL Provider</a><?php 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/ssl-provider.php">Add A New SSL Provider</a>&nbsp;<?php 
 
-} elseif ($software_section == "ssl-provider-accounts") {
+} elseif ($software_section == "ssl-provider-accounts") {?>
 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;<?php
 	if ($_SESSION['need_ssl_provider'] != "1") { ?>
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/ssl-provider-account.php">Add A New SSL Provider Account</a><?php 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/ssl-provider-account.php">Add A New SSL Provider Account</a>&nbsp;<?php 
 	} 
 	
 } elseif ($software_section == "ssl-certs") {
 	
 	if ($_SESSION['need_ssl_provider'] != "1" && $_SESSION['need_ssl_account'] != "1" && $_SESSION['need_domain'] != "1") { ?>
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-cert.php">Add A New SSL Certificate</a><?php 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/add/ssl-cert.php">Add A New SSL Certificate</a>&nbsp;<?php 
 	}
 
 } elseif ($software_section == "ssl-types") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/ssl-type.php">Add A New SSL Type</a><?php 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/ssl-type.php">Add A New SSL Type</a>&nbsp;<?php 
 
 } elseif ($software_section == "categories") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/category.php">Add A New Category</a><?php 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/category.php">Add A New Category</a>&nbsp;<?php 
 		
 } elseif ($software_section == "dns") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/dns.php">Add A New DNS Profile</a><?php 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/dns.php">Add A New DNS Profile</a>&nbsp;<?php 
 		
 } elseif ($software_section == "ip-addresses") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/ip-address.php">Add A New IP Address</a><?php 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/ip-address.php">Add A New IP Address</a>&nbsp;<?php 
 
 } elseif ($software_section == "hosting") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/host.php">Add A New Web Host</a><?php 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/host.php">Add A New Web Host</a><?php 
 
 } elseif ($software_section == "registrars") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/registrar.php">Add A New Registrar</a><?php 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
+        &raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/registrar.php">Add A New Registrar</a>&nbsp;<?php 
 
-} elseif ($software_section == "registrar-accounts") {
+} elseif ($software_section == "registrar-accounts") { ?>
 	
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;<?php
+
 	if ($_SESSION['need_registrar'] != "1") { ?>
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/registrar-account.php">Add A New Registrar Account</a><?php 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/registrar-account.php">Add A New Registrar Account</a>&nbsp;<?php 
 	}
 	
 } elseif ($software_section == "account-owners") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/account-owner.php">Add A New Account Owner</a><?php 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/add/account-owner.php">Add A New Account Owner</a>&nbsp;<?php 
 		
 } elseif ($software_section == "segments") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/add/segment.php">Add A New Segment</a><?php 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/add/segment.php">Add A New Segment</a>&nbsp;<?php 
 
 } elseif ($software_section == "system") { ?>
 
 <?php
 } elseif ($software_section == "user-list") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/add/user.php">Add A New User</a><?php 
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/add/user.php">Add A New User</a>&nbsp;<?php 
 
 } elseif ($software_section == "reporting") { ?>
 
@@ -92,6 +103,7 @@ if ($software_section == "domains") {
 <?php
 } elseif ($software_section == "help") { ?>
 
-		&raquo; <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/">Main</a>  /  <a href="<?php if ($web_root != "/") echo $web_root; ?>/help/getting-started/">Getting Started</a><?php
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/help/">Main</a>&nbsp;
+        &raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/help/getting-started/">Getting Started</a>&nbsp;<?php
 
 } ?>
