@@ -62,7 +62,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT o.name, SUM(f.renewal_fee * cc.conversion) as total_cost, count(*) AS number_of_certs
+$sql = "SELECT o.id, o.name, SUM(f.renewal_fee * cc.conversion) as total_cost, count(*) AS number_of_certs
 		FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, owners AS o
 		WHERE sslc.fee_id = f.id
 		  AND f.currency_id = c.id
@@ -220,7 +220,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 	
 		<tr class="main_table_row_active">
 			<td class="main_table_cell_active"><?=$row->name?></td>
-			<td class="main_table_cell_active"><?=$row->number_of_certs?></td>
+			<td class="main_table_cell_active"><a href="../../ssl-certs.php?oid=<?=$row->id?>"><?=$row->number_of_certs?></a></td>
 			<td class="main_table_cell_active"><?=$row->total_cost?></td>
 			<td class="main_table_cell_active"><?=$per_cert?></td>
 		</tr><?php

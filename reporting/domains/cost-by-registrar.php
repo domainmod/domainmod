@@ -62,7 +62,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.username, SUM(f.renewal_fee * cc.conversion) as total_cost, count(*) AS number_of_domains
+$sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS registrar_account_id, ra.username, SUM(f.renewal_fee * cc.conversion) as total_cost, count(*) AS number_of_domains
 		FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
 		WHERE d.fee_id = f.id
 		  AND f.currency_id = c.id
@@ -315,11 +315,11 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 	
             <tr class="main_table_row_active">
                 <td class="main_table_cell_active"><?=$row->registrar_name?></td>
-                <td class="main_table_cell_active"><?=$number_of_domains_registrar?></td>
+                <td class="main_table_cell_active"><a href="../../domains.php?rid=<?=$row->id?>"><?=$number_of_domains_registrar?></a></td>
                 <td class="main_table_cell_active"><?=$temp_registrar_total?></td>
                 <td class="main_table_cell_active"><?=$per_domain_registrar?></td>
                 <td class="main_table_cell_active"><?=$row->owner_name?> (<?=$row->username?>)</td>
-                <td class="main_table_cell_active"><?=$row->number_of_domains?></td>
+                <td class="main_table_cell_active"><a href="../../domains.php?raid=<?=$row->registrar_account_id?>"><?=$row->number_of_domains?></a></td>
                 <td class="main_table_cell_active"><?=$row->total_cost?></td>
                 <td class="main_table_cell_active"><?=$per_domain_account?></td>
             </tr><?php
@@ -334,7 +334,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                 <td class="main_table_cell_active"></td>
                 <td class="main_table_cell_active"></td>
                 <td class="main_table_cell_active"><?=$row->owner_name?> (<?=$row->username?>)</td>
-                <td class="main_table_cell_active"><?=$row->number_of_domains?></td>
+                <td class="main_table_cell_active"><a href="../../domains.php?raid=<?=$row->registrar_account_id?>"><?=$row->number_of_domains?></a></td>
                 <td class="main_table_cell_active"><?=$row->total_cost?></td>
                 <td class="main_table_cell_active"><?=$per_domain_account?></td>
             </tr><?php

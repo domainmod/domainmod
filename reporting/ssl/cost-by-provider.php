@@ -62,7 +62,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.username, SUM(f.renewal_fee * cc.conversion) as total_cost, count(*) AS number_of_certs
+$sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.id AS ssl_account_id, sslpa.username, SUM(f.renewal_fee * cc.conversion) as total_cost, count(*) AS number_of_certs
 		FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
 		WHERE sslc.fee_id = f.id
 		  AND f.currency_id = c.id
@@ -314,11 +314,11 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 	
             <tr class="main_table_row_active">
                 <td class="main_table_cell_active"><?=$row->provider_name?></td>
-                <td class="main_table_cell_active"><?=$number_of_certs_provider?></td>
+                <td class="main_table_cell_active"><a href="../../ssl-certs.php?sslpid=<?=$row->id?>"><?=$number_of_certs_provider?></a></td>
                 <td class="main_table_cell_active"><?=$temp_provider_total?></td>
                 <td class="main_table_cell_active"><?=$per_cert_provider?></td>
                 <td class="main_table_cell_active"><?=$row->owner_name?> (<?=$row->username?>)</td>
-                <td class="main_table_cell_active"><?=$row->number_of_certs?></td>
+                <td class="main_table_cell_active"><a href="../../ssl-certs.php?sslpaid=<?=$row->ssl_account_id?>"><?=$row->number_of_certs?></a></td>
                 <td class="main_table_cell_active"><?=$row->total_cost?></td>
                 <td class="main_table_cell_active"><?=$per_cert_account?></td>
             </tr><?php
@@ -333,7 +333,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                 <td class="main_table_cell_active"></td>
                 <td class="main_table_cell_active"></td>
                 <td class="main_table_cell_active"><?=$row->owner_name?> (<?=$row->username?>)</td>
-                <td class="main_table_cell_active"><?=$row->number_of_certs?></td>
+                <td class="main_table_cell_active"><a href="../../ssl-certs.php?sslpaid=<?=$row->ssl_account_id?>"><?=$row->number_of_certs?></a></td>
                 <td class="main_table_cell_active"><?=$row->total_cost?></td>
                 <td class="main_table_cell_active"><?=$per_cert_account?></td>
             </tr><?php
