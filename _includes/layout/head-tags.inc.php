@@ -40,7 +40,7 @@ tr.main_table_row_heading_active {
 }
 td.main_table_cell_heading_active {
 	padding-top: 0px;
-	padding-right: 29px;
+	padding-right: 26px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
@@ -49,7 +49,7 @@ tr.main_table_row_active {
 }
 td.main_table_cell_active {
 	padding-top: 0px; 
-	padding-right: 29px; 
+	padding-right: 26px; 
 	padding-bottom: 0px; 
 	padding-left: 0px; 
 }
@@ -58,7 +58,7 @@ tr.main_table_row_heading_inactive {
 }
 td.main_table_cell_heading_inactive {
 	padding-top: 15px;
-	padding-right: 29px;
+	padding-right: 26px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
@@ -67,20 +67,20 @@ tr.main_table_row_inactive {
 }
 td.main_table_cell_inactive {
 	padding-top: 0px; 
-	padding-right: 29px; 
+	padding-right: 26px; 
 	padding-bottom: 0px; 
 	padding-left: 0px; 
 }
 td.main_table_cell_heading_active_centered {
 	padding-top: 0px;
-	padding-right: 29px;
+	padding-right: 26px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 	text-align: center;
 }
 td.main_table_cell_active_centered {
 	padding-top: 0px; 
-	padding-right: 29px; 
+	padding-right: 26px; 
 	padding-bottom: 0px; 
 	padding-left: 0px; 
 	text-align: center;
