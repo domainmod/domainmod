@@ -42,7 +42,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT r.name AS registrar, d.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
+$sql = "SELECT r.id, r.name AS registrar, d.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
 		FROM registrars AS r, domains AS d, fees AS f, currencies AS c
 		WHERE r.id = d.registrar_id
 		  AND d.fee_id = f.id
@@ -196,8 +196,8 @@ if ($total_rows > 0) {
             if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
     
                 <tr class="main_table_row_active">
-                    <td class="main_table_cell_active"><?=$row->registrar?></td>
-                    <td class="main_table_cell_active">.<?=$row->tld?></td>
+                    <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?=$row->id?>"><?=$row->registrar?></a></td>
+                    <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?=$row->id?>">.<?=$row->tld?></a></td>
                     <td class="main_table_cell_active">
                         <?php
                         $temp_input_amount = $row->initial_fee;
@@ -246,7 +246,7 @@ if ($total_rows > 0) {
             
                 <tr class="main_table_row_active">
                     <td class="main_table_cell_active">&nbsp;</td>
-                    <td class="main_table_cell_active">.<?=$row->tld?></td>
+                    <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?=$row->id?>">.<?=$row->tld?></a></td>
                     <td class="main_table_cell_active">
                         <?php
                         $temp_input_amount = $row->initial_fee;

@@ -218,8 +218,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		$row->total_cost = $temp_output_amount; ?>
 	
 		<tr class="main_table_row_active">
-			<td class="main_table_cell_active">.<?=$row->tld?></td>
-			<td class="main_table_cell_active"><a href="../../domains.php?tld=<?=$row->tld?>"><?=$row->number_of_domains?></a></td>
+			<td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?tld=<?=$row->tld?>">.<?=$row->tld?></a></td>
+			<td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?tld=<?=$row->tld?>"><?=$row->number_of_domains?></a></td>
 			<td class="main_table_cell_active"><?=$row->total_cost?></td>
 			<td class="main_table_cell_active"><?=$per_domain?></td>
 		</tr><?php

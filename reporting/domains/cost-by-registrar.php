@@ -314,12 +314,12 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
 	
             <tr class="main_table_row_active">
-                <td class="main_table_cell_active"><?=$row->registrar_name?></td>
-                <td class="main_table_cell_active"><a href="../../domains.php?rid=<?=$row->id?>"><?=$number_of_domains_registrar?></a></td>
+                <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?rid=<?=$row->id?>"><?=$row->registrar_name?></a></td>
+                <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?rid=<?=$row->id?>"><?=$number_of_domains_registrar?></a></td>
                 <td class="main_table_cell_active"><?=$temp_registrar_total?></td>
                 <td class="main_table_cell_active"><?=$per_domain_registrar?></td>
-                <td class="main_table_cell_active"><?=$row->owner_name?> (<?=$row->username?>)</td>
-                <td class="main_table_cell_active"><a href="../../domains.php?raid=<?=$row->registrar_account_id?>"><?=$row->number_of_domains?></a></td>
+                <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?raid=<?=$row->registrar_account_id?>"><?=$row->owner_name?> (<?=$row->username?>)</a></td>
+                <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?raid=<?=$row->registrar_account_id?>"><?=$row->number_of_domains?></a></td>
                 <td class="main_table_cell_active"><?=$row->total_cost?></td>
                 <td class="main_table_cell_active"><?=$per_domain_account?></td>
             </tr><?php
@@ -333,8 +333,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                 <td class="main_table_cell_active"></td>
                 <td class="main_table_cell_active"></td>
                 <td class="main_table_cell_active"></td>
-                <td class="main_table_cell_active"><?=$row->owner_name?> (<?=$row->username?>)</td>
-                <td class="main_table_cell_active"><a href="../../domains.php?raid=<?=$row->registrar_account_id?>"><?=$row->number_of_domains?></a></td>
+                <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?raid=<?=$row->registrar_account_id?>"><?=$row->owner_name?> (<?=$row->username?>)</a></td>
+                <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?raid=<?=$row->registrar_account_id?>"><?=$row->number_of_domains?></a></td>
                 <td class="main_table_cell_active"><?=$row->total_cost?></td>
                 <td class="main_table_cell_active"><?=$per_domain_account?></td>
             </tr><?php

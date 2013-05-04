@@ -42,7 +42,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT sslp.name AS ssl_provider, sslt.type, f.initial_fee, f.renewal_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
+$sql = "SELECT sslp.id, sslp.name AS ssl_provider, sslt.type, f.initial_fee, f.renewal_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
 		FROM ssl_providers AS sslp, ssl_certs AS sslc, ssl_fees AS f, currencies AS c, ssl_cert_types AS sslt
 		WHERE sslp.id = sslc.ssl_provider_id
 		  AND sslc.fee_id = f.id
@@ -186,8 +186,8 @@ if ($total_rows > 0) {
             if ($new_ssl_provider != $last_ssl_provider || $new_ssl_provider == "") { ?>
     
                 <tr class="main_table_row_active">
-                    <td class="main_table_cell_active"><?=$row->ssl_provider?></td>
-                    <td class="main_table_cell_active"><?=$row->type?></td>
+                    <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/ssl-provider-fees.php?sslpid=<?=$row->id?>"><?=$row->ssl_provider?></a></td>
+                    <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/ssl-provider-fees.php?sslpid=<?=$row->id?>"><?=$row->type?></a></td>
                     <td class="main_table_cell_active">
                         <?php
                         $temp_input_amount = $row->initial_fee;
@@ -224,7 +224,7 @@ if ($total_rows > 0) {
             
                 <tr class="main_table_row_active">
                     <td class="main_table_cell_active">&nbsp;</td>
-                    <td class="main_table_cell_active"><?=$row->type?></td>
+                    <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/ssl-provider-fees.php?sslpid=<?=$row->id?>"><?=$row->type?></a></td>
                     <td class="main_table_cell_active">
                         <?php
                         $temp_input_amount = $row->initial_fee;

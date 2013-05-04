@@ -219,8 +219,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		$row->total_cost = $temp_output_amount; ?>
 	
 		<tr class="main_table_row_active">
-			<td class="main_table_cell_active"><?=$row->name?></td>
-			<td class="main_table_cell_active"><a href="../../ssl-certs.php?sslpcid=<?=$row->id?>"><?=$row->number_of_certs?></a></td>
+			<td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpcid=<?=$row->id?>"><?=$row->name?></a></td>
+			<td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpcid=<?=$row->id?>"><?=$row->number_of_certs?></a></td>
 			<td class="main_table_cell_active"><?=$row->total_cost?></td>
 			<td class="main_table_cell_active"><?=$per_cert?></td>
 		</tr><?php

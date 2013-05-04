@@ -313,12 +313,12 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		if ($new_provider != $last_provider || $new_provider == "") { ?>
 	
             <tr class="main_table_row_active">
-                <td class="main_table_cell_active"><?=$row->provider_name?></td>
-                <td class="main_table_cell_active"><a href="../../ssl-certs.php?sslpid=<?=$row->id?>"><?=$number_of_certs_provider?></a></td>
+                <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpid=<?=$row->id?>"><?=$row->provider_name?></a></td>
+                <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpid=<?=$row->id?>"><?=$number_of_certs_provider?></a></td>
                 <td class="main_table_cell_active"><?=$temp_provider_total?></td>
                 <td class="main_table_cell_active"><?=$per_cert_provider?></td>
-                <td class="main_table_cell_active"><?=$row->owner_name?> (<?=$row->username?>)</td>
-                <td class="main_table_cell_active"><a href="../../ssl-certs.php?sslpaid=<?=$row->ssl_account_id?>"><?=$row->number_of_certs?></a></td>
+                <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpaid=<?=$row->ssl_account_id?>"><?=$row->owner_name?> (<?=$row->username?>)</a></td>
+                <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpaid=<?=$row->ssl_account_id?>"><?=$row->number_of_certs?></a></td>
                 <td class="main_table_cell_active"><?=$row->total_cost?></td>
                 <td class="main_table_cell_active"><?=$per_cert_account?></td>
             </tr><?php
@@ -332,8 +332,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                 <td class="main_table_cell_active"></td>
                 <td class="main_table_cell_active"></td>
                 <td class="main_table_cell_active"></td>
-                <td class="main_table_cell_active"><?=$row->owner_name?> (<?=$row->username?>)</td>
-                <td class="main_table_cell_active"><a href="../../ssl-certs.php?sslpaid=<?=$row->ssl_account_id?>"><?=$row->number_of_certs?></a></td>
+                <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpaid=<?=$row->ssl_account_id?>"><?=$row->owner_name?> (<?=$row->username?>)</a></td>
+                <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpaid=<?=$row->ssl_account_id?>"><?=$row->number_of_certs?></a></td>
                 <td class="main_table_cell_active"><?=$row->total_cost?></td>
                 <td class="main_table_cell_active"><?=$per_cert_account?></td>
             </tr><?php
