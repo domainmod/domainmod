@@ -24,7 +24,7 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = $reporting_section_title;
-$page_subtitle = "Registrar Fee Report";
+$page_subtitle = "Domain Registrar Fee Report";
 $software_section = "reporting";
 $report_name = "domain-registrar-fee-report";
 

@@ -26,7 +26,7 @@ include("../../_includes/timestamps/current-timestamp-basic.inc.php");
 include("../../_includes/system/functions/check-date-format.inc.php");
 
 $page_title = $reporting_section_title;
-$page_subtitle = "SSL Cost by Provider Report";
+$page_subtitle = "SSL Certificate Cost by Provider Report";
 $software_section = "reporting";
 $report_name = "ssl-cost-by-provider-report";
 
