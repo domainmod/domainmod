@@ -725,7 +725,6 @@ while ($row_segment = mysql_fetch_object($result_segment)) {
 } 
 echo "</select>";
 ?>
-&nbsp;[<a class="invisiblelink" href="segments.php">segments</a>]
 <BR><BR>
 
 &nbsp;&nbsp;
