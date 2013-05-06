@@ -703,6 +703,33 @@ if ($segid != "") {
 <div class="search-block-left">
 &nbsp;&nbsp;
 <?php 
+// SEGMENT
+if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
+if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
+if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
+if ($ipid != "") { $ipid_string = " AND d.ip_id = '$ipid' "; } else { $ipid_string = ""; }
+if ($whid != "") { $whid_string = " AND d.hosting_id = '$whid' "; } else { $whid_string = ""; }
+if ($rid != "") { $rid_string = " AND d.registrar_id = '$rid' "; } else { $rid_string = ""; }
+if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
+if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
+
+$sql_segment = "SELECT id, name
+				FROM segments
+				ORDER BY name asc";
+$result_segment = mysql_query($sql_segment,$connection);
+
+echo "<select name=\"segid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
+echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Segment Filter - ALL</option>";
+while ($row_segment = mysql_fetch_object($result_segment)) { 
+	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&segid=$row_segment->id&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_segment->id == $segid) echo " selected"; echo ">"; echo "$row_segment->name</option>";
+} 
+echo "</select>";
+?>
+&nbsp;[<a class="invisiblelink" href="segments.php">segments</a>]
+<BR><BR>
+
+&nbsp;&nbsp;
+<?php 
 // REGISTRAR
 if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; } 
 elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; } 
@@ -1076,32 +1103,6 @@ echo "<select name=\"oid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Owner - ALL</option>";
 while ($row_owner = mysql_fetch_object($result_owner)) { 
 	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$row_owner->id&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
-} 
-echo "</select>";
-?>
-<BR><BR>
-
-&nbsp;&nbsp;
-<?php 
-// SEGMENT
-if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
-if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
-if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
-if ($ipid != "") { $ipid_string = " AND d.ip_id = '$ipid' "; } else { $ipid_string = ""; }
-if ($whid != "") { $whid_string = " AND d.hosting_id = '$whid' "; } else { $whid_string = ""; }
-if ($rid != "") { $rid_string = " AND d.registrar_id = '$rid' "; } else { $rid_string = ""; }
-if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
-if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
-
-$sql_segment = "SELECT id, name
-				FROM segments
-				ORDER BY name asc";
-$result_segment = mysql_query($sql_segment,$connection);
-
-echo "<select name=\"segid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Segment Filter - ALL</option>";
-while ($row_segment = mysql_fetch_object($result_segment)) { 
-	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&segid=$row_segment->id&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_segment->id == $segid) echo " selected"; echo ">"; echo "$row_segment->name</option>";
 } 
 echo "</select>";
 ?>
