@@ -69,7 +69,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		$result = mysql_query($sql,$connection);
 		
 		while ($row = mysql_fetch_object($result)) {
+
+			$sql_updates = "SELECT id
+							FROM `updates`";
+			$result_updates = mysql_query($sql_updates,$connection);
+
+			while ($row_updates = mysql_fetch_object($result_updates)) {
+
+				$sql_insert = "INSERT INTO 
+							   update_data
+							   (user_id, update_id, insert_time) VALUES 
+							   ('" . $row->id . "', '" . $row_updates->id . "', '" . $current_timestamp . "')";
+				$result_insert = mysql_query($sql_insert,$connection);
+
+			}
+
 			$temp_user_id = $row->id;
+
 		}
 
 		$sql = "INSERT INTO user_settings

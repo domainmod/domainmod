@@ -101,6 +101,10 @@ if ($software_section == "domains") {
 } elseif ($software_section == "bulkactions") { ?>
 
 <?php
+} elseif ($software_section == "updates") { ?>
+
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/updates.php">All Software Updates</a>&nbsp;<?php
+
 } elseif ($software_section == "help") { ?>
 
 		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/help/">Main</a>&nbsp;

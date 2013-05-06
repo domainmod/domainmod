@@ -24,19 +24,50 @@
         </div>
         <div class="header-right">
             <?php if ($_SESSION['is_logged_in'] == 1) { ?>
-                <em>logged in as <strong><?=$_SESSION['username']?></strong> (<a class="subtlelink" href="<?=$web_root?>/system/update-profile.php"><?=$_SESSION['first_name']?> <?=$_SESSION['last_name']?></a>)</em>&nbsp;&nbsp;[ <a target="_blank" href="http://aysmedia.com/contact/">Help</a> ]&nbsp;&nbsp;[ <a href="<?=$web_root?>/logout.php">Logout</a> ]
+                <a href="<?=$web_root?>/temp-reset-updates-temp.inc.php">reset all updates</a><BR><BR>
+                <em>logged in as <strong><?=$_SESSION['username']?></strong> (<a class="subtlelink" href="<?=$web_root?>/system/update-profile.php"><?=$_SESSION['first_name']?> <?=$_SESSION['last_name']?></a>)</em>&nbsp;&nbsp;[ <a href="<?=$web_root?>/updates.php">Updates</a> ]&nbsp;&nbsp;[ <a target="_blank" href="http://aysmedia.com/contact/">Help</a> ]&nbsp;&nbsp;[ <a href="<?=$web_root?>/logout.php">Logout</a> ]
             <?php } ?>
         </div>
     </div>
-
     <div class="main-outer">
-        <div class="main-menu">
-            <?php if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['running_login_checks'] != 1) { ?>
-            <?php include($full_server_path . "/_includes/layout/menu-main.inc.php"); ?><BR>
-            <hr width="100%" size="1" noshade>
-            <?php } ?>
+        <div>
+            <div class="main-menu">
+                <?php if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['running_login_checks'] != 1) { ?>
+                <?php include($full_server_path . "/_includes/layout/menu-main.inc.php"); ?><BR>
+                <?php } ?>
+            </div>
+            <div class="update_box_header"><?php 
+				if ($_SESSION['are_there_updates'] == "1") { ?>
+	
+					<a href="<?=$web_root?>/updates.php"><font class="subheadline">Recent Software Updates</font></a><BR><?php
+					$sql_updates = "SELECT u.id, u.name
+									FROM updates AS u, update_data AS ud
+									WHERE u.id = ud.update_id
+									  AND ud.user_id = '" . $_SESSION['user_id'] . "'
+									ORDER BY u.insert_time desc, u.id desc
+									LIMIT 3";
+					$result_updates = mysql_query($sql_updates,$connection);
+					while ($row_updates = mysql_fetch_object($result_updates)) {
+
+						echo "<a class=\"invisiblelink\" href=\"" . $web_root . "/updates.php?id=" . $row_updates->id . "\">";
+						echo substr($row_updates->name, 0, 65); 
+						if (strlen($row_updates->name) >= 65) echo "...";
+						echo "</a>";
+						echo "<BR>";
+
+					} ?>
+                    
+					[<a class="invisiblelink" href="<?=$web_root?>/_includes/system/mark-updates-read.inc.php?direct=1">mark all updates as read</a>]<?php
+
+				}
+				?>
+            </div>
+            <div style="clear: both;"></div>
         </div>
         <div class="main-inner">
+			<?php if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['running_login_checks'] != 1) { ?>
+            <hr width="100%" size="1" noshade><BR>
+            <?php } ?>
             <font class="headline"><?=$page_title?></font>
             <BR><BR>
             <?php 

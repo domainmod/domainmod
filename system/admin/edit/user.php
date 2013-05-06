@@ -168,6 +168,10 @@ if ($really_del == "1") {
 	$sql = "DELETE FROM user_settings
 			WHERE user_id = '$uid'";
 	$result = mysql_query($sql,$connection);
+
+	$sql = "DELETE FROM update_data
+			WHERE user_id = '$uid'";
+	$result = mysql_query($sql,$connection);
 	
 	$_SESSION['result_message'] = "User <font class=\"highlight\">$new_first_name $new_last_name ($new_username)</font> Deleted<BR>";
 	

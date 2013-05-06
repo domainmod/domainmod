@@ -160,6 +160,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['default_currency_symbol_space'] = $row_currencies->symbol_space;
 			}
 			
+			$sql_update = "SELECT *
+						   FROM update_data
+						   WHERE user_id = '" . $_SESSION['user_id'] . "'";
+			$result_update = mysql_query($sql_update,$connection);
+			if (mysql_num_rows($result_update) != 0) { $_SESSION['are_there_updates'] = "1"; }
+
 			$current_date = date("Y-m-d", strtotime($current_timestamp));
 			$last_login_date = date("Y-m-d", strtotime($row->last_login));
 

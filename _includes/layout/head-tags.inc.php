@@ -122,6 +122,37 @@ td.dns_table_right {
 	padding-bottom: 14px;
 	padding-left: 0px;
 }
+div.update_box_header {
+	text-align: right;
+	padding-top: 14px;
+	padding-right: 22px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
+
+table.update-block-outer {
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
+td.update-block-left {
+	width: 90px;
+	vertical-align: top;
+	text-align: left;
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
+td.update-block-right {
+	vertical-align: top;
+	text-align: left;
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
 div.main-container {
 	width: <?=$site_width?>;
 	display: table;
@@ -186,7 +217,7 @@ div.header-container {
 	padding-left: 0px;
 }
 div.header-left {
-	width: 50%;
+	width: 42%;
 	float: left;
 	text-align: left;
 	vertical-align: bottom; 
@@ -204,7 +235,7 @@ div.header-left {
 	padding-left: 20px;
 }
 div.header-right {
-	width: 40%;
+	width: 52%;
 	float: right;
 	text-align: right;
 	vertical-align: bottom; 
@@ -238,6 +269,7 @@ div.header-center {
 	padding-left: 0px;
 }
 div.main-menu {
+	float: left;
 	text-align: left;
 	font-family: Verdana, sans-serif, Arial;
 	font-size: 8pt;
@@ -248,9 +280,9 @@ div.main-menu {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 15px;
-	padding-right: 15px; 
+	padding-right: 0px; 
 	padding-bottom: 0px;
-	padding-left: 15px;
+	padding-left: 24px;
 }
 div.maintenance_warning_outer {
 	width: 100%;
@@ -475,8 +507,8 @@ font.subheadline {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	font-size: 9pt;
-	color: #CC0000;
-	color: #BB0000;
+/*	color: #BB0000; */
+	color: #AA0000;
 }
 font.main_table_heading {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
