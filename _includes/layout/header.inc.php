@@ -24,7 +24,6 @@
         </div>
         <div class="header-right">
             <?php if ($_SESSION['is_logged_in'] == 1) { ?>
-                <a href="<?=$web_root?>/temp-reset-updates-temp.inc.php">reset all updates</a><BR><BR>
                 <em>logged in as <strong><?=$_SESSION['username']?></strong> (<a class="subtlelink" href="<?=$web_root?>/system/update-profile.php"><?=$_SESSION['first_name']?> <?=$_SESSION['last_name']?></a>)</em>&nbsp;&nbsp;[ <a href="<?=$web_root?>/updates.php">Updates</a> ]&nbsp;&nbsp;[ <a target="_blank" href="http://aysmedia.com/contact/">Help</a> ]&nbsp;&nbsp;[ <a href="<?=$web_root?>/logout.php">Logout</a> ]
             <?php } ?>
         </div>
