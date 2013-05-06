@@ -369,10 +369,24 @@ if ($segid != "") {
 	$sql_filter_update = "UPDATE segment_data
 						  SET filtered = '1'
 						  WHERE active = '1'
-						    AND segment_id = '$segid'
+							AND segment_id = '$segid'
 							AND domain NOT IN ($active_domains)";
 	$result_filter_update = mysql_query($sql_filter_update,$connection);
-	
+
+	$sql_filter_update = "UPDATE segment_data
+						  SET filtered = '1'
+						  WHERE active = '1'
+							AND segment_id = '$segid'
+							AND domain NOT LIKE '%" . $search_for . "%'";
+	$result_filter_update = mysql_query($sql_filter_update,$connection);
+
+	$sql_filter_update = "UPDATE segment_data
+						  SET filtered = '1'
+						  WHERE active = '1'
+							AND segment_id = '$segid'
+							AND domain NOT IN (" . $_SESSION['quick_search'] . ")";
+	$result_filter_update = mysql_query($sql_filter_update,$connection);
+
 }
 
 $full_export = "";
@@ -1295,10 +1309,6 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 	<strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
 	<strong>Number of Domains:</strong> <?=number_format($totalrows)?><BR><BR>
 <?php } ?>
-<?php
-// RIGHT HERE
-// IN THE PROCESS OF SWITCHING THIS FROM TABLE TO DIV
-?>
 <?php include("_includes/layout/search-options-block.inc.php"); ?>
 <BR>
 <?php if ($totalrows != '0') { ?>
@@ -1444,7 +1454,7 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 <?php } ?>
 <?php include("_includes/layout/search-options-block.inc.php"); ?>
 <?php } else { ?>
-			Your search returned zero results.
+			<BR><BR>Your search returned zero results.
 <?php } ?>
 <?php include("_includes/layout/footer.inc.php"); ?>
 </body>
