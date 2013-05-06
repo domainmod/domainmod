@@ -46,11 +46,13 @@ include("_includes/config-demo.inc.php"); // $demo_url, $demo_username, $demo_pa
 
 if ($_SERVER['HTTP_HOST'] == $demo_url) $demo_install = "1";
 
+/*
 if ($demo_install == "1" && !stripos($_SERVER['HTTP_REFERER'], "" . $demo_url . "")) {
 	$_SERVER['REQUEST_METHOD'] = 'POST';
 	$new_username = $demo_username;
 	$new_password = $demo_password;
 }
+*/
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
 	
