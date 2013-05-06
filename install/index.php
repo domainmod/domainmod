@@ -547,7 +547,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `segments` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(40) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`name` varchar(35) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`description` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`segment` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`number_of_domains` int(6) NOT NULL,
