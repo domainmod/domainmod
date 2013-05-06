@@ -195,10 +195,10 @@ if ($really_del == "1") {
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
 <form name="edit_domain_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Domain</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+<strong>Domain (255)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_domain" type="text" size="50" maxlength="255" value="<?php if ($new_domain != "") echo $new_domain; ?>">
 <BR><BR>
-<strong>Function</strong><BR><BR>
+<strong>Function (255)</strong><BR><BR>
 <input name="new_function" type="text" size="50" maxlength="255" value="<?php if ($new_function != "") echo $new_function; ?>">
 <BR><BR>
 <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>

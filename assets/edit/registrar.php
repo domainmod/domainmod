@@ -145,11 +145,11 @@ if ($really_del == "1") {
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="edit_registrar_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Registrar Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-<input name="new_registrar" type="text" value="<?=$new_registrar?>" size="50" maxlength="255">
+<strong>Registrar Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<input name="new_registrar" type="text" value="<?=$new_registrar?>" size="50" maxlength="100">
 <BR><BR>
-<strong>Registrar's URL</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-<input name="new_url" type="text" value="<?=$new_url?>" size="50" maxlength="255">
+<strong>Registrar's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<input name="new_url" type="text" value="<?=$new_url?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>

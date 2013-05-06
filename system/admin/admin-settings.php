@@ -89,13 +89,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="admin_settings_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Full <?=$software_title?> URL:</strong><BR><BR>
+<strong>Full <?=$software_title?> URL (100):</strong><BR><BR>
 Enter the full URL of your <?=$software_title?> installation, excluding the trailing slash (Example: http://yourdomain.com/domainmanager).<BR><BR>
 <input name="new_full_url" type="text" size="50" maxlength="100" value="<?php if ($new_full_url != "") echo $new_full_url; ?>">
 <BR><BR>
-<strong>System Email Address:</strong><BR><BR>
+<strong>System Email Address (100):</strong><BR><BR>
 This should be a valid email address that is able to receive mail. It will be used in various system locations, such as the FROM address for emails sent by <?=$software_title?>.<BR><BR>
-<input name="new_email_address" type="text" size="50" maxlength="255" value="<?php if ($new_email_address != "") echo $new_email_address; ?>">
+<input name="new_email_address" type="text" size="50" maxlength="100" value="<?php if ($new_email_address != "") echo $new_email_address; ?>">
 <BR><BR>
 <strong>Days to Display in Expiration Emails:</strong><BR><BR>
 This is the number of days in the future to display in the expiration emails.<BR><BR>

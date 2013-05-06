@@ -127,13 +127,13 @@ if ($really_del == "1") {
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="edit_category_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Category Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Category Name (150)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_category" type="text" value="<?php if ($new_category != "") echo $new_category; ?>
-" size="50" maxlength="255">
+" size="50" maxlength="150">
 <BR><BR>
-<strong>Stakeholder</strong><BR><BR>
+<strong>Stakeholder (100)</strong><BR><BR>
 <input name="new_stakeholder" type="text" value="<?php if ($new_stakeholder != "") echo $new_stakeholder; ?>
-" size="50" maxlength="255">
+" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>

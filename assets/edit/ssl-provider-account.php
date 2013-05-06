@@ -205,11 +205,11 @@ while ($row_ssl_provider = mysql_fetch_object($result_ssl_provider)) {
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Username</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-<input name="new_username" type="text" size="50" maxlength="255" value="<?=$new_username?>">
+<strong>Username (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+<input name="new_username" type="text" size="50" maxlength="100" value="<?=$new_username?>">
 <BR><BR>
-<strong>Password</strong><BR><BR>
-<input name="new_password" type="text" size="50" maxlength="100" value="<?=$new_password?>">
+<strong>Password (255)</strong><BR><BR>
+<input name="new_password" type="text" size="50" maxlength="255" value="<?=$new_password?>">
 <BR><BR>
 <strong>Reseller Account?</strong><BR><BR>
 <select name="new_reseller">";

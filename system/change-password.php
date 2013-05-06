@@ -88,9 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/layout/header.inc.php"); ?>
 <form name="change_password_form" method="post" action="<?=$PHP_SELF?>">
-<strong>New Password</strong><BR><input type="password" name="new_password" size="20">
+<strong>New Password (255)</strong><BR><BR><input type="password" name="new_password" size="20" maxlength="255">
 <BR><BR>
-<strong>Confirm New Password</strong><BR><input type="password" name="new_password_confirmation" size="20">
+<strong>Confirm New Password</strong><BR><BR><input type="password" name="new_password_confirmation" size="20" maxlength="255">
 <BR><BR>
 <input type="submit" name="button" value="Change Password &raquo;">
 </form>

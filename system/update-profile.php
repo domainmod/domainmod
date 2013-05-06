@@ -88,14 +88,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
 <form name="change_email_address_form" method="post" action="<?=$PHP_SELF?>">
-<strong>First Name:</strong><BR><BR>
+<strong>First Name (50):</strong><BR><BR>
 <input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") { echo $new_first_name; } else { echo $_SESSION['first_name']; }?>">
 <BR><BR>
-<strong>Last Name:</strong><BR><BR>
+<strong>Last Name (50):</strong><BR><BR>
 <input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") { echo $new_last_name; } else { echo $_SESSION['last_name']; }?>">
 <BR><BR>
-<strong>Email Address:</strong><BR><BR>
-<input name="new_email_address" type="text" size="50" maxlength="255" value="<?php if ($new_email_address != "") { echo $new_email_address; } else { echo $_SESSION['email_address']; }?>">
+<strong>Email Address (100):</strong><BR><BR>
+<input name="new_email_address" type="text" size="50" maxlength="100" value="<?php if ($new_email_address != "") { echo $new_email_address; } else { echo $_SESSION['email_address']; }?>">
 <BR><BR>
 <input type="submit" name="button" value="Update Profile &raquo;">
 </form>

@@ -854,7 +854,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     </select>
     <BR><BR>
 <?php } elseif ($action == "AD") { ?>
-    <strong>Function</strong><BR><BR>
+    <strong>Function (255)</strong><BR><BR>
     <input name="new_function" type="text" size="50" maxlength="255" value="<?=$new_function?>">
     <BR><BR>
     <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
