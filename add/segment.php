@@ -154,8 +154,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/layout/header.inc.php"); ?>
 <form name="add_segment_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Segment Name (40)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-<input name="new_name" type="text" value="<?=$new_name?>" size="40" maxlength="40">
+<strong>Segment Name (35)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<input name="new_name" type="text" value="<?=$new_name?>" size="25" maxlength="35">
 <BR><BR>
 <strong>Segment Domains (one per line)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <textarea name="new_segment" cols="60" rows="5"><?=$new_segment?></textarea>
