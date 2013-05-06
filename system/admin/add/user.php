@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 	
 	$sql = "SELECT username
 			FROM users
-			WHERE username = '$new_username'";
+			WHERE username = '" . $new_username . "'";
 	$result = mysql_query($sql,$connection);
 
 	if (mysql_num_rows($result) > 0) { $existing_username = 1; }
@@ -58,14 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 		$sql = "INSERT INTO users 
 				(first_name, last_name, username, email_address, password, new_password, admin, active, insert_time) VALUES 
-				('$new_first_name', '$new_last_name', '$new_username', '$new_email_address', password('$new_password'), '1', '$new_admin', '$new_active', '$current_timestamp')";
+				('" . $new_first_name . "', '" . $new_last_name . "', '" . $new_username . "', '" . $new_email_address . "', password('" . $new_password . "'), '1', '" . $new_admin . "', '" . $new_active . "', '" . $current_timestamp . "')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "SELECT id
 				FROM users
-				WHERE first_name = '$new_first_name'
-				  AND last_name = '$new_last_name'
-				  AND insert_time = '$current_timestamp'";
+				WHERE first_name = '" . $new_first_name . "'
+				  AND last_name = '" . $new_last_name . "'
+				  AND insert_time = '" . $current_timestamp . "'";
 		$result = mysql_query($sql,$connection);
 		
 		while ($row = mysql_fetch_object($result)) {
@@ -90,11 +90,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 		$sql = "INSERT INTO user_settings
 				(user_id, default_currency, default_category_domains, default_category_ssl, default_dns, default_host, default_ip_address_domains, default_ip_address_ssl, default_owner_domains, default_owner_ssl, default_registrar, default_registrar_account, default_ssl_provider, default_ssl_provider_account, default_ssl_type, insert_time) VALUES 
-				('$temp_user_id', 'CAD', '" . $_SESSION['system_default_category_domains'] . "', '" . $_SESSION['system_default_category_ssl'] . "', '" . $_SESSION['system_default_dns'] . "', '" . $_SESSION['system_default_host'] . "', '" . $_SESSION['system_default_ip_address_domains'] . "', '" . $_SESSION['system_default_ip_address_ssl'] . "', '" . $_SESSION['system_default_owner_domains'] . "', '" . $_SESSION['system_default_owner_ssl'] . "', '" . $_SESSION['system_default_registrar'] . "', '" . $_SESSION['system_default_registrar_account'] . "', '" . $_SESSION['system_default_ssl_provider'] . "', '" . $_SESSION['system_default_ssl_provider_account'] . "', '" . $_SESSION['system_default_ssl_type'] . "', '" . $current_timestamp . "');";
+				('" . $temp_user_id . "', 'CAD', '" . $_SESSION['system_default_category_domains'] . "', '" . $_SESSION['system_default_category_ssl'] . "', '" . $_SESSION['system_default_dns'] . "', '" . $_SESSION['system_default_host'] . "', '" . $_SESSION['system_default_ip_address_domains'] . "', '" . $_SESSION['system_default_ip_address_ssl'] . "', '" . $_SESSION['system_default_owner_domains'] . "', '" . $_SESSION['system_default_owner_ssl'] . "', '" . $_SESSION['system_default_registrar'] . "', '" . $_SESSION['system_default_registrar_account'] . "', '" . $_SESSION['system_default_ssl_provider'] . "', '" . $_SESSION['system_default_ssl_provider_account'] . "', '" . $_SESSION['system_default_ssl_type'] . "', '" . $current_timestamp . "');";
 		$result = mysql_query($sql,$connection);
 
-		$_SESSION['result_message'] .= "User <font class=\"highlight\">$new_first_name $new_last_name ($new_username / $new_password)</font> Added<BR><BR>
-		You can either manually email the above credentials to the user, or you can <a href=\"reset-password.php?new_username=$new_username\">click here</a> to have $software_title email them for you<BR>";
+		$_SESSION['result_message'] .= "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . " / " . $new_password . ")</font> Added<BR><BR>
+		You can either manually email the above credentials to the user, or you can <a href=\"reset-password.php?new_username=" . $new_username . "\">click here</a> to have " . $software_title . " email them for you<BR>";
 
 		$temp_input_user_id = $temp_user_id;
 		$temp_input_default_currency = 'CAD';
