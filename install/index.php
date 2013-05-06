@@ -45,8 +45,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`id` int(10) NOT NULL auto_increment,
 				`first_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`last_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`username` varchar(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`email_address` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`username` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`email_address` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`password` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`new_password` int(1) NOT NULL default '1',
 				`admin` int(1) NOT NULL default '0',
@@ -123,8 +123,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 
 	$sql = "CREATE TABLE IF NOT EXISTS `categories` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`stakeholder` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`name` varchar(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`stakeholder` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -139,7 +139,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 
 	$sql = "CREATE TABLE IF NOT EXISTS `hosting` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -154,7 +154,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 
 	$sql = "CREATE TABLE IF NOT EXISTS `owners` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -426,7 +426,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`type_id` int(10) NOT NULL,
 				`ip_id` int(10) NOT NULL,
 				`cat_id` int(10) NOT NULL,
-				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`expiry_date` date NOT NULL,
 				`fee_id` int(10) NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -440,7 +440,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_types` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`type` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`type` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -494,8 +494,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `registrars` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`url` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`url` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -506,8 +506,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_providers` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`url` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`url` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -519,8 +519,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`id` int(10) NOT NULL auto_increment,
 				`owner_id` int(10) NOT NULL,
 				`registrar_id` int(10) NOT NULL,
-				`username` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`password` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`username` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`password` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`reseller` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
@@ -534,8 +534,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`id` int(10) NOT NULL auto_increment,
 				`owner_id` int(10) NOT NULL,
 				`ssl_provider_id` int(10) NOT NULL,
-				`username` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`password` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`username` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`password` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`reseller` int(1) NOT NULL default '0',
 				`insert_time` datetime NOT NULL,
@@ -574,9 +574,9 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `ip_addresses` ( 
 				`id` int(10) NOT NULL auto_increment,
-				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`ip` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				`rdns` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default '-',
+				`name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`ip` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`rdns` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default '-',
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
@@ -593,7 +593,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 				`id` int(10) NOT NULL auto_increment,
 				`full_url` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default 'http://',
 				`db_version` float NOT NULL,
-				`email_address` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`email_address` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`default_category_domains` int(10) NOT NULL default '0',
 				`default_category_ssl` int(10) NOT NULL default '0',
 				`default_dns` int(10) NOT NULL default '0',
