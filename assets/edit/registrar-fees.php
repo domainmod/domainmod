@@ -26,7 +26,6 @@ include("../../_includes/timestamps/current-timestamp.inc.php");
 $page_title = "Registrar Fees";
 $software_section = "registrar-fees";
 
-// 'Delete Registrar Fee' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
@@ -34,7 +33,6 @@ $rid = $_GET['rid'];
 $feeid = $_GET['feeid'];
 $tld = $_GET['tld'];
 
-// Form Variables
 $new_tld = $_POST['new_tld'];
 $new_initial_fee = $_POST['new_initial_fee'];
 $new_renewal_fee = $_POST['new_renewal_fee'];
@@ -251,7 +249,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 
 if (mysql_num_rows($result) != 0) {
 ?>
-    <BR><BR><font class="subheadline">TLDs Linked to Active Domains</font><BR><BR>
+    <BR><font class="subheadline">TLDs Linked to Active Domains</font><BR><BR>
     <?php
     while ($row = mysql_fetch_object($result)) {
         
@@ -276,8 +274,7 @@ if (mysql_num_rows($result) != 0) {
 
 }
 ?>
-<BR>
-<font class="subheadline">Add/Update TLD Fee</font><BR><BR>
+<font class="subheadline">Add/Update TLD Fee</font><BR>
 <form name="edit_registrar_fee_form" method="post" action="<?=$PHP_SELF?>">
 <table class="main_table">
 	<tr class="main_table_row_heading_active">
@@ -325,7 +322,7 @@ if (mysql_num_rows($result) != 0) {
 <input type="submit" name="button" value="Add/Update This TLD Fee &raquo;">
 </form>
 <BR><BR>
-<font class="subheadline">TLD Fees</font><BR><BR>
+<font class="subheadline">TLD Fees</font><BR>
 <table class="main_table">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active"><strong>TLD</strong></td>
