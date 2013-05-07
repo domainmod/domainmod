@@ -168,10 +168,19 @@ if ($really_del == "1") {
 	while ($row = mysql_fetch_object($result)) {
 		$temp_uid = $row->id;
 	}
-	
-	if ($temp_uid == $uid) {
 
-		$_SESSION['result_message'] = "The user <font class=\"highlight\">admin</font> cannot be deleted<BR>";
+	$sql = "SELECT id
+			FROM users
+			WHERE username = '" . $_SESSION['username'] . "'";
+	$result = mysql_query($sql,$connection);
+	while ($row = mysql_fetch_object($result)) {
+		$temp_uid_current = $row->id;
+	}
+
+	if ($temp_uid == $uid || $temp_uid_current == $_SESSION['user_id']) {
+
+		if ($temp_uid == $uid) $_SESSION['result_message'] = "The user <font class=\"highlight\">admin</font> cannot be deleted<BR>";
+		if ($temp_uid_current == $_SESSION['user_id']) $_SESSION['result_message'] = "You can't delete yourself<BR>";
 
 	} else {
 
