@@ -27,7 +27,7 @@ include("../../_includes/system/functions/check-date-format.inc.php");
 
 $page_title = $reporting_section_title;
 $page_subtitle = "Domain Cost by Month Report";
-$software_section = "reporting";
+$software_section = "reporting-domain-cost-by-month-report";
 $report_name = "domain-cost-by-month-report";
 
 // Form Variables

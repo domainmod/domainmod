@@ -213,13 +213,13 @@ if (mysql_num_rows($result) > 0) {
 
 		<tr class="main_table_row_active">
 			<td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->sslpid?>"><?=$row->sslpname?></a>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
 			</td>
 			<td class="main_table_cell_active">
 				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
 			</td>
 			<td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/account-owner.php?oid=<?=$row->oid?>"><?=$row->oname?></a>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>
 			</td>
 			<td class="main_table_cell_active"><?php
 				$sql_total_count = "SELECT count(*) AS total_cert_count
@@ -288,13 +288,13 @@ if (mysql_num_rows($result) > 0) {
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->sslpid?>"><?=$row->sslpname?></a>
+                <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
             </td>
             <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
-				<a class="invisiblelink" href="edit/account-owner.php?oid=<?=$row->oid?>"><?=$row->oname?></a>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>
             </td>
             <td class="main_table_cell_inactive">&nbsp;
                 

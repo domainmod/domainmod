@@ -27,7 +27,7 @@ include("../../_includes/system/functions/check-date-format.inc.php");
 
 $page_title = $reporting_section_title;
 $page_subtitle = "Domain Renewal Report";
-$software_section = "reporting";
+$software_section = "reporting-domain-renewal-report";
 $report_name = "domain-renewal-report";
 
 // Form Variables

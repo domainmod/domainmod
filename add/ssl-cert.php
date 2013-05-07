@@ -26,7 +26,7 @@ include("../_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php")
 include("../_includes/system/functions/check-date-format.inc.php");
 
 $page_title = "Adding A New SSL Certificate";
-$software_section = "ssl-certs";
+$software_section = "ssl-cert-add";
 
 // Form Variables
 $new_domain_id = $_POST['new_domain_id'];

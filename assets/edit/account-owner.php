@@ -23,8 +23,8 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "Editting An Owner";
-$software_section = "account-owners";
+$page_title = "Editing An Account Owner";
+$software_section = "account-owners-edit";
 
 // 'Delete Owner' Confirmation Variables
 $del = $_GET['del'];

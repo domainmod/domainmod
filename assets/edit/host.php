@@ -23,16 +23,13 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "Editting A Web Host";
-$software_section = "hosting";
+$page_title = "Editing A Web Host";
+$software_section = "hosting-edit";
 
-// 'Delete Web Host' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 $whid = $_GET['whid'];
-
-// Form Variables
 $new_host = $_REQUEST['new_host'];
 $new_notes = $_REQUEST['new_notes'];
 $new_whid = $_REQUEST['new_whid'];

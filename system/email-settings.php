@@ -23,10 +23,9 @@ include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
-$page_title = "Edit Email Settings";
-$software_section = "system";
+$page_title = "Email Settings";
+$software_section = "system-email-settings";
 
-// Form Variables
 $new_expiration_email = $_POST['new_expiration_email'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

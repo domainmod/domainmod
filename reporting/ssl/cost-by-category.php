@@ -27,7 +27,7 @@ include("../../_includes/system/functions/check-date-format.inc.php");
 
 $page_title = $reporting_section_title;
 $page_subtitle = "SSL Certificate Cost by Category Report";
-$software_section = "reporting";
+$software_section = "reporting-ssl-cost-by-category-report";
 $report_name = "ssl-cost-by-category-report";
 
 // Form Variables

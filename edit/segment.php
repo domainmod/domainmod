@@ -24,16 +24,14 @@ include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/system/functions/check-domain-format.inc.php");
 
-$page_title = "Editting A Segment";
-$software_section = "segments";
+$page_title = "Editing A Segment";
+$software_section = "segment-edit";
 
 $segid = $_GET['segid'];
 
-// 'Delete Domain' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
-// Form Variables
 $new_name = $_POST['new_name'];
 $new_description = $_POST['new_description'];
 $new_segment = $_POST['new_segment'];

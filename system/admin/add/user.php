@@ -28,8 +28,8 @@ include("../../../_includes/software.inc.php");
 include("../../../_includes/timestamps/current-timestamp.inc.php");
 include("../../../_includes/auth/auth-check.inc.php");
 
-$page_title = "Add A New User";
-$software_section = "system";
+$page_title = "Adding A New User";
+$software_section = "admin-user-add";
 
 // Form Variables
 $new_first_name = $_POST['new_first_name'];

@@ -24,7 +24,7 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Adding A New Registrar";
-$software_section = "registrars";
+$software_section = "registrars-add";
 
 // Form Variables
 $new_registrar = $_POST['new_registrar'];

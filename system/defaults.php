@@ -23,10 +23,9 @@ include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
-$page_title = "Edit User Defaults";
-$software_section = "system";
+$page_title = "User Defaults";
+$software_section = "system-user-defaults";
 
-// Form Variables
 $new_default_currency = $_POST['new_default_currency'];
 $new_default_timezone = $_POST['new_default_timezone'];
 $new_default_category_domains = $_POST['new_default_category_domains'];
@@ -197,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
 <form name="default_user_settings_form" method="post" action="<?=$PHP_SELF?>">
-<font class="subheadline">System Defaults</font><BR><BR>
+<BR><font class="subheadline">System Defaults</font><BR><BR>
 <strong>Default Currency</strong><BR><BR>
 <select name="new_default_currency">
 <?php
@@ -428,7 +427,7 @@ while ($row = mysql_fetch_object($result)) {
 }
 ?>
 </select>
-<BR><BR>
+<BR><BR><BR>
 <input type="submit" name="button" value="Update User Defaults &raquo;">
 </form>
 <?php include("../_includes/layout/footer.inc.php"); ?>

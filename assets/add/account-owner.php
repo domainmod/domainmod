@@ -23,8 +23,8 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "Adding A New Owner";
-$software_section = "account-owners";
+$page_title = "Adding A New Account Owner";
+$software_section = "account-owners-add";
 
 // Form Variables
 $new_owner = $_POST['new_owner'];

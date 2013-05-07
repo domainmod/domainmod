@@ -23,16 +23,14 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "Editting An SSL Type";
-$software_section = "ssl-types";
+$page_title = "Editing An SSL Type";
+$software_section = "ssl-types-edit";
 
-// 'Delete Type' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 $ssltid = $_GET['ssltid'];
 
-// Form Variables
 $new_type = $_REQUEST['new_type'];
 $new_notes = $_REQUEST['new_notes'];
 $new_ssltid = $_REQUEST['new_ssltid'];

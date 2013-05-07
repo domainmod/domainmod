@@ -36,7 +36,7 @@ $software_section = "assets";
 <font class="subheadline">Domains</font><BR>
 <a href="registrars.php">Domain Registrars</a><BR>
 <a href="registrar-accounts.php">Domain Registrar Accounts</a><BR>
-<a href="dns.php">DNS Servers</a><BR>
+<a href="dns.php">DNS Profiles</a><BR>
 <a href="hosting.php">Web Hosting Providers</a><BR>
 <BR>
 <font class="subheadline">SSL Certificates</font><BR>

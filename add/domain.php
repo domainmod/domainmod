@@ -27,7 +27,7 @@ include("../_includes/system/functions/check-domain-format.inc.php");
 include("../_includes/system/functions/check-date-format.inc.php");
 
 $page_title = "Adding A New Domain";
-$software_section = "domains";
+$software_section = "domain-add";
 
 // Form Variables
 $new_domain = $_POST['new_domain'];

@@ -23,8 +23,8 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "Editting A Category";
-$software_section = "categories";
+$page_title = "Editing A Category";
+$software_section = "categories-edit";
 
 // 'Delete Category' Confirmation Variables
 $del = $_GET['del'];

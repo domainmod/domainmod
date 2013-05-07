@@ -23,16 +23,13 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "Editting A Registrar Account";
-$software_section = "registrar-accounts";
+$page_title = "Editing A Registrar Account";
+$software_section = "registrar-accounts-edit";
 
-// 'Delete Registrar Account' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 $raid = $_GET['raid'];
-
-// Form Variables
 $new_owner_id = $_POST['new_owner_id'];
 $new_registrar_id = $_POST['new_registrar_id'];
 $new_username = $_POST['new_username'];

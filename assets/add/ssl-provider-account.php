@@ -24,7 +24,7 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Adding A New SSL Provider Account";
-$software_section = "ssl-provider-accounts";
+$software_section = "ssl-provider-accounts-add";
 
 // Form Variables
 $new_owner_id = $_POST['new_owner_id'];

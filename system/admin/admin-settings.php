@@ -1,5 +1,5 @@
 <?php
-// /system/admin/admin-settings.php
+// /system/admin/system-settings.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -28,8 +28,8 @@ include("../../_includes/software.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 
-$page_title = "Edit Admin Settings";
-$software_section = "system";
+$page_title = "System Settings";
+$software_section = "admin-system-settings";
 
 // Form Variables
 $new_email_address = $_POST['new_email_address'];
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 	$_SESSION['system_email_address'] = $new_email_address;
 	$_SESSION['system_expiration_email_days'] = $new_expiration_email_days;
 
-	$_SESSION['result_message'] .= "The Admin Settings were updated<BR>";
+	$_SESSION['result_message'] .= "The System Settings were updated<BR>";
 
 	header("Location: ../index.php");
 	exit;
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="admin_settings_form" method="post" action="<?=$PHP_SELF?>">
+<form name="system_settings_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Full <?=$software_title?> URL (100):</strong><BR><BR>
 Enter the full URL of your <?=$software_title?> installation, excluding the trailing slash (Example: http://yourdomain.com/domainmanager).<BR><BR>
 <input name="new_full_url" type="text" size="50" maxlength="100" value="<?php if ($new_full_url != "") echo $new_full_url; ?>">
@@ -101,7 +101,7 @@ This should be a valid email address that is able to receive mail. It will be us
 This is the number of days in the future to display in the expiration emails.<BR><BR>
 <input name="new_expiration_email_days" type="text" size="4" maxlength="3" value="<?php if ($new_expiration_email_days != "") echo $new_expiration_email_days; ?>">
 <BR><BR>
-<input type="submit" name="button" value="Update Admin Settings&raquo;">
+<input type="submit" name="button" value="Update System Settings&raquo;">
 </form>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>

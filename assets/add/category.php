@@ -24,7 +24,7 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Adding A New Category";
-$software_section = "categories";
+$software_section = "categories-add";
 
 // Form Variables
 $new_category = $_POST['new_category'];

@@ -227,8 +227,13 @@ $result = mysql_query($sql,$connection); ?>
                 </tr>
 	
 				<tr>
-					<td class="update-block-left">&nbsp;</td>
-					<td class="update-block-right"><?=$row->update?><BR><BR></td>
+					<td class="update-block-left">
+                    	&nbsp;
+					</td>
+					<td class="update-block-right">
+						<?=$row->update?>
+                        <?php if ($id == "") echo "<BR><BR>"; ?>
+                    </td>
 				</tr><?php
 
 			} else { ?>
@@ -265,8 +270,12 @@ $result = mysql_query($sql,$connection); ?>
 	                            &nbsp;&nbsp;<font class="default_highlight">*NEW*</font>&nbsp;&nbsp;[<a href="_includes/system/mark-updates-read.inc.php?direct=1&id=<?=$row->id?>">mark read</a>]<?php
 							} 
 
-						} ?>
-                        <BR><BR>
+						} 
+						
+						if ($id == "") echo "<BR><BR>";
+						
+						?>
+                        
                     </td>
                 </tr><?php
 
@@ -276,8 +285,6 @@ $result = mysql_query($sql,$connection); ?>
 
 	</table>
     
-    <?php if ($id != "") { ?><a href="updates.php">More Updates &raquo;</a><BR><?php } ?>
-
 <?php if ($id == "") { ?>
 <?php include("_includes/layout/search-options-block-updates.inc.php"); ?>
 <?php } ?>

@@ -23,8 +23,8 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "Editting An SSL Provider's Fees";
-$software_section = "ssl-providers";
+$page_title = "SSL Provider Fees";
+$software_section = "ssl-provider-fees";
 
 // 'Delete SSL Provider Fee' Confirmation Variables
 $del = $_GET['del'];

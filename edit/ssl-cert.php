@@ -24,16 +24,14 @@ include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/system/functions/check-date-format.inc.php");
 
-$page_title = "Editting An SSL Certificate";
-$software_section = "ssl-certs";
+$page_title = "Editing An SSL Certificate";
+$software_section = "ssl-cert-edit";
 
-// 'Delete Cert' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 $sslcid = $_GET['sslcid'];
 
-// Form Variables
 $new_domain_id = $_POST['new_domain_id'];
 $new_name = $_POST['new_name'];
 $new_type_id = $_POST['new_type_id'];

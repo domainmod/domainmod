@@ -28,8 +28,8 @@ include("../../_includes/software.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 
-$page_title = "Edit System Defaults";
-$software_section = "system";
+$page_title = "System Defaults";
+$software_section = "admin-system-defaults";
 
 // Form Variables
 $new_default_category_domains = $_POST['new_default_category_domains'];
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="default_settings_form" method="post" action="<?=$PHP_SELF?>">
-<font class="subheadline">Domain Defaults</font><BR><BR>
+<BR><font class="subheadline">Domain Defaults</font><BR><BR>
 <strong>Default Domain Registrar</strong><BR><BR>
 <select name="new_default_registrar">
 <?php
@@ -295,7 +295,7 @@ while ($row = mysql_fetch_object($result)) {
 }
 ?>
 </select>
-<BR><BR>
+<BR><BR><BR>
 <input type="submit" name="button" value="Update System Defaults &raquo;">
 </form>
 <?php include("../../_includes/layout/footer.inc.php"); ?>

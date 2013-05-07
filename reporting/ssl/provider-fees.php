@@ -25,7 +25,7 @@ include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = $reporting_section_title;
 $page_subtitle = "SSL Provider Fee Report";
-$software_section = "reporting";
+$software_section = "reporting-ssl-provider-fee-report";
 $report_name = "ssl-provider-fee-report";
 
 // Form Variables

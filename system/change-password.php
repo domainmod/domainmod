@@ -24,7 +24,7 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
 $page_title = "Change Password";
-$software_section = "system";
+$software_section = "system-change-password";
 
 // Form Variables
 $new_password = $_POST['new_password'];

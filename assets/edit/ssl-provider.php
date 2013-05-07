@@ -23,16 +23,13 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "Editting An SSL Provider";
-$software_section = "ssl-providers";
+$page_title = "Editing An SSL Provider";
+$software_section = "ssl-providers-edit";
 
-// 'Delete SSL Provider' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 $sslpid = $_GET['sslpid'];
-
-// Form Variables
 $new_ssl_provider = $_POST['new_ssl_provider'];
 $new_url = $_POST['new_url'];
 $new_notes = $_POST['new_notes'];

@@ -28,8 +28,8 @@ include("../../../_includes/software.inc.php");
 include("../../../_includes/timestamps/current-timestamp.inc.php");
 include("../../../_includes/auth/auth-check.inc.php");
 
-$page_title = "Edit User";
-$software_section = "system";
+$page_title = "Editing A User";
+$software_section = "admin-user-edit";
 
 // 'Delete User' Confirmation Variables
 $del = $_GET['del'];

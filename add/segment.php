@@ -25,7 +25,7 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/system/functions/check-domain-format.inc.php");
 
 $page_title = "Adding A New Segment";
-$software_section = "segments";
+$software_section = "segment-add";
 
 // Form Variables
 $new_name = $_POST['new_name'];

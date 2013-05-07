@@ -23,8 +23,8 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "Editting A DNS Profile";
-$software_section = "dns";
+$page_title = "Editing A DNS Profile";
+$software_section = "dns-edit";
 
 // 'Delete DNS Profile' Confirmation Variables
 $del = $_GET['del'];

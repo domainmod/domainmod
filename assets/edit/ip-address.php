@@ -23,16 +23,13 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "Editting An IP Address";
-$software_section = "ip-addresses";
+$page_title = "Editing An IP Address";
+$software_section = "ip-addresses-edit";
 
-// 'Delete IP Address' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 $ipid = $_GET['ipid'];
-
-// Form Variables
 $new_name = $_POST['new_name'];
 $new_ip = $_POST['new_ip'];
 $new_rdns = $_POST['new_rdns'];

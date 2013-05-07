@@ -29,7 +29,7 @@ include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 
 $page_title = "System Information";
-$software_section = "system";
+$software_section = "admin-system-info";
 ?>
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>

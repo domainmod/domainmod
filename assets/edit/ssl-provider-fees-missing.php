@@ -22,7 +22,8 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 
-$page_title = "Missing SSL Fees";
+$page_title = "Missing SSL Provider Fees";
+$software_section = "ssl-provider-fees-missing";
 ?>
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
@@ -41,8 +42,7 @@ $sql = "SELECT sp.id AS ssl_provider_id, sp.name AS ssl_provider_name
 		ORDER BY sp.name asc";
 $result = mysql_query($sql,$connection);
 ?>
-The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these fees.
-<BR><BR>
+The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these fees.<BR>
 <table class="main_table">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">

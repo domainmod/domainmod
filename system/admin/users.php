@@ -27,8 +27,8 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 
-$page_title = "User List";
-$software_section = "user-list";
+$page_title = "Users";
+$software_section = "admin-user-list";
 ?>
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
@@ -38,8 +38,10 @@ $software_section = "user-list";
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
+Below is a list of all users that have access to <?=$software_title?>.<BR>
 <?php
 if ($_SESSION['username'] == "admin") {
+
 	$sql = "SELECT id, first_name, last_name, username, email_address, admin
 			FROM users
 			WHERE active = '1'

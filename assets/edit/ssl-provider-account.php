@@ -23,16 +23,13 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
-$page_title = "Editting An SSL Provider Account";
-$software_section = "ssl-provider-accounts";
+$page_title = "Editing An SSL Provider Account";
+$software_section = "ssl-provider-accounts-edit";
 
-// 'Delete SSL Provider Account' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 $sslpaid = $_GET['sslpaid'];
-
-// Form Variables
 $new_owner_id = $_POST['new_owner_id'];
 $new_ssl_provider_id = $_POST['new_ssl_provider_id'];
 $new_username = $_POST['new_username'];

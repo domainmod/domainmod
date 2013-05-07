@@ -28,7 +28,7 @@ include("_includes/system/functions/check-domain-format.inc.php");
 include("_includes/system/functions/check-date-format.inc.php");
 
 $page_title = "Perform Bulk Domain Actions";
-$software_section = "bulkactions";
+$software_section = "bulk-actions";
 
 // Form Variables
 $jumpMenu = $_GET['jumpMenu'];

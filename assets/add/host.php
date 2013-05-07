@@ -24,7 +24,7 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Adding A New Web Host";
-$software_section = "hosting";
+$software_section = "hosting-add";
 
 // Form Variables
 $new_host = $_POST['new_host'];

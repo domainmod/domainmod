@@ -24,7 +24,7 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Adding A New SSL Type";
-$software_section = "ssl-types";
+$software_section = "ssl-types-add";
 
 // Form Variables
 $new_type = $_POST['new_type'];

@@ -24,9 +24,8 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 
 $page_title = "Update Profile";
-$software_section = "system";
+$software_section = "system-update-profile";
 
-// Form Variables
 $new_first_name = $_POST['new_first_name'];
 $new_last_name = $_POST['new_last_name'];
 $new_email_address = $_POST['new_email_address'];

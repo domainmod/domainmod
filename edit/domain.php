@@ -25,16 +25,14 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/system/functions/check-domain-format.inc.php");
 include("../_includes/system/functions/check-date-format.inc.php");
 
-$page_title = "Editting A Domain";
-$software_section = "domains";
+$page_title = "Editing A Domain";
+$software_section = "domain-edit";
 
 $did = $_GET['did'];
 
-// 'Delete Domain' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
-// Form Variables
 $new_domain = $_POST['new_domain'];
 $new_expiry_date = $_POST['new_expiry_date'];
 $new_function = $_POST['new_function'];

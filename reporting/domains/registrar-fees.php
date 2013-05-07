@@ -25,7 +25,7 @@ include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = $reporting_section_title;
 $page_subtitle = "Domain Registrar Fee Report";
-$software_section = "reporting";
+$software_section = "reporting-domain-registrar-fee-report";
 $report_name = "domain-registrar-fee-report";
 
 // Form Variables
