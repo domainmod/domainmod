@@ -36,54 +36,57 @@ table.main_table {
 	padding-left: 0px;
 }
 tr.main_table_row_heading_active {
-	line-height: 30px; 
+/*	line-height: 18px; */
 }
 td.main_table_cell_heading_active {
-	padding-top: 0px;
+	vertical-align: bottom;
+	padding-top: 12px;
 	padding-right: 26px;
-	padding-bottom: 0px;
+	padding-bottom: 5px;
 	padding-left: 0px;
 }
 tr.main_table_row_active {
-	line-height: 18px; 
+/*	line-height: 18px; */
 }
 td.main_table_cell_active {
 	padding-top: 0px; 
 	padding-right: 26px; 
-	padding-bottom: 0px; 
+	padding-bottom: 5px; 
 	padding-left: 0px; 
 }
 tr.main_table_row_heading_inactive {
-	line-height: 30px; 
+/*	line-height: 18px; */
 }
 td.main_table_cell_heading_inactive {
-	padding-top: 15px;
+	vertical-align: bottom;
+	padding-top: 12px;
 	padding-right: 26px;
-	padding-bottom: 0px;
+	padding-bottom: 5px;
 	padding-left: 0px;
 }
 tr.main_table_row_inactive {
-	line-height: 18px; 
+/*	line-height: 18px; */
 }
 td.main_table_cell_inactive {
 	padding-top: 0px; 
 	padding-right: 26px; 
-	padding-bottom: 0px; 
+	padding-bottom: 5px; 
 	padding-left: 0px; 
 }
+
 td.main_table_cell_heading_active_centered {
+	text-align: center;
 	padding-top: 0px;
 	padding-right: 26px;
 	padding-bottom: 0px;
 	padding-left: 0px;
-	text-align: center;
 }
 td.main_table_cell_active_centered {
-	padding-top: 0px; 
+	text-align: center;
+	padding-top: 5px; 
 	padding-right: 26px; 
 	padding-bottom: 0px; 
 	padding-left: 0px; 
-	text-align: center;
 }
 table.dns_table {
 	border-spacing: 0px;
@@ -510,6 +513,12 @@ font.subheadline {
 /*	color: #BB0000; */
 	color: #AA0000;
 }
+font.main_table_heading_extra {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 8pt;
+	color: #000000;
+}
 font.main_table_heading {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
@@ -522,6 +531,10 @@ font.highlight {
 font.default_highlight {
 	font-weight: bold;
 	color: #CC0000;
+}
+font.default_highlight_secondary {
+	font-weight: bold;
+	color: #0040FF;
 }
 font.reseller_highlight {
 	font-weight: bold;
