@@ -29,7 +29,7 @@ while ($row_settings = mysql_fetch_object($result_settings)) {
 $to = $row->email_address;
 $from_name = $software_title;
 
-$subject = "Your " . $software_title . " Password has been Reset 2";
+$subject = "Your " . $software_title . " Password has been Reset";
 $headline = "Your " . $software_title . " Password has been Reset";
 
 $headers = "";
