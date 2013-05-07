@@ -47,7 +47,6 @@ if ($_SESSION['username'] == "admin") {
 			FROM users AS u, user_settings AS us
 			WHERE u.id = us.user_id
 			  AND u.active = '1'
-			  AND u.username != 'admin'
 			ORDER BY u.first_name, u.last_name, u.username, u.email_address";
 
 }
