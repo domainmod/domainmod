@@ -2807,6 +2807,53 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0045 to 2.0046
+	if ($current_db_version == 2.0045) {
+
+		$sql = "INSERT INTO updates
+				(name, `update`, insert_time, update_time) VALUES 
+				('An Export option has been added to all Asset pages', '', '2013-05-06 00:00:00', '2013-05-06 00:00:00')";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "SELECT id
+				FROM users";
+		$result = mysql_query($sql,$connection);
+
+		while ($row = mysql_fetch_object($result)) {
+
+			$sql_updates = "SELECT id
+							FROM `updates`
+							WHERE name = 'An Export option has been added to all Asset pages'
+							  AND insert_time = '2013-05-06 00:00:00'";
+			$result_updates = mysql_query($sql_updates,$connection);
+
+			while ($row_updates = mysql_fetch_object($result_updates)) {
+
+				$sql_insert = "INSERT INTO 
+							   update_data
+							   (user_id, update_id, insert_time) VALUES 
+							   ('" . $row->id . "', '" . $row_updates->id . "', '" . $current_timestamp . "')";
+				$result_insert = mysql_query($sql_insert,$connection);
+
+			}
+
+		}
+		
+		$sql = "SELECT *
+				FROM `update_data`
+				WHERE user_id = '" . $_SESSION['user_id'] . "'";
+		$result = mysql_query($sql,$connection);
+		if (mysql_num_rows($result) != 0) { $_SESSION['are_there_updates'] = "1"; }
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0046',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0046;
+
+	}
+
 	if ($direct == "1") {
 	
 		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
