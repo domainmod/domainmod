@@ -57,8 +57,16 @@ if ($id != "") {
 
 if ($direct == "1") {
 
-	$_SESSION['result_message'] .= "Marked as read<BR>";
-	
+	if ($id != "") {
+
+		$_SESSION['result_message'] .= "Update marked as read<BR>";
+		
+	} else {
+
+		$_SESSION['result_message'] .= "All updates have been marked as read<BR>";
+		
+	}
+
 	header("Location: " . $_SERVER['HTTP_REFERER']);
 	exit;
 
