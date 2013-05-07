@@ -30,7 +30,6 @@ $page_subtitle = "SSL Certificate Cost by Provider Report";
 $software_section = "reporting-ssl-cost-by-provider-report";
 $report_name = "ssl-cost-by-provider-report";
 
-// Form Variables
 $export = $_GET['export'];
 $all = $_GET['all'];
 $new_start_date = $_REQUEST['new_start_date'];
@@ -228,7 +227,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <?php } ?>
     <strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
     <strong>Number of SSL Certs:</strong> <?=$number_of_certs_total?><BR><BR>
-    <table class="main_table">
+    <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
         <font class="main_table_heading">Provider</font></td>

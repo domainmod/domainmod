@@ -148,7 +148,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 if (mysql_num_rows($result) > 0) {
 	
 	$has_active = "1"; ?>
-    <table class="main_table">
+    <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
         	<font class="main_table_heading">Active SSL Types (<?=mysql_num_rows($result)?>)</font>
@@ -221,7 +221,7 @@ if (mysql_num_rows($result) > 0) {
 
 	$has_inactive = "1";
 	if ($has_active == "1") echo "<BR>";
-	if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\">"; ?>
+	if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
 
     <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">

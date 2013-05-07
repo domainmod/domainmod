@@ -1312,7 +1312,7 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 <?php include("_includes/layout/search-options-block.inc.php"); ?>
 <BR>
 <?php if ($totalrows != '0') { ?>
-<table class="main_table">
+<table class="main_table" cellpadding="0" cellspacing="0">
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_heading_active">

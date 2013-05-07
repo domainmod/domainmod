@@ -28,12 +28,13 @@ td {
 	color: #000000;
 	font-size: 8pt;
 }
-table.main_table {
-	border-spacing: 0px;
-	padding-top: 0px;
-	padding-right: 0px; 
-	padding-bottom: 0px;
+table.main_table tr.main_table_row_active:hover td, tr.main_table_row_inactive:hover td {
+	padding-top: 2px;
+	padding-right: 26px;
+	padding-bottom: 2px;
 	padding-left: 0px;
+ 	color: #000000;
+    background-color: #D1D1D1;
 }
 tr.main_table_row_heading_active {
 /*	line-height: 18px; */
@@ -42,16 +43,20 @@ td.main_table_cell_heading_active {
 	vertical-align: bottom;
 	padding-top: 12px;
 	padding-right: 26px;
-	padding-bottom: 5px;
+	padding-bottom: 3px;
 	padding-left: 0px;
 }
 tr.main_table_row_active {
 /*	line-height: 18px; */
 }
+tr.main_table_row_active_nohover {
+/*	line-height: 18px; */
+}
 td.main_table_cell_active {
-	padding-top: 0px; 
-	padding-right: 26px; 
-	padding-bottom: 5px; 
+	vertical-align: middle;
+	padding-top: 2px; 
+	padding-right: 26px;
+	padding-bottom: 2px; 
 	padding-left: 0px; 
 }
 tr.main_table_row_heading_inactive {
@@ -61,31 +66,31 @@ td.main_table_cell_heading_inactive {
 	vertical-align: bottom;
 	padding-top: 12px;
 	padding-right: 26px;
-	padding-bottom: 5px;
+	padding-bottom: 3px;
 	padding-left: 0px;
 }
 tr.main_table_row_inactive {
 /*	line-height: 18px; */
 }
 td.main_table_cell_inactive {
-	padding-top: 0px; 
-	padding-right: 26px; 
-	padding-bottom: 5px; 
+	padding-top: 2px; 
+	padding-right: 26px;
+	padding-bottom: 2px; 
 	padding-left: 0px; 
 }
-
 td.main_table_cell_heading_active_centered {
+	vertical-align: bottom;
 	text-align: center;
 	padding-top: 0px;
 	padding-right: 26px;
-	padding-bottom: 0px;
+	padding-bottom: 3px;
 	padding-left: 0px;
 }
 td.main_table_cell_active_centered {
 	text-align: center;
-	padding-top: 5px; 
-	padding-right: 26px; 
-	padding-bottom: 0px; 
+	padding-top: 2px; 
+	padding-right: 26px;
+	padding-bottom: 2px; 
 	padding-left: 0px; 
 }
 table.dns_table {

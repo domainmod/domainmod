@@ -128,7 +128,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 
 if (mysql_num_rows($result) > 0) { ?>
 
-    <table class="main_table">
+    <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Active Users (<?=mysql_num_rows($result)?>)</font>

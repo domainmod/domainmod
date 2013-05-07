@@ -43,7 +43,7 @@ $sql = "SELECT r.id AS registrar_id, r.name AS registrar_name
 $result = mysql_query($sql,$connection);
 ?>
 The following Registrars/TLDs are missing Domain fees. In order to ensure your domain reporting is accurate please update these fees.<BR>
-<table class="main_table">
+<table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Registrar</font>

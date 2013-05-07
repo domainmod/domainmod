@@ -147,7 +147,7 @@ if ($total_rows > 0) {
     <?php
     if ($total_rows > 0) { ?>
     
-        <table class="main_table">
+        <table class="main_table" cellpadding="0" cellspacing="0">
         <tr class="main_table_row_heading_active">
             <td class="main_table_cell_heading_active">
             <font class="main_table_heading">SSL Provider</font></td>

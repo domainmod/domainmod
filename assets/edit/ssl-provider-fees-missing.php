@@ -43,7 +43,7 @@ $sql = "SELECT sp.id AS ssl_provider_id, sp.name AS ssl_provider_name
 $result = mysql_query($sql,$connection);
 ?>
 The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these fees.<BR>
-<table class="main_table">
+<table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">SSL Provider</font>

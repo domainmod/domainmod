@@ -294,7 +294,7 @@ if (mysql_num_rows($result) != 0) {
 ?>
 <font class="subheadline">Add/Update SSL Type Fee</font><BR>
 <form name="edit_ssl_provider_fee_form" method="post" action="<?=$PHP_SELF?>">
-<table class="main_table">
+<table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active">
         	<strong>SSL Type</strong><BR>
@@ -358,7 +358,7 @@ if (mysql_num_rows($result) != 0) {
 </form>
 <BR><BR>
 <font class="subheadline">SSL Type Fees</font><BR>
-<table class="main_table">
+<table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active"><strong>SSL Type</strong></td>
         <td class="main_table_cell_heading_active"><strong>Initial Fee</strong></td>
