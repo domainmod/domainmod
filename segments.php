@@ -55,7 +55,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 Segments are lists of domains that can be used to help filter and manage your <a href="domains.php">domain results</a>.<BR>
 <BR>
 Segment filters will tell you which domains match with domains that are saved in your <?=$software_title?>, as well as domains that are missing, and you can easily export the results.
-<BR><BR>
+<BR>
 <?php 
 $sql_segment_check = "SELECT id
 					  FROM segments

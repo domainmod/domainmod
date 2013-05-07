@@ -226,7 +226,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 	    <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
     <strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
-    <strong>Number of SSL Certs:</strong> <?=$number_of_certs_total?><BR><BR>
+    <strong>Number of SSL Certs:</strong> <?=$number_of_certs_total?><BR>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">

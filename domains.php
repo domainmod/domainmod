@@ -1310,7 +1310,6 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 	<strong>Number of Domains:</strong> <?=number_format($totalrows)?><BR><BR>
 <?php } ?>
 <?php include("_includes/layout/search-options-block.inc.php"); ?>
-<BR>
 <?php if ($totalrows != '0') { ?>
 <table class="main_table" cellpadding="0" cellspacing="0">
 <tr class="main_table_row_heading_active">

@@ -147,9 +147,9 @@ if ($total_rows > 0) {
     <BR><font class="subheadline"><?=$page_subtitle?></font><BR>
     <BR>
     <?php if ($all == "1") { ?>
-        <strong>All Registrar Fees</strong><BR><BR>
+        <strong>All Registrar Fees</strong><BR>
     <?php } else { ?>
-        <strong>Active Registrar Fees</strong><BR><BR>
+        <strong>Active Registrar Fees</strong><BR>
     <?php }
 
     if ($total_rows > 0) { ?>

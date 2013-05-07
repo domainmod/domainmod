@@ -177,7 +177,7 @@ if ($export == "1") {
 	<strong>Date Range:</strong> ALL<BR><BR>
 <?php } ?>
 <strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR><BR>
-<strong>Number of Domains:</strong> <?=number_format($total_results)?><BR><BR>
+<strong>Number of Domains:</strong> <?=number_format($total_results)?><BR>
 <table class="main_table" cellpadding="0" cellspacing="0">
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>

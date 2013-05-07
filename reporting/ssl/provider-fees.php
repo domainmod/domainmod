@@ -140,9 +140,9 @@ if ($total_rows > 0) {
     <BR><font class="subheadline"><?=$page_subtitle?></font><BR>
     <BR>
     <?php if ($all == "1") { ?>
-        <strong>All SSL Provider Fees</strong><BR><BR>
+        <strong>All SSL Provider Fees</strong><BR>
     <?php } else { ?>
-        <strong>Active SSL Provider Fees</strong><BR><BR>
+        <strong>Active SSL Provider Fees</strong><BR>
     <?php } ?>
     <?php
     if ($total_rows > 0) { ?>

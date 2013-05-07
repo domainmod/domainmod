@@ -904,7 +904,6 @@ echo "</select>";
 <BR><strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
 <strong>Number of SSL Certs:</strong> <?=number_format($totalrows)?><BR><BR>
 <?php include("_includes/layout/search-options-block.inc.php"); ?>
-<BR>
 <?php if ($totalrows != '0') { ?>
 <table class="main_table" cellpadding="0" cellspacing="0">
 <tr class="main_table_row_heading_active">

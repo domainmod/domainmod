@@ -827,7 +827,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
   </select>
 
 <?php if ($action != "") { ?>
-        <BR><BR><BR>
+        <BR><BR>
 		<?php if ($action == "AD") { ?>
 	        <strong>Domains to add (one per line)</strong><a title="Required Field"><font class="default_highlight">*</font></a>
         <?php } else { ?>
