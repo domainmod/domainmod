@@ -124,76 +124,76 @@ if ($software_section == "domains") { ?>
 
 } elseif ($software_section == "reporting") { ?>
 
-	&raquo;&nbsp;<strong>Run Reports</strong>&nbsp;<?php
+	&raquo;&nbsp;<strong>Reporting</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-domain-cost-by-category-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>Domain Cost by Category Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-domain-cost-by-month-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>Domain Cost by Month Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-domain-cost-by-owner-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>Domain Cost by Owner Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-domain-cost-by-registrar-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>Domain Cost by Registrar Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-domain-cost-by-tld-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>Domain Cost by TLD Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-domain-registrar-fee-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>Domain Registrar Fee Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-domain-renewal-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>Domain Renewal Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-ssl-cost-by-category-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Certificate Cost by Category Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-ssl-cost-by-month-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Certificate Cost by Month Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-ssl-cost-by-owner-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Certificate Cost by Owner Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-ssl-cost-by-provider-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Certificate Cost by Provider Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-ssl-cost-by-type-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Certificate Cost by Type Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-ssl-provider-fee-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Provider Fee Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-ssl-renewal-report") { ?>
 
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Certificate Renewal Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "registrars") { ?>

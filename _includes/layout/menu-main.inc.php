@@ -21,6 +21,6 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-actions.php">Bulk Actions</a> ]&nbsp;
 <BR><BR>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/">Asset Management</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Run Reports</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a> ]&nbsp;
 <?php include($full_server_path . "/_includes/layout/menu-sub.inc.php"); ?>
