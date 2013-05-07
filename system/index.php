@@ -38,7 +38,7 @@ $software_section = "system";
 &raquo; <a href="../_includes/system/update-conversion-rates.inc.php?direct=1">Update Conversion Rates</a><BR>
 <?php if ($_SESSION['is_admin'] == 1) { ?>
 	<BR><BR><font class="subheadline">System Administration</font><BR><BR>
-	&raquo; <a href="admin/admin-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/defaults.php">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/users.php">Users</a><BR><BR>
+	&raquo; <a href="admin/system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/defaults.php">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/users.php">Users</a><BR><BR>
 	&raquo; <a href="admin/system-info.php">System Information</a><BR>
 <?php } ?>
 <?php include("../_includes/layout/footer.inc.php"); ?>
