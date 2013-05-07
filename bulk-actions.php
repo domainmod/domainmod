@@ -730,11 +730,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	}
 
-	include("_includes/system/update-tlds.inc.php");
-	include("_includes/system/update-domain-fees.inc.php");
-	include("_includes/system/update-ssl-fees.inc.php");
-	include("_includes/system/update-segments.inc.php");
-
 }
 ?>
 <?php include("_includes/doctype.inc.php"); ?>
