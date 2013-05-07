@@ -136,7 +136,7 @@ echo "</select>";
 <strong>Password (255)</strong><BR><BR>
 <input name="new_password" type="text" size="50" maxlength="255" value="<?=$new_password?>">
 <BR><BR>
-<strong>Reseller Account?</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+<strong>Reseller Account?</strong><BR><BR>
 <select name="new_reseller">";
 <option value="0"<?php if ($new_reseller != "1") echo " selected"; ?>>No</option>
 <option value="1"<?php if ($new_reseller == "1") echo " selected"; ?>>Yes</option>
