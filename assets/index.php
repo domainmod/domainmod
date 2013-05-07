@@ -33,21 +33,7 @@ $software_section = "assets";
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<font class="subheadline">Domains</font><BR>
-<a href="registrars.php">Domain Registrars</a><BR>
-<a href="registrar-accounts.php">Domain Registrar Accounts</a><BR>
-<a href="dns.php">DNS Profiles</a><BR>
-<a href="hosting.php">Web Hosting Providers</a><BR>
-<BR>
-<font class="subheadline">SSL Certificates</font><BR>
-<a href="ssl-providers.php">SSL Providers</a><BR>
-<a href="ssl-accounts.php">SSL Provider Accounts</a><BR>
-<a href="ssl-types.php">SSL Certificate Types</a><BR>
-<BR>
-<font class="subheadline">Shared</font><BR>
-<a href="account-owners.php">Account Owners</a><BR>
-<a href="categories.php">Categories</a><BR>
-<a href="ip-addresses.php">IP Addresses</a><BR>
+<?php include("../_includes/layout/asset-management-block.inc.php"); ?>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

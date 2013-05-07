@@ -348,6 +348,36 @@ div.result_message_inner {
 	padding-bottom: 21px;
 	padding-left: 8px;
 }
+div.asset-management-block-outer {
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 65px;
+	padding-left: 0px;
+}
+div.asset-management-block-left {
+	float: left;
+	width: 235px; 
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
+div.asset-management-block-center {
+	float: left;
+	width: 235px; 
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
+div.asset-management-block-right {
+	float: left;
+	width: 235px; 
+	padding-top: 0px;
+	padding-right: 0px; 
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
 div.reporting-block-outer {
 	padding-top: 0px;
 	padding-right: 0px; 
