@@ -21,14 +21,181 @@ include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
+include("../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Domain Registrar & SSL Provider Account Owners";
 $software_section = "account-owners";
 
-$sql = "SELECT id
-		FROM owners";
-$result = mysql_query($sql,$connection);
-if (mysql_num_rows($result) == 0) $zero_owners = "1";
+$export = $_GET['export'];
+
+$sql = "(SELECT o.id, o.name, o.notes, o.insert_time, o.update_time
+		 FROM owners AS o, domains AS d
+		 WHERE o.id = d.owner_id
+		   AND d.active NOT IN ('0', '10')
+		 GROUP BY o.name)
+		UNION
+		(SELECT o.id, o.name, o.notes, o.insert_time, o.update_time
+		 FROM owners AS o, ssl_certs AS sslc
+		 WHERE o.id = sslc.owner_id
+		   AND sslc.active NOT IN ('0')
+		 GROUP BY o.name)
+		ORDER BY name";
+
+if ($export == "1") {
+	
+	$full_export = "";
+	$full_export .= "\"" . $page_title . "\"\n\n";
+	$full_export .= "\"Status\",\"Owner\",\"Registrar Accounts\",\"Domains\",\"SSL Provider Accounts\",\"SSL Certs\",\"Default Domain Owner?\",\"Default SSL Owner?\",\"Notes\",\"Added\",\"Last Updated\"\n";
+
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+	if (mysql_num_rows($result) > 0) {
+	
+		$has_active = "1";
+	
+		while ($row = mysql_fetch_object($result)) {
+	
+			$new_oid = $row->id;
+		
+			if ($current_oid != $new_oid) {
+				$exclude_owner_string_raw .= "'" . $row->id . "', ";
+			}
+	
+			$sql_total_count = "SELECT count(*) AS total_count
+								FROM registrar_accounts
+								WHERE owner_id = '" . $row->id . "'";
+			$result_total_count = mysql_query($sql_total_count,$connection);
+			while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+				$total_registrar_accounts = $row_total_count->total_count; 
+			}
+	
+			$sql_total_count = "SELECT count(*) AS total_count
+								FROM domains
+								WHERE active NOT IN ('0', '10')
+								  AND owner_id = '" . $row->id . "'";
+			$result_total_count = mysql_query($sql_total_count,$connection);
+			while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+				$total_domains = $row_total_count->total_count; 
+			}
+	
+			$sql_total_count = "SELECT count(*) AS total_count
+								FROM ssl_accounts
+								WHERE owner_id = '" . $row->id . "'";
+			$result_total_count = mysql_query($sql_total_count,$connection);
+			while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+				$total_ssl_provider_accounts = $row_total_count->total_count; 
+			}
+	
+			$sql_total_count = "SELECT count(*) AS total_count
+								FROM ssl_certs
+								WHERE active NOT IN ('0')
+								  AND owner_id = '" . $row->id . "'";
+			$result_total_count = mysql_query($sql_total_count,$connection);
+			while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+				$total_certs = $row_total_count->total_count; 
+			}
+	
+			if ($row->id == $_SESSION['default_owner_domains']) {
+			
+				$is_default_domains = "1";
+				
+			} else {
+			
+				$is_default_domains = "";
+			
+			}
+	
+			if ($row->id == $_SESSION['default_owner_ssl']) {
+			
+				$is_default_ssl = "1";
+				
+			} else {
+			
+				$is_default_ssl = "";
+			
+			}
+	
+			$full_export .= "\"Active\",\"" . $row->name . "\",\"" . $total_registrar_accounts . "\",\"" . $total_domains . "\",\"" . $total_ssl_provider_accounts . "\",\"" . $total_certs . "\",\"" . $is_default_domains . "\",\"" . $is_default_ssl . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
+	
+			$current_oid = $row->id;
+	
+		}
+	
+	}
+	
+	$exclude_owner_string = substr($exclude_owner_string_raw, 0, -2); 
+	
+	if ($exclude_owner_string == "") {
+	
+		$sql = "SELECT id, name, notes, insert_time, update_time
+				FROM owners
+				ORDER BY name asc";
+	
+	} else {
+	
+		$sql = "SELECT id, name, notes, insert_time, update_time
+				FROM owners
+				WHERE id NOT IN (" . $exclude_owner_string . ")
+				ORDER BY name asc";
+	
+	}
+	
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+	if (mysql_num_rows($result) > 0) {
+		
+		$has_inactive = "1";
+	
+		while ($row = mysql_fetch_object($result)) {
+	
+			$sql_total_count = "SELECT count(*) AS total_count
+								FROM registrar_accounts
+								WHERE owner_id = '" . $row->id . "'";
+			$result_total_count = mysql_query($sql_total_count,$connection);
+			while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+				$total_registrar_accounts = $row_total_count->total_count; 
+			}
+	
+			$sql_total_count = "SELECT count(*) AS total_count
+								FROM ssl_accounts
+								WHERE owner_id = '" . $row->id . "'";
+			$result_total_count = mysql_query($sql_total_count,$connection);
+			while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+				$total_ssl_provider_accounts = $row_total_count->total_count; 
+			}
+	
+			if ($row->id == $_SESSION['default_owner_domains']) {
+			
+				$is_default_domains = "1";
+				
+			} else {
+			
+				$is_default_domains = "";
+			
+			}
+	
+			if ($row->id == $_SESSION['default_owner_ssl']) {
+			
+				$is_default_ssl = "1";
+				
+			} else {
+			
+				$is_default_ssl = "";
+			
+			}
+	
+			$full_export .= "\"Inactive\",\"" . $row->name . "\",\"" . $total_registrar_accounts . "\",\"0\",\"" . $total_ssl_provider_accounts . "\",\"0\",\"" . $is_default_domains . "\",\"" . $is_default_ssl . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
+	
+		}
+	
+	}
+
+	$full_export .= "\n";
+	$current_timestamp_unix = strtotime($current_timestamp);
+	$export_filename = "account_owner_list_" . $current_timestamp_unix . ".csv";
+	include("../_includes/system/export-to-csv.inc.php");
+	exit;
+}
 ?>
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
@@ -38,270 +205,237 @@ if (mysql_num_rows($result) == 0) $zero_owners = "1";
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<?php
-$sql = "SELECT id, name
-		FROM owners
-		WHERE id IN (SELECT owner_id FROM domains WHERE owner_id != '0' AND active NOT IN ('0','10') GROUP BY owner_id)
-		ORDER BY name asc";
+Below is a list of all the Account Owners that are stored in your <?=$software_title?>.<BR><BR>
+[<a href="<?=$PHP_SELF?>?export=1">EXPORT</a>]<?php
+
 $result = mysql_query($sql,$connection) or die(mysql_error());
-?>
-Below is a list of all the Domain Registrar and SSL Provider Account Owners that are stored in your <?=$software_title?>.
-<?php if ($zero_owners != "1") { ?><BR><BR><BR><font class="subheadline">Domains</font><?php } ?>
-<?php if (mysql_num_rows($result) > 0) { ?>
-<?php $has_active_domain = "1"; ?>
-<table class="main_table">
-<tr class="main_table_row_heading_active">
-	<td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Active Owners (<?=mysql_num_rows($result)?>)</font>
-    </td>
-	<td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Accounts</font>
-    </td>
-	<td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Domains</font>
-    </td>
-</tr>
-<?php while ($row = mysql_fetch_object($result)) { ?>
-<tr class="main_table_row_active">
-    <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/account-owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner_domains'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
-	</td>
-	<td class="main_table_cell_active">
-    <?php
-	$sql_total_count = "SELECT count(*) AS total_count
-						FROM registrar_accounts
-						WHERE owner_id = '$row->id'";
-	$result_total_count = mysql_query($sql_total_count,$connection);
-	while ($row_total_count = mysql_fetch_object($result_total_count)) { $total_accounts = $row_total_count->total_count; }
-	?>
-    	<?php if ($total_accounts >= 1) { ?>
 
-	        <a class="nobold" href="registrar-accounts.php?oid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
+if (mysql_num_rows($result) > 0) {
 
-        <?php } else { ?>
+	$has_active = "1"; ?>
+	<table class="main_table">
+	<tr class="main_table_row_heading_active">
+		<td class="main_table_cell_heading_active">
+			<font class="main_table_heading">Active Owners (<?=mysql_num_rows($result)?>)</font>
+		</td>
+		<td class="main_table_cell_heading_active">
+			<font class="main_table_heading">Registrar<BR>Accounts</font>
+		</td>
+		<td class="main_table_cell_heading_active">
+			<font class="main_table_heading">Domains</font>
+		</td>
+		<td class="main_table_cell_heading_active">
+			<font class="main_table_heading">SSL Provider<BR>Accounts</font>
+		</td>
+		<td class="main_table_cell_heading_active">
+			<font class="main_table_heading">SSL Certs</font>
+		</td>
+	</tr><?php 
+	
+	while ($row = mysql_fetch_object($result)) {
 
-	        <?=number_format($total_accounts)?>
-        
-        <?php } ?>
-    </td>
-	<td class="main_table_cell_active">
-    <?php
-	$sql3 = "SELECT count(*) AS total_count
-			 FROM domains
-			 WHERE active NOT IN ('0', '10')
-			   AND owner_id = '$row->id'";
-	$result3 = mysql_query($sql3,$connection);
-	while ($row3 = mysql_fetch_object($result3)) { $total_domains = $row3->total_count; }
-	?>
+		$new_oid = $row->id;
+	
+		if ($current_oid != $new_oid) {
+			$exclude_owner_string_raw .= "'" . $row->id . "', ";
+		} ?>
 
-    	<?php if ($total_domains >= 1) { ?>
+        <tr class="main_table_row_active">
+            <td class="main_table_cell_active">
+                <a class="invisiblelink" href="edit/account-owner.php?oid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_owner_domains'] == $row->id) echo "<a title=\"Default Domain Owner\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_owner_ssl'] == $row->id) echo "<a title=\"Default SSL Owner\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
+            </td>
+            <td class="main_table_cell_active"><?php
+				$sql_total_count = "SELECT count(*) AS total_count
+									FROM registrar_accounts
+									WHERE owner_id = '" . $row->id . "'";
+				$result_total_count = mysql_query($sql_total_count,$connection);
+				while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+					$total_accounts = $row_total_count->total_count; 
+				}
+				
+				if ($total_accounts >= 1) { ?>
+			
+					<a class="nobold" href="registrar-accounts.php?oid=<?=$row->id?>"><?=number_format($total_accounts)?></a><?php 
+					
+				} else {
+					
+					echo "-";
+	
+				} ?>
+            </td>
+            <td class="main_table_cell_active"><?php
+				$sql_total_count = "SELECT count(*) AS total_count
+									FROM domains
+									WHERE active NOT IN ('0', '10')
+									  AND owner_id = '" . $row->id . "'";
+				$result_total_count = mysql_query($sql_total_count,$connection);
+				while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+					$total_domains = $row_total_count->total_count; 
+				}
+				
+				if ($total_domains >= 1) { ?>
+			
+					<a class="nobold" href="../domains.php?oid=<?=$row->id?>"><?=number_format($total_domains)?></a><?php 
+					
+				} else {
+					
+					echo "-";
+					
+				} ?>
+            </td>
+            <td class="main_table_cell_active"><?php
+				$sql_total_count = "SELECT count(*) AS total_count
+									FROM ssl_accounts
+									WHERE owner_id = '" . $row->id . "'";
+				$result_total_count = mysql_query($sql_total_count,$connection);
+				while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+					$total_accounts = $row_total_count->total_count; 
+				}
+				
+				if ($total_accounts >= 1) { ?>
+			
+					<a class="nobold" href="ssl-accounts.php?oid=<?=$row->id?>"><?=number_format($total_accounts)?></a><?php 
+					
+				} else {
+					
+					echo "-";
+	
+				} ?>
+            </td>
+            <td class="main_table_cell_active"><?php
+				$sql_total_count = "SELECT count(*) AS total_count
+									FROM ssl_certs
+									WHERE active NOT IN ('0')
+									  AND owner_id = '" . $row->id . "'";
+				$result_total_count = mysql_query($sql_total_count,$connection);
+				while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+					$total_certs = $row_total_count->total_count; 
+				}
+				
+				if ($total_certs >= 1) { ?>
+			
+					<a class="nobold" href="../ssl-certs.php?oid=<?=$row->id?>"><?=number_format($total_certs)?></a><?php 
+					
+				} else {
+					
+					echo "-";
+					
+				} ?>
+            </td>
+        </tr><?php 
 
-	    	<a class="nobold" href="../domains.php?oid=<?=$row->id?>"><?=number_format($total_domains)?></a>
+		$current_oid = $row->id;
 
-        <?php } else { ?>
+	}
 
-	        <?=number_format($total_domains)?>
-        
-        <?php } ?>
+}
 
-    </td>
-</tr>
-<?php } ?>
-<?php } ?>
-<?php
-if ($has_active_domain == "1") {
+$exclude_owner_string = substr($exclude_owner_string_raw, 0, -2); 
+
+if ($exclude_owner_string == "") {
 
 	$sql = "SELECT id, name
 			FROM owners
-			WHERE id NOT IN (SELECT owner_id FROM domains WHERE owner_id != '0' AND active NOT IN ('0','10') GROUP BY owner_id)
 			ORDER BY name asc";
 
 } else {
-	
+
 	$sql = "SELECT id, name
 			FROM owners
+			WHERE id NOT IN (" . $exclude_owner_string . ")
 			ORDER BY name asc";
-	
+
 }
+
 $result = mysql_query($sql,$connection) or die(mysql_error());
-?>
-<?php if (mysql_num_rows($result) > 0) { 
-$has_inactive_domains = "1";
-if ($has_active_domain == "1") echo "<BR>";
-if ($has_active_domain != "1" && $has_inactive_domains == "1") echo "<table class=\"main_table\">";
-?>
-<tr class="main_table_row_heading_inactive">
-	<td class="main_table_cell_heading_inactive">
-    	<font class="main_table_heading">Inactive Owners (<?=mysql_num_rows($result)?>)</font>
-    </td>
-	<td class="main_table_cell_heading_inactive">
-    	<font class="main_table_heading">Accounts</font>
-    </td>
-</tr>
-<?php while ($row = mysql_fetch_object($result)) { ?>
-<tr class="main_table_row_inactive">
-    <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/account-owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner_domains'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
-	</td>
-	<td class="main_table_cell_inactive">
-    <?php
-	$sql_total_count = "SELECT count(*) AS total_count
-						FROM registrar_accounts
-						WHERE owner_id = '$row->id'";
-	$result_total_count = mysql_query($sql_total_count,$connection);
-	while ($row_total_count = mysql_fetch_object($result_total_count)) { $total_accounts = $row_total_count->total_count; }
-	?>
-    	<?php if ($total_accounts >= 1) { ?>
 
-	        <a class="nobold" href="registrar-accounts.php?oid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
-
-        <?php } else { ?>
-
-	        <?=number_format($total_accounts)?>
-        
-        <?php } ?>
-    </td>
-</tr>
-<?php } ?>
-<?php } ?>
-<?php
-if ($has_active_domain == "1" || $has_inactive_domains == "1") echo "</table>";
-?>
-
-<?php
-$sql = "SELECT id, name
-		FROM owners
-		WHERE id IN (SELECT owner_id FROM ssl_certs WHERE owner_id != '0' AND active NOT IN ('0') GROUP BY owner_id)
-		ORDER BY name asc";
-$result = mysql_query($sql,$connection) or die(mysql_error());
-?>
-<?php if ($zero_owners != "1") { ?><BR><BR><font class="subheadline">SSL Certificates</font><?php } ?>
-<?php if (mysql_num_rows($result) > 0) { ?>
-<?php $has_active_ssl = "1"; ?>
-<table class="main_table">
-<tr class="main_table_row_heading_active">
-	<td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Active Owners (<?=mysql_num_rows($result)?>)</font>
-    </td>
-	<td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Accounts</font>
-    </td>
-	<td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">SSL Certs</font>
-    </td>
-</tr>
-<?php while ($row = mysql_fetch_object($result)) { ?>
-<tr class="main_table_row_active">
-    <td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/account-owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner_ssl'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
-	</td>
-	<td class="main_table_cell_active">
-    <?php
-	$sql_total_count = "SELECT count(*) AS total_count
-						FROM ssl_accounts
-						WHERE owner_id = '$row->id'";
-	$result_total_count = mysql_query($sql_total_count,$connection);
-	while ($row_total_count = mysql_fetch_object($result_total_count)) { $total_accounts = $row_total_count->total_count; }
-	?>
-    	<?php if ($total_accounts >= 1) { ?>
-
-	        <a class="nobold" href="ssl-accounts.php?oid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
-
-        <?php } else { ?>
-
-	        <?=number_format($total_accounts)?>
-        
-        <?php } ?>
-    </td>
-	<td class="main_table_cell_active">
-    <?php
-	$sql3 = "SELECT count(*) AS total_count
-			 FROM ssl_certs
-			 WHERE active NOT IN ('0')
-			   AND owner_id = '$row->id'";
-	$result3 = mysql_query($sql3,$connection);
-	while ($row3 = mysql_fetch_object($result3)) { $total_certs = $row3->total_count; }
-	?>
-
-    	<?php if ($total_certs >= 1) { ?>
-
-	    	<a class="nobold" href="../ssl-certs.php?oid=<?=$row->id?>"><?=number_format($total_certs)?></a>
-
-        <?php } else { ?>
-
-	        <?=number_format($total_certs)?>
-        
-        <?php } ?>
-
-    </td>
-</tr>
-<?php } ?>
-<?php } ?>
-<?php
-if ($has_active_ssl == "1") {
-
-	$sql = "SELECT id, name
-			FROM owners
-			WHERE id NOT IN (SELECT owner_id FROM ssl_certs WHERE owner_id != '0' AND active NOT IN ('0') GROUP BY owner_id)
-			ORDER BY name asc";
-
-} else {
+if (mysql_num_rows($result) > 0) {
 	
-	$sql = "SELECT id, name
-			FROM owners
-			ORDER BY name asc";
+	$has_inactive = "1";
+	if ($has_active == "1") echo "<BR>";
+	if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\">"; ?>
+
+    <tr class="main_table_row_heading_inactive">
+        <td class="main_table_cell_heading_inactive">
+            <font class="main_table_heading">Inactive Owners (<?=mysql_num_rows($result)?>)</font>
+        </td>
+        <td class="main_table_cell_heading_inactive">
+            <font class="main_table_heading">Registrar<BR>Accounts</font>
+        </td>
+        <td class="main_table_cell_heading_inactive">
+            <font class="main_table_heading">Domains</font>
+        </td>
+        <td class="main_table_cell_heading_inactive">
+            <font class="main_table_heading">SSL Provider<BR>Accounts</font>
+        </td>
+        <td class="main_table_cell_heading_inactive">
+            <font class="main_table_heading">SSL Certs</font>
+        </td>
+    </tr><?php 
 	
+	while ($row = mysql_fetch_object($result)) { ?>
+
+        <tr class="main_table_row_inactive">
+            <td class="main_table_cell_inactive">
+                <a class="invisiblelink" href="edit/account-owner.php?oid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_owner_domains'] == $row->id) echo "<a title=\"Default Domain Owner\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_owner_ssl'] == $row->id) echo "<a title=\"Default SSL Owner\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
+            </td>
+            <td class="main_table_cell_inactive"><?php
+				$sql_total_count = "SELECT count(*) AS total_count
+									FROM registrar_accounts
+									WHERE owner_id = '" . $row->id . "'";
+				$result_total_count = mysql_query($sql_total_count,$connection);
+				while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+					$total_accounts = $row_total_count->total_count; 
+				}
+				
+				if ($total_accounts >= 1) { ?>
+			
+						<a class="nobold" href="registrar-accounts.php?oid=<?=$row->id?>"><?=number_format($total_accounts)?></a><?php 
+				} else {
+					
+					echo "-";
+					
+				} ?>
+            </td>
+            <td class="main_table_cell_inactive">
+            	-
+			</td>
+            <td class="main_table_cell_inactive"><?php
+				$sql_total_count = "SELECT count(*) AS total_count
+									FROM ssl_accounts
+									WHERE owner_id = '" . $row->id . "'";
+				$result_total_count = mysql_query($sql_total_count,$connection);
+				while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+					$total_accounts = $row_total_count->total_count; 
+				}
+				
+				if ($total_accounts >= 1) { ?>
+			
+						<a class="nobold" href="registrar-accounts.php?oid=<?=$row->id?>"><?=number_format($total_accounts)?></a><?php 
+				} else {
+					
+					echo "-";
+					
+				} ?>
+            </td>
+            <td class="main_table_cell_inactive">
+            	-
+			</td>
+        </tr><?php 
+
+	}
+
 }
-$result = mysql_query($sql,$connection) or die(mysql_error());
-?>
-<?php if (mysql_num_rows($result) > 0) { 
-if ($has_active_ssl) echo "<BR>";
-$has_inactive_ssl = "1";
-if ($has_active_ssl != "1" && $has_inactive_ssl == "1") echo "<table class=\"main_table\">";
-?>
-<tr class="main_table_row_heading_inactive">
-	<td class="main_table_cell_heading_inactive">
-    	<font class="main_table_heading">Inactive Owners (<?=mysql_num_rows($result)?>)</font>
-    </td>
-	<td class="main_table_cell_heading_inactive">
-    	<font class="main_table_heading">Accounts</font>
-    </td>
-</tr>
-<?php while ($row = mysql_fetch_object($result)) { ?>
-<tr class="main_table_row_inactive">
-    <td class="main_table_cell_inactive">
-		<a class="invisiblelink" href="edit/account-owner.php?oid=<?=$row->id?>"><?=$row->name?><?php if ($_SESSION['default_owner_ssl'] == $row->id) echo "<a title=\"Default Owner\"><font class=\"default_highlight\">*</font></a>"; ?></a>
-	</td>
-	<td class="main_table_cell_inactive">
-    <?php
-	$sql_total_count = "SELECT count(*) AS total_count 
-						FROM ssl_accounts
-						WHERE owner_id = '$row->id'";
-	$result_total_count = mysql_query($sql_total_count,$connection);
-	while ($row_total_count = mysql_fetch_object($result_total_count)) { $total_accounts = $row_total_count->total_count; }
-	?>
-    	<?php if ($total_accounts >= 1) { ?>
 
-	        <a class="nobold" href="ssl-accounts.php?oid=<?=$row->id?>"><?=number_format($total_accounts)?></a>
+if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
-        <?php } else { ?>
+if ($has_active || $has_inactive) { ?>
+	<BR><font class="default_highlight">*</font> = Default Domain Owner&nbsp;&nbsp;<font class="default_highlight_secondary">*</font> = Default SSL Owner<?php 
+}
 
-	        <?=number_format($total_accounts)?>
-        
-        <?php } ?>
-    </td>
-</tr>
-<?php } ?>
-<?php } ?>
-<?php
-if ($has_active_ssl == "1" || $has_inactive_ssl == "1") echo "</table>";
-?>
-<?php if ($has_active_domain || $has_inactive_domain || $has_active_ssl || $has_inactive_ssl) { ?>
-		<BR><font class="default_highlight">*</font> = Default Owner
-<?php } ?>
-<?php if (!$has_active_domain && !$has_inactive_domain && !$has_active_ssl && !$has_inactive_ssl) { ?>
-        <BR><BR>You don't currently have any Owners. <a href="add/account-owner.php">Click here to add one</a>.
-<?php } ?>
+if (!$has_active && !$has_inactive) { ?>
+	<BR><BR>You don't currently have any Owners. <a href="add/account-owner.php">Click here to add one</a>.<?php 
+} ?>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

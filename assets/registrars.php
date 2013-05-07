@@ -21,9 +21,139 @@ include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
+include("../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Domain Registrars";
 $software_section = "registrars";
+
+$export = $_GET['export'];
+
+$sql = "SELECT r.id AS rid, r.name AS rname, r.url, r.notes, r.insert_time, r.update_time
+		FROM registrars AS r, domains AS d
+		WHERE r.id = d.registrar_id
+		  AND d.domain NOT IN ('0', '10')
+		  AND (SELECT count(*) 
+		  	   FROM domains 
+			   WHERE registrar_id = r.id 
+			     AND active NOT IN ('0','10')) 
+				 > 0
+		GROUP BY r.name
+		ORDER BY r.name asc";
+
+if ($export == "1") {
+	
+	$full_export = "";
+	$full_export .= "\"" . $page_title . "\"\n\n";
+	$full_export .= "\"Status\",\"Registrar\",\"Accounts\",\"Domains\",\"Default Registrar?\",\"URL\",\"Notes\",\"Added\",\"Last Updated\"\n";
+
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+	if (mysql_num_rows($result) > 0) {
+	
+		$has_active = "1";
+
+		while ($row = mysql_fetch_object($result)) {
+	
+			$new_rid = $row->rid;
+		
+			if ($current_rid != $new_rid) {
+				$exclude_registrar_string_raw .= "'" . $row->rid . "', ";
+			}
+	
+			$sql_total_count = "SELECT count(*) AS total_count
+								FROM registrar_accounts
+								WHERE registrar_id = '" . $row->rid . "'";
+			$result_total_count = mysql_query($sql_total_count,$connection);
+	
+			while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+				$total_accounts = $row_total_count->total_count;
+			}
+	
+			$sql_domain_count = "SELECT count(*) AS total_count
+								 FROM domains
+								 WHERE active NOT IN ('0', '10')
+								   AND registrar_id = '" . $row->rid . "'";
+			$result_domain_count = mysql_query($sql_domain_count,$connection);
+		
+			while ($row_domain_count = mysql_fetch_object($result_domain_count)) { 
+				$total_domains = $row_domain_count->total_count;
+			}
+			
+			if ($row->rid == $_SESSION['default_registrar']) {
+			
+				$is_default = "1";
+				
+			} else {
+			
+				$is_default = "";
+			
+			}
+	
+			$full_export .= "\"Active\",\"" . $row->rname . "\",\"" . number_format($total_accounts) . "\",\"" . number_format($total_domains) . "\",\"" . $is_default . "\",\"" . $row->url . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
+	
+			$current_rid = $row->rid;
+	
+		}
+	
+	}
+
+	$exclude_registrar_string = substr($exclude_registrar_string_raw, 0, -2); 
+	
+	if ($exclude_registrar_string == "") {
+	
+		$sql = "SELECT r.id AS rid, r.name AS rname, r.url, r.notes, r.insert_time, r.update_time
+				FROM registrars AS r
+				GROUP BY r.name
+				ORDER BY r.name asc";
+	
+	} else {
+		
+		$sql = "SELECT r.id AS rid, r.name AS rname, r.url, r.notes, r.insert_time, r.update_time
+				FROM registrars AS r
+				WHERE r.id
+				  AND r.id NOT IN (" . $exclude_registrar_string . ")
+				GROUP BY r.name
+				ORDER BY r.name asc";
+	
+	}
+	
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+	if (mysql_num_rows($result) > 0) { 
+
+		$has_inactive = "1";
+
+		while ($row = mysql_fetch_object($result)) {
+	
+			$sql_total_count = "SELECT count(*) AS total_count
+								FROM registrar_accounts
+								WHERE registrar_id = '" . $row->rid . "'";
+			$result_total_count = mysql_query($sql_total_count,$connection);
+	
+			while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+				$total_accounts = $row_total_count->total_count;
+			}
+
+			if ($row->rid == $_SESSION['default_registrar']) {
+			
+				$is_default = "1";
+				
+			} else {
+			
+				$is_default = "";
+			
+			}
+	
+			$full_export .= "\"Inactive\",\"" . $row->rname . "\",\"" . number_format($total_accounts) . "\",\"0\",\"" . $is_default . "\",\"" . $row->url . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
+		}
+	}
+
+	$full_export .= "\n";
+	$current_timestamp_unix = strtotime($current_timestamp);
+	$export_filename = "registrar_list_" . $current_timestamp_unix . ".csv";
+	include("../_includes/system/export-to-csv.inc.php");
+	exit;
+}
 ?>
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
@@ -33,19 +163,14 @@ $software_section = "registrars";
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<?php
-$sql = "SELECT r.id AS rid, r.name AS rname, r.url
-		FROM registrars AS r, domains AS d
-		WHERE r.id = d.registrar_id
-		  AND d.domain NOT IN ('0', '10')
-		  AND (SELECT count(*) FROM domains WHERE registrar_id = r.id AND active NOT IN ('0','10')) > 0
-		GROUP BY r.name
-		ORDER BY r.name asc";
+Below is a list of all the Domain Registrars that are stored in your <?=$software_title?>.<BR><BR>
+[<a href="<?=$PHP_SELF?>?export=1">EXPORT</a>]<?php
+
 $result = mysql_query($sql,$connection) or die(mysql_error());
-?>
-Below is a list of all the Domain Registrars that are stored in your <?=$software_title?>.<BR>
-<?php if (mysql_num_rows($result) > 0) { ?>
-<?php $has_active = "1"; ?>
+
+if (mysql_num_rows($result) > 0) {
+
+	$has_active = "1"; ?>
     <table class="main_table">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
@@ -57,79 +182,69 @@ Below is a list of all the Domain Registrars that are stored in your <?=$softwar
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Domains</font>
         </td>
-    </tr>
-    <?php 
-    
+    </tr><?php 
+
     while ($row = mysql_fetch_object($result)) {
 
 	    $new_rid = $row->rid;
     
         if ($current_rid != $new_rid) {
-			$exclude_registrar_string_raw .= "'$row->rid', ";
+			$exclude_registrar_string_raw .= "'" . $row->rid . "', ";
 		} ?>
     
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
                 <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
-            <td class="main_table_cell_active">
-                <?php
+            <td class="main_table_cell_active"><?php
                 $sql_total_count = "SELECT count(*) AS total_count
 									FROM registrar_accounts
-									WHERE registrar_id = '$row->rid'";
+									WHERE registrar_id = '" . $row->rid . "'";
                 $result_total_count = mysql_query($sql_total_count,$connection);
         
                 while ($row_total_count = mysql_fetch_object($result_total_count)) { 
                     $total_accounts = $row_total_count->total_count;
                 }
                 
-                    if ($total_accounts >= 1) { ?>
-            
-                        <a class="nobold" href="registrar-accounts.php?rid=<?=$row->rid?>"><?=number_format($total_accounts)?></a>
-                        <?php 
-            
-                    } else { ?>
-            
-                        <?=number_format($total_accounts)?>
-                        <?php
-                    } ?>
-        
+				if ($total_accounts >= 1) { ?>
+		
+					<a class="nobold" href="registrar-accounts.php?rid=<?=$row->rid?>"><?=number_format($total_accounts)?></a><?php 
+		
+				} else {
+					
+					echo number_format($total_accounts);
+
+				} ?>
             </td>
-            <td class="main_table_cell_active">
-                <?php
-                $sql3 = "SELECT count(*) AS total_count
-                         FROM domains
-                         WHERE active NOT IN ('0', '10')
-                           AND registrar_id = '$row->rid'";
-                $result3 = mysql_query($sql3,$connection);
+            <td class="main_table_cell_active"><?php
+                $sql_domain_count = "SELECT count(*) AS total_count
+									 FROM domains
+									 WHERE active NOT IN ('0', '10')
+									   AND registrar_id = '" . $row->rid . "'";
+                $result_domain_count = mysql_query($sql_domain_count,$connection);
         
-                while ($row3 = mysql_fetch_object($result3)) { 
-                    $total_domains = $row3->total_count;
+                while ($row_domain_count = mysql_fetch_object($result_domain_count)) { 
+                    $total_domains = $row_domain_count->total_count;
                 }		
         
-                    if ($total_accounts >= 1) { ?>
-            
-                        <a class="nobold" href="../domains.php?rid=<?=$row->rid?>"><?=number_format($total_domains)?></a>
-                        <?php 
-            
-                    } else { ?>
-            
-                        <?=number_format($total_domains)?>
-                        <?php 
-                    
-                    } ?>
-        
+				if ($total_accounts >= 1) { ?>
+		
+					<a class="nobold" href="../domains.php?rid=<?=$row->rid?>"><?=number_format($total_domains)?></a><?php 
+		
+				} else {
+					
+					echo number_format($total_domains);
+					
+				} ?>
             </td>
-        </tr>
-        <?php 
+        </tr><?php 
+
 		$current_rid = $row->rid;
 
-	} ?>
-	<?php
+	}
 
-} ?>
+}
 
-<?php
 $exclude_registrar_string = substr($exclude_registrar_string_raw, 0, -2); 
 
 if ($exclude_registrar_string == "") {
@@ -145,30 +260,31 @@ if ($exclude_registrar_string == "") {
 	$sql = "SELECT r.id AS rid, r.name AS rname, r.url
 			FROM registrars AS r
 			WHERE r.id
-			  AND r.id NOT IN ($exclude_registrar_string)
+			  AND r.id NOT IN (" . $exclude_registrar_string . ")
 			GROUP BY r.name
 			ORDER BY r.name asc";
 
 }
+
 $result = mysql_query($sql,$connection) or die(mysql_error());
-?>
-<?php if (mysql_num_rows($result) > 0) { 
-$has_inactive = "1";
-if ($has_active == "1") echo "<BR>";
-if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\">";
-?>
-    <tr class="main_table_row_heading_inactive">
-        <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive Registrars (<?=mysql_num_rows($result)?>)</font>
-        </td>
-        <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Accounts</font>
-        </td>
-        <td class="main_table_cell_heading_inactive">&nbsp;
-        	
-        </td>
-    </tr>
-    <?php 
+
+if (mysql_num_rows($result) > 0) { 
+
+	$has_inactive = "1";
+	if ($has_active == "1") echo "<BR>";
+	if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\">"; ?>
+
+        <tr class="main_table_row_heading_inactive">
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Inactive Registrars (<?=mysql_num_rows($result)?>)</font>
+            </td>
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Accounts</font>
+            </td>
+            <td class="main_table_cell_heading_inactive">&nbsp;
+                
+            </td>
+        </tr><?php 
     
     while ($row = mysql_fetch_object($result)) { ?>
     
@@ -176,48 +292,44 @@ if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\
             <td class="main_table_cell_inactive">
                 <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
             </td>
-            <td class="main_table_cell_inactive">
-                <?php
+            <td class="main_table_cell_inactive"><?php
                 $sql_total_count = "SELECT count(*) AS total_count
 									FROM registrar_accounts
-									WHERE registrar_id = '$row->rid'";
+									WHERE registrar_id = '" . $row->rid . "'";
                 $result_total_count = mysql_query($sql_total_count,$connection);
         
                 while ($row_total_count = mysql_fetch_object($result_total_count)) { 
                     $total_accounts = $row_total_count->total_count;
                 }
                 
-                    if ($total_accounts >= 1) { ?>
-            
-                        <a class="nobold" href="registrar-accounts.php?rid=<?=$row->rid?>"><?=number_format($total_accounts)?></a>
-                        <?php 
-            
-                    } else { ?>
-            
-                        <?=number_format($total_accounts)?>
-                        <?php
-                    } ?>
-        
+				if ($total_accounts >= 1) { ?>
+		
+					<a class="nobold" href="registrar-accounts.php?rid=<?=$row->rid?>"><?=number_format($total_accounts)?></a><?php 
+		
+				} else {
+					
+					echo number_format($total_accounts);
+
+				} ?>
             </td>
             <td class="main_table_cell_inactive">&nbsp;
 				
             </td>
-        </tr>
-        <?php 
+        </tr><?php 
 
-	} ?>
-	<?php
+	}
 
-} ?>
-<?php
+}
+
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
-?>
-<?php if ($has_active || $has_inactive) { ?>
-		<BR><font class="default_highlight">*</font> = Default Registrar
-<?php } ?>
-<?php if (!$has_active && !$has_inactive) { ?>
-		<BR>You don't currently have any Domain Registrars. <a href="add/registrar.php">Click here to add one</a>.
-<?php } ?>
+
+if ($has_active || $has_inactive) { ?>
+	<BR><font class="default_highlight">*</font> = Default Registrar<?php
+} 
+
+if (!$has_active && !$has_inactive) { ?>
+	<BR>You don't currently have any Domain Registrars. <a href="add/registrar.php">Click here to add one</a>.<?php
+} ?>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>
