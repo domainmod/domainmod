@@ -131,6 +131,21 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>Domain Cost by Category Report</strong>&nbsp;<?php
 
+} elseif ($software_section == "reporting-domain-cost-by-dns-report") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
+	&raquo;&nbsp;<strong>Domain Cost by DNS Profile Report</strong>&nbsp;<?php
+
+} elseif ($software_section == "reporting-domain-cost-by-host-report") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
+	&raquo;&nbsp;<strong>Domain Cost by Web Host Report</strong>&nbsp;<?php
+
+} elseif ($software_section == "reporting-domain-cost-by-ip-address-report") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
+	&raquo;&nbsp;<strong>Domain Cost by IP Address Report</strong>&nbsp;<?php
+
 } elseif ($software_section == "reporting-domain-cost-by-month-report") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
@@ -165,6 +180,16 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Certificate Cost by Category Report</strong>&nbsp;<?php
+
+} elseif ($software_section == "reporting-ssl-cost-by-domain-report") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
+	&raquo;&nbsp;<strong>SSL Certificate Cost by Domain Report</strong>&nbsp;<?php
+
+} elseif ($software_section == "reporting-ssl-cost-by-ip-address-report") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
+	&raquo;&nbsp;<strong>SSL Certificate Cost by IP Address Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-ssl-cost-by-month-report") { ?>
 
