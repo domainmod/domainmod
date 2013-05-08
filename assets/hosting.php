@@ -28,7 +28,7 @@ $software_section = "hosting";
 
 $export = $_GET['export'];
 
-$sql = "SELECT id, name, notes, insert_time, update_time
+$sql = "SELECT id, name, url, notes, insert_time, update_time
 		FROM hosting
 		WHERE id IN (SELECT hosting_id 
 					 FROM domains 
@@ -41,7 +41,7 @@ if ($export == "1") {
 	
 	$full_export = "";
 	$full_export .= "\"" . $page_title . "\"\n\n";
-	$full_export .= "\"Status\",\"Web Host\",\"Domains\",\"Default Web Host?\",\"Notes\",\"Added\",\"Last Updated\"\n";
+	$full_export .= "\"Status\",\"Web Host\",\"Domains\",\"Default Web Host?\",\"URL\",\"Notes\",\"Added\",\"Last Updated\"\n";
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
@@ -76,7 +76,7 @@ if ($export == "1") {
 			
 			}
 	
-			$full_export .= "\"Active\",\"" . $row->name . "\",\"" . number_format($active_domains) . "\",\"" . $is_default . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
+			$full_export .= "\"Active\",\"" . $row->name . "\",\"" . number_format($active_domains) . "\",\"" . $is_default . "\",\"" . $row->url . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
 	
 			$current_whid = $row->id;
 	
@@ -88,13 +88,13 @@ if ($export == "1") {
 	
 	if ($exclude_web_host_string == "") {
 	
-		$sql = "SELECT id, name, notes, insert_time, update_time
+		$sql = "SELECT id, name, url, notes, insert_time, update_time
 				FROM hosting
 				ORDER BY name";
 	
 	} else {
 	
-		$sql = "SELECT id, name, notes, insert_time, update_time
+		$sql = "SELECT id, name, url, notes, insert_time, update_time
 				FROM hosting
 				WHERE id NOT IN (" . $exclude_web_host_string . ")
 				ORDER BY name";
@@ -119,7 +119,7 @@ if ($export == "1") {
 			
 			}
 	
-			$full_export .= "\"Inactive\",\"" . $row->name . "\",\"0\",\"" . $is_default . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
+			$full_export .= "\"Inactive\",\"" . $row->name . "\",\"0\",\"" . $is_default . "\",\"" . $row->url . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
 	
 		}
 	
@@ -159,6 +159,9 @@ if (mysql_num_rows($result) > 0) {
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Domains</font>
         </td>
+        <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">Options</font>
+        </td>
     </tr><?php 
 	
 	while ($row = mysql_fetch_object($result)) {
@@ -193,6 +196,9 @@ if (mysql_num_rows($result) > 0) {
 					
 				} ?>
             </td>
+            <td class="main_table_cell_active">
+				<a class="invisiblelink" target="_blank" href="<?=$row->url?>">www</a>
+            </td>
         </tr><?php 
 
 		$current_whid = $row->id;
@@ -205,13 +211,13 @@ $exclude_web_host_string = substr($exclude_web_host_string_raw, 0, -2);
 
 if ($exclude_web_host_string == "") {
 
-	$sql = "SELECT id, name, notes, insert_time, update_time
+	$sql = "SELECT id, name, url, notes, insert_time, update_time
 			FROM hosting
 			ORDER BY name";
 
 } else {
 
-	$sql = "SELECT id, name, notes, insert_time, update_time
+	$sql = "SELECT id, name, url, notes, insert_time, update_time
 			FROM hosting
 			WHERE id NOT IN (" . $exclude_web_host_string . ")
 			ORDER BY name";
@@ -231,6 +237,9 @@ if (mysql_num_rows($result) > 0) {
 		<td class="main_table_cell_heading_inactive">
 			<font class="main_table_heading">Inactive Hosts (<?=$number_of_hosting_providers?>)</font>
 		</td>
+		<td class="main_table_cell_heading_inactive">
+			<font class="main_table_heading">Options</font>
+		</td>
 	</tr><?php 
 	
 	while ($row = mysql_fetch_object($result)) { ?>
@@ -238,6 +247,9 @@ if (mysql_num_rows($result) > 0) {
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
                 <a class="invisiblelink" href="edit/host.php?whid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_host'] == "1") echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
+            </td>
+            <td class="main_table_cell_inactive">
+				<a class="invisiblelink" target="_blank" href="<?=$row->url?>">www</a>
             </td>
         </tr><?php 
 		

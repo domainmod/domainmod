@@ -31,15 +31,17 @@ $really_del = $_GET['really_del'];
 
 $whid = $_GET['whid'];
 $new_host = $_REQUEST['new_host'];
+$new_url = $_POST['new_url'];
 $new_notes = $_REQUEST['new_notes'];
 $new_whid = $_REQUEST['new_whid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_host != "") {
+	if ($new_host != "" && $new_url != "") {
 
 		$sql = "UPDATE hosting
 				SET name = '" . mysql_real_escape_string($new_host) . "', 
+					url = '" . mysql_real_escape_string($new_url) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
 					update_time = '$current_timestamp'
 				WHERE id = '$new_whid'";
@@ -56,14 +58,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		exit;
 
 	} else {
-	
-		$_SESSION['result_message'] = "Please enter the web host name<BR>";
+
+		if ($new_host == "") $_SESSION['result_message'] .= "Please enter the web host's name<BR>";
+		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the web host's URL<BR>";
 
 	}
 
 } else {
 
-	$sql = "SELECT name, notes
+	$sql = "SELECT name, url, notes
 			FROM hosting
 			WHERE id = '$whid'";
 	$result = mysql_query($sql,$connection);
@@ -71,7 +74,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	while ($row = mysql_fetch_object($result)) { 
 	
 		$new_host = $row->name;
+		$new_url = $row->url;
 		$new_notes = $row->notes;
+
 	}
 
 }
@@ -123,6 +128,9 @@ if ($really_del == "1") {
 <strong>Web Host Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_host" type="text" value="<?php if ($new_host != "") echo $new_host; ?>
 " size="50" maxlength="100">
+<BR><BR>
+<strong>Registrar's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<input name="new_url" type="text" value="<?=$new_url?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>

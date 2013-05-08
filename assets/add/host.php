@@ -28,15 +28,16 @@ $software_section = "hosting-add";
 
 // Form Variables
 $new_host = $_POST['new_host'];
+$new_url = $_POST['new_url'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_host != "") {
+	if ($new_host != "" && $new_url != "") {
 		
 		$sql = "INSERT INTO hosting 
-				(name, notes, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_host) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
+				(name, url, notes, insert_time) VALUES 
+				('" . mysql_real_escape_string($new_host) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Added<BR>";
@@ -46,7 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	} else {
 	
-		$_SESSION['result_message'] .= "Please enter the web host name<BR>";
+		if ($new_host == "") $_SESSION['result_message'] .= "Please enter the web host name<BR>";
+		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the web host's URL<BR>";
 
 	}
 
@@ -63,6 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <form name="add_host_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Web Host Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_host" type="text" value="<?=$new_host?>" size="50" maxlength="100">
+<BR><BR>
+<strong>Web Host's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<input name="new_url" type="text" value="<?=$new_url?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
