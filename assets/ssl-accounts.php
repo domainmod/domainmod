@@ -284,11 +284,11 @@ if (mysql_num_rows($result) > 0) {
         </td>
     </tr><?php 
 
-	while ($row = mysql_fetch_object($result)) { ?>
+	while ($row = mysql_fetch_object($result)) {  ?>
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
             </td>
             <td class="main_table_cell_inactive">
 				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>

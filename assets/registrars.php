@@ -182,6 +182,9 @@ if (mysql_num_rows($result) > 0) {
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Domains</font>
         </td>
+        <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">Options</font>
+        </td>
     </tr><?php 
 
     while ($row = mysql_fetch_object($result)) {
@@ -194,7 +197,7 @@ if (mysql_num_rows($result) > 0) {
     
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_active"><?php
                 $sql_total_count = "SELECT count(*) AS total_count
@@ -236,6 +239,9 @@ if (mysql_num_rows($result) > 0) {
 					echo number_format($total_domains);
 					
 				} ?>
+            </td>
+            <td class="main_table_cell_active">
+				<a class="invisiblelink" href="edit/registrar-fees.php?rid=<?=$row->rid?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?=$row->url?>">view</a>
             </td>
         </tr><?php 
 
@@ -281,13 +287,16 @@ if (mysql_num_rows($result) > 0) {
             <td class="main_table_cell_heading_inactive">
                 <font class="main_table_heading">Accounts</font>
             </td>
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Options</font>
+            </td>
         </tr><?php 
     
     while ($row = mysql_fetch_object($result)) { ?>
     
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>&nbsp;[<a class="invisiblelink" target="_blank" href="<?=$row->url?>">v</a>]
+                <a class="invisiblelink" href="edit/registrar.php?rid=<?=$row->rid?>"><?=$row->rname?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive"><?php
                 $sql_total_count = "SELECT count(*) AS total_count
@@ -308,6 +317,9 @@ if (mysql_num_rows($result) > 0) {
 					echo number_format($total_accounts);
 
 				} ?>
+            </td>
+            <td class="main_table_cell_inactive">
+				<a class="invisiblelink" href="edit/registrar-fees.php?rid=<?=$row->rid?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?=$row->url?>">view</a>
             </td>
         </tr><?php 
 

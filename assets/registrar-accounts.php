@@ -214,7 +214,7 @@ if (mysql_num_rows($result) > 0) {
 
 		<tr class="main_table_row_active">
 			<td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
+                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
 			</td>
 			<td class="main_table_cell_active" valign="top">
 				<a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
@@ -287,7 +287,7 @@ if (mysql_num_rows($result) > 0) {
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
+	                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
             </td>
             <td class="main_table_cell_inactive" valign="top">
 				<a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
