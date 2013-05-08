@@ -61,7 +61,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.id AS ssl_account_id, sslpa.username, SUM(f.renewal_fee * cc.conversion) as total_cost, count(*) AS number_of_certs
+$sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.id AS ssl_account_id, sslpa.username, SUM(f.renewal_fee * cc.conversion) AS total_cost, count(*) AS number_of_certs
 		FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
 		WHERE sslc.fee_id = f.id
 		  AND f.currency_id = c.id
@@ -77,11 +77,14 @@ $sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_rows = mysql_num_rows($result);
 
-$sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) as grand_total, count(*) AS number_of_certs_total
-					FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
+$sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
+					FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
 					WHERE sslc.fee_id = f.id
 					  AND f.currency_id = c.id
 					  AND c.id = cc.currency_id
+					  AND sslc.ssl_provider_id = sslp.id
+					  AND sslc.account_id = sslpa.id
+					  AND sslc.owner_id = o.id
 					  AND sslc.active NOT IN ('0')
 					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 					  " . $range_string . "";

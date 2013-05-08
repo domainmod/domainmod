@@ -77,10 +77,11 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_rows = mysql_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) as grand_total, count(*) AS number_of_domains_total
-					FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
+					FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, owners AS o
 					WHERE d.fee_id = f.id
 					  AND f.currency_id = c.id
 					  AND c.id = cc.currency_id
+					  AND d.owner_id = o.id
 					  AND d.active NOT IN ('0', '10')
 					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 					  " . $range_string . "";
