@@ -2854,6 +2854,22 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
+	// upgrade database from 2.0046 to 2.0047
+	if ($current_db_version == 2.0046) {
+
+		$sql = "ALTER TABLE `hosting`  
+				ADD `url` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL after name";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0047',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0047;
+
+	}
+
 	if ($direct == "1") {
 	
 		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";

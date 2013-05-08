@@ -140,6 +140,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	$sql = "CREATE TABLE IF NOT EXISTS `hosting` ( 
 				`id` int(10) NOT NULL auto_increment,
 				`name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`url` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
