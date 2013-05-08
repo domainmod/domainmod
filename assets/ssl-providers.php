@@ -233,7 +233,7 @@ if (mysql_num_rows($result) > 0) {
 				} ?>
             </td>
             <td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?=$row->id?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?=$row->url?>">view</a>
+				<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?=$row->id?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?=$row->url?>">www</a>
             </td>
         </tr><?php 
 
@@ -306,7 +306,7 @@ if (mysql_num_rows($result) > 0) {
 				} ?>
             </td>
             <td class="main_table_cell_inactive">
-				<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?=$row->id?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?=$row->url?>">view</a>
+				<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?=$row->id?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?=$row->url?>">www</a>
             </td>
         </tr><?php 
 
