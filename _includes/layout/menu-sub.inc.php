@@ -243,7 +243,13 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/registrars.php">Domain Registrars</a>&nbsp;
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/edit/registrar.php?rid=<?=$rid?>">Editing A Registrar</a>&nbsp;
+    <?php
+	$sql_registrar = "SELECT name
+					  FROM registrars
+					  WHERE id = '" . $rid . "'";
+	$result_registrar = mysql_query($sql_registrar,$connection);
+	while ($row_registrar = mysql_fetch_object($result_registrar)) { $temp_registrar_name = $row_registrar->name; } ?>
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/edit/registrar.php?rid=<?=$rid?>"><?=$temp_registrar_name?></a>&nbsp;
 	&raquo;&nbsp;<strong>Registrar Fees</strong>&nbsp;<?php 
 
 } elseif ($software_section == "registrar-fees-missing") { ?>
@@ -348,7 +354,13 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/ssl-providers.php">SSL Providers</a>&nbsp;
-	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/edit/ssl-provider.php?sslpid=<?=$sslpid?>">Editing An SSL Provider</a>&nbsp;
+    <?php
+	$sql_ssl_provider = "SELECT name
+						 FROM ssl_providers
+						 WHERE id = '" . $sslpid . "'";
+	$result_ssl_provider = mysql_query($sql_ssl_provider,$connection);
+	while ($row_ssl_provider = mysql_fetch_object($result_ssl_provider)) { $temp_ssl_provider_name = $row_ssl_provider->name; } ?>
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/edit/ssl-provider.php?sslpid=<?=$sslpid?>"><?=$temp_ssl_provider_name?></a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Provider Fees</strong>&nbsp;<?php 
 
 } elseif ($software_section == "ssl-provider-fees-missing") { ?>
