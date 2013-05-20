@@ -16,5 +16,6 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
+session_name("domain_manager_gc");
 session_start();
 ?>

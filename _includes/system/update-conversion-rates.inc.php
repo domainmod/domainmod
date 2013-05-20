@@ -28,16 +28,18 @@
 $direct = $_GET['direct'];
 
 if ($direct == "1") { 
-	session_start(); 
+
+	include("../start-session.inc.php");
+	include("../config.inc.php");
+	include("../database.inc.php");
+	include("../software.inc.php");
+	include("../auth/auth-check.inc.php");
 	$temp_input_user_id = $_SESSION['user_id'];
 	$temp_input_default_currency = $_SESSION['default_currency'];
+
 }
 
-include($_SESSION['full_server_path'] . "/_includes/config.inc.php");
-include($_SESSION['full_server_path'] . "/_includes/database.inc.php");
-include($_SESSION['full_server_path'] . "/_includes/software.inc.php");
 include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp.inc.php");
-include($_SESSION['full_server_path'] . "/_includes/auth/auth-check.inc.php");
 
 $sql_ucr = "SELECT c.id, c.currency
 			FROM currencies AS c, fees AS f, domains AS d

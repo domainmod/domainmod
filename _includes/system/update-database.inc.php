@@ -17,13 +17,18 @@
 ?>
 <?php
 $direct = $_GET['direct'];
-if ($direct == "1") { session_start(); }
 
-include($_SESSION['full_server_path'] . "/_includes/config.inc.php");
-include($_SESSION['full_server_path'] . "/_includes/database.inc.php");
-include($_SESSION['full_server_path'] . "/_includes/software.inc.php");
+if ($direct == "1") { 
+
+	include("../start-session.inc.php");
+	include("../config.inc.php");
+	include("../database.inc.php");
+	include("../software.inc.php");
+	include("../auth/auth-check.inc.php");
+
+}
+
 include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp.inc.php");
-include($_SESSION['full_server_path'] . "/_includes/auth/auth-check.inc.php");
 
 $sql = "SELECT db_version
 		FROM settings";
