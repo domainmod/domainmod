@@ -66,15 +66,15 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/segments.php">Segments</a>&nbsp;
 	&raquo;&nbsp;<strong>Editing A Segment</strong>&nbsp;<?php 
 
-} elseif ($software_section == "bulk-actions") {
+} elseif ($software_section == "bulk-updater") {
 
 	if ($action == "") { ?>
 
-		&raquo;&nbsp;<strong>Bulk Actions</strong>&nbsp;<?php
+		&raquo;&nbsp;<strong>Bulk Updater</strong>&nbsp;<?php
         
 	} else { ?>
 
-		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-actions.php">Bulk Actions</a>&nbsp;<?php
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-updater.php">Bulk Updater</a>&nbsp;<?php
 
 		if ($action == "AD") { ?>
 			&raquo;&nbsp;<strong>Add Domains</strong>&nbsp;<?php
@@ -112,6 +112,30 @@ if ($software_section == "domains") { ?>
 			&raquo;&nbsp;<strong>Change Registrar Account</strong>&nbsp;<?php
 		} elseif ($action == "CWH") { ?>
 			&raquo;&nbsp;<strong>Change Web Hosting Provider</strong>&nbsp;<?php
+
+
+		} elseif ($action == "UCF") { ?>
+			&raquo;&nbsp;<strong>Update Custom Domain Field</strong>&nbsp;<?php
+		} elseif ($action == "UCF1") { ?>
+        	<?php
+			$sql = "SELECT df.name, cft.name AS type
+					FROM domain_fields AS df, custom_field_types AS cft
+					WHERE df.type_id = cft.id
+					AND df.id = '" . $field_id . "'";
+			$result = mysql_query($sql,$connection)or die(mysql_error());
+			while ($row = mysql_fetch_object($result)) {
+				
+				$temp_field_name = $row->name;
+				$temp_field_type = $row->type;
+				
+			} ?>
+			&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-updater.php?action=UCF">Update Custom Domain Field</a></strong>&nbsp;&raquo;&nbsp;<strong><?=$temp_field_name?> (<?=$temp_field_type?>)</strong>&nbsp;<?php
+		} elseif ($action == "UCF2") { ?>
+			&raquo;&nbsp;<strong>Change Web Hosting Provider</strong>&nbsp;<?php
+		} elseif ($action == "UCF3") { ?>
+			&raquo;&nbsp;<strong>Change Web Hosting Provider</strong>&nbsp;<?php
+
+
 		} elseif ($action == "AN") { ?>
 			&raquo;&nbsp;<strong>Add A Note</strong>&nbsp;<?php
 		}
