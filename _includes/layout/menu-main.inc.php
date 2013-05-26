@@ -18,7 +18,7 @@
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/domains.php">Domains</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/ssl-certs.php">SSL Certificates</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/segments.php">Segments</a> ]&nbsp;
-[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-actions.php">Bulk Actions</a> ]&nbsp;
+[ <a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-updater.php">Bulk Updater</a> ]&nbsp;
 <BR><BR>
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/">Asset Management</a> ]&nbsp;
 [ <a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a> ]&nbsp;
