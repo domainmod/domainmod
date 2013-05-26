@@ -116,7 +116,7 @@ if ($software_section == "domains") { ?>
 
 		} elseif ($action == "UCF") { ?>
 			&raquo;&nbsp;<strong>Update Custom Domain Field</strong>&nbsp;<?php
-		} elseif ($action == "UCF1") { ?>
+		} elseif ($action == "UCF1" || $action == "UCF2" || $action == "UCF3") { ?>
         	<?php
 			$sql = "SELECT df.name, cft.name AS type
 					FROM domain_fields AS df, custom_field_types AS cft
@@ -130,10 +130,6 @@ if ($software_section == "domains") { ?>
 				
 			} ?>
 			&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/bulk-updater.php?action=UCF">Update Custom Domain Field</a></strong>&nbsp;&raquo;&nbsp;<strong><?=$temp_field_name?> (<?=$temp_field_type?>)</strong>&nbsp;<?php
-		} elseif ($action == "UCF2") { ?>
-			&raquo;&nbsp;<strong>Change Web Hosting Provider</strong>&nbsp;<?php
-		} elseif ($action == "UCF3") { ?>
-			&raquo;&nbsp;<strong>Change Web Hosting Provider</strong>&nbsp;<?php
 
 
 		} elseif ($action == "AN") { ?>
