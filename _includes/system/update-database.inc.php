@@ -2672,12 +2672,8 @@ if ($current_db_version < $most_recent_db_version) {
 			}
 
 		}
-		
-		$sql = "SELECT *
-				FROM `update_data`
-				WHERE user_id = '" . $_SESSION['user_id'] . "'";
-		$result = mysql_query($sql,$connection);
-		if (mysql_num_rows($result) != 0) { $_SESSION['are_there_updates'] = "1"; }
+
+		$_SESSION['are_there_updates'] = "1";
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0042',
@@ -2844,11 +2840,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		}
 		
-		$sql = "SELECT *
-				FROM `update_data`
-				WHERE user_id = '" . $_SESSION['user_id'] . "'";
-		$result = mysql_query($sql,$connection);
-		if (mysql_num_rows($result) != 0) { $_SESSION['are_there_updates'] = "1"; }
+		$_SESSION['are_there_updates'] = "1";
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0046',
@@ -2872,6 +2864,143 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0047;
+
+	}
+
+	// upgrade database from 2.0047 to 2.0048
+	if ($current_db_version == 2.0047) {
+
+		$sql = "CREATE TABLE IF NOT EXISTS `custom_field_types` (
+				`id` int(10) NOT NULL auto_increment,
+				`name` varchar(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`insert_time` datetime NOT NULL,
+				`update_time` datetime NOT NULL,
+				PRIMARY KEY  (`id`)
+				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "INSERT INTO custom_field_types
+				(id, name, insert_time) VALUES 
+				(1, 'Check Box', '" . $current_timestamp . "'),
+				(2, 'Text', '" . $current_timestamp . "'),
+				(3, 'Text Area', '" . $current_timestamp . "')";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "CREATE TABLE IF NOT EXISTS `domain_fields` (
+				`id` int(10) NOT NULL auto_increment,
+				`name` varchar(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`field_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`type_id` int(10) NOT NULL,
+				`description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`insert_time` datetime NOT NULL,
+				`update_time` datetime NOT NULL,
+				PRIMARY KEY  (`id`)
+				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "CREATE TABLE IF NOT EXISTS `domain_field_data` (
+				`id` int(10) NOT NULL auto_increment,
+				`domain_id` int(10) NOT NULL,
+				`insert_time` datetime NOT NULL,
+				`update_time` datetime NOT NULL,
+				PRIMARY KEY  (`id`)
+				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "SELECT id
+				FROM domains";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		while ($row = mysql_fetch_object($result)) {
+			
+			$full_id_string .= "('" . $row->id . "', '" . $current_timestamp . "'), ";
+			
+		}
+
+		$full_id_string_formatted = substr($full_id_string, 0, -2);
+		
+		$sql = "INSERT INTO domain_field_data
+				(domain_id, insert_time) VALUES 
+				" . $full_id_string_formatted . "";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$full_id_string = "";
+		$full_id_string_formatted = "";
+
+		$sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_fields` (
+				`id` int(10) NOT NULL auto_increment,
+				`name` varchar(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`field_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`type_id` int(10) NOT NULL,
+				`description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`insert_time` datetime NOT NULL,
+				`update_time` datetime NOT NULL,
+				PRIMARY KEY  (`id`)
+				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_field_data` (
+				`id` int(10) NOT NULL auto_increment,
+				`ssl_id` int(10) NOT NULL,
+				`insert_time` datetime NOT NULL,
+				`update_time` datetime NOT NULL,
+				PRIMARY KEY  (`id`)
+				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "SELECT id
+				FROM ssl_certs";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		while ($row = mysql_fetch_object($result)) {
+			
+			$full_id_string .= "('" . $row->id . "', '" . $current_timestamp . "'), ";
+			
+		}
+
+		$full_id_string_formatted = substr($full_id_string, 0, -2);
+		
+		$sql = "INSERT INTO ssl_cert_field_data
+				(ssl_id, insert_time) VALUES 
+				" . $full_id_string_formatted . "";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "INSERT INTO updates
+				(name, `update`, insert_time, update_time) VALUES 
+				('You can now create Custom Domain & SSL Fields!', 'In an effort to allow the user more flexibility, as well as track as much data as possible, I\'ve implemented Custom Domain & SSL Fields. Now if there\'s information you want to track for a domain or SSL certificate but the field isn\'t already in Domain Manager, you can just add it yourself!<BR><BR>For example, if you wanted to keep track of which domains are currenty setup in Google Analytics, you could create a new Google Analytics check box field and start tracking this information for each of your domains. Or if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. The data tracking possibilities are endless!<BR><BR>And when you export your Domain & SSL data, the information contained in your custom fields will be included in the exported data.', '2013-05-25 17:00:00', '2013-05-25 17:00:00')";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "SELECT id
+				FROM `updates`
+				WHERE name = 'You can now create Custom Domain & SSL Fields!'
+				  AND insert_time = '2013-05-25 17:00:00'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $temp_update_id = $row->id; }
+		
+		$sql = "SELECT id
+				FROM users";
+		$result = mysql_query($sql,$connection);
+
+		while ($row = mysql_fetch_object($result)) {
+
+			$sql_insert = "INSERT INTO 
+						   update_data
+						   (user_id, update_id, insert_time) VALUES 
+						   ('" . $row->id . "', '" . $temp_update_id . "', '" . $current_timestamp . "')";
+			$result_insert = mysql_query($sql_insert,$connection);
+
+		}
+
+		$_SESSION['are_there_updates'] = "1";
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0048',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$current_db_version = 2.0048;
 
 	}
 

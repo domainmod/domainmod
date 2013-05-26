@@ -418,6 +418,44 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
+	$sql = "CREATE TABLE IF NOT EXISTS `custom_field_types` (
+			`id` int(10) NOT NULL auto_increment,
+			`name` varchar(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`insert_time` datetime NOT NULL,
+			`update_time` datetime NOT NULL,
+			PRIMARY KEY  (`id`)
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+	$sql = "INSERT INTO custom_field_types
+			(id, name, insert_time) VALUES 
+			(1, 'Check Box', '" . $current_timestamp . "'),
+			(2, 'Text', '" . $current_timestamp . "'),
+			(3, 'Text Area', '" . $current_timestamp . "')";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$sql = "CREATE TABLE IF NOT EXISTS `domain_fields` (
+			`id` int(10) NOT NULL auto_increment,
+			`name` varchar(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`field_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`type_id` int(10) NOT NULL,
+			`description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`insert_time` datetime NOT NULL,
+			`update_time` datetime NOT NULL,
+			PRIMARY KEY  (`id`)
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$sql = "CREATE TABLE IF NOT EXISTS `domain_field_data` (
+			`id` int(10) NOT NULL auto_increment,
+			`domain_id` int(10) NOT NULL,
+			`insert_time` datetime NOT NULL,
+			`update_time` datetime NOT NULL,
+			PRIMARY KEY  (`id`)
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+	
 	$sql = "CREATE TABLE IF NOT EXISTS `ssl_certs` ( 
 				`id` int(10) NOT NULL auto_increment,
 				`owner_id` int(10) NOT NULL,
@@ -455,6 +493,28 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 			(2, 'S/MIME and Authentication Certificate', '$current_timestamp'),
 			(3, 'Object Code Signing Certificate', '$current_timestamp'),
 			(4, 'Digital ID', '$current_timestamp');";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_fields` (
+			`id` int(10) NOT NULL auto_increment,
+			`name` varchar(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`field_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`type_id` int(10) NOT NULL,
+			`description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`insert_time` datetime NOT NULL,
+			`update_time` datetime NOT NULL,
+			PRIMARY KEY  (`id`)
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_field_data` (
+			`id` int(10) NOT NULL auto_increment,
+			`ssl_id` int(10) NOT NULL,
+			`insert_time` datetime NOT NULL,
+			`update_time` datetime NOT NULL,
+			PRIMARY KEY  (`id`)
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS `dns` ( 
@@ -666,7 +726,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 			('Currencies have been updated to be user-based instead of system-based', 'Now that Currencies have been re-worked to be user-based, every user in the system can set their own default currency, and this currency will be used for them throughout the system. Every setting, webpage, and report in the Domain Manager system will automatically be converted to display monetary values using the user\'s default currency.', '2013-04-29 00:00:00', '2013-04-29 00:00:00'),
 			('Overhaul of Domain Manager Settings Complete!', 'Over the past few months the Domain Manager settings have been undergoing a complete overhaul. The changes include but are not limited to making currency conversions user-based instead of system- based, updating all Domain & SSL default settings to be user-based instead of system-based, separating out Category, IP Addres and Owner settings so that Domains & SSLs have thier own options instead of sharing them, adding support for saving passwords for Registrar & SSL Provider accounts, removing the redundant Status and Status Notes fields from the Domains section, and so on.<BR><BR>I\'m constantly trying to improve the software and make it more user-friendly, so if you have any suggestions or feedback feel free to drop me a line at <a class=\"invisiblelink\" href=\"mailto:greg@chetcuti.com\">greg@chetcuti.com</a>.', '2013-05-02 00:00:00', '2013-05-02 00:00:00'),
 			('Domain Manager now contains a Software Updates section!', 'After upgrading Domain Manager I\'m sure it would be nice to know what new features have been added, as well as any important changes to the software that you should know about, so I\'ve added a Software Updates section that chronicles the most important and most useful new features. Now after an upgrade you can simply visit the Software Updates section and view a list of the updates since your previous version.', '2013-05-04 00:00:00', '2013-05-04 00:00:00'),
-			('An Export option has been added to all Asset pages', '', '2013-05-06 00:00:00', '2013-05-06 00:00:00')";
+			('An Export option has been added to all Asset pages', '', '2013-05-06 00:00:00', '2013-05-06 00:00:00'),
+			('You can now create Custom Domain & SSL Fields!', 'In an effort to allow the user more flexibility, as well as track as much data as possible, I\'ve implemented Custom Domain & SSL Fields. Now if there\'s information you want to track for a domain or SSL certificate but the field isn\'t already in Domain Manager, you can just add it yourself!<BR><BR>For example, if you wanted to keep track of which domains are currenty setup in Google Analytics, you could create a new Google Analytics check box field and start tracking this information for each of your domains. Or if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. The data tracking possibilities are endless!<BR><BR>And when you export your Domain & SSL data, the information contained in your custom fields will be included in the exported data.', '2013-05-25 17:00:00', '2013-05-25 17:00:00')";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS update_data (
