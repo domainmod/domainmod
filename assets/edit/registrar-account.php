@@ -43,32 +43,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" && $new_registrar_id != "0") {
 
 		$sql = "UPDATE registrar_accounts
-				SET owner_id = '$new_owner_id',
-					registrar_id = '$new_registrar_id',
+				SET owner_id = '" . $new_owner_id . "',
+					registrar_id = '" . $new_registrar_id . "',
 					username = '" . mysql_real_escape_string($new_username) . "',
 					password = '" . mysql_real_escape_string($new_password) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
-					reseller = '$new_reseller',
-					update_time = '$current_timestamp'
-				WHERE id = '$new_raid'";
+					reseller = '" . $new_reseller . "',
+					update_time = '" . $current_timestamp . "'
+				WHERE id = '" . $new_raid . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "UPDATE domains
-				SET owner_id = '$new_owner_id'
-				WHERE account_id = '$new_raid'";
+				SET owner_id = '" . $new_owner_id . "'
+				WHERE account_id = '" . $new_raid . "'";
 		$result = mysql_query($sql,$connection);
 		
 		$raid = $new_raid; 
 
 		$sql = "SELECT name
 				FROM registrars
-				WHERE id = '$new_registrar_id'";
+				WHERE id = '" . $new_registrar_id . "'";
 		$result = mysql_query($sql,$connection);
 		while ($row = mysql_fetch_object($result)) { $temp_registrar = $row->name; }
 
 		$sql = "SELECT name
 				FROM owners
-				WHERE id = '$new_owner_id'";
+				WHERE id = '" . $new_owner_id . "'";
 		$result = mysql_query($sql,$connection);
 		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
 		
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$sql = "SELECT owner_id, registrar_id, username, password, notes, reseller
 			FROM registrar_accounts
-			WHERE id = '$raid'"; 
+			WHERE id = '" . $raid . "'"; 
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
@@ -106,7 +106,7 @@ if ($del == "1") {
 
 	$sql = "SELECT account_id
 			FROM domains
-			WHERE account_id = '$raid'";
+			WHERE account_id = '" . $raid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) {
@@ -131,7 +131,7 @@ if ($really_del == "1") {
 			FROM registrar_accounts as ra, owners as o, registrars as r
 			WHERE ra.owner_id = o.id
 			  AND ra.registrar_id = r.id
-			  AND ra.id = '$raid'";
+			  AND ra.id = '" . $raid . "'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	while ($row = mysql_fetch_object($result)) { 

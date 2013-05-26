@@ -43,27 +43,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_username != "" && $new_owner_id != "" && $new_ssl_provider_id != "" && $new_owner_id != "0" && $new_ssl_provider_id != "0") {
 
 		$sql = "UPDATE ssl_accounts
-				SET owner_id = '$new_owner_id',
-					ssl_provider_id = '$new_ssl_provider_id',
+				SET owner_id = '" . $new_owner_id . "',
+					ssl_provider_id = '" . $new_ssl_provider_id . "',
 					username = '" . mysql_real_escape_string($new_username) . "',
 					password = '" . mysql_real_escape_string($new_password) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
-					reseller = '$new_reseller',
-					update_time = '$current_timestamp'
-				WHERE id = '$new_sslpaid'";
+					reseller = '" . $new_reseller . "',
+					update_time = '" . $current_timestamp . "'
+				WHERE id = '" . $new_sslpaid . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sslpaid = $new_sslpaid; 
 
 		$sql = "SELECT name
 				FROM ssl_providers
-				WHERE id = '$new_ssl_provider_id'";
+				WHERE id = '" . $new_ssl_provider_id . "'";
 		$result = mysql_query($sql,$connection);
 		while ($row = mysql_fetch_object($result)) { $temp_ssl_provider = $row->name; }
 
 		$sql = "SELECT name
 				FROM owners
-				WHERE id = '$new_owner_id'";
+				WHERE id = '" . $new_owner_id . "'";
 		$result = mysql_query($sql,$connection);
 		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
 
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$sql = "SELECT owner_id, ssl_provider_id, username, password, notes, reseller
 			FROM ssl_accounts
-			WHERE id = '$sslpaid'";
+			WHERE id = '" . $sslpaid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
@@ -101,7 +101,7 @@ if ($del == "1") {
 
 	$sql = "SELECT account_id
 			FROM ssl_certs
-			WHERE account_id = '$sslpaid'";
+			WHERE account_id = '" . $sslpaid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) {
@@ -126,7 +126,7 @@ if ($really_del == "1") {
 			FROM ssl_accounts as a, owners as o, ssl_providers as p
 			WHERE a.owner_id = o.id
 			  AND a.ssl_provider_id = p.id
-			  AND a.id = '$sslpaid'";
+			  AND a.id = '" . $sslpaid . "'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	while ($row = mysql_fetch_object($result)) { 
@@ -136,7 +136,7 @@ if ($really_del == "1") {
 	}
 
 	$sql = "DELETE FROM ssl_accounts 
-			WHERE id = '$sslpaid'";
+			WHERE id = '" . $sslpaid . "'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$_SESSION['result_message'] = "SSL Account <font class=\"highlight\">$temp_username ($temp_ssl_provider_name, $temp_owner_name)</font> Deleted<BR>";

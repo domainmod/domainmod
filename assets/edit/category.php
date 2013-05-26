@@ -46,8 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				SET name = '" . mysql_real_escape_string($new_category) . "', 
 					stakeholder = '" . mysql_real_escape_string($new_stakeholder) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
-					update_time = '$current_timestamp'
-				WHERE id = '$new_pcid'";
+					update_time = '" . $current_timestamp . "'
+				WHERE id = '" . $new_pcid . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$new_category = $new_category;
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$sql = "SELECT name, stakeholder, notes
 			FROM categories
-			WHERE id = '$pcid'";
+			WHERE id = '" . $pcid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
@@ -86,7 +86,7 @@ if ($del == "1") {
 
 	$sql = "SELECT cat_id
 			FROM domains
-			WHERE cat_id = '$pcid'";
+			WHERE cat_id = '" . $pcid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) {
@@ -108,7 +108,7 @@ if ($del == "1") {
 if ($really_del == "1") {
 
 	$sql = "DELETE FROM categories 
-			WHERE id = '$pcid'";
+			WHERE id = '" . $pcid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	$_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Deleted<BR>";

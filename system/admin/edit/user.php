@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 	// Check to see if another user already has the username
 	$sql = "SELECT username
 			FROM users
-			WHERE username = '" . $new_username . "'
+			WHERE username = '" . mysql_real_escape_string($new_username) . "'
 			AND id != '" . $new_uid . "'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	$is_username_taken = mysql_num_rows($result);
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 		$sql = "SELECT username
 				FROM users
-				WHERE username = '" . $new_username . "'
+				WHERE username = '" . mysql_real_escape_string($new_username) . "'
 				AND id = '" . $new_uid . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		$is_it_my_username = mysql_num_rows($result);
@@ -101,10 +101,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != "" && $new_email_address != "" && $invalid_username != 1) {
 
 	$sql = "UPDATE users
-			SET first_name = '" . $new_first_name . "',
-				last_name = '" . $new_last_name . "',
-				username = '" . $new_username . "',
-				email_address = '" . $new_email_address . "',
+			SET first_name = '" . mysql_real_escape_string($new_first_name). "',
+				last_name = '" . mysql_real_escape_string($new_last_name). "',
+				username = '" . mysql_real_escape_string($new_username) . "',
+				email_address = '" . mysql_real_escape_string($new_email_address) . "',
 				admin = '" . $new_is_admin . "',
 				active = '" . $new_is_active . "',
 				update_time = '" . $current_timestamp . "'

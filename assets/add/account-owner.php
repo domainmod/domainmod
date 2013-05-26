@@ -36,10 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO owners 
 				(name, notes, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_owner) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
+				('" . mysql_real_escape_string($new_owner) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Added<BR>";
+		$_SESSION['result_message'] = "Owner <font class=\"highlight\">" . $new_owner . "</font> Added<BR>";
 		
 		header("Location: ../account-owners.php");
 		exit;

@@ -40,22 +40,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT into ssl_accounts
 				(owner_id, ssl_provider_id, username, password, notes, reseller, insert_time) VALUES 
-				('$new_owner_id', '$new_ssl_provider_id', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_password) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_reseller', '$current_timestamp')";
+				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_password) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_reseller . "', '" . $current_timestamp . "')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "SELECT name
 				FROM ssl_providers
-				WHERE id = '$new_ssl_provider_id'";
+				WHERE id = '" . $new_ssl_provider_id . "'";
 		$result = mysql_query($sql,$connection);
 		while ($row = mysql_fetch_object($result)) { $temp_ssl_provider = $row->name; }
 
 		$sql = "SELECT name
 				FROM owners
-				WHERE id = '$new_owner_id'";
+				WHERE id = '" . $new_owner_id . "'";
 		$result = mysql_query($sql,$connection);
 		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
 		
-		$_SESSION['result_message'] = "SSL Account <font class=\"highlight\">$new_username ($temp_ssl_provider, $temp_owner)</font> Added<BR>";
+		$_SESSION['result_message'] = "SSL Account <font class=\"highlight\">$new_username (" . $temp_ssl_provider . ", " . $temp_owner . ")</font> Added<BR>";
 
 		if ($_SESSION['need_ssl_account'] == "1") {
 			
@@ -97,11 +97,11 @@ while ($row_owner = mysql_fetch_object($result_owner)) {
 
 	if ($row_owner->id == $_SESSION['default_owner_ssl']) {
 
-		echo "<option value=\"$row_owner->id\" selected>$row_owner->name</option>";
+		echo "<option value=\"" . $row_owner->id . "\" selected>" . $row_owner->name . "</option>";
 	
 	} else {
 
-		echo "<option value=\"$row_owner->id\">$row_owner->name</option>";
+		echo "<option value=\"" . $row_owner->id . "\">" . $row_owner->name . "</option>";
 	
 	}
 }
@@ -119,11 +119,11 @@ while ($row_ssl_provider = mysql_fetch_object($result_ssl_provider)) {
 
 	if ($row_ssl_provider->id == $_SESSION['default_ssl_provider']) {
 
-		echo "<option value=\"$row_ssl_provider->id\" selected>$row_ssl_provider->name</option>";
+		echo "<option value=\"" . $row_ssl_provider->id . "\" selected>" . $row_ssl_provider->name . "</option>";
 	
 	} else {
 
-		echo "<option value=\"$row_ssl_provider->id\">$row_ssl_provider->name</option>";
+		echo "<option value=\"" . $row_ssl_provider->id . "\">" . $row_ssl_provider->name . "</option>";
 	
 	}
 }

@@ -58,13 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 		$sql = "INSERT INTO users 
 				(first_name, last_name, username, email_address, password, new_password, admin, active, insert_time) VALUES 
-				('" . $new_first_name . "', '" . $new_last_name . "', '" . $new_username . "', '" . $new_email_address . "', password('" . $new_password . "'), '1', '" . $new_admin . "', '" . $new_active . "', '" . $current_timestamp . "')";
+				('" . mysql_real_escape_string($new_first_name) . "', '" . mysql_real_escape_string($new_last_name) . "', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_email_address) . "', password('" . $new_password . "'), '1', '" . $new_admin . "', '" . $new_active . "', '" . $current_timestamp . "')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "SELECT id
 				FROM users
-				WHERE first_name = '" . $new_first_name . "'
-				  AND last_name = '" . $new_last_name . "'
+				WHERE first_name = '" . mysql_real_escape_string($new_first_name) . "'
+				  AND last_name = '" . mysql_real_escape_string($new_last_name) . "'
 				  AND insert_time = '" . $current_timestamp . "'";
 		$result = mysql_query($sql,$connection);
 		

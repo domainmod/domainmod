@@ -69,11 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO dns 
 				(name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, number_of_servers, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_dns1) . "', '" . mysql_real_escape_string($new_dns2) . "', '" . mysql_real_escape_string($new_dns3) . "', '" . mysql_real_escape_string($new_dns4) . "', '" . mysql_real_escape_string($new_dns5) . "', '" . mysql_real_escape_string($new_dns6) . "', '" . mysql_real_escape_string($new_dns7) . "', '" . mysql_real_escape_string($new_dns8) . "', '" . mysql_real_escape_string($new_dns9) . "', '" . mysql_real_escape_string($new_dns10) . "', '" . mysql_real_escape_string($new_ip1) . "', '" . mysql_real_escape_string($new_ip2) . "', '" . mysql_real_escape_string($new_ip3) . "', '" . mysql_real_escape_string($new_ip4) . "', '" . mysql_real_escape_string($new_ip5) . "', '" . mysql_real_escape_string($new_ip6) . "', '" . mysql_real_escape_string($new_ip7) . "', '" . mysql_real_escape_string($new_ip8) . "', '" . mysql_real_escape_string($new_ip9) . "', '" . mysql_real_escape_string($new_ip10) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_number_of_servers', '$current_timestamp')";
+				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_dns1) . "', '" . mysql_real_escape_string($new_dns2) . "', '" . mysql_real_escape_string($new_dns3) . "', '" . mysql_real_escape_string($new_dns4) . "', '" . mysql_real_escape_string($new_dns5) . "', '" . mysql_real_escape_string($new_dns6) . "', '" . mysql_real_escape_string($new_dns7) . "', '" . mysql_real_escape_string($new_dns8) . "', '" . mysql_real_escape_string($new_dns9) . "', '" . mysql_real_escape_string($new_dns10) . "', '" . mysql_real_escape_string($new_ip1) . "', '" . mysql_real_escape_string($new_ip2) . "', '" . mysql_real_escape_string($new_ip3) . "', '" . mysql_real_escape_string($new_ip4) . "', '" . mysql_real_escape_string($new_ip5) . "', '" . mysql_real_escape_string($new_ip6) . "', '" . mysql_real_escape_string($new_ip7) . "', '" . mysql_real_escape_string($new_ip8) . "', '" . mysql_real_escape_string($new_ip9) . "', '" . mysql_real_escape_string($new_ip10) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_number_of_servers . "', '" . $current_timestamp . "')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Added<BR>";
+		$_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">" . $new_name . "</font> Added<BR>";
 
 		header("Location: ../dns.php");
 		exit;

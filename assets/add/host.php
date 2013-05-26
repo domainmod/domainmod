@@ -37,10 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$sql = "INSERT INTO hosting 
 				(name, url, notes, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_host) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
+				('" . mysql_real_escape_string($new_host) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Added<BR>";
+		$_SESSION['result_message'] = "Web Host <font class=\"highlight\">" . $new_host . "</font> Added<BR>";
 		
 		header("Location: ../hosting.php");
 		exit;

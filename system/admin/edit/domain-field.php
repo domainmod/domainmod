@@ -60,9 +60,9 @@ if (mysql_num_rows($result) == 0) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 
 	$sql = "UPDATE domain_fields
-			SET name = '" . $new_name . "',
-				description = '" . $new_description . "',
-				notes = '" . $new_notes . "',
+			SET name = '" . mysql_real_escape_string($new_name) . "',
+				description = '" . mysql_real_escape_string($new_description) . "',
+				notes = '" . mysql_real_escape_string($new_notes) . "',
 				update_time = '" . $current_timestamp . "'
 			WHERE id = '" . $new_cdfid . "'";
 	$result = mysql_query($sql,$connection) or die(mysql_error());

@@ -43,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				SET name = '" . mysql_real_escape_string($new_host) . "', 
 					url = '" . mysql_real_escape_string($new_url) . "',
 					notes = '" . mysql_real_escape_string($new_notes) . "',
-					update_time = '$current_timestamp'
-				WHERE id = '$new_whid'";
+					update_time = '" . $current_timestamp . "'
+				WHERE id = '" . $new_whid . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$new_host = $new_host;
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$sql = "SELECT name, url, notes
 			FROM hosting
-			WHERE id = '$whid'";
+			WHERE id = '" . $whid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
@@ -84,7 +84,7 @@ if ($del == "1") {
 
 	$sql = "SELECT hosting_id
 			FROM domains
-			WHERE hosting_id = '$whid'";
+			WHERE hosting_id = '" . $whid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) {
@@ -106,7 +106,7 @@ if ($del == "1") {
 if ($really_del == "1") {
 
 	$sql = "DELETE FROM hosting 
-			WHERE id = '$whid'";
+			WHERE id = '" . $whid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	$_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Deleted<BR>";

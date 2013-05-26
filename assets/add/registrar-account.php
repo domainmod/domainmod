@@ -40,22 +40,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO registrar_accounts 
 				(owner_id, registrar_id, username, password, notes, reseller, insert_time) VALUES 
-				('$new_owner_id', '$new_registrar_id', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_password) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_reseller', '$current_timestamp')";
+				('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_password) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_reseller . "', '" . $current_timestamp . "')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "SELECT name
 				FROM registrars
-				WHERE id = '$new_registrar_id'";
+				WHERE id = '" . $new_registrar_id . "'";
 		$result = mysql_query($sql,$connection);
 		while ($row = mysql_fetch_object($result)) { $temp_registrar = $row->name; }
 
 		$sql = "SELECT name
 				FROM owners
-				WHERE id = '$new_owner_id'";
+				WHERE id = '" . $new_owner_id . "'";
 		$result = mysql_query($sql,$connection);
 		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
 
-		$_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar, $temp_owner)</font> Added<BR>";
+		$_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">" . $new_username . " (" . $temp_registrar . ", " . $temp_owner . ")</font> Added<BR>";
 
 		if ($_SESSION['need_registrar_account'] == "1") {
 			
@@ -97,11 +97,11 @@ while ($row_owner = mysql_fetch_object($result_owner)) {
 
 	if ($row_owner->id == $_SESSION['default_owner_domains']) {
 
-		echo "<option value=\"$row_owner->id\" selected>$row_owner->name</option>";
+		echo "<option value=\"" . $row_owner->id . "\" selected>" . $row_owner->name . "</option>";
 	
 	} else {
 
-		echo "<option value=\"$row_owner->id\">$row_owner->name</option>";
+		echo "<option value=\"" . $row_owner->id . "\">" . $row_owner->name . "</option>";
 	
 	}
 }
@@ -119,11 +119,11 @@ while ($row_registrar = mysql_fetch_object($result_registrar)) {
 
 	if ($row_registrar->id == $_SESSION['default_registrar']) {
 
-		echo "<option value=\"$row_registrar->id\" selected>$row_registrar->name</option>";
+		echo "<option value=\"" . $row_registrar->id . "\" selected>" . $row_registrar->name . "</option>";
 	
 	} else {
 
-		echo "<option value=\"$row_registrar->id\">$row_registrar->name</option>";
+		echo "<option value=\"" . $row_registrar->id . "\">" . $row_registrar->name . "</option>";
 	
 	}
 }

@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 
 		$sql = "INSERT INTO ssl_cert_fields 
 				(name, field_name, description, type_id, notes, insert_time) VALUES 
-				('" . $new_name . "', '" . $new_field_name . "', '" . $new_description . "', '" . $new_field_type_id . "', '" . $new_notes . "', '" . $current_timestamp . "')";
+				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_field_name) . "', '" . mysql_real_escape_string($new_description) . "', '" . $new_field_type_id . "', '" . mysql_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		if ($new_field_type_id == '1') { // Check Box

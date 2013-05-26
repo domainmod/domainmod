@@ -65,7 +65,7 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
 				$sql_missing_types = "SELECT sslcf.type
 									  FROM ssl_certs AS sslc, ssl_cert_types AS sslcf
 									  WHERE sslc.type_id = sslcf.id
-									    AND sslc.ssl_provider_id = '$row->ssl_provider_id'
+									    AND sslc.ssl_provider_id = '" . $row->ssl_provider_id . "'
 										AND sslc.fee_id = '0'
 									  GROUP BY sslcf.type
 									  ORDER BY sslcf.type asc";

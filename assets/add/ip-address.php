@@ -38,11 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO ip_addresses
 				(name, ip, rdns, notes, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_ip) . "', '" . mysql_real_escape_string($new_rdns) . "', '" . mysql_real_escape_string($new_notes) . "', '$current_timestamp')";
+				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_ip) . "', '" . mysql_real_escape_string($new_rdns) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
 
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
-		$_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Added<BR>";
+		$_SESSION['result_message'] = "IP Address <font class=\"highlight\">" . $new_name . " (" . $new_ip . ")</font> Added<BR>";
 
 		header("Location: ../ip-addresses.php");
 		exit;

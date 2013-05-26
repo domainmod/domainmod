@@ -97,9 +97,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   ip9 = '" . mysql_real_escape_string($new_ip9) . "',
 						   ip10 = '" . mysql_real_escape_string($new_ip10) . "',
 						   notes = '" . mysql_real_escape_string($new_notes) . "',
-						   number_of_servers = '$new_number_of_servers',
-						   update_time = '$current_timestamp'
-					   WHERE id = '$new_dnsid'";
+						   number_of_servers = '" . $new_number_of_servers . "',
+						   update_time = '" . $current_timestamp . "'
+					   WHERE id = '" . $new_dnsid . "'";
 		$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 
 		$new_name = $new_name;
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$sql = "SELECT name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes
 			FROM dns
-			WHERE id = '$dnsid'";
+			WHERE id = '" . $dnsid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
@@ -161,7 +161,7 @@ if ($del == "1") {
 
 	$sql = "SELECT dns_id
 			FROM domains
-			WHERE dns_id = '$dnsid'";
+			WHERE dns_id = '" . $dnsid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) {
@@ -183,7 +183,7 @@ if ($del == "1") {
 if ($really_del == "1") {
 
 	$sql = "DELETE FROM dns 
-			WHERE id = '$dnsid'";
+			WHERE id = '" . $dnsid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	$_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Deleted<BR>";

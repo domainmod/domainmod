@@ -56,27 +56,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "SELECT *
 				FROM fees
-				WHERE registrar_id = '$new_rid'
-				  AND tld = '$new_tld'";
+				WHERE registrar_id = '" . $new_rid . "'
+				  AND tld = '" . $new_tld . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		if (mysql_num_rows($result) > 0) {
 			
 			$sql = "UPDATE fees
-					SET initial_fee = '$new_initial_fee',
-						renewal_fee = '$new_renewal_fee',
-						transfer_fee = '$new_transfer_fee',
-						currency_id = '$new_currency_id',
-						update_time = '$current_timestamp'
-					WHERE registrar_id = '$new_rid'
-					  AND tld = '$new_tld'";
+					SET initial_fee = '" . $new_initial_fee . "',
+						renewal_fee = '" . $new_renewal_fee . "',
+						transfer_fee = '" . $new_transfer_fee . "',
+						currency_id = '" . $new_currency_id . "',
+						update_time = '" . $current_timestamp . "'
+					WHERE registrar_id = '" . $new_rid . "'
+					  AND tld = '" . $new_tld . "'";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 
 			$sql = "SELECT id
 					FROM fees
-					WHERE registrar_id = '$new_rid'
-					  AND tld = '$new_tld'
-					  AND currency_id = '$new_currency_id'
+					WHERE registrar_id = '" . $new_rid . "'
+					  AND tld = '" . $new_tld . "'
+					  AND currency_id = '" . $new_currency_id . "'
 					LIMIT 1";
 	
 			$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -86,10 +86,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			}
 
 			$sql = "UPDATE domains
-					SET fee_id = '$new_fee_id',
-						update_time = '$current_timestamp'
-					WHERE registrar_id = '$new_rid'
-					  AND tld = '$new_tld'";
+					SET fee_id = '" . $new_fee_id . "',
+						update_time = '" . $current_timestamp . "'
+					WHERE registrar_id = '" . $new_rid . "'
+					  AND tld = '" . $new_tld . "'";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 			$rid = $new_rid;
@@ -106,14 +106,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 			$sql = "INSERT INTO fees 
 					(registrar_id, tld, initial_fee, renewal_fee, transfer_fee, currency_id, insert_time) VALUES 
-					('$new_rid', '" . mysql_real_escape_string($new_tld) . "', '$new_initial_fee', '$new_renewal_fee', '$new_transfer_fee', '$new_currency_id', '$current_timestamp')";
+					('" . $new_rid . "', '" . mysql_real_escape_string($new_tld) . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 
 			$sql = "SELECT id
 					FROM fees
-					WHERE registrar_id = '$new_rid'
-					  AND tld = '$new_tld'
-					  AND currency_id = '$new_currency_id'
+					WHERE registrar_id = '" . $new_rid . "'
+					  AND tld = '" . $new_tld . "'
+					  AND currency_id = '" . $new_currency_id . "'
 					ORDER BY id desc
 					LIMIT 1";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -123,10 +123,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			}
 
 			$sql = "UPDATE domains
-					SET fee_id = '$new_fee_id',
-						update_time = '$current_timestamp'
-					WHERE registrar_id = '$new_rid'
-					  AND tld = '$new_tld'";
+					SET fee_id = '" . $new_fee_id . "',
+						update_time = '" . $current_timestamp . "'
+					WHERE registrar_id = '" . $new_rid . "'
+					  AND tld = '" . $new_tld . "'";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
@@ -151,9 +151,9 @@ if ($really_del == "1") {
 
 	$sql = "SELECT *
 			FROM fees
-			WHERE id = '$feeid'
-			  AND registrar_id = '$rid'
-			  AND tld = '$tld'";
+			WHERE id = '" . $feeid . "'
+			  AND registrar_id = '" . $rid . "'
+			  AND tld = '" . $tld . "'";
 	$result = mysql_query($sql,$connection);
 	
 	if (mysql_num_rows($result) == 0) {
@@ -166,17 +166,17 @@ if ($really_del == "1") {
 	} else {
 
 		$sql = "DELETE FROM fees
-				WHERE id = '$feeid'
-				  AND registrar_id = '$rid'
-				  AND tld = '$tld'";
+				WHERE id = '" . $feeid . "'
+				  AND registrar_id = '" . $rid . "'
+				  AND tld = '" . $tld . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$sql = "UPDATE domains
 				SET fee_id = '0',
-					update_time = '$current_timestamp'
-				WHERE fee_id = '$feeid'
-				  AND registrar_id = '$rid'
-				  AND tld = '$tld'";
+					update_time = '" . $current_timestamp . "'
+				WHERE fee_id = '" . $feeid . "'
+				  AND registrar_id = '" . $rid . "'
+				  AND tld = '" . $tld . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
@@ -205,14 +205,14 @@ if ($really_del == "1") {
 <?php
 $sql = "SELECT name
 		FROM registrars
-		WHERE id = '$rid'";
+		WHERE id = '" . $rid . "'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $temp_registrar_name = $row->name; } ?>
 The below fees are for the registrar <a href="registrar.php?rid=<?=$rid?>"><?=$temp_registrar_name?></a>.<BR><BR>
 <?php
 $sql = "SELECT tld
 		FROM domains
-		WHERE registrar_id = '$rid'
+		WHERE registrar_id = '" . $rid . "'
 		  AND fee_id = '0'
 		GROUP BY tld
 		ORDER BY tld asc";
@@ -241,7 +241,7 @@ if (mysql_num_rows($result) > 0) {
 <?php
 $sql = "SELECT tld 
 		FROM domains
-		WHERE registrar_id = '$rid'
+		WHERE registrar_id = '" . $rid . "'
 		  AND active not in ('0', '10')
 		GROUP BY tld
 		ORDER BY tld";
@@ -255,8 +255,8 @@ if (mysql_num_rows($result) != 0) {
         
         $sql_temp = "SELECT tld, fee_id
                      FROM domains
-                     WHERE registrar_id = '$rid'
-                       AND tld = '$row->tld'";
+                     WHERE registrar_id = '" . $rid . "'
+                       AND tld = '" . $row->tld . "'";
         $result_temp = mysql_query($sql_temp,$connection) or die(mysql_error());
         while ($row_temp = mysql_fetch_object($result_temp)) { $temp_fee_id = $row_temp->fee_id; }
         
@@ -335,7 +335,7 @@ if (mysql_num_rows($result) != 0) {
 $sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, c.currency, c.symbol, c.symbol_order, c.symbol_space
 		FROM fees AS f, currencies AS c
 		WHERE f.currency_id = c.id
-		  AND f.registrar_id = '$rid'
+		  AND f.registrar_id = '" . $rid . "'
 		ORDER BY f.tld asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) {

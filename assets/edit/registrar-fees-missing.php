@@ -64,7 +64,7 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
                 <?php
                 $sql_missing_tlds = "SELECT tld
 									 FROM domains
-									 WHERE registrar_id = '$row->registrar_id'
+									 WHERE registrar_id = '" . $row->registrar_id . "'
 									   AND fee_id = '0'
 									 GROUP BY tld
 									 ORDER BY tld asc";

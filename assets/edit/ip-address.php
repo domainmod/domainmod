@@ -45,8 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					   	   ip = '" . mysql_real_escape_string($new_ip) . "',
 						   rdns = '" . mysql_real_escape_string($new_rdns) . "',
 						   notes = '" . mysql_real_escape_string($new_notes) . "',
-						   update_time = '$current_timestamp'
-					   WHERE id = '$new_ipid'";
+						   update_time = '" . $current_timestamp . "'
+					   WHERE id = '" . $new_ipid . "'";
 		$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 
 		$new_name = $new_name;
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$sql = "SELECT name, ip, rdns, notes
 			FROM ip_addresses
-			WHERE id = '$ipid'";
+			WHERE id = '" . $ipid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
@@ -89,7 +89,7 @@ if ($del == "1") {
 
 	$sql = "SELECT ip_id
 			FROM domains
-			WHERE ip_id = '$ipid'";
+			WHERE ip_id = '" . $ipid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) {
@@ -111,7 +111,7 @@ if ($del == "1") {
 if ($really_del == "1") {
 
 	$sql = "DELETE FROM ip_addresses 
-			WHERE id = '$ipid'";
+			WHERE id = '" . $ipid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	$_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Deleted<BR>";
