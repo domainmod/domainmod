@@ -248,7 +248,7 @@ echo "</select>";
 <?php
 $sql = "SELECT field_name
 		FROM ssl_cert_fields
-		ORDER BY name";
+		ORDER BY type_id, name";
 $result = mysql_query($sql,$connection);
 
 if (mysql_num_rows($result) > 0) { ?>
@@ -275,9 +275,9 @@ if (mysql_num_rows($result) > 0) { ?>
 		while ($row = mysql_fetch_object($result)) {
 			
 			if ($row->type_id == "1") { // Check Box ?>
-	
-				<strong><?=$row->name?></strong>
-                <input type="checkbox" name="new_<?=$row->field_name?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>><BR><?php
+
+                <input type="checkbox" name="new_<?=$row->field_name?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>>
+                &nbsp;<strong><?=$row->name?></strong><BR><?php
 				
 				if ($row->description != "") {
 					
