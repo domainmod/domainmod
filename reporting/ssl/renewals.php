@@ -60,7 +60,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, (f.renewal_fee * cc.conversion) AS converted_renewal_fee, cc.conversion, d.domain, ip.name AS ip_name, ip.ip, ip.rdns, cat.name AS cat_name
+$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslc.insert_time, sslc.update_time, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, (f.renewal_fee * cc.conversion) AS converted_renewal_fee, cc.conversion, d.domain, ip.name AS ip_name, ip.ip, ip.rdns, cat.name AS cat_name
 		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat
 		WHERE sslc.account_id = sslpa.id
 		  AND sslc.type_id = sslcf.id
@@ -106,7 +106,29 @@ if ($export == "1") {
 	}
 	$full_export .= "\"Total Renewal Cost:\",\"" . $total_cost . "\",\"" . $_SESSION['default_currency'] . "\"\n";
 	$full_export .= "\"Number of SSL Certificates:\",\"" . number_format($total_results) . "\"\n\n";
-	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"SSL Provider Account\",\"Username\",\"SSL Type\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Category\",\"Owner\",\"Notes\"\n";
+
+	$sql_field = "SELECT name
+				  FROM ssl_cert_fields
+				  ORDER BY name";
+	$result_field = mysql_query($sql_field,$connection);
+	
+	$count = 0;
+	$header_list = "";
+	
+	while ($row_field = mysql_fetch_object($result_field)) {
+		
+		$name_array[$count] = $row_field->name;
+		$count++;
+	
+	}
+	
+	foreach($name_array as $field_name) {
+		
+		$header_list .= "\"" . $field_name . "\",";
+	
+	}
+
+	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"SSL Provider Account\",\"Username\",\"SSL Type\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Category\",\"Owner\",\"Notes\",$header_list\"Inserted\",\"Updated\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
@@ -125,7 +147,37 @@ if ($export == "1") {
 		include("../../_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
-		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"\",\"" . $export_renewal_fee . "\",\"$row->name\",\"$row->domain\",\"$row->ssl_provider_name\",\"$row->ssl_provider_name, $row->owner_name ($row->username)\",\"$row->username\",\"$row->type\",\"$row->ip_name\",\"$row->ip\",\"$row->rdns\",\"$row->cat_name\",\"$row->owner_name\",\"$row->notes\"\n";
+		$sql_field = "SELECT field_name
+					  FROM ssl_cert_fields
+					  ORDER BY name";
+		$result_field = mysql_query($sql_field,$connection);
+		
+		$count = 0;
+		$field_data = "";
+		
+		while ($row_field = mysql_fetch_object($result_field)) {
+			
+			$field_array[$count] = $row_field->field_name;
+			$count++;
+		
+		}
+		
+		foreach($field_array as $field) {
+		
+			$sql_data = "SELECT " . $field . " 
+						 FROM ssl_cert_field_data
+						 WHERE ssl_id = '" . $row->id . "'";
+			$result_data = mysql_query($sql_data,$connection);
+			
+			while ($row_data = mysql_fetch_object($result_data)) {
+		
+				$field_data .= "\"" . $row_data->{$field} . "\",";
+			
+			}
+		
+		}
+
+		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"\",\"" . $export_renewal_fee . "\",\"$row->name\",\"$row->domain\",\"$row->ssl_provider_name\",\"$row->ssl_provider_name, $row->owner_name ($row->username)\",\"$row->username\",\"$row->type\",\"$row->ip_name\",\"$row->ip\",\"$row->rdns\",\"$row->cat_name\",\"$row->owner_name\",\"$row->notes\",$field_data\"$row->insert_time\",\"$row->update_time\"\n";
 
 	}
 	
@@ -305,6 +357,24 @@ IP Address rDNS<BR>
 Category<BR>
 Owner<BR>
 Notes<BR>
+Insert Time<BR>
+Last Update Time<BR>
+<?php
+$sql = "SELECT name
+		FROM ssl_cert_fields
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+
+if (mysql_num_rows($result) > 0) {
+
+	echo "<BR><strong>Custom Fields</strong><BR>";
+
+	while ($row = mysql_fetch_object($result)) {
+		echo $row->name . "<BR>";
+	}
+	
+}
+?>
 <?php } ?>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>

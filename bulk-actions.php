@@ -45,6 +45,30 @@ $new_privacy = $_POST['new_privacy'];
 $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 $new_renewal_years = $_POST['new_renewal_years'];
+$new_field_type_id = $_POST['new_field_type_id'];
+$field_id = $_REQUEST['field_id'];
+
+// Custom Fields
+$sql = "SELECT field_name
+		FROM domain_fields
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+
+$count = 0;
+
+while ($row = mysql_fetch_object($result)) {
+	
+	$field_array[$count] = $row->field_name;
+	$count++;
+
+}
+
+foreach($field_array as $field) {
+
+	$full_field = "new_" . $field . "";
+	${'new_' . $field} = $_POST[$full_field];
+	
+}
 
 $choose_text = "Click here to choose the new";
 
@@ -206,10 +230,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 						$sql = "INSERT INTO domains 
 								(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, dns_id, ip_id, hosting_id, function, notes, privacy, active, fee_fixed, insert_time) VALUES 
-								('$temp_owner_id', '$temp_registrar_id', '$new_raid',  '$new_domain', '$new_tld', '$new_expiry_date', '$new_pcid', '$temp_fee_id', '$new_dnsid', '$new_ipid', '$new_whid', '$new_function', '$new_notes', '$new_privacy', '$new_active', '$temp_fee_fixed', '$current_timestamp')";
+								('$temp_owner_id', '$temp_registrar_id', '$new_raid', '" . mysql_real_escape_string($new_domain) . "', '$new_tld', '$new_expiry_date', '$new_pcid', '$temp_fee_id', '$new_dnsid', '$new_ipid', '$new_whid', '$new_function', '$new_notes', '$new_privacy', '$new_active', '$temp_fee_fixed', '$current_timestamp')";
 						$result = mysql_query($sql,$connection) or die(mysql_error());
 						$temp_fee_id = 0;
-		
+
+						$sql = "SELECT id
+								FROM domains
+								WHERE domain = '" . $new_domain . "'
+								  AND insert_time = '" . $current_timestamp . "'";
+						$result = mysql_query($sql,$connection);
+						while ($row = mysql_fetch_object($result)) { $temp_domain_id = $row->id; }
+			
+						$sql = "INSERT INTO domain_field_data
+								(domain_id, insert_time) VALUES 
+								('" . $temp_domain_id . "', '" . $current_timestamp . "')";
+						$result = mysql_query($sql,$connection);
+			
+						$sql = "SELECT field_name
+								FROM domain_fields
+								ORDER BY name";
+						$result = mysql_query($sql,$connection);
+						
+						$count = 0;
+						
+						while ($row = mysql_fetch_object($result)) {
+							
+							$field_array[$count] = $row->field_name;
+							$count++;
+						
+						}
+						
+						foreach($field_array as $field) {
+							
+							$full_field = "new_" . $field;
+							
+							$sql = "UPDATE domain_field_data
+									SET `" . $field . "` = '" . ${$full_field} . "' 
+									WHERE domain_id = '" . $temp_domain_id . "'";
+							$result = mysql_query($sql,$connection);
+						
+						}
+
 					// finish cycling through domains here
 					}
 
@@ -718,9 +779,56 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					$result = mysql_query($sql,$connection) or die(mysql_error());
 					
 					$_SESSION['result_message'] = "Expiry Date Updated<BR>";
-	
+
 				}
-	
+
+			} elseif ($action == "UCF1" || $action == "UCF2" || $action == "UCF3") { 
+			
+				$sql = "SELECT id
+						FROM domains
+						WHERE domain in ($new_data_formatted)";
+				$result = mysql_query($sql,$connection) or die(mysql_error());
+				
+				while ($row = mysql_fetch_object($result)) {
+					
+					$domain_id_list .= "'" . $row->id . "', ";
+					
+				}
+				
+				$domain_id_list_formatted = substr($domain_id_list, 0, -2);
+
+				$sql = "SELECT name, field_name
+						FROM domain_fields
+						WHERE id = '" . $field_id . "'";
+				$result = mysql_query($sql,$connection);
+
+				while ($row = mysql_fetch_object($result)) {
+
+					$temp_name = $row->name;
+					$temp_field_name = $row->field_name;
+
+				}
+
+				$full_field = "new_" . $temp_field_name;
+			
+				$sql = "UPDATE domain_field_data
+						SET `" . $temp_field_name . "` = '" . ${$full_field} . "',
+							 update_time = '" . $current_timestamp . "'
+						WHERE domain_id IN (" . $domain_id_list_formatted . ")";
+				$result = mysql_query($sql,$connection);
+
+				if ($new_notes != "") {
+				
+					$sql = "UPDATE domains
+							SET notes = CONCAT('" . $new_notes . "\r\n\r\n', notes),
+								update_time = '" . $current_timestamp . "'
+							WHERE id in (" . $domain_id_list_formatted . ")";
+					$result = mysql_query($sql,$connection) or die(mysql_error());
+					
+				}
+				
+				$_SESSION['result_message'] = "Custom Field <font class=\"highlight\">" . $name_array[0] . "</font> Updated<BR>";
+
 			}
 	
 			$done = "1";
@@ -790,6 +898,8 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
             <BR><strong>The following domains had their Web Hosting Provider changed:</strong><BR>
         <?php } elseif ($action == "AN") { ?>
             <BR><strong>The following domains had the Note appended:</strong><BR>
+        <?php } elseif ($action == "UCF1" || $action == "UCF2" || $action == "UCF3") { ?>
+            <BR><strong>The following domains had their Custom Domain Field updated:</strong><BR>
         <?php } ?>
 
 		<BR><?=$new_data_unformatted?><BR><BR><BR>
@@ -797,9 +907,9 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 
 <?php } ?>
 Instead of having to waste time editing domains one-by-one, you can use the below form to execute actions on multiple domains.<BR><BR>
-<form name="bulk_actions_forum" method="post" action="<?=$PHP_SELF?>">
+<form name="bulk_actions_form" method="post" action="<?=$PHP_SELF?>">
   <select name="jumpMenu" id="jumpMenu" onChange="MM_jumpMenu('parent',this,0)">
-    <option value="bulk-actions.php"<?php if ($action == "") { echo " selected"; } ?>>Click to Choose Action</option>
+    <option value="bulk-actions.php"<?php if ($action == "") { echo " selected"; } ?>>Choose Action</option>
     <option value="bulk-actions.php?action=AD"<?php if ($action == "AD") { echo " selected"; } ?>>Add Domains</option>
     <option value="bulk-actions.php?action=FR"<?php if ($action == "FR") { echo " selected"; } ?>>Renew Domains (Update Expiry Date, Mark Active, Add Note)</option>
     <option value="bulk-actions.php?action=R"<?php if ($action == "R") { echo " selected"; } ?>>Renew Domains (Update Expiry Date Only)</option>
@@ -818,10 +928,30 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <option value="bulk-actions.php?action=CIP"<?php if ($action == "CIP") { echo " selected"; } ?>>Change IP Address</option>
     <option value="bulk-actions.php?action=CRA"<?php if ($action == "CRA") { echo " selected"; } ?>>Change Registrar Account</option>
     <option value="bulk-actions.php?action=CWH"<?php if ($action == "CWH") { echo " selected"; } ?>>Change Web Hosting Provider</option>
+    <option value="bulk-actions.php?action=UCF"<?php if ($action == "UCF" || $action == "UCF1" || $action == "UCF2" || $action == "UCF3") { echo " selected"; } ?>>Update Custom Domain Field</option>
     <option value="bulk-actions.php?action=AN"<?php if ($action == "AN") { echo " selected"; } ?>>Add A Note</option>
   </select>
 
-<?php if ($action != "") { ?>
+<?php if ($action == "UCF" || $action == "UCF1" || $action == "UCF2" || $action == "UCF3") { ?>
+<BR><BR>
+<select name="jumpMenu" id="jumpMenu2" onChange="MM_jumpMenu('parent',this,0)">
+    <option value="bulk-actions.php?action=UCF"<?php if ($action == "UCF") { echo " selected"; } ?>>Choose the Custom Field to Edit</option>
+    <?php
+    $sql = "SELECT df.id, df.name, df.type_id, cft.name AS type
+            FROM domain_fields AS df, custom_field_types AS cft
+            WHERE df.type_id = cft.id
+            ORDER BY df.name";
+    $result = mysql_query($sql,$connection) or die(mysql_error());
+    while ($row = mysql_fetch_object($result)) { ?>
+    
+        <option value="bulk-actions.php?action=UCF<?=$row->type_id?>&field_id=<?=$row->id?>"<?php if ($row->id == $field_id) echo " selected"; ?>><?=$row->name?> (<?=$row->type?>)</option><?php
+    
+    }
+    ?>
+</select>
+<?php } ?>
+
+<?php if ($action != "" && $action != "UCF") { ?>
         <BR><BR>
 		<?php if ($action == "AD") { ?>
 	        <strong>Domains to add (one per line)</strong><a title="Required Field"><font class="default_highlight">*</font></a>
@@ -1026,7 +1156,6 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     ?>
     <BR><BR>
 <?php } elseif ($action == "CWH") { ?>
-
 	<?php
     $sql_host = "SELECT id, name
 				 FROM hosting
@@ -1044,18 +1173,185 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 <?php } elseif ($action == "AN") { ?>
 
 <?php } elseif ($action == "CED") { ?>
-<strong>New Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-<input name="new_expiry_date" type="text" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic; } ?>" size="10" maxlength="10">
+    <strong>New Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <input name="new_expiry_date" type="text" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic; } ?>" size="10" maxlength="10">
     <BR><BR>
-<?php } ?>
-<?php if ($action != "") { ?>
+
+<?php } elseif ($action == "UCF1") {
+
+	$sql = "SELECT df.name, df.field_name, df.type_id, df.description
+			FROM domain_fields AS df, custom_field_types AS cft
+			WHERE df.type_id = cft.id
+			  AND df.id = '" . $field_id . "'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) { ?>
+	
+        <strong><?=$row->name?></strong>
+        <input type="checkbox" name="new_<?=$row->field_name?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>><BR><?php
+        
+        if ($row->description != "") {
+            
+            echo $row->description . "<BR><BR>";
+            
+        } else {
+            
+            echo "<BR>";
+            
+        }
+	
+	}
+
+} elseif ($action == "UCF2") {
+
+	$sql = "SELECT df.name, df.field_name, df.type_id, df.description
+			FROM domain_fields AS df, custom_field_types AS cft
+			WHERE df.type_id = cft.id
+			  AND df.id = '" . $field_id . "'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) { ?>
+
+		<strong><?=$row->name?> (255)</strong><?php
+
+		if ($row->description != "") {
+			
+			echo "<BR>" . $row->description . "<BR><BR>";
+			
+		} else {
+			
+			echo "<BR><BR>";
+			
+		} ?>
+		<input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=${'new_' . $row->field_name}?>"><BR><BR><?php
+
+	}
+
+} elseif ($action == "UCF3") {
+
+	$sql = "SELECT df.name, df.field_name, df.type_id, df.description
+			FROM domain_fields AS df, custom_field_types AS cft
+			WHERE df.type_id = cft.id
+			  AND df.id = '" . $field_id . "'";
+	$result = mysql_query($sql,$connection);
+	
+	while ($row = mysql_fetch_object($result)) { ?>
+
+		<strong><?=$row->name?></strong><?php
+
+		if ($row->description != "") {
+			
+			echo "<BR>" . $row->description . "<BR><BR>";
+			
+		} else {
+			
+			echo "<BR><BR>";
+			
+		} ?>
+		<textarea name="new_<?=$row->field_name?>" cols="60" rows="5"><?=${'new_' . $row->field_name}?></textarea><BR><BR><?php
+
+	}
+
+} ?>
+<?php if ($action != "" && $action != "UCF") { ?>
+
     <?php if ($action == "AN") { ?>
 		<strong>Notes</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-    <?php } else { ?>
+    <?php } elseif ($action == "AD") { ?>
 		<strong>Notes</strong><BR><BR>
+    <?php } elseif ($action == "UCF") { ?>
+    <?php } else { ?>
+		<strong>Notes (will be appended to current domain notes)</strong><BR><BR>
     <?php } ?>
     <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-    <BR><BR>
+    <BR>
+
+<?php if ($action == "AD") { ?>
+
+    <?php
+    $sql = "SELECT field_name
+            FROM domain_fields
+            ORDER BY name";
+    $result = mysql_query($sql,$connection);
+	
+	if (mysql_num_rows($result) > 0) { ?>
+
+	    <BR><BR><font class="subheadline">Custom Fields</font><BR><BR><?php
+
+		$count = 0;
+		
+		while ($row = mysql_fetch_object($result)) {
+			
+			$field_array[$count] = $row->field_name;
+			$count++;
+		
+		}
+		
+		foreach($field_array as $field) {
+			
+			$sql = "SELECT df.name, df.field_name, df.type_id, df.description
+					FROM domain_fields AS df, custom_field_types AS cft
+					WHERE df.type_id = cft.id
+					  AND df.field_name = '" . $field . "'";
+			$result = mysql_query($sql,$connection);
+			
+			while ($row = mysql_fetch_object($result)) {
+				
+				if ($row->type_id == "1") { // Check Box ?>
+		
+					<strong><?=$row->name?></strong>
+					<input type="checkbox" name="new_<?=$row->field_name?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>><BR><?php
+					
+					if ($row->description != "") {
+						
+						echo $row->description . "<BR><BR>";
+						
+					} else {
+						
+						echo "<BR>";
+						
+					}
+		
+				} elseif ($row->type_id == "2") { // Text ?>
+	
+					<strong><?=$row->name?> (255)</strong><?php
+	
+					if ($row->description != "") {
+						
+						echo "<BR>" . $row->description . "<BR><BR>";
+						
+					} else {
+						
+						echo "<BR><BR>";
+						
+					} ?>
+					<input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=${'new_' . $row->field_name}?>"><BR><BR><?php
+	
+				} elseif ($row->type_id == "3") { // Text Area ?>
+	
+					<strong><?=$row->name?></strong><?php
+	
+					if ($row->description != "") {
+						
+						echo "<BR>" . $row->description . "<BR><BR>";
+						
+					} else {
+						
+						echo "<BR><BR>";
+						
+					} ?>
+					<textarea name="new_<?=$row->field_name?>" cols="60" rows="5"><?=${'new_' . $row->field_name}?></textarea><BR><BR><?php
+	
+				}
+				
+			}
+		
+		}
+
+	}
+
+} ?>
+
     <input type="hidden" name="action" value="<?=$action?>">
     <?php if ($action == "CDNS") { ?>
     <input type="hidden" name="dnsid" value="<?=$new_dnsid?>">
@@ -1069,7 +1365,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <?php if ($action == "CWH") { ?>
     <input type="hidden" name="whid" value="<?=$new_whid?>">
     <?php } ?>
-    <input type="submit" name="button" value="Perform Bulk Action &raquo;">
+    <BR><input type="submit" name="button" value="Perform Bulk Action &raquo;">
 <?php } ?>
 </form>
 <?php include("_includes/layout/footer.inc.php"); ?>

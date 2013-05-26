@@ -475,39 +475,81 @@ if ($software_section == "domains") { ?>
 } elseif ($software_section == "admin-system-settings") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
-	&raquo;&nbsp;<font class="default_highlight">SYS ADMIN</font>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<strong>System Settings</string>&nbsp;<?php
 
 } elseif ($software_section == "admin-system-defaults") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
-	&raquo;&nbsp;<font class="default_highlight">SYS ADMIN</font>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<strong>System Defaults</string>&nbsp;<?php
+
+} elseif ($software_section == "admin-domain-fields") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
+	&raquo;&nbsp;<strong>Custom Domain Fields</string>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/add/domain-field.php">Add A Custom Field</a>&nbsp;<?php 
+
+} elseif ($software_section == "admin-domain-field-add") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/domain-fields.php">Custom Domain Fields</a>&nbsp;
+	&raquo;&nbsp;Adding A Custom Field&nbsp;<?php 
+
+} elseif ($software_section == "admin-domain-field-edit") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/domain-fields.php">Custom Domain Fields</a>&nbsp;
+	&raquo;&nbsp;Editing A Custom Field&nbsp;<?php 
+
+} elseif ($software_section == "admin-ssl-fields") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
+	&raquo;&nbsp;<strong>Custom SSL Fields</string>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/add/ssl-field.php">Add A Custom Field</a>&nbsp;<?php 
+
+} elseif ($software_section == "admin-ssl-field-add") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/ssl-fields.php">Custom SSL Fields</a>&nbsp;
+	&raquo;&nbsp;Adding A Custom Field&nbsp;<?php 
+
+} elseif ($software_section == "admin-ssl-field-edit") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/ssl-fields.php">Custom SSL Fields</a>&nbsp;
+	&raquo;&nbsp;Editing A Custom Field&nbsp;<?php 
 
 } elseif ($software_section == "admin-system-info") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
-	&raquo;&nbsp;<font class="default_highlight">SYS ADMIN</font>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<strong>System Information</string>&nbsp;<?php
 
 } elseif ($software_section == "admin-user-list") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
-	&raquo;&nbsp;<font class="default_highlight">SYS ADMIN</font>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<strong>Users</strong>&nbsp;
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/add/user.php">Add A New User</a>&nbsp;<?php 
 
 } elseif ($software_section == "admin-user-add") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
-	&raquo;&nbsp;<font class="default_highlight">SYS ADMIN</font>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/users.php">Users</a>&nbsp;
 	&raquo;&nbsp;Adding A New User&nbsp;<?php 
 
 } elseif ($software_section == "admin-user-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
-	&raquo;&nbsp;<font class="default_highlight">SYS ADMIN</font>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/users.php">Users</a>&nbsp;
 	&raquo;&nbsp;Editing A User&nbsp;<?php 
 

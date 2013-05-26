@@ -60,7 +60,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, (f.renewal_fee * cc.conversion) AS converted_renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, (f.renewal_fee * cc.conversion) AS converted_renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
 		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
 		WHERE d.account_id = ra.id
 		  AND ra.registrar_id = r.id
@@ -106,7 +106,29 @@ if ($export == "1") {
 	}
 	$full_export .= "\"Total Cost:\",\"" . $total_cost . "\",\"" . $_SESSION['default_currency'] . "\"\n";
 	$full_export .= "\"Number of Domains:\",\"" . number_format($total_results) . "\"\n\n";
-	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Registrar Account\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\"\n";
+
+	$sql_field = "SELECT name
+				  FROM domain_fields
+				  ORDER BY name";
+	$result_field = mysql_query($sql_field,$connection);
+	
+	$count = 0;
+	$header_list = "";
+	
+	while ($row_field = mysql_fetch_object($result_field)) {
+		
+		$name_array[$count] = $row_field->name;
+		$count++;
+	
+	}
+	
+	foreach($name_array as $field_name) {
+		
+		$header_list .= "\"" . $field_name . "\",";
+	
+	}
+
+	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Registrar Account\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\",$header_list\"Inserted\",\"Updated\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 
@@ -133,7 +155,38 @@ if ($export == "1") {
 		include("../../_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
-		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"\",\"" . $export_renewal_fee . "\",\"$row->domain\",\".$row->tld\",\"$row->function\",\"$privacy_status\",\"$row->registrar_name\",\"$row->registrar_name, $row->owner_name ($row->username)\",\"$row->username\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->wh_name\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->notes\"\n";
+		$sql_field = "SELECT field_name
+					  FROM domain_fields
+					  ORDER BY name";
+		$result_field = mysql_query($sql_field,$connection);
+		
+		$count = 0;
+		$field_data = "";
+		
+		while ($row_field = mysql_fetch_object($result_field)) {
+			
+			$field_array[$count] = $row_field->field_name;
+			$count++;
+		
+		}
+		
+		foreach($field_array as $field) {
+		
+			$sql_data = "SELECT " . $field . " 
+						 FROM domain_field_data
+						 WHERE domain_id = '" . $row->id . "'";
+			$result_data = mysql_query($sql_data,$connection);
+			
+			while ($row_data = mysql_fetch_object($result_data)) {
+		
+				$field_data .= "\"" . $row_data->{$field} . "\",";
+			
+			}
+		
+		}
+
+		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"\",\"" . $export_renewal_fee . "\",\"$row->domain\",\".$row->tld\",\"$row->function\",\"$privacy_status\",\"$row->registrar_name\",\"$row->registrar_name, $row->owner_name ($row->username)\",\"$row->username\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->wh_name\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->notes\",$field_data\"$row->insert_time\",\"$row->update_time\"\n";
+
 	}
 	
 	$full_export .= "\n";
@@ -322,6 +375,24 @@ Category<BR>
 Category Stakeholder<BR>
 Owner<BR>
 Notes<BR>
+Insert Time<BR>
+Last Update Time<BR>
+<?php
+$sql = "SELECT name
+		FROM domain_fields
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+
+if (mysql_num_rows($result) > 0) {
+
+	echo "<BR><strong>Custom Fields</strong><BR>";
+
+	while ($row = mysql_fetch_object($result)) {
+		echo $row->name . "<BR>";
+	}
+	
+}
+?>
 <?php } ?>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>

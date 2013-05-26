@@ -39,6 +39,28 @@ $new_account_id = $_POST['new_account_id'];
 $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 
+// Custom Fields
+$sql = "SELECT field_name
+		FROM ssl_cert_fields
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+
+$count = 0;
+
+while ($row = mysql_fetch_object($result)) {
+	
+	$field_array[$count] = $row->field_name;
+	$count++;
+
+}
+
+foreach($field_array as $field) {
+
+	$full_field = "new_" . $field . "";
+	${'new_' . $field} = $_POST[$full_field];
+	
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if (CheckDateFormat($new_expiry_date) && $new_name != "" && $new_type_id != "" && $new_ip_id != "" && $new_cat_id != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "0" && $new_ip_id != "0" && $new_cat_id != "0" && $new_domain_id != "0" && $new_account_id != "0") {
@@ -61,8 +83,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "INSERT INTO ssl_certs
 				(owner_id, ssl_provider_id, account_id, domain_id, name, type_id, ip_id, cat_id, expiry_date, fee_id, notes, active, insert_time) VALUES 
 				('$new_owner_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '" . mysql_real_escape_string($new_name) . "', '$new_type_id', '$new_ip_id', '$new_cat_id', '$new_expiry_date', '$new_fee_id', '" . mysql_real_escape_string($new_notes) . "', '$new_active', '$current_timestamp')";
-
 		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "SELECT id
+				FROM ssl_certs
+				WHERE name = '" . $new_name . "'
+				  AND insert_time = '" . $current_timestamp . "'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $temp_ssl_id = $row->id; }
+
+		$sql = "INSERT INTO ssl_cert_field_data
+				(ssl_id, insert_time) VALUES 
+				('" . $temp_ssl_id . "', '" . $current_timestamp . "')";
+		$result = mysql_query($sql,$connection);
+
+		$sql = "SELECT field_name
+				FROM ssl_cert_fields
+				ORDER BY name";
+		$result = mysql_query($sql,$connection);
+		
+		$count = 0;
+		
+		while ($row = mysql_fetch_object($result)) {
+			
+			$field_array[$count] = $row->field_name;
+			$count++;
+		
+		}
+		
+		foreach($field_array as $field) {
+			
+			$full_field = "new_" . $field;
+			
+			$sql = "UPDATE ssl_cert_field_data
+					SET `" . $field . "` = '" . ${$full_field} . "' 
+					WHERE ssl_id = '" . $temp_ssl_id . "'";
+			$result = mysql_query($sql,$connection);
+		
+		}
 
 		$_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
 
@@ -187,6 +245,90 @@ echo "</select>";
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <BR><BR>
+<?php
+$sql = "SELECT field_name
+		FROM ssl_cert_fields
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+
+if (mysql_num_rows($result) > 0) { ?>
+
+	<BR><font class="subheadline">Custom Fields</font><BR><BR><?php
+
+	$count = 0;
+	
+	while ($row = mysql_fetch_object($result)) {
+		
+		$field_array[$count] = $row->field_name;
+		$count++;
+	
+	}
+	
+	foreach($field_array as $field) {
+		
+		$sql = "SELECT sf.name, sf.field_name, sf.type_id, sf.description
+				FROM ssl_cert_fields AS sf, custom_field_types AS cft
+				WHERE sf.type_id = cft.id
+				  AND sf.field_name = '" . $field . "'";
+		$result = mysql_query($sql,$connection);
+	
+		while ($row = mysql_fetch_object($result)) {
+			
+			if ($row->type_id == "1") { // Check Box ?>
+	
+				<strong><?=$row->name?></strong>
+                <input type="checkbox" name="new_<?=$row->field_name?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>><BR><?php
+				
+				if ($row->description != "") {
+					
+					echo $row->description . "<BR><BR>";
+					
+				} else {
+					
+					echo "<BR>";
+					
+				}
+	
+			} elseif ($row->type_id == "2") { // Text ?>
+
+				<strong><?=$row->name?> (255)</strong><?php
+
+				if ($row->description != "") {
+					
+					echo "<BR>" . $row->description . "<BR><BR>";
+					
+				} else {
+					
+					echo "<BR><BR>";
+					
+				} ?>
+                <input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=${'new_' . $row->field_name}?>"><BR><BR><?php
+
+			} elseif ($row->type_id == "3") { // Text Area ?>
+
+				<strong><?=$row->name?></strong><?php
+
+				if ($row->description != "") {
+					
+					echo "<BR>" . $row->description . "<BR><BR>";
+					
+				} else {
+					
+					echo "<BR><BR>";
+					
+				} ?>
+                <textarea name="new_<?=$row->field_name?>" cols="60" rows="5"><?=${'new_' . $row->field_name}?></textarea><BR><BR><?php
+
+			}
+			
+		}
+	
+	}
+	
+	echo "<BR>";
+
+}
+?>
 <input type="submit" name="button" value="Add This SSL Certificate &raquo;">
 </form>
 <?php include("../_includes/layout/footer.inc.php"); ?>

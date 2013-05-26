@@ -284,7 +284,7 @@ elseif ($sort_by == "r_d") { $sort_by_string = " ORDER BY r.name desc, d.domain 
 elseif ($sort_by == "ra_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc "; } 
 elseif ($sort_by == "ra_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
 
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.initial_fee, f.renewal_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.initial_fee, f.renewal_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name
 		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
 		WHERE d.account_id = ra.id
 		  AND ra.registrar_id = r.id
@@ -600,7 +600,28 @@ if ($export == "1") {
 
 	$full_export .= "\n";
 
-	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Registrar Account\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\"\n";
+	$sql_field = "SELECT name
+				  FROM domain_fields
+				  ORDER BY name";
+	$result_field = mysql_query($sql_field,$connection);
+	
+	$count = 0;
+	$header_list = "";
+	
+	while ($row_field = mysql_fetch_object($result_field)) {
+		
+		$name_array[$count] = $row_field->name;
+		$count++;
+	
+	}
+	
+	foreach($name_array as $field_name) {
+		
+		$header_list .= "\"" . $field_name . "\",";
+	
+	}
+
+	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Registrar Account\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\",$header_list\"Inserted\",\"Updated\"\n";
 
 	while ($row = mysql_fetch_object($result)) {
 		
@@ -639,7 +660,38 @@ if ($export == "1") {
 		include("_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
-		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"" . $export_initial_fee . "\",\"" . $export_renewal_fee . "\",\"$row->domain\",\".$row->tld\",\"$row->function\",\"$privacy_status\",\"$row->registrar_name\",\"$row->registrar_name, $row->owner_name ($row->username)\",\"$row->username\",\"$row->dns_name\",\"$row->ip_name\",\"$row->ip\",\"$row->rdns\",\"$row->wh_name\",\"$row->category_name\",\"$row->stakeholder\",\"$row->owner_name\",\"$row->notes\"\n";
+		$sql_field = "SELECT field_name
+					  FROM domain_fields
+					  ORDER BY name";
+		$result_field = mysql_query($sql_field,$connection);
+		
+		$count = 0;
+		$field_data = "";
+		
+		while ($row_field = mysql_fetch_object($result_field)) {
+			
+			$field_array[$count] = $row_field->field_name;
+			$count++;
+		
+		}
+		
+		foreach($field_array as $field) {
+		
+			$sql_data = "SELECT " . $field . " 
+						 FROM domain_field_data
+						 WHERE domain_id = '" . $row->id . "'";
+			$result_data = mysql_query($sql_data,$connection);
+			
+			while ($row_data = mysql_fetch_object($result_data)) {
+		
+				$field_data .= "\"" . $row_data->{$field} . "\",";
+			
+			}
+		
+		}
+
+		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"" . $export_initial_fee . "\",\"" . $export_renewal_fee . "\",\"$row->domain\",\".$row->tld\",\"$row->function\",\"$privacy_status\",\"$row->registrar_name\",\"$row->registrar_name, $row->owner_name ($row->username)\",\"$row->username\",\"$row->dns_name\",\"$row->ip_name\",\"$row->ip\",\"$row->rdns\",\"$row->wh_name\",\"$row->category_name\",\"$row->stakeholder\",\"$row->owner_name\",\"$row->notes\",$field_data\"$row->insert_time\",\"$row->update_time\"\n";
+
 	}
 
 	$full_export .= "\n";
@@ -648,6 +700,7 @@ if ($export == "1") {
 	$export_filename = "domain_results_" . $current_timestamp_unix . ".csv";
 	include("_includes/system/export-to-csv.inc.php");
 	exit;
+
 }
 ?>
 <?php include("_includes/doctype.inc.php"); ?>

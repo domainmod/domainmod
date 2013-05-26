@@ -46,6 +46,28 @@ $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
 $new_did = $_POST['new_did'];
 
+// Custom Fields
+$sql = "SELECT field_name
+		FROM domain_fields
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+
+$count = 0;
+
+while ($row = mysql_fetch_object($result)) {
+	
+	$field_array[$count] = $row->field_name;
+	$count++;
+
+}
+
+foreach($field_array as $field) {
+
+	$full_field = "new_" . $field . "";
+	${'new_' . $field} = $_POST[$full_field];
+	
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
@@ -100,7 +122,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   update_time = '$current_timestamp'
 					   WHERE id = '$new_did'";
 		$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
+
+		$sql = "SELECT field_name
+				FROM domain_fields
+				ORDER BY name";
+		$result = mysql_query($sql,$connection);
 		
+		$count = 0;
+		
+		while ($row = mysql_fetch_object($result)) {
+			
+			$field_array[$count] = $row->field_name;
+			$count++;
+		
+		}
+		
+		foreach($field_array as $field) {
+			
+			$full_field = "new_" . $field;
+			
+			$sql = "UPDATE domain_field_data
+					SET `" . $field . "` = '" . ${$full_field} . "', 
+						update_time = '" . $current_timestamp . "'
+					WHERE domain_id = '" . $new_did . "'";
+			$result = mysql_query($sql,$connection);
+		
+		}
+
 		$did = $new_did;
 		
 		$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Updated<BR>";
@@ -170,7 +218,11 @@ if ($del == "1") {
 if ($really_del == "1") {
 
 	$sql = "DELETE FROM domains 
-			WHERE id = '$did'";
+			WHERE id = '" . $did . "'";
+	$result = mysql_query($sql,$connection);
+
+	$sql = "DELETE FROM domain_field_data
+			WHERE domain_id = '" . $did . "'";
 	$result = mysql_query($sql,$connection);
 	
 	$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Deleted<BR>";
@@ -305,6 +357,99 @@ echo "</select>";
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
 <input type="hidden" name="new_did" value="<?=$did?>">
 <BR><BR>
+<?php
+$sql = "SELECT field_name
+		FROM domain_fields
+		ORDER BY name";
+$result = mysql_query($sql,$connection);
+
+if (mysql_num_rows($result) > 0) { ?>
+
+	<BR><font class="subheadline">Custom Fields</font><BR><BR><?php
+
+	$count = 0;
+	
+	while ($row = mysql_fetch_object($result)) {
+		
+		$field_array[$count] = $row->field_name;
+		$count++;
+	
+	}
+	
+	foreach($field_array as $field) {
+		
+		$sql = "SELECT df.name, df.field_name, df.type_id, df.description
+				FROM domain_fields AS df, custom_field_types AS cft
+				WHERE df.type_id = cft.id
+				  AND df.field_name = '" . $field . "'";
+		$result = mysql_query($sql,$connection);
+		
+		while ($row = mysql_fetch_object($result)) {
+			
+			$sql_data = "SELECT " . $row->field_name . " 
+						 FROM domain_field_data
+						 WHERE domain_id = '" . $did . "'";
+			$result_data = mysql_query($sql_data,$connection);
+			
+			while ($row_data = mysql_fetch_object($result_data)) {
+				
+				$field_data = $row_data->{$row->field_name};
+	
+			}
+	
+			if ($row->type_id == "1") { // Check Box ?>
+	
+				<strong><?=$row->name?></strong>
+                <input type="checkbox" name="new_<?=$row->field_name?>" value="1"<?php if ($field_data == "1") echo " checked"; ?>><BR><?php
+				
+				if ($row->description != "") {
+
+					echo $row->description . "<BR><BR>";
+
+				} else {
+					
+					echo "<BR>";
+					
+				}
+	
+			} elseif ($row->type_id == "2") { // Text ?>
+	
+				<strong><?=$row->name?> (255)</strong><BR><?php
+				if ($row->description != "") {
+
+					echo $row->description . "<BR><BR>";
+
+				} else {
+					
+					echo "<BR>";
+					
+				} ?>
+                <input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=$field_data?>"><BR><BR><?php
+
+			} elseif ($row->type_id == "3") { // Text Area ?>
+	
+				<strong><?=$row->name?></strong><BR><?php
+				if ($row->description != "") {
+
+					echo $row->description . "<BR><BR>";
+
+				} else {
+					
+					echo "<BR>";
+					
+				} ?>
+                <textarea name="new_<?=$row->field_name?>" cols="60" rows="5"><?=$field_data?></textarea><BR><BR><?php
+
+			}
+			
+		}
+	
+	}
+	
+	echo "<BR>";
+	
+}
+?>
 <input type="submit" name="button" value="Update This Domain &raquo;">
 </form>
 <BR><BR><a href="<?=$PHP_SELF?>?did=<?=$did?>&del=1">DELETE THIS DOMAIN</a>
