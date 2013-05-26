@@ -77,15 +77,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "SELECT registrar_id, owner_id
 				FROM registrar_accounts
-				WHERE id = '$new_account_id'";
+				WHERE id = '" . $new_account_id . "'";
 		$result = mysql_query($sql,$connection);
 		
 		while ($row = mysql_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
 
 		$sql_fee_id = "SELECT id
 					   FROM fees
-					   WHERE registrar_id = '$new_registrar_id'
-						 AND tld = '$tld'";
+					   WHERE registrar_id = '" . $new_registrar_id . "'
+						 AND tld = '" . $tld . "'";
 		$result_fee_id = mysql_query($sql_fee_id,$connection);
 		
 		if (mysql_num_rows($result_fee_id) >= 1) { 
@@ -103,24 +103,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 
 		$sql_update = "UPDATE domains
-					   SET owner_id = '$new_owner_id',
-						   registrar_id = '$new_registrar_id',
-						   account_id = '$new_account_id',
+					   SET owner_id = '" . $new_owner_id . "',
+						   registrar_id = '" . $new_registrar_id . "',
+						   account_id = '" . $new_account_id . "',
 						   domain = '" . mysql_real_escape_string($new_domain) . "',
-						   tld = '$tld',
-						   expiry_date = '$new_expiry_date',
-						   cat_id = '$new_cat_id',
-						   dns_id = '$new_dns_id',
-						   ip_id = '$new_ip_id',
-						   hosting_id = '$new_hosting_id',
-						   fee_id = '$temp_fee_id',
+						   tld = '" . $tld . "',
+						   expiry_date = '" . $new_expiry_date . "',
+						   cat_id = '" . $new_cat_id . "',
+						   dns_id = '" . $new_dns_id . "',
+						   ip_id = '" . $new_ip_id . "',
+						   hosting_id = '" . $new_hosting_id . "',
+						   fee_id = '" . $temp_fee_id . "',
 						   function = '" . mysql_real_escape_string($new_function) . "',
 						   notes = '" . mysql_real_escape_string($new_notes) . "',
-						   privacy = '$new_privacy',
-						   active = '$new_active',
-						   fee_fixed = '$temp_fee_fixed',
-						   update_time = '$current_timestamp'
-					   WHERE id = '$new_did'";
+						   privacy = '" . $new_privacy . "',
+						   active = '" . $new_active . "',
+						   fee_fixed = '" . $temp_fee_fixed . "',
+						   update_time = '" . $current_timestamp . "'
+					   WHERE id = '" . $new_did . "'";
 		$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 
 		$sql = "SELECT field_name
@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$full_field = "new_" . $field;
 			
 			$sql = "UPDATE domain_field_data
-					SET `" . $field . "` = '" . ${$full_field} . "', 
+					SET `" . $field . "` = '" . mysql_real_escape_string(${$full_field}) . "', 
 						update_time = '" . $current_timestamp . "'
 					WHERE domain_id = '" . $new_did . "'";
 			$result = mysql_query($sql,$connection);
@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT d.domain, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.hosting_id, d.function, d.notes, d.privacy, d.active, ra.id as account_id
 			FROM domains as d, registrar_accounts as ra
 			WHERE d.account_id = ra.id
-			  AND d.id = '$did'";
+			  AND d.id = '" . $did . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
@@ -196,7 +196,7 @@ if ($del == "1") {
 
 	$sql = "SELECT domain_id
 			FROM ssl_certs
-			WHERE domain_id = '$did'";
+			WHERE domain_id = '" . $did . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) {

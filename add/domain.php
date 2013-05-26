@@ -79,22 +79,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 			$sql = "SELECT registrar_id, owner_id
 					FROM registrar_accounts
-					WHERE id = '$new_account_id'";
+					WHERE id = '" . $new_account_id . "'";
 			$result = mysql_query($sql,$connection);
 			
 			while ($row = mysql_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
 	
 			$sql = "SELECT id
 					FROM fees
-					WHERE registrar_id = '$new_registrar_id' 
-					  AND tld = '$tld'";
+					WHERE registrar_id = '" . $new_registrar_id . "' 
+					  AND tld = '" . $tld . "'";
 			$result = mysql_query($sql,$connection);
 			
 			while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
 	
 			$sql = "INSERT INTO domains
 					(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id, fee_id, function, notes, privacy, active, insert_time) VALUES 
-					('$new_owner_id', '$new_registrar_id', '$new_account_id', '" . mysql_real_escape_string($new_domain) . "', '$tld', '$new_expiry_date', '$new_cat_id', '$new_dns_id', '$new_ip_id', '$new_hosting_id', '$new_fee_id', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_notes) . "', '$new_privacy', '$new_active', '$current_timestamp')";
+					('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . $new_account_id . "', '" . mysql_real_escape_string($new_domain) . "', '" . $tld . "', '" . $new_expiry_date . "', '" . $new_cat_id . "', '" . $new_dns_id . "', '" . $new_ip_id . "', '" . $new_hosting_id . "', '" . $new_fee_id . "', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $current_timestamp . "')";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			$sql = "SELECT id
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$full_field = "new_" . $field;
 				
 				$sql = "UPDATE domain_field_data
-						SET `" . $field . "` = '" . ${$full_field} . "' 
+						SET `" . $field . "` = '" . mysql_real_escape_string(${$full_field}) . "' 
 						WHERE domain_id = '" . $temp_domain_id . "'";
 				$result = mysql_query($sql,$connection);
 			

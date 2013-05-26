@@ -71,15 +71,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "SELECT ssl_provider_id, owner_id
 				FROM ssl_accounts
-				WHERE id = '$new_account_id'";
+				WHERE id = '" . $new_account_id . "'";
 		$result = mysql_query($sql,$connection);
 		
 		while ($row = mysql_fetch_object($result)) { $new_ssl_provider_id = $row->ssl_provider_id; $new_owner_id = $row->owner_id; }
 
 		$sql_fee_id = "SELECT id
 					   FROM ssl_fees
-					   WHERE ssl_provider_id = '$new_ssl_provider_id'
-					     AND type_id = '$new_type_id'";
+					   WHERE ssl_provider_id = '" . $new_ssl_provider_id . "'
+					     AND type_id = '" . $new_type_id . "'";
 		$result_fee_id = mysql_query($sql_fee_id,$connection);
 		
 		if (mysql_num_rows($result_fee_id) >= 1) { 
@@ -97,21 +97,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 
 		$sql_update = "UPDATE ssl_certs
-					   SET owner_id = '$new_owner_id',
-					   	   ssl_provider_id = '$new_ssl_provider_id',
-						   account_id = '$new_account_id',
-						   domain_id = '$new_domain_id',
+					   SET owner_id = '" . $new_owner_id . "',
+					   	   ssl_provider_id = '" . $new_ssl_provider_id . "',
+						   account_id = '" . $new_account_id . "',
+						   domain_id = '" . $new_domain_id . "',
 						   name = '" . mysql_real_escape_string($new_name) . "',
-						   type_id = '$new_type_id',
-						   ip_id = '$new_ip_id',
-						   cat_id = '$new_cat_id',
-						   expiry_date = '$new_expiry_date',
-						   fee_id = '$temp_fee_id',
+						   type_id = '" . $new_type_id . "',
+						   ip_id = '" . $new_ip_id . "',
+						   cat_id = '" . $new_cat_id . "',
+						   expiry_date = '" . $new_expiry_date . "',
+						   fee_id = '" . $temp_fee_id . "',
 						   notes = '" . mysql_real_escape_string($new_notes) . "',
-						   active = '$new_active',
-						   fee_fixed = '$temp_fee_fixed',
-						   update_time = '$current_timestamp'
-					   WHERE id = '$new_sslcid'";
+						   active = '" . $new_active . "',
+						   fee_fixed = '" . $temp_fee_fixed . "',
+						   update_time = '" . $current_timestamp . "'
+					   WHERE id = '" . $new_sslcid . "'";
 		$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 
 		$sql = "SELECT field_name
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$full_field = "new_" . $field;
 			
 			$sql = "UPDATE ssl_cert_field_data
-					SET `" . $field . "` = '" . ${$full_field} . "', 
+					SET `" . $field . "` = '" . mysql_real_escape_string(${$full_field}) . "', 
 						update_time = '" . $current_timestamp . "'
 					WHERE ssl_id = '" . $new_sslcid . "'";
 			$result = mysql_query($sql,$connection);
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			  AND sslc.type_id = sslcf.id
 			  AND sslc.ip_id = ip.id
 			  AND sslc.cat_id = cat.id
-			  AND sslc.id = '$sslcid'";
+			  AND sslc.id = '" . $sslcid . "'";
 	$result = mysql_query($sql,$connection);
 	
 	while ($row = mysql_fetch_object($result)) { 
@@ -201,7 +201,7 @@ if ($really_del == "1") {
 	
 	$sql = "SELECT type
 			FROM ssl_cert_types
-			WHERE id = '$new_type_id'";
+			WHERE id = '" . $new_type_id . "'";
 	$result = mysql_query($sql,$connection);
 	while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
 	

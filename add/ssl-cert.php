@@ -67,27 +67,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "SELECT ssl_provider_id, owner_id
 				FROM ssl_accounts
-				WHERE id = '$new_account_id'";
+				WHERE id = '" . $new_account_id . "'";
 		$result = mysql_query($sql,$connection);
 		
 		while ($row = mysql_fetch_object($result)) { $new_ssl_provider_id = $row->ssl_provider_id; $new_owner_id = $row->owner_id; }
 
 		$sql = "SELECT id
 				FROM ssl_fees
-				WHERE ssl_provider_id = '$new_ssl_provider_id' 
-				  AND type_id = '$new_type_id'";
+				WHERE ssl_provider_id = '" . $new_ssl_provider_id . "' 
+				  AND type_id = '" . $new_type_id . "'";
 		$result = mysql_query($sql,$connection);
 		
 		while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
 
 		$sql = "INSERT INTO ssl_certs
 				(owner_id, ssl_provider_id, account_id, domain_id, name, type_id, ip_id, cat_id, expiry_date, fee_id, notes, active, insert_time) VALUES 
-				('$new_owner_id', '$new_ssl_provider_id', '$new_account_id', '$new_domain_id', '" . mysql_real_escape_string($new_name) . "', '$new_type_id', '$new_ip_id', '$new_cat_id', '$new_expiry_date', '$new_fee_id', '" . mysql_real_escape_string($new_notes) . "', '$new_active', '$current_timestamp')";
+				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . $new_account_id . "', '" . $new_domain_id . "', '" . mysql_real_escape_string($new_name) . "', '" . $new_type_id . "', '" . $new_ip_id . "', '" . $new_cat_id . "', '" . $new_expiry_date . "', '" . $new_fee_id . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_active . "', '" . $current_timestamp . "')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "SELECT id
 				FROM ssl_certs
-				WHERE name = '" . $new_name . "'
+				WHERE name = '" . mysql_real_escape_string($new_name) . "'
 				  AND insert_time = '" . $current_timestamp . "'";
 		$result = mysql_query($sql,$connection);
 		while ($row = mysql_fetch_object($result)) { $temp_ssl_id = $row->id; }
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$full_field = "new_" . $field;
 			
 			$sql = "UPDATE ssl_cert_field_data
-					SET `" . $field . "` = '" . ${$full_field} . "' 
+					SET `" . $field . "` = '" . mysql_real_escape_string(${$full_field}) . "' 
 					WHERE ssl_id = '" . $temp_ssl_id . "'";
 			$result = mysql_query($sql,$connection);
 		

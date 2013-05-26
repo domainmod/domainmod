@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 				$sql = "SELECT domain, expiry_date
 						FROM domains
-						WHERE domain IN ($new_data_formatted)";
+						WHERE domain IN (" . $new_data_formatted . ")";
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
 				while ($row = mysql_fetch_object($result)) {
@@ -163,17 +163,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					if ($new_notes != "") {
 
 						$sql_update = "UPDATE domains
-									   SET expiry_date = '$new_expiry',
-									   	   notes = CONCAT('$new_notes\r\n\r\n', notes),
-										   update_time = '$current_timestamp'
-									   WHERE domain = '$row->domain'";
+									   SET expiry_date = '" . $new_expiry . "',
+									   	   notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+										   update_time = '" . $current_timestamp . "'
+									   WHERE domain = '" . $row->domain . "'";
 						
 					} else {
 
 						$sql_update = "UPDATE domains
-									   SET expiry_date = '$new_expiry',
-									   	   update_time = '$current_timestamp'
-									   WHERE domain = '$row->domain'";
+									   SET expiry_date = '" . $new_expiry . "',
+									   	   update_time = '" . $current_timestamp . "'
+									   WHERE domain = '" . $row->domain . "'";
 
 					}
 					$result_update = mysql_query($sql_update,$connection);
@@ -200,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 					$sql = "SELECT owner_id, registrar_id
 							FROM registrar_accounts
-							WHERE id = '$new_raid'";
+							WHERE id = '" . $new_raid . "'";
 					$result = mysql_query($sql,$connection);
 					while ($row = mysql_fetch_object($result)) {
 						$temp_owner_id = $row->owner_id;
@@ -219,8 +219,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 						$sql = "SELECT id
 								FROM fees
-								WHERE registrar_id = '$temp_registrar_id'
-								  AND tld = '$new_tld'";
+								WHERE registrar_id = '" . $temp_registrar_id . "'
+								  AND tld = '" . $new_tld . "'";
 						$result = mysql_query($sql,$connection);
 						while ($row = mysql_fetch_object($result)) {
 							$temp_fee_id = $row->id;
@@ -230,13 +230,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 						$sql = "INSERT INTO domains 
 								(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, dns_id, ip_id, hosting_id, function, notes, privacy, active, fee_fixed, insert_time) VALUES 
-								('$temp_owner_id', '$temp_registrar_id', '$new_raid', '" . mysql_real_escape_string($new_domain) . "', '$new_tld', '$new_expiry_date', '$new_pcid', '$temp_fee_id', '$new_dnsid', '$new_ipid', '$new_whid', '$new_function', '$new_notes', '$new_privacy', '$new_active', '$temp_fee_fixed', '$current_timestamp')";
+								('" . $temp_owner_id . "', '" . $temp_registrar_id . "', '" . $new_raid . "', '" . mysql_real_escape_string($new_domain) . "', '" . $new_tld . "', '" . $new_expiry_date . "', '" . $new_pcid . "', '" . $temp_fee_id . "', '" . $new_dnsid . "', '" . $new_ipid . "', '" . $new_whid . "', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $temp_fee_fixed . "', '" . $current_timestamp . "')";
 						$result = mysql_query($sql,$connection) or die(mysql_error());
 						$temp_fee_id = 0;
 
 						$sql = "SELECT id
 								FROM domains
-								WHERE domain = '" . $new_domain . "'
+								WHERE domain = '" . mysql_real_escape_string($new_domain) . "'
 								  AND insert_time = '" . $current_timestamp . "'";
 						$result = mysql_query($sql,$connection);
 						while ($row = mysql_fetch_object($result)) { $temp_domain_id = $row->id; }
@@ -265,7 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							$full_field = "new_" . $field;
 							
 							$sql = "UPDATE domain_field_data
-									SET `" . $field . "` = '" . ${$full_field} . "' 
+									SET `" . $field . "` = '" . mysql_real_escape_string(${$full_field}) . "' 
 									WHERE domain_id = '" . $temp_domain_id . "'";
 							$result = mysql_query($sql,$connection);
 						
@@ -286,7 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 				$sql = "SELECT domain, expiry_date
 						FROM domains
-						WHERE domain IN ($new_data_formatted)";
+						WHERE domain IN (" . $new_data_formatted . ")";
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
 				while ($row = mysql_fetch_object($result)) {
@@ -296,32 +296,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					$new_expiry = $lines[0]+$new_renewal_years . "-" . $lines[1] . "-" . $lines[2];
 					
 					if ($new_renewal_years == "1") {
-						$renewal_years_string = "$new_renewal_years Year";
+						$renewal_years_string = $new_renewal_years . " Year";
 					} else {
-						$renewal_years_string = "$new_renewal_years Years";
+						$renewal_years_string = $new_renewal_years . " Years";
 					}
 
 					if ($new_notes != "") {
 
-						$new_notes_renewal = "$current_timestamp_basic - Domain Renewed For $renewal_years_string";
+						$new_notes_renewal = $current_timestamp_basic . " - Domain Renewed For " . $renewal_years_string;
 
 						$sql_update = "UPDATE domains
-									   SET expiry_date = '$new_expiry',
-									   	   notes = CONCAT('$new_notes\r\n\r\n', '$new_notes_renewal\r\n\r\n', notes),
+									   SET expiry_date = '" . $new_expiry . "',
+									   	   notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', '" . mysql_real_escape_string($new_notes_renewal) . "\r\n\r\n', notes),
 										   active = '1',
-										   update_time = '$current_timestamp'
-									   WHERE domain = '$row->domain'";
-						
+										   update_time = '" . $current_timestamp . "'
+									   WHERE domain = '" . $row->domain . "'";
+
 					} else {
 
-						$new_notes_renewal = "$current_timestamp_basic - Domain Renewed For $renewal_years_string";
+						$new_notes_renewal = $current_timestamp_basic . " - Domain Renewed For " . $renewal_years_string;
 
 						$sql_update = "UPDATE domains
-									   SET expiry_date = '$new_expiry',
-									   	   notes = CONCAT('$new_notes_renewal\r\n\r\n', notes),
+									   SET expiry_date = '" . $new_expiry . "',
+									   	   notes = CONCAT('" . mysql_real_escape_string($new_notes_renewal) . "\r\n\r\n', notes),
 										   active = '1',
-										   update_time = '$current_timestamp'
-									   WHERE domain = '$row->domain'";
+										   update_time = '" . $current_timestamp . "'
+									   WHERE domain = '" . $row->domain . "'";
 
 					}
 					$result_update = mysql_query($sql_update,$connection);
@@ -344,17 +344,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					if ($new_notes != "") {
 
 						$sql = "UPDATE domains
-								SET cat_id = '$new_pcid',
-									notes = CONCAT('$new_notes\r\n\r\n', notes),
-									update_time = '$current_timestamp'
-								WHERE domain IN ($new_data_formatted)";
+								SET cat_id = '" . $new_pcid . "',
+									notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+									update_time = '" . $current_timestamp . "'
+								WHERE domain IN (" . $new_data_formatted . ")";
 						
 					} else {
 
 						$sql = "UPDATE domains
-								SET cat_id = '$new_pcid',
-									update_time = '$current_timestamp'
-								WHERE domain IN ($new_data_formatted)";
+								SET cat_id = '" . $new_pcid . "',
+									update_time = '" . $current_timestamp . "'
+								WHERE domain IN (" . $new_data_formatted . ")";
 
 					}
 					$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -375,17 +375,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					if ($new_notes != "") {
 
 						$sql = "UPDATE domains
-								SET dns_id = '$new_dnsid',
-									notes = CONCAT('$new_notes\r\n\r\n', notes),
-									update_time = '$current_timestamp'
-								WHERE domain IN ($new_data_formatted)";
+								SET dns_id = '" . $new_dnsid . "',
+									notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+									update_time = '" . $current_timestamp . "'
+								WHERE domain IN (" . $new_data_formatted . ")";
 						
 					} else {
 
 						$sql = "UPDATE domains
-								SET dns_id = '$new_dnsid',
-									update_time = '$current_timestamp'
-								WHERE domain IN ($new_data_formatted)";
+								SET dns_id = '" . $new_dnsid . "',
+									update_time = '" . $current_timestamp . "'
+								WHERE domain IN (" . $new_data_formatted . ")";
 
 					}
 					$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -405,17 +405,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					if ($new_notes != "") {
 
 						$sql = "UPDATE domains
-								SET ip_id = '$new_ipid',
-									notes = CONCAT('$new_notes\r\n\r\n', notes),
-									update_time = '$current_timestamp'
-								WHERE domain IN ($new_data_formatted)";
+								SET ip_id = '" . $new_ipid . "',
+									notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+									update_time = '" . $current_timestamp . "'
+								WHERE domain IN (" . $new_data_formatted . ")";
 						
 					} else {
 
 						$sql = "UPDATE domains
-								SET ip_id = '$new_ipid',
-									update_time = '$current_timestamp'
-								WHERE domain IN ($new_data_formatted)";
+								SET ip_id = '" . $new_ipid . "',
+									update_time = '" . $current_timestamp . "'
+								WHERE domain IN (" . $new_data_formatted . ")";
 
 					}
 					$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -434,9 +434,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				} else {
 
 					$sql_update = "UPDATE domains
-								   SET notes = CONCAT('$new_notes\r\n\r\n', notes),
-								   	   update_time = '$current_timestamp'
-								   WHERE domain IN ($new_data_formatted)";
+								   SET notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+								   	   update_time = '" . $current_timestamp . "'
+								   WHERE domain IN (" . $new_data_formatted . ")";
 					$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
 					
 					$_SESSION['result_message'] = "Note Added<BR>";
@@ -456,7 +456,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							FROM registrar_accounts AS ra, registrars AS r, owners AS o
 							WHERE ra.registrar_id = r.id
 							  AND ra.owner_id = o.id
-							  AND ra.id = '$new_raid'
+							  AND ra.id = '" . $new_raid . "'
 							GROUP BY r.name, o.name, ra.username
 							ORDER BY r.name asc, o.name asc, ra.username asc";
 					$result = mysql_query($sql,$connection);
@@ -473,21 +473,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					if ($new_notes != "") {
 
 						$sql = "UPDATE domains
-								SET owner_id = '$new_owner_id', 
-									registrar_id = '$new_registrar_id', 
-									account_id = '$new_registrar_account_id',
-									notes = CONCAT('$new_notes\r\n\r\n', notes),
-									update_time = '$current_timestamp'
-								WHERE domain IN ($new_data_formatted)";
+								SET owner_id = '" . $new_owner_id . "', 
+									registrar_id = '" . $new_registrar_id . "', 
+									account_id = '" . $new_registrar_account_id . "',
+									notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+									update_time = '" . $current_timestamp . "'
+								WHERE domain IN (" . $new_data_formatted . ")";
 						
 					} else {
 
 						$sql = "UPDATE domains
-								SET owner_id = '$new_owner_id', 
-									registrar_id = '$new_registrar_id', 
-									account_id = '$new_registrar_account_id',
-									update_time = '$current_timestamp'
-								WHERE domain IN ($new_data_formatted)";
+								SET owner_id = '" . $new_owner_id . "', 
+									registrar_id = '" . $new_registrar_id . "', 
+									account_id = '" . $new_registrar_account_id . "',
+									update_time = '" . $current_timestamp . "'
+								WHERE domain IN (" . $new_data_formatted . ")";
 						
 					}
 					$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -510,17 +510,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					if ($new_notes != "") {
 
 						$sql = "UPDATE domains
-								SET hosting_id = '$new_whid',
-									notes = CONCAT('$new_notes\r\n\r\n', notes),
-									update_time = '$current_timestamp'
-								WHERE domain IN ($new_data_formatted)";
+								SET hosting_id = '" . $new_whid . "',
+									notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+									update_time = '" . $current_timestamp . "'
+								WHERE domain IN (" . $new_data_formatted . ")";
 						
 					} else {
 
 						$sql = "UPDATE domains
-								SET hosting_id = '$new_whid',
-									update_time = '$current_timestamp'
-								WHERE domain IN ($new_data_formatted)";
+								SET hosting_id = '" . $new_whid . "',
+									update_time = '" . $current_timestamp . "'
+								WHERE domain IN (" . $new_data_formatted . ")";
 
 					}
 					$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -535,16 +535,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					$sql = "UPDATE domains
 							SET active = '0',
-								notes = CONCAT('$new_notes\r\n\r\n', notes),
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				} else {
 
 					$sql = "UPDATE domains
 							SET active = '0',
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -560,16 +560,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					$sql = "UPDATE domains
 							SET active = '10',
-								notes = CONCAT('$new_notes\r\n\r\n', notes),
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				} else {
 
 					$sql = "UPDATE domains
 							SET active = '10',
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -585,16 +585,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					$sql = "UPDATE domains
 							SET active = '1',
-								notes = CONCAT('$new_notes\r\n\r\n', notes),
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				} else {
 
 					$sql = "UPDATE domains
 							SET active = '1',
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -610,15 +610,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					$sql = "UPDATE domains
 							SET active = '2',
-								notes = CONCAT('$new_notes\r\n\r\n', notes),
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				} else {
 
 					$sql = "UPDATE domains
 							SET active = '2',
-								update_time = '$current_timestamp'
+								update_time = '" . $current_timestamp . "'
 							WHERE domain IN ($new_data_formatted)";
 					
 				}
@@ -635,16 +635,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					$sql = "UPDATE domains
 							SET active = '5',
-								notes = CONCAT('$new_notes\r\n\r\n', notes),
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				} else {
 
 					$sql = "UPDATE domains
 							SET active = '5',
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -660,16 +660,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					$sql = "UPDATE domains
 							SET active = '3',
-								notes = CONCAT('$new_notes\r\n\r\n', notes),
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				} else {
 
 					$sql = "UPDATE domains
 							SET active = '3',
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -685,16 +685,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					$sql = "UPDATE domains
 							SET active = '4',
-								notes = CONCAT('$new_notes\r\n\r\n', notes),
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				} else {
 
 					$sql = "UPDATE domains
 							SET active = '4',
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -710,16 +710,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					$sql = "UPDATE domains
 							SET privacy = '1',
-								notes = CONCAT('$new_notes\r\n\r\n', notes),
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				} else {
 
 					$sql = "UPDATE domains
 							SET privacy = '1',
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -735,16 +735,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					$sql = "UPDATE domains
 							SET privacy = '0',
-								notes = CONCAT('$new_notes\r\n\r\n', notes),
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				} else {
 
 					$sql = "UPDATE domains
 							SET privacy = '0',
-								update_time = '$current_timestamp'
-							WHERE domain IN ($new_data_formatted)";
+								update_time = '" . $current_timestamp . "'
+							WHERE domain IN (" . $new_data_formatted . ")";
 
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -763,17 +763,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					if ($new_notes != "") {
 	
 						$sql = "UPDATE domains
-								SET expiry_date = '$new_expiry_date',
-									notes = CONCAT('$new_notes\r\n\r\n', notes),
-									update_time = '$current_timestamp'
-								WHERE domain IN ($new_data_formatted)";
+								SET expiry_date = '" . $new_expiry_date . "',
+									notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
+									update_time = '" . $current_timestamp . "'
+								WHERE domain IN (" . $new_data_formatted . ")";
 						
 					} else {
 	
 						$sql = "UPDATE domains
-								SET expiry_date = '$new_expiry_date',
-									update_time = '$current_timestamp'
-								WHERE domain IN ($new_data_formatted)";
+								SET expiry_date = '" . $new_expiry_date . "',
+									update_time = '" . $current_timestamp . "'
+								WHERE domain IN (" . $new_data_formatted . ")";
 	
 					}
 					$result = mysql_query($sql,$connection) or die(mysql_error());
@@ -786,7 +786,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 				$sql = "SELECT id
 						FROM domains
-						WHERE domain in ($new_data_formatted)";
+						WHERE domain in (" . $new_data_formatted . ")";
 				$result = mysql_query($sql,$connection) or die(mysql_error());
 				
 				while ($row = mysql_fetch_object($result)) {
@@ -812,7 +812,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$full_field = "new_" . $temp_field_name;
 			
 				$sql = "UPDATE domain_field_data
-						SET `" . $temp_field_name . "` = '" . ${$full_field} . "',
+						SET `" . $temp_field_name . "` = '" . mysql_real_escape_string(${$full_field}) . "',
 							 update_time = '" . $current_timestamp . "'
 						WHERE domain_id IN (" . $domain_id_list_formatted . ")";
 				$result = mysql_query($sql,$connection);
@@ -820,7 +820,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				if ($new_notes != "") {
 				
 					$sql = "UPDATE domains
-							SET notes = CONCAT('" . $new_notes . "\r\n\r\n', notes),
+							SET notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
 								update_time = '" . $current_timestamp . "'
 							WHERE id in (" . $domain_id_list_formatted . ")";
 					$result = mysql_query($sql,$connection) or die(mysql_error());
