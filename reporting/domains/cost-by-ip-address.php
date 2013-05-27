@@ -103,51 +103,90 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
-		$full_export = "";
-		$full_export .= "\"" . $page_subtitle . "\"\n\n";
-		if ($all != "1") {
-		    $full_export .= "\"Date Range:\",\"" . $new_start_date . "\",\"" . $new_end_date . "\"\n";
-        } else {
-		    $full_export .= "\"Date Range:\",\"ALL\"\n";
-        }
-		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
-		$full_export .= "\"Number of Domains:\",\"" . $number_of_domains_total . "\"\n\n";
-		$full_export .= "\"IP Address Name\",\"IP Address\",\"rDNS\",\"Domains\",\"Cost\",\"Per Domain\"\n";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-		while ($row = mysql_fetch_object($result)) {
-
-			$per_domain = $row->total_cost / $row->number_of_domains;
-	
-			$temp_input_amount = $per_domain;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$per_domain = $temp_output_amount;
-
-			$temp_input_amount = $row->total_cost;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$row->total_cost = $temp_output_amount;
-
-			$full_export .= "\"" . $row->name . "\",\"" . $row->ip . "\",\"" . $row->rdns . "\",\"" . $row->number_of_domains . "\",\"" . $row->total_cost . "\",\"" . $per_domain . "\"\n";
-
-		}
-
-		$full_export .= "\n";
-
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
 			$export_filename = "domain_cost_by_ip_address_report_all_" . $current_timestamp_unix . ".csv";
 		} else {
 			$export_filename = "domain_cost_by_ip_address_report_" . $new_start_date . "--" . $new_end_date . ".csv";
 		}
-		include("../../_includes/system/export-to-csv.inc.php");
-		exit;
+		include("../../_includes/system/export/header.inc.php");
+	
+		$row_content[$count++] = $page_subtitle;
+		include("../../_includes/system/export/write-row.inc.php");
+	
+		fputcsv($file_content, $blank_line);
+
+		if ($all != "1") {
+
+			$row_content[$count++] = "Date Range:";
+			$row_content[$count++] = $new_start_date;
+			$row_content[$count++] = $new_end_date;
+
+        } else {
+
+			$row_content[$count++] = "Date Range:";
+			$row_content[$count++] = "ALL";
+
+        }
+		include("../../_includes/system/export/write-row.inc.php");
+
+		$row_content[$count++] = "Total Cost:";
+		$row_content[$count++] = $grand_total;
+		$row_content[$count++] = $_SESSION['default_currency'];
+		include("../../_includes/system/export/write-row.inc.php");
+
+		$row_content[$count++] = "Number of Domains:";
+		$row_content[$count++] = $number_of_domains_total;
+		include("../../_includes/system/export/write-row.inc.php");
+
+		fputcsv($file_content, $blank_line);
+
+		$row_content[$count++] = "IP Address Name";
+		$row_content[$count++] = "IP Address";
+		$row_content[$count++] = "rDNS";
+		$row_content[$count++] = "Domains";
+		$row_content[$count++] = "Cost";
+		$row_content[$count++] = "Per Domain";
+		include("../../_includes/system/export/write-row.inc.php");
+
+		if (mysql_num_rows($result) > 0) {
+
+			while ($row = mysql_fetch_object($result)) {
+	
+				$per_domain = $row->total_cost / $row->number_of_domains;
+		
+				$temp_input_amount = $per_domain;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$per_domain = $temp_output_amount;
+	
+				$temp_input_amount = $row->total_cost;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$row->total_cost = $temp_output_amount;
+
+				$row_content[$count++] = $row->name;
+				$row_content[$count++] = $row->ip;
+				$row_content[$count++] = $row->rdns;
+				$row_content[$count++] = $row->number_of_domains;
+				$row_content[$count++] = $row->total_cost;
+				$row_content[$count++] = $per_domain;
+				include("../../_includes/system/export/write-row.inc.php");
+
+			}
+
+		}
+
+		include("../../_includes/system/export/footer.inc.php");
+
 	}
 
 }

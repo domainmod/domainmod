@@ -106,93 +106,137 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
-		$full_export = "";
-		$full_export .= "\"" . $page_subtitle . "\"\n\n";
-		if ($all != "1") {
-		    $full_export .= "\"Date Range:\",\"" . $new_start_date . "\",\"" . $new_end_date . "\"\n";
-        } else {
-		    $full_export .= "\"Date Range:\",\"ALL\"\n";
-        }
-		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
-		$full_export .= "\"Number of SSL Certs:\",\"" . $number_of_certs_total . "\"\n\n";
-		$full_export .= "\"Provider\",\"Certs\",\"Cost\",\"Per Cert\",\"Provider Account\",\"Certs\",\"Cost\",\"Per Cert\"\n";
-
-		$new_provider = "";
-		$last_provider = "";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-		while ($row = mysql_fetch_object($result)) {
-
-			$new_provider = $row->provider_name;
-
-			$sql_provider_total = "SELECT SUM(f.renewal_fee * cc.conversion) as provider_total, count(*) AS number_of_certs_provider
-								   FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
-								   WHERE sslc.fee_id = f.id
-								     AND f.currency_id = c.id
-									 AND c.id = cc.currency_id
-									 AND sslc.ssl_provider_id = sslp.id
-									 AND sslc.account_id = sslpa.id
-									 AND sslc.owner_id = o.id
-									 AND sslc.active NOT IN ('0')
-									 AND cc.user_id = '" . $_SESSION['user_id'] . "'
-									 AND sslp.id = '" . $row->id . "'
-									 " . $range_string . "";
-			$result_provider_total = mysql_query($sql_provider_total,$connection) or die(mysql_error());
-			while ($row_provider_total = mysql_fetch_object($result_provider_total)) { 
-				$temp_provider_total = $row_provider_total->provider_total; 
-				$number_of_certs_provider = $row_provider_total->number_of_certs_provider; 
-			}
-
-			$per_cert_account = $row->total_cost / $row->number_of_certs;
-
-			$temp_input_amount = $row->total_cost;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$row->total_cost = $temp_output_amount;
-
-			$temp_input_amount = $per_cert_account;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$per_cert_account = $temp_output_amount;
-
-			$per_cert_provider = $temp_provider_total / $number_of_certs_provider;
-
-			$temp_input_amount = $temp_provider_total;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$temp_provider_total = $temp_output_amount;
-
-			$temp_input_amount = $per_cert_provider;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$per_cert_provider = $temp_output_amount;
-
-			$full_export .= "\"" . $row->provider_name . "\",\"" . $number_of_certs_provider . "\",\"" . $temp_provider_total . "\",\"" . $per_cert_provider . "\",\"" . $row->owner_name . " (" . $row->username . ")\",\"" . $row->number_of_certs . "\",\"" . $row->total_cost . "\",\"" . $per_cert_account . "\"\n";
-			$last_provider = $row->provider_name;
-
-		}
-
-		$full_export .= "\n";
-
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
 			$export_filename = "ssl_cost_by_provider_report_all_" . $current_timestamp_unix . ".csv";
 		} else {
 			$export_filename = "ssl_cost_by_provider_report_" . $new_start_date . "--" . $new_end_date . ".csv";
 		}
-		include("../../_includes/system/export-to-csv.inc.php");
-		exit;
+		include("../../_includes/system/export/header.inc.php");
+	
+		$row_content[$count++] = $page_subtitle;
+		include("../../_includes/system/export/write-row.inc.php");
+	
+		fputcsv($file_content, $blank_line);
+
+		if ($all != "1") {
+
+			$row_content[$count++] = "Date Range:";
+			$row_content[$count++] = $new_start_date;
+			$row_content[$count++] = $new_end_date;
+
+        } else {
+
+			$row_content[$count++] = "Date Range:";
+			$row_content[$count++] = "ALL";
+
+        }
+		include("../../_includes/system/export/write-row.inc.php");
+
+		$row_content[$count++] = "Total Cost:";
+		$row_content[$count++] = $grand_total;
+		$row_content[$count++] = $_SESSION['default_currency'];
+		include("../../_includes/system/export/write-row.inc.php");
+
+		$row_content[$count++] = "Number of SSL Certs:";
+		$row_content[$count++] = $number_of_certs_total;
+		include("../../_includes/system/export/write-row.inc.php");
+
+		fputcsv($file_content, $blank_line);
+
+		$row_content[$count++] = "Provider";
+		$row_content[$count++] = "Certs";
+		$row_content[$count++] = "Cost";
+		$row_content[$count++] = "Per Cert";
+		$row_content[$count++] = "Provider Account";
+		$row_content[$count++] = "Certs";
+		$row_content[$count++] = "Cost";
+		$row_content[$count++] = "Per Cert";
+		include("../../_includes/system/export/write-row.inc.php");
+
+		$new_provider = "";
+		$last_provider = "";
+
+		if (mysql_num_rows($result) > 0) {
+	
+			while ($row = mysql_fetch_object($result)) {
+	
+				$new_provider = $row->provider_name;
+	
+				$sql_provider_total = "SELECT SUM(f.renewal_fee * cc.conversion) as provider_total, count(*) AS number_of_certs_provider
+									   FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
+									   WHERE sslc.fee_id = f.id
+										 AND f.currency_id = c.id
+										 AND c.id = cc.currency_id
+										 AND sslc.ssl_provider_id = sslp.id
+										 AND sslc.account_id = sslpa.id
+										 AND sslc.owner_id = o.id
+										 AND sslc.active NOT IN ('0')
+										 AND cc.user_id = '" . $_SESSION['user_id'] . "'
+										 AND sslp.id = '" . $row->id . "'
+										 " . $range_string . "";
+				$result_provider_total = mysql_query($sql_provider_total,$connection) or die(mysql_error());
+				while ($row_provider_total = mysql_fetch_object($result_provider_total)) { 
+					$temp_provider_total = $row_provider_total->provider_total; 
+					$number_of_certs_provider = $row_provider_total->number_of_certs_provider; 
+				}
+	
+				$per_cert_account = $row->total_cost / $row->number_of_certs;
+	
+				$temp_input_amount = $row->total_cost;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$row->total_cost = $temp_output_amount;
+	
+				$temp_input_amount = $per_cert_account;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$per_cert_account = $temp_output_amount;
+	
+				$per_cert_provider = $temp_provider_total / $number_of_certs_provider;
+	
+				$temp_input_amount = $temp_provider_total;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$temp_provider_total = $temp_output_amount;
+	
+				$temp_input_amount = $per_cert_provider;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$per_cert_provider = $temp_output_amount;
+	
+				$row_content[$count++] = $row->provider_name;
+				$row_content[$count++] = $number_of_certs_provider;
+				$row_content[$count++] = $temp_provider_total;
+				$row_content[$count++] = $per_cert_provider;
+				$row_content[$count++] = $row->owner_name . " (" . $row->username . ")";
+				$row_content[$count++] = $row->number_of_certs;
+				$row_content[$count++] = $row->total_cost;
+				$row_content[$count++] = $per_cert_account;
+				include("../../_includes/system/export/write-row.inc.php");
+
+				$last_provider = $row->provider_name;
+	
+			}
+	
+		}
+	
+		include("../../_includes/system/export/footer.inc.php");
+
 	}
 
 }

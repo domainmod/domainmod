@@ -99,22 +99,57 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
-		$full_export = "";
-		$full_export .= "\"" . $page_subtitle . "\"\n\n";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+		$current_timestamp_unix = strtotime($current_timestamp);
+		if ($all == "1") {
+			$export_filename = "domain_cost_by_month_report_all_" . $current_timestamp_unix . ".csv";
+		} else {
+			$export_filename = "domain_cost_by_month_report_" . $new_start_date . "--" . $new_end_date . ".csv";
+		}
+		include("../../_includes/system/export/header.inc.php");
+	
+		$row_content[$count++] = $page_subtitle;
+		include("../../_includes/system/export/write-row.inc.php");
+	
+		fputcsv($file_content, $blank_line);
+
 		if ($all != "1") {
-		    $full_export .= "\"Date Range:\",\"" . $new_start_date . "\",\"" . $new_end_date . "\"\n";
+
+			$row_content[$count++] = "Date Range:";
+			$row_content[$count++] = $new_start_date;
+			$row_content[$count++] = $new_end_date;
+
         } else {
-		    $full_export .= "\"Date Range:\",\"ALL\"\n";
+
+			$row_content[$count++] = "Date Range:";
+			$row_content[$count++] = "ALL";
+
         }
-		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
-		$full_export .= "\"Number of Domains:\",\"" . $number_of_domains_total . "\"\n\n";
-		$full_export .= "\"Year\",\"Month\",\"Cost\",\"By Year\"\n";
+		include("../../_includes/system/export/write-row.inc.php");
+
+		$row_content[$count++] = "Total Cost:";
+		$row_content[$count++] = $grand_total;
+		$row_content[$count++] = $_SESSION['default_currency'];
+		include("../../_includes/system/export/write-row.inc.php");
+
+		$row_content[$count++] = "Number of Domains:";
+		$row_content[$count++] = $number_of_domains_total;
+		include("../../_includes/system/export/write-row.inc.php");
+
+		fputcsv($file_content, $blank_line);
+
+		$row_content[$count++] = "Year";
+		$row_content[$count++] = "Month";
+		$row_content[$count++] = "Cost";
+		$row_content[$count++] = "By Year";
+		include("../../_includes/system/export/write-row.inc.php");
 	
 		$new_year = "";
 		$last_year = "";
 		$new_month = "";
 		$last_month = "";
-	
+
 		while ($row = mysql_fetch_object($result)) {
 			
 			$new_year = $row->year;
@@ -180,22 +215,19 @@ if ($submission_failed != "1" && $total_rows > 0) {
 			include("../../_includes/system/convert-and-format-currency.inc.php");
 			$yearly_cost = $temp_output_amount;
 
-			$full_export .= "\"" . $row->year . "\",\"" . $display_month . "\",\"" . $monthly_cost . "\",\"" . $yearly_cost . "\"\n";
+			$row_content[$count++] = $row->year;
+			$row_content[$count++] = $display_month;
+			$row_content[$count++] = $monthly_cost;
+			$row_content[$count++] = $yearly_cost;
+			include("../../_includes/system/export/write-row.inc.php");
+
 			$last_year = $row->year;
 			$last_month = $row->month;
 
 		}
-	
-		$full_export .= "\n";
 
-		$current_timestamp_unix = strtotime($current_timestamp);
-		if ($all == "1") {
-			$export_filename = "domain_cost_by_month_report_all_" . $current_timestamp_unix . ".csv";
-		} else {
-			$export_filename = "domain_cost_by_month_report_" . $new_start_date . "--" . $new_end_date . ".csv";
-		}
-		include("../../_includes/system/export-to-csv.inc.php");
-		exit;
+		include("../../_includes/system/export/footer.inc.php");
+
 	}
 
 }

@@ -389,28 +389,49 @@ if ($segid != "") {
 
 }
 
-$full_export = "";
-
 if ($export == "1") {
 
-	$result = mysql_query($sql,$connection);
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 	$total_rows = number_format(mysql_num_rows($result));
 
-	$full_export .= "\"Domain Search Results Export\"\n\n";
+	$current_timestamp_unix = strtotime($current_timestamp);
+	$export_filename = "domain_results_" . $current_timestamp_unix . ".csv";
+	include("_includes/system/export/header.inc.php");
+
+	$row_content[$count++] = "Domain Search Results Export";
+	include("_includes/system/export/write-row.inc.php");
+
+	fputcsv($file_content, $blank_line);
+
 	if ($segid == "") {
 
-		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
-		$full_export .= "\"Number of Domains:\",\"" . number_format($total_rows) . "\"\n\n";
+		$row_content[$count++] = "Total Cost:";
+		$row_content[$count++] = $grand_total;
+		$row_content[$count++] = $_SESSION['default_currency'];
+		include("_includes/system/export/write-row.inc.php");
+
+		$row_content[$count++] = "Number of Domains:";
+		$row_content[$count++] = number_format($total_rows);
+		include("_includes/system/export/write-row.inc.php");
+
+		fputcsv($file_content, $blank_line);
 
 	} else {
 
-		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n\n";
+		$row_content[$count++] = "Total Cost:";
+		$row_content[$count++] = $grand_total;
+		$row_content[$count++] = $_SESSION['default_currency'];
+		include("_includes/system/export/write-row.inc.php");
+
+		fputcsv($file_content, $blank_line);
 
 	}
 
 	if ($tld != "") { 
 
-		$full_export .= "\"TLD:\",\"." . $tld . "\"\n"; 
+		$row_content[$count++] = "TLD";
+		$row_content[$count++] = "." . $tld;
+		include("_includes/system/export/write-row.inc.php");
 
 	}
 
@@ -418,7 +439,7 @@ if ($export == "1") {
 
 		$sql_segment = "SELECT domain
 						FROM segment_data
-						WHERE segment_id = '$segid'
+						WHERE segment_id = '" . $segid . "'
 						  AND inactive = '1'
 						ORDER BY domain";
 		$result_segment = mysql_query($sql_segment,$connection);
@@ -426,7 +447,7 @@ if ($export == "1") {
 	
 		$sql_segment = "SELECT domain
 						FROM segment_data
-						WHERE segment_id = '$segid'
+						WHERE segment_id = '" . $segid . "'
 						  AND missing = '1'
 						ORDER BY domain";
 		$result_segment = mysql_query($sql_segment,$connection);
@@ -434,7 +455,7 @@ if ($export == "1") {
 	
 		$sql_segment = "SELECT domain
 						FROM segment_data
-						WHERE segment_id = '$segid'
+						WHERE segment_id = '" . $segid . "'
 						  AND filtered = '1'
 						ORDER BY domain";
 		$result_segment = mysql_query($sql_segment,$connection);
@@ -444,13 +465,14 @@ if ($export == "1") {
 		
 			$sql_segment = "SELECT number_of_domains
 							FROM segments
-							WHERE id = '$segid'";
+							WHERE id = '" . $segid . "'";
 			$result_segment = mysql_query($sql_segment,$connection);
 			while ($row_segment = mysql_fetch_object($result_segment)) { $number_of_domains = $row_segment->number_of_domains; }
 		
 		}
 
-		$full_export .= "\"[Segment Results]\"\n";
+		$row_content[$count++] = "[Segment Results]";
+		include("_includes/system/export/write-row.inc.php");
 
 		$sql_filter = "SELECT name
 					   FROM segments
@@ -458,32 +480,55 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"Segment Filter:\",\"" . $row_filter->name . "\"\n"; 
+
+			$row_content[$count++] = "Segment Filter:";
+			$row_content[$count++] = $row_filter->name;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
-		$full_export .= "\"Domains in Segment:\",\"" . number_format($number_of_domains) . "\"\n";
+		$row_content[$count++] = "Domains in Segment:";
+		$row_content[$count++] = number_format($number_of_domains);
+		include("_includes/system/export/write-row.inc.php");
 	
-		$full_export .= "\"Matching Domains:\",\"" . number_format($total_rows) . "\"\n";
+		$row_content[$count++] = "Matching Domains:";
+		$row_content[$count++] = number_format($total_rows);
+		include("_includes/system/export/write-row.inc.php");
 		
 		if ($totalrows_inactive > 0) {
-			$full_export .= "\"Matching But Inactive Domains:\",\"" . number_format($totalrows_inactive) . "\"\n";
-		}
-		if ($totalrows_filtered > 0) {
-			$full_export .= "\"Matching But Filtered Domains:\",\"" . number_format($totalrows_filtered) . "\"\n";
-		}
-		if ($totalrows_missing > 0) {
-			$full_export .= "\"Missing Domains:\",\"" . number_format($totalrows_missing) . "\"\n";
+
+			$row_content[$count++] = "Matching But Inactive Domains:";
+			$row_content[$count++] = number_format($totalrows_inactive);
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
-		$full_export .= "\n";
+		if ($totalrows_filtered > 0) {
+
+			$row_content[$count++] = "Matching But Filtered Domains:";
+			$row_content[$count++] = number_format($totalrows_filtered);
+			include("_includes/system/export/write-row.inc.php");
+
+		}
+
+		if ($totalrows_missing > 0) {
+
+			$row_content[$count++] = "Missing Domains:";
+			$row_content[$count++] = number_format($totalrows_missing);
+			include("_includes/system/export/write-row.inc.php");
+
+		}
 
 	}
 
-	$full_export .= "\"[Search Filters]\"\n";
+	$row_content[$count++] = "[Search Filters]";
+	include("_includes/system/export/write-row.inc.php");
 
 	if ($_SESSION['search_for'] != "") { 
 
-		$full_export .= "\"Keyword Search:\",\"" . $_SESSION['search_for'] . "\"\n"; 
+		$row_content[$count++] = "Keyword Search:";
+		$row_content[$count++] = $_SESSION['search_for'];
+		include("_includes/system/export/write-row.inc.php");
 
 	}
 
@@ -491,7 +536,9 @@ if ($export == "1") {
 	
 		$formatted_quick_search = str_replace("'", "", $_SESSION['quick_search']);
 		$formatted_quick_search = str_replace(",", ", ", $formatted_quick_search);
-		$full_export .= "\"Quick Domain Search:\",\"" . $formatted_quick_search . "\"\n"; 
+		$row_content[$count++] = "Quick Domain Search:";
+		$row_content[$count++] = $formatted_quick_search;
+		include("_includes/system/export/write-row.inc.php");
 
 	}
 
@@ -503,7 +550,11 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"Registrar:\",\"" . $row_filter->name . "\"\n"; 
+
+			$row_content[$count++] = "Registrar:";
+			$row_content[$count++] = $row_filter->name;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
@@ -518,7 +569,11 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"Registrar Account:\",\"" . $row_filter->registrar_name . " - " . $row_filter->owner_name . " - " . $row_filter->username . "\"\n"; 
+
+			$row_content[$count++] = "Registrar Account:";
+			$row_content[$count++] = $row_filter->registrar_name . " - " . $row_filter->owner_name . " - " . $row_filter->username;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
@@ -531,7 +586,11 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"DNS Profile:\",\"" . $row_filter->name . "\"\n"; 
+
+			$row_content[$count++] = "DNS Profile:";
+			$row_content[$count++] = $row_filter->name;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
@@ -544,7 +603,11 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"IP Address:\",\"" . $row_filter->name . " (" . $row_filter->ip . ")\"\n"; 
+
+			$row_content[$count++] = "IP Address:";
+			$row_content[$count++] = $row_filter->name . " (" . $row_filter->ip . ")";
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
@@ -557,7 +620,11 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"Web Host:\",\"" . $row_filter->name . "\"\n"; 
+
+			$row_content[$count++] = "Web Host:";
+			$row_content[$count++] = $row_filter->name;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
@@ -570,7 +637,11 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"Category:\",\"" . $row_filter->name . "\"\n"; 
+
+			$row_content[$count++] = "Category:";
+			$row_content[$count++] = $row_filter->name;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
@@ -583,45 +654,108 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"Owner:\",\"" . $row_filter->name . "\"\n"; 
+
+			$row_content[$count++] = "Owner:";
+			$row_content[$count++] = $row_filter->name;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
 
-	if ($is_active == "ALL") { $full_export .= "\"Domain Status:\",\"ALL\"\n"; } 
-	elseif ($is_active == "LIVE" || $is_active == "") { $full_export .= "\"Domain Status:\",\"LIVE (Active / Transfers / Pending)\"\n"; } 
-	elseif ($is_active == "0") { $full_export .= "\"Domain Status:\",\"Expired\"\n"; } 
-	elseif ($is_active == "1") { $full_export .= "\"Domain Status:\",\"Active\"\n"; } 
-	elseif ($is_active == "2") { $full_export .= "\"Domain Status:\",\"In Transfer\"\n"; } 
-	elseif ($is_active == "3") { $full_export .= "\"Domain Status:\",\"Pending (Renewal)\"\n"; } 
-	elseif ($is_active == "4") { $full_export .= "\"Domain Status:\",\"Pending (Other)\"\n"; } 
-	elseif ($is_active == "5") { $full_export .= "\"Domain Status:\",\"Pending (Registration)\"\n"; } 
-	elseif ($is_active == "10") { $full_export .= "\"Domain Status:\",\"Sold\"\n"; }
+	if ($is_active == "ALL") { 
+	
+		$row_content[$count++] = "Domain Status:";
+		$row_content[$count++] = "ALL";
+		include("_includes/system/export/write-row.inc.php");
 
-	$full_export .= "\n";
+	} elseif ($is_active == "LIVE" || $is_active == "") { 
+	
+		$row_content[$count++] = "Domain Status:";
+		$row_content[$count++] = "LIVE (Active / Transfers / Pending)";
+		include("_includes/system/export/write-row.inc.php");
+		
+	} elseif ($is_active == "0") { 
+	
+		$row_content[$count++] = "Domain Status:";
+		$row_content[$count++] = "Expired";
+		include("_includes/system/export/write-row.inc.php");
+		
+	} elseif ($is_active == "1") { 
+	
+		$row_content[$count++] = "Domain Status:";
+		$row_content[$count++] = "Active";
+		include("_includes/system/export/write-row.inc.php");
+		
+	} elseif ($is_active == "2") { 
+	
+		$row_content[$count++] = "Domain Status:";
+		$row_content[$count++] = "In Transfer";
+		include("_includes/system/export/write-row.inc.php");
+		
+	} elseif ($is_active == "3") { 
+	
+		$row_content[$count++] = "Domain Status:";
+		$row_content[$count++] = "Pending (Renewal)";
+		include("_includes/system/export/write-row.inc.php");
+		
+	} elseif ($is_active == "4") { 
+	
+		$row_content[$count++] = "Domain Status:";
+		$row_content[$count++] = "Pending (Other)";
+		include("_includes/system/export/write-row.inc.php");
+		
+	} elseif ($is_active == "5") { 
+	
+		$row_content[$count++] = "Domain Status:";
+		$row_content[$count++] = "Pending (Registration)";
+		include("_includes/system/export/write-row.inc.php");
+		
+	} elseif ($is_active == "10") { 
+	
+		$row_content[$count++] = "Domain Status:";
+		$row_content[$count++] = "Sold";
+		include("_includes/system/export/write-row.inc.php");
+
+	}
+	
+	fputcsv($file_content, $blank_line);
 
 	$sql_field = "SELECT name
 				  FROM domain_fields
 				  ORDER BY name";
 	$result_field = mysql_query($sql_field,$connection);
-	
-	$count = 0;
-	$header_list = "";
-	
+
+	$row_content[$count++] = "Domain Status";
+	$row_content[$count++] = "Expiry Date";
+	$row_content[$count++] = "Initial Fee";
+	$row_content[$count++] = "Renewal Fee";
+	$row_content[$count++] = "Domain";
+	$row_content[$count++] = "TLD";
+	$row_content[$count++] = "Function";
+	$row_content[$count++] = "WHOIS Status";
+	$row_content[$count++] = "Registrar";
+	$row_content[$count++] = "Registrar Account";
+	$row_content[$count++] = "Username";
+	$row_content[$count++] = "DNS Profile";
+	$row_content[$count++] = "IP Address Name";
+	$row_content[$count++] = "IP Address";
+	$row_content[$count++] = "IP Address rDNS";
+	$row_content[$count++] = "Web Host";
+	$row_content[$count++] = "Category";
+	$row_content[$count++] = "Category Stakeholder";
+	$row_content[$count++] = "Owner";
+	$row_content[$count++] = "Notes";
+
 	while ($row_field = mysql_fetch_object($result_field)) {
 		
-		$name_array[$count] = $row_field->name;
-		$count++;
-	
-	}
-	
-	foreach($name_array as $field_name) {
-		
-		$header_list .= "\"" . $field_name . "\",";
+		$row_content[$count++] = $row_field->name;
 	
 	}
 
-	$full_export .= "\"Domain Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"Function\",\"WHOIS Status\",\"Registrar\",\"Registrar Account\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Notes\",$header_list\"Inserted\",\"Updated\"\n";
+	$row_content[$count++] = "Inserted";
+	$row_content[$count++] = "Updated";
+	include("_includes/system/export/write-row.inc.php");
 
 	while ($row = mysql_fetch_object($result)) {
 		
@@ -660,18 +794,39 @@ if ($export == "1") {
 		include("_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
+		$row_content[$count++] = $domain_status;
+		$row_content[$count++] = $row->expiry_date;
+		$row_content[$count++] = $export_initial_fee;
+		$row_content[$count++] = $export_renewal_fee;
+		$row_content[$count++] = $row->domain;
+		$row_content[$count++] = "." . $row->tld;
+		$row_content[$count++] = $row->function;
+		$row_content[$count++] = $privacy_status;
+		$row_content[$count++] = $row->registrar_name;
+		$row_content[$count++] = $row->registrar_name . ", " . $row->owner_name . "(" . $row->username . ")";
+		$row_content[$count++] = $row->username;
+		$row_content[$count++] = $row->dns_name;
+		$row_content[$count++] = $row->ip_name;
+		$row_content[$count++] = $row->ip;
+		$row_content[$count++] = $row->rdns;
+		$row_content[$count++] = $row->wh_name;
+		$row_content[$count++] = $row->category_name;
+		$row_content[$count++] = $row->stakeholder;
+		$row_content[$count++] = $row->owner_name;
+		$row_content[$count++] = $row->notes;
+
 		$sql_field = "SELECT field_name
 					  FROM domain_fields
 					  ORDER BY name";
 		$result_field = mysql_query($sql_field,$connection);
 		
-		$count = 0;
+		$array_count = 0;
 		$field_data = "";
 		
 		while ($row_field = mysql_fetch_object($result_field)) {
 			
-			$field_array[$count] = $row_field->field_name;
-			$count++;
+			$field_array[$array_count] = $row_field->field_name;
+			$array_count++;
 		
 		}
 		
@@ -684,22 +839,19 @@ if ($export == "1") {
 			
 			while ($row_data = mysql_fetch_object($result_data)) {
 		
-				$field_data .= "\"" . $row_data->{$field} . "\",";
+				$row_content[$count++] = $row_data->{$field};
 			
 			}
 		
 		}
 
-		$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"" . $export_initial_fee . "\",\"" . $export_renewal_fee . "\",\"$row->domain\",\".$row->tld\",\"$row->function\",\"$privacy_status\",\"$row->registrar_name\",\"$row->registrar_name, $row->owner_name ($row->username)\",\"$row->username\",\"$row->dns_name\",\"$row->ip_name\",\"$row->ip\",\"$row->rdns\",\"$row->wh_name\",\"$row->category_name\",\"$row->stakeholder\",\"$row->owner_name\",\"$row->notes\",$field_data\"$row->insert_time\",\"$row->update_time\"\n";
+		$row_content[$count++] = $row->insert_time;
+		$row_content[$count++] = $row->update_time;
+		include("_includes/system/export/write-row.inc.php");
 
 	}
 
-	$full_export .= "\n";
-
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "domain_results_" . $current_timestamp_unix . ".csv";
-	include("_includes/system/export-to-csv.inc.php");
-	exit;
+	include("_includes/system/export/footer.inc.php");
 
 }
 ?>

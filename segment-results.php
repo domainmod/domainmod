@@ -86,27 +86,63 @@ if ($type == "inactive") {
 }
 $result = mysql_query($sql,$connection);
 
-$full_export = "";
-
 if ($export == "1") {
 
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+	
+	$current_timestamp_unix = strtotime($current_timestamp);
+	if ($type == "inactive") { 
+		$export_filename = "segment_results_inactive_" . $current_timestamp_unix . ".csv";
+	} elseif ($type == "filtered") {
+		$export_filename = "segment_results_filtered_" . $current_timestamp_unix . ".csv";
+	} elseif ($type == "missing") {
+		$export_filename = "segment_results_missing_" . $current_timestamp_unix . ".csv";
+	}
+	include("_includes/system/export/header.inc.php");
+	
 	if ($type == "inactive" || $type == "filtered") { 
 	
 		if ($type == "inactive") {
 			
-			$full_export .= "\"INACTIVE DOMAINS\"\n\n";
-			
+			$row_content[$count++] = "INACTIVE DOMAINS";
+			include("_includes/system/export/write-row.inc.php");
+
+			fputcsv($file_content, $blank_line);
+
 		} elseif ($type == "filtered") {
 
-			$full_export .= "\"FILTERED DOMAINS\"\n\n";
+			$row_content[$count++] = "FILTERED DOMAINS";
+			include("_includes/system/export/write-row.inc.php");
+
+			fputcsv($file_content, $blank_line);
 			
 		}
 
-		$full_export .= "\"Domain Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Domain\",\"TLD\",\"WHOIS Status\",\"Registrar\",\"Username\",\"DNS Profile\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Web Host\",\"Category\",\"Category Stakeholder\",\"Owner\",\"Function\",\"Notes\"\n";
+		$row_content[$count++] = "Domain Status";
+		$row_content[$count++] = "Expiry Date";
+		$row_content[$count++] = "Initial Fee";
+		$row_content[$count++] = "Renewal Fee";
+		$row_content[$count++] = "Domain";
+		$row_content[$count++] = "TLD";
+		$row_content[$count++] = "WHOIS Status";
+		$row_content[$count++] = "Registrar";
+		$row_content[$count++] = "Username";
+		$row_content[$count++] = "DNS Profile";
+		$row_content[$count++] = "IP Address Name";
+		$row_content[$count++] = "IP Address";
+		$row_content[$count++] = "IP Address rDNS";
+		$row_content[$count++] = "Web Host";
+		$row_content[$count++] = "Category";
+		$row_content[$count++] = "Category Stakeholder";
+		$row_content[$count++] = "Owner";
+		$row_content[$count++] = "Function";
+		$row_content[$count++] = "Notes";
+		include("_includes/system/export/write-row.inc.php");
 	
 	} elseif ($type == "missing") {
 	
-		$full_export .= "\"MISSING DOMAINS\"\n";
+		$row_content[$count++] = "MISSING DOMAINS";
+		include("_includes/system/export/write-row.inc.php");
 	
 	}
 
@@ -151,7 +187,26 @@ if ($export == "1") {
 			include("_includes/system/convert-and-format-currency.inc.php");
 			$export_renewal_fee = $temp_output_amount;
 	
-			$full_export .= "\"$domain_status\",\"$row->expiry_date\",\"" . $export_initial_fee . "\",\"" . $export_renewal_fee . "\",\"$row->domain\",\".$row->tld\",\"$privacy_status\",\"$row->registrar_name\",\"$row->username\",\"$row->dns_profile\",\"$row->name\",\"$row->ip\",\"$row->rdns\",\"$row->wh_name\",\"$row->category_name\",\"$row->category_stakeholder\",\"$row->owner_name\",\"$row->function\",\"$row->notes\"\n";
+			$row_content[$count++] = $domain_status;
+			$row_content[$count++] = $row->expiry_date;
+			$row_content[$count++] = $export_initial_fee;
+			$row_content[$count++] = $export_renewal_fee;
+			$row_content[$count++] = $row->domain;
+			$row_content[$count++] = "." . $row->tld;
+			$row_content[$count++] = $privacy_status;
+			$row_content[$count++] = $row->registrar_name;
+			$row_content[$count++] = $row->username;
+			$row_content[$count++] = $row->dns_profile;
+			$row_content[$count++] = $row->name;
+			$row_content[$count++] = $row->ip;
+			$row_content[$count++] = $row->rdns;
+			$row_content[$count++] = $row->wh_name;
+			$row_content[$count++] = $row->category_name;
+			$row_content[$count++] = $row->category_stakeholder;
+			$row_content[$count++] = $row->owner_name;
+			$row_content[$count++] = $row->function;
+			$row_content[$count++] = $row->notes;
+			include("_includes/system/export/write-row.inc.php");
 
 		}
 		
@@ -159,13 +214,14 @@ if ($export == "1") {
 
 		while ($row = mysql_fetch_object($result)) {
 			
-			$full_export .= "\"$row->domain\"\n";
+			$row_content[$count++] = $row->domain;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 		
 	}
 
-	$full_export .= "\n";
-
+/*
 	if ($type == "inactive" || $type == "filtered") {
 
 		$temp_input_amount = $total_initial_fee_export;
@@ -185,17 +241,10 @@ if ($export == "1") {
 		$total_export_renewal_fee = $temp_output_amount;
 
 	}
+*/
 
-	$current_timestamp_unix = strtotime($current_timestamp);
-	if ($type == "inactive") { 
-		$export_filename = "export_inactive_" . $current_timestamp_unix . ".csv";
-	} elseif ($type == "filtered") {
-		$export_filename = "export_filtered_" . $current_timestamp_unix . ".csv";
-	} elseif ($type == "missing") {
-		$export_filename = "export_missing_" . $current_timestamp_unix . ".csv";
-	}
-	include("_includes/system/export-to-csv.inc.php");
-	exit;
+	include("_includes/system/export/footer.inc.php");
+
 }
 ?>
 <?php include("_includes/doctype.inc.php"); ?>

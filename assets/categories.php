@@ -42,19 +42,36 @@ $sql = "(SELECT c.id, c.name, c.stakeholder, c.notes, c.insert_time, c.update_ti
 		ORDER BY name";
 
 if ($export == "1") {
-	
-	$full_export = "";
-	$full_export .= "\"" . $page_title . "\"\n\n";
-	$full_export .= "\"Status\",\"Category\",\"Stakeholder\",\"Domains\",\"SSL Certs\",\"Default Domain Category?\",\"Default SSL Category?\",\"Notes\",\"Added\",\"Last Updated\"\n";
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
-	
+
+	$current_timestamp_unix = strtotime($current_timestamp);
+	$export_filename = "category_list_" . $current_timestamp_unix . ".csv";
+	include("../_includes/system/export/header.inc.php");
+
+	$row_content[$count++] = $page_title;
+	include("../_includes/system/export/write-row.inc.php");
+
+	fputcsv($file_content, $blank_line);
+
+	$row_content[$count++] = "Status";
+	$row_content[$count++] = "Category";
+	$row_content[$count++] = "Stakeholder";
+	$row_content[$count++] = "Domains";
+	$row_content[$count++] = "SSL Certs";
+	$row_content[$count++] = "Default Domain Category?";
+	$row_content[$count++] = "Default SSL Category?";
+	$row_content[$count++] = "Notes";
+	$row_content[$count++] = "Inserted";
+	$row_content[$count++] = "Updated";
+	include("../_includes/system/export/write-row.inc.php");
+
 	if (mysql_num_rows($result) > 0) {
-	
+
 		$has_active = "1";
-	
+
 		while ($row = mysql_fetch_object($result)) {
-	
+
 			$new_pcid = $row->id;
 		
 			if ($current_pcid != $new_pcid) {
@@ -99,14 +116,24 @@ if ($export == "1") {
 			
 			}
 	
-			$full_export .= "\"Active\",\"" . $row->name . "\",\"" . $row->stakeholder . "\",\"" . $total_domains . "\",\"" . $total_certs . "\",\"" . $is_default_domains . "\",\"" . $is_default_ssl . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
+			$row_content[$count++] = "Active";
+			$row_content[$count++] = $row->name;
+			$row_content[$count++] = $row->stakeholder;
+			$row_content[$count++] = $total_domains;
+			$row_content[$count++] = $total_certs;
+			$row_content[$count++] = $is_default_domains;
+			$row_content[$count++] = $is_default_ssl;
+			$row_content[$count++] = $row->notes;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
+			include("../_includes/system/export/write-row.inc.php");
 	
 			$current_pcid = $row->id;
-	
+
 		}
-	
+
 	}
-	
+
 	$exclude_category_string = substr($exclude_category_string_raw, 0, -2); 
 	
 	if ($exclude_category_string == "") {
@@ -151,18 +178,25 @@ if ($export == "1") {
 				$is_default_ssl = "";
 			
 			}
-	
-			$full_export .= "\"Inactive\",\"" . $row->name . "\",\"" . $row->stakeholder . "\",\"0\",\"0\",\"" . $is_default_domains . "\",\"" . $is_default_ssl . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
-	
+
+			$row_content[$count++] = "Inactive";
+			$row_content[$count++] = $row->name;
+			$row_content[$count++] = $row->stakeholder;
+			$row_content[$count++] = 0;
+			$row_content[$count++] = 0;
+			$row_content[$count++] = $is_default_domains;
+			$row_content[$count++] = $is_default_ssl;
+			$row_content[$count++] = $row->notes;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
+			include("../_includes/system/export/write-row.inc.php");
+
 		}
-	
+
 	}
 
-	$full_export .= "\n";
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "category_list_" . $current_timestamp_unix . ".csv";
-	include("../_includes/system/export-to-csv.inc.php");
-	exit;
+	include("../_includes/system/export/footer.inc.php");
+
 }
 ?>
 <?php include("../_includes/doctype.inc.php"); ?>

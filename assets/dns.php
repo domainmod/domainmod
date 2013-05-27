@@ -38,19 +38,54 @@ $sql = "SELECT id, name, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, 
 		ORDER BY name, number_of_servers desc";
 
 if ($export == "1") {
-	
-	$full_export = "";
-	$full_export .= "\"" . $page_title . "\"\n\n";
-	$full_export .= "\"Status\",\"DNS Profile\",\"DNS Servers\",\"Domains\",\"Default DNS Profile?\",\"DNS Server 1\",\"IP Address 1\",\"DNS Server 2\",\"IP Address 2\",\"DNS Server 3\",\"IP Address 3\",\"DNS Server 4\",\"IP Address 4\",\"DNS Server 5\",\"IP Address 5\",\"DNS Server 6\",\"IP Address 6\",\"DNS Server 7\",\"IP Address 7\",\"DNS Server 8\",\"IP Address 8\",\"DNS Server 9\",\"IP Address 9\",\"DNS Server 10\",\"IP Address 10\",\"Notes\",\"Added\",\"Last Updated\"\n";
 
-	$result = mysql_query($sql,$connection);
-	
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$current_timestamp_unix = strtotime($current_timestamp);
+	$export_filename = "dns_profile_list_" . $current_timestamp_unix . ".csv";
+	include("../_includes/system/export/header.inc.php");
+
+	$row_content[$count++] = $page_title;
+	include("../_includes/system/export/write-row.inc.php");
+
+	fputcsv($file_content, $blank_line);
+
+	$row_content[$count++] = "Status";
+	$row_content[$count++] = "DNS Profile";
+	$row_content[$count++] = "DNS Servers";
+	$row_content[$count++] = "Domains";
+	$row_content[$count++] = "Default DNS Profile?";
+	$row_content[$count++] = "DNS Server 1";
+	$row_content[$count++] = "IP Address 1";
+	$row_content[$count++] = "DNS Server 2";
+	$row_content[$count++] = "IP Address 2";
+	$row_content[$count++] = "DNS Server 3";
+	$row_content[$count++] = "IP Address 3";
+	$row_content[$count++] = "DNS Server 4";
+	$row_content[$count++] = "IP Address 4";
+	$row_content[$count++] = "DNS Server 5";
+	$row_content[$count++] = "IP Address 5";
+	$row_content[$count++] = "DNS Server 6";
+	$row_content[$count++] = "IP Address 6";
+	$row_content[$count++] = "DNS Server 7";
+	$row_content[$count++] = "IP Address 7";
+	$row_content[$count++] = "DNS Server 8";
+	$row_content[$count++] = "IP Address 8";
+	$row_content[$count++] = "DNS Server 9";
+	$row_content[$count++] = "IP Address 9";
+	$row_content[$count++] = "DNS Server 10";
+	$row_content[$count++] = "IP Address 10";
+	$row_content[$count++] = "Notes";
+	$row_content[$count++] = "Inserted";
+	$row_content[$count++] = "Updated";
+	include("../_includes/system/export/write-row.inc.php");
+
 	if (mysql_num_rows($result) > 0) {
-	
+
 		$has_active = "1";
-	
+
 		while ($row = mysql_fetch_object($result)) {
-	
+
 			$new_dnsid = $row->id;
 		
 			if ($current_dnsid != $new_dnsid) {
@@ -75,15 +110,43 @@ if ($export == "1") {
 				$is_default = "";
 			
 			}
-	
-			$full_export .= "\"Active\",\"" . $row->name . "\",\"" . number_format($row->number_of_servers) . "\",\"" . number_format($total_dns_count) . "\",\"" . $is_default . "\",\"" . $row->dns1 . "\",\"" . $row->ip1 . "\",\"" . $row->dns2 . "\",\"" . $row->ip2 . "\",\"" . $row->dns3 . "\",\"" . $row->ip3 . "\",\"" . $row->dns4 . "\",\"" . $row->ip4 . "\",\"" . $row->dns5 . "\",\"" . $row->ip5 . "\",\"" . $row->dns6 . "\",\"" . $row->ip6 . "\",\"" . $row->dns7 . "\",\"" . $row->ip7 . "\",\"" . $row->dns8 . "\",\"" . $row->ip8 . "\",\"" . $row->dns9 . "\",\"" . $row->ip9 . "\",\"" . $row->dns10 . "\",\"" . $row->ip10 . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
-	
+
+			$row_content[$count++] = "Active";
+			$row_content[$count++] = $row->name;
+			$row_content[$count++] = number_format($row->number_of_servers);
+			$row_content[$count++] = number_format($total_dns_count);
+			$row_content[$count++] = $is_default;
+			$row_content[$count++] = $row->dns1;
+			$row_content[$count++] = $row->ip1;
+			$row_content[$count++] = $row->dns2;
+			$row_content[$count++] = $row->ip2;
+			$row_content[$count++] = $row->dns3;
+			$row_content[$count++] = $row->ip3;
+			$row_content[$count++] = $row->dns4;
+			$row_content[$count++] = $row->ip4;
+			$row_content[$count++] = $row->dns5;
+			$row_content[$count++] = $row->ip5;
+			$row_content[$count++] = $row->dns6;
+			$row_content[$count++] = $row->ip6;
+			$row_content[$count++] = $row->dns7;
+			$row_content[$count++] = $row->ip7;
+			$row_content[$count++] = $row->dns8;
+			$row_content[$count++] = $row->ip8;
+			$row_content[$count++] = $row->dns9;
+			$row_content[$count++] = $row->ip9;
+			$row_content[$count++] = $row->dns10;
+			$row_content[$count++] = $row->ip10;
+			$row_content[$count++] = $row->notes;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
+			include("../_includes/system/export/write-row.inc.php");
+
 			$current_dnsid = $row->id;
-	
+
 		}
-	
+
 	}
-	
+
 	$exclude_dns_string = substr($exclude_dns_string_raw, 0, -2); 
 	
 	if ($exclude_dns_string == "") {
@@ -118,18 +181,43 @@ if ($export == "1") {
 				$is_default = "";
 			
 			}
-	
-			$full_export .= "\"Inactive\",\"" . $row->name . "\",\"" . number_format($row->number_of_servers) . "\",\"0\",\"" . $is_default . "\",\"" . $row->dns1 . "\",\"" . $row->ip1 . "\",\"" . $row->dns2 . "\",\"" . $row->ip2 . "\",\"" . $row->dns3 . "\",\"" . $row->ip3 . "\",\"" . $row->dns4 . "\",\"" . $row->ip4 . "\",\"" . $row->dns5 . "\",\"" . $row->ip5 . "\",\"" . $row->dns6 . "\",\"" . $row->ip6 . "\",\"" . $row->dns7 . "\",\"" . $row->ip7 . "\",\"" . $row->dns8 . "\",\"" . $row->ip8 . "\",\"" . $row->dns9 . "\",\"" . $row->ip9 . "\",\"" . $row->dns10 . "\",\"" . $row->ip10 . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
-	
+
+			$row_content[$count++] = "Inactive";
+			$row_content[$count++] = $row->name;
+			$row_content[$count++] = number_format($row->number_of_servers);
+			$row_content[$count++] = 0;
+			$row_content[$count++] = $is_default;
+			$row_content[$count++] = $row->dns1;
+			$row_content[$count++] = $row->ip1;
+			$row_content[$count++] = $row->dns2;
+			$row_content[$count++] = $row->ip2;
+			$row_content[$count++] = $row->dns3;
+			$row_content[$count++] = $row->ip3;
+			$row_content[$count++] = $row->dns4;
+			$row_content[$count++] = $row->ip4;
+			$row_content[$count++] = $row->dns5;
+			$row_content[$count++] = $row->ip5;
+			$row_content[$count++] = $row->dns6;
+			$row_content[$count++] = $row->ip6;
+			$row_content[$count++] = $row->dns7;
+			$row_content[$count++] = $row->ip7;
+			$row_content[$count++] = $row->dns8;
+			$row_content[$count++] = $row->ip8;
+			$row_content[$count++] = $row->dns9;
+			$row_content[$count++] = $row->ip9;
+			$row_content[$count++] = $row->dns10;
+			$row_content[$count++] = $row->ip10;
+			$row_content[$count++] = $row->notes;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
+			include("../_includes/system/export/write-row.inc.php");
+
 		}
-	
+
 	}
 
-	$full_export .= "\n";
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "dns_profile_list_" . $current_timestamp_unix . ".csv";
-	include("../_includes/system/export-to-csv.inc.php");
-	exit;
+	include("../_includes/system/export/footer.inc.php");
+
 }
 ?>
 <?php include("../_includes/doctype.inc.php"); ?>

@@ -107,93 +107,137 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
-		$full_export = "";
-		$full_export .= "\"" . $page_subtitle . "\"\n\n";
-		if ($all != "1") {
-		    $full_export .= "\"Date Range:\",\"" . $new_start_date . "\",\"" . $new_end_date . "\"\n";
-        } else {
-		    $full_export .= "\"Date Range:\",\"ALL\"\n";
-        }
-		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
-		$full_export .= "\"Number of Domains:\",\"" . $number_of_domains_total . "\"\n\n";
-		$full_export .= "\"Registrar\",\"Domains\",\"Cost\",\"Per Domain\",\"Registrar Account\",\"Domains\",\"Cost\",\"Per Domain\"\n";
-
-		$new_registrar = "";
-		$last_registrar = "";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-		while ($row = mysql_fetch_object($result)) {
-
-			$new_registrar = $row->registrar_name;
-
-			$sql_registrar_total = "SELECT SUM(f.renewal_fee * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
-									FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
-									WHERE d.fee_id = f.id
-									  AND f.currency_id = c.id
-									  AND c.id = cc.currency_id
-									  AND d.registrar_id = r.id
-									  AND d.account_id = ra.id
-									  AND d.owner_id = o.id
-									  AND d.active NOT IN ('0', '10')
-									  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-									  AND r.id = '" . $row->id . "'
-									  " . $range_string . "";
-			$result_registrar_total = mysql_query($sql_registrar_total,$connection) or die(mysql_error());
-			while ($row_registrar_total = mysql_fetch_object($result_registrar_total)) { 
-				$temp_registrar_total = $row_registrar_total->registrar_total; 
-				$number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar; 
-			}
-
-			$per_domain_account = $row->total_cost / $row->number_of_domains;
-
-			$temp_input_amount = $row->total_cost;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$row->total_cost = $temp_output_amount;
-
-			$temp_input_amount = $per_domain_account;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$per_domain_account = $temp_output_amount;
-
-			$per_domain_registrar = $temp_registrar_total / $number_of_domains_registrar;
-
-			$temp_input_amount = $temp_registrar_total;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$temp_registrar_total = $temp_output_amount;
-
-			$temp_input_amount = $per_domain_registrar;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$per_domain_registrar = $temp_output_amount;
-
-			$full_export .= "\"" . $row->registrar_name . "\",\"" . $number_of_domains_registrar . "\",\"" . $temp_registrar_total . "\",\"" . $per_domain_registrar . "\",\"" . $row->owner_name . " (" . $row->username . ")\",\"" . $row->number_of_domains . "\",\"" . $row->total_cost . "\",\"" . $per_domain_account . "\"\n";
-			$last_registrar = $row->registrar_name;
-
-		}
-
-		$full_export .= "\n";
-
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
 			$export_filename = "domain_cost_by_registrar_report_all_" . $current_timestamp_unix . ".csv";
 		} else {
 			$export_filename = "domain_cost_by_registrar_report_" . $new_start_date . "--" . $new_end_date . ".csv";
 		}
-		include("../../_includes/system/export-to-csv.inc.php");
-		exit;
+		include("../../_includes/system/export/header.inc.php");
+	
+		$row_content[$count++] = $page_subtitle;
+		include("../../_includes/system/export/write-row.inc.php");
+	
+		fputcsv($file_content, $blank_line);
+
+		if ($all != "1") {
+
+			$row_content[$count++] = "Date Range:";
+			$row_content[$count++] = $new_start_date;
+			$row_content[$count++] = $new_end_date;
+
+        } else {
+
+			$row_content[$count++] = "Date Range:";
+			$row_content[$count++] = "ALL";
+
+        }
+		include("../../_includes/system/export/write-row.inc.php");
+
+		$row_content[$count++] = "Total Cost:";
+		$row_content[$count++] = $grand_total;
+		$row_content[$count++] = $_SESSION['default_currency'];
+		include("../../_includes/system/export/write-row.inc.php");
+
+		$row_content[$count++] = "Number of Domains:";
+		$row_content[$count++] = $number_of_domains_total;
+		include("../../_includes/system/export/write-row.inc.php");
+
+		fputcsv($file_content, $blank_line);
+
+		$row_content[$count++] = "Registrar";
+		$row_content[$count++] = "Domains";
+		$row_content[$count++] = "Cost";
+		$row_content[$count++] = "Per Domain";
+		$row_content[$count++] = "Registrar Account";
+		$row_content[$count++] = "Domains";
+		$row_content[$count++] = "Cost";
+		$row_content[$count++] = "Per Domain";
+		include("../../_includes/system/export/write-row.inc.php");
+
+		$new_registrar = "";
+		$last_registrar = "";
+
+		if (mysql_num_rows($result) > 0) {
+
+			while ($row = mysql_fetch_object($result)) {
+	
+				$new_registrar = $row->registrar_name;
+	
+				$sql_registrar_total = "SELECT SUM(f.renewal_fee * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
+										FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
+										WHERE d.fee_id = f.id
+										  AND f.currency_id = c.id
+										  AND c.id = cc.currency_id
+										  AND d.registrar_id = r.id
+										  AND d.account_id = ra.id
+										  AND d.owner_id = o.id
+										  AND d.active NOT IN ('0', '10')
+										  AND cc.user_id = '" . $_SESSION['user_id'] . "'
+										  AND r.id = '" . $row->id . "'
+										  " . $range_string . "";
+				$result_registrar_total = mysql_query($sql_registrar_total,$connection) or die(mysql_error());
+				while ($row_registrar_total = mysql_fetch_object($result_registrar_total)) { 
+					$temp_registrar_total = $row_registrar_total->registrar_total; 
+					$number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar; 
+				}
+	
+				$per_domain_account = $row->total_cost / $row->number_of_domains;
+	
+				$temp_input_amount = $row->total_cost;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$row->total_cost = $temp_output_amount;
+	
+				$temp_input_amount = $per_domain_account;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$per_domain_account = $temp_output_amount;
+	
+				$per_domain_registrar = $temp_registrar_total / $number_of_domains_registrar;
+	
+				$temp_input_amount = $temp_registrar_total;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$temp_registrar_total = $temp_output_amount;
+	
+				$temp_input_amount = $per_domain_registrar;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$per_domain_registrar = $temp_output_amount;
+
+				$row_content[$count++] = $row->registrar_name;
+				$row_content[$count++] = $number_of_domains_registrar;
+				$row_content[$count++] = $temp_registrar_total;
+				$row_content[$count++] = $per_domain_registrar;
+				$row_content[$count++] = $row->owner_name . " (" . $row->username . ")";
+				$row_content[$count++] = $row->number_of_domains;
+				$row_content[$count++] = $row->total_cost;
+				$row_content[$count++] = $per_domain_account;
+				include("../../_includes/system/export/write-row.inc.php");
+
+				$last_registrar = $row->registrar_name;
+
+			}
+
+		}
+
+		include("../../_includes/system/export/footer.inc.php");
+
 	}
 
 }

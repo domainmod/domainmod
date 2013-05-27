@@ -99,94 +99,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
-		$full_export = "";
-		$full_export .= "\"" . $page_subtitle . "\"\n\n";
-		if ($all != "1") {
-		    $full_export .= "\"Date Range:\",\"" . $new_start_date . "\",\"" . $new_end_date . "\"\n";
-        } else {
-		    $full_export .= "\"Date Range:\",\"ALL\"\n";
-        }
-		$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
-		$full_export .= "\"Number of SSL Certs:\",\"" . $number_of_certs_total . "\"\n\n";
-		$full_export .= "\"Year\",\"Month\",\"Cost\",\"By Year\"\n";
-	
-		$new_year = "";
-		$last_year = "";
-		$new_month = "";
-		$last_month = "";
-	
-		while ($row = mysql_fetch_object($result)) {
-			
-			$new_year = $row->year;
-			$new_month = $row->month;
-	
-			$sql_monthly_cost = "SELECT SUM(f.renewal_fee * cc.conversion) AS monthly_cost
-								 FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
-								 WHERE sslc.fee_id = f.id
-								   AND f.currency_id = c.id
-								   AND c.id = cc.currency_id
-								   AND cc.user_id = '" . $_SESSION['user_id'] . "'
-								   AND sslc.active NOT IN ('0')
-								   AND YEAR(sslc.expiry_date) = '" . $row->year . "'
-								   AND MONTH(sslc.expiry_date) = '" . $row->month . "'
-		  						   " . $range_string . "";
-			$result_monthly_cost = mysql_query($sql_monthly_cost,$connection) or die(mysql_error());
-			
-			while ($row_monthly_cost = mysql_fetch_object($result_monthly_cost)) {
-				$monthly_cost = $row_monthly_cost->monthly_cost;
-			}
-	
-			$temp_input_amount = $monthly_cost;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$monthly_cost = $temp_output_amount;
-	
-			if ($row->month == "1") { $display_month = "January"; } 
-			elseif ($row->month == "2") { $display_month = "February"; }
-			elseif ($row->month == "3") { $display_month = "March"; }
-			elseif ($row->month == "4") { $display_month = "April"; }
-			elseif ($row->month == "5") { $display_month = "May"; }
-			elseif ($row->month == "6") { $display_month = "June"; }
-			elseif ($row->month == "7") { $display_month = "July"; }
-			elseif ($row->month == "8") { $display_month = "August"; }
-			elseif ($row->month == "9") { $display_month = "September"; }
-			elseif ($row->month == "10") { $display_month = "October"; }
-			elseif ($row->month == "11") { $display_month = "November"; }
-			elseif ($row->month == "12") { $display_month = "December"; }
-	
-			$sql_yearly_cost = "SELECT SUM(f.renewal_fee * cc.conversion) AS yearly_cost
-								FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
-								WHERE sslc.fee_id = f.id
-								  AND f.currency_id = c.id
-								  AND c.id = cc.currency_id
-								  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-								  AND sslc.active NOT IN ('0')
-								  AND YEAR(sslc.expiry_date) = '" . $row->year . "'
-								  " . $range_string . "";
-			$result_yearly_cost = mysql_query($sql_yearly_cost,$connection) or die(mysql_error());
-			
-			while ($row_yearly_cost = mysql_fetch_object($result_yearly_cost)) {
-				$yearly_cost = $row_yearly_cost->yearly_cost;
-			}
-
-			$temp_input_amount = $yearly_cost;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$yearly_cost = $temp_output_amount;
-
-			$full_export .= "\"" . $row->year . "\",\"" . $display_month . "\",\"" . $monthly_cost . "\",\"" . $yearly_cost . "\"\n";
-			$last_year = $row->year;
-			$last_month = $row->month;
-
-		}
-	
-		$full_export .= "\n";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
@@ -194,8 +107,130 @@ if ($submission_failed != "1" && $total_rows > 0) {
 		} else {
 			$export_filename = "ssl_cost_by_month_report_" . $new_start_date . "--" . $new_end_date . ".csv";
 		}
-		include("../../_includes/system/export-to-csv.inc.php");
-		exit;
+		include("../../_includes/system/export/header.inc.php");
+	
+		$row_content[$count++] = $page_subtitle;
+		include("../../_includes/system/export/write-row.inc.php");
+	
+		fputcsv($file_content, $blank_line);
+
+		if ($all != "1") {
+
+			$row_content[$count++] = "Date Range:";
+			$row_content[$count++] = $new_start_date;
+			$row_content[$count++] = $new_end_date;
+
+        } else {
+
+			$row_content[$count++] = "Date Range:";
+			$row_content[$count++] = "ALL";
+
+        }
+		include("../../_includes/system/export/write-row.inc.php");
+
+		$row_content[$count++] = "Total Cost:";
+		$row_content[$count++] = $grand_total;
+		$row_content[$count++] = $_SESSION['default_currency'];
+		include("../../_includes/system/export/write-row.inc.php");
+
+		$row_content[$count++] = "Number of SSL Certs:";
+		$row_content[$count++] = $number_of_certs_total;
+		include("../../_includes/system/export/write-row.inc.php");
+
+		fputcsv($file_content, $blank_line);
+
+		$row_content[$count++] = "Year";
+		$row_content[$count++] = "Month";
+		$row_content[$count++] = "Cost";
+		$row_content[$count++] = "By Year";
+		include("../../_includes/system/export/write-row.inc.php");
+
+		$new_year = "";
+		$last_year = "";
+		$new_month = "";
+		$last_month = "";
+
+		if (mysql_num_rows($result) > 0) {
+
+			while ($row = mysql_fetch_object($result)) {
+				
+				$new_year = $row->year;
+				$new_month = $row->month;
+		
+				$sql_monthly_cost = "SELECT SUM(f.renewal_fee * cc.conversion) AS monthly_cost
+									 FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
+									 WHERE sslc.fee_id = f.id
+									   AND f.currency_id = c.id
+									   AND c.id = cc.currency_id
+									   AND cc.user_id = '" . $_SESSION['user_id'] . "'
+									   AND sslc.active NOT IN ('0')
+									   AND YEAR(sslc.expiry_date) = '" . $row->year . "'
+									   AND MONTH(sslc.expiry_date) = '" . $row->month . "'
+									   " . $range_string . "";
+				$result_monthly_cost = mysql_query($sql_monthly_cost,$connection) or die(mysql_error());
+				
+				while ($row_monthly_cost = mysql_fetch_object($result_monthly_cost)) {
+					$monthly_cost = $row_monthly_cost->monthly_cost;
+				}
+		
+				$temp_input_amount = $monthly_cost;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$monthly_cost = $temp_output_amount;
+		
+				if ($row->month == "1") { $display_month = "January"; } 
+				elseif ($row->month == "2") { $display_month = "February"; }
+				elseif ($row->month == "3") { $display_month = "March"; }
+				elseif ($row->month == "4") { $display_month = "April"; }
+				elseif ($row->month == "5") { $display_month = "May"; }
+				elseif ($row->month == "6") { $display_month = "June"; }
+				elseif ($row->month == "7") { $display_month = "July"; }
+				elseif ($row->month == "8") { $display_month = "August"; }
+				elseif ($row->month == "9") { $display_month = "September"; }
+				elseif ($row->month == "10") { $display_month = "October"; }
+				elseif ($row->month == "11") { $display_month = "November"; }
+				elseif ($row->month == "12") { $display_month = "December"; }
+		
+				$sql_yearly_cost = "SELECT SUM(f.renewal_fee * cc.conversion) AS yearly_cost
+									FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
+									WHERE sslc.fee_id = f.id
+									  AND f.currency_id = c.id
+									  AND c.id = cc.currency_id
+									  AND cc.user_id = '" . $_SESSION['user_id'] . "'
+									  AND sslc.active NOT IN ('0')
+									  AND YEAR(sslc.expiry_date) = '" . $row->year . "'
+									  " . $range_string . "";
+				$result_yearly_cost = mysql_query($sql_yearly_cost,$connection) or die(mysql_error());
+				
+				while ($row_yearly_cost = mysql_fetch_object($result_yearly_cost)) {
+					$yearly_cost = $row_yearly_cost->yearly_cost;
+				}
+	
+				$temp_input_amount = $yearly_cost;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$yearly_cost = $temp_output_amount;
+	
+				$row_content[$count++] = $row->year;
+				$row_content[$count++] = $display_month;
+				$row_content[$count++] = $monthly_cost;
+				$row_content[$count++] = $yearly_cost;
+				include("../../_includes/system/export/write-row.inc.php");
+
+				$last_year = $row->year;
+				$last_month = $row->month;
+	
+			}
+	
+		}
+	
+		include("../../_includes/system/export/footer.inc.php");
 
 	}
 

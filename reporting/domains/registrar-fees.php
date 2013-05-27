@@ -57,72 +57,94 @@ if ($total_rows > 0) {
 
 	if ($export == "1") {
 
-		$full_export = "";
-
-		$full_export .= "\"" . $page_subtitle . "\"\n\n";
-
-		if ($all == "1") {
-			$full_export .= "\"All Registrar Fees\"\n\n";
-		} else {
-			$full_export .= "\"Active Registrar Fees\"\n\n";
-		}
-
-		$full_export .= "\"Registrar\",\"TLD\",\"Initial Fee\",\"Renewal Fee\",\"Transfer Fee\",\"Currency\",\"Last Updated\"\n";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 	
-		$new_registrar = "";
-		$last_registrar = "";
-		$new_tld = "";
-		$last_tld = "";
-	
-		while ($row = mysql_fetch_object($result)) {
-			
-			$new_registrar = $row->registrar;
-			$new_tld = $row->tld;
-
-			if ($row->update_time == "0000-00-00 00:00:00") {
-				$row->update_time = $row->insert_time;	
-			}
-			$last_updated = date('Y-m-d', strtotime($row->update_time));
-
-			$temp_input_amount = $row->initial_fee;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $row->symbol;
-			$temp_input_currency_symbol_order = $row->symbol_order;
-			$temp_input_currency_symbol_space = $row->symbol_space;
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$row->initial_fee = $temp_output_amount;
-
-			$temp_input_amount = $row->renewal_fee;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $row->symbol;
-			$temp_input_currency_symbol_order = $row->symbol_order;
-			$temp_input_currency_symbol_space = $row->symbol_space;
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$row->renewal_fee = $temp_output_amount;
-
-			$temp_input_amount = $row->transfer_fee;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $row->symbol;
-			$temp_input_currency_symbol_order = $row->symbol_order;
-			$temp_input_currency_symbol_space = $row->symbol_space;
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			$row->transfer_fee = $temp_output_amount;
-
-			$full_export .= "\"" . $row->registrar . "\",\"." . $row->tld . "\",\"" . $row->initial_fee . "\",\"" . $row->renewal_fee . "\",\"" . $row->transfer_fee . "\",\"" . $row->currency . "\",\"" . $last_updated . "\"\n";
-			$last_registrar = $row->registrar;
-
-		}
-	
-		$full_export .= "\n";
-
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
 			$export_filename = "registrar_fee_report_all_" . $current_timestamp_unix . ".csv";
 		} else {
 			$export_filename = "registrar_fee_report_active_" . $current_timestamp_unix . ".csv";
 		}
-		include("../../_includes/system/export-to-csv.inc.php");
-		exit;
+		include("../../_includes/system/export/header.inc.php");
+	
+		$row_content[$count++] = $page_subtitle;
+		include("../../_includes/system/export/write-row.inc.php");
+	
+		fputcsv($file_content, $blank_line);
+
+		if ($all == "1") {
+			$row_content[$count++] = "All Registrar Fees";
+		} else {
+			$row_content[$count++] = "Active Registrar Fees";
+		}
+		include("../../_includes/system/export/write-row.inc.php");
+
+		fputcsv($file_content, $blank_line);
+
+		$row_content[$count++] = "Registrar";
+		$row_content[$count++] = "TLD";
+		$row_content[$count++] = "Initial Fee";
+		$row_content[$count++] = "Renewal Fee";
+		$row_content[$count++] = "Transfer Fee";
+		$row_content[$count++] = "Currency";
+		$row_content[$count++] = "Inserted";
+		$row_content[$count++] = "Updated";
+		include("../../_includes/system/export/write-row.inc.php");
+	
+		$new_registrar = "";
+		$last_registrar = "";
+		$new_tld = "";
+		$last_tld = "";
+
+		if (mysql_num_rows($result) > 0) {
+	
+			while ($row = mysql_fetch_object($result)) {
+				
+				$new_registrar = $row->registrar;
+				$new_tld = $row->tld;
+
+				$temp_input_amount = $row->initial_fee;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $row->symbol;
+				$temp_input_currency_symbol_order = $row->symbol_order;
+				$temp_input_currency_symbol_space = $row->symbol_space;
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$row->initial_fee = $temp_output_amount;
+	
+				$temp_input_amount = $row->renewal_fee;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $row->symbol;
+				$temp_input_currency_symbol_order = $row->symbol_order;
+				$temp_input_currency_symbol_space = $row->symbol_space;
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$row->renewal_fee = $temp_output_amount;
+	
+				$temp_input_amount = $row->transfer_fee;
+				$temp_input_conversion = "";
+				$temp_input_currency_symbol = $row->symbol;
+				$temp_input_currency_symbol_order = $row->symbol_order;
+				$temp_input_currency_symbol_space = $row->symbol_space;
+				include("../../_includes/system/convert-and-format-currency.inc.php");
+				$row->transfer_fee = $temp_output_amount;
+	
+				$row_content[$count++] = $row->registrar;
+				$row_content[$count++] = "." . $row->tld;
+				$row_content[$count++] = $row->initial_fee;
+				$row_content[$count++] = $row->renewal_fee;
+				$row_content[$count++] = $row->transfer_fee;
+				$row_content[$count++] = $row->currency;
+				$row_content[$count++] = $row->insert_time;
+				$row_content[$count++] = $row->update_time;
+				include("../../_includes/system/export/write-row.inc.php");
+
+				$last_registrar = $row->registrar;
+	
+			}
+	
+		}
+	
+		include("../../_includes/system/export/footer.inc.php");
+
 	}
 
 }

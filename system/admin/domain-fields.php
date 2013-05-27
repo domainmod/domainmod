@@ -39,28 +39,45 @@ $sql = "SELECT f.id, f.name, f.field_name, f.description, f.notes, f.insert_time
 		ORDER BY f.name";
 
 if ($export == "1") {
-	
-	$full_export = "";
-	$full_export .= "\"" . $page_title . "\"\n\n";
-	$full_export .= "\"Display Name\",\"DB Field\",\"Data Type\",\"Description\",\"Notes\",\"Inserted\",\"Updated\",\n";
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
-	if (mysql_num_rows($result) > 0) {
-	
-		while ($row = mysql_fetch_object($result)) {
-			
-			$full_export .= "\"" . $row->name . "\",\"" . $row->field_name . "\",\"" . $row->type . "\",\"" . $row->description . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\",\n";
-	
-		}
-			
-	}
-
-	$full_export .= "\n";
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "custom_domain_field_list_" . $current_timestamp_unix . ".csv";
-	include("../../_includes/system/export-to-csv.inc.php");
-	exit;
+	include("../../_includes/system/export/header.inc.php");
+
+	$row_content[$count++] = $page_title;
+	include("../../_includes/system/export/write-row.inc.php");
+
+	fputcsv($file_content, $blank_line);
+
+	$row_content[$count++] = "Display Name";
+	$row_content[$count++] = "DB Field";
+	$row_content[$count++] = "Data Type";
+	$row_content[$count++] = "Description";
+	$row_content[$count++] = "Notes";
+	$row_content[$count++] = "Inserted";
+	$row_content[$count++] = "Updated";
+	include("../../_includes/system/export/write-row.inc.php");
+
+	if (mysql_num_rows($result) > 0) {
+
+		while ($row = mysql_fetch_object($result)) {
+
+			$row_content[$count++] = $row->name;
+			$row_content[$count++] = $row->field_name;
+			$row_content[$count++] = $row->type;
+			$row_content[$count++] = $row->description;
+			$row_content[$count++] = $row->notes;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
+			include("../../_includes/system/export/write-row.inc.php");
+
+		}
+
+	}
+
+	include("../../_includes/system/export/footer.inc.php");
 
 }
 ?>

@@ -53,13 +53,31 @@ $sql = "SELECT sa.id AS sslpaid, sa.username, sa.password, sa.owner_id, sa.ssl_p
 		ORDER BY sslpname, username, oname";
 
 if ($export == "1") {
-	
-	$full_export = "";
-	$full_export .= "\"" . $page_title . "\"\n\n";
-	$full_export .= "\"Status\",\"SSL Provider\",\"Username\",\"Password\",\"Owner\",\"SSL Certs\",\"Default Account?\",\"Reseller Account?\",\"Notes\",\"Added\",\"Last Updated\"\n";
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
-	
+
+	$current_timestamp_unix = strtotime($current_timestamp);
+	$export_filename = "ssl_provider_account_list_" . $current_timestamp_unix . ".csv";
+	include("../_includes/system/export/header.inc.php");
+
+	$row_content[$count++] = $page_title;
+	include("../_includes/system/export/write-row.inc.php");
+
+	fputcsv($file_content, $blank_line);
+
+	$row_content[$count++] = "Status";
+	$row_content[$count++] = "SSL Provider";
+	$row_content[$count++] = "Username";
+	$row_content[$count++] = "Password";
+	$row_content[$count++] = "Owner";
+	$row_content[$count++] = "SSL Certs";
+	$row_content[$count++] = "Default Account?";
+	$row_content[$count++] = "Reseller Account?";
+	$row_content[$count++] = "Notes";
+	$row_content[$count++] = "Inserted";
+	$row_content[$count++] = "Updated";
+	include("../_includes/system/export/write-row.inc.php");
+
 	if (mysql_num_rows($result) > 0) {
 		
 		$has_active = 1;
@@ -100,9 +118,20 @@ if ($export == "1") {
 				$is_reseller = "1";
 	
 			}
-	
-			$full_export .= "\"Active\",\"" . $row->sslpname . "\",\"" . $row->username . "\",\"" . $row->password . "\",\"" . $row->oname . "\",\"" . $total_cert_count . "\",\"" . $is_default . "\",\"" . $is_reseller . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
-	
+
+			$row_content[$count++] = "Active";
+			$row_content[$count++] = $row->sslpname;
+			$row_content[$count++] = $row->username;
+			$row_content[$count++] = $row->password;
+			$row_content[$count++] = $row->oname;
+			$row_content[$count++] = $total_cert_count;
+			$row_content[$count++] = $is_default;
+			$row_content[$count++] = $is_reseller;
+			$row_content[$count++] = $row->notes;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
+			include("../_includes/system/export/write-row.inc.php");
+
 			$current_sslpaid = $row->sslpaid;
 		
 		}
@@ -157,18 +186,26 @@ if ($export == "1") {
 				$is_reseller = "1";
 	
 			}
-	
-			$full_export .= "\"Inactive\",\"" . $row->sslpname . "\",\"" . $row->username . "\",\"" . $row->password . "\",\"" . $row->oname . "\",\"0\",\"" . $is_default . "\",\"" . $is_reseller . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
-	
+
+			$row_content[$count++] = "Inactive";
+			$row_content[$count++] = $row->sslpname;
+			$row_content[$count++] = $row->username;
+			$row_content[$count++] = $row->password;
+			$row_content[$count++] = $row->oname;
+			$row_content[$count++] = 0;
+			$row_content[$count++] = $is_default;
+			$row_content[$count++] = $is_reseller;
+			$row_content[$count++] = $row->notes;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
+			include("../_includes/system/export/write-row.inc.php");
+
 		}
 	
 	}
 
-	$full_export .= "\n";
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "ssl_provider_account_list_" . $current_timestamp_unix . ".csv";
-	include("../_includes/system/export-to-csv.inc.php");
-	exit;
+	include("../_includes/system/export/footer.inc.php");
+
 }
 ?>
 <?php include("../_includes/doctype.inc.php"); ?>

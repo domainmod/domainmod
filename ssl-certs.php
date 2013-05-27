@@ -261,22 +261,39 @@ $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 include("_includes/system/convert-and-format-currency.inc.php");
 $grand_total = $temp_output_amount;
 
-$full_export = "";
-
 if ($export == "1") {
 
-	$result = mysql_query($sql,$connection);
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 	$total_rows = number_format(mysql_num_rows($result));
 
-	$full_export .= "\"SSL Certificate Search Results Export\"\n\n";
-	$full_export .= "\"Total Cost:\",\"" . $grand_total . "\",\"" . $_SESSION['default_currency'] . "\"\n";
-	$full_export .= "\"Number of SSL Certs:\",\"" . $total_rows . "\"\n\n";
+	$current_timestamp_unix = strtotime($current_timestamp);
+	$export_filename = "ssl_results_" . $current_timestamp_unix . ".csv";
+	include("_includes/system/export/header.inc.php");
 
-	$full_export .= "\"[Search Filters]\"\n";
+	$row_content[$count++] = "SSL Certificate Search Results Export";
+	include("_includes/system/export/write-row.inc.php");
+
+	fputcsv($file_content, $blank_line);
+
+	$row_content[$count++] = "Total Cost:";
+	$row_content[$count++] = $grand_total;
+	$row_content[$count++] = $_SESSION['default_currency'];
+	include("_includes/system/export/write-row.inc.php");
+
+	$row_content[$count++] = "Number of SSL Certs:";
+	$row_content[$count++] = $total_rows;
+	include("_includes/system/export/write-row.inc.php");
+
+	fputcsv($file_content, $blank_line);
+
+	$row_content[$count++] = "[Search Filters]";
+	include("_includes/system/export/write-row.inc.php");
 
 	if ($_SESSION['search_for_ssl'] != "") { 
 
-		$full_export .= "\"Keyword Search:\",\"" . $_SESSION['search_for_ssl'] . "\"\n"; 
+		$row_content[$count++] = "Keyword Search:";
+		$row_content[$count++] = $_SESSION['search_for_ssl'];
+		include("_includes/system/export/write-row.inc.php");
 
 	}
 
@@ -288,7 +305,11 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"Associated Domain:\",\"" . $row_filter->domain . "\"\n"; 
+
+			$row_content[$count++] = "Associated Domain:";
+			$row_content[$count++] = $row_filter->domain;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
@@ -301,7 +322,11 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"SSL Provider:\",\"" . $row_filter->name . "\"\n"; 
+
+			$row_content[$count++] = "SSL Provider:";
+			$row_content[$count++] = $row_filter->name;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
@@ -316,7 +341,11 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"SSL Provider Account:\",\"" . $row_filter->ssl_provider_name . " - " . $row_filter->owner_name . " - " . $row_filter->username . "\"\n"; 
+
+			$row_content[$count++] = "SSL Provider Account:";
+			$row_content[$count++] = $row_filter->ssl_provider_name . " - " . $row_filter->owner_name . " - " . $row_filter->username;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
@@ -329,7 +358,11 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"SSL Type:\",\"" . $row_filter->type . "\"\n"; 
+
+			$row_content[$count++] = "SSL Type:";
+			$row_content[$count++] = $row_filter->type;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
@@ -342,7 +375,11 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"SSL IP Address:\",\"" . $row_filter->name . " (" . $row_filter->ip . ")\"\n"; 
+
+			$row_content[$count++] = "SSL IP Address:";
+			$row_content[$count++] = $row_filter->name . " (" . $row_filter->ip . ")";
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
@@ -355,7 +392,11 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"SSL Category:\",\"" . $row_filter->name . "\"\n"; 
+
+			$row_content[$count++] = "SSL Category:";
+			$row_content[$count++] = $row_filter->name;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
@@ -368,43 +409,92 @@ if ($export == "1") {
 		$result_filter = mysql_query($sql_filter,$connection);
 
 		while ($row_filter = mysql_fetch_object($result_filter)) {
-			$full_export .= "\"Owner:\",\"" . $row_filter->name . "\"\n"; 
+
+			$row_content[$count++] = "Owner:";
+			$row_content[$count++] = $row_filter->name;
+			include("_includes/system/export/write-row.inc.php");
+
 		}
 
 	}
 
-	if ($is_active == "ALL") { $full_export .= "\"SSL Status:\",\"ALL\"\n"; } 
-	elseif ($is_active == "LIVE" || $is_active == "") { $full_export .= "\"SSL Status:\",\"LIVE (Active / Pending)\"\n"; } 
-	elseif ($is_active == "0") { $full_export .= "\"SSL Status:\",\"Expired\"\n"; } 
-	elseif ($is_active == "1") { $full_export .= "\"SSL Status:\",\"Active\"\n"; } 
-	elseif ($is_active == "3") { $full_export .= "\"SSL Status:\",\"Pending (Renewal)\"\n"; } 
-	elseif ($is_active == "4") { $full_export .= "\"SSL Status:\",\"Pending (Other)\"\n"; } 
-	elseif ($is_active == "5") { $full_export .= "\"SSL Status:\",\"Pending (Registration)\"\n"; } 
+	if ($is_active == "ALL") { 
+	
+		$row_content[$count++] = "SSL Status:";
+		$row_content[$count++] = "ALL";
+		include("_includes/system/export/write-row.inc.php");
 
-	$full_export .= "\n";
+	} elseif ($is_active == "LIVE" || $is_active == "") { 
+	
+		$row_content[$count++] = "SSL Status:";
+		$row_content[$count++] = "LIVE (Active / Pending)";
+		include("_includes/system/export/write-row.inc.php");
+
+	} elseif ($is_active == "0") { 
+	
+		$row_content[$count++] = "SSL Status:";
+		$row_content[$count++] = "Expired";
+		include("_includes/system/export/write-row.inc.php");
+
+	} elseif ($is_active == "1") { 
+	
+		$row_content[$count++] = "SSL Status:";
+		$row_content[$count++] = "Active";
+		include("_includes/system/export/write-row.inc.php");
+
+	} elseif ($is_active == "3") { 
+	
+		$row_content[$count++] = "SSL Status:";
+		$row_content[$count++] = "Pending (Renewal)";
+		include("_includes/system/export/write-row.inc.php");
+
+	} elseif ($is_active == "4") { 
+	
+		$row_content[$count++] = "SSL Status:";
+		$row_content[$count++] = "Pending (Other)";
+		include("_includes/system/export/write-row.inc.php");
+
+	} elseif ($is_active == "5") { 
+	
+		$row_content[$count++] = "SSL Status:";
+		$row_content[$count++] = "Pending (Registration)";
+		include("_includes/system/export/write-row.inc.php");
+
+	} 
+
+	fputcsv($file_content, $blank_line);
+
+	$row_content[$count++] = "SSL Cert Status";
+	$row_content[$count++] = "Expiry Date";
+	$row_content[$count++] = "Initial Fee";
+	$row_content[$count++] = "Renewal Fee";
+	$row_content[$count++] = "Host / Label";
+	$row_content[$count++] = "Domain";
+	$row_content[$count++] = "SSL Provider";
+	$row_content[$count++] = "SSL Provider Account";
+	$row_content[$count++] = "Username";
+	$row_content[$count++] = "SSL Type";
+	$row_content[$count++] = "IP Address Name";
+	$row_content[$count++] = "IP Address";
+	$row_content[$count++] = "IP Address rDNS";
+	$row_content[$count++] = "Category";
+	$row_content[$count++] = "Owner";
+	$row_content[$count++] = "Notes";
 
 	$sql_field = "SELECT name
 				  FROM ssl_cert_fields
 				  ORDER BY name";
 	$result_field = mysql_query($sql_field,$connection);
 	
-	$count = 0;
-	$header_list = "";
-	
 	while ($row_field = mysql_fetch_object($result_field)) {
 		
-		$name_array[$count] = $row_field->name;
-		$count++;
-	
-	}
-	
-	foreach($name_array as $field_name) {
-		
-		$header_list .= "\"" . $field_name . "\",";
-	
+		$row_content[$count++] = $row_field->name;
+
 	}
 
-	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Initial Fee\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"SSL Provider Account\",\"Username\",\"SSL Type\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Category\",\"Owner\",\"Notes\",$header_list\"Inserted\",\"Updated\"\n";
+	$row_content[$count++] = "Inserted";
+	$row_content[$count++] = "Updated";
+	include("_includes/system/export/write-row.inc.php");
 
 	while ($row = mysql_fetch_object($result)) {
 		
@@ -435,18 +525,35 @@ if ($export == "1") {
 		include("_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
+		$row_content[$count++] = $ssl_status;
+		$row_content[$count++] = $row->expiry_date;
+		$row_content[$count++] = $export_initial_fee;
+		$row_content[$count++] = $export_renewal_fee;
+		$row_content[$count++] = $row->name;
+		$row_content[$count++] = $row->domain;
+		$row_content[$count++] = $row->ssl_provider_name;
+		$row_content[$count++] = $row->ssl_provider_name . ", " . $row->owner_name . " (" . $row->username . ")";
+		$row_content[$count++] = $row->username;
+		$row_content[$count++] = $row->type;
+		$row_content[$count++] = $row->ip_name;
+		$row_content[$count++] = $row->ip;
+		$row_content[$count++] = $row->rdns;
+		$row_content[$count++] = $row->cat_name;
+		$row_content[$count++] = $row->owner_name;
+		$row_content[$count++] = $row->notes;
+
 		$sql_field = "SELECT field_name
 					  FROM ssl_cert_fields
 					  ORDER BY name";
 		$result_field = mysql_query($sql_field,$connection);
 		
-		$count = 0;
+		$array_count = 0;
 		$field_data = "";
 		
 		while ($row_field = mysql_fetch_object($result_field)) {
 			
-			$field_array[$count] = $row_field->field_name;
-			$count++;
+			$field_array[$array_count] = $row_field->field_name;
+			$array_count++;
 		
 		}
 		
@@ -459,22 +566,19 @@ if ($export == "1") {
 			
 			while ($row_data = mysql_fetch_object($result_data)) {
 		
-				$field_data .= "\"" . $row_data->{$field} . "\",";
+				$row_content[$count++] = $row_data->{$field};
 			
 			}
 		
 		}
 
-		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"" . $export_initial_fee . "\",\"" . $export_renewal_fee . "\",\"" . $row->name . "\",\"" . $row->domain . "\",\"$row->ssl_provider_name\",\"$row->ssl_provider_name, $row->owner_name ($row->username)\",\"$row->username\",\"$row->type\",\"$row->ip_name\",\"$row->ip\",\"$row->rdns\",\"$row->cat_name\",\"$row->owner_name\",\"$row->notes\",$field_data\"$row->insert_time\",\"$row->update_time\"\n";
+		$row_content[$count++] = $row->insert_time;
+		$row_content[$count++] = $row->update_time;
+		include("_includes/system/export/write-row.inc.php");
 
 	}
-	
-	$full_export .= "\n";
 
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "ssl_results_" . $current_timestamp_unix . ".csv";
-	include("_includes/system/export-to-csv.inc.php");
-	exit;
+	include("_includes/system/export/footer.inc.php");
 
 }
 ?>

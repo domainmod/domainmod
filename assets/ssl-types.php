@@ -38,13 +38,27 @@ $sql = "SELECT id, type, notes, insert_time, update_time
 		ORDER BY type asc";
 
 if ($export == "1") {
-	
-	$full_export = "";
-	$full_export .= "\"" . $page_title . "\"\n\n";
-	$full_export .= "\"Status\",\"SSL Type\",\"SSL Certs\",\"Default SSL Type?\",\"Notes\",\"Added\",\"Last Updated\"\n";
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
-	
+
+	$current_timestamp_unix = strtotime($current_timestamp);
+	$export_filename = "ssl_certificate_type_list_" . $current_timestamp_unix . ".csv";
+	include("../_includes/system/export/header.inc.php");
+
+	$row_content[$count++] = $page_title;
+	include("../_includes/system/export/write-row.inc.php");
+
+	fputcsv($file_content, $blank_line);
+
+	$row_content[$count++] = "Status";
+	$row_content[$count++] = "SSL Type";
+	$row_content[$count++] = "SSL Certs";
+	$row_content[$count++] = "Default SSL Type?";
+	$row_content[$count++] = "Notes";
+	$row_content[$count++] = "Inserted";
+	$row_content[$count++] = "Updated";
+	include("../_includes/system/export/write-row.inc.php");
+
 	if (mysql_num_rows($result) > 0) {
 		
 		$has_active = "1";
@@ -75,8 +89,15 @@ if ($export == "1") {
 				$is_default = "";
 			
 			}
-	
-			$full_export .= "\"Active\",\"" . $row->type . "\",\"" . number_format($active_certs) . "\",\"" . $is_default . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
+
+			$row_content[$count++] = "Active";
+			$row_content[$count++] = $row->type;
+			$row_content[$count++] = number_format($active_certs);
+			$row_content[$count++] = $is_default;
+			$row_content[$count++] = $row->notes;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
+			include("../_includes/system/export/write-row.inc.php");
 	
 			$current_ssltid = $row->ssltid;
 	
@@ -118,18 +139,22 @@ if ($export == "1") {
 				$is_default = "";
 			
 			}
-			
-			$full_export .= "\"Inactive\",\"" . $row->type . "\",\"0\",\"" . $is_default . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
-	
+
+			$row_content[$count++] = "Inactive";
+			$row_content[$count++] = $row->type;
+			$row_content[$count++] = 0;
+			$row_content[$count++] = $is_default;
+			$row_content[$count++] = $row->notes;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
+			include("../_includes/system/export/write-row.inc.php");
+
 		}
 	
 	}
 
-	$full_export .= "\n";
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "ssl_certificate_type_list_" . $current_timestamp_unix . ".csv";
-	include("../_includes/system/export-to-csv.inc.php");
-	exit;
+	include("../_includes/system/export/footer.inc.php");
+
 }
 ?>
 <?php include("../_includes/doctype.inc.php"); ?>

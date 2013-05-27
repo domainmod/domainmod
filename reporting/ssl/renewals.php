@@ -94,41 +94,80 @@ $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 include("../../_includes/system/convert-and-format-currency.inc.php");
 $total_cost = $temp_output_amount;
 
-$full_export = "";
-
 if ($export == "1") {
 
-	$full_export .= "\"" . $page_subtitle . "\"\n\n";
-	if ($all != "1") {
-		$full_export .= "\"Date Range:\",\"" . $new_expiry_start . "\",\"" . $new_expiry_end . "\"\n";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$current_timestamp_unix = strtotime($current_timestamp);
+	if ($all == "1") {
+		$export_filename = "ssl_renewal_report_all_" . $current_timestamp_unix . ".csv";
 	} else {
-		$full_export .= "\"Date Range:\",\"ALL\"\n";
+		$export_filename = "ssl_renewal_report_" . $new_expiry_start . "--" . $new_expiry_end . ".csv";
 	}
-	$full_export .= "\"Total Renewal Cost:\",\"" . $total_cost . "\",\"" . $_SESSION['default_currency'] . "\"\n";
-	$full_export .= "\"Number of SSL Certificates:\",\"" . number_format($total_results) . "\"\n\n";
+	include("../../_includes/system/export/header.inc.php");
+
+	$row_content[$count++] = $page_subtitle;
+	include("../../_includes/system/export/write-row.inc.php");
+
+	fputcsv($file_content, $blank_line);
+
+	if ($all != "1") {
+
+		$row_content[$count++] = "Date Range:";
+		$row_content[$count++] = $new_expiry_start;
+		$row_content[$count++] = $new_expiry_end;
+		include("../../_includes/system/export/write-row.inc.php");
+
+	} else {
+
+		$row_content[$count++] = "Date Range:";
+		$row_content[$count++] = "ALL";
+		include("../../_includes/system/export/write-row.inc.php");
+
+	}
+
+	$row_content[$count++] = "Total Renewal Cost:";
+	$row_content[$count++] = $total_cost;
+	$row_content[$count++] = $_SESSION['default_currency'];
+	include("../../_includes/system/export/write-row.inc.php");
+
+	$row_content[$count++] = "Number of SSL Certificates:";
+	$row_content[$count++] = number_format($total_results);
+	include("../../_includes/system/export/write-row.inc.php");
+
+	fputcsv($file_content, $blank_line);
+
+	$row_content[$count++] = "SSL Cert Status";
+	$row_content[$count++] = "Expiry Date";
+	$row_content[$count++] = "Renew?";
+	$row_content[$count++] = "Renewal Fee";
+	$row_content[$count++] = "Host / Label";
+	$row_content[$count++] = "Domain";
+	$row_content[$count++] = "SSL Provider";
+	$row_content[$count++] = "SSL Provider Account";
+	$row_content[$count++] = "Username";
+	$row_content[$count++] = "SSL Type";
+	$row_content[$count++] = "IP Address Name";
+	$row_content[$count++] = "IP Address";
+	$row_content[$count++] = "IP Address rDNS";
+	$row_content[$count++] = "Category";
+	$row_content[$count++] = "Owner";
+	$row_content[$count++] = "Notes";
 
 	$sql_field = "SELECT name
 				  FROM ssl_cert_fields
 				  ORDER BY name";
 	$result_field = mysql_query($sql_field,$connection);
 	
-	$count = 0;
-	$header_list = "";
-	
 	while ($row_field = mysql_fetch_object($result_field)) {
 		
-		$name_array[$count] = $row_field->name;
-		$count++;
-	
-	}
-	
-	foreach($name_array as $field_name) {
-		
-		$header_list .= "\"" . $field_name . "\",";
+		$row_content[$count++] = $row_field->name;
 	
 	}
 
-	$full_export .= "\"SSL Cert Status\",\"Expiry Date\",\"Renew?\",\"Renewal Fee\",\"Host / Label\",\"Domain\",\"SSL Provider\",\"SSL Provider Account\",\"Username\",\"SSL Type\",\"IP Address Name\",\"IP Address\",\"IP Address rDNS\",\"Category\",\"Owner\",\"Notes\",$header_list\"Inserted\",\"Updated\"\n";
+	$row_content[$count++] = "Inserted";
+	$row_content[$count++] = "Updated";
+	include("../../_includes/system/export/write-row.inc.php");
 
 	while ($row = mysql_fetch_object($result)) {
 		
@@ -147,18 +186,35 @@ if ($export == "1") {
 		include("../../_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
+		$row_content[$count++] = $ssl_status;
+		$row_content[$count++] = $row->expiry_date;
+		$row_content[$count++] = "";
+		$row_content[$count++] = $export_renewal_fee;
+		$row_content[$count++] = $row->name;
+		$row_content[$count++] = $row->domain;
+		$row_content[$count++] = $row->ssl_provider_name;
+		$row_content[$count++] = $row->ssl_provider_name . ", " . $row->owner_name . " (" . $row->username . ")";
+		$row_content[$count++] = $row->username;
+		$row_content[$count++] = $row->type;
+		$row_content[$count++] = $row->ip_name;
+		$row_content[$count++] = $row->ip;
+		$row_content[$count++] = $row->rdns;
+		$row_content[$count++] = $row->cat_name;
+		$row_content[$count++] = $row->owner_name;
+		$row_content[$count++] = $row->notes;
+
 		$sql_field = "SELECT field_name
 					  FROM ssl_cert_fields
 					  ORDER BY name";
 		$result_field = mysql_query($sql_field,$connection);
 		
-		$count = 0;
+		$array_count = 0;
 		$field_data = "";
 		
 		while ($row_field = mysql_fetch_object($result_field)) {
 			
-			$field_array[$count] = $row_field->field_name;
-			$count++;
+			$field_array[$array_count] = $row_field->field_name;
+			$array_count++;
 		
 		}
 		
@@ -171,26 +227,20 @@ if ($export == "1") {
 			
 			while ($row_data = mysql_fetch_object($result_data)) {
 		
-				$field_data .= "\"" . $row_data->{$field} . "\",";
+				$row_content[$count++] = $row_data->{$field};
 			
 			}
 		
 		}
 
-		$full_export .= "\"$ssl_status\",\"$row->expiry_date\",\"\",\"" . $export_renewal_fee . "\",\"$row->name\",\"$row->domain\",\"$row->ssl_provider_name\",\"$row->ssl_provider_name, $row->owner_name ($row->username)\",\"$row->username\",\"$row->type\",\"$row->ip_name\",\"$row->ip\",\"$row->rdns\",\"$row->cat_name\",\"$row->owner_name\",\"$row->notes\",$field_data\"$row->insert_time\",\"$row->update_time\"\n";
+		$row_content[$count++] = $row->insert_time;
+		$row_content[$count++] = $row->update_time;
+		include("../../_includes/system/export/write-row.inc.php");
 
 	}
-	
-	$full_export .= "\n";
 
-	$current_timestamp_unix = strtotime($current_timestamp);
-	if ($all == "1") {
-		$export_filename = "ssl_renewal_report_all_" . $current_timestamp_unix . ".csv";
-	} else {
-		$export_filename = "ssl_renewal_report_" . $new_expiry_start . "--" . $new_expiry_end . ".csv";
-	}
-	include("../../_includes/system/export-to-csv.inc.php");
-	exit;
+	include("../../_includes/system/export/footer.inc.php");
+
 }
 ?>
 <?php include("../../_includes/doctype.inc.php"); ?>

@@ -52,12 +52,31 @@ if ($_SESSION['username'] == "admin") {
 }
 
 if ($export == "1") {
-	
-	$full_export = "";
-	$full_export .= "\"" . $page_title . "\"\n\n";
-	$full_export .= "\"Status\",\"First Name\",\"Last Name\",\"Username\",\"Email Address\",\"Is Admin?\",\"Default Currency\",\"Default Timezone\",\"Number of Logins\",\"Last Login\",\"Added\",\"Last Updated\",\n";
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
+
+	$current_timestamp_unix = strtotime($current_timestamp);
+	$export_filename = "user_list_" . $current_timestamp_unix . ".csv";
+	include("../../_includes/system/export/header.inc.php");
+
+	$row_content[$count++] = $page_title;
+	include("../../_includes/system/export/write-row.inc.php");
+
+	fputcsv($file_content, $blank_line);
+
+	$row_content[$count++] = "Status";
+	$row_content[$count++] = "First Name";
+	$row_content[$count++] = "Last Name";
+	$row_content[$count++] = "Username";
+	$row_content[$count++] = "Email Address";
+	$row_content[$count++] = "Is Admin?";
+	$row_content[$count++] = "Default Currency";
+	$row_content[$count++] = "Default Timezone";
+	$row_content[$count++] = "Number of Logins";
+	$row_content[$count++] = "Last Login";
+	$row_content[$count++] = "Inserted";
+	$row_content[$count++] = "Updated";
+	include("../../_includes/system/export/write-row.inc.php");
 
 	if (mysql_num_rows($result) > 0) {
 	
@@ -72,8 +91,20 @@ if ($export == "1") {
 				$is_admin = "";
 				
 			}
-	
-			$full_export .= "\"Active\",\"" . $row->first_name . "\",\"" . $row->last_name . "\",\"" . $row->username . "\",\"" . $row->email_address . "\",\"" . $is_admin . "\",\"" . $row->default_currency . "\",\"" . $row->default_timezone . "\",\"" . $row->number_of_logins . "\",\"" . $row->last_login . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\",\n";
+
+			$row_content[$count++] = "Active";
+			$row_content[$count++] = $row->first_name;
+			$row_content[$count++] = $row->last_name;
+			$row_content[$count++] = $row->username;
+			$row_content[$count++] = $row->email_address;
+			$row_content[$count++] = $is_admin;
+			$row_content[$count++] = $row->default_currency;
+			$row_content[$count++] = $row->default_timezone;
+			$row_content[$count++] = $row->number_of_logins;
+			$row_content[$count++] = $row->last_login;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
+			include("../../_includes/system/export/write-row.inc.php");
 	
 		}
 			
@@ -99,18 +130,27 @@ if ($export == "1") {
 				$is_admin = "";
 				
 			}
-	
-			$full_export .= "\"Inactive\",\"" . $row->first_name . "\",\"" . $row->last_name . "\",\"" . $row->username . "\",\"" . $row->email_address . "\",\"" . $is_admin . "\",\"" . $row->default_currency . "\",\"" . $row->default_timezone . "\",\"" . $row->number_of_logins . "\",\"" . $row->last_login . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\",\n";
-	
+
+			$row_content[$count++] = "Inactive";
+			$row_content[$count++] = $row->first_name;
+			$row_content[$count++] = $row->last_name;
+			$row_content[$count++] = $row->username;
+			$row_content[$count++] = $row->email_address;
+			$row_content[$count++] = $is_admin;
+			$row_content[$count++] = $row->default_currency;
+			$row_content[$count++] = $row->default_timezone;
+			$row_content[$count++] = $row->number_of_logins;
+			$row_content[$count++] = $row->last_login;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
+			include("../../_includes/system/export/write-row.inc.php");
+
 		}
-		
+
 	}
 
-	$full_export .= "\n";
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "user_list_" . $current_timestamp_unix . ".csv";
-	include("../../_includes/system/export-to-csv.inc.php");
-	exit;
+	include("../../_includes/system/export/footer.inc.php");
+
 }
 ?>
 <?php include("../../_includes/doctype.inc.php"); ?>

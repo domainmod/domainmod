@@ -38,13 +38,28 @@ $sql = "SELECT id, name, url, notes, insert_time, update_time
 		ORDER BY name";
 
 if ($export == "1") {
-	
-	$full_export = "";
-	$full_export .= "\"" . $page_title . "\"\n\n";
-	$full_export .= "\"Status\",\"Web Host\",\"Domains\",\"Default Web Host?\",\"URL\",\"Notes\",\"Added\",\"Last Updated\"\n";
 
 	$result = mysql_query($sql,$connection) or die(mysql_error());
-	
+
+	$current_timestamp_unix = strtotime($current_timestamp);
+	$export_filename = "web_hosting_provider_list_" . $current_timestamp_unix . ".csv";
+	include("../_includes/system/export/header.inc.php");
+
+	$row_content[$count++] = $page_title;
+	include("../_includes/system/export/write-row.inc.php");
+
+	fputcsv($file_content, $blank_line);
+
+	$row_content[$count++] = "Status";
+	$row_content[$count++] = "Web Host";
+	$row_content[$count++] = "Domains";
+	$row_content[$count++] = "Default Web Host?";
+	$row_content[$count++] = "URL";
+	$row_content[$count++] = "Notes";
+	$row_content[$count++] = "Inserted";
+	$row_content[$count++] = "Updated";
+	include("../_includes/system/export/write-row.inc.php");
+
 	if (mysql_num_rows($result) > 0) {
 		
 		$has_active = "1";
@@ -75,9 +90,17 @@ if ($export == "1") {
 				$is_default = "";
 			
 			}
-	
-			$full_export .= "\"Active\",\"" . $row->name . "\",\"" . number_format($active_domains) . "\",\"" . $is_default . "\",\"" . $row->url . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
-	
+
+			$row_content[$count++] = "Active";
+			$row_content[$count++] = $row->name;
+			$row_content[$count++] = number_format($active_domains);
+			$row_content[$count++] = $is_default;
+			$row_content[$count++] = $row->url;
+			$row_content[$count++] = $row->notes;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
+			include("../_includes/system/export/write-row.inc.php");
+
 			$current_whid = $row->id;
 	
 		}
@@ -118,18 +141,23 @@ if ($export == "1") {
 				$is_default = "";
 			
 			}
-	
-			$full_export .= "\"Inactive\",\"" . $row->name . "\",\"0\",\"" . $is_default . "\",\"" . $row->url . "\",\"" . $row->notes . "\",\"" . $row->insert_time . "\",\"" . $row->update_time . "\"\n";
-	
+
+			$row_content[$count++] = "Inactive";
+			$row_content[$count++] = $row->name;
+			$row_content[$count++] = 0;
+			$row_content[$count++] = $is_default;
+			$row_content[$count++] = $row->url;
+			$row_content[$count++] = $row->notes;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
+			include("../_includes/system/export/write-row.inc.php");
+
 		}
 	
 	}
 
-	$full_export .= "\n";
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "web_hosting_provider_list_" . $current_timestamp_unix . ".csv";
-	include("../_includes/system/export-to-csv.inc.php");
-	exit;
+	include("../_includes/system/export/footer.inc.php");
+
 }
 ?>
 <?php include("../_includes/doctype.inc.php"); ?>
