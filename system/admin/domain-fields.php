@@ -91,7 +91,7 @@ if ($export == "1") {
 <?php include("../../_includes/layout/header.inc.php"); ?>
 Below is a list of all the Custom Domain Fields that have been added to your <?=$software_title?>.<BR><BR>
 Custom Domain Fields help extend the functionality of <?=$software_title?> by allowing the user to create their own data fields. For example, if you wanted to keep track of which domains are currenty setup in Google Analytics, you could create a new Google Analytics check box field and start tracking this information for each of your domains. Combine custom fields with the ability to update them with the Bulk Updater, and the sky's the limit in regards to what data you can easily track!<BR><BR>
-And when you export your domain & SSL data, the information contained in your custom fields will automatically be included in the exported data.
+And when you export your domain data, the information contained in your custom fields will automatically be included in the exported data.
 <BR><BR><?php
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
