@@ -34,22 +34,26 @@ $all = $_GET['all'];
 
 if ($all == "1") {
 
-	$range_string = "";
+	$sql = "SELECT r.id, r.name AS registrar, f.id AS fee_id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
+			FROM registrars AS r, fees AS f, currencies AS c
+			WHERE r.id = f.registrar_id
+			  AND f.currency_id = c.id
+			GROUP BY r.name, f.tld
+			ORDER BY r.name, f.tld";
 	
 } else {
 
-	$range_string = " AND d.active NOT IN ('0', '10') ";
-	
+	$sql = "SELECT r.id, r.name AS registrar, d.tld, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
+			FROM registrars AS r, domains AS d, fees AS f, currencies AS c
+			WHERE r.id = d.registrar_id
+			  AND d.fee_id = f.id
+			  AND f.currency_id = c.id
+			  AND d.active NOT IN ('0', '10')
+			GROUP BY r.name, d.tld
+			ORDER BY r.name, d.tld";
+
 }
 
-$sql = "SELECT r.id, r.name AS registrar, d.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
-		FROM registrars AS r, domains AS d, fees AS f, currencies AS c
-		WHERE r.id = d.registrar_id
-		  AND d.fee_id = f.id
-		  AND f.currency_id = c.id
-		  " . $range_string . "
-		GROUP BY r.name, d.tld
-		ORDER BY r.name, d.tld";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_rows = mysql_num_rows($result);
 
@@ -87,6 +91,7 @@ if ($total_rows > 0) {
 		$row_content[$count++] = "Renewal Fee";
 		$row_content[$count++] = "Transfer Fee";
 		$row_content[$count++] = "Currency";
+		$row_content[$count++] = "Domains";
 		$row_content[$count++] = "Inserted";
 		$row_content[$count++] = "Updated";
 		include("../../_includes/system/export/write-row.inc.php");
@@ -133,6 +138,20 @@ if ($total_rows > 0) {
 				$row_content[$count++] = $row->renewal_fee;
 				$row_content[$count++] = $row->transfer_fee;
 				$row_content[$count++] = $row->currency;
+				
+				$sql_domain_count = "SELECT count(*) AS total_domain_count
+									 FROM domains
+									 WHERE registrar_id = '" . $row->id . "'
+									   AND fee_id = '" . $row->fee_id . "'
+									   AND active NOT IN ('0', '10')";
+				$result_domain_count = mysql_query($sql_domain_count,$connection);
+
+				while ($row_domain_count = mysql_fetch_object($result_domain_count)) {
+
+					$row_content[$count++] = $row_domain_count->total_domain_count;
+
+				}
+
 				$row_content[$count++] = $row->insert_time;
 				$row_content[$count++] = $row->update_time;
 				include("../../_includes/system/export/write-row.inc.php");
@@ -179,9 +198,11 @@ if ($total_rows > 0) {
         <table class="main_table" cellpadding="0" cellspacing="0">
         <tr class="main_table_row_heading_active">
             <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Registrar</font></td>
+            	<font class="main_table_heading">Registrar</font>
+			</td>
             <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">TLD</font></td>
+            	<font class="main_table_heading">TLD</font>
+			</td>
             <td class="main_table_cell_heading_active">
                 <font class="main_table_heading">Initial Fee</font>
             </td>
@@ -194,6 +215,9 @@ if ($total_rows > 0) {
             <td class="main_table_cell_heading_active">
                 <font class="main_table_heading">Currency</font>
             </td>
+            <td class="main_table_cell_heading_active">
+            	<font class="main_table_heading">Domains</font>
+			</td>
             <td class="main_table_cell_heading_active">
                 <font class="main_table_heading">Last Updated</font>
             </td>
@@ -257,6 +281,28 @@ if ($total_rows > 0) {
                         <?=$row->transfer_fee?>
                     </td>
                     <td class="main_table_cell_active"><?=$row->currency?></td>
+                    <td class="main_table_cell_active">
+                    	<?php
+						$sql_domain_count = "SELECT count(*) AS total_domain_count
+											 FROM domains
+											 WHERE registrar_id = '" . $row->id . "'
+											   AND fee_id = '" . $row->fee_id . "'
+											   AND active NOT IN ('0', '10')";
+						$result_domain_count = mysql_query($sql_domain_count,$connection);
+						while ($row_domain_count = mysql_fetch_object($result_domain_count)) {
+							
+							if ($row_domain_count->total_domain_count == 0) {
+
+								echo "-";
+								
+							} else {
+
+								echo "<a class=\"invisiblelink\" href=\"../../domains.php?rid=" . $row->id . "&tld=" . $row->tld . "\">" . $row_domain_count->total_domain_count . "</a>";
+								
+							}
+
+						} ?>
+                    </td>
                     <td class="main_table_cell_active"><?=$last_updated?></td>
                 </tr>
     
@@ -306,6 +352,28 @@ if ($total_rows > 0) {
                         <?=$row->transfer_fee?>
                     </td>
                     <td class="main_table_cell_active"><?=$row->currency?></td>
+                    <td class="main_table_cell_active">
+                    	<?php
+						$sql_domain_count = "SELECT count(*) AS total_domain_count
+											 FROM domains
+											 WHERE registrar_id = '" . $row->id . "'
+											   AND fee_id = '" . $row->fee_id . "'
+											   AND active NOT IN ('0', '10')";
+						$result_domain_count = mysql_query($sql_domain_count,$connection);
+						while ($row_domain_count = mysql_fetch_object($result_domain_count)) {
+							
+							if ($row_domain_count->total_domain_count == 0) {
+
+								echo "-";
+								
+							} else {
+
+								echo "<a class=\"invisiblelink\" href=\"../../domains.php?rid=" . $row->id . "&tld=" . $row->tld . "\">" . $row_domain_count->total_domain_count . "</a>";
+								
+							}
+
+						} ?>
+					</td>
                     <td class="main_table_cell_active"><?=$last_updated?></td>
                 </tr>
     
