@@ -418,45 +418,40 @@ if ($export == "1") {
 
 	}
 
+	$row_content[$count++] = "SSL Status:";
+
 	if ($is_active == "ALL") { 
-	
-		$row_content[$count++] = "SSL Status:";
+
 		$row_content[$count++] = "ALL";
 		include("_includes/system/export/write-row.inc.php");
 
 	} elseif ($is_active == "LIVE" || $is_active == "") { 
-	
-		$row_content[$count++] = "SSL Status:";
+
 		$row_content[$count++] = "LIVE (Active / Pending)";
 		include("_includes/system/export/write-row.inc.php");
 
 	} elseif ($is_active == "0") { 
-	
-		$row_content[$count++] = "SSL Status:";
+
 		$row_content[$count++] = "Expired";
 		include("_includes/system/export/write-row.inc.php");
 
 	} elseif ($is_active == "1") { 
-	
-		$row_content[$count++] = "SSL Status:";
+
 		$row_content[$count++] = "Active";
 		include("_includes/system/export/write-row.inc.php");
 
 	} elseif ($is_active == "3") { 
-	
-		$row_content[$count++] = "SSL Status:";
+
 		$row_content[$count++] = "Pending (Renewal)";
 		include("_includes/system/export/write-row.inc.php");
 
 	} elseif ($is_active == "4") { 
-	
-		$row_content[$count++] = "SSL Status:";
+
 		$row_content[$count++] = "Pending (Other)";
 		include("_includes/system/export/write-row.inc.php");
 
 	} elseif ($is_active == "5") { 
-	
-		$row_content[$count++] = "SSL Status:";
+
 		$row_content[$count++] = "Pending (Registration)";
 		include("_includes/system/export/write-row.inc.php");
 
