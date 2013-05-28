@@ -619,7 +619,7 @@ if ($_SESSION['need_domain'] == "1" && $_SESSION['need_ssl_provider'] == "0" && 
 	exit;
 }
 $totalrows = mysql_num_rows(mysql_query($sql));
-$navigate = pageBrowser($totalrows,15,$result_limit, "&oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=" . $_SESSION['search_for_ssl'] . "",$_GET[numBegin],$_GET[begin],$_GET[num]);
+$navigate = pageBrowser($totalrows,15,$result_limit, "&oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=" . $_SESSION['search_for_ssl'] . "",$_REQUEST[numBegin],$_REQUEST[begin],$_REQUEST[num]);
 $sql = $sql.$navigate[0];
 $result = mysql_query($sql,$connection);
 $total_rows = number_format(mysql_num_rows($result));
@@ -1052,6 +1052,9 @@ echo "</select>";
 <input type="hidden" name="sslpcid" value="<?=$sslpcid?>">
 <input type="hidden" name="is_active" value="<?=$is_active?>">
 <input type="hidden" name="result_limit" value="<?=$result_limit?>">
+<input type="hidden" name="begin" value="0">
+<input type="hidden" name="num" value="1">
+<input type="hidden" name="numBegin" value="1">
 </div>
 </div>
 </div>
