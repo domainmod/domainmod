@@ -19,7 +19,7 @@
 include("../../_includes/start-session.inc.php");
 
 // If the user isn't an administrator, redirect them to $full_redirect
-$full_redirect = "index.php";
+$full_redirect = "../../invalid.php";
 include("../../_includes/auth/admin-user-check.inc.php");
 
 include("../../_includes/config.inc.php");
