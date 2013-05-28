@@ -41,7 +41,7 @@ while ($row = mysql_fetch_object($result)) {
 	
 	$sql_update = "UPDATE domains
 				   SET tld = '$tld',
-				   	   update_time = '$current_timestamp'
+				   	   update_time = '" . $current_timestamp . "'
 				   WHERE id = '$row->id'";
 	$result_update = mysql_query($sql_update,$connection);
 

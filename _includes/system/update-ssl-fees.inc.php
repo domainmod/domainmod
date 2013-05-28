@@ -32,13 +32,13 @@ include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp
 
 $sql_ssl_fee_fix1 = "UPDATE ssl_certs 
 					 SET fee_fixed = '0', 
-					 	 update_time = '$current_timestamp',
+					 	 update_time = '" . mysql_real_escape_string($current_timestamp) . "',
 						 fee_id = '0'";
 $result_ssl_fee_fix1 = mysql_query($sql_ssl_fee_fix1,$connection) or die(mysql_error());
 
 $sql_ssl_fee_fix2 = "UPDATE ssl_fees 
 					 SET fee_fixed = '0',
-					 	 update_time = '$current_timestamp'";
+					 	 update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 $result_ssl_fee_fix2 = mysql_query($sql_ssl_fee_fix2,$connection) or die(mysql_error());
 
 $sql_ssl_fee_fix3 = "SELECT id, ssl_provider_id, type_id
@@ -51,7 +51,7 @@ while ($row_ssl_fee_fix3 = mysql_fetch_object($result_ssl_fee_fix3)) {
 	$sql_ssl_fee_fix4 = "UPDATE ssl_certs
 						 SET fee_id = '$row_ssl_fee_fix3->id',
 						 	 fee_fixed = '1',
-							 update_time = '$current_timestamp'
+							 update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 						 WHERE ssl_provider_id = '$row_ssl_fee_fix3->ssl_provider_id' 
 						   AND type_id = '$row_ssl_fee_fix3->type_id'
 						   AND fee_fixed = '0'";
@@ -59,7 +59,7 @@ while ($row_ssl_fee_fix3 = mysql_fetch_object($result_ssl_fee_fix3)) {
 	
 	$sql_ssl_fee_fix5 = "UPDATE ssl_fees
 						 SET fee_fixed = '1',
-						 	 update_time = '$current_timestamp'
+						 	 update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 						 WHERE ssl_provider_id = '$row_ssl_fee_fix3->ssl_provider_id'
 						   AND type_id = '$row_ssl_fee_fix3->type_id'";
 	$result_ssl_fee_fix5 = mysql_query($sql_ssl_fee_fix5,$connection);

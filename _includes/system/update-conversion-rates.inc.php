@@ -75,7 +75,7 @@ while ($row_ucr = mysql_fetch_object($result_ucr)) {
 
 			$sql_ucr_update = "UPDATE currency_conversions
 							   SET conversion = '1',
-							   	   update_time = '" . $current_timestamp . "'
+							   	   update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 							   WHERE currency_id = '" . $row_ucr->id . "'
 							     AND user_id = '" . $temp_input_user_id . "'";
 			$result_ucr_update = mysql_query($sql_ucr_update,$connection) or die(mysql_error());
@@ -99,7 +99,7 @@ while ($row_ucr = mysql_fetch_object($result_ucr)) {
 
 			$sql_ucr_update = "UPDATE currency_conversions
 							   SET conversion = '" . $conversion_rate . "',
-							   	   update_time = '" . $current_timestamp . "'
+							   	   update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 							   WHERE currency_id = '" . $row_ucr->id . "'
 							     AND user_id = '" . $temp_input_user_id . "'";
 			$result_ucr_update = mysql_query($sql_ucr_update,$connection) or die(mysql_error());
@@ -112,7 +112,7 @@ while ($row_ucr = mysql_fetch_object($result_ucr)) {
 
 			$sql_ucr_insert = "INSERT INTO currency_conversions
 							   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
-							   ('" . $row_ucr->id . "', '" . $temp_input_user_id . "', '1', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+							   ('" . $row_ucr->id . "', '" . $temp_input_user_id . "', '1', '" . mysql_real_escape_string($current_timestamp) . "', '" . mysql_real_escape_string($current_timestamp) . "')";
 			$result_ucr_insert = mysql_query($sql_ucr_insert,$connection) or die(mysql_error());
 
 		} else {
@@ -134,7 +134,7 @@ while ($row_ucr = mysql_fetch_object($result_ucr)) {
 		
 			$sql_ucr_insert = "INSERT INTO currency_conversions
 							   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
-							   ('" . $row_ucr->id . "', '" . $temp_input_user_id . "', '" . $conversion_rate . "', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+							   ('" . $row_ucr->id . "', '" . $temp_input_user_id . "', '" . $conversion_rate . "', '" . mysql_real_escape_string($current_timestamp) . "', '" . mysql_real_escape_string($current_timestamp) . "')";
 			$result_ucr_insert = mysql_query($sql_ucr_insert,$connection) or die(mysql_error());
 
 		}
@@ -179,7 +179,7 @@ while ($row_ucr = mysql_fetch_object($result_ucr)) {
 
 			$sql_ucr_update = "UPDATE currency_conversions
 							   SET conversion = '1',
-							   	   update_time = '" . $current_timestamp . "'
+							   	   update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 							   WHERE currency_id = '" . $row_ucr->id . "'
 							     AND user_id = '" . $temp_input_user_id . "'";
 			$result_ucr_update = mysql_query($sql_ucr_update,$connection) or die(mysql_error());
@@ -203,7 +203,7 @@ while ($row_ucr = mysql_fetch_object($result_ucr)) {
 
 			$sql_ucr_update = "UPDATE currency_conversions
 							   SET conversion = '" . $conversion_rate . "',
-							   	   update_time = '" . $current_timestamp . "'
+							   	   update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 							   WHERE currency_id = '" . $row_ucr->id . "'
 							     AND user_id = '" . $temp_input_user_id . "'";
 			$result_ucr_update = mysql_query($sql_ucr_update,$connection) or die(mysql_error());
@@ -216,7 +216,7 @@ while ($row_ucr = mysql_fetch_object($result_ucr)) {
 
 			$sql_ucr_insert = "INSERT INTO currency_conversions
 							   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
-							   ('" . $row_ucr->id . "', '" . $temp_input_user_id . "', '1', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+							   ('" . $row_ucr->id . "', '" . $temp_input_user_id . "', '1', '" . mysql_real_escape_string($current_timestamp) . "', '" . mysql_real_escape_string($current_timestamp) . "')";
 			$result_ucr_insert = mysql_query($sql_ucr_insert,$connection) or die(mysql_error());
 
 		} else {
@@ -238,7 +238,7 @@ while ($row_ucr = mysql_fetch_object($result_ucr)) {
 		
 			$sql_ucr_insert = "INSERT INTO currency_conversions
 							   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
-							   ('" . $row_ucr->id . "', '" . $temp_input_user_id . "', '" . $conversion_rate . "', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+							   ('" . $row_ucr->id . "', '" . $temp_input_user_id . "', '" . $conversion_rate . "', '" . mysql_real_escape_string($current_timestamp) . "', '" . mysql_real_escape_string($current_timestamp) . "')";
 			$result_ucr_insert = mysql_query($sql_ucr_insert,$connection) or die(mysql_error());
 
 		}
