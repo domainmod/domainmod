@@ -158,6 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 $sql_domain = "SELECT id, domain
 			   FROM domains
+			   WHERE active NOT IN ('0', '10')
 			   ORDER BY domain asc";
 $result_domain = mysql_query($sql_domain,$connection) or die(mysql_error());
 echo "<select name=\"new_domain_id\">";
