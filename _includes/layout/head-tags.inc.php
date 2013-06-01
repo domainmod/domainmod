@@ -36,6 +36,14 @@ table.main_table tr.main_table_row_active:hover td, tr.main_table_row_inactive:h
  	color: #000000;
     background-color: #D1D1D1;
 }
+table.main_table_no_right_padding tr.main_table_row_active_no_right_padding:hover td, tr.main_table_row_inactive_no_right_padding:hover td {
+	padding-top: 2px;
+	padding-right: 0px;
+	padding-bottom: 2px;
+	padding-left: 0px;
+ 	color: #000000;
+    background-color: #D1D1D1;
+}
 tr.main_table_row_heading_active {
 /*	line-height: 18px; */
 }
@@ -49,6 +57,9 @@ td.main_table_cell_heading_active {
 tr.main_table_row_active {
 /*	line-height: 18px; */
 }
+tr.main_table_row_active_no_right_padding {
+/*	line-height: 18px; */
+}
 tr.main_table_row_active_nohover {
 /*	line-height: 18px; */
 }
@@ -59,6 +70,21 @@ td.main_table_cell_active {
 	padding-bottom: 2px; 
 	padding-left: 0px; 
 }
+td.main_table_cell_active_top_aligned {
+	vertical-align: top;
+	padding-top: 2px; 
+	padding-right: 26px;
+	padding-bottom: 2px; 
+	padding-left: 0px; 
+}
+td.main_table_cell_active_top_aligned_no_right_padding {
+	vertical-align: top;
+	padding-top: 2px; 
+	padding-right: 0px;
+	padding-bottom: 2px; 
+	padding-left: 0px; 
+}
+
 tr.main_table_row_heading_inactive {
 /*	line-height: 18px; */
 }
@@ -70,6 +96,9 @@ td.main_table_cell_heading_inactive {
 	padding-left: 0px;
 }
 tr.main_table_row_inactive {
+/*	line-height: 18px; */
+}
+tr.main_table_row_inactive_no_right_padding {
 /*	line-height: 18px; */
 }
 td.main_table_cell_inactive {
@@ -478,14 +507,14 @@ div.export-inner {
 div.login_form {
 	text-align: center;
 }
-div.search_options_block {
+div.pagination_menu_block {
 	text-align: left;
 	padding-top: 0px;
 	padding-right: 0px; 
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
-div.search_options_block_inner {
+div.pagination_menu_block_inner {
 	text-align: left;
 	padding-top: 0px;
 	padding-right: 0px; 

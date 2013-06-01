@@ -241,6 +241,11 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Certificate Renewal Report</strong>&nbsp;<?php
 
+} elseif ($software_section == "reporting-dw-potential-problems-report") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
+	&raquo;&nbsp;<strong>Data Warehouse Potential Problems Report</strong>&nbsp;<?php
+
 } elseif ($software_section == "registrars") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
@@ -572,6 +577,60 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/users.php">Users</a>&nbsp;
 	&raquo;&nbsp;Editing A User&nbsp;<?php 
+
+} elseif ($software_section == "admin-dw-main" || $software_section == "admin-dw-intro") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
+	&raquo;&nbsp;<strong>DW</string>&nbsp;<?php
+
+} elseif ($software_section == "admin-dw-list-accounts") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
+	<?php if ($domain == "" && $search_for == "") { ?>
+		&raquo;&nbsp;<strong>Accounts</string>&nbsp;
+	<?php } else { ?>
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/dw/list-accounts.php">Accounts</a></string>&nbsp;
+		&raquo;&nbsp;<strong>Search Results</string>&nbsp;
+	<?php }
+
+} elseif ($software_section == "admin-dw-list-dns-zones") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
+	<?php if ($domain == "" && $search_for == "") { ?>
+		&raquo;&nbsp;<strong>DNS Zones & Records</string>&nbsp;
+	<?php } else { ?>
+		&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/dw/list-dns-zones.php">DNS Zones</a></string>&nbsp;
+		&raquo;&nbsp;<strong>Search Results</string>&nbsp;
+	<?php }
+
+} elseif ($software_section == "admin-dw-manage-servers") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
+    &raquo;&nbsp;<strong>Servers</string>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/dw/add/server.php">Add A Server</a>&nbsp;<?php 
+
+} elseif ($software_section == "admin-dw-manage-servers-add") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/dw/servers.php">Servers</a>&nbsp;
+	&raquo;&nbsp;Adding A Server&nbsp;<?php 
+
+} elseif ($software_section == "admin-dw-manage-servers-edit") { ?>
+
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
+	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
+	&raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php if ($web_root != "/") echo $web_root; ?>/system/admin/dw/servers.php">Servers</a>&nbsp;
+	&raquo;&nbsp;Editing A Server&nbsp;<?php 
 
 } elseif ($software_section == "updates") {
 	

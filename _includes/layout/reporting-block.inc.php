@@ -15,14 +15,7 @@
 // You should have received a copy of the GNU General Public License along with Domain Manager. If not, please 
 // see http://www.gnu.org/licenses/
 ?>
-<script type="text/javascript">
-<!--
-function MM_jumpMenu(targ,selObj,restore){ //v3.0
-  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
-  if (restore) selObj.selectedIndex=0;
-}
-//-->
-</script>
+<?php include($_SESSION['full_server_path'] . "/_includes/system/functions/jumpmenu.inc.php"); ?>
 Before running any reports you should <a href="<?=$web_root?>/_includes/system/update-conversion-rates.inc.php?direct=1">update the conversion rates</a>.<BR><BR><BR>
 <div class="reporting-block-outer">
 	<div class="reporting-block-left">
@@ -45,7 +38,7 @@ Before running any reports you should <a href="<?=$web_root?>/_includes/system/u
 	</div>
 	<div class="reporting-block-center">
         <font class="subheadline">SSL Certificate Reports</font><BR><BR>
-        <form name="reporting_menu_domain_form" method="post" action="<?=$PHP_SELF?>">
+        <form name="reporting_menu_ssl_form" method="post" action="<?=$PHP_SELF?>">
             <select name="reporting_menu_ssl" onChange="MM_jumpMenu('parent',this,0)">
             <option value="<?=$web_root?>/reporting/"<?php if ($report_name == "") echo " selected" ?>>Click to select an SSL Report</option>
             <option value="<?=$web_root?>/reporting/ssl/cost-by-category.php"<?php if ($report_name == "ssl-cost-by-category-report") echo " selected" ?>>Cost by Category</option>
@@ -61,14 +54,11 @@ Before running any reports you should <a href="<?=$web_root?>/_includes/system/u
 		</form>
 	</div>
 	<div class="reporting-block-right">
-        <font class="subheadline">General Reports</font><BR><BR>
-        <form name="reporting_menu_domain_form" method="post" action="<?=$PHP_SELF?>">
-            <select name="reporting_menu_ssl" onChange="MM_jumpMenu('parent',this,0)">
-            <option value="<?=$web_root?>/reporting/"<?php if ($report_name == "") echo " selected" ?>>Click to select a General Report</option>
-            <option value="<?=$web_root?>/reporting/">Coming Soon</option>
-<?php /* ?>
-            <option value="<?=$web_root?>/reporting/"<?php if ($report_name == "error-report") echo " selected" ?>>Error Report</option>
-<?php */ ?>
+        <font class="subheadline">Data Warehouse Reports</font><BR><BR>
+        <form name="reporting_menu_dw_form" method="post" action="<?=$PHP_SELF?>">
+            <select name="reporting_menu_dw" onChange="MM_jumpMenu('parent',this,0)">
+            <option value="<?=$web_root?>/reporting/"<?php if ($report_name == "") echo " selected" ?>>Click to select a DW Report</option>
+            <option value="<?=$web_root?>/reporting/dw/potential-problems.php"<?php if ($report_name == "dw-potential-problems-report") echo " selected" ?>>Potential Problems</option>
             </select>
 		</form>
 	</div>

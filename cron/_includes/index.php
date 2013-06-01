@@ -1,5 +1,5 @@
 <?php
-// /cron/main.php
+// /cron/_includes/index.php
 // 
 // Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
@@ -16,7 +16,6 @@
 // see http://www.gnu.org/licenses/
 ?>
 <?php
-include("currencies.php");
-include("expirations.php");
-include("dw.php");
+header("Location: ../../invalid.php");
+exit;
 ?>

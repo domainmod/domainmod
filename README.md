@@ -5,19 +5,18 @@
 
 
 # About
-Domain Manager is a web-based application written in PHP & MySQL used to manage a collection of domain names.  
-
+Domain Manager is a web-based application written in PHP & MySQL used to manage a collection of domain names. Domain Manager also includes a fully functional Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports servers running WHM/cPanel, but further support will be added in the future.
 
 # Live Demo
-Not sure if the Domain Manager is what you're looking for? Don't want to waste your time installing it only to find out that it's not? As developers ourselves, we hate when that happens, so AYS Media always tries to run live demos of our products so that we don't waste your time.  
+Not sure if the Domain Manager is what you're looking for? Don't want to waste your time installing it only to find out that it's not? As a developer myself, I hate when that happens, so I always try to run live demos so you don't waste your time.  
 
-So go ahead, take our live demo for a test drive before you install! http://demos.aysmedia.com/domainmanager/  
+So go ahead, take live demo for a test drive before you install! http://demos.aysmedia.com/domainmanager/  
 
 
 # Downloading
 You have two options for downloading the Domain Manager.  
 
-NOTE: Whenever possible we recommend that you use option #1, the git repository download directly from your server. Not only is it a nice quick install, but it makes upgrading a breeze (more info below).  
+NOTE: Whenever possible I recommend that you use option #1, the git repository download directly from your server. Not only is it a nice quick install, but it makes upgrading a breeze (more info below).  
 
 1. Use git right from your server to retrieve the source code. To do so, change to the directory where you want to install Domain Manager and run the following command:  
 
@@ -61,9 +60,45 @@ The file to execute is:
 
     /SERVER-PATH-TO-DOMAIN-MANAGER/cron/expirations.php  
 
-If you want to run both of the above cron jobs, simply run this script instead and it will run both of them for you:
+The third cron job will rebuild your data warehouse. If you're going to use the data warehouse, it's highly recommended that you set this cron job up to automate your builds. There's a lot of work being done in the background during a build, and more often than not a web browser will timeout if you try to build through the UI instead of using a cron job, leading to incomplete and missing information in your data warehouse. I would recommend setting the cron job up to run daily, preferably while you're asleep, so that way you'll always start the day with the freshest data possible.
+
+The file to execute is:
+
+    /SERVER-PATH-TO-DOMAIN-MANAGER/cron/dw.php  
+
+If you want to run all of the above cron jobs, simply run this script instead and it will execute all current and future cron jobs.
 
     /SERVER-PATH-TO-DOMAIN-MANAGER/cron/main.php  
+
+
+# Data Warehouse
+
+Domain Manager has a data warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also intend on adding support for Plesk once I've ironed out all the kinks in the framework.
+
+If you don't run a server that uses WHM, or you don't want to import your WHM data into Domain Manager, you can ignore this section.
+
+Importing your server(s) into the data warehouse will not modify any of your Domain Manager data. The data warehouse is used for informational purposes only, and you will see its data referenced throughout Domain Manager where applicable. For example, if a domain you're editing has information stored in your data warehouse, the system will automatically match them up and display the additional information for you, giving you even more insight into your data. You can also view, export, and run reports on the information in your data warehouse.
+
+### Supported Data
+The following WHM sections are currently supported, but my end goal is to have every piece of WHM information that can be retrieved via the API stored in the data warehouse. In the future I plan on adding support for as many types of web servers as possible.  
+
+### ACCOUNTS
+
+Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max FTP Accounts, Max Email Lists, Max Parked Domains, Max POP Accounts, Max SQL Accounts, Max Subdomains, Creation Date, Suspend Status, Suspend Reason, Suspend Time, Max Email Per Hour, Failed Email % Before Defer, Min Failed Email # Before Defer
+
+### DNS ZONES
+
+Zone File Name, Original/Primary Source of Zone Data, Admin Email, Serial #, Refresh, Retry, Expiry, Minimum TTL, Authoritative Name Server
+
+### DNS RECORDS
+
+TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data
+
+### References
+WHM & cPanel: http://cpanel.net 
+API Documentation: http://docs.cpanel.net/twiki/bin/view/SoftwareDevelopmentKit/XmlApi 
+
+
 
 # Usage
 After installation just load the URL in a web browser and play around in the UI, it's pretty self explanatory.  

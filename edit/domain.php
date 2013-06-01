@@ -452,7 +452,76 @@ if (mysql_num_rows($result) > 0) { ?>
 ?>
 <input type="submit" name="button" value="Update This Domain &raquo;">
 </form>
-<BR><BR><a href="<?=$PHP_SELF?>?did=<?=$did?>&del=1">DELETE THIS DOMAIN</a>
+
+<?php
+$sql_accounts = "SELECT id
+				 FROM dw_accounts
+				 WHERE domain = '" . $new_domain . "'";
+$result_accounts = mysql_query($sql_accounts,$connection);
+
+$sql_dns_zones = "SELECT id
+				  FROM dw_dns_zones
+				  WHERE domain = '" . $new_domain . "'";
+$result_dns_zones = mysql_query($sql_dns_zones,$connection);
+
+if (mysql_num_rows($result_accounts) > 0 || mysql_num_rows($result_dns_zones) > 0) { ?>
+
+    <BR><BR><font class="subheadline">Data Warehouse Information</font><?php
+	
+}
+
+if (mysql_num_rows($result_accounts) > 0) { ?>
+
+    <BR><BR><strong>Accounts</strong><?php
+
+	$sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+							FROM dw_accounts AS a, dw_servers AS s
+							WHERE a.server_id = s.id
+							  AND a.domain = '" . $new_domain . "'
+							ORDER BY s.name, a.unix_startdate DESC";
+	$result_dw_account_temp = mysql_query($sql_dw_account_temp,$connection) or die(mysql_error());
+	// $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+	// 						   FROM dw_accounts AS a, dw_servers AS s
+	// 						   WHERE a.server_id = s.id
+	// 						     AND X
+	// 						   ORDER BY s.name, a.unix_startdate DESC";
+	// $result_dw_account_temp = mysql_query($sql_dw_account_temp,$connection) or die(mysql_error());
+	$from_main_dw_account_page = 0;
+	include("../_includes/dw/display-account.inc.php");
+
+}
+
+if (mysql_num_rows($result_dns_zones) > 0) {
+
+    if (mysql_num_rows($result_accounts) > 0) {
+
+	    echo "";
+
+	} else {
+
+	    echo "<BR><BR>";
+		
+	} ?>
+    <strong>DNS Zones & Records</strong><BR><BR><?php
+	$sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+							 FROM dw_dns_zones AS z, dw_servers AS s
+							 WHERE z.server_id = s.id
+							   AND z.domain = '" . $new_domain . "'
+							 ORDER BY s.name, z.zonefile, z.domain";
+	$result_dw_dns_zone_temp = mysql_query($sql_dw_dns_zone_temp,$connection) or die(mysql_error());
+	// $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+	//							FROM dw_dns_zones AS z, dw_servers AS s
+	//							WHERE z.server_id = s.id
+	//							  AND X
+	//							ORDER BY s.name, z.zonefile, z.domain";
+	// $result_dw_dns_zone_temp = mysql_query($sql_dw_dns_zone_temp,$connection) or die(mysql_error());
+	$from_main_dw_dns_zone_page = 0;
+	include("../_includes/dw/display-dns-zone.inc.php");
+
+}
+?>
+
+<BR><a href="<?=$PHP_SELF?>?did=<?=$did?>&del=1">DELETE THIS DOMAIN</a>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>
