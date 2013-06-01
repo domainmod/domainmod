@@ -32,7 +32,6 @@ include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp
 
 $sql_domain_fee_fix1 = "UPDATE domains 
 						SET fee_fixed = '0', 
-						    update_time = '" . mysql_real_escape_string($current_timestamp) . "',
 							fee_id = '0'";
 $result_domain_fee_fix1 = mysql_query($sql_domain_fee_fix1,$connection) or die(mysql_error());
 
@@ -50,8 +49,7 @@ while ($row_domain_fee_fix3 = mysql_fetch_object($result_domain_fee_fix3)) {
 
 	$sql_domain_fee_fix4 = "UPDATE domains
 							SET fee_id = '" . $row_domain_fee_fix3->id . "',
-								fee_fixed = '1',
-								update_time = '" . mysql_real_escape_string($current_timestamp) . "'
+								fee_fixed = '1'
 							WHERE registrar_id = '" . $row_domain_fee_fix3->registrar_id. "' 
 							  AND tld = '" .$row_domain_fee_fix3->tld. "'
 							  AND fee_fixed = '0'";
