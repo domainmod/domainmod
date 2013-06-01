@@ -233,7 +233,8 @@ if ($really_del == "1") {
 <?php
 $sql_domain = "SELECT id, domain
 			   FROM domains
-			   ORDER BY domain asc";
+			   WHERE (active NOT IN ('0', '10') OR id = '" . $new_domain_id . "')
+			   ORDER BY domain";
 $result_domain = mysql_query($sql_domain,$connection) or die(mysql_error());
 echo "<select name=\"new_domain_id\">";
 while ($row_domain = mysql_fetch_object($result_domain)) { ?>
