@@ -23,7 +23,7 @@ include("../_includes/software.inc.php");
 include("../_includes/system/installation-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 
-if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
+if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '" . settings . "'"))) {
 	
 	$_SESSION['result_message'] = "$software_title is already installed<BR>";
 
@@ -676,10 +676,12 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$full_url = substr($_SERVER["HTTP_REFERER"], 0, -1);
+	
+	$temp_system_email = "support@" . $_SERVER["HTTP_HOST"];
 
 	$sql = "INSERT INTO `settings` 
 			(`full_url`, `db_version`, `email_address`, `insert_time`) VALUES 
-			('$full_url', '$most_recent_db_version', 'dm@aysmedia.com', '$current_timestamp');";
+			('" . $full_url . "', '" . $most_recent_db_version . "', '" . $temp_system_email . "', '" . $current_timestamp . "');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "CREATE TABLE IF NOT EXISTS `timezones` (
@@ -727,7 +729,8 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 			('Overhaul of Domain Manager Settings Complete!', 'Over the past few months the Domain Manager settings have been undergoing a complete overhaul. The changes include but are not limited to making currency conversions user-based instead of system-based, updating all Domain & SSL default settings to be user-based instead of system-based, separating out Category, IP Address and Owner settings so that Domains & SSLs have thier own options instead of sharing them, adding support for saving passwords for Domain Registrar & SSL Provider accounts, removing the redundant Status and Status Notes fields from the Domains section, and so on.<BR><BR>I\'m constantly trying to improve the software and make it more user-friendly, so if you have any suggestions or feedback feel free to drop me a line at <a class=\"invisiblelink\" href=\"mailto:greg@chetcuti.com\">greg@chetcuti.com</a>.', '2013-05-02 00:00:00', '2013-05-02 00:00:00'),
 			('Domain Manager now contains a Software Updates section!', 'After upgrading Domain Manager I\'m sure it would be nice to know what new features have been added, as well as any important changes to the software that you should know about, so I\'ve added a Software Updates section that chronicles the most important and most useful new features. Now after an upgrade you can simply visit the Software Updates section and view a list of the updates since your previous version.', '2013-05-04 00:00:00', '2013-05-04 00:00:00'),
 			('An Export option has been added to all Asset pages', '', '2013-05-06 00:00:00', '2013-05-06 00:00:00'),
-			('You can now create Custom Domain & SSL Fields!', 'In an effort to allow users more flexibility, as well as track as much data as possible, I\'ve implemented Custom Domain & SSL Fields. Now if there\'s information you want to track for a domain or SSL certificate but the field doesn\'t exist in Domain Manager, you can just add it yourself!<BR><BR>For example, if you wanted to keep track of which domains are currenty setup in Google Analytics, you could create a new Google Analytics check box field and start tracking this information for each of your domains. Or if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. Combine custom fields with the ability to update them with the Bulk Updater, and the sky\'s the limit in regards to what data you can easily track! (the Bulk Updater currently only supports domains, not SSL certificates)<BR><BR>And when you export your domain & SSL data, the information contained in your custom fields will automatically be included in the exported data.', '2013-05-25 17:00:00', '2013-05-25 17:00:00')";
+			('You can now create Custom Domain & SSL Fields!', 'In an effort to allow users more flexibility, as well as track as much data as possible, I\'ve implemented Custom Domain & SSL Fields. Now if there\'s information you want to track for a domain or SSL certificate but the field doesn\'t exist in Domain Manager, you can just add it yourself!<BR><BR>For example, if you wanted to keep track of which domains are currenty setup in Google Analytics, you could create a new Google Analytics check box field and start tracking this information for each of your domains. Or if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. Combine custom fields with the ability to update them with the Bulk Updater, and the sky\'s the limit in regards to what data you can easily track! (the Bulk Updater currently only supports domains, not SSL certificates)<BR><BR>And when you export your domain & SSL data, the information contained in your custom fields will automatically be included in the exported data.', '2013-05-25 17:00:00', '2013-05-25 17:00:00'),
+			('Domain Manager now includes a Data Warehouse for importing data', 'Domain Manager now has a data warehouse framework built right into it, which allows you to import the data stored on your web servers. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also intend on adding support for Plesk and other systems once I’ve ironed out all the kinks in the framework.<BR><BR>The data warehouse is used for informational purposes only, and you will see its data referenced throughout Domain Manager where applicable. For example, if a domain you’re editing has information stored in your data warehouse, the system will automatically match them up and display the additional information for you, giving you even more insight into your data. You can also view, export, and run reports on the information in your data warehouse.<BR><BR>The following WHM data is currently supported, but my end goal is to have every piece of WHM information that can be retrieved via the API stored in the data warehouse.<BR><BR><strong>ACCOUNTS</strong><BR>Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max FTP Accounts, Max Email Lists, Max Parked Domains, Max POP Accounts, Max SQL Accounts, Max Subdomains, Creation Date, Suspend Status, Suspend Reason, Suspend Time, Max Email Per Hour, Failed Email % Before Defer, Min Failed Email # Before Defer<BR><BR><strong>DNS ZONES</strong><BR>Zone File Name, Original/Primary Source of Zone Data, Admin Email, Serial #, Refresh, Retry, Expiry, Minimum TTL, Authoritative Name Server<BR><BR><strong>DNS RECORDS</strong><BR>TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data<BR><BR><font class=\"default_highlight\">NOTE:</font> Importing your server into the data warehouse will not modify any of your Domain Manager data.', '2013-06-01 1:00:00', '2013-06-01 1:00:00')";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	$sql = "CREATE TABLE IF NOT EXISTS update_data (
@@ -766,6 +769,34 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '".settings."'"))) {
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
 	$result = mysql_query($sql,$connection);
 	if (mysql_num_rows($result) != 0) { $_SESSION['are_there_updates'] = "1"; }
+
+	$sql = "CREATE TABLE IF NOT EXISTS `dw_servers` (
+			`id` int(10) NOT NULL auto_increment,
+			`name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`host` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`protocol` varchar(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`port` int(5) NOT NULL,
+			`username` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`hash` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+			`dw_accounts` int(10) NOT NULL,
+			`dw_dns_zones` int(10) NOT NULL,
+			`dw_dns_records` int(10) NOT NULL,
+			`build_status` int(1) NOT NULL default '0',
+			`build_start_time` datetime NOT NULL,
+			`build_end_time` datetime NOT NULL,
+			`build_time` int(10) NOT NULL default '0',
+			`has_ever_been_built` int(1) NOT NULL default '0',
+			`build_status_overall` int(1) NOT NULL default '0',
+			`build_start_time_overall` datetime NOT NULL,
+			`build_end_time_overall` datetime NOT NULL,
+			`build_time_overall` int(10) NOT NULL default '0',
+			`has_ever_been_built_overall` int(1) NOT NULL default '0',
+			`insert_time` datetime NOT NULL,
+			`update_time` datetime NOT NULL,
+			PRIMARY KEY  (`id`)
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql_settings = "SELECT *
 					 FROM settings";

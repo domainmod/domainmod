@@ -17,6 +17,7 @@
 ?>
 <?php
 $direct = $_GET['direct'];
+$current_timestamp = date("Y-m-d H:i:s");
 
 if ($direct == "1") { 
 
@@ -27,8 +28,6 @@ if ($direct == "1") {
 	include("../auth/auth-check.inc.php");
 
 }
-
-include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp.inc.php");
 
 $sql = "SELECT db_version
 		FROM settings";
@@ -1221,7 +1220,7 @@ if ($current_db_version < $most_recent_db_version) {
 				if ($row->status != "") {
 		
 					$full_status .= "--------------------\r\n";
-					$full_status .= "OLD STATUS - INSERTED " . $current_timestamp . "\r\n";
+					$full_status .= "OLD STATUS - INSERTED " . mysql_real_escape_string($current_timestamp) . "\r\n";
 					$full_status .= "The Status field was removed because it was redundant.\r\n";
 					$full_status .= "--------------------\r\n";
 					$full_status .= $row->status . "\r\n";
@@ -1236,7 +1235,7 @@ if ($current_db_version < $most_recent_db_version) {
 				if ($row->status_notes != "") {
 		
 					$full_status_notes .= "--------------------\r\n";
-					$full_status_notes .= "OLD STATUS NOTES - INSERTED " . $current_timestamp . "\r\n";
+					$full_status_notes .= "OLD STATUS NOTES - INSERTED " . mysql_real_escape_string($current_timestamp) . "\r\n";
 					$full_status_notes .= "The Status Notes field was removed because it was redundant.\r\n";
 					$full_status_notes .= "--------------------\r\n";
 					$full_status_notes .= $row->status_notes . "\r\n";
@@ -1657,7 +1656,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE currencies
 				SET newly_inserted = '0',
-					update_time = '" . $current_timestamp . "'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection);
 
 		$sql = "ALTER TABLE `settings`  
@@ -1670,182 +1669,182 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET default_currency = '" . $_SESSION['default_currency'] . "',
-					update_time = '" . $current_timestamp . "'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection);
 
 		$sql = "UPDATE user_settings
 				SET default_currency = '" . $_SESSION['default_currency'] . "',
-					update_time = '" . $current_timestamp . "'";
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection);
 
 		$sql = "INSERT INTO currencies
 				(name, currency, symbol, insert_time) VALUES 
-				('Albania Lek', 'ALL', 'Lek', '" . $current_timestamp . "'),
-				('Afghanistan Afghani', 'AFN', '؋', '" . $current_timestamp . "'),
-				('Argentina Peso', 'ARS', '$', '" . $current_timestamp . "'),
-				('Aruba Guilder', 'AWG', 'ƒ', '" . $current_timestamp . "'),
-				('Australia Dollar', 'AUD', '$', '" . $current_timestamp . "'),
-				('Azerbaijan New Manat', 'AZN', '" . 'ман' . "', '" . $current_timestamp . "'),
-				('Bahamas Dollar', 'BSD', '$', '" . $current_timestamp . "'),
-				('Barbados Dollar', 'BBD', '$', '" . $current_timestamp . "'),
-				('Belarus Ruble', 'BYR', 'p.', '" . $current_timestamp . "'),
-				('Belize Dollar', 'BZD', 'BZ$', '" . $current_timestamp . "'),
-				('Bermuda Dollar', 'BMD', '$', '" . $current_timestamp . "'),
-				('Bolivia Boliviano', 'BOB', '\$b', '" . $current_timestamp . "'),
-				('Bosnia and Herzegovina Convertible Marka', 'BAM', 'KM', '" . $current_timestamp . "'),
-				('Botswana Pula', 'BWP', 'P', '" . $current_timestamp . "'),
-				('Bulgaria Lev', 'BGN', 'лв', '" . $current_timestamp . "'),
-				('Brazil Real', 'BRL', 'R$', '" . $current_timestamp . "'),
-				('Brunei Darussalam Dollar', 'BND', '$', '" . $current_timestamp . "'),
-				('Cambodia Riel', 'KHR', '៛', '" . $current_timestamp . "'),
-				('Canada Dollar', 'CAD', '$', '" . $current_timestamp . "'),
-				('Cayman Islands Dollar', 'KYD', '$', '" . $current_timestamp . "'),
-				('Chile Peso', 'CLP', '$', '" . $current_timestamp . "'),
-				('China Yuan Renminbi', 'CNY', '¥', '" . $current_timestamp . "'),
-				('Colombia Peso', 'COP', '$', '" . $current_timestamp . "'),
-				('Costa Rica Colon', 'CRC', '₡', '" . $current_timestamp . "'),
-				('Croatia Kuna', 'HRK', 'kn', '" . $current_timestamp . "'),
-				('Cuba Peso', 'CUP', '₱', '" . $current_timestamp . "'),
-				('Czech Republic Koruna', 'CZK', 'Kč', '" . $current_timestamp . "'),
-				('Denmark Krone', 'DKK', 'kr', '" . $current_timestamp . "'),
-				('Dominican Republic Peso', 'DOP', 'RD$', '" . $current_timestamp . "'),
-				('East Caribbean Dollar', 'XCD', '$', '" . $current_timestamp . "'),
-				('Egypt Pound', 'EGP', '£', '" . $current_timestamp . "'),
-				('El Salvador Colon', 'SVC', '$', '" . $current_timestamp . "'),
-				('Estonia Kroon', 'EEK', 'kr', '" . $current_timestamp . "'),
-				('Euro Member Countries', 'EUR', '€', '" . $current_timestamp . "'),
-				('Falkland Islands (Malvinas) Pound', 'FKP', '£', '" . $current_timestamp . "'),
-				('Fiji Dollar', 'FJD', '$', '" . $current_timestamp . "'),
-				('Ghana Cedis', 'GHC', '¢', '" . $current_timestamp . "'),
-				('Gibraltar Pound', 'GIP', '£', '" . $current_timestamp . "'),
-				('Guatemala Quetzal', 'GTQ', 'Q', '" . $current_timestamp . "'),
-				('Guernsey Pound', 'GGP', '£', '" . $current_timestamp . "'),
-				('Guyana Dollar', 'GYD', '$', '" . $current_timestamp . "'),
-				('Honduras Lempira', 'HNL', 'L', '" . $current_timestamp . "'),
-				('Hong Kong Dollar', 'HKD', '$', '" . $current_timestamp . "'),
-				('Hungary Forint', 'HUF', 'Ft', '" . $current_timestamp . "'),
-				('Iceland Krona', 'ISK', 'kr', '" . $current_timestamp . "'),
-				('India Rupee', 'INR', 'Rs', '" . $current_timestamp . "'),
-				('Indonesia Rupiah', 'IDR', 'Rp', '" . $current_timestamp . "'),
-				('Iran Rial', 'IRR', '﷼', '" . $current_timestamp . "'),
-				('Isle of Man Pound', 'IMP', '£', '" . $current_timestamp . "'),
-				('Israel Shekel', 'ILS', '₪', '" . $current_timestamp . "'),
-				('Jamaica Dollar', 'JMD', 'J$', '" . $current_timestamp . "'),
-				('Japan Yen', 'JPY', '¥', '" . $current_timestamp . "'),
-				('Jersey Pound', 'JEP', '£', '" . $current_timestamp . "'),
-				('Kazakhstan Tenge', 'KZT', 'лв', '" . $current_timestamp . "'),
-				('Korea (North) Won', 'KPW', '₩', '" . $current_timestamp . "'),
-				('Korea (South) Won', 'KRW', '₩', '" . $current_timestamp . "'),
-				('Kyrgyzstan Som', 'KGS', 'лв', '" . $current_timestamp . "'),
-				('Laos Kip', 'LAK', '₭', '" . $current_timestamp . "'),
-				('Latvia Lat', 'LVL', 'Ls', '" . $current_timestamp . "'),
-				('Lebanon Pound', 'LBP', '£', '" . $current_timestamp . "'),
-				('Liberia Dollar', 'LRD', '$', '" . $current_timestamp . "'),
-				('Lithuania Litas', 'LTL', 'Lt', '" . $current_timestamp . "'),
-				('Macedonia Denar', 'MKD', 'ден', '" . $current_timestamp . "'),
-				('Malaysia Ringgit', 'RM', 'RM', '" . $current_timestamp . "'),
-				('Mauritius Rupee', 'MUR', '₨', '" . $current_timestamp . "'),
-				('Mexico Peso', 'MXN', '$', '" . $current_timestamp . "'),
-				('Mongolia Tughrik', 'MNT', '₮', '" . $current_timestamp . "'),
-				('Mozambique Metical', 'MZN', 'MT', '" . $current_timestamp . "'),
-				('Namibia Dollar', 'NAD', '$', '" . $current_timestamp . "'),
-				('Nepal Rupee', 'NPR', '₨', '" . $current_timestamp . "'),
-				('Netherlands Antilles Guilder', 'ANG', 'ƒ', '" . $current_timestamp . "'),
-				('New Zealand Dollar', 'NZD', '$', '" . $current_timestamp . "'),
-				('Nicaragua Cordoba', 'NIO', 'C$', '" . $current_timestamp . "'),
-				('Nigeria Naira', 'NGN', '₦', '" . $current_timestamp . "'),
-				('Norway Krone', 'NOK', 'kr', '" . $current_timestamp . "'),
-				('Oman Rial', 'OMR', '﷼', '" . $current_timestamp . "'),
-				('Pakistan Rupee', 'PKR', '₨', '" . $current_timestamp . "'),
-				('Panama Balboa', 'PAB', 'B/.', '" . $current_timestamp . "'),
-				('Paraguay Guarani', 'PYG', 'Gs', '" . $current_timestamp . "'),
-				('Peru Nuevo Sol', 'PEN', 'S/.', '" . $current_timestamp . "'),
-				('Philippines Peso', 'PHP', '₱', '" . $current_timestamp . "'),
-				('Poland Zloty', 'PLN', 'zł', '" . $current_timestamp . "'),
-				('Qatar Riyal', 'QAR', '﷼', '" . $current_timestamp . "'),
-				('Romania New Leu', 'RON', 'lei', '" . $current_timestamp . "'),
-				('Russia Ruble', 'RUB', 'руб', '" . $current_timestamp . "'),
-				('Saint Helena Pound', 'SHP', '£', '" . $current_timestamp . "'),
-				('Saudi Arabia Riyal', 'SAR', '﷼', '" . $current_timestamp . "'),
-				('Serbia Dinar', 'RSD', 'Дин.', '" . $current_timestamp . "'),
-				('Seychelles Rupee', 'SCR', '₨', '" . $current_timestamp . "'),
-				('Singapore Dollar', 'SGD', '$', '" . $current_timestamp . "'),
-				('Solomon Islands Dollar', 'SBD', '$', '" . $current_timestamp . "'),
-				('Somalia Shilling', 'SOS', 'S', '" . $current_timestamp . "'),
-				('South Africa Rand', 'ZAR', 'R', '" . $current_timestamp . "'),
-				('Sri Lanka Rupee', 'LKR', '₨', '" . $current_timestamp . "'),
-				('Sweden Krona', 'SEK', 'kr', '" . $current_timestamp . "'),
-				('Switzerland Franc', 'CHF', 'CHF', '" . $current_timestamp . "'),
-				('Suriname Dollar', 'SRD', '$', '" . $current_timestamp . "'),
-				('Syria Pound', 'SYP', '£', '" . $current_timestamp . "'),
-				('Taiwan New Dollar', 'TWD', 'NT$', '" . $current_timestamp . "'),
-				('Thailand Baht', 'THB', '฿', '" . $current_timestamp . "'),
-				('Trinidad and Tobago Dollar', 'TTD', 'TT$', '" . $current_timestamp . "'),
-				('Turkey Lira', 'TRY', '₤', '" . $current_timestamp . "'),
-				('Tuvalu Dollar', 'TVD', '$', '" . $current_timestamp . "'),
-				('Ukraine Hryvna', 'UAH', '₴', '" . $current_timestamp . "'),
-				('United Kingdom Pound', 'GBP', '£', '" . $current_timestamp . "'),
-				('United States Dollar', 'USD', '$', '" . $current_timestamp . "'),
-				('Uruguay Peso', 'UYU', '\$U', '" . $current_timestamp . "'),
-				('Uzbekistan Som', 'UZS', 'лв', '" . $current_timestamp . "'),
-				('Venezuela Bolivar', 'VEF', 'Bs', '" . $current_timestamp . "'),
-				('Viet Nam Dong', 'VND', '₫', '" . $current_timestamp . "'),
-				('Yemen Rial', 'YER', '﷼', '" . $current_timestamp . "'),
-				('Zimbabwe Dollar', 'ZWD', 'Z$', '" . $current_timestamp . "'),
-				('Emirati Dirham', 'AED', 'د.إ', '" . $current_timestamp . "'),
-				('Malaysian Ringgit', 'MYR', 'RM', '" . $current_timestamp . "'),
-				('Kuwaiti Dinar', 'KWD', 'ك', '" . $current_timestamp . "'),
-				('Moroccan Dirham', 'MAD', 'م.', '" . $current_timestamp . "'),
-				('Iraqi Dinar', 'IQD', 'د.ع', '" . $current_timestamp . "'),
-				('Bangladeshi Taka', 'BDT', 'Tk', '" . $current_timestamp . "'),
-				('Bahraini Dinar', 'BHD', 'BD', '" . $current_timestamp . "'),
-				('Kenyan Shilling', 'KES', 'KSh', '" . $current_timestamp . "'),
-				('CFA Franc', 'XOF', 'CFA', '" . $current_timestamp . "'),
-				('Jordanian Dinar', 'JOD', 'JD', '" . $current_timestamp . "'),
-				('Tunisian Dinar', 'TND', 'د.ت', '" . $current_timestamp . "'),
-				('Ghanaian Cedi', 'GHS', 'GH¢', '" . $current_timestamp . "'),
-				('Central African CFA Franc BEAC', 'XAF', 'FCFA', '" . $current_timestamp . "'),
-				('Algerian Dinar', 'DZD', 'دج', '" . $current_timestamp . "'),
-				('CFP Franc', 'XPF', 'F', '" . $current_timestamp . "'),
-				('Ugandan Shilling', 'UGX', 'USh', '" . $current_timestamp . "'),
-				('Tanzanian Shilling', 'TZS', 'TZS', '" . $current_timestamp . "'),
-				('Ethiopian Birr', 'ETB', 'Br', '" . $current_timestamp . "'),
-				('Georgian Lari', 'GEL', 'GEL', '" . $current_timestamp . "'),
-				('Cuban Convertible Peso', 'CUC', 'CUC$', '" . $current_timestamp . "'),
-				('Burmese Kyat', 'MMK', 'K', '" . $current_timestamp . "'),
-				('Libyan Dinar', 'LYD', 'LD', '" . $current_timestamp . "'),
-				('Zambian Kwacha', 'ZMK', 'ZK', '" . $current_timestamp . "'),
-				('Zambian Kwacha', 'ZMW', 'ZK', '" . $current_timestamp . "'),
-				('Macau Pataca', 'MOP', 'MOP$', '" . $current_timestamp . "'),
-				('Armenian Dram', 'AMD', 'AMD', '" . $current_timestamp . "'),
-				('Angolan Kwanza', 'AOA', 'Kz', '" . $current_timestamp . "'),
-				('Papua New Guinean Kina', 'PGK', 'K', '" . $current_timestamp . "'),
-				('Malagasy Ariary', 'MGA', 'Ar', '" . $current_timestamp . "'),
-				('Ni-Vanuatu Vatu', 'VUV', 'VT', '" . $current_timestamp . "'),
-				('Sudanese Pound', 'SDG', 'SDG', '" . $current_timestamp . "'),
-				('Malawian Kwacha', 'MWK', 'MK', '" . $current_timestamp . "'),
-				('Rwandan Franc', 'RWF', 'FRw', '" . $current_timestamp . "'),
-				('Gambian Dalasi', 'GMD', 'D', '" . $current_timestamp . "'),
-				('Maldivian Rufiyaa', 'MVR', 'Rf', '" . $current_timestamp . "'),
-				('Congolese Franc', 'CDF', 'FC', '" . $current_timestamp . "'),
-				('Djiboutian Franc', 'DJF', 'Fdj', '" . $current_timestamp . "'),
-				('Haitian Gourde', 'HTG', 'G', '" . $current_timestamp . "'),
-				('Samoan Tala', 'WST', '$', '" . $current_timestamp . "'),
-				('Guinean Franc', 'GNF', 'FG', '" . $current_timestamp . "'),
-				('Cape Verdean Escudo', 'CVE', '$', '" . $current_timestamp . "'),
-				('Tongan Pa\'anga', 'TOP', 'T$', '" . $current_timestamp . "'),
-				('Moldovan Leu', 'MDL', 'MDL', '" . $current_timestamp . "'),
-				('Sierra Leonean Leone', 'SLL', 'Le', '" . $current_timestamp . "'),
-				('Burundian Franc', 'BIF', 'FBu', '" . $current_timestamp . "'),
-				('Mauritanian Ouguiya', 'MRO', 'UM', '" . $current_timestamp . "'),
-				('Bhutanese Ngultrum', 'BTN', 'Nu.', '" . $current_timestamp . "'),
-				('Swazi Lilangeni', 'SZL', 'SZL', '" . $current_timestamp . "'),
-				('Tajikistani Somoni', 'TJS', 'TJS', '" . $current_timestamp . "'),
-				('Turkmenistani Manat', 'TMT', 'm', '" . $current_timestamp . "'),
-				('Basotho Loti', 'LSL', 'LSL', '" . $current_timestamp . "'),
-				('Comoran Franc', 'KMF', 'CF', '" . $current_timestamp . "'),
-				('Sao Tomean Dobra', 'STD', 'STD', '" . $current_timestamp . "'),
-				('Seborgan Luigino', 'SPL', 'SPL', '" . $current_timestamp . "')";
+				('Albania Lek', 'ALL', 'Lek', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Afghanistan Afghani', 'AFN', '؋', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Argentina Peso', 'ARS', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Aruba Guilder', 'AWG', 'ƒ', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Australia Dollar', 'AUD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Azerbaijan New Manat', 'AZN', '" . 'ман' . "', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Bahamas Dollar', 'BSD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Barbados Dollar', 'BBD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Belarus Ruble', 'BYR', 'p.', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Belize Dollar', 'BZD', 'BZ$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Bermuda Dollar', 'BMD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Bolivia Boliviano', 'BOB', '\$b', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Bosnia and Herzegovina Convertible Marka', 'BAM', 'KM', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Botswana Pula', 'BWP', 'P', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Bulgaria Lev', 'BGN', 'лв', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Brazil Real', 'BRL', 'R$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Brunei Darussalam Dollar', 'BND', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Cambodia Riel', 'KHR', '៛', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Canada Dollar', 'CAD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Cayman Islands Dollar', 'KYD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Chile Peso', 'CLP', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('China Yuan Renminbi', 'CNY', '¥', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Colombia Peso', 'COP', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Costa Rica Colon', 'CRC', '₡', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Croatia Kuna', 'HRK', 'kn', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Cuba Peso', 'CUP', '₱', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Czech Republic Koruna', 'CZK', 'Kč', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Denmark Krone', 'DKK', 'kr', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Dominican Republic Peso', 'DOP', 'RD$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('East Caribbean Dollar', 'XCD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Egypt Pound', 'EGP', '£', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('El Salvador Colon', 'SVC', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Estonia Kroon', 'EEK', 'kr', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Euro Member Countries', 'EUR', '€', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Falkland Islands (Malvinas) Pound', 'FKP', '£', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Fiji Dollar', 'FJD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Ghana Cedis', 'GHC', '¢', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Gibraltar Pound', 'GIP', '£', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Guatemala Quetzal', 'GTQ', 'Q', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Guernsey Pound', 'GGP', '£', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Guyana Dollar', 'GYD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Honduras Lempira', 'HNL', 'L', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Hong Kong Dollar', 'HKD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Hungary Forint', 'HUF', 'Ft', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Iceland Krona', 'ISK', 'kr', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('India Rupee', 'INR', 'Rs', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Indonesia Rupiah', 'IDR', 'Rp', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Iran Rial', 'IRR', '﷼', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Isle of Man Pound', 'IMP', '£', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Israel Shekel', 'ILS', '₪', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Jamaica Dollar', 'JMD', 'J$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Japan Yen', 'JPY', '¥', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Jersey Pound', 'JEP', '£', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Kazakhstan Tenge', 'KZT', 'лв', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Korea (North) Won', 'KPW', '₩', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Korea (South) Won', 'KRW', '₩', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Kyrgyzstan Som', 'KGS', 'лв', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Laos Kip', 'LAK', '₭', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Latvia Lat', 'LVL', 'Ls', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Lebanon Pound', 'LBP', '£', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Liberia Dollar', 'LRD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Lithuania Litas', 'LTL', 'Lt', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Macedonia Denar', 'MKD', 'ден', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Malaysia Ringgit', 'RM', 'RM', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Mauritius Rupee', 'MUR', '₨', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Mexico Peso', 'MXN', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Mongolia Tughrik', 'MNT', '₮', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Mozambique Metical', 'MZN', 'MT', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Namibia Dollar', 'NAD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Nepal Rupee', 'NPR', '₨', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Netherlands Antilles Guilder', 'ANG', 'ƒ', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('New Zealand Dollar', 'NZD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Nicaragua Cordoba', 'NIO', 'C$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Nigeria Naira', 'NGN', '₦', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Norway Krone', 'NOK', 'kr', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Oman Rial', 'OMR', '﷼', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Pakistan Rupee', 'PKR', '₨', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Panama Balboa', 'PAB', 'B/.', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Paraguay Guarani', 'PYG', 'Gs', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Peru Nuevo Sol', 'PEN', 'S/.', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Philippines Peso', 'PHP', '₱', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Poland Zloty', 'PLN', 'zł', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Qatar Riyal', 'QAR', '﷼', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Romania New Leu', 'RON', 'lei', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Russia Ruble', 'RUB', 'руб', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Saint Helena Pound', 'SHP', '£', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Saudi Arabia Riyal', 'SAR', '﷼', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Serbia Dinar', 'RSD', 'Дин.', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Seychelles Rupee', 'SCR', '₨', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Singapore Dollar', 'SGD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Solomon Islands Dollar', 'SBD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Somalia Shilling', 'SOS', 'S', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('South Africa Rand', 'ZAR', 'R', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Sri Lanka Rupee', 'LKR', '₨', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Sweden Krona', 'SEK', 'kr', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Switzerland Franc', 'CHF', 'CHF', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Suriname Dollar', 'SRD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Syria Pound', 'SYP', '£', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Taiwan New Dollar', 'TWD', 'NT$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Thailand Baht', 'THB', '฿', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Trinidad and Tobago Dollar', 'TTD', 'TT$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Turkey Lira', 'TRY', '₤', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Tuvalu Dollar', 'TVD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Ukraine Hryvna', 'UAH', '₴', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('United Kingdom Pound', 'GBP', '£', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('United States Dollar', 'USD', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Uruguay Peso', 'UYU', '\$U', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Uzbekistan Som', 'UZS', 'лв', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Venezuela Bolivar', 'VEF', 'Bs', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Viet Nam Dong', 'VND', '₫', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Yemen Rial', 'YER', '﷼', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Zimbabwe Dollar', 'ZWD', 'Z$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Emirati Dirham', 'AED', 'د.إ', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Malaysian Ringgit', 'MYR', 'RM', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Kuwaiti Dinar', 'KWD', 'ك', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Moroccan Dirham', 'MAD', 'م.', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Iraqi Dinar', 'IQD', 'د.ع', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Bangladeshi Taka', 'BDT', 'Tk', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Bahraini Dinar', 'BHD', 'BD', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Kenyan Shilling', 'KES', 'KSh', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('CFA Franc', 'XOF', 'CFA', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Jordanian Dinar', 'JOD', 'JD', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Tunisian Dinar', 'TND', 'د.ت', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Ghanaian Cedi', 'GHS', 'GH¢', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Central African CFA Franc BEAC', 'XAF', 'FCFA', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Algerian Dinar', 'DZD', 'دج', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('CFP Franc', 'XPF', 'F', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Ugandan Shilling', 'UGX', 'USh', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Tanzanian Shilling', 'TZS', 'TZS', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Ethiopian Birr', 'ETB', 'Br', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Georgian Lari', 'GEL', 'GEL', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Cuban Convertible Peso', 'CUC', 'CUC$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Burmese Kyat', 'MMK', 'K', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Libyan Dinar', 'LYD', 'LD', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Zambian Kwacha', 'ZMK', 'ZK', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Zambian Kwacha', 'ZMW', 'ZK', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Macau Pataca', 'MOP', 'MOP$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Armenian Dram', 'AMD', 'AMD', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Angolan Kwanza', 'AOA', 'Kz', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Papua New Guinean Kina', 'PGK', 'K', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Malagasy Ariary', 'MGA', 'Ar', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Ni-Vanuatu Vatu', 'VUV', 'VT', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Sudanese Pound', 'SDG', 'SDG', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Malawian Kwacha', 'MWK', 'MK', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Rwandan Franc', 'RWF', 'FRw', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Gambian Dalasi', 'GMD', 'D', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Maldivian Rufiyaa', 'MVR', 'Rf', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Congolese Franc', 'CDF', 'FC', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Djiboutian Franc', 'DJF', 'Fdj', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Haitian Gourde', 'HTG', 'G', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Samoan Tala', 'WST', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Guinean Franc', 'GNF', 'FG', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Cape Verdean Escudo', 'CVE', '$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Tongan Pa\'anga', 'TOP', 'T$', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Moldovan Leu', 'MDL', 'MDL', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Sierra Leonean Leone', 'SLL', 'Le', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Burundian Franc', 'BIF', 'FBu', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Mauritanian Ouguiya', 'MRO', 'UM', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Bhutanese Ngultrum', 'BTN', 'Nu.', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Swazi Lilangeni', 'SZL', 'SZL', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Tajikistani Somoni', 'TJS', 'TJS', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Turkmenistani Manat', 'TMT', 'm', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Basotho Loti', 'LSL', 'LSL', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Comoran Franc', 'KMF', 'CF', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Sao Tomean Dobra', 'STD', 'STD', '" . mysql_real_escape_string($current_timestamp) . "'),
+				('Seborgan Luigino', 'SPL', 'SPL', '" . mysql_real_escape_string($current_timestamp) . "')";
 		$result = mysql_query($sql,$connection);
 		
 		$sql = "SELECT id, currency
@@ -1996,7 +1995,7 @@ if ($current_db_version < $most_recent_db_version) {
 				
 				$sql_insert = "INSERT INTO currency_conversions
 							   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
-							   ('" . $row_conversion->id . "', '" . $row->id . "', '" . $row_conversion->conversion . "', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+							   ('" . $row_conversion->id . "', '" . $row->id . "', '" . $row_conversion->conversion . "', '" . mysql_real_escape_string($current_timestamp) . "', '" . mysql_real_escape_string($current_timestamp) . "')";
 				$result_insert = mysql_query($sql_insert,$connection);
 				
 			}
@@ -2037,7 +2036,7 @@ if ($current_db_version < $most_recent_db_version) {
 			$sql_update = "UPDATE ssl_certs
 						   SET cat_id = '" . $row->cat_id . "',
 						   	   ip_id = '" . $row->ip_id . "',
-							   update_time = '" . $current_timestamp . "'
+							   update_time = '" . mysql_real_escape_string($current_timestamp) . "'
 						   WHERE domain_id = '" . $row->id . "'";
 			$result_update = mysql_query($sql_update,$connection);
 			
@@ -2666,7 +2665,7 @@ if ($current_db_version < $most_recent_db_version) {
 				$sql_insert = "INSERT INTO 
 							   update_data
 							   (user_id, update_id, insert_time) VALUES 
-							   ('" . $row->id . "', '" . $row_updates->id . "', '" . $current_timestamp . "')";
+							   ('" . $row->id . "', '" . $row_updates->id . "', '" . mysql_real_escape_string($current_timestamp) . "')";
 				$result_insert = mysql_query($sql_insert,$connection);
 
 			}
@@ -2833,7 +2832,7 @@ if ($current_db_version < $most_recent_db_version) {
 				$sql_insert = "INSERT INTO 
 							   update_data
 							   (user_id, update_id, insert_time) VALUES 
-							   ('" . $row->id . "', '" . $row_updates->id . "', '" . $current_timestamp . "')";
+							   ('" . $row->id . "', '" . $row_updates->id . "', '" . mysql_real_escape_string($current_timestamp) . "')";
 				$result_insert = mysql_query($sql_insert,$connection);
 
 			}
@@ -2881,9 +2880,9 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "INSERT INTO custom_field_types
 				(id, name, insert_time) VALUES 
-				(1, 'Check Box', '" . $current_timestamp . "'),
-				(2, 'Text', '" . $current_timestamp . "'),
-				(3, 'Text Area', '" . $current_timestamp . "')";
+				(1, 'Check Box', '" . mysql_real_escape_string($current_timestamp) . "'),
+				(2, 'Text', '" . mysql_real_escape_string($current_timestamp) . "'),
+				(3, 'Text Area', '" . mysql_real_escape_string($current_timestamp) . "')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "CREATE TABLE IF NOT EXISTS `domain_fields` (
@@ -2914,7 +2913,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		while ($row = mysql_fetch_object($result)) {
 			
-			$full_id_string .= "('" . $row->id . "', '" . $current_timestamp . "'), ";
+			$full_id_string .= "('" . $row->id . "', '" . mysql_real_escape_string($current_timestamp) . "'), ";
 			
 		}
 
@@ -2956,7 +2955,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		while ($row = mysql_fetch_object($result)) {
 			
-			$full_id_string .= "('" . $row->id . "', '" . $current_timestamp . "'), ";
+			$full_id_string .= "('" . $row->id . "', '" . mysql_real_escape_string($current_timestamp) . "'), ";
 			
 		}
 
@@ -2988,7 +2987,7 @@ if ($current_db_version < $most_recent_db_version) {
 			$sql_insert = "INSERT INTO 
 						   update_data
 						   (user_id, update_id, insert_time) VALUES 
-						   ('" . $row->id . "', '" . $temp_update_id . "', '" . $current_timestamp . "')";
+						   ('" . $row->id . "', '" . $temp_update_id . "', '" . mysql_real_escape_string($current_timestamp) . "')";
 			$result_insert = mysql_query($sql_insert,$connection);
 
 		}
@@ -3001,6 +3000,74 @@ if ($current_db_version < $most_recent_db_version) {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$current_db_version = 2.0048;
+
+	}
+
+	// upgrade database from 2.0048 to 2.0049
+	if ($current_db_version == 2.0048) {
+
+		$sql = "CREATE TABLE IF NOT EXISTS `dw_servers` (
+				`id` int(10) NOT NULL auto_increment,
+				`name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`host` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`protocol` varchar(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`port` int(5) NOT NULL,
+				`username` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`hash` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`dw_accounts` int(10) NOT NULL,
+				`dw_dns_zones` int(10) NOT NULL,
+				`dw_dns_records` int(10) NOT NULL,
+				`build_status` int(1) NOT NULL default '0',
+				`build_start_time` datetime NOT NULL,
+				`build_end_time` datetime NOT NULL,
+				`build_time` int(10) NOT NULL default '0',
+				`has_ever_been_built` int(1) NOT NULL default '0',
+				`build_status_overall` int(1) NOT NULL default '0',
+				`build_start_time_overall` datetime NOT NULL,
+				`build_end_time_overall` datetime NOT NULL,
+				`build_time_overall` int(10) NOT NULL default '0',
+				`has_ever_been_built_overall` int(1) NOT NULL default '0',
+				`insert_time` datetime NOT NULL,
+				`update_time` datetime NOT NULL,
+				PRIMARY KEY  (`id`)
+				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$sql = "INSERT INTO updates
+				(name, `update`, insert_time, update_time) VALUES 
+				('Domain Manager now includes a Data Warehouse for importing data', 'Domain Manager now has a data warehouse framework built right into it, which allows you to import the data stored on your web servers. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also intend on adding support for Plesk and other systems once I’ve ironed out all the kinks in the framework.<BR><BR>The data warehouse is used for informational purposes only, and you will see its data referenced throughout Domain Manager where applicable. For example, if a domain you’re editing has information stored in your data warehouse, the system will automatically match them up and display the additional information for you, giving you even more insight into your data. You can also view, export, and run reports on the information in your data warehouse.<BR><BR>The following WHM data is currently supported, but my end goal is to have every piece of WHM information that can be retrieved via the API stored in the data warehouse.<BR><BR><strong>ACCOUNTS</strong><BR>Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max FTP Accounts, Max Email Lists, Max Parked Domains, Max POP Accounts, Max SQL Accounts, Max Subdomains, Creation Date, Suspend Status, Suspend Reason, Suspend Time, Max Email Per Hour, Failed Email % Before Defer, Min Failed Email # Before Defer<BR><BR><strong>DNS ZONES</strong><BR>Zone File Name, Original/Primary Source of Zone Data, Admin Email, Serial #, Refresh, Retry, Expiry, Minimum TTL, Authoritative Name Server<BR><BR><strong>DNS RECORDS</strong><BR>TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data<BR><BR><font class=\"default_highlight\">NOTE:</font> Importing your server into the data warehouse will not modify any of your Domain Manager data.', '2013-06-01 1:00:00', '2013-06-01 1:00:00')";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+		
+		$sql = "SELECT id
+				FROM `updates`
+				WHERE name = 'Domain Manager now includes a Data Warehouse for importing data'
+				  AND insert_time = '2013-06-01 1:00:00'";
+		$result = mysql_query($sql,$connection);
+		while ($row = mysql_fetch_object($result)) { $temp_update_id = $row->id; }
+		
+		$sql = "SELECT id
+				FROM users";
+		$result = mysql_query($sql,$connection);
+		
+		while ($row = mysql_fetch_object($result)) {
+		
+			$sql_insert = "INSERT INTO 
+						   update_data
+						   (user_id, update_id, insert_time) VALUES 
+						   ('" . $row->id . "', '" . $temp_update_id . "', '" . mysql_real_escape_string($current_timestamp) . "')";
+			$result_insert = mysql_query($sql_insert,$connection);
+		
+		}
+		
+		$_SESSION['are_there_updates'] = "1";
+
+		$sql = "UPDATE settings
+				SET db_version = '2.0049',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+		$result = mysql_query($sql,$connection) or die(mysql_error());
+
+		$current_db_version = 2.0049;
 
 	}
 
