@@ -39,7 +39,7 @@ $software_section = "segments";
 
 if ($type == "inactive") { 
 
-	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
 			FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
 			WHERE d.account_id = ra.id
 			  AND ra.registrar_id = r.id
@@ -58,7 +58,7 @@ if ($type == "inactive") {
 
 } elseif ($type == "filtered") {
 
-	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+	$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
 			FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
 			WHERE d.account_id = ra.id
 			  AND ra.registrar_id = r.id
@@ -137,6 +137,13 @@ if ($export == "1") {
 		$row_content[$count++] = "Owner";
 		$row_content[$count++] = "Function";
 		$row_content[$count++] = "Notes";
+
+		if ($type == "inactive" || $type == "filtered") {
+		
+			$row_content[$count++] = "Inserted";
+			$row_content[$count++] = "Updated";
+		
+		}
 		include("_includes/system/export/write-row.inc.php");
 	
 	} elseif ($type == "missing") {
@@ -206,6 +213,8 @@ if ($export == "1") {
 			$row_content[$count++] = $row->owner_name;
 			$row_content[$count++] = $row->function;
 			$row_content[$count++] = $row->notes;
+			$row_content[$count++] = $row->insert_time;
+			$row_content[$count++] = $row->update_time;
 			include("_includes/system/export/write-row.inc.php");
 
 		}
