@@ -22,6 +22,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
+include("_includes/system/functions/pagination.inc.php");
 
 $page_title = "SSL Certificates";
 $software_section = "ssl-certs";
@@ -61,99 +62,6 @@ if ($export != "1") {
 if ($result_limit == "") $result_limit = $_SESSION['number_of_ssl_certs'];
 if ($is_active == "") $is_active = "LIVE";
 
-//
-// START - Code for pagination
-// 
-function pageBrowser($totalrows,$numLimit,$amm,$queryStr,$numBegin,$begin,$num) {
-		$larrow = "&nbsp;&laquo; Prev &nbsp;";
-		$rarrow = "&nbsp;Next &raquo;&nbsp;";
-		$wholePiece = "<B>Page:</B> ";
-		if ($totalrows > 0) {
-			$numSoFar = 1;
-			$cycle = ceil($totalrows/$amm);
-			
-			if (!isset($numBegin) || $numBegin < 1) {
-				$numBegin = 1;
-				$num = 1;
-			}
-
-			$minus = $numBegin-1;
-			$start = $minus*$amm;
-
-			if (!isset($begin)) {
-				$begin = $start;
-			}
-
-			$preBegin = $numBegin-$numLimit;
-			$preStart = $amm*$numLimit;
-			$preStart = $start-$preStart;
-			$preVBegin = $start-$amm;
-			$preRedBegin = $numBegin-1;
-
-			if ($start > 0 || $numBegin > 1) {
-				$wholePiece .= "<a href='?num=".$preRedBegin
-						."&numBegin=".$preBegin
-						."&begin=".$preVBegin
-						.$queryStsslp."'>"
-						.$larrow."</a>\n";
-			}
-
-			for ($i=$numBegin;$i<=$cycle;$i++) {
-				if ($numSoFar == $numLimit+1) {
-					$piece = "<a href='?numBegin=".$i
-						."&num=".$i
-						."&begin=".$start
-						.$queryStsslp."'>"
-						.$rarrow."</a>\n";
-					$wholePiece .= $piece;
-					break;
-				}
-
-				$piece = "<a href='?begin=".$start
-					."&num=".$i
-					."&numBegin=".$numBegin
-					.$queryStr
-					."'>";
-
-				if ($num == $i) {
-					$piece .= "</a><b>$i</b><a>";
-				} else {
-					$piece .= "$i";
-				}
-
-				$piece .= "</a>\n";
-				$start = $start+$amm;
-				$numSoFar++;
-				$wholePiece .= $piece;
-
-			}
-
-			$wholePiece .= "\n";
-			$wheBeg = $begin+1;
-			$wheEnd = $begin+$amm;
-			$wheToWhe = "<b>".number_format($wheBeg)."</b>-<b>";
-
-			if ($totalrows <= $wheEnd) {
-				$wheToWhe .= $totalrows."</b>";
-			} else {
-				$wheToWhe .= number_format($wheEnd)."</b>";
-			}
-
-			$sqlprod = " LIMIT ".$begin.", ".$amm;
-
-		} else {
-
-			$wholePiece = "";
-			$wheToWhe = "<b>0</b> - <b>0</b>";
-
-		}
-
-		return array($sqlprod,$wheToWhe,$wholePiece);
-	}
-
-//
-// END - Code for pagination
-// 
 if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
 elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
 elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
@@ -582,14 +490,7 @@ if ($export == "1") {
 <head>
 <title><?=$software_title?> :: <?=$page_title?></title>
 <?php include("_includes/layout/head-tags.inc.php"); ?>
-<script type="text/javascript">
-<!--
-function MM_jumpMenu(targ,selObj,restore){ //v3.0
-  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
-  if (restore) selObj.selectedIndex=0;
-}
-//-->
-</script>
+<?php include("_includes/system/functions/jumpmenu.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[10].focus()";>
 <?php include("_includes/layout/header.inc.php"); ?>
@@ -1058,7 +959,7 @@ echo "</select>";
 <?php if (mysql_num_rows($result) > 0) { ?>
 <BR><strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
 <strong>Number of SSL Certs:</strong> <?=number_format($totalrows)?><BR><BR>
-<?php include("_includes/layout/search-options-block.inc.php"); ?>
+<?php include("_includes/layout/pagination.menu.inc.php"); ?>
 <?php if ($totalrows != '0') { ?>
 <table class="main_table" cellpadding="0" cellspacing="0">
 <tr class="main_table_row_heading_active">
@@ -1185,7 +1086,7 @@ echo "</select>";
 </table>
 <BR>
 <?php } ?>
-<?php include("_includes/layout/search-options-block.inc.php"); ?>
+<?php include("_includes/layout/pagination.menu.inc.php"); ?>
 <?php } else { ?>
 			<BR>Your search returned zero results.
 <?php } ?>

@@ -21,6 +21,7 @@ include("_includes/config.inc.php");
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
+include("_includes/system/functions/pagination.inc.php");
 
 $page_title = $software_title . " Updates";
 $software_section = "updates";
@@ -31,100 +32,6 @@ $begin = $_GET['begin'];
 $num = $_GET['num'];
 
 $id = $_GET['id'];
-
-//
-// START - Code for pagination
-// 
-function pageBrowser($totalrows,$numLimit,$amm,$queryStr,$numBegin,$begin,$num) {
-		$larrow = "&nbsp;&laquo; Prev &nbsp;";
-		$rarrow = "&nbsp;Next &raquo;&nbsp;";
-		$wholePiece = "<B>Page:</B> ";
-		if ($totalrows > 0) {
-			$numSoFar = 1;
-			$cycle = ceil($totalrows/$amm);
-			
-			if (!isset($numBegin) || $numBegin < 1) {
-				$numBegin = 1;
-				$num = 1;
-			}
-
-			$minus = $numBegin-1;
-			$start = $minus*$amm;
-
-			if (!isset($begin)) {
-				$begin = $start;
-			}
-
-			$preBegin = $numBegin-$numLimit;
-			$preStart = $amm*$numLimit;
-			$preStart = $start-$preStart;
-			$preVBegin = $start-$amm;
-			$preRedBegin = $numBegin-1;
-
-			if ($start > 0 || $numBegin > 1) {
-				$wholePiece .= "<a href='?num=".$preRedBegin
-						."&numBegin=".$preBegin
-						."&begin=".$preVBegin
-						.$queryStr."'>"
-						.$larrow."</a>\n";
-			}
-
-			for ($i=$numBegin;$i<=$cycle;$i++) {
-				if ($numSoFar == $numLimit+1) {
-					$piece = "<a href='?numBegin=".$i
-						."&num=".$i
-						."&begin=".$start
-						.$queryStr."'>"
-						.$rarrow."</a>\n";
-					$wholePiece .= $piece;
-					break;
-				}
-
-				$piece = "<a href='?begin=".$start
-					."&num=".$i
-					."&numBegin=".$numBegin
-					.$queryStr
-					."'>";
-
-				if ($num == $i) {
-					$piece .= "</a><b>$i</b><a>";
-				} else {
-					$piece .= "$i";
-				}
-
-				$piece .= "</a>\n";
-				$start = $start+$amm;
-				$numSoFar++;
-				$wholePiece .= $piece;
-
-			}
-
-			$wholePiece .= "\n";
-			$wheBeg = $begin+1;
-			$wheEnd = $begin+$amm;
-			$wheToWhe = "<b>".number_format($wheBeg)."</b>-<b>";
-
-			if ($totalrows <= $wheEnd) {
-				$wheToWhe .= $totalrows."</b>";
-			} else {
-				$wheToWhe .= number_format($wheEnd)."</b>";
-			}
-
-			$sqlprod = " LIMIT ".$begin.", ".$amm;
-
-		} else {
-
-			$wholePiece = "";
-			$wheToWhe = "<b>0</b> - <b>0</b>";
-
-		}
-
-		return array($sqlprod,$wheToWhe,$wholePiece);
-	}
-
-//
-// END - Code for pagination
-// 
 
 if ($id != "") {
 	
@@ -180,7 +87,7 @@ $navigate = pageBrowser($totalrows,15,$result_limit, "",$_GET[numBegin],$_GET[be
 $sql = $sql.$navigate[0];
 $result = mysql_query($sql,$connection); ?>
 <?php if ($id == "") { ?>
-<?php include("_includes/layout/search-options-block-updates.inc.php"); ?><BR>
+<?php include("_includes/layout/pagination.menu.inc.php"); ?><BR>
 <?php } ?>
 
     <table class="update-block-outer"><?php
@@ -227,8 +134,8 @@ $result = mysql_query($sql,$connection); ?>
                 </tr>
 	
 				<tr>
-					<td class="update-block-left">
-                    	&nbsp;
+					<td class="update-block-left">&nbsp;
+                    	
 					</td>
 					<td class="update-block-right">
 						<?=$row->update?>
@@ -286,7 +193,7 @@ $result = mysql_query($sql,$connection); ?>
 	</table>
     
 <?php if ($id == "") { ?>
-<?php include("_includes/layout/search-options-block-updates.inc.php"); ?>
+<?php include("_includes/layout/pagination.menu.inc.php"); ?>
 <?php } ?>
 <?php include("_includes/layout/footer.inc.php"); ?>
 </body>
