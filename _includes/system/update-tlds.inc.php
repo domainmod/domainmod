@@ -40,8 +40,7 @@ while ($row = mysql_fetch_object($result)) {
 	$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $row->domain);
 	
 	$sql_update = "UPDATE domains
-				   SET tld = '$tld',
-				   	   update_time = '" . $current_timestamp . "'
+				   SET tld = '$tld'
 				   WHERE id = '$row->id'";
 	$result_update = mysql_query($sql_update,$connection);
 
