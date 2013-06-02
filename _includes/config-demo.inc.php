@@ -16,7 +16,7 @@
 // http://www.gnu.org/licenses/
 ?>
 <?php
-$demo_url = "demos.aysmedia.com";
+$demo_url = "demo.domainmod.org";
 $demo_username = "demo";
 $demo_password = "demo";
 ?>
