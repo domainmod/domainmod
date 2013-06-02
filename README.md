@@ -9,13 +9,13 @@ DomainMOD is a web-based application written in PHP & MySQL used to manage a col
 
 
 # Live Demo
-Not sure if the DomainMOD is what you're looking for? Don't want to waste your time installing it only to find out that it's not? As a developer myself, I hate when that happens, so I always try to run live demos so you don't waste your time.  
+Not sure if DomainMOD is what you're looking for? Don't want to waste your time installing it only to find out that it's not? As a developer myself, I hate when that happens, so I always try to run live demos so you don't waste your time.  
 
 So go ahead, take the live demo for a test drive before you install! http://demo.domainmod.org  
 
 
 # Downloading
-You have two options for downloading the DomainMOD.  
+You have two options for downloading DomainMOD.  
 
 NOTE: Whenever possible I recommend that you use option #1, the git repository download directly from your server. Not only is it a nice quick install, but it makes upgrading a breeze (more info below).  
 
@@ -39,7 +39,7 @@ NOTE: Whenever possible I recommend that you use option #1, the git repository d
 
 3. In the '_includes' folder, copy config.SAMPLE.inc.php to config.inc.php and then update config.inc.php to reflect your server's settings.  
 
-4. In a web browser, visit the URL where you just installed the DomainMOD and then click the Install link. For example, http://yourdomain.com/dm/ or http://yourdomain.com/domainmod/.  
+4. In a web browser, visit the URL where you just installed DomainMOD and then click the Install link. For example, http://yourdomain.com/dm/ or http://yourdomain.com/domainmod/.  
 
 5. After a few seconds a message will appear letting you know that the installation was successful.
 
@@ -105,7 +105,7 @@ After installation just load the URL in a web browser and play around in the UI,
 
 
 # Upgrading
-You have two options for upgrading the DomainMOD.  
+You have two options for upgrading DomainMOD.  
 
 1. If you chose Download Option #1 above, using git right from your server to download the source code, just run the following command to upgrade DomainMOD:  
 
