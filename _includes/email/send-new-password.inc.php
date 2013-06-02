@@ -1,19 +1,19 @@
 <?php
 // /_includes/email/send-new-password.inc.php
 // 
-// Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
+// DomainMOD - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
 // 
-// Domain Manager is free software; you can redistribute it and/or modify it under the terms of the GNU General
+// DomainMOD is free software; you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
 // 
-// Domain Manager is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+// DomainMOD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
 // implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
 // for more details.
 // 
-// You should have received a copy of the GNU General Public License along with Domain Manager. If not, please 
-// see http://www.gnu.org/licenses/
+// You should have received a copy of the GNU General Public License along with DomainMOD. If not, please see
+// http://www.gnu.org/licenses/
 ?>
 <?php
 $sql_settings = "SELECT full_url, email_address
@@ -57,7 +57,7 @@ $message .= "
 						$message .= "will be easier for you to remember, but still hard for someone ";
 						$message .= "else to guess.<BR>";
 						$message .= "<BR>";
-						$message .= "URL: <a title=\"Domain Manager\" target=\"_blank\" href=\"" . $full_url . "/\">" . $full_url . "/</a><BR>";
+						$message .= "URL: <a title=\"DomainMOD\" target=\"_blank\" href=\"" . $full_url . "/\">" . $full_url . "/</a><BR>";
 						$message .= "<BR>";
 						$message .= "Your Username: $row->username<BR>";
 						$message .= "Your New Password: $new_password<BR>";

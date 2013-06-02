@@ -1,19 +1,19 @@
 <?php
 // /system/admin/system-settings.php
 // 
-// Domain Manager - A web-based application written in PHP & MySQL used to manage a collection of domain names.
+// DomainMOD - A web-based application written in PHP & MySQL used to manage a collection of domain names.
 // Copyright (C) 2010 Greg Chetcuti
 // 
-// Domain Manager is free software; you can redistribute it and/or modify it under the terms of the GNU General
+// DomainMOD is free software; you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
 // 
-// Domain Manager is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+// DomainMOD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
 // implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
 // for more details.
 // 
-// You should have received a copy of the GNU General Public License along with Domain Manager. If not, please 
-// see http://www.gnu.org/licenses/
+// You should have received a copy of the GNU General Public License along with DomainMOD. If not, please see
+// http://www.gnu.org/licenses/
 ?>
 <?php
 include("../../_includes/start-session.inc.php");
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="system_settings_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Full <?=$software_title?> URL (100):</strong><BR><BR>
-Enter the full URL of your <?=$software_title?> installation, excluding the trailing slash (Example: http://yourdomain.com/domainmanager).<BR><BR>
+Enter the full URL of your <?=$software_title?> installation, excluding the trailing slash (Example: http://yourdomain.com/<?=$software_title_slug?>).<BR><BR>
 <input name="new_full_url" type="text" size="50" maxlength="100" value="<?php if ($new_full_url != "") echo $new_full_url; ?>">
 <BR><BR>
 <strong>System Email Address (100):</strong><BR><BR>
