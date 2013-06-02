@@ -61,7 +61,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '" . settings . "'"))) {
 	
 	$sql = "INSERT INTO `users` 
 			(`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `insert_time`) VALUES 
-			('Domain', 'Administrator', 'admin', 'admin@aysmedia.com', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '$current_timestamp');";
+			('Domain', 'Administrator', 'admin', 'admin@domainmod.org', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '$current_timestamp');";
 	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "CREATE TABLE IF NOT EXISTS `user_settings` (
