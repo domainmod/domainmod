@@ -38,7 +38,7 @@ NOTE: Whenever possible I recommend that you use option #1, the git repository d
 
 3. In the '_includes' folder, copy config.SAMPLE.inc.php to config.inc.php and then update config.inc.php to reflect your server's settings.  
 
-4. In a web browser, visit the URL where you just installed the DomainMOD and then click the Install link. For example, http://aysmedia.com/dm/ or http://aysmedia.com/domainmod/.  
+4. In a web browser, visit the URL where you just installed the DomainMOD and then click the Install link. For example, http://yourdomain.com/dm/ or http://yourdomain.com/domainmod/.  
 
 5. After a few seconds a message should appear letting you know that the installation was successful.
 
@@ -119,7 +119,7 @@ You have two options for upgrading the DomainMOD.
 
 
 # Support
-If you have any questions or comments please visit http://aysmedia.com or email us at code@aysmedia.com  
+If you have any questions or comments please visit http://domainmod.org or email us at support@domainmod.org  
 
 To report bugs, please visit http://github.com/aysmedia/domainmod/issues/  
 
