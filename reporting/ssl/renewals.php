@@ -1,7 +1,7 @@
 <?php
 // /reporting/ssl/renewals.php
 // 
-// DomainMOD - A web-based application written in PHP & MySQL used to manage a collection of domain names.
+// DomainMOD is an open source application written in PHP & MySQL used to track and manage your web resources.
 // Copyright (C) 2010 Greg Chetcuti
 // 
 // DomainMOD is free software; you can redistribute it and/or modify it under the terms of the GNU General
