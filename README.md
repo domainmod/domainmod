@@ -7,10 +7,11 @@
 # About
 DomainMOD is a web-based application written in PHP & MySQL used to manage a collection of domain names. DomainMOD also includes a fully functional Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports servers running WHM/cPanel, but further support will be added in the future.
 
+
 # Live Demo
 Not sure if the DomainMOD is what you're looking for? Don't want to waste your time installing it only to find out that it's not? As a developer myself, I hate when that happens, so I always try to run live demos so you don't waste your time.  
 
-So go ahead, take live demo for a test drive before you install! http://demo.domainmod.org  
+So go ahead, take the live demo for a test drive before you install! http://demo.domainmod.org  
 
 
 # Downloading
@@ -40,7 +41,7 @@ NOTE: Whenever possible I recommend that you use option #1, the git repository d
 
 4. In a web browser, visit the URL where you just installed the DomainMOD and then click the Install link. For example, http://yourdomain.com/dm/ or http://yourdomain.com/domainmod/.  
 
-5. After a few seconds a message should appear letting you know that the installation was successful.
+5. After a few seconds a message will appear letting you know that the installation was successful.
 
 6. If you have any problems during installation please see the Support section below.
 
@@ -77,7 +78,7 @@ DomainMOD has a data warehouse framework built right into it, which allows you t
 
 If you don't run a server that uses WHM, or you don't want to import your WHM data into DomainMOD, you can ignore this section.
 
-Importing your server(s) into the data warehouse will not modify any of your DomainMOD data. The data warehouse is used for informational purposes only, and you will see its data referenced throughout DomainMOD where applicable. For example, if a domain you're editing has information stored in your data warehouse, the system will automatically match them up and display the additional information for you, giving you even more insight into your data. You can also view, export, and run reports on the information in your data warehouse.
+NOTE: Importing your server(s) into the data warehouse will not modify any of your DomainMOD data. The data warehouse is used for informational purposes only, and you will see its data referenced throughout DomainMOD where applicable. For example, if a domain you're editing has information stored in your data warehouse, the system will automatically match them up and display the additional information for you, giving you even more insight into your data. You can also view, export, and run reports on the information in your data warehouse.
 
 ### Supported Data
 The following WHM sections are currently supported, but my end goal is to have every piece of WHM information that can be retrieved via the API stored in the data warehouse. In the future I plan on adding support for as many types of web servers as possible.  
@@ -99,7 +100,6 @@ WHM & cPanel: http://cpanel.net
 API Documentation: http://docs.cpanel.net/twiki/bin/view/SoftwareDevelopmentKit/XmlApi 
 
 
-
 # Usage
 After installation just load the URL in a web browser and play around in the UI, it's pretty self explanatory.  
 
@@ -107,7 +107,7 @@ After installation just load the URL in a web browser and play around in the UI,
 # Upgrading
 You have two options for upgrading the DomainMOD.  
 
-1. Use git right from your server to upgrade. To do so, just run the following command from within the directory where you installed the DomainMOD:  
+1. If you chose Download Option #1 above, using git right from your server to download the source code, just run the following command to upgrade DomainMOD:  
 
         git pull  
     
@@ -119,7 +119,7 @@ You have two options for upgrading the DomainMOD.
 
 
 # Support
-If you have any questions or comments please visit http://domainmod.org or email us at support@domainmod.org  
+If you have any questions or comments please visit http://domainmod.org or email me at support@domainmod.org  
 
 To report bugs, please visit http://github.com/aysmedia/domainmod/issues/  
 
