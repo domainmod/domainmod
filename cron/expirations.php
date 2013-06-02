@@ -85,7 +85,7 @@ if ((mysql_num_rows($result_domains) != 0 || mysql_num_rows($result_ssl) != 0) &
 				<td width=\"100%\" bgcolor=\"#FFFFFF\">";
 					$message .= "<font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica, sans-serif\">";
 					$message .= "<a title=\"" . $software_title . "\" href=\"" . $full_url . "/\"><img alt=\"" . $software_title . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
-					$message .= "Below is a list of all the Domains & SSL Certificates in the " . $software_title . " that are expiring in the next " . $number_of_days . " days. <BR>";
+					$message .= "Below is a list of all the Domains & SSL Certificates in " . $software_title . " that are expiring in the next " . $number_of_days . " days. <BR>";
 					$message .= "<BR>If you would like to change the frequency of this email notification please contact your " . $software_title . " administrator. <BR>";
 					$message .= "<BR>";
 			
