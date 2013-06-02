@@ -5,7 +5,7 @@
 
 
 # About
-DomainMOD is a web-based application written in PHP & MySQL used to manage a collection of domain names. DomainMOD also includes a fully functional Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports servers running WHM/cPanel, but further support will be added in the future.
+DomainMOD is an open source application written in PHP & MySQL used to track and manage your web resources. DomainMOD also includes a fully functional Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports servers running WHM/cPanel, but further support will be added in the future.
 
 
 # Live Demo
