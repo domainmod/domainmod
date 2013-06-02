@@ -23,10 +23,14 @@ if ($_SESSION['is_logged_in'] != 1) {
 	$_SESSION['result_message'] = "You must be logged in to access this area<BR>";
 	
 	// not logged in, send to login page
-	if ($web_root == "/") {
+	if ($web_root == "") {
+
 		header("Location: /index.php");
+
 	} else {
+
 		header("Location: " . $web_root . "/index.php");
+
 	}
 	exit;
 

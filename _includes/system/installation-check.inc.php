@@ -25,12 +25,14 @@ if (is_dir($full_install_path)) {
 		$_SESSION['installation_mode'] = 1;
 		$_SESSION['first_login'] = 1;
 
-		if ($web_root == "/") {
+		if ($web_root == "") {
 
 			$_SESSION['result_message'] .= "<a href=\"/install/\">Please click here to install</a><BR>";
 
 		} else {
+
 			$_SESSION['result_message'] .= "<a href=\"" . $web_root . "/install/\">Please click here to install</a><BR>";
+
 		}
 
 	} else {

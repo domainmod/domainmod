@@ -20,11 +20,11 @@
 
     <div class="header-container">
         <div class="header-left">
-            <a href="<?=$web_root?>/domains.php"><img border="0" src="<?=$web_root?>/images/logo.png"></a>
+            <a href="<?php if ($web_root != "") echo $web_root; ?>/domains.php"><img border="0" src="<?php if ($web_root != "") echo $web_root; ?>/images/logo.png"></a>
         </div>
         <div class="header-right">
             <?php if ($_SESSION['is_logged_in'] == 1) { ?>
-                <em>logged in as <strong><?=$_SESSION['username']?></strong> (<a class="subtlelink" href="<?=$web_root?>/system/update-profile.php"><?=$_SESSION['first_name']?> <?=$_SESSION['last_name']?></a>)</em>&nbsp;&nbsp;[ <a href="<?=$web_root?>/updates.php">Updates</a> ]&nbsp;&nbsp;[ <a target="_blank" href="http://aysmedia.com/contact/">Help</a> ]&nbsp;&nbsp;[ <a href="<?=$web_root?>/logout.php">Logout</a> ]
+                <em>logged in as <strong><?=$_SESSION['username']?></strong> (<a class="subtlelink" href="<?php if ($web_root != "") echo $web_root; ?>/system/update-profile.php"><?=$_SESSION['first_name']?> <?=$_SESSION['last_name']?></a>)</em>&nbsp;&nbsp;[ <a href="<?php if ($web_root != "") echo $web_root; ?>/updates.php">Updates</a> ]&nbsp;&nbsp;[ <a target="_blank" href="http://aysmedia.com/contact/">Help</a> ]&nbsp;&nbsp;[ <a href="<?php if ($web_root != "") echo $web_root; ?>/logout.php">Logout</a> ]
             <?php } ?>
         </div>
     </div>
@@ -38,7 +38,7 @@
             <div class="update_box_header"><?php 
 				if ($_SESSION['are_there_updates'] == "1") { ?>
 	
-					<a href="<?=$web_root?>/updates.php"><font class="subheadline">Recent Software Updates</font></a><BR><?php
+					<a href="<?php if ($web_root != "") echo $web_root; ?>/updates.php"><font class="subheadline">Recent Software Updates</font></a><BR><?php
 					$sql_updates = "SELECT u.id, u.name
 									FROM updates AS u, update_data AS ud
 									WHERE u.id = ud.update_id
@@ -48,7 +48,15 @@
 					$result_updates = mysql_query($sql_updates,$connection);
 					while ($row_updates = mysql_fetch_object($result_updates)) {
 
-						echo "<a class=\"invisiblelink\" href=\"" . $web_root . "/updates.php?id=" . $row_updates->id . "\">";
+						if ($web_root != "") {
+
+							echo "<a class=\"invisiblelink\" href=\"" . $web_root . "/updates.php?id=" . $row_updates->id . "\">";
+
+						} else {
+
+							echo "<a class=\"invisiblelink\" href=\"/updates.php?id=" . $row_updates->id . "\">";
+
+						}
 						echo substr($row_updates->name, 0, 65); 
 						if (strlen($row_updates->name) >= 65) echo "...";
 						echo "</a>";
@@ -56,7 +64,7 @@
 
 					} ?>
                     
-					[<a class="invisiblelink" href="<?=$web_root?>/_includes/system/mark-updates-read.inc.php?direct=1">mark all updates as read</a>]<?php
+					[<a class="invisiblelink" href="<?php if ($web_root != "") echo $web_root; ?>/_includes/system/mark-updates-read.inc.php?direct=1">mark all updates as read</a>]<?php
 
 				}
 				?>

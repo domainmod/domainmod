@@ -20,7 +20,7 @@
 
     <div class="header-container">
         <div class="header-center">
-            <a href="<?=$web_root?>/"><img border="0" src="<?=$web_root?>/images/logo.png"></a>
+            <a href="<?php if ($web_root != "") echo $web_root; ?>/"><img border="0" src="<?php if ($web_root != "") echo $web_root; ?>/images/logo.png"></a>
         </div>
     </div>
 
