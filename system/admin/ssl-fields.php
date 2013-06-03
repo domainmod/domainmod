@@ -89,7 +89,7 @@ if ($export == "1") {
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-Below is a list of all the Custom SSL Fields that have been added to your <?=$software_title?>.<BR><BR>
+Below is a list of all the Custom SSL Fields that have been added to <?=$software_title?>.<BR><BR>
 Custom SSL Fields help extend the functionality of <?=$software_title?> by allowing the user to create their own data fields. For example, if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. And when you export your SSL data, the information contained in your custom fields will automatically be included in the exported data.
 <BR><BR><?php
 
