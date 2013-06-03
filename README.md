@@ -17,7 +17,7 @@ So go ahead, take the live demo for a test drive before you install! http://demo
 # Downloading
 You have two options for downloading DomainMOD.  
 
-NOTE: Whenever possible I recommend that you use option #1, the git repository download directly from your server. Not only is it a nice quick install, but it makes upgrading a breeze (more info below).  
+NOTE: Whenever possible I recommend that you use option #1, the git repository download directly from your server. Not only is it a nice quick install, but it makes upgrading a breeze.  
 
 1. Use git right from your server to retrieve the source code. To do so, change to the directory where you want to install DomainMOD and run the following command:  
 
