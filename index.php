@@ -42,17 +42,7 @@ if ($_SESSION['installation_mode'] == 1) {
 $new_username = $_POST['new_username'];
 $new_password = $_POST['new_password'];
 
-include("_includes/config-demo.inc.php"); // $demo_url, $demo_username, $demo_password
-
-if ($_SERVER['HTTP_HOST'] == $demo_url) $demo_install = "1";
-
-/*
-if ($demo_install == "1" && !stripos($_SERVER['HTTP_REFERER'], "" . $demo_url . "")) {
-	$_SERVER['REQUEST_METHOD'] = 'POST';
-	$new_username = $demo_username;
-	$new_password = $demo_password;
-}
-*/
+include("_includes/config-demo.inc.php");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
 	
