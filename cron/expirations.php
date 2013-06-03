@@ -16,18 +16,16 @@
 // http://www.gnu.org/licenses/
 ?>
 <?php
+include("../_includes/config.inc.php");
+include("../_includes/database.inc.php");
+include("../_includes/software.inc.php");
+include("../_includes/timestamps/current-timestamp-basic.inc.php");
+include("../_includes/timestamps/current-timestamp-long.inc.php");
+
 include("../_includes/config-demo.inc.php");
 
-if ($_SERVER['HTTP_HOST'] == $demo_url) $demo_install = "1";
-
 if ($demo_install != "1") {
-	
-	include("../_includes/config.inc.php");
-	include("../_includes/database.inc.php");
-	include("../_includes/software.inc.php");
-	include("../_includes/timestamps/current-timestamp-basic.inc.php");
-	include("../_includes/timestamps/current-timestamp-long.inc.php");
-	
+
 	$sql = "SELECT expiration_email_days
 			FROM settings";
 	$result = mysql_query($sql,$connection);

@@ -16,17 +16,15 @@
 // http://www.gnu.org/licenses/
 ?>
 <?php
+include("../_includes/config.inc.php");
+include("../_includes/database.inc.php");
+include("../_includes/software.inc.php");
+include("../_includes/timestamps/current-timestamp.inc.php");
+
 include("../_includes/config-demo.inc.php");
 
-if ($_SERVER['HTTP_HOST'] == $demo_url) $demo_install = "1";
-
 if ($demo_install != "1") {
-	
-	include("../_includes/config.inc.php");
-	include("../_includes/database.inc.php");
-	include("../_includes/software.inc.php");
-	include("../_includes/timestamps/current-timestamp.inc.php");
-	
+
 	$sql = "SELECT c.id, c.currency
 			FROM currencies AS c, fees AS f, domains AS d
 			WHERE c.id = f.currency_id

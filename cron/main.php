@@ -18,8 +18,6 @@
 <?php
 include("../_includes/config-demo.inc.php");
 
-if ($_SERVER['HTTP_HOST'] == $demo_url) $demo_install = "1";
-
 if ($demo_install != "1") {
 	
 	include("currencies.php");
