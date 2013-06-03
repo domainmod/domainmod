@@ -53,23 +53,23 @@ The first cron job will update the conversion rates for all active currencies.
 
 The file to execute is:
 
-    /SERVER-PATH-TO-DOMAINMOD/cron/currencies.php  
+    /cron/currencies.php  
 
 The second cron job will send out an email reminder about Domains and SSL Certificates that are coming up for renewal.
 
 The file to execute is:
 
-    /SERVER-PATH-TO-DOMAINMOD/cron/expirations.php  
+    /cron/expirations.php  
 
-The third cron job will rebuild your data warehouse. If you're going to use the data warehouse, it's highly recommended that you set this cron job up to automate your builds. There's a lot of work being done in the background during a build, and more often than not a web browser will timeout if you try to build through the UI instead of using a cron job, leading to incomplete and missing information in your data warehouse. I would recommend setting the cron job up to run daily, preferably while you're asleep, so that way you'll always start the day with the freshest data possible.
+The third cron job will rebuild your data warehouse. If you're going to use the data warehouse it's highly recommended that you set this cron job up to automate your builds. There's a lot of work being done in the background during a build, and more often than not a web browser will timeout if you try to build through the UI instead of using a cron job, leading to incomplete and missing information in your data warehouse. I would recommend setting the cron job up to run daily, preferably while you're asleep, so that way you'll always start the day with the freshest data possible.
 
 The file to execute is:
 
-    /SERVER-PATH-TO-DOMAINMOD/cron/dw.php  
+    /cron/dw.php  
 
-If you want to run all of the above cron jobs, simply run this script instead and it will execute all current and future cron jobs.
+To run all current and future jobs simply use this script instead of the ones above:
 
-    /SERVER-PATH-TO-DOMAINMOD/cron/main.php  
+    /cron/main.php  
 
 
 # Data Warehouse
@@ -115,17 +115,17 @@ You have two options for upgrading DomainMOD.
 
 2. Visit the following URL to download the most recent source code archive: https://github.com/aysmedia/domainmod/archive/master.zip  
 
-   Them simply unpack the new archive overtop of where you installed the previous version.  
+   Then simply unpack the new archive overtop of where you installed the previous version.  
 
 
 # Support
-If you have any questions or comments please visit http://domainmod.org or email me at support@domainmod.org  
+If you have any questions or comments please visit http://domainmod.org or email me at support@domainmod.org.  
 
-To report bugs, please visit http://github.com/aysmedia/domainmod/issues/  
+To report bugs, please visit http://github.com/aysmedia/domainmod/issues/.  
 
 
 # License
-DomainMOD - A web-based application written in PHP & MySQL used to manage a collection of domain names.  
+DomainMOD is an open source application written in PHP & MySQL used to track and manage your web resources.  
 Copyright (C) 2010 Greg Chetcuti  
 
 DomainMOD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.  
