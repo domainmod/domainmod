@@ -119,9 +119,7 @@ You have two options for upgrading DomainMOD.
 
 
 # Support
-If you have any questions or comments please visit http://domainmod.org or email me at support@domainmod.org.  
-
-To report bugs, please visit http://github.com/aysmedia/domainmod/issues/.  
+If you have any questions, comments or bugs to report, please visit domainmod.org/support/  
 
 
 # License
