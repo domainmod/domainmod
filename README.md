@@ -43,7 +43,7 @@ NOTE: Whenever possible I recommend that you use option #1, the git repository d
 
 5. After a few seconds a message will appear letting you know that the installation was successful.
 
-6. If you have any problems during installation please see the Support section below.
+6. If you have any problems during installation please see the Support section.
 
 
 # Cron Job Installation (Optional)
