@@ -34,7 +34,7 @@ NOTE: Whenever possible I recommend that you use option #1, the git repository d
 
     If you used git to retrieve the source code in the previous step, just change to the directory where you ran the git command and your files are already waiting for you in a folder called /domainmod/. Feel free to rename this folder to whatever you want.  
 
-    If you downloaded the source code in the previous step, you will now need to upload the archive to your server and then unpack it into the folder where you wish to install.  
+    If you downloaded the source code in the previous step, you will now need to upload the archive to your server and then unpack it into the folder where you wish to install (or unpack it and then upload it, whichever you prefer).  
 
 2. Create a MySQL database that will be used to store DomainMOD's data.  
 
@@ -48,7 +48,7 @@ NOTE: Whenever possible I recommend that you use option #1, the git repository d
 
 
 ## Cron Job Installation (Optional)
-Included with Domain Manger are multiple cron jobs to help keep things running smoothly. The cron jobs are completely optional, and they can be triggered at whatever frequency you wish.
+Included with DomainMOD are multiple cron jobs to help keep things running smoothly. The cron jobs are completely optional, and they can be triggered at whatever frequency you wish.
 
 The first cron job will update the conversion rates for all active currencies.
 
@@ -56,40 +56,40 @@ The file to execute is:
 
     /cron/currencies.php  
 
-The second cron job will send out an email reminder about Domains and SSL Certificates that are coming up for renewal.
+The second cron job will send out an email reminder about Domains and SSL Certificates that are coming up for renewal (to all active, subscribed users).
 
 The file to execute is:
 
     /cron/expirations.php  
 
-The third cron job will rebuild your data warehouse. If you're going to use the data warehouse it's highly recommended that you set this cron job up to automate your builds. There's a lot of work being done in the background during a build, and more often than not a web browser will timeout if you try to build through the UI instead of using a cron job, leading to incomplete and missing information in your data warehouse. I would recommend setting the cron job up to run daily, preferably while you're asleep, so that way you'll always start the day with the freshest data possible.
+The third cron job will rebuild your Data Warehouse. If you're going to use the Data Warehouse it's highly recommended that you set this cron job up to automate your builds. There's a lot of work being done in the background during a build, and more often than not a web browser will timeout if you try to build through the UI instead of using the cron job, leading to incomplete and missing information in your Data Warehouse. I would recommend setting the cron job up to run daily, preferably while you're asleep, so that way you'll always start the day with the freshest data possible.
 
 The file to execute is:
 
     /cron/dw.php  
 
-To run all current and future jobs simply use this script instead of the ones above:
+To run all current and future jobs, simply execute this cron job instead of the ones above:
 
     /cron/main.php  
 
 
 ## Data Warehouse
 
-DomainMOD has a data warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also intend on adding support for Plesk once I've ironed out all the kinks in the framework.
+DomainMOD has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also intend on adding support for Plesk once I've ironed out all the kinks in the framework.
 
 If you don't run a server that uses WHM, or you don't want to import your WHM data into DomainMOD, you can ignore this section.
 
-NOTE: Importing your server(s) into the data warehouse will not modify any of your DomainMOD data. The data warehouse is used for informational purposes only, and you will see its data referenced throughout DomainMOD where applicable. For example, if a domain you're editing has information stored in your data warehouse, the system will automatically match them up and display the additional information for you, giving you even more insight into your data. You can also view, export, and run reports on the information in your data warehouse.
+NOTE: Importing your server(s) into the Data Warehouse will not modify any of your DomainMOD data. The Data Warehouse is used for informational purposes only, and you will see its data referenced throughout DomainMOD where applicable. For example, if a domain you're editing has information stored in your Data Warehouse, the system will automatically match them up and display the additional information for you, giving you even more insight into your data. You can also view, export, and run reports against the information in your Data Warehouse.
 
 ### Supported Data
-The following WHM sections are currently supported, but my end goal is to have every piece of WHM information that can be retrieved via the API stored in the data warehouse. In the future I plan on adding support for as many types of web servers as possible.  
+The following WHM sections are currently supported, but my end goal is to have every piece of WHM information that can be retrieved via the API stored in the Data Warehouse. In the future I plan on adding support for as many types of web servers as possible.  
 
 #### ACCOUNTS
 Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max FTP Accounts, Max Email Lists, Max Parked Domains, Max POP Accounts, Max SQL Accounts, Max Subdomains, Creation Date, Suspend Status, Suspend Reason, Suspend Time, Max Email Per Hour, Failed Email % Before Defer, Min Failed Email # Before Defer
 
 #### DNS ZONES
 
-Zone File Name, Original/Primary Source of Zone Data, Admin Email, Serial #, Refresh, Retry, Expiry, Minimum TTL, Authoritative Name Server
+Zone Filename, Original/Primary Source of Zone Data, Admin Email, Serial #, Refresh, Retry, Expiry, Minimum TTL, Authoritative Name Server
 
 #### DNS RECORDS
 
@@ -115,7 +115,7 @@ You have two options for upgrading DomainMOD.
 
 2. Visit the following URL to download the most recent source code archive: https://github.com/aysmedia/domainmod/archive/master.zip  
 
-   Then simply unpack the new archive overtop of where you installed the previous version.  
+   Then simply upload and unpack the new archive overtop of where you installed the previous version (or unpack it and then upload it, whichever you prefer).  
 
 
 ## Support
