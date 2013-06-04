@@ -5,17 +5,17 @@
     Source Code: http://github.com/aysmedia/domainmod/  
 
 
-# About
+## About
 DomainMOD is an open source application written in PHP & MySQL used to track and manage your web resources. DomainMOD also includes a fully functional Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports servers running WHM/cPanel, but further support will be added in the future.
 
 
-# Live Demo
+## Live Demo
 Not sure if DomainMOD is what you're looking for? Don't want to waste your time installing it only to find out that it's not? As a developer myself, I hate when that happens, so I always try to run live demos so you don't waste your time.  
 
 So go ahead, take the live demo for a test drive before you install! http://demo.domainmod.org  
 
 
-# Downloading
+## Downloading
 You have two options for downloading DomainMOD.  
 
 NOTE: Whenever possible I recommend that you use option #1, the git repository download directly from your server. Not only is it a nice quick install, but it makes upgrading a breeze.  
@@ -29,7 +29,7 @@ NOTE: Whenever possible I recommend that you use option #1, the git repository d
 2. Visit the following URL to download the most recent source code archive: https://github.com/aysmedia/domainmod/archive/master.zip  
 
 
-# Installation
+## Installation
 1. Please choose from one of the following two options:  
 
     If you used git to retrieve the source code in the previous step, just change to the directory where you ran the git command and your files are already waiting for you in a folder called /domainmod/. Feel free to rename this folder to whatever you want.  
@@ -47,7 +47,7 @@ NOTE: Whenever possible I recommend that you use option #1, the git repository d
 6. If you have any problems during installation please see the Support section.
 
 
-# Cron Job Installation (Optional)
+## Cron Job Installation (Optional)
 Included with Domain Manger are multiple cron jobs to help keep things running smoothly. The cron jobs are completely optional, and they can be triggered at whatever frequency you wish.
 
 The first cron job will update the conversion rates for all active currencies.
@@ -73,7 +73,7 @@ To run all current and future jobs simply use this script instead of the ones ab
     /cron/main.php  
 
 
-# Data Warehouse
+## Data Warehouse
 
 DomainMOD has a data warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also intend on adding support for Plesk once I've ironed out all the kinks in the framework.
 
@@ -84,15 +84,14 @@ NOTE: Importing your server(s) into the data warehouse will not modify any of yo
 ### Supported Data
 The following WHM sections are currently supported, but my end goal is to have every piece of WHM information that can be retrieved via the API stored in the data warehouse. In the future I plan on adding support for as many types of web servers as possible.  
 
-### ACCOUNTS
-
+#### ACCOUNTS
 Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max FTP Accounts, Max Email Lists, Max Parked Domains, Max POP Accounts, Max SQL Accounts, Max Subdomains, Creation Date, Suspend Status, Suspend Reason, Suspend Time, Max Email Per Hour, Failed Email % Before Defer, Min Failed Email # Before Defer
 
-### DNS ZONES
+#### DNS ZONES
 
 Zone File Name, Original/Primary Source of Zone Data, Admin Email, Serial #, Refresh, Retry, Expiry, Minimum TTL, Authoritative Name Server
 
-### DNS RECORDS
+#### DNS RECORDS
 
 TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data
 
@@ -101,11 +100,11 @@ WHM & cPanel: http://cpanel.net
 API Documentation: http://docs.cpanel.net/twiki/bin/view/SoftwareDevelopmentKit/XmlApi 
 
 
-# Usage
+## Usage
 After installation just load the URL in a web browser and play around in the UI, it's pretty self explanatory.  
 
 
-# Upgrading
+## Upgrading
 You have two options for upgrading DomainMOD.  
 
 1. If you chose Download Option #1 above, using git right from your server to download the source code, just run the following command to upgrade DomainMOD:  
@@ -119,11 +118,11 @@ You have two options for upgrading DomainMOD.
    Then simply unpack the new archive overtop of where you installed the previous version.  
 
 
-# Support
+## Support
 If you have any questions, comments or bugs to report, please visit domainmod.org/support/  
 
 
-# License
+## License
 DomainMOD is an open source application written in PHP & MySQL used to track and manage your web resources.  
 Copyright (C) 2010 Greg Chetcuti  
 
