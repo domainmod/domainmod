@@ -36,7 +36,7 @@ NOTE: Whenever possible I recommend that you use option #1, the git repository d
 
     If you downloaded the source code in the previous step, you will now need to upload the archive to your server and then unpack it into the folder where you wish to install.  
 
-2. Create a MySQL database that will be used to store the DomainMOD information.  
+2. Create a MySQL database that will be used to store DomainMOD's data.  
 
 3. In the '_includes' folder, copy config.SAMPLE.inc.php to config.inc.php and then update config.inc.php to reflect your server's settings.  
 
@@ -119,7 +119,7 @@ You have two options for upgrading DomainMOD.
 
 
 ## Support
-If you have any questions, comments or bugs to report, please visit domainmod.org/support/  
+If you have any questions, comments, or bugs to report, please visit domainmod.org/support/  
 
 
 ## License
