@@ -16,6 +16,7 @@
 // http://www.gnu.org/licenses/
 ?>
 <?php
+// IDE commit test
 include("_includes/start-session.inc.php");
 include("_includes/config.inc.php");
 
