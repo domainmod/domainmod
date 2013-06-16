@@ -215,13 +215,13 @@ v0.34.1   2013-04-21   a26079d2bb5b33cb5b949d3752914c9c177d97a1
  - Cleaned up all SQL queries and removed all unnecessary 'active' fields
 
 v0.34.0   2013-04-20   90f93225f1165d2f6b3f49dc1a09dfe8b56882a0
- - Decommission the Domain Status and Status Notes fields, as they were redundant and confusing
+ - Decommissioned the Domain Status and Status Notes fields, as they were redundant and confusing
 
 v0.33.6   2013-04-20   c9bb9aa892b633c4c474727150ce53c4243b0b90
  - Renamed Price to Fee in domain & SSL certificate renewal exports
 
 v0.33.5   2013-04-20   825f7c17e6e489ea5aee0c6f2f824ad3d1d25f7f
- - Fixed a bug that made it so the default currency isn't displayed in domain and SSL renewal exports
+ - Fixed a bug that made it so the default currency isn't displayed in domain & SSL renewal exports
 
 v0.33.4   2013-04-20   967ebba64e81d99c5b45a8f675d9e8a4b25852d3
  - Updated Bulk Actions to denote required fields
@@ -260,7 +260,7 @@ v0.31.1   2013-04-16   b187cce01e6cf813c7393bda2684c6b41e924fa4
  - Updated the System Result Message to use DIVs instead of TABLEs
 
 v0.31.0   2013-04-16   3d0afc3f162a4e01ce95fbfac2c1b628e1c91e62
- - Updated the login page to use a DIV instead of TABLE
+ - Updated the login page to use a DIV instead of a TABLE
 
 v0.30.2   2013-04-16   4e0870459cb3c4ffc7e9d74c1b5b5b093a15b3be
  - Added a Default Timezone field to the System Settings
@@ -284,7 +284,7 @@ v0.27.2   2013-04-14   3953e92cfcc081c271984c82b0f6ff4ef1841da1
  - Added a check to the add & edit pages to verify the validity of submitted expiry dates
 
 v0.27.1   2013-04-11   74fb58d3b49148b7da64c849b65864c779572adb
- - Added a check to Bulk Actions to see if the Notes field was blank or not
+ - Added a check to Bulk Actions to see if the Notes field was submitted blank or not
 
 v0.27.0   2013-04-10   4f49ed572b7958325f98329a1a12c0ff491ac2f2
  - Added a logo and favicon
@@ -311,7 +311,7 @@ v0.26.0   2013-04-08   6d285bf0dcd3a28bd0a09294f3c5ec34c3c6be0c
  - Completely reworked how the Fix Fees scripts work
 
 v0.25.2   2013-04-08   fbc7425350c943049e917cf89babf403fa472e5b
- - Updated the currency conversion & format process and turned it into an include
+ - Updated the currency conversion & format process and converted it to an include
 
 v0.25.1   2013-04-08   3d266ceba8854f1acb26f605b1c6f1305d05688e
  - Added the Fee column to the main Domain & SSL Certificate pages
@@ -359,7 +359,7 @@ v0.21.6   2013-04-05   15507f1ab3a232802c51e19ba630a6220f0889f8
  - Added Domain Registrars & SSL Providers to the user's display settings (for the Domains page)
 
 v0.21.5   2013-04-05   863a21dca34ec250a3c1190f2b3e622ba8f720dd
- - Updated user add & edit process to account for new per-user settings
+ - Updated user add & edit process to account for the new user-based settings
 
 v0.21.4   2013-04-05   fe60220dff968b2b7eb2581ab0449e7aba920025
  - Updated the Domains page to only display the data columns chosen by the user
@@ -416,7 +416,7 @@ v0.17.0   2013-04-01   96a4b710e407fac9d5c1fe5ef3cee55730fabeb7
  - Added the ability to manually edit conversion rates
 
 v0.16.1   2013-04-01   3786de0930cac2047c21ec5cbc3d6946d24835e3
- - Updated domain deletion process to display an error if there are active SSL Certificates associated with it
+ - Updated the domain deletion process to display an error if someone tries to delete a domain with active SSL certificates associated with it
 
 v0.16.0   2013-04-01   8d9f0eb57731e193e261e8243bc5bfa87563adb3
  - Added the ability to delete assets on various asset edit pages
@@ -425,7 +425,7 @@ v0.15.2   2013-04-01   0a2a78e17609d6da330ee7765a3e5d0f900647b3
  - Renamed Category Owner to Category Stakeholder
 
 v0.15.1   2013-04-01   2613e67c5fadaa013920d97891cc8d22488c6b26
- - Fixed bug that prevented registrar fees from being deleted
+ - Fixed a bug that prevented registrar fees from being deleted
 
 v0.15.0   2013-04-01   1d79640933577fa9ed095b87bdb7d725f4f70eda
  - Added the ability to assign defaults to DNS Profiles, IP Addresses & Owners
@@ -461,7 +461,7 @@ v0.8.3   2013-03-23   9ee72cfa68fd006046adf973e50bb13a449ab6b9
  - Fixed a bug with the add domain page that caused the status to not get added to the database
 
 v0.8.2   2013-03-22   3137f363bb765c45ca88ba7c5d09a70337c99507
- - Fixed a bug with Bulk Actions that made it so only registrar accounts that already had domains associated with them were displayed.
+ - Fixed a bug with Bulk Actions that made it so only registrar accounts that already had domains associated with them were displayed
 
 v0.8.1   2013-03-21   f92eb3baf11545875f861b38ad02870152c2ddcb
  - Fixed a bug that was preventing the submenu from displaying
@@ -473,16 +473,16 @@ v0.7.0   2013-03-20   aa458942079ae5da3439a0bb74f7a17d0e302a91
  - Added MySQL escaping to various files to help prevent SQL injections
 
 v0.6.1   2012-03-06   bb81c60e2bcc4c7aaedd4151d2d0cb2c22fcd65a
- - Updated domain expiration export to include DNS Profile
+ - Updated the domain expiration export to include DNS Profile
 
 v0.6.0   2011-06-20   23528ce16e19a6bc0ee82df74a16a165c642307d
  - Added 'Sold' as a domain status type
 
 v0.5.2   2010-10-02   7d4fde6200277663c9b6b4c46fd40b7be13c488b
- - Updated domain expiration results to exclude expired domains, instead of including active domains. So now the results will include domains that are pending renewal, pending registration, etc.
+ - Updated the domain expiration results to exclude expired domains, instead of including active domains. So now the results will include domains that are pending renewal, pending registration, etc.
 
 v0.5.1   2010-09-22   31121f87ce94c37f1c88a722a3fe71b6e2d510b2
- - Updated domain expiration export to include Category Owner
+ - Updated the domain expiration export to include Category Owner
 
 v0.5.0   2010-09-22   db4558655c77ce3e3c079f753793efc93c899ec7
  - Added support for Category Owner
