@@ -128,7 +128,7 @@ v0.45.2   2013-04-30   8e9bee8295d0d2e467c5fb509fe17c7577368587
  - Fixed a System Settings bug that was causing conversions to show up wrong after switching default currencies
 
 v0.45.1   2013-04-29   c9ef4bc9400cdab0c5d650edcfcd285e981a6183
- - Updated the search boxes on the main Domain & SSL Certificate pages to use DIVs instead of TABLES
+ - Updated the search boxes on the main Domain & SSL Certificate pages to use DIVs instead of TABLEs
 
 v0.45.0   2013-04-29   76ac4d3923fb0b23d8066f3bac5b37cfefb3d822
  - Completely reworked currencies to be user-based instead of system-based
@@ -251,13 +251,13 @@ v0.31.4   2013-04-16   b73dbb814c31c1108f861cc274a160b6a26d174c
  - Added a DOCTYPE declaration to every page
 
 v0.31.3   2013-04-16   8fd1d13ee7931629190b3dac2720a72fc5f75385
- - Updated the system-wide headers to use DIVs instead of TABLES
+ - Updated the system-wide headers to use DIVs instead of TABLEs
 
 v0.31.2   2013-04-16   20d6395d8ecbc0445f308ca8f59171fb0408aee7
- - Updated the System Maintenance Message to use DIVs instead of TABLES
+ - Updated the System Maintenance Message to use DIVs instead of TABLEs
 
 v0.31.1   2013-04-16   b187cce01e6cf813c7393bda2684c6b41e924fa4
- - Updated the System Result Message to use DIVs instead of TABLES
+ - Updated the System Result Message to use DIVs instead of TABLEs
 
 v0.31.0   2013-04-16   3d0afc3f162a4e01ce95fbfac2c1b628e1c91e62
  - Updated the login page to use a DIV instead of TABLE
