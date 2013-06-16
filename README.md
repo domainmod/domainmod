@@ -117,6 +117,10 @@ After installation just load the URL in a web browser and play around in the UI,
    Then simply upload and unpack the new archive overtop of where you installed the previous version (or unpack it and then upload it, whichever you prefer).  
 
 
+## Changelog
+Please see the CHANGELOG file that came with DomainMOD, or view the Changelog online at http://domainmod.org/changelog/
+
+
 ## Support
 If you have any questions, comments, or bugs to report, please visit domainmod.org/support/  
 
