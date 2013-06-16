@@ -122,7 +122,7 @@ Please see the CHANGELOG file that came with DomainMOD, or view the Changelog on
 
 
 ## Support
-If you have any questions, comments, or bugs to report, please visit domainmod.org/support/  
+If you have any questions, comments, or bugs to report, please visit http://domainmod.org/support/
 
 
 ## License
