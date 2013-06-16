@@ -1,5 +1,8 @@
 DomainMOD Changelog
 ===================
+v0.73.0   2013-06-16   14e78be88daf7809c9fb7d8636a0f02435e4e96f
+ - Added a CHANGELOG file to the project root
+
 v0.72.0   2013-06-01   b04a84dec4d13e8be7a6002ef80975d957ec5cbd
  - Completely rebranded to DomainMOD
  - The software needed a real name now that it's close to being released into the wild
