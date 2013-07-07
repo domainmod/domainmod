@@ -8,7 +8,7 @@ v0.72.0   2013-06-01   b04a84dec4d13e8be7a6002ef80975d957ec5cbd
  - The software needed a real name now that it's close to being released into the wild
 
 v0.71.0   2013-06-01   ac166c1212093deb73237cbb24ca6147234a62a3
- - Implemented a Data Warehouse framework that allows you to import you WHM web server data
+ - Implemented a Data Warehouse framework that allows you to import your WHM web server data
 
 v0.70.2   2013-06-01   cc6f57e7be377398488d1041323e0c2c0b056f18
  - Added insert & update times to Segment result exports
