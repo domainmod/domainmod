@@ -209,7 +209,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Domain?<BR><BR><a href=\"$PHP_SELF?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN ACCOUNT</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Domain?<BR><BR><a href=\"$PHP_SELF?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
 
 	}
 
