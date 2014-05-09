@@ -18,10 +18,18 @@
 <?php
 //   if (preg_match('/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i', $temp_input_domain, $domain)) {
 function CheckDomainFormat( $temp_input_domain ) {
-   if (preg_match('/^[A-Z0-9.-]+\.[A-Z0-9-]{2,50}$/i', $temp_input_domain, $domain)) {
-	  return $domain;
-   } else {
-	  return false;
-   }
-} 	
+
+    /*
+
+       if (preg_match('/^[A-Z0-9.-]+\.[A-Z0-9-]{2,50}$/i', $temp_input_domain, $domain)) {
+          return $domain;
+       } else {
+          return false;
+       }
+
+    */
+
+    return $temp_input_domain;
+
+}
 ?>
