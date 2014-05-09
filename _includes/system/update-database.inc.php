@@ -1002,7 +1002,7 @@ if ($current_db_version < $most_recent_db_version) {
 	if ($current_db_version == 2.0021) {
 
 		$sql = "ALTER TABLE `settings`  
-					ADD `timezone` VARCHAR(10) NOT NULL DEFAULT 'Canada/Pacific' AFTER `email_address`";
+					ADD `timezone` VARCHAR(50) NOT NULL DEFAULT 'Canada/Pacific' AFTER `email_address`";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "UPDATE settings
