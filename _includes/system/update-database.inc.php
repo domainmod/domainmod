@@ -2954,21 +2954,25 @@ if ($current_db_version < $most_recent_db_version) {
 		$sql = "SELECT id
 				FROM ssl_certs";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
-		
-		while ($row = mysql_fetch_object($result)) {
-			
-			$full_id_string .= "('" . $row->id . "', '" . mysql_real_escape_string($current_timestamp) . "'), ";
-			
-		}
 
-		$full_id_string_formatted = substr($full_id_string, 0, -2);
-		
-		$sql = "INSERT INTO ssl_cert_field_data
-				(ssl_id, insert_time) VALUES 
-				" . $full_id_string_formatted . "";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+        if (mysql_num_rows($result) > 0) {
 
-		// This section was made redunant by DB update v2.005
+            while ($row = mysql_fetch_object($result)) {
+
+                $full_id_string .= "('" . $row->id . "', '" . mysql_real_escape_string($current_timestamp) . "'), ";
+
+            }
+
+            $full_id_string_formatted = substr($full_id_string, 0, -2);
+
+            $sql = "INSERT INTO ssl_cert_field_data
+                    (ssl_id, insert_time) VALUES
+                    " . $full_id_string_formatted . "";
+            $result = mysql_query($sql,$connection) or die(mysql_error());
+
+        }
+
+		// This section was made redundant by DB update v2.005
 		/*
 		$sql = "INSERT INTO updates
 				(name, `update`, insert_time, update_time) VALUES 
