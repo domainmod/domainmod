@@ -813,11 +813,7 @@ if ($current_db_version < $most_recent_db_version) {
 				DROP `test_data`;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
-		$sql = "ALTER TABLE `segments` 
-				DROP `test_data`;";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-
-		$sql = "ALTER TABLE `segments` 
+		$sql = "ALTER TABLE `segments`
 				DROP `test_data`;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
