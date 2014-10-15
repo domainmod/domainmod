@@ -252,7 +252,7 @@ if ($_SESSION['installation_mode'] != 1) { ?>
             <strong>Username:</strong>&nbsp;
             <input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
             &nbsp;<strong>Password:</strong>&nbsp;
-            <input name="new_password" type="password" id="new_password" size="20" maxlength="20"><br>
+            <input name="new_password" type="password" id="new_password" size="20" maxlength="255"><br>
         </div>
         <div class="login_form">
             <?php if ($demo_install != "1") { ?><BR><font size="1"><a class="invisiblelink" href="reset-password.php">Forgot your Password?</a></font><BR><?php } ?>
