@@ -1,5 +1,8 @@
 DomainMOD Changelog
 ===================
+v0.74.0   2014-10-14   9643de9a298f8cff3ef4916eb0991080aa21e8db
+ - Updated the Bulk Updater to allow for domain deletions
+
 v0.73.0   2013-06-16   14e78be88daf7809c9fb7d8636a0f02435e4e96f
  - Added a CHANGELOG file to the project root
 
