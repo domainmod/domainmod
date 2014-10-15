@@ -589,9 +589,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "Domains (and associated SSL Certificates) Deleted<BR>";
 
-                include("_includes/system/update-domain-fees.inc.php");
                 include("_includes/system/update-segments.inc.php");
-                include("_includes/system/update-tlds.inc.php");
 
             } elseif ($action == "E") {
 
