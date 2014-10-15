@@ -498,38 +498,102 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 				}
 
-			} elseif ($action == "CWH") {
-	
-				if ($new_whid == "" || $new_whid == 0) {
-	
-					$_SESSION['result_message'] = "Please choose the new Web Hosting Provider<BR>";
-					$submission_failed = 1;
-	
-				} else {
+            } elseif ($action == "CWH") {
 
-					if ($new_notes != "") {
+                if ($new_whid == "" || $new_whid == 0) {
 
-						$sql = "UPDATE domains
+                    $_SESSION['result_message'] = "Please choose the new Web Hosting Provider<BR>";
+                    $submission_failed = 1;
+
+                } else {
+
+                    if ($new_notes != "") {
+
+                        $sql = "UPDATE domains
 								SET hosting_id = '" . $new_whid . "',
 									notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
 									update_time = '" . $current_timestamp . "'
 								WHERE domain IN (" . $new_data_formatted . ")";
-						
-					} else {
 
-						$sql = "UPDATE domains
+                    } else {
+
+                        $sql = "UPDATE domains
 								SET hosting_id = '" . $new_whid . "',
 									update_time = '" . $current_timestamp . "'
 								WHERE domain IN (" . $new_data_formatted . ")";
 
-					}
-					$result = mysql_query($sql,$connection) or die(mysql_error());
-	
-					$_SESSION['result_message'] = "Web Hosting Provider Changed<BR>";
-	
-				}
+                    }
+                    $result = mysql_query($sql,$connection) or die(mysql_error());
 
-			} elseif ($action == "E") { 
+                    $_SESSION['result_message'] = "Web Hosting Provider Changed<BR>";
+
+                }
+
+            } elseif ($action == "DD") {
+
+                $sql = "SELECT id
+						FROM domains
+						WHERE domain in (" . $new_data_formatted . ")";
+                // $result = mysql_query($sql,$connection) or die(mysql_error());
+                $result = mysql_query($sql,$connection) or die("error 1");
+
+                if (mysql_num_rows($result) > 0) {
+
+                    while ($row = mysql_fetch_object($result)) {
+
+                        $domain_id_list .= "'" . $row->id . "', ";
+
+                    }
+
+                    $domain_id_list_formatted = substr($domain_id_list, 0, -2);
+
+                    $sql_domain = "DELETE FROM domains
+                                   WHERE id IN (" . $domain_id_list_formatted . ")";
+                    // $result_domain = mysql_query($sql_domain,$connection) or die(mysql_error());
+                    $result_domain = mysql_query($sql_domain, $connection) or die("error 2");
+
+                    $sql_domain = "DELETE FROM domain_field_data
+                                   WHERE domain_id IN (" . $domain_id_list_formatted . ")";
+                    // $result_domain = mysql_query($sql_domain,$connection) or die(mysql_error());
+                    $result_domain = mysql_query($sql_domain, $connection) or die("error 3");
+
+                    $sql_ssl = "SELECT id
+                                FROM ssl_certs
+                                WHERE domain_id IN (" . $domain_id_list_formatted . ")";
+                    // $result_ssl = mysql_query($sql_ssl,$connection) or die(mysql_error());
+                    $result_ssl = mysql_query($sql_ssl, $connection) or die("error 4");
+
+                    if (mysql_num_rows($result_ssl) > 0) {
+
+                        while ($row_ssl = mysql_fetch_object($result_ssl)) {
+
+                            $ssl_id_list .= "'" . $row_ssl->id . "', ";
+
+                        }
+
+                        $ssl_id_list_formatted = substr($ssl_id_list, 0, -2);
+
+                        $sql_ssl = "DELETE FROM ssl_certs
+                                    WHERE domain_id IN (" . $domain_id_list_formatted . ")";
+                        // $result_ssl = mysql_query($sql_ssl,$connection) or die(mysql_error());
+                        $result_ssl = mysql_query($sql_ssl, $connection) or die("error 5");
+
+                        $sql_ssl = "DELETE FROM ssl_cert_field_data
+                                    WHERE ssl_id IN (" . $ssl_id_list_formatted . ")";
+                        // $result_ssl = mysql_query($sql_ssl,$connection) or die(mysql_error());
+                        $result_ssl = mysql_query($sql_ssl, $connection) or die("error 6");
+
+                    }
+
+                }
+
+                $_SESSION['result_message'] = "Domains (and associated SSL Certificates) Deleted<BR>";
+
+                include("_includes/system/update-domain-fees.inc.php");
+                include("_includes/system/update-segments.inc.php");
+                include("_includes/system/update-tlds.inc.php");
+
+            } elseif ($action == "E") {
 
 				if ($new_notes != "") {
 
@@ -889,6 +953,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <BR><strong>The following domains had their Registrar Account changed:</strong><BR>
         <?php } elseif ($action == "CWH") { ?>
             <BR><strong>The following domains had their Web Hosting Provider changed:</strong><BR>
+        <?php } elseif ($action == "DD") { ?>
+            <BR><strong>The following domains (and associated SSL Certificates) were deleted:</strong><BR>
         <?php } elseif ($action == "AN") { ?>
             <BR><strong>The following domains had the Note appended:</strong><BR>
         <?php } elseif ($action == "UCF1" || $action == "UCF2" || $action == "UCF3") { ?>
@@ -904,6 +970,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
   <select name="jumpMenu" id="jumpMenu" onChange="MM_jumpMenu('parent',this,0)">
     <option value="bulk-updater.php"<?php if ($action == "") { echo " selected"; } ?>>Choose Action</option>
     <option value="bulk-updater.php?action=AD"<?php if ($action == "AD") { echo " selected"; } ?>>Add Domains</option>
+    <option value="bulk-updater.php?action=AN"<?php if ($action == "AN") { echo " selected"; } ?>>Add A Note</option>
     <option value="bulk-updater.php?action=FR"<?php if ($action == "FR") { echo " selected"; } ?>>Renew Domains (Update Expiry Date, Mark Active, Add Note)</option>
     <option value="bulk-updater.php?action=R"<?php if ($action == "R") { echo " selected"; } ?>>Renew Domains (Update Expiry Date Only)</option>
     <option value="bulk-updater.php?action=A"<?php if ($action == "A") { echo " selected"; } ?>>Mark as 'Active'</option>
@@ -922,7 +989,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <option value="bulk-updater.php?action=CRA"<?php if ($action == "CRA") { echo " selected"; } ?>>Change Registrar Account</option>
     <option value="bulk-updater.php?action=CWH"<?php if ($action == "CWH") { echo " selected"; } ?>>Change Web Hosting Provider</option>
     <option value="bulk-updater.php?action=UCF"<?php if ($action == "UCF" || $action == "UCF1" || $action == "UCF2" || $action == "UCF3") { echo " selected"; } ?>>Update Custom Domain Field</option>
-    <option value="bulk-updater.php?action=AN"<?php if ($action == "AN") { echo " selected"; } ?>>Add A Note</option>
+    <option value="bulk-updater.php?action=DD"<?php if ($action == "DD") { echo " selected"; } ?>>Delete Domains</option>
   </select>
 
 <?php if ($action == "UCF" || $action == "UCF1" || $action == "UCF2" || $action == "UCF3") { ?>
@@ -1149,7 +1216,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     ?>
     <BR><BR>
 <?php } elseif ($action == "CWH") { ?>
-	<?php
+    <?php
     $sql_host = "SELECT id, name
 				 FROM hosting
 				 ORDER BY name asc";
@@ -1157,12 +1224,14 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<strong>New Web Hosting Provider</strong><a title=\"Required Field\"><font class=\"default_highlight\">*</font></a><BR><BR>";
     echo "<select name=\"new_whid\">";
     echo "<option value=\"\""; if ($new_whid == "") echo " selected"; echo ">"; echo "$choose_text Web Hosting Provider</option>";
-    while ($row_host = mysql_fetch_object($result_host)) { 
-    echo "<option value=\"$row_host->id\""; if ($row_host->id == $_SESSION['default_host']) echo " selected"; echo ">"; echo "$row_host->name</option>";
-    } 
+    while ($row_host = mysql_fetch_object($result_host)) {
+        echo "<option value=\"$row_host->id\""; if ($row_host->id == $_SESSION['default_host']) echo " selected"; echo ">"; echo "$row_host->name</option>";
+    }
     echo "</select>";
     ?>
     <BR><BR>
+<?php } elseif ($action == "DD") { ?>
+
 <?php } elseif ($action == "AN") { ?>
 
 <?php } elseif ($action == "CED") { ?>
@@ -1252,98 +1321,102 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 		<strong>Notes</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
     <?php } elseif ($action == "AD") { ?>
 		<strong>Notes</strong><BR><BR>
-    <?php } elseif ($action == "UCF") { ?>
+    <?php } elseif ($action == "UCF" || $action == "DD") { ?>
     <?php } else { ?>
 		<strong>Notes (will be appended to current domain notes)</strong><BR><BR>
     <?php } ?>
-    <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-    <BR>
 
-<?php if ($action == "AD") { ?>
+    <?php if ($action == "DD") { ?>
+    <?php } else { ?>
+        <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+        <BR><BR>
+    <?php } ?>
 
-    <?php
-    $sql = "SELECT field_name
-            FROM domain_fields
-            ORDER BY type_id, name";
-    $result = mysql_query($sql,$connection);
-	
-	if (mysql_num_rows($result) > 0) { ?>
+    <?php if ($action == "AD") { ?>
 
-	    <BR><BR><font class="subheadline">Custom Fields</font><BR><BR><?php
+        <?php
+        $sql = "SELECT field_name
+                FROM domain_fields
+                ORDER BY type_id, name";
+        $result = mysql_query($sql,$connection);
 
-		$count = 0;
-		
-		while ($row = mysql_fetch_object($result)) {
-			
-			$field_array[$count] = $row->field_name;
-			$count++;
-		
-		}
-		
-		foreach($field_array as $field) {
-			
-			$sql = "SELECT df.name, df.field_name, df.type_id, df.description
-					FROM domain_fields AS df, custom_field_types AS cft
-					WHERE df.type_id = cft.id
-					  AND df.field_name = '" . $field . "'";
-			$result = mysql_query($sql,$connection);
-			
-			while ($row = mysql_fetch_object($result)) {
-				
-				if ($row->type_id == "1") { // Check Box ?>
+        if (mysql_num_rows($result) > 0) { ?>
 
-					<input type="checkbox" name="new_<?=$row->field_name?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>>
-                    &nbsp;<strong><?=$row->name?></strong><BR><?php
-					
-					if ($row->description != "") {
-						
-						echo $row->description . "<BR><BR>";
-						
-					} else {
-						
-						echo "<BR>";
-						
-					}
-		
-				} elseif ($row->type_id == "2") { // Text ?>
-	
-					<strong><?=$row->name?> (255)</strong><?php
-	
-					if ($row->description != "") {
-						
-						echo "<BR>" . $row->description . "<BR><BR>";
-						
-					} else {
-						
-						echo "<BR><BR>";
-						
-					} ?>
-					<input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=${'new_' . $row->field_name}?>"><BR><BR><?php
-	
-				} elseif ($row->type_id == "3") { // Text Area ?>
-	
-					<strong><?=$row->name?></strong><?php
-	
-					if ($row->description != "") {
-						
-						echo "<BR>" . $row->description . "<BR><BR>";
-						
-					} else {
-						
-						echo "<BR><BR>";
-						
-					} ?>
-					<textarea name="new_<?=$row->field_name?>" cols="60" rows="5"><?=${'new_' . $row->field_name}?></textarea><BR><BR><?php
-	
-				}
-				
-			}
-		
-		}
+            <BR><BR><font class="subheadline">Custom Fields</font><BR><BR><?php
 
-	}
+            $count = 0;
 
-} ?>
+            while ($row = mysql_fetch_object($result)) {
+
+                $field_array[$count] = $row->field_name;
+                $count++;
+
+            }
+
+            foreach($field_array as $field) {
+
+                $sql = "SELECT df.name, df.field_name, df.type_id, df.description
+                        FROM domain_fields AS df, custom_field_types AS cft
+                        WHERE df.type_id = cft.id
+                          AND df.field_name = '" . $field . "'";
+                $result = mysql_query($sql,$connection);
+
+                while ($row = mysql_fetch_object($result)) {
+
+                    if ($row->type_id == "1") { // Check Box ?>
+
+                        <input type="checkbox" name="new_<?=$row->field_name?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>>
+                        &nbsp;<strong><?=$row->name?></strong><BR><?php
+
+                        if ($row->description != "") {
+
+                            echo $row->description . "<BR><BR>";
+
+                        } else {
+
+                            echo "<BR>";
+
+                        }
+
+                    } elseif ($row->type_id == "2") { // Text ?>
+
+                        <strong><?=$row->name?> (255)</strong><?php
+
+                        if ($row->description != "") {
+
+                            echo "<BR>" . $row->description . "<BR><BR>";
+
+                        } else {
+
+                            echo "<BR><BR>";
+
+                        } ?>
+                        <input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=${'new_' . $row->field_name}?>"><BR><BR><?php
+
+                    } elseif ($row->type_id == "3") { // Text Area ?>
+
+                        <strong><?=$row->name?></strong><?php
+
+                        if ($row->description != "") {
+
+                            echo "<BR>" . $row->description . "<BR><BR>";
+
+                        } else {
+
+                            echo "<BR><BR>";
+
+                        } ?>
+                        <textarea name="new_<?=$row->field_name?>" cols="60" rows="5"><?=${'new_' . $row->field_name}?></textarea><BR><BR><?php
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    } ?>
 
     <input type="hidden" name="action" value="<?=$action?>">
     <?php if ($action == "CDNS") { ?>
@@ -1358,7 +1431,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <?php if ($action == "CWH") { ?>
     <input type="hidden" name="whid" value="<?=$new_whid?>">
     <?php } ?>
-    <BR><input type="submit" name="button" value="Perform Bulk Action &raquo;">
+    <input type="submit" name="button" value="Perform Bulk Action &raquo;">
 <?php } ?>
 </form>
 <?php include("_includes/layout/footer.inc.php"); ?>
