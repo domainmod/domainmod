@@ -28,15 +28,24 @@ $software_section = "registrars";
 
 $export = $_GET['export'];
 
-$sql = "SELECT r.id AS rid, r.name AS rname, r.url, r.notes, r.insert_time, r.update_time
+/*
+ * $sql = "SELECT r.id AS rid, r.name AS rname, r.url, r.notes, r.insert_time, r.update_time
 		FROM registrars AS r, domains AS d
 		WHERE r.id = d.registrar_id
 		  AND d.domain NOT IN ('0', '10')
-		  AND (SELECT count(*) 
-		  	   FROM domains 
-			   WHERE registrar_id = r.id 
-			     AND active NOT IN ('0','10')) 
+		  AND (SELECT count(*)
+		  	   FROM domains
+			   WHERE registrar_id = r.id
+			     AND active NOT IN ('0','10'))
 				 > 0
+		GROUP BY r.name
+		ORDER BY r.name asc";
+ */
+
+$sql = "SELECT r.id AS rid, r.name AS rname, r.url, r.notes, r.insert_time, r.update_time
+		FROM registrars AS r, domains AS d
+		WHERE r.id = d.registrar_id
+		  AND d.active NOT IN ('0', '10')
 		GROUP BY r.name
 		ORDER BY r.name asc";
 

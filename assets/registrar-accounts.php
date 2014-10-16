@@ -35,6 +35,25 @@ if ($rid != "") { $rid_string = " AND ra.registrar_id = '$rid' "; } else { $rid_
 if ($raid != "") { $raid_string = " AND ra.id = '$raid' "; } else { $raid_string = ""; }
 if ($oid != "") { $oid_string = " AND ra.owner_id = '$oid' "; } else { $oid_string = ""; }
 
+/*
+ * $sql = "SELECT ra.id AS raid, ra.username, ra.password, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname, ra.notes, ra.insert_time, ra.update_time
+		FROM registrar_accounts AS ra, owners AS o, registrars AS r, domains AS d
+		WHERE ra.owner_id = o.id
+		  AND ra.registrar_id = r.id
+		  AND ra.id = d.account_id
+		  AND d.active not in ('0', '10')
+		  $rid_string
+		  $raid_string
+		  $oid_string
+		  AND (SELECT count(*)
+		  	   FROM domains
+			   WHERE account_id = ra.id
+			     AND active NOT IN ('0', '10'))
+				 > 0
+		GROUP BY ra.username, oname, rname
+		ORDER BY rname, username, oname";
+ */
+
 $sql = "SELECT ra.id AS raid, ra.username, ra.password, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname, ra.notes, ra.insert_time, ra.update_time
 		FROM registrar_accounts AS ra, owners AS o, registrars AS r, domains AS d
 		WHERE ra.owner_id = o.id
@@ -44,11 +63,6 @@ $sql = "SELECT ra.id AS raid, ra.username, ra.password, ra.owner_id, ra.registra
 		  $rid_string
 		  $raid_string
 		  $oid_string
-		  AND (SELECT count(*) 
-		  	   FROM domains 
-			   WHERE account_id = ra.id 
-			     AND active NOT IN ('0', '10')) 
-				 > 0
 		GROUP BY ra.username, oname, rname
 		ORDER BY rname, username, oname";
 
