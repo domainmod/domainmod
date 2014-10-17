@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$rid = $new_rid;
 
 			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been updated<BR>";
-			
+
 			$temp_input_user_id = $_SESSION['user_id'];
 			$temp_input_default_currency = $_SESSION['default_currency'];
 			include("../../_includes/system/update-conversion-rates.inc.php");
@@ -128,6 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
+            $_SESSION['result_message'] .= "<BR>You should <a href=\"../../_includes/system/update-domain-fees.inc.php?direct=1\">update the domain fees system-wide</a> (this may take some time)<BR><BR>";
 
 			$temp_input_user_id = $_SESSION['user_id'];
 			$temp_input_default_currency = $_SESSION['default_currency'];

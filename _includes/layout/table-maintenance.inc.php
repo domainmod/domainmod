@@ -30,7 +30,7 @@
 	<div class="maintenance_warning_inner">
         <strong>Maintenance Warning! (clear up the below issues to make this table disappear)</strong><BR><BR>
         <?php if ($_SESSION['missing_domain_fees'] == 1) { ?>
-		        <LI>Some of your Registrars/TLDs are missing domain fees. <a href="<?php if ($web_root != "") echo $web_root; ?>/assets/edit/registrar-fees-missing.php">Click here to fix this</a>.</LI>
+		        <LI>Some of your Registrars/TLDs are missing domain fees. <a href="<?php if ($web_root != "") echo $web_root; ?>/assets/edit/registrar-fees-missing.php">Click here to fix this</a>. If you've already updated all new TLDs, you should <a href="<?php if ($web_root != "") echo $web_root; ?>/_includes/system/update-domain-fees.inc.php?direct=1">update the domain fees system-wide</a> (this may take some time).</LI>
         <?php } ?>
         <?php if ($_SESSION['missing_ssl_fees'] == 1) { ?>
 		        <LI>Some of your SSL Certificate Types are missing fees. <a href="<?php if ($web_root != "") echo $web_root; ?>/assets/edit/ssl-provider-fees-missing.php">Click here to fix this</a>.</LI>
