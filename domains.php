@@ -319,7 +319,7 @@ if ($export == "1") {
 		include("_includes/system/export/write-row.inc.php");
 
 		$row_content[$count++] = "Number of Domains:";
-		$row_content[$count++] = number_format($total_rows);
+		$row_content[$count++] = $total_rows;
 		include("_includes/system/export/write-row.inc.php");
 
 		fputcsv($file_content, $blank_line);
@@ -400,7 +400,7 @@ if ($export == "1") {
 		include("_includes/system/export/write-row.inc.php");
 	
 		$row_content[$count++] = "Matching Domains:";
-		$row_content[$count++] = number_format($total_rows);
+		$row_content[$count++] = $total_rows;
 		include("_includes/system/export/write-row.inc.php");
 		
 		if ($totalrows_inactive > 0) {
