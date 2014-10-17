@@ -34,8 +34,7 @@ $software_section = "system";
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
 &raquo; <a href="display-settings.php">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="email-settings.php">Email Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="defaults.php">User Defaults</a><BR><BR>
-&raquo; <a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="change-password.php">Change Password</a><BR><BR>
-&raquo; <a href="../_includes/system/update-conversion-rates.inc.php?direct=1">Update Conversion Rates</a><BR>
+&raquo; <a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="change-password.php">Change Password</a><BR>
 <?php if ($_SESSION['is_admin'] == 1) { ?>
 	<BR><BR><font class="subheadline">System Administration</font><BR><BR>
 	&raquo; <a href="admin/system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/defaults.php">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/users.php">Users</a><BR><BR>
@@ -43,6 +42,8 @@ $software_section = "system";
 	&raquo; <a href="admin/dw/intro.php">Data Warehouse</a><BR><BR>
 	&raquo; <a href="admin/system-info.php">System Information</a><BR>
 <?php } ?>
+<BR><BR><font class="subheadline">Maintenance</font><BR><BR>
+&raquo; <a href="../_includes/system/update-conversion-rates.inc.php?direct=1">Update Conversion Rates</a><BR>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>
