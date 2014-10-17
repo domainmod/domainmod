@@ -203,7 +203,7 @@ if ($really_del == "1") {
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="edit_dns_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Profile Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo $new_name; ?>">
+<input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
 <BR><BR>
 <table class="dns_table">
 	<tr>

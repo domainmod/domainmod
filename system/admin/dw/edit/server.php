@@ -154,7 +154,7 @@ if ($really_del == "1") {
 <form name="dw_edit_server_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 Enter the display name for this server.<BR><BR>
-<input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "") echo $new_name; ?>">
+<input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
 <BR><BR>
 <strong>Host Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 Enter the host name of your WHM installation (ie. server1.yourdomain.com).<BR><BR>

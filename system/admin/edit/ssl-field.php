@@ -156,12 +156,12 @@ if ($really_del == "1") {
 <body>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
 <form name="edit_user_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Display Name (75)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_name" type="text" size="30" maxlength="75" value="<?php if ($new_name != "") echo $new_name; ?>"><BR><BR>
+<strong>Display Name (75)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_name" type="text" size="30" maxlength="75" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>"><BR><BR>
 <strong>Database Field Name</strong><BR><BR><?=$new_field_name?><BR><BR>
 <strong>Data Type</strong><BR><BR>
 <?=$new_field_type?>
 <BR><BR>
-<strong>Description (255)</strong><BR><BR><input name="new_description" type="text" size="50" maxlength="255" value="<?php if ($new_description != "") echo $new_description; ?>">
+<strong>Description (255)</strong><BR><BR><input name="new_description" type="text" size="50" maxlength="255" value="<?php if ($new_description != "") echo htmlentities($new_description); ?>">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>

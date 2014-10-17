@@ -224,7 +224,7 @@ if ($really_del == "1") {
 <?php include("../_includes/layout/header.inc.php"); ?>
 <form name="edit_ssl_cert_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Host / Label (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "") echo $new_name; ?>">
+<input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
 <BR><BR>
 <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
@@ -389,7 +389,7 @@ if (mysql_num_rows($result) > 0) { ?>
 					echo "<BR>";
 					
 				} ?>
-                <input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=$field_data?>"><BR><BR><?php
+                <input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=htmlentities($field_data)?>"><BR><BR><?php
 
 			} elseif ($row->type_id == "3") { // Text Area ?>
 	

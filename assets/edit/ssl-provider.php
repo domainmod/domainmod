@@ -143,10 +143,10 @@ if ($really_del == "1") {
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="edit_ssl_provider_form" method="post" action="<?=$PHP_SELF?>">
 <strong>SSL Provider Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-<input name="new_ssl_provider" type="text" value="<?=$new_ssl_provider?>" size="50" maxlength="100">
+<input name="new_ssl_provider" type="text" value="<?=htmlentities($new_ssl_provider)?>" size="50" maxlength="100">
 <BR><BR>
 <strong>SSL Provider's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-<input name="new_url" type="text" value="<?=$new_url?>" size="50" maxlength="100">
+<input name="new_url" type="text" value="<?=htmlentities($new_url)?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>

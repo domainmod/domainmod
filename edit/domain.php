@@ -246,10 +246,10 @@ if ($really_del == "1") {
 <?php include("../_includes/layout/header.inc.php"); ?>
 <form name="edit_domain_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Domain (255)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-<input name="new_domain" type="text" size="50" maxlength="255" value="<?php if ($new_domain != "") echo $new_domain; ?>">
+<input name="new_domain" type="text" size="50" maxlength="255" value="<?php if ($new_domain != "") echo htmlentities($new_domain); ?>">
 <BR><BR>
 <strong>Function (255)</strong><BR><BR>
-<input name="new_function" type="text" size="50" maxlength="255" value="<?php if ($new_function != "") echo $new_function; ?>">
+<input name="new_function" type="text" size="50" maxlength="255" value="<?php if ($new_function != "") echo htmlentities($new_function); ?>">
 <BR><BR>
 <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
@@ -424,7 +424,7 @@ if (mysql_num_rows($result) > 0) { ?>
 					echo "<BR>";
 					
 				} ?>
-                <input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=$field_data?>"><BR><BR><?php
+                <input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=htmlentities($field_data)?>"><BR><BR><?php
 
 			} elseif ($row->type_id == "3") { // Text Area ?>
 	

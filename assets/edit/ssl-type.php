@@ -123,7 +123,7 @@ if ($really_del == "1") {
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <form name="edit_type_form" method="post" action="<?=$PHP_SELF?>">
 <strong>Type Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-<input name="new_type" type="text" value="<?php if ($new_type != "") echo $new_type; ?>
+<input name="new_type" type="text" value="<?php if ($new_type != "") echo htmlentities($new_type); ?>
 " size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>

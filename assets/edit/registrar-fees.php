@@ -341,7 +341,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) {
 ?>
 	<tr class="main_table_row_active">
-    	<td class="main_table_cell_active">.<?=$row->tld?></td>
+    	<td class="main_table_cell_active">.<?=htmlentities($row->tld)?></td>
         <td class="main_table_cell_active">
 			<?php
 			$temp_input_amount = $row->initial_fee;
