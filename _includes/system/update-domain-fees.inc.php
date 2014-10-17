@@ -32,7 +32,8 @@ include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp
 
 $sql_domain_fee_fix1 = "UPDATE domains 
 						SET fee_fixed = '0', 
-							fee_id = '0'";
+							fee_id = '0'
+                        WHERE active NOT IN ('0', '10')";
 $result_domain_fee_fix1 = mysql_query($sql_domain_fee_fix1,$connection) or die(mysql_error());
 
 $sql_domain_fee_fix2 = "UPDATE fees 
@@ -52,7 +53,8 @@ while ($row_domain_fee_fix3 = mysql_fetch_object($result_domain_fee_fix3)) {
 								fee_fixed = '1'
 							WHERE registrar_id = '" . $row_domain_fee_fix3->registrar_id. "' 
 							  AND tld = '" .$row_domain_fee_fix3->tld. "'
-							  AND fee_fixed = '0'";
+							  AND fee_fixed = '0'
+							  AND active NOT IN ('0', '10')";
 	$result_domain_fee_fix4 = mysql_query($sql_domain_fee_fix4,$connection);
 	
 	$sql_domain_fee_fix5 = "UPDATE fees
@@ -66,7 +68,8 @@ while ($row_domain_fee_fix3 = mysql_fetch_object($result_domain_fee_fix3)) {
 
 $sql_find_missing_domain_fees = "SELECT count(id) AS total_count
 								 FROM domains
-								 WHERE fee_id = '0'";
+								 WHERE fee_id = '0'
+								   AND active NOT IN ('0', '10')";
 $result_find_missing_domain_fees = mysql_query($sql_find_missing_domain_fees,$connection);
 
 while ($row_find_missing_domain_fees = mysql_fetch_object($result_find_missing_domain_fees)) { $total_results_find_missing_domain_fees = $row_find_missing_domain_fees->total_count; }
