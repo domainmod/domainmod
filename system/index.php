@@ -43,7 +43,7 @@ $software_section = "system";
 	&raquo; <a href="admin/system-info.php">System Information</a><BR>
 <?php } ?>
 <BR><BR><font class="subheadline">Maintenance</font><BR><BR>
-&raquo; <a href="../_includes/system/update-conversion-rates.inc.php?direct=1">Update Conversion Rates</a><BR>
+&raquo; <a href="../_includes/system/update-conversion-rates.inc.php?direct=1">Update Conversion Rates</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/update-domain-fees.inc.php?direct=1">Update Domain Fees</a><BR>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>
