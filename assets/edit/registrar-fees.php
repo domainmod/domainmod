@@ -96,8 +96,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been updated<BR>";
 			
-			include("../../_includes/system/update-domain-fees.inc.php");
-
 			$temp_input_user_id = $_SESSION['user_id'];
 			$temp_input_default_currency = $_SESSION['default_currency'];
 			include("../../_includes/system/update-conversion-rates.inc.php");
@@ -130,8 +128,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
-
-			include("../../_includes/system/update-domain-fees.inc.php");
 
 			$temp_input_user_id = $_SESSION['user_id'];
 			$temp_input_default_currency = $_SESSION['default_currency'];
@@ -180,8 +176,6 @@ if ($really_del == "1") {
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
-
-		include("../../_includes/system/update-domain-fees.inc.php");
 
 		$temp_input_user_id = $_SESSION['user_id'];
 		$temp_input_default_currency = $_SESSION['default_currency'];

@@ -153,7 +153,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Updated<BR>";
 
-		include("../_includes/system/update-domain-fees.inc.php");
 		include("../_includes/system/update-segments.inc.php");
 
 		header("Location: ../domains.php");
@@ -217,7 +216,7 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-	$sql = "DELETE FROM domains 
+	$sql = "DELETE FROM domains
 			WHERE id = '" . $did . "'";
 	$result = mysql_query($sql,$connection);
 
@@ -227,7 +226,6 @@ if ($really_del == "1") {
 	
 	$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Deleted<BR>";
 
-	include("../_includes/system/update-domain-fees.inc.php");
 	include("../_includes/system/update-segments.inc.php");
 	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
