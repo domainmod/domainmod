@@ -463,7 +463,7 @@ div.search-block-inner {
 }
 div.search-block-left {
 	float: left;
-	width: 490px; 
+	width: 575px;
 	padding-top: 0px;
 	padding-right: 0px; 
 	padding-bottom: 0px;
