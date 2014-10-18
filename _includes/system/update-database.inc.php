@@ -2604,7 +2604,7 @@ if ($current_db_version < $most_recent_db_version) {
 	// upgrade database from 2.0041 to 2.0042
 	if ($current_db_version == 2.0041) {
 
-		// This section was made redunant by DB update v2.005
+		// This section was made redundant by DB update v2.005
 		/*
 		$sql = "CREATE TABLE IF NOT EXISTS `updates` (
 				`id` int(10) NOT NULL auto_increment,
@@ -2809,7 +2809,7 @@ if ($current_db_version < $most_recent_db_version) {
 	// upgrade database from 2.0045 to 2.0046
 	if ($current_db_version == 2.0045) {
 
-		// This section was made redunant by DB update v2.005
+		// This section was made redundant by DB update v2.005
 		/*
 		$sql = "INSERT INTO updates
 				(name, `update`, insert_time, update_time) VALUES 
@@ -3043,7 +3043,7 @@ if ($current_db_version < $most_recent_db_version) {
 				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
-		// This section was made redunant by DB update v2.005
+		// This section was made redundant by DB update v2.005
 		/*
 		$sql = "INSERT INTO updates
 				(name, `update`, insert_time, update_time) VALUES 
@@ -3086,12 +3086,14 @@ if ($current_db_version < $most_recent_db_version) {
 	// upgrade database from 2.0049 to 2.005
 	if ($current_db_version == 2.0049) {
 
+        // This section was made redundant by DB update v2.0051
+        /*
 		$sql = "DROP TABLE IF EXISTS `updates`;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
-	
+
 		$sql = "DROP TABLE IF EXISTS `update_data`;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
-	
+
 		$sql = "CREATE TABLE IF NOT EXISTS `updates` (
 				`id` int(10) NOT NULL auto_increment,
 				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -3101,9 +3103,9 @@ if ($current_db_version < $most_recent_db_version) {
 				PRIMARY KEY  (`id`)
 				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
-	
+
 		$sql = "INSERT INTO updates
-				(name, `update`, insert_time, update_time) VALUES 
+				(name, `update`, insert_time, update_time) VALUES
 				('" . $software_title . " now contains a Software Updates section!', '<em>[This feature was implemented on 2013-05-04, but it seemed appropriate that the very first post in the Software Updates section be information about the new section itself, so the post was duplicated and backdated]</em><BR><BR>After upgrading " . $software_title . " I\'m sure it would be nice to know what new features have been added, as well as any important changes to the software that you should know about, so I\'ve added a Software Updates section that chronicles the most important and most useful new features. Now after an upgrade you can simply visit the Software Updates section and view a list of the updates since your previous version.', '2013-03-20 00:00:00', '2013-03-20 00:00:00'),
 				('Support has been added for automatic currency updates!', 'Thanks to Yahoo! Finance\'s free API, I\'m happy to announce that currency conversions have been completely automated. Now instead of having to manually update the conversions one-by-one on a regular basis to ensure proper financial reporting, all you have to do is make sure your default currency is set and your conversion rates will be updated automatically and seemlessly in the background while you use the software.<BR><BR>To say that this feature pleases me would be a huge understatement. I personally use " . $software_title . " on a daily basis, and updating the currency conversions manually was always such a boring, tedious task, and I\'m happy that nobody will ever have to go through that process ever again. If I could give Yahoo! Finance a big hug, I would.', '2013-03-20 00:00:01', '2013-03-20 00:00:01'),
 				('A new \'IP Address\' section has been added to the UI so that you can keep track of all your IP Addresses within " . $software_title . "', '', '2013-03-26 00:00:00', '2013-03-26 00:00:00'),
@@ -3127,7 +3129,7 @@ if ($current_db_version < $most_recent_db_version) {
 				('You can now create Custom Domain & SSL Fields!', 'In an effort to allow users more flexibility, as well as track as much data as possible, I\'ve implemented Custom Domain & SSL Fields. Now if there\'s information you want to track for a domain or SSL certificate but the field doesn\'t exist in " . $software_title . ", you can just add it yourself!<BR><BR>For example, if you wanted to keep track of which domains are currenty setup in Google Analytics, you could create a new Google Analytics check box field and start tracking this information for each of your domains. Or if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. Combine custom fields with the ability to update them with the Bulk Updater, and the sky\'s the limit in regards to what data you can easily track! (the Bulk Updater currently only supports domains, not SSL certificates)<BR><BR>And when you export your domain & SSL data, the information contained in your custom fields will automatically be included in the exported data.', '2013-05-25 17:00:00', '2013-05-25 17:00:00'),
 				('" . $software_title . " now includes a Data Warehouse for importing data', '" . $software_title . " now has a data warehouse framework built right into it, which allows you to import the data stored on your web servers. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also intend on adding support for Plesk and other systems once I’ve ironed out all the kinks in the framework.<BR><BR>The data warehouse is used for informational purposes only, and you will see its data referenced throughout " . $software_title . " where applicable. For example, if a domain you’re editing has information stored in your data warehouse, the system will automatically match them up and display the additional information for you, giving you even more insight into your data. You can also view, export, and run reports on the information in your data warehouse.<BR><BR>The following WHM data is currently supported, but my end goal is to have every piece of WHM information that can be retrieved via the API stored in the data warehouse.<BR><BR><strong>ACCOUNTS</strong><BR>Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max FTP Accounts, Max Email Lists, Max Parked Domains, Max POP Accounts, Max SQL Accounts, Max Subdomains, Creation Date, Suspend Status, Suspend Reason, Suspend Time, Max Email Per Hour, Failed Email % Before Defer, Min Failed Email # Before Defer<BR><BR><strong>DNS ZONES</strong><BR>Zone File Name, Original/Primary Source of Zone Data, Admin Email, Serial #, Refresh, Retry, Expiry, Minimum TTL, Authoritative Name Server<BR><BR><strong>DNS RECORDS</strong><BR>TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data<BR><BR><font class=\"default_highlight\">NOTE:</font> Importing your server into the data warehouse will not modify any of your " . $software_title . " data.', '2013-06-01 1:00:00', '2013-06-01 1:00:00')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
-	
+
 		$sql = "CREATE TABLE IF NOT EXISTS update_data (
 				`id` int(10) NOT NULL auto_increment,
 				`user_id` int(10) NOT NULL,
@@ -3136,27 +3138,27 @@ if ($current_db_version < $most_recent_db_version) {
 				PRIMARY KEY  (`id`)
 				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
-		
+
 		$sql = "SELECT id
 				FROM users";
 		$result = mysql_query($sql,$connection);
-	
+
 		while ($row = mysql_fetch_object($result)) {
-	
+
 			$sql_updates = "SELECT id
 							FROM `updates`";
 			$result_updates = mysql_query($sql_updates,$connection);
-	
+
 			while ($row_updates = mysql_fetch_object($result_updates)) {
-	
-				$sql_insert = "INSERT INTO 
+
+				$sql_insert = "INSERT INTO
 							   update_data
-							   (user_id, update_id, insert_time) VALUES 
+							   (user_id, update_id, insert_time) VALUES
 							   ('" . $row->id . "', '" . $row_updates->id . "', '" . $current_timestamp . "')";
 				$result_insert = mysql_query($sql_insert,$connection);
-	
+
 			}
-	
+
 		}
 
 		$_SESSION['are_there_updates'] = "1";
@@ -3166,9 +3168,11 @@ if ($current_db_version < $most_recent_db_version) {
 					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
-		$current_db_version = 2.005;
+        */
 
-	}
+        $current_db_version = 2.005;
+
+    }
 
     // upgrade database from 2.005 to 2.0051
     if ($current_db_version == 2.005) {

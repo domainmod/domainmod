@@ -632,19 +632,6 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/admin/dw/servers.php">Servers</a>&nbsp;
 	&raquo;&nbsp;Editing A Server&nbsp;<?php 
 
-} elseif ($software_section == "updates") {
-	
-	if ($id == "") { ?>
-
-		&raquo;&nbsp;<strong><?=$software_title?> Updates</string>&nbsp;<?php
-		
-	} else { ?>
-
-		&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/updates.php"><?=$software_title?> Updates</a>&nbsp;
-		&raquo;&nbsp;<strong>Viewing An Update</string>&nbsp;<?php
-		
-	}
-
 } elseif ($software_section == "help") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/help/">Main</a>&nbsp;

@@ -35,40 +35,9 @@
                 <?php include($full_server_path . "/_includes/layout/menu-main.inc.php"); ?><BR>
                 <?php } ?>
             </div>
-            <div class="update_box_header"><?php 
-				if ($_SESSION['are_there_updates'] == "1") { ?>
-	
-					<a href="<?php if ($web_root != "") echo $web_root; ?>/updates.php"><font class="subheadline">Recent Software Updates</font></a><BR><?php
-					$sql_updates = "SELECT u.id, u.name
-									FROM updates AS u, update_data AS ud
-									WHERE u.id = ud.update_id
-									  AND ud.user_id = '" . $_SESSION['user_id'] . "'
-									ORDER BY u.insert_time desc, u.id desc
-									LIMIT 3";
-					$result_updates = mysql_query($sql_updates,$connection);
-					while ($row_updates = mysql_fetch_object($result_updates)) {
-
-						if ($web_root != "") {
-
-							echo "<a class=\"invisiblelink\" href=\"" . $web_root . "/updates.php?id=" . $row_updates->id . "\">";
-
-						} else {
-
-							echo "<a class=\"invisiblelink\" href=\"/updates.php?id=" . $row_updates->id . "\">";
-
-						}
-						echo substr($row_updates->name, 0, 65); 
-						if (strlen($row_updates->name) >= 65) echo "...";
-						echo "</a>";
-						echo "<BR>";
-
-					} ?>
-                    
-					[<a class="invisiblelink" href="<?php if ($web_root != "") echo $web_root; ?>/_includes/system/mark-updates-read.inc.php?direct=1">mark all updates as read</a>]<?php
-
-				}
-				?>
-            </div>
+            <div class="update_box_header">
+                &nbsp;
+			</div>
             <div style="clear: both;"></div>
         </div>
         <div class="main-inner">
