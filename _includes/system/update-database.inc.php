@@ -3170,7 +3170,25 @@ if ($current_db_version < $most_recent_db_version) {
 
 	}
 
-	if ($direct == "1") {
+    // upgrade database from 2.005 to 2.0051
+    if ($current_db_version == 2.005) {
+
+        $sql = "DROP TABLE IF EXISTS `updates`;";
+        $result = mysql_query($sql,$connection) or die(mysql_error());
+
+        $sql = "DROP TABLE IF EXISTS `update_data`;";
+        $result = mysql_query($sql,$connection) or die(mysql_error());
+
+        $sql = "UPDATE settings
+				SET db_version = '2.0051',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+        $result = mysql_query($sql,$connection) or die(mysql_error());
+
+        $current_db_version = 2.0051;
+
+    }
+
+    if ($direct == "1") {
 	
 		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
 			
