@@ -1,5 +1,8 @@
 DomainMOD Changelog
 ===================
+v0.76.0   2014-10-17   360ea5f6ba734ea8672e20afb0ac8d41f729468e
+ - Removed the code for the Software Updates section
+
 v0.75.0   2014-10-17   3b45dd19499e903654f3190e270a0a0bb3287160
  - Added a cron job to fix domain fees
 
