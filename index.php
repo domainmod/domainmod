@@ -170,8 +170,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				include("_includes/system/update-tlds.inc.php");
 
 			}
-			
-			if ($_SESSION['is_new_password'] == 1) {
+
+           include("_includes/system/check-domain-fees.inc.php");
+
+           if ($_SESSION['is_new_password'] == 1) {
 				
 				$_SESSION['result_message'] .= "Your password should be changed for security purposes<BR>";
 				header("Location: system/change-password.php");

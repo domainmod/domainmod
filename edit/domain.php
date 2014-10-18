@@ -152,9 +152,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$did = $new_did;
 		
 		$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Updated<BR>";
-        $_SESSION['result_message'] .= "<BR>If you've added a new TLD, you should <a href=\"_includes/system/update-domain-fees.inc.php?direct=1\">update the domain fees system-wide</a> (this may take some time)<BR><BR>";
 
-		include("../_includes/system/update-segments.inc.php");
+        include("../_includes/system/check-domain-fees.inc.php");
+        include("../_includes/system/update-segments.inc.php");
 
 		header("Location: ../domains.php");
 		exit;
