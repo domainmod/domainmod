@@ -50,27 +50,25 @@ NOTE: Whenever possible I recommend that you use option #1, the git repository d
 ## Cron Job Installation (Optional)
 Included with DomainMOD are multiple cron jobs to help keep things running smoothly. The cron jobs are completely optional, and they can be triggered at whatever frequency you wish.
 
+To run all current and future cron jobs, simply execute this one cron job instead of the others below:
+
+    /cron/main.php
+
 The first cron job will update the conversion rates for all active currencies.
 
-The file to execute is:
-
-    /cron/currencies.php  
+The file to execute is: /cron/currencies.php
 
 The second cron job will send out an email reminder about Domains and SSL Certificates that are coming up for renewal (to all active, subscribed users).
 
-The file to execute is:
-
-    /cron/expirations.php  
+The file to execute is: /cron/expirations.php
 
 The third cron job will rebuild your Data Warehouse. If you're going to use the Data Warehouse it's highly recommended that you set this cron job up to automate your builds. There's a lot of work being done in the background during a build, and more often than not a web browser will timeout if you try to build through the UI instead of using the cron job, leading to incomplete and missing information in your Data Warehouse. I would recommend setting the cron job up to run daily, preferably while you're asleep, so that way you'll always start the day with the freshest data possible.
 
-The file to execute is:
+The file to execute is: /cron/dw.php
 
-    /cron/dw.php  
+The forth cron job will fix various domain fee related issues. I would recommend setting the cron job up to run daily, preferably while you're asleep, so that way you'll always start the day with the freshest data possible.
 
-To run all current and future jobs, simply execute this cron job instead of the ones above:
-
-    /cron/main.php  
+The file to execute is: /cron/fixfees.php
 
 
 ## Data Warehouse
