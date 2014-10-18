@@ -64,9 +64,8 @@ $message .= "
 						$message .= "<BR>";
 						$message .= "Best Regards,<BR>";
 						$message .= "<BR>";
-						$message .= "AYS Media<BR>";
-						$message .= "<a target=\"_blank\" href=\"http://aysmedia.com\">http://aysmedia.com</a><BR>";
-						$message .= "<a target=\"_blank\" href=\"mailto:dm@aysmedia.com\">dm@aysmedia.com</a><BR>";
+						$message .= "Greg Chetcuti<BR>";
+						$message .= "<a target=\"_blank\" href=\"mailto:greg@domainmod.org\">greg@domainmod.org</a><BR>";
 						$message .= "<BR>";
 						$message .= "</font>
 					</td>
