@@ -1,5 +1,8 @@
 DomainMOD Changelog
 ===================
+v0.75.0   2014-10-17   3b45dd19499e903654f3190e270a0a0bb3287160
+ - Added a cron job to fix domain fees
+
 v0.74.0   2014-10-14   9643de9a298f8cff3ef4916eb0991080aa21e8db
  - Updated the Bulk Updater to allow for domain deletions
 
