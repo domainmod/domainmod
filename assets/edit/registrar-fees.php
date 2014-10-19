@@ -40,103 +40,137 @@ $new_transfer_fee = $_POST['new_transfer_fee'];
 $new_currency_id = $_POST['new_currency_id'];
 $new_rid = $_POST['new_rid'];
 
+$fee_id = $_POST['fee_id'];
+$initial_fee = $_POST['initial_fee'];
+$renewal_fee = $_POST['renewal_fee'];
+$transfer_fee = $_POST['transfer_fee'];
+$currency = $_POST['currency'];
+
+$which_form = $_POST['which_form'];
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_rid == "" || $new_tld == "" || $new_initial_fee == "" || $new_renewal_fee == "" || $new_transfer_fee == "" || $new_currency_id == "" || $new_currency_id == "0") {
-		
-		if ($new_tld == "") $_SESSION['result_message'] .= "Please enter the TLD<BR>";
-		if ($new_initial_fee == "") $_SESSION['result_message'] .= "Please enter the initial fee<BR>";
-		if ($new_renewal_fee == "") $_SESSION['result_message'] .= "Please enter the renewal fee<BR>";
-		if ($new_transfer_fee == "") $_SESSION['result_message'] .= "Please enter the transfer fee<BR>";
-		if ($new_currency_id == "" || $new_currency_id == "0") $_SESSION['result_message'] .= "There was a problem with the currency you chose<BR>";
+    if ($which_form == "edit") {
 
-	} else {
-		
-		$new_tld = trim($new_tld, ". \t\n\r\0\x0B");
+        $count = 0;
 
-		$sql = "SELECT *
-				FROM fees
-				WHERE registrar_id = '" . $new_rid . "'
-				  AND tld = '" . $new_tld . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+        foreach ($fee_id as $value) {
 
-		if (mysql_num_rows($result) > 0) {
-			
-			$sql = "UPDATE fees
-					SET initial_fee = '" . $new_initial_fee . "',
-						renewal_fee = '" . $new_renewal_fee . "',
-						transfer_fee = '" . $new_transfer_fee . "',
-						currency_id = '" . $new_currency_id . "',
-						update_time = '" . $current_timestamp . "'
-					WHERE registrar_id = '" . $new_rid . "'
-					  AND tld = '" . $new_tld . "'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+            $sql = "UPDATE fees
+                    SET initial_fee = '" . $initial_fee[$count] . "',
+                        renewal_fee = '" . $renewal_fee[$count] . "',
+                        transfer_fee = '" . $transfer_fee[$count] . "',
+                        currency_id = '" . $currency[$count] . "',
+                        update_time = '" . $current_timestamp . "'
+                    WHERE id = '" . $fee_id[$count] . "'";
+            $result = mysql_query($sql,$connection) or die(mysql_error());
 
-			$sql = "SELECT id
-					FROM fees
-					WHERE registrar_id = '" . $new_rid . "'
-					  AND tld = '" . $new_tld . "'
-					  AND currency_id = '" . $new_currency_id . "'
-					LIMIT 1";
-	
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+            $count++;
 
-			while ($row = mysql_fetch_object($result)) {
-				$new_fee_id = $row->id;
-			}
+        }
 
-			$sql = "UPDATE domains
-					SET fee_id = '" . $new_fee_id . "',
-						update_time = '" . $current_timestamp . "'
-					WHERE registrar_id = '" . $new_rid . "'
-					  AND tld = '" . $new_tld . "'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-	
-			$rid = $new_rid;
+        $_SESSION['result_message'] = "The Registrar Fees have been updated<BR>";
+        include("../../_includes/system/update-conversion-rates.inc.php");
 
-			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been updated<BR>";
+    } elseif ($which_form == "add") {
 
-			$temp_input_user_id = $_SESSION['user_id'];
-			$temp_input_default_currency = $_SESSION['default_currency'];
-			include("../../_includes/system/update-conversion-rates.inc.php");
+        if ($new_rid == "" || $new_tld == "" || $new_initial_fee == "" || $new_renewal_fee == "" || $new_transfer_fee == "" || $new_currency_id == "" || $new_currency_id == "0") {
 
-		} else {
-			
-			$sql = "INSERT INTO fees 
-					(registrar_id, tld, initial_fee, renewal_fee, transfer_fee, currency_id, insert_time) VALUES 
-					('" . $new_rid . "', '" . mysql_real_escape_string($new_tld) . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+            if ($new_tld == "") $_SESSION['result_message'] .= "Please enter the TLD<BR>";
+            if ($new_initial_fee == "") $_SESSION['result_message'] .= "Please enter the initial fee<BR>";
+            if ($new_renewal_fee == "") $_SESSION['result_message'] .= "Please enter the renewal fee<BR>";
+            if ($new_transfer_fee == "") $_SESSION['result_message'] .= "Please enter the transfer fee<BR>";
+            if ($new_currency_id == "" || $new_currency_id == "0") $_SESSION['result_message'] .= "There was a problem with the currency you chose<BR>";
 
-			$sql = "SELECT id
-					FROM fees
-					WHERE registrar_id = '" . $new_rid . "'
-					  AND tld = '" . $new_tld . "'
-					  AND currency_id = '" . $new_currency_id . "'
-					ORDER BY id desc
-					LIMIT 1";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			
-			while ($row = mysql_fetch_object($result)) {
-				$new_fee_id = $row->id;
-			}
+        } else {
 
-			$sql = "UPDATE domains
-					SET fee_id = '" . $new_fee_id . "',
-						update_time = '" . $current_timestamp . "'
-					WHERE registrar_id = '" . $new_rid . "'
-					  AND tld = '" . $new_tld . "'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-	
-			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
+            $new_tld = trim($new_tld, ". \t\n\r\0\x0B");
 
-			$temp_input_user_id = $_SESSION['user_id'];
-			$temp_input_default_currency = $_SESSION['default_currency'];
-            include("../../_includes/system/check-domain-fees.inc.php");
-            include("../../_includes/system/update-conversion-rates.inc.php");
+            $sql = "SELECT *
+                    FROM fees
+                    WHERE registrar_id = '" . $new_rid . "'
+                      AND tld = '" . $new_tld . "'";
+            $result = mysql_query($sql, $connection) or die(mysql_error());
 
-		}
+            if (mysql_num_rows($result) > 0) {
 
-	}
+                $sql = "UPDATE fees
+                        SET initial_fee = '" . $new_initial_fee . "',
+                            renewal_fee = '" . $new_renewal_fee . "',
+                            transfer_fee = '" . $new_transfer_fee . "',
+                            currency_id = '" . $new_currency_id . "',
+                            update_time = '" . $current_timestamp . "'
+                        WHERE registrar_id = '" . $new_rid . "'
+                          AND tld = '" . $new_tld . "'";
+                $result = mysql_query($sql, $connection) or die(mysql_error());
+
+                $sql = "SELECT id
+                        FROM fees
+                        WHERE registrar_id = '" . $new_rid . "'
+                          AND tld = '" . $new_tld . "'
+                          AND currency_id = '" . $new_currency_id . "'
+                        LIMIT 1";
+
+                $result = mysql_query($sql, $connection) or die(mysql_error());
+
+                while ($row = mysql_fetch_object($result)) {
+                    $new_fee_id = $row->id;
+                }
+
+                $sql = "UPDATE domains
+                        SET fee_id = '" . $new_fee_id . "',
+                            update_time = '" . $current_timestamp . "'
+                        WHERE registrar_id = '" . $new_rid . "'
+                          AND tld = '" . $new_tld . "'";
+                $result = mysql_query($sql, $connection) or die(mysql_error());
+
+                $rid = $new_rid;
+
+                $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been updated<BR>";
+
+                $temp_input_user_id = $_SESSION['user_id'];
+                $temp_input_default_currency = $_SESSION['default_currency'];
+                include("../../_includes/system/update-conversion-rates.inc.php");
+
+            } else {
+
+                $sql = "INSERT INTO fees
+                        (registrar_id, tld, initial_fee, renewal_fee, transfer_fee, currency_id, insert_time) VALUES
+                        ('" . $new_rid . "', '" . mysql_real_escape_string($new_tld) . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
+                $result = mysql_query($sql, $connection) or die(mysql_error());
+
+                $sql = "SELECT id
+                        FROM fees
+                        WHERE registrar_id = '" . $new_rid . "'
+                          AND tld = '" . $new_tld . "'
+                          AND currency_id = '" . $new_currency_id . "'
+                        ORDER BY id DESC
+                        LIMIT 1";
+                $result = mysql_query($sql, $connection) or die(mysql_error());
+
+                while ($row = mysql_fetch_object($result)) {
+                    $new_fee_id = $row->id;
+                }
+
+                $sql = "UPDATE domains
+                        SET fee_id = '" . $new_fee_id . "',
+                            update_time = '" . $current_timestamp . "'
+                        WHERE registrar_id = '" . $new_rid . "'
+                          AND tld = '" . $new_tld . "'";
+                $result = mysql_query($sql, $connection) or die(mysql_error());
+
+                $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
+
+                $temp_input_user_id = $_SESSION['user_id'];
+                $temp_input_default_currency = $_SESSION['default_currency'];
+                include("../../_includes/system/check-domain-fees.inc.php");
+                include("../../_includes/system/update-conversion-rates.inc.php");
+
+            }
+
+        }
+
+    }
 
 }
 
@@ -180,9 +214,10 @@ if ($really_del == "1") {
 
 		$temp_input_user_id = $_SESSION['user_id'];
 		$temp_input_default_currency = $_SESSION['default_currency'];
+        include("../../_includes/system/check-domain-fees.inc.php");
 		include("../../_includes/system/update-conversion-rates.inc.php");
 
-		header("Location: registrar-fees.php?rid=$rid");
+        header("Location: registrar-fees.php?rid=$rid");
 		exit;
 
 	}
@@ -269,25 +304,25 @@ if (mysql_num_rows($result) != 0) {
 
 }
 ?>
-<font class="subheadline">Add/Update TLD Fee</font><BR>
-<form name="edit_registrar_fee_form" method="post" action="<?=$PHP_SELF?>">
+<font class="subheadline">Add A New TLD Fee</font><BR>
+<form name="add_registrar_fee_form" method="post" action="<?=$PHP_SELF?>">
 <table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active">
         	<strong>TLD</strong><BR>
-            <input name="new_tld" type="text" value="<?=$new_tld?>" size="10">
+            <input name="new_tld" type="text" value="<?=$new_tld?>" size="4">
 		</td>
 		<td class="main_table_cell_heading_active">
         	<strong>Initial Fee</strong><BR>
-            <input name="new_initial_fee" type="text" value="<?=$new_initial_fee?>" size="10">
+            <input name="new_initial_fee" type="text" value="<?=$new_initial_fee?>" size="4">
 		</td>
 		<td class="main_table_cell_heading_active">
         	<strong>Renewal Fee</strong><BR>
-            <input name="new_renewal_fee" type="text" value="<?=$new_renewal_fee?>" size="10">
+            <input name="new_renewal_fee" type="text" value="<?=$new_renewal_fee?>" size="4">
 		</td>
 		<td class="main_table_cell_heading_active">
         	<strong>Transfer Fee</strong><BR>
-            <input name="new_transfer_fee" type="text" value="<?=$new_transfer_fee?>" size="10">
+            <input name="new_transfer_fee" type="text" value="<?=$new_transfer_fee?>" size="4">
 		</td>
 	  	<td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
 		  <select name="new_currency_id" id="new_currency">
@@ -313,11 +348,13 @@ if (mysql_num_rows($result) != 0) {
 	    </td>
 	</tr>
 </table>
-<input type="hidden" name="new_rid" value="<?=$rid?>"><BR>
-<input type="submit" name="button" value="Add/Update This TLD Fee &raquo;">
+    <input type="hidden" name="new_rid" value="<?=$rid?>"><BR>
+    <input type="hidden" name="which_form" value="add"><BR>
+    <input type="submit" name="button" value="Add This TLD Fee &raquo;">
 </form>
 <BR><BR>
 <font class="subheadline">TLD Fees</font><BR>
+<form name="edit_registrar_fee_form" method="post" action="<?=$PHP_SELF?>">
 <table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active"><strong>TLD</strong></td>
@@ -333,51 +370,53 @@ $sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, c.curr
 		  AND f.registrar_id = '" . $rid . "'
 		ORDER BY f.tld asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
+$count = 0;
 while ($row = mysql_fetch_object($result)) {
 ?>
 	<tr class="main_table_row_active">
     	<td class="main_table_cell_active">.<?=htmlentities($row->tld)?></td>
         <td class="main_table_cell_active">
-			<?php
-			$temp_input_amount = $row->initial_fee;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $row->symbol;
-			$temp_input_currency_symbol_order = $row->symbol_order;
-			$temp_input_currency_symbol_space = $row->symbol_space;
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			echo $temp_output_amount;
-            ?>
-		</td>
+            <input type="hidden" name="fee_id[<?=$count?>]" value="<?=$row->id?>">
+            <input name="initial_fee[<?=$count?>]" type="text" value="<?=$row->initial_fee?>" size="4">
+        </td>
         <td class="main_table_cell_active">
-			<?php
-			$temp_input_amount = $row->renewal_fee;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $row->symbol;
-			$temp_input_currency_symbol_order = $row->symbol_order;
-			$temp_input_currency_symbol_space = $row->symbol_space;
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			echo $temp_output_amount;
-            ?>
-		</td>
+            <input name="renewal_fee[<?=$count?>]" type="text" value="<?=$row->renewal_fee?>" size="4">
+        </td>
         <td class="main_table_cell_active">
-			<?php
-			$temp_input_amount = $row->transfer_fee;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $row->symbol;
-			$temp_input_currency_symbol_order = $row->symbol_order;
-			$temp_input_currency_symbol_space = $row->symbol_space;
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			echo $temp_output_amount;
-            ?>
-		</td>
-        <td class="main_table_cell_active"><?=$row->currency?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="registrar-fees.php?rid=<?=$rid?>&tld=<?=$row->tld?>&feeid=<?=$row->id?>&del=1">delete</a>]
+            <input name="transfer_fee[<?=$count?>]" type="text" value="<?=$row->transfer_fee?>" size="4">
+        </td>
+        <td class="main_table_cell_active">
+            <select name="currency[<?=$count?>]" id="new_currency">
+                <?php
+                $sql_currency = "SELECT id, currency, name, symbol
+                                 FROM currencies
+                                 ORDER BY currency";
+                $result_currency = mysql_query($sql_currency,$connection) or die(mysql_error());
+                while ($row_currency = mysql_fetch_object($result_currency)) {
+
+                    if ($row_currency->currency == $row->currency) {
+                        ?>
+                        <option value="<?=$row_currency->id?>" selected><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
+                    <?php
+                    } else {
+                        ?>
+                        <option value="<?=$row_currency->id?>"><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
+                    <?php
+                    }
+                }
+                ?>
+            </select>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="registrar-fees.php?rid=<?=$rid?>&tld=<?=$row->tld?>&feeid=<?=$row->id?>&del=1">delete</a>]
         </td>
 	</tr>
 <?php
+$count++;
 }
 ?>
 </table>
+    <input type="hidden" name="which_form" value="edit"><BR>
+<BR><input type="submit" name="button" value="Update Registrar Fees &raquo;">
+</form>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>
