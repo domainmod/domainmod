@@ -1,5 +1,8 @@
 DomainMOD Changelog
 ===================
+v0.80.0   2014-10-19   2d57db455299e406d9a5265009be2a7abcd8320c
+ - Added a Misc Fee to the Registrar & SSL Provider Fee Asset Pages
+
 v0.79.0   2014-10-19   a2b2b0f2cae142b60580d1799e0c7f592d1ad92b
  - Added a WHOIS Privacy Fee to the Registrar Fees Asset Page
 
