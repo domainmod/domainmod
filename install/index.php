@@ -371,6 +371,7 @@ if (mysql_num_rows( mysql_query("SHOW TABLES LIKE '" . settings . "'"))) {
 				`initial_fee` float NOT NULL,
 				`renewal_fee` float NOT NULL,
 				`transfer_fee` float NOT NULL,
+				`privacy_fee` float NOT NULL,
 				`currency_id` int(10) NOT NULL,
 				`fee_fixed` int(1) NOT NULL,
 				`insert_time` datetime NOT NULL,

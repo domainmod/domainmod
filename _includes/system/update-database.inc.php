@@ -3200,6 +3200,22 @@ if ($current_db_version < $most_recent_db_version) {
 
     }
 
+    // upgrade database from 2.0051 to 2.0052
+    if ($current_db_version == 2.0051) {
+
+        $sql = "ALTER TABLE `fees`
+				ADD `privacy_fee` FLOAT NOT NULL AFTER `transfer_fee`";
+        $result = mysql_query($sql,$connection);
+
+        $sql = "UPDATE settings
+				SET db_version = '2.0052',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+        $result = mysql_query($sql,$connection) or die(mysql_error());
+
+        $current_db_version = 2.0052;
+
+    }
+
     if ($direct == "1") {
 	
 		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
