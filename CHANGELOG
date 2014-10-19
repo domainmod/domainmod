@@ -1,5 +1,8 @@
 DomainMOD Changelog
 ===================
+v0.77.0   2014-10-18   d324a08f6c74e28d2efe7a91b1e5144f1a5c7e2d
+ - Added the ability to export Segments
+
 v0.76.0   2014-10-17   360ea5f6ba734ea8672e20afb0ac8d41f729468e
  - Removed the code for the Software Updates section
 
