@@ -1,5 +1,8 @@
 DomainMOD Changelog
 ===================
+v0.77.1   2014-10-19   f704608896d525efa0b01a8f93d8852f2a061336
+ - Implemented in-line editing of Registrar Fees
+
 v0.77.0   2014-10-18   d324a08f6c74e28d2efe7a91b1e5144f1a5c7e2d
  - Added the ability to export Segments
 
