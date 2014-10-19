@@ -3236,6 +3236,58 @@ if ($current_db_version < $most_recent_db_version) {
 
     }
 
+    // upgrade database from 2.0053 to 2.0054
+    if ($current_db_version == 2.0053) {
+
+        $sql = "ALTER TABLE `domains`
+				ADD `total_cost` FLOAT NOT NULL AFTER `fee_id`";
+        $result = mysql_query($sql,$connection);
+
+        $sql = "SELECT d.id, d.fee_id, f.renewal_fee
+                FROM domains AS d, fees AS f
+                WHERE d.fee_id = f.id
+                ORDER BY domain ASC";
+
+        $result = mysql_query($sql,$connection);
+
+        while ($row = mysql_fetch_object($result)) {
+
+            $sql_update = "UPDATE domains
+                           SET total_cost = '" . $row->renewal_fee . "'
+                           WHERE id = '" . $row->id . "'
+                             AND fee_id = '" . $row->fee_id . "'";
+            $result_update = mysql_query($sql_update,$connection);
+
+        }
+
+        $sql = "ALTER TABLE `ssl_certs`
+				ADD `total_cost` FLOAT NOT NULL AFTER `fee_id`";
+        $result = mysql_query($sql,$connection);
+
+        $sql = "SELECT s.id, s.fee_id, sf.renewal_fee
+                FROM ssl_certs AS s, ssl_fees AS sf
+                WHERE s.fee_id = sf.id";
+        $result = mysql_query($sql,$connection);
+
+        while ($row = mysql_fetch_object($result)) {
+
+            $sql_update = "UPDATE ssl_certs
+                           SET total_cost = '" . $row->renewal_fee . "'
+                           WHERE id = '" . $row->id . "'
+                             AND fee_id = '" . $row->fee_id . "'";
+            $result_update = mysql_query($sql_update,$connection);
+
+        }
+
+        $sql = "UPDATE settings
+				SET db_version = '2.0054',
+					update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
+        $result = mysql_query($sql,$connection) or die(mysql_error());
+
+        $current_db_version = 2.0054;
+
+    }
+
     if ($direct == "1") {
 	
 		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
