@@ -1,5 +1,8 @@
 DomainMOD Changelog
 ===================
+v0.78.0   2014-10-19   c5bae7c3c2228e0c76776e65eb7a86514f76dd8f
+ - Implemented in-line editing of SSL Provider Fees
+
 v0.77.1   2014-10-19   f704608896d525efa0b01a8f93d8852f2a061336
  - Implemented in-line editing of Registrar Fees
 
