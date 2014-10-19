@@ -37,6 +37,7 @@ $new_tld = $_POST['new_tld'];
 $new_initial_fee = $_POST['new_initial_fee'];
 $new_renewal_fee = $_POST['new_renewal_fee'];
 $new_transfer_fee = $_POST['new_transfer_fee'];
+$new_privacy_fee = $_POST['new_privacy_fee'];
 $new_currency_id = $_POST['new_currency_id'];
 $new_rid = $_POST['new_rid'];
 
@@ -44,6 +45,7 @@ $fee_id = $_POST['fee_id'];
 $initial_fee = $_POST['initial_fee'];
 $renewal_fee = $_POST['renewal_fee'];
 $transfer_fee = $_POST['transfer_fee'];
+$privacy_fee = $_POST['privacy_fee'];
 $currency = $_POST['currency'];
 
 $which_form = $_POST['which_form'];
@@ -60,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     SET initial_fee = '" . $initial_fee[$count] . "',
                         renewal_fee = '" . $renewal_fee[$count] . "',
                         transfer_fee = '" . $transfer_fee[$count] . "',
+                        privacy_fee = '" . $privacy_fee[$count] . "',
                         currency_id = '" . $currency[$count] . "',
                         update_time = '" . $current_timestamp . "'
                     WHERE id = '" . $fee_id[$count] . "'";
@@ -98,6 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         SET initial_fee = '" . $new_initial_fee . "',
                             renewal_fee = '" . $new_renewal_fee . "',
                             transfer_fee = '" . $new_transfer_fee . "',
+                            privacy_fee = '" . $new_privacy_fee . "',
                             currency_id = '" . $new_currency_id . "',
                             update_time = '" . $current_timestamp . "'
                         WHERE registrar_id = '" . $new_rid . "'
@@ -135,8 +139,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
 
                 $sql = "INSERT INTO fees
-                        (registrar_id, tld, initial_fee, renewal_fee, transfer_fee, currency_id, insert_time) VALUES
-                        ('" . $new_rid . "', '" . mysql_real_escape_string($new_tld) . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
+                        (registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, currency_id, insert_time) VALUES
+                        ('" . $new_rid . "', '" . mysql_real_escape_string($new_tld) . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "', '" . $new_privacy_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
                 $result = mysql_query($sql, $connection) or die(mysql_error());
 
                 $sql = "SELECT id
@@ -320,10 +324,14 @@ if (mysql_num_rows($result) != 0) {
         	<strong>Renewal Fee</strong><BR>
             <input name="new_renewal_fee" type="text" value="<?=$new_renewal_fee?>" size="4">
 		</td>
-		<td class="main_table_cell_heading_active">
-        	<strong>Transfer Fee</strong><BR>
+        <td class="main_table_cell_heading_active">
+            <strong>Transfer Fee</strong><BR>
             <input name="new_transfer_fee" type="text" value="<?=$new_transfer_fee?>" size="4">
-		</td>
+        </td>
+        <td class="main_table_cell_heading_active">
+            <strong>Privacy Fee</strong><BR>
+            <input name="new_privacy_fee" type="text" value="<?=$new_privacy_fee?>" size="4">
+        </td>
 	  	<td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
 		  <select name="new_currency_id" id="new_currency">
 		  	<?php
@@ -361,10 +369,11 @@ if (mysql_num_rows($result) != 0) {
         <td class="main_table_cell_heading_active"><strong>Initial Fee</strong></td>
         <td class="main_table_cell_heading_active"><strong>Renewal Fee</strong></td>
         <td class="main_table_cell_heading_active"><strong>Transfer Fee</strong></td>
+        <td class="main_table_cell_heading_active"><strong>Privacy Fee</strong></td>
         <td class="main_table_cell_heading_active"><strong>Currency</strong></td>
 	</tr>
 <?php
-$sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, c.currency, c.symbol, c.symbol_order, c.symbol_space
+$sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, c.currency, c.symbol, c.symbol_order, c.symbol_space
 		FROM fees AS f, currencies AS c
 		WHERE f.currency_id = c.id
 		  AND f.registrar_id = '" . $rid . "'
@@ -384,6 +393,9 @@ while ($row = mysql_fetch_object($result)) {
         </td>
         <td class="main_table_cell_active">
             <input name="transfer_fee[<?=$count?>]" type="text" value="<?=$row->transfer_fee?>" size="4">
+        </td>
+        <td class="main_table_cell_active">
+            <input name="privacy_fee[<?=$count?>]" type="text" value="<?=$row->privacy_fee?>" size="4">
         </td>
         <td class="main_table_cell_active">
             <select name="currency[<?=$count?>]" id="new_currency">
