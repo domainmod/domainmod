@@ -39,115 +39,151 @@ $new_renewal_fee = $_POST['new_renewal_fee'];
 $new_currency_id = $_POST['new_currency_id'];
 $new_sslpid = $_POST['new_sslpid'];
 
+$fee_id = $_POST['fee_id'];
+$initial_fee = $_POST['initial_fee'];
+$renewal_fee = $_POST['renewal_fee'];
+$currency = $_POST['currency'];
+
+$which_form = $_POST['which_form'];
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_sslpid == "" || $new_type_id == "" || $new_type_id == "0" || $new_initial_fee == "" || $new_renewal_fee == "" || $new_currency_id == "" || $new_currency_id == "0") {
-		
-		if ($new_initial_fee == "") $_SESSION['result_message'] .= "Please enter the initial fee<BR>";
-		if ($new_renewal_fee == "") $_SESSION['result_message'] .= "Please enter the renewal fee<BR>";
-		if ($new_type_id == "" || $new_type_id == "0") $_SESSION['result_message'] .= "There was a problem with the SSL Type you chose<BR>";
-		if ($new_currency_id == "" || $new_currency_id == "0") $_SESSION['result_message'] .= "There was a problem with the currency you chose<BR>";
+    if ($which_form == "edit") {
 
-	} else {
+        $count = 0;
 
-		$sql = "SELECT *
-				FROM ssl_fees
-				WHERE ssl_provider_id = '" . $new_sslpid . "'
-				  AND type_id = '" . $new_type_id . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+        foreach ($fee_id as $value) {
 
-		if (mysql_num_rows($result) > 0) {
-			
-			$sql = "UPDATE ssl_fees
-					SET initial_fee = '" . $new_initial_fee . "',
-						renewal_fee = '" . $new_renewal_fee . "',
-						currency_id = '" . $new_currency_id . "',
-						update_time = '" . $current_timestamp . "'
-					WHERE ssl_provider_id = '" . $new_sslpid . "'
-					  AND type_id = '" . $new_type_id . "'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+            $sql = "UPDATE ssl_fees
+                        SET initial_fee = '" . $initial_fee[$count] . "',
+                            renewal_fee = '" . $renewal_fee[$count] . "',
+                            currency_id = '" . $currency[$count] . "',
+                            update_time = '" . $current_timestamp . "'
+                        WHERE id = '" . $fee_id[$count] . "'";
+            $result = mysql_query($sql,$connection) or die(mysql_error());
 
-			$sql = "SELECT id
-					FROM ssl_fees
-					WHERE ssl_provider_id = '" . $new_sslpid . "'
-					  AND type_id = '" . $new_type_id . "'
-					  AND currency_id = '" . $new_currency_id . "'
-					LIMIT 1";
-	
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+            $count++;
 
-			while ($row = mysql_fetch_object($result)) {
-				$new_fee_id = $row->id;
-			}
+        }
 
-			$sql = "UPDATE ssl_certs
-					SET fee_id = '" . $new_fee_id . "',
-						update_time = '" . $current_timestamp . "'
-					WHERE ssl_provider_id = '" . $new_sslpid . "'
-					  AND type_id = '" . $new_type_id . "'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			
-			$sql = "SELECT type
-					FROM ssl_cert_types
-					WHERE id = '" . $new_type_id . "'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
-	
-			$sslpid = $new_sslpid;
+        $_SESSION['result_message'] = "The SSL Provider Fees have been updated<BR>";
+        include("../../_includes/system/update-conversion-rates.inc.php");
 
-			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been updated<BR>";
-			
-			include("../../_includes/system/update-ssl-fees.inc.php");
+    } elseif ($which_form == "add") {
 
-			$temp_input_user_id = $_SESSION['user_id'];
-			$temp_input_default_currency = $_SESSION['default_currency'];
-			include("../../_includes/system/update-conversion-rates.inc.php");
+        if ($new_sslpid == "" || $new_type_id == "" || $new_type_id == "0" || $new_initial_fee == "" || $new_renewal_fee == "" || $new_currency_id == "" || $new_currency_id == "0") {
 
-		} else {
-			
-			$sql = "INSERT INTO ssl_fees 
-					(ssl_provider_id, type_id, initial_fee, renewal_fee, currency_id, insert_time) VALUES 
-					('" . $new_sslpid . "', '" . $new_type_id . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+            if ($new_initial_fee == "") $_SESSION['result_message'] .= "Please enter the initial fee<BR>";
+            if ($new_renewal_fee == "") $_SESSION['result_message'] .= "Please enter the renewal fee<BR>";
+            if ($new_type_id == "" || $new_type_id == "0") $_SESSION['result_message'] .= "There was a problem with the SSL Type you chose<BR>";
+            if ($new_currency_id == "" || $new_currency_id == "0") $_SESSION['result_message'] .= "There was a problem with the currency you chose<BR>";
 
-			$sql = "SELECT id
-					FROM ssl_fees
-					WHERE ssl_provider_id = '" . $new_sslpid . "'
-					  AND type_id = '" . $new_type_id . "'
-					  AND currency_id = '" . $new_currency_id . "'
-					ORDER BY id desc
-					LIMIT 1";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
-			
-			while ($row = mysql_fetch_object($result)) {
-				$new_fee_id = $row->id;
-			}
+        } else {
 
-			$sql = "UPDATE ssl_certs
-					SET fee_id = '" . $new_fee_id . "',
-						update_time = '" . $current_timestamp . "'
-					WHERE ssl_provider_id = '" . $new_sslpid . "'
-					  AND type_id = '" . $new_type_id . "'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+            $sql = "SELECT *
+                    FROM ssl_fees
+                    WHERE ssl_provider_id = '" . $new_sslpid . "'
+                      AND type_id = '" . $new_type_id . "'";
+            $result = mysql_query($sql, $connection) or die(mysql_error());
 
-			$sql = "SELECT type
-					FROM ssl_cert_types
-					WHERE id = '" . $new_type_id . "'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+            if (mysql_num_rows($result) > 0) {
 
-			while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
-	
-			$_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been added<BR>";
+                $sql = "UPDATE ssl_fees
+                        SET initial_fee = '" . $new_initial_fee . "',
+                            renewal_fee = '" . $new_renewal_fee . "',
+                            currency_id = '" . $new_currency_id . "',
+                            update_time = '" . $current_timestamp . "'
+                        WHERE ssl_provider_id = '" . $new_sslpid . "'
+                          AND type_id = '" . $new_type_id . "'";
+                $result = mysql_query($sql, $connection) or die(mysql_error());
 
-			include("../../_includes/system/update-ssl-fees.inc.php");
+                $sql = "SELECT id
+                        FROM ssl_fees
+                        WHERE ssl_provider_id = '" . $new_sslpid . "'
+                          AND type_id = '" . $new_type_id . "'
+                          AND currency_id = '" . $new_currency_id . "'
+                        LIMIT 1";
 
-			$temp_input_user_id = $_SESSION['user_id'];
-			$temp_input_default_currency = $_SESSION['default_currency'];
-			include("../../_includes/system/update-conversion-rates.inc.php");
+                $result = mysql_query($sql, $connection) or die(mysql_error());
 
-		}
+                while ($row = mysql_fetch_object($result)) {
+                    $new_fee_id = $row->id;
+                }
 
-	}
+                $sql = "UPDATE ssl_certs
+                        SET fee_id = '" . $new_fee_id . "',
+                            update_time = '" . $current_timestamp . "'
+                        WHERE ssl_provider_id = '" . $new_sslpid . "'
+                          AND type_id = '" . $new_type_id . "'";
+                $result = mysql_query($sql, $connection) or die(mysql_error());
+
+                $sql = "SELECT type
+                        FROM ssl_cert_types
+                        WHERE id = '" . $new_type_id . "'";
+                $result = mysql_query($sql, $connection) or die(mysql_error());
+                while ($row = mysql_fetch_object($result)) {
+                    $temp_type = $row->type;
+                }
+
+                $sslpid = $new_sslpid;
+
+                $_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been updated<BR>";
+
+                include("../../_includes/system/update-ssl-fees.inc.php");
+
+                $temp_input_user_id = $_SESSION['user_id'];
+                $temp_input_default_currency = $_SESSION['default_currency'];
+                include("../../_includes/system/update-conversion-rates.inc.php");
+
+            } else {
+
+                $sql = "INSERT INTO ssl_fees
+                        (ssl_provider_id, type_id, initial_fee, renewal_fee, currency_id, insert_time) VALUES
+                        ('" . $new_sslpid . "', '" . $new_type_id . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
+                $result = mysql_query($sql, $connection) or die(mysql_error());
+
+                $sql = "SELECT id
+                        FROM ssl_fees
+                        WHERE ssl_provider_id = '" . $new_sslpid . "'
+                          AND type_id = '" . $new_type_id . "'
+                          AND currency_id = '" . $new_currency_id . "'
+                        ORDER BY id DESC
+                        LIMIT 1";
+                $result = mysql_query($sql, $connection) or die(mysql_error());
+
+                while ($row = mysql_fetch_object($result)) {
+                    $new_fee_id = $row->id;
+                }
+
+                $sql = "UPDATE ssl_certs
+                        SET fee_id = '" . $new_fee_id . "',
+                            update_time = '" . $current_timestamp . "'
+                        WHERE ssl_provider_id = '" . $new_sslpid . "'
+                          AND type_id = '" . $new_type_id . "'";
+                $result = mysql_query($sql, $connection) or die(mysql_error());
+
+                $sql = "SELECT type
+                        FROM ssl_cert_types
+                        WHERE id = '" . $new_type_id . "'";
+                $result = mysql_query($sql, $connection) or die(mysql_error());
+
+                while ($row = mysql_fetch_object($result)) {
+                    $temp_type = $row->type;
+                }
+
+                $_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been added<BR>";
+
+                include("../../_includes/system/update-ssl-fees.inc.php");
+
+                $temp_input_user_id = $_SESSION['user_id'];
+                $temp_input_default_currency = $_SESSION['default_currency'];
+                include("../../_includes/system/update-conversion-rates.inc.php");
+
+            }
+
+        }
+
+    }
 
 }
 
@@ -262,7 +298,6 @@ $sql = "SELECT t.id, t.type
 		ORDER BY t.type";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
-
 if (mysql_num_rows($result) != 0) {
 ?>
 
@@ -292,8 +327,8 @@ if (mysql_num_rows($result) != 0) {
 
 }
 ?>
-<font class="subheadline">Add/Update SSL Type Fee</font><BR>
-<form name="edit_ssl_provider_fee_form" method="post" action="<?=$PHP_SELF?>">
+<font class="subheadline">Add SSL Type Fee</font><BR>
+<form name="add_ssl_provider_fee_form" method="post" action="<?=$PHP_SELF?>">
 <table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active">
@@ -323,11 +358,11 @@ if (mysql_num_rows($result) != 0) {
         </td>
 		<td class="main_table_cell_heading_active">
         	<strong>Initial Fee</strong><BR>
-            <input name="new_initial_fee" type="text" value="<?=$new_initial_fee?>" size="10">
+            <input name="new_initial_fee" type="text" value="<?=$new_initial_fee?>" size="4">
         </td>
 		<td class="main_table_cell_heading_active">
         	<strong>Renewal Fee</strong><BR>
-            <input name="new_renewal_fee" type="text" value="<?=$new_renewal_fee?>" size="10">
+            <input name="new_renewal_fee" type="text" value="<?=$new_renewal_fee?>" size="4">
 		</td>
 	  	<td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
 		  <select name="new_currency_id" id="new_currency">
@@ -354,10 +389,12 @@ if (mysql_num_rows($result) != 0) {
 	</tr>
 </table>
 <input type="hidden" name="new_sslpid" value="<?=$sslpid?>"><BR>
-<input type="submit" name="button" value="Add/Update This SSL Fee &raquo;">
+    <input type="hidden" name="which_form" value="add"><BR>
+    <input type="submit" name="button" value="Add This SSL Fee &raquo;">
 </form>
 <BR><BR>
 <font class="subheadline">SSL Type Fees</font><BR>
+<form name="edit_ssl_provider_fee_form" method="post" action="<?=$PHP_SELF?>">
 <table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active"><strong>SSL Type</strong></td>
@@ -373,40 +410,50 @@ $sql = "SELECT f.id as sslfeeid, f.initial_fee, f.renewal_fee, c.currency, c.sym
 		  AND f.ssl_provider_id = '" . $sslpid . "'
 		ORDER BY t.type asc";
 $result = mysql_query($sql,$connection) or die(mysql_error());
+$count = 0;
 while ($row = mysql_fetch_object($result)) {
 ?>
 	<tr class="main_table_row_active">
     	<td class="main_table_cell_active"><?=$row->type?></td>
         <td class="main_table_cell_active">
-			<?php
-			$temp_input_amount = $row->initial_fee;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $row->symbol;
-			$temp_input_currency_symbol_order = $row->symbol_order;
-			$temp_input_currency_symbol_space = $row->symbol_space;
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			echo $temp_output_amount;
-            ?>
-		</td>
+            <input type="hidden" name="fee_id[<?=$count?>]" value="<?=$row->sslfeeid?>">
+            <input name="initial_fee[<?=$count?>]" type="text" value="<?=$row->initial_fee?>" size="4">
+        </td>
         <td class="main_table_cell_active">
-			<?php
-			$temp_input_amount = $row->renewal_fee;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $row->symbol;
-			$temp_input_currency_symbol_order = $row->symbol_order;
-			$temp_input_currency_symbol_space = $row->symbol_space;
-			include("../../_includes/system/convert-and-format-currency.inc.php");
-			echo $temp_output_amount;
-            ?>
-		</td>
-        <td class="main_table_cell_active"><?=$row->currency?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="ssl-provider-fees.php?sslpid=<?=$sslpid?>&ssltid=<?=$row->ssltid?>&sslfeeid=<?=$row->sslfeeid?>&del=1">delete</a>]
+            <input name="renewal_fee[<?=$count?>]" type="text" value="<?=$row->renewal_fee?>" size="4">
+        </td>
+        <td class="main_table_cell_active">
+            <select name="currency[<?=$count?>]" id="new_currency">
+                <?php
+                $sql_currency = "SELECT id, currency, name, symbol
+                                 FROM currencies
+                                 ORDER BY currency";
+                $result_currency = mysql_query($sql_currency,$connection) or die(mysql_error());
+                while ($row_currency = mysql_fetch_object($result_currency)) {
+
+                    if ($row_currency->currency == $row->currency) {
+                        ?>
+                        <option value="<?=$row_currency->id?>" selected><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
+                    <?php
+                    } else {
+                        ?>
+                        <option value="<?=$row_currency->id?>"><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
+                    <?php
+                    }
+                }
+                ?>
+            </select>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="ssl-provider-fees.php?sslpid=<?=$sslpid?>&ssltid=<?=$row->ssltid?>&sslfeeid=<?=$row->sslfeeid?>&del=1">delete</a>]
         </td>
 	</tr>
 <?php
+$count++;
 }
 ?>
 </table>
+    <input type="hidden" name="which_form" value="edit"><BR>
+    <BR><input type="submit" name="button" value="Update SSL Provider Fees &raquo;">
+</form>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>
