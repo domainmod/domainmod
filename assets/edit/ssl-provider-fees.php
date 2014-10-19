@@ -36,12 +36,14 @@ $sslfeeid = $_GET['sslfeeid'];
 $new_type_id = $_POST['new_type_id'];
 $new_initial_fee = $_POST['new_initial_fee'];
 $new_renewal_fee = $_POST['new_renewal_fee'];
+$new_misc_fee = $_POST['new_misc_fee'];
 $new_currency_id = $_POST['new_currency_id'];
 $new_sslpid = $_POST['new_sslpid'];
 
 $fee_id = $_POST['fee_id'];
 $initial_fee = $_POST['initial_fee'];
 $renewal_fee = $_POST['renewal_fee'];
+$misc_fee = $_POST['misc_fee'];
 $currency = $_POST['currency'];
 
 $which_form = $_POST['which_form'];
@@ -57,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $sql = "UPDATE ssl_fees
                         SET initial_fee = '" . $initial_fee[$count] . "',
                             renewal_fee = '" . $renewal_fee[$count] . "',
+                            misc_fee = '" . $misc_fee[$count] . "',
                             currency_id = '" . $currency[$count] . "',
                             update_time = '" . $current_timestamp . "'
                         WHERE id = '" . $fee_id[$count] . "'";
@@ -91,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = "UPDATE ssl_fees
                         SET initial_fee = '" . $new_initial_fee . "',
                             renewal_fee = '" . $new_renewal_fee . "',
+                            misc_fee = '" . $new_misc_fee . "',
                             currency_id = '" . $new_currency_id . "',
                             update_time = '" . $current_timestamp . "'
                         WHERE ssl_provider_id = '" . $new_sslpid . "'
@@ -138,8 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
 
                 $sql = "INSERT INTO ssl_fees
-                        (ssl_provider_id, type_id, initial_fee, renewal_fee, currency_id, insert_time) VALUES
-                        ('" . $new_sslpid . "', '" . $new_type_id . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
+                        (ssl_provider_id, type_id, initial_fee, renewal_fee, misc_fee, currency_id, insert_time) VALUES
+                        ('" . $new_sslpid . "', '" . $new_type_id . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_misc_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
                 $result = mysql_query($sql, $connection) or die(mysql_error());
 
                 $sql = "SELECT id
@@ -360,10 +364,14 @@ if (mysql_num_rows($result) != 0) {
         	<strong>Initial Fee</strong><BR>
             <input name="new_initial_fee" type="text" value="<?=$new_initial_fee?>" size="4">
         </td>
-		<td class="main_table_cell_heading_active">
-        	<strong>Renewal Fee</strong><BR>
+        <td class="main_table_cell_heading_active">
+            <strong>Renewal Fee</strong><BR>
             <input name="new_renewal_fee" type="text" value="<?=$new_renewal_fee?>" size="4">
-		</td>
+        </td>
+        <td class="main_table_cell_heading_active">
+            <strong>Misc Fee</strong><BR>
+            <input name="new_misc_fee" type="text" value="<?=$new_misc_fee?>" size="4">
+        </td>
 	  	<td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
 		  <select name="new_currency_id" id="new_currency">
 		  	<?php
@@ -400,10 +408,11 @@ if (mysql_num_rows($result) != 0) {
     	<td class="main_table_cell_heading_active"><strong>SSL Type</strong></td>
         <td class="main_table_cell_heading_active"><strong>Initial Fee</strong></td>
         <td class="main_table_cell_heading_active"><strong>Renewal Fee</strong></td>
+        <td class="main_table_cell_heading_active"><strong>Misc Fee</strong></td>
         <td class="main_table_cell_heading_active"><strong>Currency</strong></td>
 	</tr>
 <?php
-$sql = "SELECT f.id as sslfeeid, f.initial_fee, f.renewal_fee, c.currency, c.symbol, c.symbol_order, c.symbol_space, t.id as ssltid, t.type
+$sql = "SELECT f.id as sslfeeid, f.initial_fee, f.renewal_fee, f.misc_fee, c.currency, c.symbol, c.symbol_order, c.symbol_space, t.id as ssltid, t.type
 		FROM ssl_fees AS f, currencies AS c, ssl_cert_types AS t
 		WHERE f.currency_id = c.id
 		  AND f.type_id = t.id
@@ -421,6 +430,9 @@ while ($row = mysql_fetch_object($result)) {
         </td>
         <td class="main_table_cell_active">
             <input name="renewal_fee[<?=$count?>]" type="text" value="<?=$row->renewal_fee?>" size="4">
+        </td>
+        <td class="main_table_cell_active">
+            <input name="misc_fee[<?=$count?>]" type="text" value="<?=$row->misc_fee?>" size="4">
         </td>
         <td class="main_table_cell_active">
             <select name="currency[<?=$count?>]" id="new_currency">
