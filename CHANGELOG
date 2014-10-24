@@ -1,5 +1,35 @@
 DomainMOD Changelog
 ===================
+v0.84.2   2014-10-24   9828a8583bb7f888f1a0353b5cb78e7dbd45c5f1
+ - Updated Renewal & Fee Reports to use Total Cost
+
+v0.84.1   2014-10-24   9e04be46de401a63f197132ef2671ab50ea604f3
+ - Updated Reports to use the new Total Cost values
+
+v0.84.0   2014-10-24   083cc954029e6e0f9f597ab5aef3fa227acdad15
+ - Added Misc Fees & Total Cost to main SSL Certificate page export
+
+v0.83.0   2014-10-24   d6142f91edd23d14434c77621a4a73a23f412ebf
+ - Added Transfer, Privacy & Misc Fees to main Domains page export
+
+v0.82.4   2014-10-24   7f8f15c2d6b4c0ed1de741e0c74d4ca5f7d39036
+ - Updated main SSL Certificate page to use Total Cost
+
+v0.82.3   2014-10-24   a695e91c47d58aa7ada856e313f38a2a35ad7fa6
+ - Updated main Domains page to use Total Cost
+
+v0.82.2   2014-10-24   db4b4f6bb3c3621b71a8961ea1515bfd17ff944f
+ - Updated all Update Fee scripts to account for Total Cost
+
+v0.82.1   2014-10-24   84fbea9e007700cbd84d4b181691240c47c36063
+ - Fixed the SSL Fee backend functionality to match the Domain Fee backend
+
+v0.82.0   2014-10-24   49bf6a0388eca1c231e1abcb21b2a221ff9f1cb4
+ - Added Update SSL Fees link to Control Panel
+
+v0.81.0   2014-10-24   4ae06a290d2cbc1037346e1c1add16df6864bef4
+ - Updated all relevant pages to calculate Total Cost when a change requires it
+
 v0.80.0   2014-10-19   2d57db455299e406d9a5265009be2a7abcd8320c
  - Added a Misc Fee to the Registrar & SSL Provider Fee Asset Pages
 
