@@ -62,7 +62,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT wh.id, wh.name, SUM(f.renewal_fee * cc.conversion) as total_cost, count(*) AS number_of_domains
+$sql = "SELECT wh.id, wh.name, SUM(d.total_cost * cc.conversion) as total_cost, count(*) AS number_of_domains
 		FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, hosting AS wh
 		WHERE d.fee_id = f.id
 		  AND f.currency_id = c.id
@@ -76,7 +76,7 @@ $sql = "SELECT wh.id, wh.name, SUM(f.renewal_fee * cc.conversion) as total_cost,
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_rows = mysql_num_rows($result);
 
-$sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) as grand_total, count(*) AS number_of_domains_total
+$sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) as grand_total, count(*) AS number_of_domains_total
 					FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, hosting AS wh
 					WHERE d.fee_id = f.id
 					  AND f.currency_id = c.id

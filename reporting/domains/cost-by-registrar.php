@@ -62,7 +62,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS registrar_account_id, ra.username, SUM(f.renewal_fee * cc.conversion) as total_cost, count(*) AS number_of_domains
+$sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS registrar_account_id, ra.username, SUM(d.total_cost * cc.conversion) as total_cost, count(*) AS number_of_domains
 		FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
 		WHERE d.fee_id = f.id
 		  AND f.currency_id = c.id
@@ -78,7 +78,7 @@ $sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS re
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_rows = mysql_num_rows($result);
 
-$sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) AS grand_total, count(*) AS number_of_domains_total
+$sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_domains_total
 					FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
 					WHERE d.fee_id = f.id
 					  AND f.currency_id = c.id
@@ -166,7 +166,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 	
 				$new_registrar = $row->registrar_name;
 	
-				$sql_registrar_total = "SELECT SUM(f.renewal_fee * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
+				$sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
 										FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
 										WHERE d.fee_id = f.id
 										  AND f.currency_id = c.id
@@ -304,7 +304,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 		$new_registrar = $row->registrar_name;
 
-		$sql_registrar_total = "SELECT SUM(f.renewal_fee * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
+		$sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
 								FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
 								WHERE d.fee_id = f.id
 								  AND f.currency_id = c.id

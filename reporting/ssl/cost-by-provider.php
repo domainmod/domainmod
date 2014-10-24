@@ -61,7 +61,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.id AS ssl_account_id, sslpa.username, SUM(f.renewal_fee * cc.conversion) AS total_cost, count(*) AS number_of_certs
+$sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.id AS ssl_account_id, sslpa.username, SUM(sslc.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_certs
 		FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
 		WHERE sslc.fee_id = f.id
 		  AND f.currency_id = c.id
@@ -77,7 +77,7 @@ $sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_rows = mysql_num_rows($result);
 
-$sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
+$sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
 					FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
 					WHERE sslc.fee_id = f.id
 					  AND f.currency_id = c.id
@@ -165,7 +165,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 	
 				$new_provider = $row->provider_name;
 	
-				$sql_provider_total = "SELECT SUM(f.renewal_fee * cc.conversion) as provider_total, count(*) AS number_of_certs_provider
+				$sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) as provider_total, count(*) AS number_of_certs_provider
 									   FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
 									   WHERE sslc.fee_id = f.id
 										 AND f.currency_id = c.id
@@ -302,7 +302,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 		$new_provider = $row->provider_name;
 
-		$sql_provider_total = "SELECT SUM(f.renewal_fee * cc.conversion) as provider_total, count(*) AS number_of_certs_provider
+		$sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) as provider_total, count(*) AS number_of_certs_provider
 							   FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
 							   WHERE sslc.fee_id = f.id
 							     AND f.currency_id = c.id

@@ -62,7 +62,7 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT ip.id, ip.name, ip.ip, ip.rdns, SUM(f.renewal_fee * cc.conversion) as total_cost, count(*) AS number_of_certs
+$sql = "SELECT ip.id, ip.name, ip.ip, ip.rdns, SUM(sslc.total_cost * cc.conversion) as total_cost, count(*) AS number_of_certs
 		FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ip_addresses AS ip
 		WHERE sslc.fee_id = f.id
 		  AND f.currency_id = c.id
@@ -76,7 +76,7 @@ $sql = "SELECT ip.id, ip.name, ip.ip, ip.rdns, SUM(f.renewal_fee * cc.conversion
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $total_rows = mysql_num_rows($result);
 
-$sql_grand_total = "SELECT SUM(f.renewal_fee * cc.conversion) as grand_total, count(*) AS number_of_certs_total
+$sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) as grand_total, count(*) AS number_of_certs_total
 					FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ip_addresses AS ip
 					WHERE sslc.fee_id = f.id
 					  AND f.currency_id = c.id
