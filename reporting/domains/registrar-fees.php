@@ -34,7 +34,7 @@ $all = $_GET['all'];
 
 if ($all == "1") {
 
-	$sql = "SELECT r.id, r.name AS registrar, f.id AS fee_id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
+	$sql = "SELECT r.id, r.name AS registrar, f.id AS fee_id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
 			FROM registrars AS r, fees AS f, currencies AS c
 			WHERE r.id = f.registrar_id
 			  AND f.currency_id = c.id
@@ -43,7 +43,7 @@ if ($all == "1") {
 	
 } else {
 
-	$sql = "SELECT r.id, r.name AS registrar, d.tld, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
+	$sql = "SELECT r.id, r.name AS registrar, d.tld, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
 			FROM registrars AS r, domains AS d, fees AS f, currencies AS c
 			WHERE r.id = d.registrar_id
 			  AND d.fee_id = f.id
@@ -89,7 +89,9 @@ if ($total_rows > 0) {
 		$row_content[$count++] = "TLD";
 		$row_content[$count++] = "Initial Fee";
 		$row_content[$count++] = "Renewal Fee";
-		$row_content[$count++] = "Transfer Fee";
+        $row_content[$count++] = "Transfer Fee";
+        $row_content[$count++] = "Privacy Fee";
+        $row_content[$count++] = "Misc Fee";
 		$row_content[$count++] = "Currency";
 		$row_content[$count++] = "Domains";
 		$row_content[$count++] = "Inserted";
@@ -123,20 +125,38 @@ if ($total_rows > 0) {
 				$temp_input_currency_symbol_space = $row->symbol_space;
 				include("../../_includes/system/convert-and-format-currency.inc.php");
 				$row->renewal_fee = $temp_output_amount;
-	
-				$temp_input_amount = $row->transfer_fee;
-				$temp_input_conversion = "";
-				$temp_input_currency_symbol = $row->symbol;
-				$temp_input_currency_symbol_order = $row->symbol_order;
-				$temp_input_currency_symbol_space = $row->symbol_space;
-				include("../../_includes/system/convert-and-format-currency.inc.php");
-				$row->transfer_fee = $temp_output_amount;
-	
-				$row_content[$count++] = $row->registrar;
+
+                $temp_input_amount = $row->transfer_fee;
+                $temp_input_conversion = "";
+                $temp_input_currency_symbol = $row->symbol;
+                $temp_input_currency_symbol_order = $row->symbol_order;
+                $temp_input_currency_symbol_space = $row->symbol_space;
+                include("../../_includes/system/convert-and-format-currency.inc.php");
+                $row->transfer_fee = $temp_output_amount;
+
+                $temp_input_amount = $row->privacy_fee;
+                $temp_input_conversion = "";
+                $temp_input_currency_symbol = $row->symbol;
+                $temp_input_currency_symbol_order = $row->symbol_order;
+                $temp_input_currency_symbol_space = $row->symbol_space;
+                include("../../_includes/system/convert-and-format-currency.inc.php");
+                $row->privacy_fee = $temp_output_amount;
+
+                $temp_input_amount = $row->misc_fee;
+                $temp_input_conversion = "";
+                $temp_input_currency_symbol = $row->symbol;
+                $temp_input_currency_symbol_order = $row->symbol_order;
+                $temp_input_currency_symbol_space = $row->symbol_space;
+                include("../../_includes/system/convert-and-format-currency.inc.php");
+                $row->misc_fee = $temp_output_amount;
+
+                $row_content[$count++] = $row->registrar;
 				$row_content[$count++] = "." . $row->tld;
 				$row_content[$count++] = $row->initial_fee;
 				$row_content[$count++] = $row->renewal_fee;
-				$row_content[$count++] = $row->transfer_fee;
+                $row_content[$count++] = $row->transfer_fee;
+                $row_content[$count++] = $row->privacy_fee;
+                $row_content[$count++] = $row->misc_fee;
 				$row_content[$count++] = $row->currency;
 				
 				$sql_domain_count = "SELECT count(*) AS total_domain_count
@@ -213,6 +233,12 @@ if ($total_rows > 0) {
                 <font class="main_table_heading">Transfer Fee</font>
             </td>
             <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Privacy Fee</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Misc Fee</font>
+            </td>
+            <td class="main_table_cell_heading_active">
                 <font class="main_table_heading">Currency</font>
             </td>
             <td class="main_table_cell_heading_active">
@@ -279,6 +305,30 @@ if ($total_rows > 0) {
                         $row->transfer_fee = $temp_output_amount;
                         ?>
                         <?=$row->transfer_fee?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $temp_input_amount = $row->privacy_fee;
+                        $temp_input_conversion = "";
+                        $temp_input_currency_symbol = $row->symbol;
+                        $temp_input_currency_symbol_order = $row->symbol_order;
+                        $temp_input_currency_symbol_space = $row->symbol_space;
+                        include("../../_includes/system/convert-and-format-currency.inc.php");
+                        $row->privacy_fee = $temp_output_amount;
+                        ?>
+                        <?=$row->privacy_fee?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $temp_input_amount = $row->misc_fee;
+                        $temp_input_conversion = "";
+                        $temp_input_currency_symbol = $row->symbol;
+                        $temp_input_currency_symbol_order = $row->symbol_order;
+                        $temp_input_currency_symbol_space = $row->symbol_space;
+                        include("../../_includes/system/convert-and-format-currency.inc.php");
+                        $row->misc_fee = $temp_output_amount;
+                        ?>
+                        <?=$row->misc_fee?>
                     </td>
                     <td class="main_table_cell_active"><?=$row->currency?></td>
                     <td class="main_table_cell_active">
@@ -350,6 +400,30 @@ if ($total_rows > 0) {
                         $row->transfer_fee = $temp_output_amount;
                         ?>
                         <?=$row->transfer_fee?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $temp_input_amount = $row->privacy_fee;
+                        $temp_input_conversion = "";
+                        $temp_input_currency_symbol = $row->symbol;
+                        $temp_input_currency_symbol_order = $row->symbol_order;
+                        $temp_input_currency_symbol_space = $row->symbol_space;
+                        include("../../_includes/system/convert-and-format-currency.inc.php");
+                        $row->privacy_fee = $temp_output_amount;
+                        ?>
+                        <?=$row->privacy_fee?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $temp_input_amount = $row->misc_fee;
+                        $temp_input_conversion = "";
+                        $temp_input_currency_symbol = $row->symbol;
+                        $temp_input_currency_symbol_order = $row->symbol_order;
+                        $temp_input_currency_symbol_space = $row->symbol_space;
+                        include("../../_includes/system/convert-and-format-currency.inc.php");
+                        $row->misc_fee = $temp_output_amount;
+                        ?>
+                        <?=$row->misc_fee?>
                     </td>
                     <td class="main_table_cell_active"><?=$row->currency?></td>
                     <td class="main_table_cell_active">

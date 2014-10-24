@@ -34,7 +34,7 @@ $all = $_GET['all'];
 
 if ($all == "1") {
 
-	$sql = "SELECT sslp.id, sslp.name AS ssl_provider, sslt.id AS type_id, sslt.type, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
+	$sql = "SELECT sslp.id, sslp.name AS ssl_provider, sslt.id AS type_id, sslt.type, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
 			FROM ssl_providers AS sslp, ssl_fees AS f, currencies AS c, ssl_cert_types AS sslt
 			WHERE sslp.id = f.ssl_provider_id
 			  AND f.currency_id = c.id
@@ -44,7 +44,7 @@ if ($all == "1") {
 	
 } else {
 
-	$sql = "SELECT sslp.id, sslp.name AS ssl_provider, sslt.id AS type_id, sslt.type, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
+	$sql = "SELECT sslp.id, sslp.name AS ssl_provider, sslt.id AS type_id, sslt.type, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
 			FROM ssl_providers AS sslp, ssl_certs AS sslc, ssl_fees AS f, currencies AS c, ssl_cert_types AS sslt
 			WHERE sslp.id = sslc.ssl_provider_id
 			  AND sslc.fee_id = f.id
@@ -94,7 +94,8 @@ if ($total_rows > 0) {
 		$row_content[$count++] = "SSL Provider";
 		$row_content[$count++] = "Certificate Type";
 		$row_content[$count++] = "Initial Fee";
-		$row_content[$count++] = "Renewal Fee";
+        $row_content[$count++] = "Renewal Fee";
+        $row_content[$count++] = "Misc Fee";
 		$row_content[$count++] = "Currency";
 		$row_content[$count++] = "Certs";
 		$row_content[$count++] = "Inserted";
@@ -120,19 +121,28 @@ if ($total_rows > 0) {
 				$temp_input_currency_symbol_space = $row->symbol_space;
 				include("../../_includes/system/convert-and-format-currency.inc.php");
 				$row->initial_fee = $temp_output_amount;
-	
-				$temp_input_amount = $row->renewal_fee;
-				$temp_input_conversion = "";
-				$temp_input_currency_symbol = $row->symbol;
-				$temp_input_currency_symbol_order = $row->symbol_order;
-				$temp_input_currency_symbol_space = $row->symbol_space;
-				include("../../_includes/system/convert-and-format-currency.inc.php");
-				$row->renewal_fee = $temp_output_amount;
-	
-				$row_content[$count++] = $row->ssl_provider;
+
+                $temp_input_amount = $row->renewal_fee;
+                $temp_input_conversion = "";
+                $temp_input_currency_symbol = $row->symbol;
+                $temp_input_currency_symbol_order = $row->symbol_order;
+                $temp_input_currency_symbol_space = $row->symbol_space;
+                include("../../_includes/system/convert-and-format-currency.inc.php");
+                $row->renewal_fee = $temp_output_amount;
+
+                $temp_input_amount = $row->misc_fee;
+                $temp_input_conversion = "";
+                $temp_input_currency_symbol = $row->symbol;
+                $temp_input_currency_symbol_order = $row->symbol_order;
+                $temp_input_currency_symbol_space = $row->symbol_space;
+                include("../../_includes/system/convert-and-format-currency.inc.php");
+                $row->misc_fee = $temp_output_amount;
+
+                $row_content[$count++] = $row->ssl_provider;
 				$row_content[$count++] = $row->type;
 				$row_content[$count++] = $row->initial_fee;
-				$row_content[$count++] = $row->renewal_fee;
+                $row_content[$count++] = $row->renewal_fee;
+                $row_content[$count++] = $row->misc_fee;
 				$row_content[$count++] = $row->currency;
 
 				$sql_ssl_count = "SELECT count(*) AS total_ssl_count
@@ -206,6 +216,9 @@ if ($total_rows > 0) {
                 <font class="main_table_heading">Renewal Fee</font>
             </td>
             <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Misc Fee</font>
+            </td>
+            <td class="main_table_cell_heading_active">
                 <font class="main_table_heading">Currency</font>
             </td>
             <td class="main_table_cell_heading_active">
@@ -260,6 +273,18 @@ if ($total_rows > 0) {
                         $row->renewal_fee = $temp_output_amount;
                         ?>
                         <?=$row->renewal_fee?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $temp_input_amount = $row->misc_fee;
+                        $temp_input_conversion = "";
+                        $temp_input_currency_symbol = $row->symbol;
+                        $temp_input_currency_symbol_order = $row->symbol_order;
+                        $temp_input_currency_symbol_space = $row->symbol_space;
+                        include("../../_includes/system/convert-and-format-currency.inc.php");
+                        $row->misc_fee = $temp_output_amount;
+                        ?>
+                        <?=$row->misc_fee?>
                     </td>
                     <td class="main_table_cell_active"><?=$row->currency?></td>
                     <td class="main_table_cell_active">
@@ -319,6 +344,18 @@ if ($total_rows > 0) {
                         $row->renewal_fee = $temp_output_amount;
                         ?>
                         <?=$row->renewal_fee?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $temp_input_amount = $row->misc_fee;
+                        $temp_input_conversion = "";
+                        $temp_input_currency_symbol = $row->symbol;
+                        $temp_input_currency_symbol_order = $row->symbol_order;
+                        $temp_input_currency_symbol_space = $row->symbol_space;
+                        include("../../_includes/system/convert-and-format-currency.inc.php");
+                        $row->misc_fee = $temp_output_amount;
+                        ?>
+                        <?=$row->misc_fee?>
                     </td>
                     <td class="main_table_cell_active"><?=$row->currency?></td>
                     <td class="main_table_cell_active">
