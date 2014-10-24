@@ -108,7 +108,7 @@ elseif ($sort_by == "sslpa_d") { $sort_by_string = " ORDER BY sslp.name desc, ss
 elseif ($sort_by == "sf_a") { $sort_by_string = " ORDER BY sslc.total_cost asc "; }
 elseif ($sort_by == "sf_d") { $sort_by_string = " ORDER BY sslc.total_cost desc "; }
 
-$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.total_cost, sslc.notes, sslc.active, sslc.insert_time, sslc.update_time, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, o.id AS o_id, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, d.domain, sslcf.id as type_id, sslcf.type, ip.id AS ip_id, ip.name as ip_name, ip.ip, ip.rdns, cat.id AS cat_id, cat.name AS cat_name
+$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.total_cost, sslc.notes, sslc.active, sslc.insert_time, sslc.update_time, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, o.id AS o_id, o.name AS owner_name, f.initial_fee, f.renewal_fee, f.misc_fee, cc.conversion, d.domain, sslcf.id as type_id, sslcf.type, ip.id AS ip_id, ip.name as ip_name, ip.ip, ip.rdns, cat.id AS cat_id, cat.name AS cat_name
 		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat
 		WHERE sslc.account_id = sslpa.id
 		  AND sslpa.ssl_provider_id = sslp.id
@@ -370,7 +370,9 @@ if ($export == "1") {
 	$row_content[$count++] = "SSL Cert Status";
 	$row_content[$count++] = "Expiry Date";
 	$row_content[$count++] = "Initial Fee";
-	$row_content[$count++] = "Renewal Fee";
+    $row_content[$count++] = "Renewal Fee";
+    $row_content[$count++] = "Misc Fee";
+    $row_content[$count++] = "Total Cost";
 	$row_content[$count++] = "Host / Label";
 	$row_content[$count++] = "Domain";
 	$row_content[$count++] = "SSL Provider";
@@ -403,6 +405,7 @@ if ($export == "1") {
 		
 		$temp_initial_fee = $row->initial_fee * $row->conversion;
         $temp_renewal_fee = $row->renewal_fee * $row->conversion;
+        $temp_misc_fee = $row->misc_fee * $row->conversion;
         $temp_total_cost = $row->total_cost * $row->conversion;
 
 		if ($row->active == "0") { $ssl_status = "EXPIRED"; } 
@@ -428,6 +431,14 @@ if ($export == "1") {
         include("_includes/system/convert-and-format-currency.inc.php");
         $export_renewal_fee = $temp_output_amount;
 
+        $temp_input_amount = $temp_misc_fee;
+        $temp_input_conversion = "";
+        $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+        $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+        $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+        include("_includes/system/convert-and-format-currency.inc.php");
+        $export_misc_fee = $temp_output_amount;
+
         $temp_input_amount = $temp_total_cost;
         $temp_input_conversion = "";
         $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
@@ -440,6 +451,7 @@ if ($export == "1") {
 		$row_content[$count++] = $row->expiry_date;
 		$row_content[$count++] = $export_initial_fee;
         $row_content[$count++] = $export_renewal_fee;
+        $row_content[$count++] = $export_misc_fee;
         $row_content[$count++] = $export_total_cost;
 		$row_content[$count++] = $row->name;
 		$row_content[$count++] = $row->domain;
