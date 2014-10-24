@@ -70,7 +70,6 @@ foreach($field_array as $field) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-
 	if (CheckDateFormat($new_expiry_date) && CheckDomainFormat($new_domain) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0") {
 
 		$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
@@ -102,7 +101,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		}
 
-		$sql_update = "UPDATE domains
+        if ($new_privacy == "1") {
+
+            $fee_string = "renewal_fee + privacy_fee + misc_fee";
+
+        } else {
+
+            $fee_string = "renewal_fee + misc_fee";
+
+        }
+
+        $sql = "SELECT (" . $fee_string . ") AS total_cost
+                FROM fees
+                WHERE registrar_id = '" . $new_registrar_id . "'
+                  AND tld = '" . $tld . "'";
+        $result = mysql_query($sql,$connection);
+
+        while ($row = mysql_fetch_object($result)) { $new_total_cost = $row->total_cost; }
+
+        $sql_update = "UPDATE domains
 					   SET owner_id = '" . $new_owner_id . "',
 						   registrar_id = '" . $new_registrar_id . "',
 						   account_id = '" . $new_account_id . "',
@@ -114,6 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   ip_id = '" . $new_ip_id . "',
 						   hosting_id = '" . $new_hosting_id . "',
 						   fee_id = '" . $temp_fee_id . "',
+						   total_cost = '" . $new_total_cost . "',
 						   function = '" . mysql_real_escape_string($new_function) . "',
 						   notes = '" . mysql_real_escape_string($new_notes) . "',
 						   privacy = '" . $new_privacy . "',

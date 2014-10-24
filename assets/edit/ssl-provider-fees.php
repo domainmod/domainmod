@@ -65,6 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         WHERE id = '" . $fee_id[$count] . "'";
             $result = mysql_query($sql,$connection) or die(mysql_error());
 
+            $sql = "UPDATE ssl_certs sslc
+                    JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
+                    SET sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
+                    WHERE sslc.fee_id = '" . $fee_id[$count] . "'";
+            $result = mysql_query($sql,$connection) or die(mysql_error());
+
             $count++;
 
         }
@@ -129,6 +135,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $temp_type = $row->type;
                 }
 
+                $sql = "UPDATE ssl_certs sslc
+                    JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
+                    SET sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
+                    WHERE sslc.fee_id = '" . $new_fee_id . "'";
+                $result = mysql_query($sql,$connection) or die(mysql_error());
+
                 $sslpid = $new_sslpid;
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been updated<BR>";
@@ -174,6 +186,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 while ($row = mysql_fetch_object($result)) {
                     $temp_type = $row->type;
                 }
+
+                $sql = "UPDATE ssl_certs sslc
+                    JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
+                    SET sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
+                    WHERE sslc.fee_id = '" . $new_fee_id . "'";
+                $result = mysql_query($sql,$connection) or die(mysql_error());
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been added<BR>";
 

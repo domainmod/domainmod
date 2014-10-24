@@ -71,6 +71,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     WHERE id = '" . $fee_id[$count] . "'";
             $result = mysql_query($sql,$connection) or die(mysql_error());
 
+            $sql = "UPDATE domains d
+                    JOIN fees f ON d.fee_id = f.id
+                    SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
+                    WHERE d.privacy = '1'
+                      AND d.fee_id = '" . $fee_id[$count] . "'";
+            $result = mysql_query($sql,$connection) or die(mysql_error());
+
+            $sql = "UPDATE domains d
+                    JOIN fees f ON d.fee_id = f.id
+                    SET d.total_cost = f.renewal_fee + f.misc_fee
+                    WHERE d.privacy = '0'
+                      AND d.fee_id = '" . $fee_id[$count] . "'";
+            $result = mysql_query($sql,$connection) or die(mysql_error());
+
             $count++;
 
         }
@@ -132,6 +146,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                           AND tld = '" . $new_tld . "'";
                 $result = mysql_query($sql, $connection) or die(mysql_error());
 
+                $sql = "UPDATE domains d
+                    JOIN fees f ON d.fee_id = f.id
+                    SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
+                    WHERE d.privacy = '1'
+                      AND d.fee_id = '" . $new_fee_id . "'";
+                $result = mysql_query($sql,$connection) or die(mysql_error());
+
+                $sql = "UPDATE domains d
+                    JOIN fees f ON d.fee_id = f.id
+                    SET d.total_cost = f.renewal_fee + f.misc_fee
+                    WHERE d.privacy = '0'
+                      AND d.fee_id = '" . $new_fee_id . "'";
+                $result = mysql_query($sql,$connection) or die(mysql_error());
+
                 $rid = $new_rid;
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been updated<BR>";
@@ -166,6 +194,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         WHERE registrar_id = '" . $new_rid . "'
                           AND tld = '" . $new_tld . "'";
                 $result = mysql_query($sql, $connection) or die(mysql_error());
+
+                $sql = "UPDATE domains d
+                    JOIN fees f ON d.fee_id = f.id
+                    SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
+                    WHERE d.privacy = '1'
+                      AND d.fee_id = '" . $new_fee_id . "'";
+                $result = mysql_query($sql,$connection) or die(mysql_error());
+
+                $sql = "UPDATE domains d
+                    JOIN fees f ON d.fee_id = f.id
+                    SET d.total_cost = f.renewal_fee + f.misc_fee
+                    WHERE d.privacy = '0'
+                      AND d.fee_id = '" . $new_fee_id . "'";
+                $result = mysql_query($sql,$connection) or die(mysql_error());
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
 

@@ -83,18 +83,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$result = mysql_query($sql,$connection);
 			
 			while ($row = mysql_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
-	
-			$sql = "SELECT id
-					FROM fees
-					WHERE registrar_id = '" . $new_registrar_id . "' 
-					  AND tld = '" . $tld . "'";
-			$result = mysql_query($sql,$connection);
-			
-			while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
+
+			if ($new_privacy == "1") {
+
+                $fee_string = "renewal_fee + privacy_fee + misc_fee";
+
+            } else {
+
+                $fee_string = "renewal_fee + misc_fee";
+
+            }
+
+            $sql = "SELECT id, (" . $fee_string . ") AS total_cost
+                    FROM fees
+                    WHERE registrar_id = '" . $new_registrar_id . "'
+                      AND tld = '" . $tld . "'";
+            $result = mysql_query($sql,$connection);
+
+            while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; $new_total_cost = $row->total_cost; }
 	
 			$sql = "INSERT INTO domains
-					(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id, fee_id, function, notes, privacy, active, insert_time) VALUES 
-					('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . $new_account_id . "', '" . mysql_real_escape_string($new_domain) . "', '" . $tld . "', '" . $new_expiry_date . "', '" . $new_cat_id . "', '" . $new_dns_id . "', '" . $new_ip_id . "', '" . $new_hosting_id . "', '" . $new_fee_id . "', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $current_timestamp . "')";
+					(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id, fee_id, total_cost, function, notes, privacy, active, insert_time) VALUES
+					('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . $new_account_id . "', '" . mysql_real_escape_string($new_domain) . "', '" . $tld . "', '" . $new_expiry_date . "', '" . $new_cat_id . "', '" . $new_dns_id . "', '" . $new_ip_id . "', '" . $new_hosting_id . "', '" . $new_fee_id . "', '" . $new_total_cost . "', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $current_timestamp . "')";
 			$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 			$sql = "SELECT id

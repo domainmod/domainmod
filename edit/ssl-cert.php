@@ -96,6 +96,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		}
 
+        $fee_string = "renewal_fee + misc_fee";
+
+        $sql = "SELECT (" . $fee_string . ") AS total_cost
+                FROM ssl_fees
+                WHERE ssl_provider_id = '" . $new_ssl_provider_id . "'
+                  AND type_id = '" . $new_type_id . "'";
+        $result = mysql_query($sql,$connection);
+
+        while ($row = mysql_fetch_object($result)) { $new_total_cost = $row->total_cost; }
+
 		$sql_update = "UPDATE ssl_certs
 					   SET owner_id = '" . $new_owner_id . "',
 					   	   ssl_provider_id = '" . $new_ssl_provider_id . "',
@@ -107,6 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   cat_id = '" . $new_cat_id . "',
 						   expiry_date = '" . $new_expiry_date . "',
 						   fee_id = '" . $temp_fee_id . "',
+						   total_cost = '" . $new_total_cost . "',
 						   notes = '" . mysql_real_escape_string($new_notes) . "',
 						   active = '" . $new_active . "',
 						   fee_fixed = '" . $temp_fee_fixed . "',

@@ -227,10 +227,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						}
 		
 						if ($temp_fee_id == '0' || $temp_fee_id == "") { $temp_fee_fixed = 0; $temp_fee_id = 0; } else { $temp_fee_fixed = 1; }
-			
-						$sql = "INSERT INTO domains 
-								(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, dns_id, ip_id, hosting_id, function, notes, privacy, active, fee_fixed, insert_time) VALUES 
-								('" . $temp_owner_id . "', '" . $temp_registrar_id . "', '" . $new_raid . "', '" . mysql_real_escape_string($new_domain) . "', '" . $new_tld . "', '" . $new_expiry_date . "', '" . $new_pcid . "', '" . $temp_fee_id . "', '" . $new_dnsid . "', '" . $new_ipid . "', '" . $new_whid . "', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $temp_fee_fixed . "', '" . $current_timestamp . "')";
+
+                        if ($new_privacy == "1") {
+
+                            $fee_string = "renewal_fee + privacy_fee + misc_fee";
+
+                        } else {
+
+                            $fee_string = "renewal_fee + misc_fee";
+
+                        }
+
+                        $sql = "SELECT id, (" . $fee_string . ") AS total_cost
+                        FROM fees
+                        WHERE registrar_id = '" . $temp_registrar_id . "'
+                          AND tld = '" . $new_tld . "'";
+                        $result = mysql_query($sql,$connection);
+
+                        while ($row = mysql_fetch_object($result)) { $new_total_cost = $row->total_cost; }
+
+						$sql = "INSERT INTO domains
+								(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, total_cost, dns_id, ip_id, hosting_id, function, notes, privacy, active, fee_fixed, insert_time) VALUES
+								('" . $temp_owner_id . "', '" . $temp_registrar_id . "', '" . $new_raid . "', '" . mysql_real_escape_string($new_domain) . "', '" . $new_tld . "', '" . $new_expiry_date . "', '" . $new_pcid . "', '" . $temp_fee_id . "', '" . $new_total_cost . "', '" . $new_dnsid . "', '" . $new_ipid . "', '" . $new_whid . "', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $temp_fee_fixed . "', '" . $current_timestamp . "')";
 						$result = mysql_query($sql,$connection) or die(mysql_error());
 						$temp_fee_id = 0;
 
@@ -459,7 +477,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							  AND ra.id = '" . $new_raid . "'
 							GROUP BY r.name, o.name, ra.username
 							ORDER BY r.name asc, o.name asc, ra.username asc";
-					$result = mysql_query($sql,$connection);
+					$result = mysql_query($sql,$connection) or die(mysql_error());
 			
 					while ($row = mysql_fetch_object($result)) {
 						$new_owner_id = $row->o_id;
@@ -492,7 +510,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					}
 					$result = mysql_query($sql,$connection) or die(mysql_error());
 
-					$_SESSION['result_message'] = "Registrar Account Changed<BR>";
+                    $sql = "UPDATE domains
+                            SET fee_id = '0', total_cost = '0'
+                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $result = mysql_query($sql,$connection) or die(mysql_error());
+
+                    $sql = "SELECT d.id, f.id AS fee_id
+                            FROM domains AS d, fees AS f
+                            WHERE d.registrar_id = f.registrar_id
+                              AND d.tld = f.tld
+                              AND d.domain IN (" . $new_data_formatted . ")";
+                    $result = mysql_query($sql,$connection) or die(mysql_error());
+
+                    while ($row = mysql_fetch_object($result)) {
+
+                        $sql_update = "UPDATE domains
+                                       SET fee_id = '" . $row->fee_id . "'
+                                       WHERE id = '" . $row->id . "'";
+                        $result_update = mysql_query($sql_update,$connection)or die(mysql_error());
+
+                    }
+
+                    $sql = "UPDATE domains d
+                            JOIN fees f ON d.fee_id = f.id
+                            SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
+                            WHERE d.privacy = '1'
+                              AND d.domain IN (" . $new_data_formatted . ")";
+                    $result = mysql_query($sql,$connection) or die(mysql_error());
+
+                    $sql = "UPDATE domains d
+                            JOIN fees f ON d.fee_id = f.id
+                            SET d.total_cost = f.renewal_fee + f.misc_fee
+                            WHERE d.privacy = '0'
+                              AND d.domain IN (" . $new_data_formatted . ")";
+                    $result = mysql_query($sql,$connection) or die(mysql_error());
+
+                    $_SESSION['result_message'] = "Registrar Account Changed<BR>";
 
                     include("_includes/system/check-domain-fees.inc.php");
 
@@ -763,23 +816,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 				if ($new_notes != "") {
 
-					$sql = "UPDATE domains
+                    $sql = "UPDATE domains
 							SET privacy = '1',
 								notes = CONCAT('" . mysql_real_escape_string($new_notes) . "\r\n\r\n', notes),
 								update_time = '" . $current_timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
-				} else {
+
+                } else {
 
 					$sql = "UPDATE domains
 							SET privacy = '1',
 								update_time = '" . $current_timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
-				}
+
+                }
 				$result = mysql_query($sql,$connection) or die(mysql_error());
-				
-				$_SESSION['result_message'] = "Domains marked as 'Private WHOIS'<BR>";
+
+                $sql = "SELECT d.id, (f.renewal_fee + f.privacy_fee + f.misc_fee) AS total_cost
+                            FROM domains AS d, fees AS f
+                            WHERE d.fee_id = f.id
+                              AND d.domain IN (" . $new_data_formatted . ")";
+                $result = mysql_query($sql,$connection) or die(mysql_error());
+
+                while ($row = mysql_fetch_object($result)) {
+
+                    $sql_update = "UPDATE domains
+                                       SET total_cost = '" . $row->total_cost . "'
+                                       WHERE id = '" . $row->id . "'";
+                    $result_update = mysql_query($sql_update,$connection) or die(mysql_error());
+
+                }
+
+                $_SESSION['result_message'] = "Domains marked as 'Private WHOIS'<BR>";
 
 				include("_includes/system/update-segments.inc.php");
 	
@@ -802,8 +870,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 				}
 				$result = mysql_query($sql,$connection) or die(mysql_error());
-				
-				$_SESSION['result_message'] = "Domains marked as 'Public WHOIS'<BR>";
+
+                $sql = "SELECT d.id, (f.renewal_fee + f.misc_fee) AS total_cost
+                            FROM domains AS d, fees AS f
+                            WHERE d.fee_id = f.id
+                              AND d.domain IN (" . $new_data_formatted . ")";
+                $result = mysql_query($sql,$connection) or die(mysql_error());
+
+                while ($row = mysql_fetch_object($result)) {
+
+                    $sql_update = "UPDATE domains
+                                       SET total_cost = '" . $row->total_cost . "'
+                                       WHERE id = '" . $row->id . "'";
+                    $result_update = mysql_query($sql_update,$connection) or die(mysql_error());
+
+                }
+
+                $_SESSION['result_message'] = "Domains marked as 'Public WHOIS'<BR>";
 	
 			} elseif ($action == "CED") { 
 	

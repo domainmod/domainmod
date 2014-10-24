@@ -72,17 +72,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		while ($row = mysql_fetch_object($result)) { $new_ssl_provider_id = $row->ssl_provider_id; $new_owner_id = $row->owner_id; }
 
-		$sql = "SELECT id
-				FROM ssl_fees
-				WHERE ssl_provider_id = '" . $new_ssl_provider_id . "' 
-				  AND type_id = '" . $new_type_id . "'";
-		$result = mysql_query($sql,$connection);
-		
-		while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; }
+        $fee_string = "renewal_fee + misc_fee";
+
+        $sql = "SELECT id, (" . $fee_string . ") AS total_cost
+                FROM ssl_fees
+                WHERE ssl_provider_id = '" . $new_ssl_provider_id . "'
+                  AND type_id = '" . $new_type_id . "'";
+        $result = mysql_query($sql,$connection);
+
+        while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; $new_total_cost = $row->total_cost; }
 
 		$sql = "INSERT INTO ssl_certs
-				(owner_id, ssl_provider_id, account_id, domain_id, name, type_id, ip_id, cat_id, expiry_date, fee_id, notes, active, insert_time) VALUES 
-				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . $new_account_id . "', '" . $new_domain_id . "', '" . mysql_real_escape_string($new_name) . "', '" . $new_type_id . "', '" . $new_ip_id . "', '" . $new_cat_id . "', '" . $new_expiry_date . "', '" . $new_fee_id . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_active . "', '" . $current_timestamp . "')";
+				(owner_id, ssl_provider_id, account_id, domain_id, name, type_id, ip_id, cat_id, expiry_date, fee_id, total_cost, notes, active, insert_time) VALUES
+				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . $new_account_id . "', '" . $new_domain_id . "', '" . mysql_real_escape_string($new_name) . "', '" . $new_type_id . "', '" . $new_ip_id . "', '" . $new_cat_id . "', '" . $new_expiry_date . "', '" . $new_fee_id . "', '" . $new_total_cost . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_active . "', '" . $current_timestamp . "')";
 		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "SELECT id
