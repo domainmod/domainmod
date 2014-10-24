@@ -145,8 +145,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been updated<BR>";
 
-                include("../../_includes/system/update-ssl-fees.inc.php");
-
                 $temp_input_user_id = $_SESSION['user_id'];
                 $temp_input_default_currency = $_SESSION['default_currency'];
                 include("../../_includes/system/update-conversion-rates.inc.php");
@@ -195,10 +193,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been added<BR>";
 
-                include("../../_includes/system/update-ssl-fees.inc.php");
-
                 $temp_input_user_id = $_SESSION['user_id'];
                 $temp_input_default_currency = $_SESSION['default_currency'];
+                include("../../_includes/system/check-ssl-fees.inc.php");
                 include("../../_includes/system/update-conversion-rates.inc.php");
 
             }
@@ -252,10 +249,9 @@ if ($really_del == "1") {
 		
 		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been deleted<BR>";
 
-		include("../../_includes/system/update-ssl-fees.inc.php");
-
 		$temp_input_user_id = $_SESSION['user_id'];
 		$temp_input_default_currency = $_SESSION['default_currency'];
+        include("../../_includes/system/check-ssl-fees.inc.php");
 		include("../../_includes/system/update-conversion-rates.inc.php");
 
 		header("Location: ssl-provider-fees.php?sslpid=$sslpid");

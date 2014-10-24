@@ -171,8 +171,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Updated<BR>";
 
-        include("../_includes/system/check-domain-fees.inc.php");
         include("../_includes/system/update-segments.inc.php");
+        include("../_includes/system/check-domain-fees.inc.php");
 
 		header("Location: ../domains.php");
 		exit;

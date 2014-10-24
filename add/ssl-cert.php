@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
 
-		include("../_includes/system/update-ssl-fees.inc.php");
+        include("../_includes/system/check-ssl-fees.inc.php");
 		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
 		header("Location: ../ssl-certs.php");

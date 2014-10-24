@@ -159,13 +159,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
 			if (($_SESSION['run_update_includes'] == "1" || $last_login_date < $current_date) && $_SESSION['need_domain'] == "0") {
 				
-				include("_includes/system/update-ssl-fees.inc.php");
 				include("_includes/system/update-segments.inc.php");
 				include("_includes/system/update-tlds.inc.php");
 
 			}
 
            include("_includes/system/check-domain-fees.inc.php");
+           include("_includes/system/check-ssl-fees.inc.php");
 
            if ($_SESSION['is_new_password'] == 1) {
 				
