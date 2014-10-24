@@ -372,7 +372,7 @@ if ($export == "1") {
 	$row_content[$count++] = "Initial Fee";
     $row_content[$count++] = "Renewal Fee";
     $row_content[$count++] = "Misc Fee";
-    $row_content[$count++] = "Total Cost";
+    $row_content[$count++] = "Total Yearly Cost";
 	$row_content[$count++] = "Host / Label";
 	$row_content[$count++] = "Domain";
 	$row_content[$count++] = "SSL Provider";
