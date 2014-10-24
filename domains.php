@@ -192,7 +192,7 @@ elseif ($sort_by == "r_d") { $sort_by_string = " ORDER BY r.name desc, d.domain 
 elseif ($sort_by == "ra_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc "; } 
 elseif ($sort_by == "ra_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
 
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.initial_fee, f.renewal_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name
 		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
 		WHERE d.account_id = ra.id
 		  AND ra.registrar_id = r.id
@@ -631,6 +631,9 @@ if ($export == "1") {
 	$row_content[$count++] = "Expiry Date";
 	$row_content[$count++] = "Initial Fee";
     $row_content[$count++] = "Renewal Fee";
+    $row_content[$count++] = "Transfer Fee";
+    $row_content[$count++] = "Privacy Fee";
+    $row_content[$count++] = "Misc Fee";
     $row_content[$count++] = "Total Cost";
 	$row_content[$count++] = "Domain";
 	$row_content[$count++] = "TLD";
@@ -663,6 +666,9 @@ if ($export == "1") {
 		
 		$temp_initial_fee = $row->initial_fee * $row->conversion;
         $temp_renewal_fee = $row->renewal_fee * $row->conversion;
+        $temp_transfer_fee = $row->transfer_fee * $row->conversion;
+        $temp_privacy_fee = $row->privacy_fee * $row->conversion;
+        $temp_misc_fee = $row->misc_fee * $row->conversion;
         $temp_total_cost = $row->total_cost * $row->conversion;
 
         if ($row->active == "0") { $domain_status = "EXPIRED"; }
@@ -696,6 +702,30 @@ if ($export == "1") {
         include("_includes/system/convert-and-format-currency.inc.php");
         $export_renewal_fee = $temp_output_amount;
 
+        $temp_input_amount = $temp_transfer_fee;
+        $temp_input_conversion = "";
+        $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+        $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+        $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+        include("_includes/system/convert-and-format-currency.inc.php");
+        $export_transfer_fee = $temp_output_amount;
+
+        $temp_input_amount = $temp_privacy_fee;
+        $temp_input_conversion = "";
+        $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+        $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+        $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+        include("_includes/system/convert-and-format-currency.inc.php");
+        $export_privacy_fee = $temp_output_amount;
+
+        $temp_input_amount = $temp_misc_fee;
+        $temp_input_conversion = "";
+        $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
+        $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
+        $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
+        include("_includes/system/convert-and-format-currency.inc.php");
+        $export_misc_fee = $temp_output_amount;
+
         $temp_input_amount = $temp_total_cost;
         $temp_input_conversion = "";
         $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
@@ -708,6 +738,9 @@ if ($export == "1") {
 		$row_content[$count++] = $row->expiry_date;
 		$row_content[$count++] = $export_initial_fee;
         $row_content[$count++] = $export_renewal_fee;
+        $row_content[$count++] = $export_transfer_fee;
+        $row_content[$count++] = $export_privacy_fee;
+        $row_content[$count++] = $export_misc_fee;
         $row_content[$count++] = $export_total_cost;
 		$row_content[$count++] = $row->domain;
 		$row_content[$count++] = "." . $row->tld;
