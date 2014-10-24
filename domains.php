@@ -634,7 +634,7 @@ if ($export == "1") {
     $row_content[$count++] = "Transfer Fee";
     $row_content[$count++] = "Privacy Fee";
     $row_content[$count++] = "Misc Fee";
-    $row_content[$count++] = "Total Cost";
+    $row_content[$count++] = "Total Yearly Cost";
 	$row_content[$count++] = "Domain";
 	$row_content[$count++] = "TLD";
 	$row_content[$count++] = "Function";
