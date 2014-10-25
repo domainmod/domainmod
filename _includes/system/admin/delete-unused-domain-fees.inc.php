@@ -1,5 +1,5 @@
 <?php
-// /_includes/system/delete-unused-ssl-fees.inc.php
+// /_includes/system/admin/delete-unused-domain-fees.inc.php
 //
 // DomainMOD is an open source application written in PHP & MySQL used to track and manage your web resources.
 // Copyright (C) 2010 Greg Chetcuti
@@ -20,28 +20,32 @@ $direct = $_GET['direct'];
 
 if ($direct == "1") {
 
-    include("../start-session.inc.php");
-    include("../config.inc.php");
-    include("../database.inc.php");
-    include("../software.inc.php");
-    include("../auth/auth-check.inc.php");
+    include("../../start-session.inc.php");
+    include("../../config.inc.php");
+    include("../../database.inc.php");
+    include("../../software.inc.php");
+    include("../../auth/auth-check.inc.php");
 
 }
 
-$sql = "DELETE FROM ssl_fees
-        WHERE id NOT IN (SELECT fee_id FROM ssl_certs)";
+// If the user isn't an administrator, redirect them to $full_redirect
+$full_redirect = "../../../invalid.php";
+include("../../auth/admin-user-check.inc.php");
+
+$sql = "DELETE FROM fees
+        WHERE id NOT IN (SELECT fee_id FROM domains)";
 $result = mysql_query($sql,$connection);
 
 if ($direct == "1") {
 
-    $_SESSION['result_message'] .= "Unused SSL Fees Deleted<BR>";
+    $_SESSION['result_message'] .= "Unused Domain Fees Deleted<BR>";
 
     header("Location: " . $_SERVER['HTTP_REFERER']);
     exit;
 
 } else {
 
-    $_SESSION['result_message'] .= "Unused SSL Fees Deleted<BR>";
+    $_SESSION['result_message'] .= "Unused Domain Fees Deleted<BR>";
 
 }
 ?>
