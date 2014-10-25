@@ -1,5 +1,8 @@
 DomainMOD Changelog
 ===================
+v0.85.0   2014-10-24   bcde9c7a4d336c4395fba52b252e0638b74b90fa
+ - Added Delete Unused Fees to Control Panel
+
 v0.84.2   2014-10-24   9828a8583bb7f888f1a0353b5cb78e7dbd45c5f1
  - Updated Renewal & Fee Reports to use Total Cost
 
