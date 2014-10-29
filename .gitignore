@@ -1,7 +1,5 @@
-.idea/tasks.xml
-.idea/workspace.xml
-_includes/config.inc.php
 .htaccess
-error_log
 robots.txt
+_includes/config.inc.php
+error_log
 Thumbs.db
