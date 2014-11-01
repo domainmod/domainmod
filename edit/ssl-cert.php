@@ -58,6 +58,7 @@ while ($row = mysql_fetch_object($result)) {
 
 }
 
+/* TODO: Figure out why this gives errors (but still works) in DEV environment */
 foreach($field_array as $field) {
 
 	$full_field = "new_" . $field . "";
@@ -157,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         include("../_includes/system/check-ssl-fees.inc.php");
 
-		header("Location: ../ssl-certs.php");
+		header("Location: ssl-cert.php?sslcid=$sslcid");
 		exit;
 
 	} else {
