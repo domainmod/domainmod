@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         include("../_includes/system/update-segments.inc.php");
         include("../_includes/system/check-domain-fees.inc.php");
 
-		header("Location: ../domains.php");
+		header("Location: domain.php?did=$did");
 		exit;
 
 	} else {
