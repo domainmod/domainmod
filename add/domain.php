@@ -150,8 +150,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             include("../_includes/system/check-domain-fees.inc.php");
 			include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
-			header("Location: ../domains.php");
-			exit;
+			// header("Location: domain.php");
+			// exit;
 
 		} else {
 
@@ -189,15 +189,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <strong>Registrar Account</strong><BR><BR>
 <?php 
 $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
-				FROM registrar_accounts AS ra, owners AS o, registrars AS r
-				WHERE ra.owner_id = o.id
-				  AND ra.registrar_id = r.id
-				ORDER BY r_name, o_name, ra.username";
+                FROM registrar_accounts AS ra, owners AS o, registrars AS r
+                WHERE ra.owner_id = o.id
+                  AND ra.registrar_id = r.id
+                ORDER BY r_name, o_name, ra.username";
 $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $to_compare = $new_account_id;
+
+} else {
+
+    $to_compare = $_SESSION['default_registrar_account'];
+
+}
+
 while ($row_account = mysql_fetch_object($result_account)) { ?>
 
-	<option value="<?=$row_account->id?>"<?php if ($row_account->id == $_SESSION['default_registrar_account']) echo " selected";?>><?=$row_account->r_name?>, <?=$row_account->o_name?> (<?=$row_account->username?>)</option><?php
+    <option value="<?= $row_account->id ?>"<?php if ($row_account->id == $to_compare) echo " selected"; ?>><?= $row_account->r_name ?>, <?= $row_account->o_name ?> (<?= $row_account->username ?>)</option><?php
 
 }
 echo "</select>";
@@ -210,9 +221,20 @@ $sql_dns = "SELECT id, name
 			ORDER BY name";
 $result_dns = mysql_query($sql_dns,$connection) or die(mysql_error());
 echo "<select name=\"new_dns_id\">";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $to_compare = $new_dns_id;
+
+} else {
+
+    $to_compare = $_SESSION['default_dns'];
+
+}
+
 while ($row_dns = mysql_fetch_object($result_dns)) { ?>
 
-	<option value="<?=$row_dns->id?>"<?php if ($row_dns->id == $_SESSION['default_dns']) echo " selected";?>><?=$row_dns->name?></option><?php
+	<option value="<?=$row_dns->id?>"<?php if ($row_dns->id == $to_compare) echo " selected";?>><?=$row_dns->name?></option><?php
 
 }
 echo "</select>";
@@ -226,9 +248,19 @@ $sql_ip = "SELECT id, name, ip
 $result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
 echo "<select name=\"new_ip_id\">";
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $to_compare = $new_ip_id;
+
+} else {
+
+    $to_compare = $_SESSION['default_ip_address_domains'];
+
+}
+
 while ($row_ip = mysql_fetch_object($result_ip)) { ?>
 
-	<option value="<?=$row_ip->id?>"<?php if ($row_ip->id == $_SESSION['default_ip_address_domains']) echo " selected";?>><?=$row_ip->name?> (<?=$row_ip->ip?>)</option><?php
+	<option value="<?=$row_ip->id?>"<?php if ($row_ip->id == $to_compare) echo " selected";?>><?=$row_ip->name?> (<?=$row_ip->ip?>)</option><?php
 
 }
 echo "</select>";
@@ -241,9 +273,20 @@ $sql_hosting = "SELECT id, name
 				ORDER BY name";
 $result_hosting = mysql_query($sql_hosting,$connection) or die(mysql_error());
 echo "<select name=\"new_hosting_id\">";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $to_compare = $new_hosting_id;
+
+} else {
+
+    $to_compare = $_SESSION['default_host'];
+
+}
+
 while ($row_hosting = mysql_fetch_object($result_hosting)) { ?>
 
-	<option value="<?=$row_hosting->id?>"<?php if ($row_hosting->id == $_SESSION['default_host']) echo " selected";?>><?=$row_hosting->name?></option><?php
+	<option value="<?=$row_hosting->id?>"<?php if ($row_hosting->id == $to_compare) echo " selected";?>><?=$row_hosting->name?></option><?php
 
 }
 echo "</select>";
@@ -256,9 +299,20 @@ $sql_cat = "SELECT id, name
 			ORDER BY name";
 $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
 echo "<select name=\"new_cat_id\">";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $to_compare = $new_cat_id;
+
+} else {
+
+    $to_compare = $_SESSION['default_category_domains'];
+
+}
+
 while ($row_cat = mysql_fetch_object($result_cat)) { ?>
 
-	<option value="<?=$row_cat->id?>"<?php if ($row_cat->id == $_SESSION['default_category_domains']) echo " selected";?>><?=$row_cat->name?></option><?php
+	<option value="<?=$row_cat->id?>"<?php if ($row_cat->id == $to_compare) echo " selected";?>><?=$row_cat->name?></option><?php
 
 }
 echo "</select>";
