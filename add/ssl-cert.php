@@ -54,6 +54,7 @@ while ($row = mysql_fetch_object($result)) {
 
 }
 
+/* TODO: Figure out why this gives errors (but still works) in DEV environment */
 foreach($field_array as $field) {
 
 	$full_field = "new_" . $field . "";
@@ -129,8 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         include("../_includes/system/check-ssl-fees.inc.php");
 		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
-		header("Location: ../ssl-certs.php");
-		exit;
+		// header("Location: ../ssl-certs.php");
+		// exit;
 
 	} else {
 	
@@ -181,9 +182,20 @@ $sql_account = "SELECT sslpa.id, sslpa.username, o.name as o_name, sslp.name as 
 				ORDER BY sslp_name, o_name, sslpa.username";
 $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $to_compare = $new_account_id;
+
+} else {
+
+    $to_compare = $_SESSION['default_ssl_provider_account'];
+
+}
+
 while ($row_account = mysql_fetch_object($result_account)) { ?>
 
-	<option value="<?=$row_account->id?>"<?php if ($row_account->id == $_SESSION['default_ssl_provider_account']) echo " selected";?>><?=$row_account->sslp_name?>, <?=$row_account->o_name?> (<?=$row_account->username?>)</option><?php
+	<option value="<?=$row_account->id?>"<?php if ($row_account->id == $to_compare) echo " selected";?>><?=$row_account->sslp_name?>, <?=$row_account->o_name?> (<?=$row_account->username?>)</option><?php
 
 }
 echo "</select>";
@@ -196,9 +208,20 @@ $sql_type = "SELECT id, type
 			 ORDER BY type";
 $result_type = mysql_query($sql_type,$connection) or die(mysql_error());
 echo "<select name=\"new_type_id\">";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $to_compare = $new_type_id;
+
+} else {
+
+    $to_compare = $_SESSION['default_ssl_type'];
+
+}
+
 while ($row_type = mysql_fetch_object($result_type)) { ?>
 
-	<option value="<?=$row_type->id?>"<?php if ($row_type->id == $_SESSION['default_ssl_type']) echo " selected";?>><?=$row_type->type?></option><?php
+	<option value="<?=$row_type->id?>"<?php if ($row_type->id == $to_compare) echo " selected";?>><?=$row_type->type?></option><?php
 
 }
 echo "</select>";
@@ -211,9 +234,20 @@ $sql_ip = "SELECT id, ip, name
 		   ORDER BY name, ip";
 $result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
 echo "<select name=\"new_ip_id\">";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $to_compare = $new_ip_id;
+
+} else {
+
+    $to_compare = $_SESSION['default_ip_address_ssl'];
+
+}
+
 while ($row_ip = mysql_fetch_object($result_ip)) { ?>
 
-	<option value="<?=$row_ip->id?>"<?php if ($row_ip->id == $_SESSION['default_ip_address_ssl']) echo " selected";?>><?=$row_ip->name?> (<?=$row_ip->ip?>)</option><?php
+	<option value="<?=$row_ip->id?>"<?php if ($row_ip->id == $to_compare) echo " selected";?>><?=$row_ip->name?> (<?=$row_ip->ip?>)</option><?php
 
 }
 echo "</select>";
@@ -226,9 +260,20 @@ $sql_cat = "SELECT id, name
 			ORDER BY name";
 $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
 echo "<select name=\"new_cat_id\">";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $to_compare = $new_cat_id;
+
+} else {
+
+    $to_compare = $_SESSION['default_category_ssl'];
+
+}
+
 while ($row_cat = mysql_fetch_object($result_cat)) { ?>
 
-	<option value="<?=$row_cat->id?>"<?php if ($row_cat->id == $_SESSION['default_category_ssl']) echo " selected";?>><?=$row_cat->name?></option><?php
+	<option value="<?=$row_cat->id?>"<?php if ($row_cat->id == $to_compare) echo " selected";?>><?=$row_cat->name?></option><?php
 
 }
 echo "</select>";
