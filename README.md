@@ -112,7 +112,7 @@ After installation just load the URL in a web browser and play around in the UI,
 
 2. Visit the following URL to download the most recent source code archive: https://github.com/aysmedia/domainmod/archive/master.zip  
 
-   Then simply upload and unpack the new archive overtop of where you installed the previous version (or unpack it and then upload it, whichever you prefer).  
+   Then simply upload and unpack the new archive overtop of where you installed the previous version (or unpack it and then upload it, whichever you prefer). You should also delete the 'install' folder.  
 
 
 ## Changelog
