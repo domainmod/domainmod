@@ -142,14 +142,14 @@ if ($export == "1") {
 	
 		$sql = "SELECT id, name, ip, rdns, notes, insert_time, update_time
 				FROM ip_addresses
-				ORDER BY name asc";
+				ORDER BY name ASC, ip ASC";
 	
 	} else {
 	
 		$sql = "SELECT id, name, ip, rdns, notes, insert_time, update_time
 				FROM ip_addresses
 				WHERE id NOT IN (" . $exclude_ip_address_string . ")
-				ORDER BY name asc";
+				ORDER BY name ASC, ip ASC";
 	
 	}
 	
@@ -309,14 +309,14 @@ if ($exclude_ip_address_string == "") {
 
 	$sql = "SELECT id, name, ip, rdns
 			FROM ip_addresses
-			ORDER BY name asc";
+			ORDER BY name ASC, ip ASC";
 
 } else {
 
 	$sql = "SELECT id, name, ip, rdns
 			FROM ip_addresses
 			WHERE id NOT IN (" . $exclude_ip_address_string . ")
-			ORDER BY name asc";
+			ORDER BY name ASC, ip ASC";
 
 }
 
