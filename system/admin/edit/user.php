@@ -187,12 +187,8 @@ if ($really_del == "1") {
 		$sql = "DELETE FROM user_settings
 				WHERE user_id = '" . $uid . "'";
 		$result = mysql_query($sql,$connection);
-	
-		$sql = "DELETE FROM update_data
-				WHERE user_id = '" . $uid . "'";
-		$result = mysql_query($sql,$connection);
-	
-		$sql = "DELETE FROM users 
+
+		$sql = "DELETE FROM users
 				WHERE id = '" . $uid . "'";
 		$result = mysql_query($sql,$connection);
 		
