@@ -21,11 +21,11 @@ include("../../_includes/start-session.inc.php");
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "../../invalid.php";
 include("../../_includes/auth/admin-user-check.inc.php");
-
 include("../../_includes/config.inc.php");
 include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
+include("../../_includes/timestamps/current-timestamp.inc.php");
 
 $page_title = "Reset Password";
 $software_section = "system";
