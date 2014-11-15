@@ -230,7 +230,8 @@ if ($page_title != "") { ?>
 	<title><?=$software_title?></title><?php 
 } ?>
 <?php include("_includes/layout/head-tags.inc.php"); ?>
-</head><?php 
+</head>
+<?php
 if ($new_username == "") { ?>
 	<body onLoad="document.forms[0].elements[0].focus()";><?php 
 } else { ?>
