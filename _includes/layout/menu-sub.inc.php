@@ -470,50 +470,50 @@ if ($software_section == "domains") { ?>
 
 } elseif ($software_section == "system") { ?>
 
-	&raquo;&nbsp;<strong>Control Panel</string>&nbsp;<?php
+	&raquo;&nbsp;<strong>Control Panel</strong>&nbsp;<?php
 
 } elseif ($software_section == "system-display-settings") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
-	&raquo;&nbsp;<strong>Display Settings</string>&nbsp;<?php
+	&raquo;&nbsp;<strong>Display Settings</strong>&nbsp;<?php
 
 } elseif ($software_section == "system-email-settings") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
-	&raquo;&nbsp;<strong>Email Settings</string>&nbsp;<?php
+	&raquo;&nbsp;<strong>Email Settings</strong>&nbsp;<?php
 
 } elseif ($software_section == "system-user-defaults") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
-	&raquo;&nbsp;<strong>User Defaults</string>&nbsp;<?php
+	&raquo;&nbsp;<strong>User Defaults</strong>&nbsp;<?php
 
 } elseif ($software_section == "system-update-profile") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
-	&raquo;&nbsp;<strong>Update Profile</string>&nbsp;<?php
+	&raquo;&nbsp;<strong>Update Profile</strong>&nbsp;<?php
 
 } elseif ($software_section == "system-change-password") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
-	&raquo;&nbsp;<strong>Change Password</string>&nbsp;<?php
+	&raquo;&nbsp;<strong>Change Password</strong>&nbsp;<?php
 
 } elseif ($software_section == "admin-system-settings") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
-	&raquo;&nbsp;<strong>System Settings</string>&nbsp;<?php
+	&raquo;&nbsp;<strong>System Settings</strong>&nbsp;<?php
 
 } elseif ($software_section == "admin-system-defaults") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
-	&raquo;&nbsp;<strong>System Defaults</string>&nbsp;<?php
+	&raquo;&nbsp;<strong>System Defaults</strong>&nbsp;<?php
 
 } elseif ($software_section == "admin-domain-fields") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
-	&raquo;&nbsp;<strong>Custom Domain Fields</string>&nbsp;
+	&raquo;&nbsp;<strong>Custom Domain Fields</strong>&nbsp;
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/admin/add/domain-field.php">Add A Custom Field</a>&nbsp;<?php 
 
 } elseif ($software_section == "admin-domain-field-add") { ?>
@@ -534,7 +534,7 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
-	&raquo;&nbsp;<strong>Custom SSL Fields</string>&nbsp;
+	&raquo;&nbsp;<strong>Custom SSL Fields</strong>&nbsp;
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/admin/add/ssl-field.php">Add A Custom Field</a>&nbsp;<?php 
 
 } elseif ($software_section == "admin-ssl-field-add") { ?>
@@ -555,7 +555,7 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
-	&raquo;&nbsp;<strong>System Information</string>&nbsp;<?php
+	&raquo;&nbsp;<strong>System Information</strong>&nbsp;<?php
 
 } elseif ($software_section == "admin-user-list") { ?>
 
@@ -582,7 +582,7 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
-	&raquo;&nbsp;<strong>DW</string>&nbsp;<?php
+	&raquo;&nbsp;<strong>DW</strong>&nbsp;<?php
 
 } elseif ($software_section == "admin-dw-list-accounts") { ?>
 
@@ -590,10 +590,10 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
 	<?php if ($domain == "" && $search_for == "") { ?>
-		&raquo;&nbsp;<strong>Accounts</string>&nbsp;
+		&raquo;&nbsp;<strong>Accounts</strong>&nbsp;
 	<?php } else { ?>
-		&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/admin/dw/list-accounts.php">Accounts</a></string>&nbsp;
-		&raquo;&nbsp;<strong>Search Results</string>&nbsp;
+		&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/admin/dw/list-accounts.php">Accounts</a></strong>&nbsp;
+		&raquo;&nbsp;<strong>Search Results</strong>&nbsp;
 	<?php }
 
 } elseif ($software_section == "admin-dw-list-dns-zones") { ?>
@@ -602,10 +602,10 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
 	<?php if ($domain == "" && $search_for == "") { ?>
-		&raquo;&nbsp;<strong>DNS Zones & Records</string>&nbsp;
+		&raquo;&nbsp;<strong>DNS Zones & Records</strong>&nbsp;
 	<?php } else { ?>
-		&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/admin/dw/list-dns-zones.php">DNS Zones</a></string>&nbsp;
-		&raquo;&nbsp;<strong>Search Results</string>&nbsp;
+		&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/admin/dw/list-dns-zones.php">DNS Zones</a></strong>&nbsp;
+		&raquo;&nbsp;<strong>Search Results</strong>&nbsp;
 	<?php }
 
 } elseif ($software_section == "admin-dw-manage-servers") { ?>
@@ -613,7 +613,7 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/">Control Panel</a>&nbsp;
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
-    &raquo;&nbsp;<strong>Servers</string>&nbsp;
+    &raquo;&nbsp;<strong>Servers</strong>&nbsp;
 	&raquo;&nbsp;<a href="<?php if ($web_root != "") echo $web_root; ?>/system/admin/dw/add/server.php">Add A Server</a>&nbsp;<?php 
 
 } elseif ($software_section == "admin-dw-manage-servers-add") { ?>
