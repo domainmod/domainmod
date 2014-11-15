@@ -15,3 +15,12 @@
 // You should have received a copy of the GNU General Public License along with DomainMOD. If not, please see
 // http://www.gnu.org/licenses/
 ?>
+<?php
+$full_filename = $full_server_path . "/_includes/layout/footer.DEMO.inc.php";
+
+if (file_exists($full_filename)) {
+
+    include($full_server_path . "/_includes/layout/footer.DEMO.inc.php");
+
+}
+?>
