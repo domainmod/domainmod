@@ -20,11 +20,11 @@
 
     <div class="header-container">
         <div class="header-left">
-            <a href="<?php if ($web_root != "") echo $web_root; ?>/domains.php"><img border="0" src="<?php if ($web_root != "") echo $web_root; ?>/images/logo.png"></a>
+            <a href="<?php echo $web_root; ?>/domains.php"><img border="0" src="<?php echo $web_root; ?>/images/logo.png"></a>
         </div>
         <div class="header-right">
             <?php if ($_SESSION['is_logged_in'] == 1) { ?>
-                <em>logged in as <strong><?=$_SESSION['username']?></strong> (<a class="subtlelink" href="<?php if ($web_root != "") echo $web_root; ?>/system/update-profile.php"><?=$_SESSION['first_name']?> <?=$_SESSION['last_name']?></a>)</em>&nbsp;&nbsp;[ <a target="_blank" href="http://domainmod.org/news/">News</a> ]&nbsp;&nbsp;[ <a target="_blank" href="http://domainmod.org/support/">Support</a> ]&nbsp;&nbsp;[ <a href="<?php if ($web_root != "") echo $web_root; ?>/logout.php">Logout</a> ]
+                <em>logged in as <strong><?=$_SESSION['username']?></strong> (<a class="subtlelink" href="<?php echo $web_root; ?>/system/update-profile.php"><?=$_SESSION['first_name']?> <?=$_SESSION['last_name']?></a>)</em>&nbsp;&nbsp;[ <a target="_blank" href="http://domainmod.org/news/">News</a> ]&nbsp;&nbsp;[ <a target="_blank" href="http://domainmod.org/support/">Support</a> ]&nbsp;&nbsp;[ <a href="<?php echo $web_root; ?>/logout.php">Logout</a> ]
             <?php } ?>
         </div>
     </div>
