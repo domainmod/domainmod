@@ -1,5 +1,6 @@
 .htaccess
 robots.txt
 _includes/config.inc.php
+_includes/layout/footer.DEMO.inc.php
 error_log
 Thumbs.db
