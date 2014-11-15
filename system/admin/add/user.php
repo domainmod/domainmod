@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		$result = mysql_query($sql,$connection);
 
 		$_SESSION['result_message'] .= "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . " / " . $new_password . ")</font> Added<BR><BR>
-		You can either manually email the above credentials to the user, or you can <a href=\"reset-password.php?new_username=" . $new_username . "\">click here</a> to have " . $software_title . " email them for you<BR>";
+		You can either manually email the above credentials to the user, or you can <a href=\"reset-password.php?new_username=" . $new_username . "\">click here</a> to have " . $software_title . " email them for you<BR><BR>";
 
 		$temp_input_user_id = $temp_user_id;
 		$temp_input_default_currency = 'CAD';
