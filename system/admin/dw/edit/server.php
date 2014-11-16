@@ -157,7 +157,7 @@ Enter the display name for this server.<BR><BR>
 <input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
 <BR><BR>
 <strong>Host Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-Enter the host name of your WHM installation (ie. server1.yourdomain.com).<BR><BR>
+Enter the host name of your WHM installation (ie. server1.example.com).<BR><BR>
 <input name="new_host" type="text" size="50" maxlength="100" value="<?php if ($new_host != "") echo $new_host; ?>">
 <BR><BR>
 <strong>Protocol (5):</strong><BR><BR>
