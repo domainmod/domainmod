@@ -213,12 +213,12 @@ if ($export == "1") {
 <?php include("../../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
-	<font class="subheadline"><?=$page_subtitle?></font><BR><BR><?php 
+	<font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR><?php
 
 $totalrows = mysql_num_rows(mysql_query($sql_dw_account_temp));
 $navigate = pageBrowser($totalrows,15,10,"&search_for=" . $search_for . "",$_REQUEST[numBegin],$_REQUEST[begin],$_REQUEST[num]);
@@ -231,17 +231,17 @@ if(mysql_num_rows($result_dw_account_temp) == 0) {
 	
 } else { ?>
 
-	<form name="form1" method="post" action="<?=$PHP_SELF?>">
-		<input type="text" name="search_for" size="17" value="<?=$search_for?>">&nbsp;
+	<form name="form1" method="post" action="<?php echo $PHP_SELF; ?>">
+		<input type="text" name="search_for" size="17" value="<?php echo $search_for; ?>">&nbsp;
 		<input type="submit" name="button" value="Search &raquo;">
 		<input type="hidden" name="begin" value="0">
 		<input type="hidden" name="num" value="1">
 		<input type="hidden" name="numBegin" value="1">
 	</form><BR>
 	
-	<strong>[<a href="<?=$PHP_SELF?>?export=1&domain=<?=$domain?>&search_for=<?=$search_for?>">EXPORT</a>]</strong><BR><BR>
+	<strong>[<a href="<?php echo $PHP_SELF; ?>?export=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong><BR><BR>
 	
-	<strong>Number of Accounts:</strong> <?=$totalrows?><BR><BR>
+	<strong>Number of Accounts:</strong> <?php echo $totalrows; ?><BR><BR>
 	<?php include("../../../_includes/layout/pagination.menu.inc.php"); ?><BR><?php
 
 	// QUERY AT TOP OF PAGE

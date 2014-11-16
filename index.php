@@ -225,9 +225,9 @@ $new_password = "";
 <head>
 <?php 
 if ($page_title != "") { ?>
-	<title><?=$software_title?> :: <?=$page_title?></title><?php 
+	<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title><?php
 } else { ?>
-	<title><?=$software_title?></title><?php 
+	<title><?php echo $software_title; ?></title><?php
 } ?>
 <?php include("_includes/layout/head-tags.inc.php"); ?>
 </head>
@@ -242,7 +242,7 @@ if ($new_username == "") { ?>
 if ($_SESSION['installation_mode'] != 1) { ?>
 
     <BR>
-    <form name="login_form" method="post" action="<?=$PHP_SELF?>">
+    <form name="login_form" method="post" action="<?php echo $PHP_SELF; ?>">
 		<?php if ($demo_install == "1") { ?><div align="center"><strong>Demo Username & Password:</strong> "demo"</div><BR><BR><?php } ?>
         <div class="login_form">
             <strong>Username:</strong>&nbsp;

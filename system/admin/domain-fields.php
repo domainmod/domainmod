@@ -84,25 +84,25 @@ if ($export == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-Below is a list of all the Custom Domain Fields that have been added to <?=$software_title?>.<BR><BR>
-Custom Domain Fields help extend the functionality of <?=$software_title?> by allowing the user to create their own data fields. For example, if you wanted to keep track of which domains are currenty setup in Google Analytics, you could create a new Google Analytics check box field and start tracking this information for each of your domains. Combine custom fields with the ability to update them with the Bulk Updater, and the sky's the limit in regards to what data you can easily track!<BR><BR>
+Below is a list of all the Custom Domain Fields that have been added to <?php echo $software_title; ?>.<BR><BR>
+Custom Domain Fields help extend the functionality of <?php echo $software_title; ?> by allowing the user to create their own data fields. For example, if you wanted to keep track of which domains are currenty setup in Google Analytics, you could create a new Google Analytics check box field and start tracking this information for each of your domains. Combine custom fields with the ability to update them with the Bulk Updater, and the sky's the limit in regards to what data you can easily track!<BR><BR>
 And when you export your domain data, the information contained in your custom fields will automatically be included in the exported data.
 <BR><BR><?php
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
 if (mysql_num_rows($result) > 0) { ?>
 
-	[<a href="<?=$PHP_SELF?>?export=1">EXPORT</a>]
+	[<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]
 
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Display Name (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Display Name (<?php echo mysql_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">DB Field</font>
@@ -122,16 +122,16 @@ if (mysql_num_rows($result) > 0) { ?>
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/domain-field.php?cdfid=<?=$row->id?>"><?=$row->name?></a>
+                <a class="invisiblelink" href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
             </td>
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/domain-field.php?cdfid=<?=$row->id?>"><?=$row->field_name?></a>
+                <a class="invisiblelink" href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $row->field_name; ?></a>
             </td>
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/domain-field.php?cdfid=<?=$row->id?>"><?=$row->type?></a>
+                <a class="invisiblelink" href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a>
             </td>
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/domain-field.php?cdfid=<?=$row->id?>"><?=$row->insert_time?></a>
+                <a class="invisiblelink" href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $row->insert_time; ?></a>
             </td>
             <td class="main_table_cell_active">
             	<?php 
@@ -145,7 +145,7 @@ if (mysql_num_rows($result) > 0) { ?>
 					
 				}
 				?>
-                <a class="invisiblelink" href="edit/domain-field.php?cdfid=<?=$row->id?>"><?=$temp_update_time?></a>
+                <a class="invisiblelink" href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $temp_update_time; ?></a>
             </td>
         </tr><?php 
 	}

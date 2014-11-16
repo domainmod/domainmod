@@ -150,26 +150,26 @@ if ($really_del == "1") {
 <?php include("../../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
-<form name="edit_user_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_user_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Display Name (75)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_name" type="text" size="30" maxlength="75" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>"><BR><BR>
-<strong>Database Field Name</strong><BR><BR><?=$new_field_name?><BR><BR>
+<strong>Database Field Name</strong><BR><BR><?php echo $new_field_name; ?><BR><BR>
 <strong>Data Type</strong><BR><BR>
-<?=$new_field_type?>
+<?php echo $new_field_type; ?>
 <BR><BR>
 <strong>Description (255)</strong><BR><BR><input name="new_description" type="text" size="50" maxlength="255" value="<?php if ($new_description != "") echo htmlentities($new_description); ?>">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<input type="hidden" name="new_csfid" value="<?=$csfid?>">
+<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+<input type="hidden" name="new_csfid" value="<?php echo $csfid; ?>">
 <BR><BR>
 <input type="submit" name="button" value="Update Custom Field &raquo;">
 </form>
-<BR><BR><a href="<?=$PHP_SELF?>?csfid=<?=$csfid?>&del=1">DELETE THIS CUSTOM SSL FIELD</a>
+<BR><BR><a href="<?php echo $PHP_SELF; ?>?csfid=<?php echo $csfid; ?>&del=1">DELETE THIS CUSTOM SSL FIELD</a>
 <?php include("../../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

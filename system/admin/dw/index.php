@@ -98,7 +98,7 @@ $software_section = "admin-dw-main";
 <?php include("../../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../../_includes/layout/head-tags.inc.php"); ?>
 <?php include("../../../_includes/system/functions/jumpmenu.inc.php"); ?>
 </head>
@@ -144,7 +144,7 @@ while ($row_build_finished = mysql_fetch_object($result_build_finished)) {
 if ($is_the_build_finished == 1 && ($temp_total_accounts != 0 || $temp_total_dns_zones != 0)) { ?>
 
     <BR><font class="subheadline">View Data</font><BR><BR>
-    <form name="dw_view_data_form" method="post" action="<?=$PHP_SELF?>">
+    <form name="dw_view_data_form" method="post" action="<?php echo $PHP_SELF; ?>">
     <?php
     
     if ($temp_total_accounts == 0) {
@@ -154,17 +154,17 @@ if ($is_the_build_finished == 1 && ($temp_total_accounts != 0 || $temp_total_dns
     } else { ?>
     
         <select name="dw_accounts" onChange="MM_jumpMenu('parent',this,0)">
-        <option value="<?=$PHP_SELF?>">Server Accounts</option><?php
+        <option value="<?php echo $PHP_SELF; ?>">Server Accounts</option><?php
         $sql_dw_account = "SELECT id, name, dw_accounts
 						   FROM dw_servers
 						   ORDER BY name, host";
         $result_dw_account = mysql_query($sql_dw_account,$connection); ?>
     
-        <option value="<?=$PHP_SELF?>?action=dw_accounts&view_all=1">VIEW ALL</option><?php
+        <option value="<?php echo $PHP_SELF; ?>?action=dw_accounts&view_all=1">VIEW ALL</option><?php
     
         while ($row_dw_account = mysql_fetch_object($result_dw_account)) { ?>
     
-            <option value="<?=$PHP_SELF?>?action=dw_accounts&id=<?=$row_dw_account->id?>"><?=$row_dw_account->name?> (<?=number_format($row_dw_account->dw_accounts)?> Accounts)</option><?php
+            <option value="<?php echo $PHP_SELF; ?>?action=dw_accounts&id=<?php echo $row_dw_account->id; ?>"><?php echo $row_dw_account->name; ?> (<?php echo number_format($row_dw_account->dw_accounts); ?> Accounts)</option><?php
     
         } ?>
         </select>
@@ -179,17 +179,17 @@ if ($is_the_build_finished == 1 && ($temp_total_accounts != 0 || $temp_total_dns
     } else { ?>
     
         <select name="dw_dns_zones" onChange="MM_jumpMenu('parent',this,0)">
-        <option value="<?=$PHP_SELF?>">DNS Zones & Records</option><?php
+        <option value="<?php echo $PHP_SELF; ?>">DNS Zones & Records</option><?php
         $sql_dw_dns_records = "SELECT id, name, dw_dns_zones, dw_dns_records
 							   FROM dw_servers
 							   ORDER BY name, host";
         $result_dw_dns_records = mysql_query($sql_dw_dns_records,$connection); ?>
     
-        <option value="<?=$PHP_SELF?>?action=dw_dns_zones&view_all=1">VIEW ALL</option><?php
+        <option value="<?php echo $PHP_SELF; ?>?action=dw_dns_zones&view_all=1">VIEW ALL</option><?php
     
         while ($row_dw_dns_records = mysql_fetch_object($result_dw_dns_records)) { ?>
     
-            <option value="<?=$PHP_SELF?>?action=dw_dns_zones&id=<?=$row_dw_dns_records->id?>"><?=$row_dw_dns_records->name?> (<?=number_format($row_dw_dns_records->dw_dns_zones)?> Zones, <?=number_format($row_dw_dns_records->dw_dns_records)?> Records)</option><?php
+            <option value="<?php echo $PHP_SELF; ?>?action=dw_dns_zones&id=<?php echo $row_dw_dns_records->id; ?>"><?php echo $row_dw_dns_records->name; ?> (<?php echo number_format($row_dw_dns_records->dw_dns_zones); ?> Zones, <?php echo number_format($row_dw_dns_records->dw_dns_records); ?> Records)</option><?php
     
         } ?>
         </select>
@@ -318,10 +318,10 @@ if ($temp_build_info != 0) { ?>
     
                 <tr class="main_table_row_active">
                     <td class="main_table_cell_active"><em>Full Build</em></td>
-                    <td class="main_table_cell_active"><?=$temp_build_start_time_overall?></td>
-                    <td class="main_table_cell_active"><?=$temp_build_end_time_overall?></td>
-                    <td class="main_table_cell_active"><?=$temp_build_time_overall?></td>
-                    <td class="main_table_cell_active"><?=$temp_build_status_overall?></td>
+                    <td class="main_table_cell_active"><?php echo $temp_build_start_time_overall; ?></td>
+                    <td class="main_table_cell_active"><?php echo $temp_build_end_time_overall; ?></td>
+                    <td class="main_table_cell_active"><?php echo $temp_build_time_overall; ?></td>
+                    <td class="main_table_cell_active"><?php echo $temp_build_status_overall; ?></td>
                 </tr><?php
                 
             }
@@ -418,11 +418,11 @@ if ($temp_build_info != 0) { ?>
                 } ?>
     
                 <tr class="main_table_row_active">
-                    <td class="main_table_cell_active"><?=$row->name?></td>
-                    <td class="main_table_cell_active"><?=$temp_build_start_time?></td>
-                    <td class="main_table_cell_active"><?=$temp_build_end_time?></td>
-                    <td class="main_table_cell_active"><?=$temp_build_time?></td>
-                    <td class="main_table_cell_active"><?=$temp_build_status?></td>
+                    <td class="main_table_cell_active"><?php echo $row->name; ?></td>
+                    <td class="main_table_cell_active"><?php echo $temp_build_start_time; ?></td>
+                    <td class="main_table_cell_active"><?php echo $temp_build_end_time; ?></td>
+                    <td class="main_table_cell_active"><?php echo $temp_build_time; ?></td>
+                    <td class="main_table_cell_active"><?php echo $temp_build_status; ?></td>
                 </tr><?php
         
             }
@@ -490,13 +490,13 @@ if (mysql_num_rows($result) == 0) {
                             <em>All Servers</em>
                         </td>
                         <td class="main_table_cell_active">
-                            <?=number_format($row->dw_accounts)?>
+                            <?php echo number_format($row->dw_accounts); ?>
                         </td>
                         <td class="main_table_cell_active">
-                            <?=number_format($row->dw_dns_zones)?>
+                            <?php echo number_format($row->dw_dns_zones); ?>
                         </td>
                         <td class="main_table_cell_active">
-                            <?=number_format($row->dw_dns_records)?>
+                            <?php echo number_format($row->dw_dns_records); ?>
                         </td>
                     </tr><?php
     
@@ -514,16 +514,16 @@ if (mysql_num_rows($result) == 0) {
         
                 <tr class="main_table_row_active">
                     <td class="main_table_cell_active">
-                        <?=$row->name?>
+                        <?php echo $row->name; ?>
                     </td>
                     <td class="main_table_cell_active">
-                        <?=number_format($row->dw_accounts)?>
+                        <?php echo number_format($row->dw_accounts); ?>
                     </td>
                     <td class="main_table_cell_active">
-                        <?=number_format($row->dw_dns_zones)?>
+                        <?php echo number_format($row->dw_dns_zones); ?>
                     </td>
                     <td class="main_table_cell_active">
-                        <?=number_format($row->dw_dns_records)?>
+                        <?php echo number_format($row->dw_dns_records); ?>
                     </td>
                 </tr><?php
                 

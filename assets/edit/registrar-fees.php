@@ -277,7 +277,7 @@ if ($really_del == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
@@ -288,7 +288,7 @@ $sql = "SELECT name
 		WHERE id = '" . $rid . "'";
 $result = mysql_query($sql,$connection) or die(mysql_error());
 while ($row = mysql_fetch_object($result)) { $temp_registrar_name = $row->name; } ?>
-The below fees are for the registrar <a href="registrar.php?rid=<?=$rid?>"><?=$temp_registrar_name?></a>.<BR><BR>
+The below fees are for the registrar <a href="registrar.php?rid=<?php echo $rid; ?>"><?php echo $temp_registrar_name; ?></a>.<BR><BR>
 <?php
 $sql = "SELECT tld
 		FROM domains
@@ -308,7 +308,7 @@ if (mysql_num_rows($result) > 0) {
     }
 	$all_missing_fees = substr($temp_all_missing_fees, 0, -2); 
     ?>
-    <?=$all_missing_fees?><BR><BR>
+    <?php echo $all_missing_fees; ?><BR><BR>
     <?php if ($count > 1) { ?>
 	    <strong>Please update the fees for these TLDs below in order to ensure proper domain accounting.</strong>
 	<?php } else { ?>
@@ -355,32 +355,32 @@ if (mysql_num_rows($result) != 0) {
 }
 ?>
 <font class="subheadline">Add A New TLD Fee</font><BR>
-<form name="add_registrar_fee_form" method="post" action="<?=$PHP_SELF?>">
+<form name="add_registrar_fee_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active">
         	<strong>TLD</strong><BR>
-            <input name="new_tld" type="text" value="<?=$new_tld?>" size="4">
+            <input name="new_tld" type="text" value="<?php echo $new_tld; ?>" size="4">
 		</td>
 		<td class="main_table_cell_heading_active">
         	<strong>Initial Fee</strong><BR>
-            <input name="new_initial_fee" type="text" value="<?=$new_initial_fee?>" size="4">
+            <input name="new_initial_fee" type="text" value="<?php echo $new_initial_fee; ?>" size="4">
 		</td>
 		<td class="main_table_cell_heading_active">
         	<strong>Renewal Fee</strong><BR>
-            <input name="new_renewal_fee" type="text" value="<?=$new_renewal_fee?>" size="4">
+            <input name="new_renewal_fee" type="text" value="<?php echo $new_renewal_fee; ?>" size="4">
 		</td>
         <td class="main_table_cell_heading_active">
             <strong>Transfer Fee</strong><BR>
-            <input name="new_transfer_fee" type="text" value="<?=$new_transfer_fee?>" size="4">
+            <input name="new_transfer_fee" type="text" value="<?php echo $new_transfer_fee; ?>" size="4">
         </td>
         <td class="main_table_cell_heading_active">
             <strong>Privacy Fee</strong><BR>
-            <input name="new_privacy_fee" type="text" value="<?=$new_privacy_fee?>" size="4">
+            <input name="new_privacy_fee" type="text" value="<?php echo $new_privacy_fee; ?>" size="4">
         </td>
         <td class="main_table_cell_heading_active">
             <strong>Misc Fee</strong><BR>
-            <input name="new_misc_fee" type="text" value="<?=$new_misc_fee?>" size="4">
+            <input name="new_misc_fee" type="text" value="<?php echo $new_misc_fee; ?>" size="4">
         </td>
 	  	<td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
 		  <select name="new_currency_id" id="new_currency">
@@ -393,11 +393,11 @@ if (mysql_num_rows($result) != 0) {
 			
 			if ($row->currency == $_SESSION['default_currency']) {
 			?>
-			    <option value="<?=$row->id?>" selected><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
+			    <option value="<?php echo $row->id; ?>" selected><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
 			<?php
 			} else {
 			?>
-			    <option value="<?=$row->id?>"><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
+			    <option value="<?php echo $row->id; ?>"><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
 			<?php
 			}
 			}
@@ -406,13 +406,13 @@ if (mysql_num_rows($result) != 0) {
 	    </td>
 	</tr>
 </table>
-    <input type="hidden" name="new_rid" value="<?=$rid?>"><BR>
+    <input type="hidden" name="new_rid" value="<?php echo $rid; ?>"><BR>
     <input type="hidden" name="which_form" value="add"><BR>
     <input type="submit" name="button" value="Add This TLD Fee &raquo;">
 </form>
 <BR><BR>
 <font class="subheadline">TLD Fees</font><BR>
-<form name="edit_registrar_fee_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_registrar_fee_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active"><strong>TLD</strong></td>
@@ -434,25 +434,25 @@ $count = 0;
 while ($row = mysql_fetch_object($result)) {
 ?>
 	<tr class="main_table_row_active">
-    	<td class="main_table_cell_active">.<?=htmlentities($row->tld)?></td>
+    	<td class="main_table_cell_active">.<?php echo htmlentities($row->tld); ?></td>
         <td class="main_table_cell_active">
-            <input type="hidden" name="fee_id[<?=$count?>]" value="<?=$row->id?>">
-            <input name="initial_fee[<?=$count?>]" type="text" value="<?=$row->initial_fee?>" size="4">
+            <input type="hidden" name="fee_id[<?php echo $count; ?>]" value="<?php echo $row->id; ?>">
+            <input name="initial_fee[<?php echo $count; ?>]" type="text" value="<?php echo $row->initial_fee; ?>" size="4">
         </td>
         <td class="main_table_cell_active">
-            <input name="renewal_fee[<?=$count?>]" type="text" value="<?=$row->renewal_fee?>" size="4">
+            <input name="renewal_fee[<?php echo $count; ?>]" type="text" value="<?php echo $row->renewal_fee; ?>" size="4">
         </td>
         <td class="main_table_cell_active">
-            <input name="transfer_fee[<?=$count?>]" type="text" value="<?=$row->transfer_fee?>" size="4">
+            <input name="transfer_fee[<?php echo $count; ?>]" type="text" value="<?php echo $row->transfer_fee; ?>" size="4">
         </td>
         <td class="main_table_cell_active">
-            <input name="privacy_fee[<?=$count?>]" type="text" value="<?=$row->privacy_fee?>" size="4">
+            <input name="privacy_fee[<?php echo $count; ?>]" type="text" value="<?php echo $row->privacy_fee; ?>" size="4">
         </td>
         <td class="main_table_cell_active">
-            <input name="misc_fee[<?=$count?>]" type="text" value="<?=$row->misc_fee?>" size="4">
+            <input name="misc_fee[<?php echo $count; ?>]" type="text" value="<?php echo $row->misc_fee; ?>" size="4">
         </td>
         <td class="main_table_cell_active">
-            <select name="currency[<?=$count?>]" id="new_currency">
+            <select name="currency[<?php echo $count; ?>]" id="new_currency">
                 <?php
                 $sql_currency = "SELECT id, currency, name, symbol
                                  FROM currencies
@@ -462,17 +462,17 @@ while ($row = mysql_fetch_object($result)) {
 
                     if ($row_currency->currency == $row->currency) {
                         ?>
-                        <option value="<?=$row_currency->id?>" selected><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
+                        <option value="<?php echo $row_currency->id; ?>" selected><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
                     <?php
                     } else {
                         ?>
-                        <option value="<?=$row_currency->id?>"><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
+                        <option value="<?php echo $row_currency->id; ?>"><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
                     <?php
                     }
                 }
                 ?>
             </select>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="registrar-fees.php?rid=<?=$rid?>&tld=<?=$row->tld?>&feeid=<?=$row->id?>&del=1">delete</a>]
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="registrar-fees.php?rid=<?php echo $rid; ?>&tld=<?php echo $row->tld; ?>&feeid=<?php echo $row->id; ?>&del=1">delete</a>]
         </td>
 	</tr>
 <?php

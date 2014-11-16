@@ -136,26 +136,26 @@ if ($really_del == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_registrar_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_registrar_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Registrar Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-<input name="new_registrar" type="text" value="<?=htmlentities($new_registrar)?>" size="50" maxlength="100">
+<input name="new_registrar" type="text" value="<?php echo htmlentities($new_registrar); ?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Registrar's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-<input name="new_url" type="text" value="<?=htmlentities($new_url)?>" size="50" maxlength="100">
+<input name="new_url" type="text" value="<?php echo htmlentities($new_url); ?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<input type="hidden" name="new_rid" value="<?=$rid?>">
+<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+<input type="hidden" name="new_rid" value="<?php echo $rid; ?>">
 <BR><BR>
 <input type="submit" name="button" value="Update This Registrar &raquo;">
 </form>
-<BR><BR><a href="registrar-fees.php?rid=<?=$rid?>">EDIT THIS REGISTRAR'S FEES</a><BR>
-<BR><a href="<?=$PHP_SELF?>?rid=<?=$rid?>&del=1">DELETE THIS REGISTRAR</a>
+<BR><BR><a href="registrar-fees.php?rid=<?php echo $rid; ?>">EDIT THIS REGISTRAR'S FEES</a><BR>
+<BR><a href="<?php echo $PHP_SELF; ?>?rid=<?php echo $rid; ?>&del=1">DELETE THIS REGISTRAR</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

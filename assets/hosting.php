@@ -163,15 +163,15 @@ if ($export == "1") {
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
 <?php
 ?>
-Below is a list of all the Web Hosting Providers that are stored in your <?=$software_title?>.<BR><BR>
-[<a href="<?=$PHP_SELF?>?export=1">EXPORT</a>]<?php
+Below is a list of all the Web Hosting Providers that are stored in your <?php echo $software_title; ?>.<BR><BR>
+[<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 $number_of_hosting_providers = mysql_num_rows($result);
@@ -182,7 +182,7 @@ if (mysql_num_rows($result) > 0) {
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-        	<font class="main_table_heading">Active Hosts (<?=$number_of_hosting_providers?>)</font>
+        	<font class="main_table_heading">Active Hosts (<?php echo $number_of_hosting_providers; ?>)</font>
 		</td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Domains</font>
@@ -202,7 +202,7 @@ if (mysql_num_rows($result) > 0) {
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/host.php?whid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_host'] == $row->id) echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
+                <a class="invisiblelink" href="edit/host.php?whid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_host'] == $row->id) echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_active"><?php
 				$sql_total_count = "SELECT count(*) AS total_count
@@ -220,12 +220,12 @@ if (mysql_num_rows($result) > 0) {
 					
 				} else { ?>
 	
-					<a class="nobold" href="../domains.php?whid=<?=$row->id?>"><?=number_format($active_domains)?></a><?php 
+					<a class="nobold" href="../domains.php?whid=<?php echo $row->id; ?>"><?php echo number_format($active_domains); ?></a><?php
 					
 				} ?>
             </td>
             <td class="main_table_cell_active">
-				<a class="invisiblelink" target="_blank" href="<?=$row->url?>">www</a>
+				<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
             </td>
         </tr><?php 
 
@@ -263,7 +263,7 @@ if (mysql_num_rows($result) > 0) {
 
 	<tr class="main_table_row_heading_inactive">
 		<td class="main_table_cell_heading_inactive">
-			<font class="main_table_heading">Inactive Hosts (<?=$number_of_hosting_providers?>)</font>
+			<font class="main_table_heading">Inactive Hosts (<?php echo $number_of_hosting_providers; ?>)</font>
 		</td>
 		<td class="main_table_cell_heading_inactive">
 			<font class="main_table_heading">Options</font>
@@ -274,10 +274,10 @@ if (mysql_num_rows($result) > 0) {
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/host.php?whid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_host'] == "1") echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
+                <a class="invisiblelink" href="edit/host.php?whid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_host'] == "1") echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
-				<a class="invisiblelink" target="_blank" href="<?=$row->url?>">www</a>
+				<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
             </td>
         </tr><?php 
 		

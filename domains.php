@@ -802,7 +802,7 @@ if ($export == "1") {
 <?php include("_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("_includes/layout/head-tags.inc.php"); ?>
 <?php include("_includes/system/functions/jumpmenu.inc.php"); ?>
 </head>
@@ -839,7 +839,7 @@ if ($segid != "") {
 
 }
 ?>
-<form name="domain_search_form" method="post" action="<?=$PHP_SELF?>">
+<form name="domain_search_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <div class="search-block-outer">
 <div class="search-block-inner">
 <div class="search-block-left">
@@ -1374,31 +1374,31 @@ echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid
 echo "</select>";
 ?>
 <BR>
-<input type="hidden" name="sort_by" value="<?=$sort_by?>">
+<input type="hidden" name="sort_by" value="<?php echo $sort_by; ?>">
 </div>
 <div class="search-block-right">
 <strong>Keyword Search:</strong><BR><BR>
-<input name="search_for" type="text" value="<?=$_SESSION['search_for']?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" value="Search &raquo;">&nbsp;&nbsp;<BR><BR>
+<input name="search_for" type="text" value="<?php echo $_SESSION['search_for']; ?>" size="20">&nbsp;&nbsp;<input type="submit" name="button" value="Search &raquo;">&nbsp;&nbsp;<BR><BR>
 <?php
 $_SESSION['quick_search'] = preg_replace("/', '/", "\r\n", $_SESSION['quick_search']);
 $_SESSION['quick_search'] = preg_replace("/','/", "\r\n", $_SESSION['quick_search']);
 $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 ?>
 <BR><strong>Domain Search (one domain per line):</strong><BR><BR>
-<textarea name="quick_search" cols="30" rows="11"><?=$_SESSION['quick_search']?></textarea>&nbsp;&nbsp;
+<textarea name="quick_search" cols="30" rows="11"><?php echo $_SESSION['quick_search']; ?></textarea>&nbsp;&nbsp;
 <BR>
 <BR>
-<input type="hidden" name="pcid" value="<?=$pcid?>">
-<input type="hidden" name="oid" value="<?=$oid?>">
-<input type="hidden" name="dnsid" value="<?=$dnsid?>">
-<input type="hidden" name="ipid" value="<?=$ipid?>">
-<input type="hidden" name="whid" value="<?=$whid?>">
-<input type="hidden" name="rid" value="<?=$rid?>">
-<input type="hidden" name="raid" value="<?=$raid?>">
-<input type="hidden" name="tld" value="<?=$tld?>">
-<input type="hidden" name="segid" value="<?=$segid?>">
-<input type="hidden" name="is_active" value="<?=$is_active?>">
-<input type="hidden" name="result_limit" value="<?=$result_limit?>">
+<input type="hidden" name="pcid" value="<?php echo $pcid; ?>">
+<input type="hidden" name="oid" value="<?php echo $oid; ?>">
+<input type="hidden" name="dnsid" value="<?php echo $dnsid; ?>">
+<input type="hidden" name="ipid" value="<?php echo $ipid; ?>">
+<input type="hidden" name="whid" value="<?php echo $whid; ?>">
+<input type="hidden" name="rid" value="<?php echo $rid; ?>">
+<input type="hidden" name="raid" value="<?php echo $raid; ?>">
+<input type="hidden" name="tld" value="<?php echo $tld; ?>">
+<input type="hidden" name="segid" value="<?php echo $segid; ?>">
+<input type="hidden" name="is_active" value="<?php echo $is_active; ?>">
+<input type="hidden" name="result_limit" value="<?php echo $result_limit; ?>">
 <input type="hidden" name="begin" value="0">
 <input type="hidden" name="num" value="1">
 <input type="hidden" name="numBegin" value="1">
@@ -1434,25 +1434,25 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 		$result_segment = mysql_query($sql_segment,$connection);
 		$totalrows_filtered = mysql_num_rows($result_segment);
 		?>
-		<strong>Domains in Segment:</strong> <?=number_format($number_of_domains)?>
-		<BR><BR><strong>Matching Domains:</strong> <?=$totalrows?>
+		<strong>Domains in Segment:</strong> <?php echo number_format($number_of_domains); ?>
+		<BR><BR><strong>Matching Domains:</strong> <?php echo $totalrows; ?>
         <?php if ($totalrows_inactive > 0) { ?>
-			<BR><BR><strong>Matching But Inactive Domains:</strong> <?=number_format($totalrows_inactive)?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=inactive&segid=<?=$segid?>">view</a>]
+			<BR><BR><strong>Matching But Inactive Domains:</strong> <?php echo number_format($totalrows_inactive); ?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=inactive&segid=<?php echo $segid; ?>">view</a>]
 		<?php } ?>
         <?php if ($totalrows_filtered > 0) { ?>
-	        <BR><BR><strong>Matching But Filtered Domains:</strong> <?=number_format($totalrows_filtered)?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=filtered&segid=<?=$segid?>">view</a>]
+	        <BR><BR><strong>Matching But Filtered Domains:</strong> <?php echo number_format($totalrows_filtered); ?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=filtered&segid=<?php echo $segid; ?>">view</a>]
 		<?php } ?>
         <?php if ($totalrows_missing > 0) { ?>
-	        <BR><BR><strong>Missing Domains:</strong> <?=number_format($totalrows_missing)?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=missing&segid=<?=$segid?>">view</a>]
+	        <BR><BR><strong>Missing Domains:</strong> <?php echo number_format($totalrows_missing); ?> [<a class="invisiblelink" target="_blank" href="segment-results.php?type=missing&segid=<?php echo $segid; ?>">view</a>]
 		<?php } ?>
 
 <?php } ?>
 <?php if (mysql_num_rows($result) > 0) { ?>
 <?php if ($segid != "") { ?>
-	<BR><BR><strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
+	<BR><BR><strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
 <?php } else { ?>
-	<strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
-	<strong>Number of Domains:</strong> <?=number_format($totalrows)?><BR><BR>
+	<strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
+	<strong>Number of Domains:</strong> <?php echo number_format($totalrows); ?><BR><BR>
 <?php } ?>
 <?php include("_includes/layout/pagination.menu.inc.php"); ?>
 <?php if ($totalrows != '0') { ?>
@@ -1460,55 +1460,55 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&whid=<?=$whid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ed_a") { echo "ed_d"; } else { echo "ed_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Expiry Date</font></a>
+		<a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active; ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php if ($sort_by == "ed_a") { echo "ed_d"; } else { echo "ed_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Expiry Date</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&whid=<?=$whid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "df_a") { echo "df_d"; } else { echo "df_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Fee</font></a>
+		<a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active; ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php if ($sort_by == "df_a") { echo "df_d"; } else { echo "df_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Fee</font></a>
 	</td>
 <?php } ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&whid=<?=$whid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Domain Name</font></a>
+		<a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active; ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php if ($sort_by == "dn_a") { echo "dn_d"; } else { echo "dn_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Domain Name</font></a>
 	</td>
 <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&whid=<?=$whid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "tld_a") { echo "tld_d"; } else { echo "tld_a"; } ?>&from_dropdown=1"><font class="main_table_heading">TLD</font></a>
+		<a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active; ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php if ($sort_by == "tld_a") { echo "tld_d"; } else { echo "tld_a"; } ?>&from_dropdown=1"><font class="main_table_heading">TLD</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&whid=<?=$whid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "r_a") { echo "r_d"; } else { echo "r_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Registrar</font></a>
+		<a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active; ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php if ($sort_by == "r_a") { echo "r_d"; } else { echo "r_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Registrar</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&whid=<?=$whid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ra_a") { echo "ra_d"; } else { echo "ra_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Registrar Account</font></a>
+		<a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active; ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php if ($sort_by == "ra_a") { echo "ra_d"; } else { echo "ra_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Registrar Account</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&whid=<?=$whid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "dns_a") { echo "dns_d"; } else { echo "dns_a"; } ?>&from_dropdown=1"><font class="main_table_heading">DNS Profile</font></a>
+		<a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active; ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php if ($sort_by == "dns_a") { echo "dns_d"; } else { echo "dns_a"; } ?>&from_dropdown=1"><font class="main_table_heading">DNS Profile</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&whid=<?=$whid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "ip_a") { echo "ip_d"; } else { echo "ip_a"; } ?>&from_dropdown=1"><font class="main_table_heading">IP Address</font></a>
+		<a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active; ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php if ($sort_by == "ip_a") { echo "ip_d"; } else { echo "ip_a"; } ?>&from_dropdown=1"><font class="main_table_heading">IP Address</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_host'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&whid=<?=$whid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "wh_a") { echo "wh_d"; } else { echo "wh_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Web Host</font></a>
+		<a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active; ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php if ($sort_by == "wh_a") { echo "wh_d"; } else { echo "wh_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Web Host</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_category'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&whid=<?=$whid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "pc_a") { echo "pc_d"; } else { echo "pc_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Category</font></a>
+		<a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active; ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php if ($sort_by == "pc_a") { echo "pc_d"; } else { echo "pc_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Category</font></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_heading_active">
-		<a href="domains.php?pcid=<?=$pcid?>&oid=<?=$oid?>&dnsid=<?=$dnsid?>&ipid=<?=$ipid?>&whid=<?=$whid?>&rid=<?=$rid?>&raid=<?=$raid?>&segid=<?=$segid?>&tld=<?=$tld?>&is_active=<?=$is_active?>&result_limit=<?=$result_limit?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Owner</font></a>
+		<a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active; ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php if ($sort_by == "o_a") { echo "o_d"; } else { echo "o_a"; } ?>&from_dropdown=1"><font class="main_table_heading">Owner</font></a>
 	</td>
 <?php } ?>
 </tr>
@@ -1516,12 +1516,12 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 <tr class="main_table_row_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->expiry_date?></a>
+		<a class="invisiblelink" href="edit/domain.php?did=<?php echo $row->id; ?>"><?php echo $row->expiry_date; ?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="assets/edit/registrar-fees.php?rid=<?=$row->r_id?>">
+		<a class="invisiblelink" href="assets/edit/registrar-fees.php?rid=<?php echo $row->r_id; ?>">
 		<?php
 		$temp_input_amount = $row->total_cost;
 		$temp_input_conversion = $row->conversion;
@@ -1549,46 +1549,46 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 				} elseif ($row->active == "5") { 
 					echo "<a title=\"Pending (Registration)\"><strong><font class=\"highlight\">PRg</font></strong></a>&nbsp;"; 
 				} 
-			?><a class="invisiblelink" href="edit/domain.php?did=<?=$row->id?>"><?=$row->domain?></a><?php if ($row->privacy == "1") { echo "&nbsp;<a title=\"Private WHOIS Registration\"><strong><font class=\"highlight\">prv</font></strong></a>&nbsp;"; } else { echo "&nbsp;"; } ?>[<a class="invisiblelink" target="_blank" href="http://<?=$row->domain?>">v</a>] [<a target="_blank" class="invisiblelink" href="http://who.is/whois/<?=$row->domain?>">w</a>]
+			?><a class="invisiblelink" href="edit/domain.php?did=<?php echo $row->id; ?>"><?php echo $row->domain; ?></a><?php if ($row->privacy == "1") { echo "&nbsp;<a title=\"Private WHOIS Registration\"><strong><font class=\"highlight\">prv</font></strong></a>&nbsp;"; } else { echo "&nbsp;"; } ?>[<a class="invisiblelink" target="_blank" href="http://<?php echo $row->domain; ?>">v</a>] [<a target="_blank" class="invisiblelink" href="http://who.is/whois/<?php echo $row->domain; ?>">w</a>]
 	</td>
 <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="edit/domain.php?did=<?=$row->id?>">.<?=$row->tld?></a>
+		<a class="invisiblelink" href="edit/domain.php?did=<?php echo $row->id; ?>">.<?php echo $row->tld; ?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="assets/edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a>
+		<a class="invisiblelink" href="assets/edit/registrar.php?rid=<?php echo $row->r_id; ?>"><?php echo $row->registrar_name; ?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="assets/edit/registrar.php?rid=<?=$row->r_id?>"><?=$row->registrar_name?></a>, <a class="invisiblelink" href="assets/edit/account-owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a> (<a class="invisiblelink" href="assets/edit/registrar-account.php?raid=<?=$row->ra_id?>"><?=substr($row->username, 0, 15);?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
+		<a class="invisiblelink" href="assets/edit/registrar.php?rid=<?php echo $row->r_id; ?>"><?php echo $row->registrar_name; ?></a>, <a class="invisiblelink" href="assets/edit/account-owner.php?oid=<?php echo $row->o_id; ?>"><?php echo $row->owner_name; ?></a> (<a class="invisiblelink" href="assets/edit/registrar-account.php?raid=<?php echo $row->ra_id; ?>"><?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="assets/edit/dns.php?dnsid=<?=$row->dnsid?>"><?=$row->dns_name?></a>
+		<a class="invisiblelink" href="assets/edit/dns.php?dnsid=<?php echo $row->dnsid; ?>"><?php echo $row->dns_name; ?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="assets/edit/ip-address.php?ipid=<?=$row->ipid?>"><?=$row->ip_name?> (<?=$row->ip?>)</a>
+		<a class="invisiblelink" href="assets/edit/ip-address.php?ipid=<?php echo $row->ipid; ?>"><?php echo $row->ip_name; ?> (<?php echo $row->ip; ?>)</a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_host'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="assets/edit/host.php?whid=<?=$row->whid?>"><?=$row->wh_name?></a>
+		<a class="invisiblelink" href="assets/edit/host.php?whid=<?php echo $row->whid; ?>"><?php echo $row->wh_name; ?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_category'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="assets/edit/category.php?pcid=<?=$row->pcid?>"><?=$row->category_name?></a>
+		<a class="invisiblelink" href="assets/edit/category.php?pcid=<?php echo $row->pcid; ?>"><?php echo $row->category_name; ?></a>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<a class="invisiblelink" href="assets/edit/account-owner.php?oid=<?=$row->o_id?>"><?=$row->owner_name?></a>
+		<a class="invisiblelink" href="assets/edit/account-owner.php?oid=<?php echo $row->o_id; ?>"><?php echo $row->owner_name; ?></a>
 	</td>
 <?php } ?>
 </tr>

@@ -204,16 +204,16 @@ if ($really_del == "1") {
 <?php include("../../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
-<form name="edit_user_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_user_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") echo htmlentities($new_first_name); ?>"><BR><BR>
 <strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") echo htmlentities($new_last_name); ?>"><BR><BR>
 <?php if ($new_username == "admin" || $new_username == "administrator") { ?>
-	<strong>Username</strong><BR><BR><?=$new_username?><BR><BR>
+	<strong>Username</strong><BR><BR><?php echo $new_username; ?><BR><BR>
 <?php } else { ?>
 	<strong>Username (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_username" type="text" size="20" maxlength="30" value="<?php if ($new_username != "") echo htmlentities($new_username); ?>"><BR><BR>
 <?php } ?>
@@ -254,12 +254,12 @@ if ($really_del == "1") {
     <input type="hidden" name="new_is_active" value="1">
 <?php } ?>
 
-<input type="hidden" name="new_uid" value="<?=$uid?>">
+<input type="hidden" name="new_uid" value="<?php echo $uid; ?>">
 <BR><BR>
 <input type="submit" name="button" value="Update User &raquo;">
 </form>
-<BR><BR><a href="../reset-password.php?new_username=<?=$new_username?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
-<BR><a href="<?=$PHP_SELF?>?uid=<?=$uid?>&del=1">DELETE THIS USER</a>
+<BR><BR><a href="../reset-password.php?new_username=<?php echo $new_username; ?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
+<BR><a href="<?php echo $PHP_SELF; ?>?uid=<?php echo $uid; ?>&del=1">DELETE THIS USER</a>
 <?php include("../../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

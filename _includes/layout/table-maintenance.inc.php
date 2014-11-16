@@ -19,7 +19,7 @@
 <div class="maintenance_warning_outer">
 	<div class="maintenance_warning_inner">
         <strong>Database Upgrade Available! (clear up the below issues to make this table disappear)</strong><BR><BR>
-        <LI>You are running an older version of the <?=$software_title?> database.</LI>
+        <LI>You are running an older version of the <?php echo $software_title; ?> database.</LI>
         <BR>&nbsp;&nbsp;&nbsp;<a href="<?php echo $web_root; ?>/system/update-database.php">Click here to upgrade your database</a>
     </div>
 </div>

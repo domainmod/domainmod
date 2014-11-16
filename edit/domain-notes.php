@@ -42,12 +42,12 @@ while ($row = mysql_fetch_object($result)) {
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../_includes/layout/head-tags-bare.inc.php"); ?>
 </head>
 <body>
 <?php include("../_includes/layout/header-bare.inc.php"); ?>
-<strong>Notes For <?=$new_domain?></strong><BR>
+<strong>Notes For <?php echo $new_domain; ?></strong><BR>
 <BR>
 <?php
 $temp_input_string = $new_notes;

@@ -145,14 +145,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="add_ssl_cert_form" method="post" action="<?=$PHP_SELF?>">
+<form name="add_ssl_cert_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Host / Label (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="100" value="<?=$new_name?>">
+<input name="new_name" type="text" size="50" maxlength="100" value="<?php echo $new_name; ?>">
 <BR><BR>
 <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
@@ -167,7 +167,7 @@ $result_domain = mysql_query($sql_domain,$connection) or die(mysql_error());
 echo "<select name=\"new_domain_id\">";
 while ($row_domain = mysql_fetch_object($result_domain)) { ?>
 
-	<option value="<?=$row_domain->id?>"<?php if ($row_domain->id == $new_domain_id) echo " selected";?>><?=$row_domain->domain?></option><?php
+	<option value="<?php echo $row_domain->id; ?>"<?php if ($row_domain->id == $new_domain_id) echo " selected";?>><?php echo $row_domain->domain; ?></option><?php
 
 }
 echo "</select>";
@@ -195,7 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 while ($row_account = mysql_fetch_object($result_account)) { ?>
 
-	<option value="<?=$row_account->id?>"<?php if ($row_account->id == $to_compare) echo " selected";?>><?=$row_account->sslp_name?>, <?=$row_account->o_name?> (<?=$row_account->username?>)</option><?php
+	<option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $to_compare) echo " selected";?>><?php echo $row_account->sslp_name; ?>, <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
 
 }
 echo "</select>";
@@ -221,7 +221,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 while ($row_type = mysql_fetch_object($result_type)) { ?>
 
-	<option value="<?=$row_type->id?>"<?php if ($row_type->id == $to_compare) echo " selected";?>><?=$row_type->type?></option><?php
+	<option value="<?php echo $row_type->id; ?>"<?php if ($row_type->id == $to_compare) echo " selected";?>><?php echo $row_type->type; ?></option><?php
 
 }
 echo "</select>";
@@ -247,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 while ($row_ip = mysql_fetch_object($result_ip)) { ?>
 
-	<option value="<?=$row_ip->id?>"<?php if ($row_ip->id == $to_compare) echo " selected";?>><?=$row_ip->name?> (<?=$row_ip->ip?>)</option><?php
+	<option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $to_compare) echo " selected";?>><?php echo $row_ip->name; ?> (<?php echo $row_ip->ip; ?>)</option><?php
 
 }
 echo "</select>";
@@ -273,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 while ($row_cat = mysql_fetch_object($result_cat)) { ?>
 
-	<option value="<?=$row_cat->id?>"<?php if ($row_cat->id == $to_compare) echo " selected";?>><?=$row_cat->name?></option><?php
+	<option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $to_compare) echo " selected";?>><?php echo $row_cat->name; ?></option><?php
 
 }
 echo "</select>";
@@ -291,7 +291,7 @@ echo "</select>";
 ?>
 <BR><BR>
 <strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
 <BR><BR>
 <?php
 $sql = "SELECT field_name
@@ -324,8 +324,8 @@ if (mysql_num_rows($result) > 0) { ?>
 			
 			if ($row->type_id == "1") { // Check Box ?>
 
-                <input type="checkbox" name="new_<?=$row->field_name?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>>
-                &nbsp;<strong><?=$row->name?></strong><BR><?php
+                <input type="checkbox" name="new_<?php echo $row->field_name; ?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>>
+                &nbsp;<strong><?php echo $row->name; ?></strong><BR><?php
 				
 				if ($row->description != "") {
 					
@@ -339,7 +339,7 @@ if (mysql_num_rows($result) > 0) { ?>
 	
 			} elseif ($row->type_id == "2") { // Text ?>
 
-				<strong><?=$row->name?> (255)</strong><?php
+				<strong><?php echo $row->name; ?> (255)</strong><?php
 
 				if ($row->description != "") {
 					
@@ -350,11 +350,11 @@ if (mysql_num_rows($result) > 0) { ?>
 					echo "<BR><BR>";
 					
 				} ?>
-                <input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=${'new_' . $row->field_name}?>"><BR><BR><?php
+                <input type="text" name="new_<?php echo $row->field_name; ?>" size="50" maxlength="255" value="<?php echo ${'new_' . $row->field_name}; ?>"><BR><BR><?php
 
 			} elseif ($row->type_id == "3") { // Text Area ?>
 
-				<strong><?=$row->name?></strong><?php
+				<strong><?php echo $row->name; ?></strong><?php
 
 				if ($row->description != "") {
 					
@@ -365,7 +365,7 @@ if (mysql_num_rows($result) > 0) { ?>
 					echo "<BR><BR>";
 					
 				} ?>
-                <textarea name="new_<?=$row->field_name?>" cols="60" rows="5"><?=${'new_' . $row->field_name}?></textarea><BR><BR><?php
+                <textarea name="new_<?php echo $row->field_name; ?>" cols="60" rows="5"><?php echo ${'new_' . $row->field_name}; ?></textarea><BR><BR><?php
 
 			}
 			

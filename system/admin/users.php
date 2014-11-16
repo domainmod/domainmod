@@ -156,13 +156,13 @@ if ($export == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-Below is a list of all users that have access to <?=$software_title?>.<BR><BR>
-[<a href="<?=$PHP_SELF?>?export=1">EXPORT</a>]<?php
+Below is a list of all users that have access to <?php echo $software_title; ?>.<BR><BR>
+[<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -171,7 +171,7 @@ if (mysql_num_rows($result) > 0) { ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Active Users (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Active Users (<?php echo mysql_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Username</font>
@@ -185,13 +185,13 @@ if (mysql_num_rows($result) > 0) { ?>
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\">*</font></a>"; ?>
+                <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?> <?php echo $row->last_name; ?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
+                <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
             </td>
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->email_address?></a>
+                <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->email_address; ?></a>
             </td>
         </tr><?php 
 	}
@@ -208,7 +208,7 @@ if (mysql_num_rows($result) > 0) { ?>
 
     <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive Users (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Inactive Users (<?php echo mysql_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Username</font>
@@ -222,13 +222,13 @@ if (mysql_num_rows($result) > 0) { ?>
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->first_name?> <?=$row->last_name?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+                <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?> <?php echo $row->last_name; ?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\">*</font></a>"; ?></a>
             </td>
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->username?></a>
+                <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
             </td>
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/user.php?uid=<?=$row->id?>"><?=$row->email_address?></a>
+                <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->email_address; ?></a>
             </td>
         </tr><?php 
 

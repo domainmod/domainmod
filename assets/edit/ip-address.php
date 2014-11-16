@@ -124,12 +124,12 @@ if ($really_del == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_ip_address_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_ip_address_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>IP Address Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
 <BR><BR>
@@ -140,12 +140,12 @@ if ($really_del == "1") {
 <input name="new_rdns" type="text" size="50" maxlength="100" value="<?php if ($new_rdns != "") echo $new_rdns; ?>">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<input type="hidden" name="new_ipid" value="<?=$ipid?>">
+<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+<input type="hidden" name="new_ipid" value="<?php echo $ipid; ?>">
 <BR><BR>
 <input type="submit" name="button" value="Update This IP Address &raquo;">
 </form>
-<BR><BR><a href="<?=$PHP_SELF?>?ipid=<?=$ipid?>&del=1">DELETE THIS IP ADDRESS</a>
+<BR><BR><a href="<?php echo $PHP_SELF; ?>?ipid=<?php echo $ipid; ?>&del=1">DELETE THIS IP ADDRESS</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

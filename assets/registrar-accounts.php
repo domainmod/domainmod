@@ -226,13 +226,13 @@ if ($export == "1") {
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-Below is a list of all the Domain Registrar Accounts that are stored in your <?=$software_title?>.<BR><BR>
-[<a href="<?=$PHP_SELF?>?export=1&rid=<?=$rid?>&raid=<?=$raid?>&oid=<?=$oid?>">EXPORT</a>]<?php
+Below is a list of all the Domain Registrar Accounts that are stored in your <?php echo $software_title; ?>.<BR><BR>
+[<a href="<?php echo $PHP_SELF; ?>?export=1&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&oid=<?php echo $oid; ?>">EXPORT</a>]<?php
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -245,7 +245,7 @@ if (mysql_num_rows($result) > 0) {
             <font class="main_table_heading">Registrar Name</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Active Accounts (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Active Accounts (<?php echo mysql_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Owner</font>
@@ -265,13 +265,13 @@ if (mysql_num_rows($result) > 0) {
 
 		<tr class="main_table_row_active">
 			<td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
+                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->rname; ?></a>
 			</td>
 			<td class="main_table_cell_active" valign="top">
-				<a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+				<a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
 			</td>
 			<td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
+				<a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->oname; ?></a>
 			</td>
 			<td class="main_table_cell_active"><?php
 				$sql_domain_count = "SELECT count(*) AS total_domain_count
@@ -327,7 +327,7 @@ if (mysql_num_rows($result) > 0) {
             <font class="main_table_heading">Registrar Name</font>
         </td>
         <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive Accounts (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Inactive Accounts (<?php echo mysql_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Owner</font>
@@ -338,13 +338,13 @@ if (mysql_num_rows($result) > 0) {
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-	                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->rname?></a>
+	                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->rname; ?></a>
             </td>
             <td class="main_table_cell_inactive" valign="top">
-				<a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->username?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+				<a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?=$row->raid?>"><?=$row->oname?></a>
+                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->oname; ?></a>
             </td>
         </tr><?php 
 

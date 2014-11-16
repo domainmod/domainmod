@@ -184,7 +184,7 @@ function str_stop($string, $max_length){
 <?php include("_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
@@ -194,9 +194,9 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 ?>
 Segments are lists of domains that can be used to help filter and manage your <a href="domains.php">domain results</a>.<BR>
 <BR>
-Segment filters will tell you which domains match with domains that are saved in <?=$software_title?>, as well as which domains don't match, and you can easily view and export the results.<BR>
+Segment filters will tell you which domains match with domains that are saved in <?php echo $software_title; ?>, as well as which domains don't match, and you can easily view and export the results.<BR>
 <BR>
-[<a href="<?=$PHP_SELF?>?export=1">EXPORT</a>]
+[<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]
 <?php
 $sql_segment_check = "SELECT id
 					  FROM segments
@@ -211,7 +211,7 @@ if (mysql_num_rows($result) > 0) { ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Segments (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Segments (<?php echo mysql_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Domains</font>
@@ -229,10 +229,10 @@ if (mysql_num_rows($result) > 0) { ?>
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active" valign="top">
-                <a class="invisiblelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$row->name?></a>
+                <a class="invisiblelink" href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
             </td>
             <td class="main_table_cell_active" valign="top">
-                <a class="invisiblelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$row->number_of_domains?></a>
+                <a class="invisiblelink" href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $row->number_of_domains; ?></a>
             </td>
             <td class="main_table_cell_active" valign="top">
                 <?php
@@ -240,10 +240,10 @@ if (mysql_num_rows($result) > 0) { ?>
                 $temp_segment = preg_replace("/'/", "", $temp_segment);
                 $cut_string = str_stop($temp_segment, 100);
 				?>
-                <a class="invisiblelink" href="edit/segment.php?segid=<?=$row->id?>"><?=$cut_string?></a>
+                <a class="invisiblelink" href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $cut_string; ?></a>
             </td>
             <td class="main_table_cell_active" valign="top">
-                <a class="invisiblelink" href="segments.php?export=1&segid=<?=$row->id?>">EXPORT</a>
+                <a class="invisiblelink" href="segments.php?export=1&segid=<?php echo $row->id; ?>">EXPORT</a>
             </td>
         </tr>
 

@@ -256,12 +256,12 @@ if ($really_del == "1") {
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="edit_domain_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_domain_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Domain (255)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_domain" type="text" size="50" maxlength="255" value="<?php if ($new_domain != "") echo htmlentities($new_domain); ?>">
 <BR><BR>
@@ -282,7 +282,7 @@ $result_account = mysql_query($sql_account,$connection) or die(mysql_error());
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysql_fetch_object($result_account)) { ?>
 
-	<option value="<?=$row_account->id?>"<?php if ($row_account->id == $new_account_id) echo " selected";?>><?=$row_account->r_name?>, <?=$row_account->o_name?> (<?=$row_account->username?>)</option><?php
+	<option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $new_account_id) echo " selected";?>><?php echo $row_account->r_name; ?>, <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
 
 }
 echo "</select>";
@@ -297,7 +297,7 @@ $result_dns = mysql_query($sql_dns,$connection) or die(mysql_error());
 echo "<select name=\"new_dns_id\">";
 while ($row_dns = mysql_fetch_object($result_dns)) { ?>
 
-	<option value="<?=$row_dns->id?>"<?php if ($row_dns->id == $new_dns_id) echo " selected";?>><?=$row_dns->name?></option><?php
+	<option value="<?php echo $row_dns->id; ?>"<?php if ($row_dns->id == $new_dns_id) echo " selected";?>><?php echo $row_dns->name; ?></option><?php
 
 }
 echo "</select>";
@@ -313,7 +313,7 @@ echo "<select name=\"new_ip_id\">";
 
 while ($row_ip = mysql_fetch_object($result_ip)) { ?>
 
-	<option value="<?=$row_ip->id?>"<?php if ($row_ip->id == $new_ip_id) echo " selected";?>><?=$row_ip->name?> (<?=$row_ip->ip?>)</option><?php
+	<option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $new_ip_id) echo " selected";?>><?php echo $row_ip->name; ?> (<?php echo $row_ip->ip; ?>)</option><?php
 
 }
 echo "</select>";
@@ -328,7 +328,7 @@ $result_hosting = mysql_query($sql_hosting,$connection) or die(mysql_error());
 echo "<select name=\"new_hosting_id\">";
 while ($row_hosting = mysql_fetch_object($result_hosting)) { ?>
 
-	<option value="<?=$row_hosting->id?>"<?php if ($row_hosting->id == $new_hosting_id) echo " selected";?>><?=$row_hosting->name?></option><?php
+	<option value="<?php echo $row_hosting->id; ?>"<?php if ($row_hosting->id == $new_hosting_id) echo " selected";?>><?php echo $row_hosting->name; ?></option><?php
 
 }
 echo "</select>";
@@ -343,7 +343,7 @@ $result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
 echo "<select name=\"new_cat_id\">";
 while ($row_cat = mysql_fetch_object($result_cat)) { ?>
 
-	<option value="<?=$row_cat->id?>"<?php if ($row_cat->id == $new_cat_id) echo " selected";?>><?=$row_cat->name?></option><?php
+	<option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $new_cat_id) echo " selected";?>><?php echo $row_cat->name; ?></option><?php
 
 }
 echo "</select>";
@@ -370,9 +370,9 @@ echo "<option value=\"1\""; if ($new_privacy == "1") echo " selected"; echo ">Ye
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Notes</strong><?php if ($new_notes != "") { ?> [<a target="_blank" href="domain-notes.php?did=<?=$did?>">view full notes</a>]<?php } ?><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<input type="hidden" name="new_did" value="<?=$did?>">
+<strong>Notes</strong><?php if ($new_notes != "") { ?> [<a target="_blank" href="domain-notes.php?did=<?php echo $did; ?>">view full notes</a>]<?php } ?><BR><BR>
+<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+<input type="hidden" name="new_did" value="<?php echo $did; ?>">
 <BR><BR>
 <?php
 $sql = "SELECT field_name
@@ -416,8 +416,8 @@ if (mysql_num_rows($result) > 0) { ?>
 	
 			if ($row->type_id == "1") { // Check Box ?>
 
-                <input type="checkbox" name="new_<?=$row->field_name?>" value="1"<?php if ($field_data == "1") echo " checked"; ?>>
-                &nbsp;<strong><?=$row->name?></strong><BR><?php
+                <input type="checkbox" name="new_<?php echo $row->field_name; ?>" value="1"<?php if ($field_data == "1") echo " checked"; ?>>
+                &nbsp;<strong><?php echo $row->name; ?></strong><BR><?php
 				
 				if ($row->description != "") {
 
@@ -431,7 +431,7 @@ if (mysql_num_rows($result) > 0) { ?>
 	
 			} elseif ($row->type_id == "2") { // Text ?>
 	
-				<strong><?=$row->name?> (255)</strong><BR><?php
+				<strong><?php echo $row->name; ?> (255)</strong><BR><?php
 				if ($row->description != "") {
 
 					echo $row->description . "<BR><BR>";
@@ -441,11 +441,11 @@ if (mysql_num_rows($result) > 0) { ?>
 					echo "<BR>";
 					
 				} ?>
-                <input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=htmlentities($field_data)?>"><BR><BR><?php
+                <input type="text" name="new_<?php echo $row->field_name; ?>" size="50" maxlength="255" value="<?php echo htmlentities($field_data); ?>"><BR><BR><?php
 
 			} elseif ($row->type_id == "3") { // Text Area ?>
 	
-				<strong><?=$row->name?></strong><BR><?php
+				<strong><?php echo $row->name; ?></strong><BR><?php
 				if ($row->description != "") {
 
 					echo $row->description . "<BR><BR>";
@@ -455,7 +455,7 @@ if (mysql_num_rows($result) > 0) { ?>
 					echo "<BR>";
 					
 				} ?>
-                <textarea name="new_<?=$row->field_name?>" cols="60" rows="5"><?=$field_data?></textarea><BR><BR><?php
+                <textarea name="new_<?php echo $row->field_name; ?>" cols="60" rows="5"><?php echo $field_data; ?></textarea><BR><BR><?php
 
 			}
 			
@@ -538,7 +538,7 @@ if (mysql_num_rows($result_dns_zones) > 0) {
 }
 ?>
 
-<BR><a href="<?=$PHP_SELF?>?did=<?=$did?>&del=1">DELETE THIS DOMAIN</a>
+<BR><a href="<?php echo $PHP_SELF; ?>?did=<?php echo $did; ?>&del=1">DELETE THIS DOMAIN</a>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

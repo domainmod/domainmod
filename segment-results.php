@@ -259,7 +259,7 @@ if ($export == "1") {
 <?php include("_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("_includes/layout/head-tags-bare.inc.php"); ?>
 </head>
 <body>

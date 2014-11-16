@@ -196,12 +196,12 @@ if ($really_del == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_dns_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_dns_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Profile Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
 <BR><BR>
@@ -308,12 +308,12 @@ if ($really_del == "1") {
     </tr>
 </table>
 <strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<input type="hidden" name="new_dnsid" value="<?=$dnsid?>">
+<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+<input type="hidden" name="new_dnsid" value="<?php echo $dnsid; ?>">
 <BR><BR>
 <input type="submit" name="button" value="Update This DNS Profile &raquo;">
 </form>
-<BR><BR><a href="<?=$PHP_SELF?>?dnsid=<?=$dnsid?>&del=1">DELETE THIS DNS PROFILE</a>
+<BR><BR><a href="<?php echo $PHP_SELF; ?>?dnsid=<?php echo $dnsid; ?>&del=1">DELETE THIS DNS PROFILE</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

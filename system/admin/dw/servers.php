@@ -95,7 +95,7 @@ if ($export == "1") {
 <?php include("../../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
@@ -105,7 +105,7 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 
 if (mysql_num_rows($result) > 0) { ?>
 
-	[<a href="<?=$PHP_SELF?>?export=1">EXPORT</a>]
+	[<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]
 
     <table class="main_table" cellpadding="0" cellspacing="0">
         <tr class="main_table_row_heading_active">
@@ -133,24 +133,24 @@ if (mysql_num_rows($result) > 0) { ?>
     
             <tr class="main_table_row_active">
                 <td class="main_table_cell_active">
-                    <a class="invisiblelink" href="edit/server.php?dwsid=<?=$row->id?>"><?=$row->name?></a>
+                    <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
                 </td>
                 <td class="main_table_cell_active">
-                    <a class="invisiblelink" href="edit/server.php?dwsid=<?=$row->id?>"><?=$row->protocol?>://<?=$row->host?></a>
+                    <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->protocol; ?>://<?php echo $row->host; ?></a>
                 </td>
                 <td class="main_table_cell_active">
-                    <a class="invisiblelink" href="edit/server.php?dwsid=<?=$row->id?>"><?=$row->port?></a>
+                    <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->port; ?></a>
                 </td>
                 <td class="main_table_cell_active">
-                    <a class="invisiblelink" href="edit/server.php?dwsid=<?=$row->id?>"><?=$row->username?></a>
+                    <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
                 </td>
                 <td class="main_table_cell_active">
                 	<?php if ($row->insert_time == "0000-00-00 00:00:00") $row->insert_time = "-"; ?>
-                    <a class="invisiblelink" href="edit/server.php?dwsid=<?=$row->id?>"><?=$row->insert_time?></a>
+                    <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->insert_time; ?></a>
                 </td>
                 <td class="main_table_cell_active">
                 	<?php if ($row->update_time == "0000-00-00 00:00:00") $row->update_time = "-"; ?>
-                    <a class="invisiblelink" href="edit/server.php?dwsid=<?=$row->id?>"><?=$row->update_time?></a>
+                    <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->update_time; ?></a>
                 </td>
             </tr><?php 
 

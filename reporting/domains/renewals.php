@@ -261,33 +261,33 @@ if ($export == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
-    <form name="export_domains_form" method="post" action="<?=$PHP_SELF?>"> 
-        <a href="<?=$PHP_SELF?>?all=1">View All</a> or Expiring Between 
+    <form name="export_domains_form" method="post" action="<?php echo $PHP_SELF; ?>">
+        <a href="<?php echo $PHP_SELF; ?>?all=1">View All</a> or Expiring Between
         <input name="new_expiry_start" type="text" size="10" maxlength="10" <?php if ($new_expiry_start == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_start\""; } ?>> 
         and 
         <input name="new_expiry_end" type="text" size="10" maxlength="10" <?php if ($new_expiry_end == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_end\""; } ?>> 
         &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
         <?php if ($total_results > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?=$PHP_SELF?>?export=1&new_expiry_start=<?=$new_expiry_start?>&new_expiry_end=<?=$new_expiry_end?>&all=<?=$all?>">EXPORT REPORT</a>]</strong>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export=1&new_expiry_start=<?php echo $new_expiry_start; ?>&new_expiry_end=<?php echo $new_expiry_end; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
     </form>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 <?php if ($total_results > 0) { ?>
-<BR><font class="subheadline"><?=$page_subtitle?></font><BR><BR>
+<BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR>
 <?php if ($all != "1") { ?>
-	<strong>Date Range:</strong> <?=$new_expiry_start?> - <?=$new_expiry_end?><BR><BR>
+	<strong>Date Range:</strong> <?php echo $new_expiry_start; ?> - <?php echo $new_expiry_end; ?><BR><BR>
 <?php } else { ?>
 	<strong>Date Range:</strong> ALL<BR><BR>
 <?php } ?>
-<strong>Total Cost:</strong> <?=$total_cost?> <?=$_SESSION['default_currency']?><BR><BR>
-<strong>Number of Domains:</strong> <?=number_format($total_results)?><BR>
+<strong>Total Cost:</strong> <?php echo $total_cost; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
+<strong>Number of Domains:</strong> <?php echo number_format($total_results); ?><BR>
 <table class="main_table" cellpadding="0" cellspacing="0">
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
@@ -348,7 +348,7 @@ if ($export == "1") {
 <tr class="main_table_row_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=$row->expiry_date?>
+		<?php echo $row->expiry_date; ?>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
@@ -365,46 +365,46 @@ if ($export == "1") {
 	</td>
 <?php } ?>
 	<td class="main_table_cell_active">
-		<?=$row->domain?>
+		<?php echo $row->domain; ?>
 	</td>
 <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
 	<td class="main_table_cell_active">
-		.<?=$row->tld?>
+		.<?php echo $row->tld; ?>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=$row->registrar_name?>
+		<?php echo $row->registrar_name; ?>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_account'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=$row->registrar_name?>, <?=$row->owner_name?> (<?=substr($row->username, 0, 15);?><?php if (strlen($row->username) >= 16) echo "..."; ?>)
+		<?php echo $row->registrar_name; ?>, <?php echo $row->owner_name; ?> (<?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?>)
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=$row->dns_profile?>
+		<?php echo $row->dns_profile; ?>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=$row->name?> (<?=$row->ip?>)
+		<?php echo $row->name; ?> (<?php echo $row->ip; ?>)
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_host'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=$row->wh_name?>
+		<?php echo $row->wh_name; ?>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_category'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=$row->category_name?>
+		<?php echo $row->category_name; ?>
 	</td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
 	<td class="main_table_cell_active">
-		<?=$row->owner_name?>
+		<?php echo $row->owner_name; ?>
     </td>
 <?php } ?>
 </tr>

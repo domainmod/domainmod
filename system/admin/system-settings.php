@@ -83,18 +83,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="system_settings_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Full <?=$software_title?> URL (100):</strong><BR><BR>
-Enter the full URL of your <?=$software_title?> installation, excluding the trailing slash (Example: http://yourdomain.com/<?=$software_title_slug?>).<BR><BR>
+<form name="system_settings_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<strong>Full <?php echo $software_title; ?> URL (100):</strong><BR><BR>
+Enter the full URL of your <?php echo $software_title; ?> installation, excluding the trailing slash (Example: http://yourdomain.com/<?php echo $software_title_slug; ?>).<BR><BR>
 <input name="new_full_url" type="text" size="50" maxlength="100" value="<?php if ($new_full_url != "") echo $new_full_url; ?>">
 <BR><BR>
 <strong>System Email Address (100):</strong><BR><BR>
-This should be a valid email address that is able to receive mail. It will be used in various system locations, such as the FROM address for emails sent by <?=$software_title?>.<BR><BR>
+This should be a valid email address that is able to receive mail. It will be used in various system locations, such as the FROM address for emails sent by <?php echo $software_title; ?>.<BR><BR>
 <input name="new_email_address" type="text" size="50" maxlength="100" value="<?php if ($new_email_address != "") echo $new_email_address; ?>">
 <BR><BR>
 <strong>Days to Display in Expiration Emails:</strong><BR><BR>

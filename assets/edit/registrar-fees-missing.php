@@ -28,7 +28,7 @@ $software_section = "registrar-fees-missing";
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
@@ -58,7 +58,7 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <?=$row->registrar_name;?>
+                <?php echo $row->registrar_name; ?>
             </td>
             <td class="main_table_cell_active">
                 <?php
@@ -75,7 +75,7 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
                 }
                 $full_tld_list_formatted = substr($full_tld_list, 0, -2); 
                 ?>
-                <a class="nobold" href="registrar-fees.php?rid=<?=$row->registrar_id?>"><?=$full_tld_list_formatted?></a>
+                <a class="nobold" href="registrar-fees.php?rid=<?php echo $row->registrar_id; ?>"><?php echo $full_tld_list_formatted; ?></a>
             </td>
         </tr>
 

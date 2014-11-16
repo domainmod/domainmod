@@ -61,12 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="email_settings_form" method="post" action="<?=$PHP_SELF?>">
+<form name="email_settings_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Subscribe to Domain & SSL Certificate expiration emails?</strong>&nbsp;
 <select name="new_expiration_email">
 <option value="1"<?php if ($new_expiration_email == "1") echo " selected"; ?>>Yes</option>

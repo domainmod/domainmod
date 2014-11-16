@@ -191,21 +191,21 @@ if ($total_rows > 0) {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?> :: <?=$page_subtitle?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?> :: <?php echo $page_subtitle; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
-    <a href="<?=$PHP_SELF?>?all=1">View All</a> or <a href="<?=$PHP_SELF?>?all=0">Active Only</a>
+    <a href="<?php echo $PHP_SELF; ?>?all=1">View All</a> or <a href="<?php echo $PHP_SELF; ?>?all=0">Active Only</a>
     <?php if ($total_rows > 0 && $all != "") { ?>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?=$PHP_SELF?>?export=1&all=<?=$all?>">EXPORT REPORT</a>]</strong>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export=1&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
     <?php } ?>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 
 <?php if ($all != "") { ?>
-    <BR><font class="subheadline"><?=$page_subtitle?></font><BR>
+    <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
     <BR>
     <?php if ($all == "1") { ?>
         <strong>All Registrar Fees</strong><BR>
@@ -268,8 +268,8 @@ if ($total_rows > 0) {
             if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
     
                 <tr class="main_table_row_active">
-                    <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?=$row->id?>"><?=$row->registrar?></a></td>
-                    <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?=$row->id?>">.<?=$row->tld?></a></td>
+                    <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id; ?>"><?php echo $row->registrar; ?></a></td>
+                    <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id; ?>">.<?php echo $row->tld; ?></a></td>
                     <td class="main_table_cell_active">
                         <?php
                         $temp_input_amount = $row->initial_fee;
@@ -280,7 +280,7 @@ if ($total_rows > 0) {
                         include("../../_includes/system/convert-and-format-currency.inc.php");
                         $row->initial_fee = $temp_output_amount;
                         ?>
-                        <?=$row->initial_fee?>
+                        <?php echo $row->initial_fee; ?>
                     </td>
                     <td class="main_table_cell_active">
                         <?php
@@ -292,7 +292,7 @@ if ($total_rows > 0) {
                         include("../../_includes/system/convert-and-format-currency.inc.php");
                         $row->renewal_fee = $temp_output_amount;
                         ?>
-                        <?=$row->renewal_fee?>
+                        <?php echo $row->renewal_fee; ?>
                     </td>
                     <td class="main_table_cell_active">
                         <?php
@@ -304,7 +304,7 @@ if ($total_rows > 0) {
                         include("../../_includes/system/convert-and-format-currency.inc.php");
                         $row->transfer_fee = $temp_output_amount;
                         ?>
-                        <?=$row->transfer_fee?>
+                        <?php echo $row->transfer_fee; ?>
                     </td>
                     <td class="main_table_cell_active">
                         <?php
@@ -316,7 +316,7 @@ if ($total_rows > 0) {
                         include("../../_includes/system/convert-and-format-currency.inc.php");
                         $row->privacy_fee = $temp_output_amount;
                         ?>
-                        <?=$row->privacy_fee?>
+                        <?php echo $row->privacy_fee; ?>
                     </td>
                     <td class="main_table_cell_active">
                         <?php
@@ -328,9 +328,9 @@ if ($total_rows > 0) {
                         include("../../_includes/system/convert-and-format-currency.inc.php");
                         $row->misc_fee = $temp_output_amount;
                         ?>
-                        <?=$row->misc_fee?>
+                        <?php echo $row->misc_fee; ?>
                     </td>
-                    <td class="main_table_cell_active"><?=$row->currency?></td>
+                    <td class="main_table_cell_active"><?php echo $row->currency; ?></td>
                     <td class="main_table_cell_active">
                     	<?php
 						$sql_domain_count = "SELECT count(*) AS total_domain_count
@@ -353,7 +353,7 @@ if ($total_rows > 0) {
 
 						} ?>
                     </td>
-                    <td class="main_table_cell_active"><?=$last_updated?></td>
+                    <td class="main_table_cell_active"><?php echo $last_updated; ?></td>
                 </tr>
     
                 <?php
@@ -364,7 +364,7 @@ if ($total_rows > 0) {
             
                 <tr class="main_table_row_active">
                     <td class="main_table_cell_active">&nbsp;</td>
-                    <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?=$row->id?>">.<?=$row->tld?></a></td>
+                    <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id; ?>">.<?php echo $row->tld; ?></a></td>
                     <td class="main_table_cell_active">
                         <?php
                         $temp_input_amount = $row->initial_fee;
@@ -375,7 +375,7 @@ if ($total_rows > 0) {
                         include("../../_includes/system/convert-and-format-currency.inc.php");
                         $row->initial_fee = $temp_output_amount;
                         ?>
-                        <?=$row->initial_fee?>
+                        <?php echo $row->initial_fee; ?>
                     </td>
                     <td class="main_table_cell_active">
                         <?php
@@ -387,7 +387,7 @@ if ($total_rows > 0) {
                         include("../../_includes/system/convert-and-format-currency.inc.php");
                         $row->renewal_fee = $temp_output_amount;
                         ?>
-                        <?=$row->renewal_fee?>
+                        <?php echo $row->renewal_fee; ?>
                     </td>
                     <td class="main_table_cell_active">
                         <?php
@@ -399,7 +399,7 @@ if ($total_rows > 0) {
                         include("../../_includes/system/convert-and-format-currency.inc.php");
                         $row->transfer_fee = $temp_output_amount;
                         ?>
-                        <?=$row->transfer_fee?>
+                        <?php echo $row->transfer_fee; ?>
                     </td>
                     <td class="main_table_cell_active">
                         <?php
@@ -411,7 +411,7 @@ if ($total_rows > 0) {
                         include("../../_includes/system/convert-and-format-currency.inc.php");
                         $row->privacy_fee = $temp_output_amount;
                         ?>
-                        <?=$row->privacy_fee?>
+                        <?php echo $row->privacy_fee; ?>
                     </td>
                     <td class="main_table_cell_active">
                         <?php
@@ -423,9 +423,9 @@ if ($total_rows > 0) {
                         include("../../_includes/system/convert-and-format-currency.inc.php");
                         $row->misc_fee = $temp_output_amount;
                         ?>
-                        <?=$row->misc_fee?>
+                        <?php echo $row->misc_fee; ?>
                     </td>
-                    <td class="main_table_cell_active"><?=$row->currency?></td>
+                    <td class="main_table_cell_active"><?php echo $row->currency; ?></td>
                     <td class="main_table_cell_active">
                     	<?php
 						$sql_domain_count = "SELECT count(*) AS total_domain_count
@@ -448,7 +448,7 @@ if ($total_rows > 0) {
 
 						} ?>
 					</td>
-                    <td class="main_table_cell_active"><?=$last_updated?></td>
+                    <td class="main_table_cell_active"><?php echo $last_updated; ?></td>
                 </tr>
     
                 <?php

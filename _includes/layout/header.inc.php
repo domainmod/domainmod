@@ -24,7 +24,7 @@
         </div>
         <div class="header-right">
             <?php if ($_SESSION['is_logged_in'] == 1) { ?>
-                <em>logged in as <strong><?=$_SESSION['username']?></strong> (<a class="subtlelink" href="<?php echo $web_root; ?>/system/update-profile.php"><?=$_SESSION['first_name']?> <?=$_SESSION['last_name']?></a>)</em>&nbsp;&nbsp;[ <a target="_blank" href="http://domainmod.org/news/">News</a> ]&nbsp;&nbsp;[ <a target="_blank" href="http://domainmod.org/support/">Support</a> ]&nbsp;&nbsp;[ <a href="<?php echo $web_root; ?>/logout.php">Logout</a> ]
+                <em>logged in as <strong><?php echo $_SESSION['username']; ?></strong> (<a class="subtlelink" href="<?php echo $web_root; ?>/system/update-profile.php"><?php echo $_SESSION['first_name']; ?> <?php echo $_SESSION['last_name']; ?></a>)</em>&nbsp;&nbsp;[ <a target="_blank" href="http://domainmod.org/news/">News</a> ]&nbsp;&nbsp;[ <a target="_blank" href="http://domainmod.org/support/">Support</a> ]&nbsp;&nbsp;[ <a href="<?php echo $web_root; ?>/logout.php">Logout</a> ]
             <?php } ?>
         </div>
     </div>
@@ -44,7 +44,7 @@
 			<?php if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['running_login_checks'] != 1) { ?>
             <hr width="100%" size="1" noshade><BR>
             <?php } ?>
-            <font class="headline"><?=$page_title?></font>
+            <font class="headline"><?php echo $page_title; ?></font>
             <BR><BR>
             <?php 
                 include($full_server_path . "/_includes/layout/table-maintenance.inc.php"); 

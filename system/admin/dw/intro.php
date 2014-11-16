@@ -33,15 +33,15 @@ $software_section = "admin-dw-intro";
 <?php include("../../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
 &raquo; <a href="index.php">Proceed to Data Warehouse</a><BR><BR>
 
-<?=$software_title?> has a data warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also intend on adding support for Plesk once I've ironed out all the kinks in the framework (as well as figured out Plesk's ridiculous API documentation).<BR><BR>
-If you don't run a server that uses WHM, or you don't want to import your WHM data into <?=$software_title?>, you can ignore this section.<BR><BR>
+<?php echo $software_title; ?> has a data warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also intend on adding support for Plesk once I've ironed out all the kinks in the framework (as well as figured out Plesk's ridiculous API documentation).<BR><BR>
+If you don't run a server that uses WHM, or you don't want to import your WHM data into <?php echo $software_title; ?>, you can ignore this section.<BR><BR>
 <font class="default_highlight">NOTE:</font> Importing your server(s) into the data warehouse will <strong>not</strong> modify any of your other data. The data warehouse is used for informational purposes only, and you will see its data referenced throughout the system where applicable. For example, if a domain you're editing has information stored in your data warehouse, the system will automatically match them up and display the additional information for you, giving you even more insight into your data.<BR><BR>
 
 <font class="subheadline">Automating Builds</font><BR><BR>

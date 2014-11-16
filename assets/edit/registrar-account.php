@@ -156,12 +156,12 @@ if ($really_del == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_account_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_account_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Owner</strong><BR><BR>
 <?php
 $sql_owner = "SELECT id, name
@@ -207,10 +207,10 @@ echo "</select>";
 ?>
 <BR><BR>
 <strong>Username (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-<input name="new_username" type="text" size="50" maxlength="100" value="<?=htmlentities($new_username)?>">
+<input name="new_username" type="text" size="50" maxlength="100" value="<?php echo htmlentities($new_username); ?>">
 <BR><BR>
 <strong>Password (255)</strong><BR><BR>
-<input name="new_password" type="text" size="50" maxlength="255" value="<?=htmlentities($new_password)?>">
+<input name="new_password" type="text" size="50" maxlength="255" value="<?php echo htmlentities($new_password); ?>">
 <BR><BR>
 <strong>Reseller Account?</strong><BR><BR>
 <select name="new_reseller">";
@@ -219,12 +219,12 @@ echo "</select>";
 </select>
 <BR><BR>
 <strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
 <BR><BR>
-<input type="hidden" name="new_raid" value="<?=$raid?>">
+<input type="hidden" name="new_raid" value="<?php echo $raid; ?>">
 <input type="submit" name="button" value="Update This Registrar Account &raquo;">
 </form>
-<BR><BR><a href="<?=$PHP_SELF?>?raid=<?=$raid?>&del=1">DELETE THIS REGISTRAR ACCOUNT</a>
+<BR><BR><a href="<?php echo $PHP_SELF; ?>?raid=<?php echo $raid; ?>&del=1">DELETE THIS REGISTRAR ACCOUNT</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

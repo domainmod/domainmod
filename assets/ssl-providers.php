@@ -182,13 +182,13 @@ if ($export == "1") {
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-Below is a list of all the SSL Certificate Providers that are stored in your <?=$software_title?>.<BR><BR>
-[<a href="<?=$PHP_SELF?>?export=1">EXPORT</a>]<?php
+Below is a list of all the SSL Certificate Providers that are stored in your <?php echo $software_title; ?>.<BR><BR>
+[<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -198,7 +198,7 @@ if (mysql_num_rows($result) > 0) {
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Active Providers (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Active Providers (<?php echo mysql_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Accounts</font>
@@ -221,7 +221,7 @@ if (mysql_num_rows($result) > 0) {
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>
+                <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_active"><?php
                 $sql_total_count = "SELECT count(*) AS total_count
@@ -234,7 +234,7 @@ if (mysql_num_rows($result) > 0) {
 				
 				if ($total_accounts >= 1) { ?>
         
-                    <a class="nobold" href="ssl-accounts.php?sslpid=<?=$row->id?>"><?=number_format($total_accounts)?></a><?php
+                    <a class="nobold" href="ssl-accounts.php?sslpid=<?php echo $row->id; ?>"><?php echo number_format($total_accounts); ?></a><?php
         
                 } else {
 					
@@ -254,7 +254,7 @@ if (mysql_num_rows($result) > 0) {
 				
 				if ($total_certs >= 1) { ?>
         
-                    <a class="nobold" href="../ssl-certs.php?sslpid=<?=$row->id?>"><?=number_format($total_certs)?></a><?php 
+                    <a class="nobold" href="../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
 				
 				} else {
 					
@@ -263,7 +263,7 @@ if (mysql_num_rows($result) > 0) {
 				} ?>
             </td>
             <td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?=$row->id?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?=$row->url?>">www</a>
+				<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?php echo $row->id; ?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
             </td>
         </tr><?php 
 
@@ -300,7 +300,7 @@ if (mysql_num_rows($result) > 0) {
 
     <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive Providers (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Inactive Providers (<?php echo mysql_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Accounts</font>
@@ -314,7 +314,7 @@ if (mysql_num_rows($result) > 0) {
     
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>
+                <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive"><?php
                 $sql_total_count = "SELECT count(*) AS total_count
@@ -327,7 +327,7 @@ if (mysql_num_rows($result) > 0) {
 				
 				if ($total_accounts >= 1) { ?>
         
-                    <a class="nobold" href="ssl-accounts.php?sslpid=<?=$row->id?>"><?=number_format($total_accounts)?></a><?php 
+                    <a class="nobold" href="ssl-accounts.php?sslpid=<?php echo $row->id; ?>"><?php echo number_format($total_accounts); ?></a><?php
 					
 				} else {
 					
@@ -336,7 +336,7 @@ if (mysql_num_rows($result) > 0) {
 				} ?>
             </td>
             <td class="main_table_cell_inactive">
-				<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?=$row->id?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?=$row->url?>">www</a>
+				<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?php echo $row->id; ?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
             </td>
         </tr><?php 
 

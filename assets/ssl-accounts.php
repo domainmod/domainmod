@@ -211,13 +211,13 @@ if ($export == "1") {
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-Below is a list of all the SSL Provider Accounts that are stored in your <?=$software_title?>.<BR><BR>
-[<a href="<?=$PHP_SELF?>?export=1&sslpid=<?=$sslpid?>&sslpaid=<?=$sslpaid?>&oid=<?=$oid?>">EXPORT</a>]<?php
+Below is a list of all the SSL Provider Accounts that are stored in your <?php echo $software_title; ?>.<BR><BR>
+[<a href="<?php echo $PHP_SELF; ?>?export=1&sslpid=<?php echo $sslpid; ?>&sslpaid=<?php echo $sslpaid; ?>&oid=<?php echo $oid; ?>">EXPORT</a>]<?php
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -230,7 +230,7 @@ if (mysql_num_rows($result) > 0) {
             <font class="main_table_heading">SSL Provider</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Active Accounts (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Active Accounts (<?php echo mysql_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Owner</font>
@@ -250,13 +250,13 @@ if (mysql_num_rows($result) > 0) {
 
 		<tr class="main_table_row_active">
 			<td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->sslpname; ?></a>
 			</td>
 			<td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
 			</td>
 			<td class="main_table_cell_active">
-				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->oname; ?></a>
 			</td>
 			<td class="main_table_cell_active"><?php
 				$sql_total_count = "SELECT count(*) AS total_cert_count
@@ -311,7 +311,7 @@ if (mysql_num_rows($result) > 0) {
             <font class="main_table_heading">SSL Provider</font>
         </td>
         <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive Accounts (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Inactive Accounts (<?php echo mysql_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Owner</font>
@@ -325,13 +325,13 @@ if (mysql_num_rows($result) > 0) {
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->sslpname?></a>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->sslpname; ?></a>
             </td>
             <td class="main_table_cell_inactive">
-				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->username?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
-				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?=$row->sslpaid?>"><?=$row->oname?></a>
+				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->oname; ?></a>
             </td>
             <td class="main_table_cell_inactive">&nbsp;
                 

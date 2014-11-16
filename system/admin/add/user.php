@@ -107,16 +107,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <?php include("../../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
-<form name="add_user_form" method="post" action="<?=$PHP_SELF?>">
-<strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?=$new_first_name?>"><BR><BR>
-<strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?=$new_last_name?>"><BR><BR>
-<strong>Username (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_username" type="text" size="20" maxlength="30" value="<?=$new_username?>"><BR><BR>
-<strong>Email Address (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_email_address" type="text" size="50" maxlength="100" value="<?=$new_email_address?>"><BR><BR>
+<form name="add_user_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php echo $new_first_name; ?>"><BR><BR>
+<strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php echo $new_last_name; ?>"><BR><BR>
+<strong>Username (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_username" type="text" size="20" maxlength="30" value="<?php echo $new_username; ?>"><BR><BR>
+<strong>Email Address (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_email_address" type="text" size="50" maxlength="100" value="<?php echo $new_email_address; ?>"><BR><BR>
 <strong>Admin Privileges?</strong>&nbsp;
 <select name="new_admin">
 <option value="0"<?php if ($new_admin == 0) echo " selected"; ?>>No</option>

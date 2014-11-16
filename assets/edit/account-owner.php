@@ -149,23 +149,23 @@ if ($really_del == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_owner_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_owner_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Owner Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_owner" type="text" value="<?php if ($new_owner != "") echo htmlentities($new_owner); ?>
 " size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<input type="hidden" name="new_oid" value="<?=$oid?>">
+<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+<input type="hidden" name="new_oid" value="<?php echo $oid; ?>">
 <BR><BR>
 <input type="submit" name="button" value="Update This Account Owner &raquo;">
 </form>
-<BR><BR><a href="<?=$PHP_SELF?>?oid=<?=$oid?>&del=1">DELETE THIS OWNER</a>
+<BR><BR><a href="<?php echo $PHP_SELF; ?>?oid=<?php echo $oid; ?>&del=1">DELETE THIS OWNER</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

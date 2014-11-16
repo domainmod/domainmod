@@ -191,12 +191,12 @@ td.update-block-right {
 	padding-left: 0px;
 }
 div.main-container {
-	width: <?=$site_width?>;
+	width: <?php echo $site_width; ?>;
 	display: table;
 	margin: 0 auto;
 }
 div.main-container-login {
-	width: <?=$site_width_login?>;
+	width: <?php echo $site_width_login; ?>;
 	display: table;
 	margin: 0 auto;
 }

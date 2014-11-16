@@ -116,23 +116,23 @@ if ($really_del == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_type_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_type_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Type Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_type" type="text" value="<?php if ($new_type != "") echo htmlentities($new_type); ?>
 " size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<input type="hidden" name="new_ssltid" value="<?=$ssltid?>">
+<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+<input type="hidden" name="new_ssltid" value="<?php echo $ssltid; ?>">
 <BR><BR>
 <input type="submit" name="button" value="Update This SSL Type &raquo;">
 </form>
-<BR><BR><a href="<?=$PHP_SELF?>?ssltid=<?=$ssltid?>&del=1">DELETE THIS TYPE</a>
+<BR><BR><a href="<?php echo $PHP_SELF; ?>?ssltid=<?php echo $ssltid; ?>&del=1">DELETE THIS TYPE</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

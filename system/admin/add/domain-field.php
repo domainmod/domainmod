@@ -99,16 +99,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 <?php include("../../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
-<form name="add_domain_field_form" method="post" action="<?=$PHP_SELF?>">
-<strong>Display Name (75)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_name" type="text" size="30" maxlength="75" value="<?=$new_name?>"><BR><BR>
+<form name="add_domain_field_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<strong>Display Name (75)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_name" type="text" size="30" maxlength="75" value="<?php echo $new_name; ?>"><BR><BR>
 <strong>Database Field Name (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 The Database Field Name can contain only letters and underscores (ie. sample_field or Sample_Field).<BR><BR>
-<font class="default_highlight">WARNING:</font> The Database Field Name cannot be renamed.<BR><BR><input name="new_field_name" type="text" size="20" maxlength="30" value="<?=$new_field_name?>"><BR><BR>
+<font class="default_highlight">WARNING:</font> The Database Field Name cannot be renamed.<BR><BR><input name="new_field_name" type="text" size="20" maxlength="30" value="<?php echo $new_field_name; ?>"><BR><BR>
 <strong>Data Type</strong><BR><BR>
 <font class="default_highlight">WARNING:</font> The Data Type cannot be changed.<BR><BR>
 <?php
@@ -119,16 +119,16 @@ $result = mysql_query($sql,$connection) or die(mysql_error());
 echo "<select name=\"new_field_type_id\">";
 while ($row = mysql_fetch_object($result)) { ?>
 
-	<option value="<?=$row->id?>"><?=$row->name?></option><?php
+	<option value="<?php echo $row->id; ?>"><?php echo $row->name; ?></option><?php
 
 }
 echo "</select>";
 ?>
 <BR><BR>
-<strong>Description (255)</strong><BR><BR><input name="new_description" type="text" size="50" maxlength="255" value="<?=$new_description?>">
+<strong>Description (255)</strong><BR><BR><input name="new_description" type="text" size="50" maxlength="255" value="<?php echo $new_description; ?>">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
 <BR><BR>
 <input type="submit" name="button" value="Add Custom Field &raquo;">
 </form>

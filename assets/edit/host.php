@@ -119,26 +119,26 @@ if ($really_del == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_host_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_host_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Web Host Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_host" type="text" value="<?php if ($new_host != "") echo htmlentities($new_host); ?>
 " size="50" maxlength="100">
 <BR><BR>
 <strong>Registrar's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-<input name="new_url" type="text" value="<?=htmlentities($new_url)?>" size="50" maxlength="100">
+<input name="new_url" type="text" value="<?php echo htmlentities($new_url); ?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<input type="hidden" name="new_whid" value="<?=$whid?>">
+<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+<input type="hidden" name="new_whid" value="<?php echo $whid; ?>">
 <BR><BR>
 <input type="submit" name="button" value="Update This Web Host &raquo;">
 </form>
-<BR><BR><a href="<?=$PHP_SELF?>?whid=<?=$whid?>&del=1">DELETE THIS WEB HOST</a>
+<BR><BR><a href="<?php echo $PHP_SELF; ?>?whid=<?php echo $whid; ?>&del=1">DELETE THIS WEB HOST</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

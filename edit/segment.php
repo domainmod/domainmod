@@ -203,12 +203,12 @@ if ($really_del == "1") {
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="edit_segment_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_segment_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Segment Name (35)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>" size="25" maxlength="35">
 <BR><BR>
@@ -219,12 +219,12 @@ if ($really_del == "1") {
 <textarea name="new_description" cols="60" rows="5"><?php if ($new_description != "") echo $new_description; ?></textarea>
 <BR><BR>
 <strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
-<input type="hidden" name="new_segid" value="<?=$segid?>">
+<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+<input type="hidden" name="new_segid" value="<?php echo $segid; ?>">
 <BR><BR>
 <input type="submit" name="button" value="Update This Segment &raquo;">
 </form>
-<BR><BR><a href="<?=$PHP_SELF?>?segid=<?=$segid?>&del=1">DELETE THIS SEGMENT</a>
+<BR><BR><a href="<?php echo $PHP_SELF; ?>?segid=<?php echo $segid; ?>&del=1">DELETE THIS SEGMENT</a>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

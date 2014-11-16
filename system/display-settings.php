@@ -152,12 +152,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="display_settings_form" method="post" action="<?=$PHP_SELF?>">
+<form name="display_settings_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <BR><font class="subheadline">Main Domain Page</font><BR><BR>
 <strong>Number of domains per page:</strong> <input name="new_number_of_domains" type="text" size="3" maxlength="5" value="<?php if ($new_number_of_domains != "") echo $new_number_of_domains; ?>">
 <BR><BR>

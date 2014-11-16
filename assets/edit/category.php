@@ -121,12 +121,12 @@ if ($really_del == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_category_form" method="post" action="<?=$PHP_SELF?>">
+<form name="edit_category_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Category Name (150)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_category" type="text" value="<?php if ($new_category != "") echo htmlentities($new_category); ?>
 " size="50" maxlength="150">
@@ -136,12 +136,12 @@ if ($really_del == "1") {
 " size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
 <BR><BR>
-<input type="hidden" name="new_pcid" value="<?=$pcid?>">
+<input type="hidden" name="new_pcid" value="<?php echo $pcid; ?>">
 <input type="submit" name="button" value="Update This Category &raquo;">
 </form>
-<BR><BR><a href="<?=$PHP_SELF?>?pcid=<?=$pcid?>&del=1">DELETE THIS CATEGORY</a>
+<BR><BR><a href="<?php echo $PHP_SELF; ?>?pcid=<?php echo $pcid; ?>&del=1">DELETE THIS CATEGORY</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

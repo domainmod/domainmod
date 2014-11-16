@@ -89,12 +89,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="default_settings_form" method="post" action="<?=$PHP_SELF?>">
+<form name="default_settings_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <BR><font class="subheadline">Domain Defaults</font><BR><BR>
 <strong>Default Domain Registrar</strong><BR><BR>
 <select name="new_default_registrar">
@@ -105,7 +105,7 @@ $sql = "SELECT id, name
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->id?>"<?php if ($_SESSION['system_default_registrar'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
+	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_registrar'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
 }
 ?>
@@ -122,7 +122,7 @@ $sql = "SELECT ra.id, ra.username, r.name AS r_name, o.name AS o_name
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->id?>"<?php if ($_SESSION['system_default_registrar_account'] == $row->id) echo " selected"; ?>><?=$row->r_name?> :: <?=$row->o_name?> :: <?=$row->username?></option>
+	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_registrar_account'] == $row->id) echo " selected"; ?>><?php echo $row->r_name; ?> :: <?php echo $row->o_name; ?> :: <?php echo $row->username; ?></option>
     <?php
 }
 ?>
@@ -137,7 +137,7 @@ $sql = "SELECT id, name
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->id?>"<?php if ($_SESSION['system_default_dns'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
+	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_dns'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
 }
 ?>
@@ -152,7 +152,7 @@ $sql = "SELECT id, name
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->id?>"<?php if ($_SESSION['system_default_host'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
+	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_host'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
 }
 ?>
@@ -167,7 +167,7 @@ $sql = "SELECT id, ip, name
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->id?>"<?php if ($_SESSION['system_default_ip_address_domains'] == $row->id) echo " selected"; ?>><?=$row->name?> (<?=$row->ip?>)</option>
+	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ip_address_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?> (<?php echo $row->ip; ?>)</option>
     <?php
 }
 ?>
@@ -182,7 +182,7 @@ $sql = "SELECT id, name
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->id?>"<?php if ($_SESSION['system_default_category_domains'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
+	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_category_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
 }
 ?>
@@ -197,7 +197,7 @@ $sql = "SELECT id, name
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->id?>"<?php if ($_SESSION['system_default_owner_domains'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
+	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_owner_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
 }
 ?>
@@ -213,7 +213,7 @@ $sql = "SELECT id, name
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->id?>"<?php if ($_SESSION['system_default_ssl_provider'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
+	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_provider'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
 }
 ?>
@@ -230,7 +230,7 @@ $sql = "SELECT sslpa.id, sslpa.username, sslp.name AS p_name, o.name AS o_name
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->id?>"<?php if ($_SESSION['system_default_ssl_provider_account'] == $row->id) echo " selected"; ?>><?=$row->p_name?> :: <?=$row->o_name?> :: <?=$row->username?></option>
+	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_provider_account'] == $row->id) echo " selected"; ?>><?php echo $row->p_name; ?> :: <?php echo $row->o_name; ?> :: <?php echo $row->username; ?></option>
     <?php
 }
 ?>
@@ -245,7 +245,7 @@ $sql = "SELECT id, type
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->id?>"<?php if ($_SESSION['system_default_ssl_type'] == $row->id) echo " selected"; ?>><?=$row->type?></option>
+	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_type'] == $row->id) echo " selected"; ?>><?php echo $row->type; ?></option>
     <?php
 }
 ?>
@@ -260,7 +260,7 @@ $sql = "SELECT id, ip, name
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->id?>"<?php if ($_SESSION['system_default_ip_address_ssl'] == $row->id) echo " selected"; ?>><?=$row->name?> (<?=$row->ip?>)</option>
+	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ip_address_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?> (<?php echo $row->ip; ?>)</option>
     <?php
 }
 ?>
@@ -275,7 +275,7 @@ $sql = "SELECT id, name
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->id?>"<?php if ($_SESSION['system_default_category_ssl'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
+	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_category_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
 }
 ?>
@@ -290,7 +290,7 @@ $sql = "SELECT id, name
 $result = mysql_query($sql,$connection);
 while ($row = mysql_fetch_object($result)) {
 	?>
-	<option value="<?=$row->id?>"<?php if ($_SESSION['system_default_owner_ssl'] == $row->id) echo " selected"; ?>><?=$row->name?></option>
+	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_owner_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
 }
 ?>

@@ -28,7 +28,7 @@ $software_section = "ssl-provider-fees-missing";
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
@@ -58,7 +58,7 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <?=$row->ssl_provider_name;?>
+                <?php echo $row->ssl_provider_name; ?>
             </td>
             <td class="main_table_cell_active">
                 <?php
@@ -78,7 +78,7 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
 
                 $full_type_list_formatted = substr($full_type_list, 0, -2); 
                 ?>
-                <a class="nobold" href="ssl-provider-fees.php?sslpid=<?=$row->ssl_provider_id?>"><?=$full_type_list_formatted?></a>
+                <a class="nobold" href="ssl-provider-fees.php?sslpid=<?php echo $row->ssl_provider_id; ?>"><?php echo $full_type_list_formatted; ?></a>
             </td>
         </tr>
     <?php 

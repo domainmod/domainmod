@@ -980,7 +980,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include("_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("_includes/layout/head-tags.inc.php"); ?>
 <?php include("_includes/system/functions/jumpmenu.inc.php"); ?>
 </head>
@@ -993,9 +993,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php if ($action == "AD") { ?>
             <BR><strong>The following domains were added:</strong><BR>
         <?php } elseif ($action == "R") { ?>
-            <BR><strong>The following domains were renewed for <?=$new_renewal_years?> year<?php if ($new_renewal_years > 1) { echo "s"; } ?>:</strong><BR>
+            <BR><strong>The following domains were renewed for <?php echo $new_renewal_years; ?> year<?php if ($new_renewal_years > 1) { echo "s"; } ?>:</strong><BR>
         <?php } elseif ($action == "FR") { ?>
-            <BR><strong>The following domains were fully renewed for <?=$new_renewal_years?> year<?php if ($new_renewal_years > 1) { echo "s"; } ?>:</strong><BR>
+            <BR><strong>The following domains were fully renewed for <?php echo $new_renewal_years; ?> year<?php if ($new_renewal_years > 1) { echo "s"; } ?>:</strong><BR>
         <?php } elseif ($action == "E") { ?>
             <BR><strong>The following domains were marked as expired:</strong><BR>
         <?php } elseif ($action == "S") { ?>
@@ -1034,12 +1034,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <BR><strong>The following domains had their Custom Domain Field updated:</strong><BR>
         <?php } ?>
 
-		<BR><?=$new_data_unformatted?><BR><BR><BR>
+		<BR><?php echo $new_data_unformatted; ?><BR><BR><BR>
 	<?php } ?>
 
 <?php } ?>
 Instead of having to waste time editing domains one-by-one, you can use the below form to update various data for multiple domains all at once.<BR><BR>
-<form name="bulk_updater_form" method="post" action="<?=$PHP_SELF?>">
+<form name="bulk_updater_form" method="post" action="<?php echo $PHP_SELF; ?>">
   <select name="jumpMenu" id="jumpMenu" onChange="MM_jumpMenu('parent',this,0)">
     <option value="bulk-updater.php"<?php if ($action == "") { echo " selected"; } ?>>Choose Action</option>
     <option value="bulk-updater.php?action=AD"<?php if ($action == "AD") { echo " selected"; } ?>>Add Domains</option>
@@ -1077,7 +1077,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     $result = mysql_query($sql,$connection) or die(mysql_error());
     while ($row = mysql_fetch_object($result)) { ?>
     
-        <option value="bulk-updater.php?action=UCF<?=$row->type_id?>&field_id=<?=$row->id?>"<?php if ($row->id == $field_id) echo " selected"; ?>><?=$row->name?> (<?=$row->type?>)</option><?php
+        <option value="bulk-updater.php?action=UCF<?php echo $row->type_id; ?>&field_id=<?php echo $row->id; ?>"<?php if ($row->id == $field_id) echo " selected"; ?>><?php echo $row->name; ?> (<?php echo $row->type; ?>)</option><?php
     
     }
     ?>
@@ -1092,7 +1092,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 	        <strong>Domains to update (one per line)</strong><a title="Required Field"><font class="default_highlight">*</font></a>
         <?php } ?>
         <BR><BR>
-        <textarea name="new_data" cols="60" rows="5"><?=$new_data?></textarea>
+        <textarea name="new_data" cols="60" rows="5"><?php echo $new_data; ?></textarea>
         <BR><BR>
 <?php } ?>
 
@@ -1113,7 +1113,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     <BR><BR>
 <?php } elseif ($action == "AD") { ?>
     <strong>Function (255)</strong><BR><BR>
-    <input name="new_function" type="text" size="50" maxlength="255" value="<?=$new_function?>">
+    <input name="new_function" type="text" size="50" maxlength="255" value="<?php echo $new_function; ?>">
     <BR><BR>
     <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
     <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
@@ -1129,7 +1129,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_raid\">";
     while ($row_account = mysql_fetch_object($result_account)) { ?>
     
-    	<option value="<?=$row_account->id?>"<?php if ($row_account->id == $_SESSION['default_registrar_account']) echo " selected";?>><?=$row_account->r_name?>, <?=$row_account->o_name?> (<?=$row_account->username?>)</option><?php
+    	<option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $_SESSION['default_registrar_account']) echo " selected";?>><?php echo $row_account->r_name; ?>, <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
 
     }
     echo "</select>";
@@ -1144,7 +1144,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_dnsid\">";
     while ($row_dns = mysql_fetch_object($result_dns)) { ?>
     
-	    <option value="<?=$row_dns->id?>"<?php if ($row_dns->id == $_SESSION['default_dns']) echo " selected";?>><?=$row_dns->name?></option><?php
+	    <option value="<?php echo $row_dns->id; ?>"<?php if ($row_dns->id == $_SESSION['default_dns']) echo " selected";?>><?php echo $row_dns->name; ?></option><?php
 
     }
     echo "</select>";
@@ -1159,7 +1159,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_ipid\">";
     while ($row_ip = mysql_fetch_object($result_ip)) { ?>
 
-		<option value="<?=$row_ip->id?>"<?php if ($row_ip->id == $_SESSION['default_ip_address_domains']) echo " selected";?>><?=$row_ip->name?> (<?=$row_ip->ip?>)</option><?php
+		<option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $_SESSION['default_ip_address_domains']) echo " selected";?>><?php echo $row_ip->name; ?> (<?php echo $row_ip->ip; ?>)</option><?php
 
     }
     echo "</select>";
@@ -1175,7 +1175,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_whid\">";
     while ($row_host = mysql_fetch_object($result_host)) { ?>
 
-		<option value="<?=$row_host->id?>"<?php if ($row_host->id == $_SESSION['default_host']) echo " selected";?>><?=$row_host->name?></option><?php
+		<option value="<?php echo $row_host->id; ?>"<?php if ($row_host->id == $_SESSION['default_host']) echo " selected";?>><?php echo $row_host->name; ?></option><?php
 
     }
     echo "</select>";
@@ -1191,7 +1191,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<select name=\"new_pcid\">";
     while ($row_cat = mysql_fetch_object($result_cat)) { ?>
     
-		<option value="<?=$row_cat->id?>"<?php if ($row_cat->id == $_SESSION['default_category_domains']) echo " selected";?>><?=$row_cat->name?></option><?php
+		<option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $_SESSION['default_category_domains']) echo " selected";?>><?php echo $row_cat->name; ?></option><?php
     
     }
     echo "</select>";
@@ -1322,8 +1322,8 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 	
 	while ($row = mysql_fetch_object($result)) { ?>
 	
-        <strong><?=$row->name?></strong>
-        <input type="checkbox" name="new_<?=$row->field_name?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>><BR><?php
+        <strong><?php echo $row->name; ?></strong>
+        <input type="checkbox" name="new_<?php echo $row->field_name; ?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>><BR><?php
         
         if ($row->description != "") {
             
@@ -1347,7 +1347,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 	
 	while ($row = mysql_fetch_object($result)) { ?>
 
-		<strong><?=$row->name?> (255)</strong><?php
+		<strong><?php echo $row->name; ?> (255)</strong><?php
 
 		if ($row->description != "") {
 			
@@ -1358,7 +1358,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 			echo "<BR><BR>";
 			
 		} ?>
-		<input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=${'new_' . $row->field_name}?>"><BR><BR><?php
+		<input type="text" name="new_<?php echo $row->field_name; ?>" size="50" maxlength="255" value="<?php echo ${'new_' . $row->field_name}; ?>"><BR><BR><?php
 
 	}
 
@@ -1372,7 +1372,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 	
 	while ($row = mysql_fetch_object($result)) { ?>
 
-		<strong><?=$row->name?></strong><?php
+		<strong><?php echo $row->name; ?></strong><?php
 
 		if ($row->description != "") {
 			
@@ -1383,7 +1383,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 			echo "<BR><BR>";
 			
 		} ?>
-		<textarea name="new_<?=$row->field_name?>" cols="60" rows="5"><?=${'new_' . $row->field_name}?></textarea><BR><BR><?php
+		<textarea name="new_<?php echo $row->field_name; ?>" cols="60" rows="5"><?php echo ${'new_' . $row->field_name}; ?></textarea><BR><BR><?php
 
 	}
 
@@ -1401,7 +1401,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 
     <?php if ($action == "DD") { ?>
     <?php } else { ?>
-        <textarea name="new_notes" cols="60" rows="5"><?=$new_notes?></textarea>
+        <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
         <BR><BR>
     <?php } ?>
 
@@ -1438,8 +1438,8 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 
                     if ($row->type_id == "1") { // Check Box ?>
 
-                        <input type="checkbox" name="new_<?=$row->field_name?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>>
-                        &nbsp;<strong><?=$row->name?></strong><BR><?php
+                        <input type="checkbox" name="new_<?php echo $row->field_name; ?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>>
+                        &nbsp;<strong><?php echo $row->name; ?></strong><BR><?php
 
                         if ($row->description != "") {
 
@@ -1453,7 +1453,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 
                     } elseif ($row->type_id == "2") { // Text ?>
 
-                        <strong><?=$row->name?> (255)</strong><?php
+                        <strong><?php echo $row->name; ?> (255)</strong><?php
 
                         if ($row->description != "") {
 
@@ -1464,11 +1464,11 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
                             echo "<BR><BR>";
 
                         } ?>
-                        <input type="text" name="new_<?=$row->field_name?>" size="50" maxlength="255" value="<?=${'new_' . $row->field_name}?>"><BR><BR><?php
+                        <input type="text" name="new_<?php echo $row->field_name; ?>" size="50" maxlength="255" value="<?php echo ${'new_' . $row->field_name}; ?>"><BR><BR><?php
 
                     } elseif ($row->type_id == "3") { // Text Area ?>
 
-                        <strong><?=$row->name?></strong><?php
+                        <strong><?php echo $row->name; ?></strong><?php
 
                         if ($row->description != "") {
 
@@ -1479,7 +1479,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
                             echo "<BR><BR>";
 
                         } ?>
-                        <textarea name="new_<?=$row->field_name?>" cols="60" rows="5"><?=${'new_' . $row->field_name}?></textarea><BR><BR><?php
+                        <textarea name="new_<?php echo $row->field_name; ?>" cols="60" rows="5"><?php echo ${'new_' . $row->field_name}; ?></textarea><BR><BR><?php
 
                     }
 
@@ -1491,18 +1491,18 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 
     } ?>
 
-    <input type="hidden" name="action" value="<?=$action?>">
+    <input type="hidden" name="action" value="<?php echo $action; ?>">
     <?php if ($action == "CDNS") { ?>
-    <input type="hidden" name="dnsid" value="<?=$new_dnsid?>">
+    <input type="hidden" name="dnsid" value="<?php echo $new_dnsid; ?>">
     <?php } ?>
     <?php if ($action == "CIP") { ?>
-    <input type="hidden" name="ipid" value="<?=$new_ipid?>">
+    <input type="hidden" name="ipid" value="<?php echo $new_ipid; ?>">
     <?php } ?>
     <?php if ($action == "CRA") { ?>
-    <input type="hidden" name="raid" value="<?=$new_raid?>">
+    <input type="hidden" name="raid" value="<?php echo $new_raid; ?>">
     <?php } ?>
     <?php if ($action == "CWH") { ?>
-    <input type="hidden" name="whid" value="<?=$new_whid?>">
+    <input type="hidden" name="whid" value="<?php echo $new_whid; ?>">
     <?php } ?>
     <input type="submit" name="button" value="Perform Bulk Action &raquo;">
 <?php } ?>

@@ -129,7 +129,7 @@ if ($software_section == "domains") { ?>
 				$temp_field_type = $row->type;
 				
 			} ?>
-			&raquo;&nbsp;<a href="<?php echo $web_root; ?>/bulk-updater.php?action=UCF">Update Custom Domain Field</a></strong>&nbsp;&raquo;&nbsp;<strong><?=$temp_field_name?> (<?=$temp_field_type?>)</strong>&nbsp;<?php
+			&raquo;&nbsp;<a href="<?php echo $web_root; ?>/bulk-updater.php?action=UCF">Update Custom Domain Field</a></strong>&nbsp;&raquo;&nbsp;<strong><?php echo $temp_field_name; ?> (<?php echo $temp_field_type; ?>)</strong>&nbsp;<?php
 
 
 		} elseif ($action == "AN") { ?>
@@ -274,7 +274,7 @@ if ($software_section == "domains") { ?>
 					  WHERE id = '" . $rid . "'";
 	$result_registrar = mysql_query($sql_registrar,$connection);
 	while ($row_registrar = mysql_fetch_object($result_registrar)) { $temp_registrar_name = $row_registrar->name; } ?>
-	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/edit/registrar.php?rid=<?=$rid?>"><?=$temp_registrar_name?></a>&nbsp;
+	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/edit/registrar.php?rid=<?php echo $rid; ?>"><?php echo $temp_registrar_name; ?></a>&nbsp;
 	&raquo;&nbsp;<strong>Registrar Fees</strong>&nbsp;<?php 
 
 } elseif ($software_section == "registrar-fees-missing") { ?>
@@ -385,7 +385,7 @@ if ($software_section == "domains") { ?>
 						 WHERE id = '" . $sslpid . "'";
 	$result_ssl_provider = mysql_query($sql_ssl_provider,$connection);
 	while ($row_ssl_provider = mysql_fetch_object($result_ssl_provider)) { $temp_ssl_provider_name = $row_ssl_provider->name; } ?>
-	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/edit/ssl-provider.php?sslpid=<?=$sslpid?>"><?=$temp_ssl_provider_name?></a>&nbsp;
+	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/edit/ssl-provider.php?sslpid=<?php echo $sslpid; ?>"><?php echo $temp_ssl_provider_name; ?></a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Provider Fees</strong>&nbsp;<?php 
 
 } elseif ($software_section == "ssl-provider-fees-missing") { ?>

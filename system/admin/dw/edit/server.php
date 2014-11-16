@@ -146,12 +146,12 @@ if ($really_del == "1") {
 <?php include("../../../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../../../_includes/layout/header.inc.php"); ?>
-<form name="dw_edit_server_form" method="post" action="<?=$PHP_SELF?>">
+<form name="dw_edit_server_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 Enter the display name for this server.<BR><BR>
 <input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
@@ -182,10 +182,10 @@ Enter the hash for you WHM installation. You can retrieve this from your WHM by 
 <strong>Notes:</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?php if ($new_notes != "") echo $new_notes; ?></textarea>
 <BR><BR>
-<input type="hidden" name="new_dwsid" value="<?=$dwsid?>">
+<input type="hidden" name="new_dwsid" value="<?php echo $dwsid; ?>">
 <input type="submit" name="button" value="Update Server &raquo;">
 </form>
-<BR><BR><a href="<?=$PHP_SELF?>?dwsid=<?=$dwsid?>&del=1">DELETE THIS SERVER</a>
+<BR><BR><a href="<?php echo $PHP_SELF; ?>?dwsid=<?php echo $dwsid; ?>&del=1">DELETE THIS SERVER</a>
 <?php include("../../../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

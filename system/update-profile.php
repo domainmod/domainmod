@@ -81,12 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="change_email_address_form" method="post" action="<?=$PHP_SELF?>">
+<form name="change_email_address_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>First Name (50):</strong><BR><BR>
 <input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") { echo $new_first_name; } else { echo $_SESSION['first_name']; }?>">
 <BR><BR>

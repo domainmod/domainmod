@@ -82,12 +82,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="change_password_form" method="post" action="<?=$PHP_SELF?>">
+<form name="change_password_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>New Password (255)</strong><BR><BR><input type="password" name="new_password" size="20" maxlength="255">
 <BR><BR>
 <strong>Confirm New Password</strong><BR><BR><input type="password" name="new_password_confirmation" size="20" maxlength="255">

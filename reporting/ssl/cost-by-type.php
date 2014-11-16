@@ -190,36 +190,36 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?> :: <?=$page_subtitle?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?> :: <?php echo $page_subtitle; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
-    <form name="export_ssl_form" method="post" action="<?=$PHP_SELF?>"> 
-        <a href="<?=$PHP_SELF?>?all=1">View All</a> or Expiring Between 
+    <form name="export_ssl_form" method="post" action="<?php echo $PHP_SELF; ?>">
+        <a href="<?php echo $PHP_SELF; ?>?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_start_date\""; } ?>> 
         and 
         <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_end_date\""; } ?>> 
         &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
         <?php if ($total_rows > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?=$PHP_SELF?>?export=1&new_start_date=<?=$new_start_date?>&new_end_date=<?=$new_end_date?>&all=<?=$all?>">EXPORT REPORT</a>]</strong>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
     </form>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
 
-	<BR><font class="subheadline"><?=$page_subtitle?></font><BR>
+	<BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
 	<BR>
     <?php if ($all != "1") { ?>
-	    <strong>Date Range:</strong> <?=$new_start_date?> - <?=$new_end_date?><BR><BR>
+	    <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
     <?php } else { ?>
 	    <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
-    <strong>Total Cost:</strong> <?=$grand_total?> <?=$_SESSION['default_currency']?><BR><BR>
-    <strong>Number of SSL Certs:</strong> <?=$number_of_certs_total?><BR>
+    <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
+    <strong>Number of SSL Certs:</strong> <?php echo $number_of_certs_total; ?><BR>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
@@ -254,10 +254,10 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		$row->total_cost = $temp_output_amount; ?>
 	
 		<tr class="main_table_row_active">
-			<td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?ssltid=<?=$row->id?>"><?=$row->type?></a></td>
-			<td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?ssltid=<?=$row->id?>"><?=$row->number_of_certs?></a></td>
-			<td class="main_table_cell_active"><?=$row->total_cost?></td>
-			<td class="main_table_cell_active"><?=$per_cert?></td>
+			<td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?ssltid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a></td>
+			<td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?ssltid=<?php echo $row->id; ?>"><?php echo $row->number_of_certs; ?></a></td>
+			<td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
+			<td class="main_table_cell_active"><?php echo $per_cert; ?></td>
 		</tr><?php
 
 	}

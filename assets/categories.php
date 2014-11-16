@@ -202,13 +202,13 @@ if ($export == "1") {
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>	
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-Below is a list of all the Categories that are stored in your <?=$software_title?>.<BR><BR>
-[<a href="<?=$PHP_SELF?>?export=1">EXPORT</a>]<?php
+Below is a list of all the Categories that are stored in your <?php echo $software_title; ?>.<BR><BR>
+[<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
 
 $result = mysql_query($sql,$connection) or die(mysql_error());
 
@@ -218,7 +218,7 @@ if (mysql_num_rows($result) > 0) {
 	<table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
 		<td class="main_table_cell_heading_active">
-			<font class="main_table_heading">Active Categories (<?=mysql_num_rows($result)?>)</font>
+			<font class="main_table_heading">Active Categories (<?php echo mysql_num_rows($result); ?>)</font>
 		</td>
 		<td class="main_table_cell_heading_active">
 			<font class="main_table_heading">Stakeholder</font>
@@ -241,10 +241,10 @@ if (mysql_num_rows($result) > 0) {
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a title=\"Default Domain Category\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
+                <a class="invisiblelink" href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a title=\"Default Domain Category\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
+                <a class="invisiblelink" href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->stakeholder; ?></a>
             </td>
             <td class="main_table_cell_active"><?php
 				$sql_total_count = "SELECT count(*) AS total_count
@@ -258,7 +258,7 @@ if (mysql_num_rows($result) > 0) {
 				
 				if ($total_domains >= 1) { ?>
 			
-					<a class="nobold" href="../domains.php?pcid=<?=$row->id?>"><?=number_format($total_domains)?></a><?php 
+					<a class="nobold" href="../domains.php?pcid=<?php echo $row->id; ?>"><?php echo number_format($total_domains); ?></a><?php
 					
 				} else {
 					
@@ -278,7 +278,7 @@ if (mysql_num_rows($result) > 0) {
 				
 				if ($total_certs >= 1) { ?>
 			
-					<a class="nobold" href="../ssl-certs.php?sslpcid=<?=$row->id?>"><?=number_format($total_certs)?></a><?php 
+					<a class="nobold" href="../ssl-certs.php?sslpcid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
 					
 				} else {
 					
@@ -321,7 +321,7 @@ if (mysql_num_rows($result) > 0) {
 
     <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive Categories (<?=mysql_num_rows($result)?>)</font>
+            <font class="main_table_heading">Inactive Categories (<?php echo mysql_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Stakeholder</font>
@@ -332,10 +332,10 @@ if (mysql_num_rows($result) > 0) {
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->name?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a title=\"Default Domain Category\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
+                <a class="invisiblelink" href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a title=\"Default Domain Category\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/category.php?pcid=<?=$row->id?>"><?=$row->stakeholder?></a>
+                <a class="invisiblelink" href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->stakeholder; ?></a>
             </td>
         </tr><?php 
 

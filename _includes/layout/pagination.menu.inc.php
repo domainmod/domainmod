@@ -29,7 +29,7 @@
                 $export_filename = "ssl-certs.php";
             
             } ?>
-            [<a href="<?=$export_filename?>?<?=$_SERVER['QUERY_STRING']?>&export=1">export results</a>]&nbsp;[<a href="system/display-settings.php">display settings</a>]<?php
+            [<a href="<?php echo $export_filename; ?>?<?php echo $_SERVER['QUERY_STRING']; ?>&export=1">export results</a>]&nbsp;[<a href="system/display-settings.php">display settings</a>]<?php
     
         }
         ?>

@@ -78,7 +78,7 @@ if ($new_username != "") {
 <?php include("_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
@@ -86,7 +86,7 @@ if ($new_username != "") {
 <div class="reset-password">
     <font class="headline">Reset Your Password</font>
     <BR><BR><BR>
-    <form name="reset_password_form" method="post" action="<?=$PHP_SELF?>">
+    <form name="reset_password_form" method="post" action="<?php echo $PHP_SELF; ?>">
     <strong>Username:</strong>&nbsp;<input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
     <input type="submit" name="button" value="Reset Password &raquo;">
     </form>

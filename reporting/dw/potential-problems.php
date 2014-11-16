@@ -132,22 +132,22 @@ if ($export == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?> :: <?=$page_subtitle?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?> :: <?php echo $page_subtitle; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
-    <form name="export_dw_form" method="post" action="<?=$PHP_SELF?>"> 
-        <a href="<?=$PHP_SELF?>?generate=1">Generate</a>
+    <form name="export_dw_form" method="post" action="<?php echo $PHP_SELF; ?>">
+        <a href="<?php echo $PHP_SELF; ?>?generate=1">Generate</a>
         <?php if ($generate == 1) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?=$PHP_SELF?>?export=1&new_start_date=<?=$new_start_date?>&new_end_date=<?=$new_end_date?>&all=<?=$all?>">EXPORT REPORT</a>]</strong>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
     </form>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 <?php if ($generate == 1) { ?>
-<BR><font class="subheadline"><?=$page_subtitle?></font><BR>
+<BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
 <BR>
 <?php } ?>
 <?php
@@ -159,7 +159,7 @@ if ($generate == 1) {
         
     } else { ?>
     
-        <strong>Accounts without a DNS Zone (<?=$temp_accounts_without_a_dns_zone?>)</strong><BR><?php
+        <strong>Accounts without a DNS Zone (<?php echo $temp_accounts_without_a_dns_zone; ?>)</strong><BR><?php
     
         while ($row_accounts_without_a_dns_zone = mysql_fetch_object($result_accounts_without_a_dns_zone)) {
         
@@ -189,7 +189,7 @@ if ($generate == 1) {
         
     } else { ?>
     
-        <strong>DNS Zones without an Account (<?=$temp_dns_zones_without_an_account?>)</strong><BR><?php
+        <strong>DNS Zones without an Account (<?php echo $temp_dns_zones_without_an_account; ?>)</strong><BR><?php
     
         while ($row_dns_zones_without_an_account = mysql_fetch_object($result_dns_zones_without_an_account)) {
         
@@ -219,7 +219,7 @@ if ($generate == 1) {
         
     } else { ?>
     
-        <strong>Suspended Accounts (<?=$temp_suspended_accounts?>)</strong><BR><?php
+        <strong>Suspended Accounts (<?php echo $temp_suspended_accounts; ?>)</strong><BR><?php
     
         while ($row_suspended_accounts = mysql_fetch_object($result_suspended_accounts)) {
         

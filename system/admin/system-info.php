@@ -34,7 +34,7 @@ $software_section = "admin-system-info";
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?=$software_title?> :: <?=$page_title?></title>
+<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
@@ -47,7 +47,7 @@ while ($row = mysql_fetch_object($result)) {
 	$db_version = $row->db_version;
 }
 ?>
-<strong>Database Version:</strong> v<?=number_format($db_version, 4)?>
+<strong>Database Version:</strong> v<?php echo number_format($db_version, 4); ?>
 
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
