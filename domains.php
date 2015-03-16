@@ -763,31 +763,35 @@ if ($export == "1") {
 					  FROM domain_fields
 					  ORDER BY name";
 		$result_field = mysql_query($sql_field,$connection);
-		
-		$array_count = 0;
-		$field_data = "";
-		
-		while ($row_field = mysql_fetch_object($result_field)) {
-			
-			$field_array[$array_count] = $row_field->field_name;
-			$array_count++;
-		
-		}
-		
-		foreach($field_array as $field) {
-		
-			$sql_data = "SELECT " . $field . " 
-						 FROM domain_field_data
-						 WHERE domain_id = '" . $row->id . "'";
-			$result_data = mysql_query($sql_data,$connection);
-			
-			while ($row_data = mysql_fetch_object($result_data)) {
-		
-				$row_content[$count++] = $row_data->{$field};
-			
-			}
-		
-		}
+
+        if (mysql_num_rows($result_field) > 0) {
+
+            $array_count = 0;
+            $field_data = "";
+
+            while ($row_field = mysql_fetch_object($result_field)) {
+
+                $field_array[$array_count] = $row_field->field_name;
+                $array_count++;
+
+            }
+
+            foreach ($field_array as $field) {
+
+                $sql_data = "SELECT " . $field . "
+                             FROM domain_field_data
+                             WHERE domain_id = '" . $row->id . "'";
+                $result_data = mysql_query($sql_data, $connection);
+
+                while ($row_data = mysql_fetch_object($result_data)) {
+
+                    $row_content[$count++] = $row_data->{$field};
+
+                }
+
+            }
+
+        }
 
 		$row_content[$count++] = $row->insert_time;
 		$row_content[$count++] = $row->update_time;
