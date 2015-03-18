@@ -33,10 +33,10 @@ include("../_includes/config-demo.inc.php");
 
 if ($demo_install != "1") {
 
-	$sql_server = "SELECT id, host, protocol, port, username, hash
+	$sql_server = "SELECT id, `host`, protocol, `port`, username, `hash`
 				   FROM dw_servers
 				   ORDER BY name";
-	$result_server = mysql_query($sql_server,$connection);
+	$result_server = mysql_query($sql_server,$connection) or die(mysql_error());
 	
 	if (mysql_num_rows($result_server) == 0) {
 		
@@ -72,20 +72,20 @@ if ($demo_install != "1") {
 					dw_accounts = '0',
 					dw_dns_zones = '0',
 					dw_dns_records = '0'";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		$sql = "CREATE TABLE IF NOT EXISTS dw_accounts (
 				id int(10) NOT NULL auto_increment,
 				server_id int(10) NOT NULL,
 				domain varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				ip varchar(15) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				owner varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				user varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`owner` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`user` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				email varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				plan varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				theme varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				shell varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				partition varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`partition` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				disklimit varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				diskused varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				maxaddons varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -127,19 +127,19 @@ if ($demo_install != "1") {
 				new_order int(10) NOT NULL,
 				mname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				rname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				serial int(20) NOT NULL,
+				`serial` int(20) NOT NULL,
 				refresh int(10) NOT NULL,
 				retry int(10) NOT NULL,
 				expire varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				minimum int(10) NOT NULL,
 				nsdname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				name varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				ttl int(10) NOT NULL,
 				class varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				type varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				address varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				cname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-				exchange varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+				`exchange` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				preference int(10) NOT NULL,
 				txtdata varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				line int(10) NOT NULL,
@@ -158,7 +158,7 @@ if ($demo_install != "1") {
 					SET build_start_time = '" . $build_start_time . "',
 						build_status = '0'
 					WHERE id = '" . $row_server->id . "'";
-			$result = mysql_query($sql,$connection);
+			$result = mysql_query($sql,$connection) or die(mysql_error());
 
 			$api_call = "/xml-api/listaccts?searchtype=domain&search=";
 			include("api/dw.whm.inc.php");
@@ -173,7 +173,7 @@ if ($demo_install != "1") {
 					$diskused_formatted = rtrim($hit->diskused, 'M');
 	
 					$sql = "INSERT INTO dw_accounts 
-							(server_id, domain, ip, owner, user, email, plan, theme, shell, partition, disklimit, diskused, maxaddons, maxftp, maxlst, maxparked, maxpop, maxsql, maxsub, startdate, unix_startdate, suspended, suspendreason, suspendtime, MAX_EMAIL_PER_HOUR, MAX_DEFER_FAIL_PERCENTAGE, MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION, insert_time) VALUES 
+							(server_id, domain, ip, `owner`, `user`, email, plan, theme, shell, `partition`, disklimit, diskused, maxaddons, maxftp, maxlst, maxparked, maxpop, maxsql, maxsub, startdate, unix_startdate, suspended, suspendreason, suspendtime, MAX_EMAIL_PER_HOUR, MAX_DEFER_FAIL_PERCENTAGE, MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION, insert_time) VALUES
 							('" . $row_server->id . "', '" . $hit->domain . "', '" . $hit->ip . "', '" . $hit->owner . "', '" . $hit->user . "', '" . $hit->email . "', '" . $hit->plan . "', '" . $hit->theme . "', '" . $hit->shell . "', '" . $hit->partition . "', '" . $disklimit_formatted . "', '" . $diskused_formatted . "', '" . $hit->maxaddons . "', '" . $hit->maxftp . "', '" . $hit->maxlst . "', '" . $hit->maxparked. "', '" . $hit->maxpop . "', '" . $hit->maxsql . "', '" . $hit->maxsub . "', '" . $hit->startdate . "', '" . $hit->unix_startdate . "', '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime . "', '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "', '" . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . date("Y-m-d H:i:s") . "')";
 					$result = mysql_query($sql,$connection) or die(mysql_error());
 				
@@ -217,7 +217,7 @@ if ($demo_install != "1") {
 					foreach($xml->result->record as $hit) {
 				
 						$sql = "INSERT INTO dw_dns_records 
-								(server_id, dns_zone_id, domain, mname, rname, serial, refresh, retry, expire, minimum, nsdname, name, ttl, class, type, address, cname, exchange, preference, txtdata, line, nlines, raw, insert_time) VALUES 
+								(server_id, dns_zone_id, domain, mname, rname, `serial`, refresh, retry, expire, minimum, nsdname, `name`, ttl, class, type, address, cname, `exchange`, preference, txtdata, line, nlines, raw, insert_time) VALUES
 								('" . $row_server->id . "', '" . $row_temp->id . "', '" . $row_temp->domain . "', '" . $hit->mname . "', '" . $hit->rname . "', '" . $hit->serial . "', '" . $hit->refresh . "', '" . $hit->retry . "', '" . $hit->expire . "', '" . $hit->minimum . "', '" . $hit->nsdname . "', '" . $hit->name . "', '" . $hit->ttl . "', '" . $hit->class . "', '" . $hit->type . "', '" . $hit->address . "', '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference . "', '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw . "', '" . date("Y-m-d H:i:s") . "')";
 						$result = mysql_query($sql,$connection) or die(mysql_error());
 					
@@ -237,7 +237,7 @@ if ($demo_install != "1") {
 						build_time = '" . $total_build_time . "',
 						has_ever_been_built = '1'
 					WHERE id = '" . $row_server->id . "'";
-			$result = mysql_query($sql,$connection);
+			$result = mysql_query($sql,$connection) or die(mysql_error());
 
 		}
 
@@ -263,14 +263,14 @@ if ($demo_install != "1") {
 		
 		$sql = "SELECT domain, zonefile
 				FROM dw_dns_zones";
-		$result = mysql_query($sql,$connection);
+		$result = mysql_query($sql,$connection) or die(mysql_error());
 		
 		while ($row = mysql_fetch_object($result)) {
 			
 			$sql_update_dns_records = "UPDATE dw_dns_records
 									   SET zonefile = '" . $row->zonefile . "'
 									   WHERE domain = '" . $row->domain . "'";
-			$result_update_dns_records = mysql_query($sql_update_dns_records,$connection);	
+			$result_update_dns_records = mysql_query($sql_update_dns_records,$connection) or die(mysql_error());
 			
 		}
 	
@@ -292,16 +292,16 @@ if ($demo_install != "1") {
 			$sql = "UPDATE dw_dns_records
 					SET new_order = '" . $new_order++ . "'
 					WHERE type = '" . $key . "'";
-			$result = mysql_query($sql,$connection);
+			$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 		}
 	
 	}
 
-	$sql_server_totals = "SELECT id, host, protocol, port, username, hash
+	$sql_server_totals = "SELECT id, `host`, protocol, `port`, username, `hash`
 						  FROM dw_servers
 						  ORDER BY name";
-	$result_server_totals = mysql_query($sql_server_totals,$connection);
+	$result_server_totals = mysql_query($sql_server_totals,$connection) or die(mysql_error());
 	
 	while ($row_server_totals = mysql_fetch_object($result_server_totals)) {
 
@@ -347,11 +347,11 @@ if ($demo_install != "1") {
 				build_end_time_overall = '" . $build_end_time_overall . "',
 				build_time_overall = '" . $total_build_time_overall . "',
 				has_ever_been_built_overall = '1'";
-	$result = mysql_query($sql,$connection);
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 
 	$sql = "SELECT dw_accounts, dw_dns_zones, dw_dns_records
 			FROM dw_server_totals";
-	$result = mysql_query($sql,$connection);
+	$result = mysql_query($sql,$connection) or die(mysql_error());
 	
 	while ($row = mysql_fetch_object($result)) {
 		$temp_dw_accounts = $row->dw_accounts;
