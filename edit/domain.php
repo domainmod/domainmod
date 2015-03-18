@@ -52,20 +52,24 @@ $sql = "SELECT field_name
 		ORDER BY name";
 $result = mysql_query($sql,$connection);
 
-$count = 0;
+if (mysql_num_rows($result) > 0) {
 
-while ($row = mysql_fetch_object($result)) {
-	
-	$field_array[$count] = $row->field_name;
-	$count++;
+    $count = 0;
 
-}
+    while ($row = mysql_fetch_object($result)) {
 
-foreach($field_array as $field) {
+        $field_array[$count] = $row->field_name;
+        $count++;
 
-	$full_field = "new_" . $field . "";
-	${'new_' . $field} = $_POST[$full_field];
-	
+    }
+
+    foreach ($field_array as $field) {
+
+        $full_field = "new_" . $field . "";
+        ${'new_' . $field} = $_POST[$full_field];
+
+    }
+
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
