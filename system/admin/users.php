@@ -53,7 +53,7 @@ if ($_SESSION['username'] == "admin") {
 
 if ($export == "1") {
 
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "user_list_" . $current_timestamp_unix . ".csv";
@@ -78,9 +78,9 @@ if ($export == "1") {
 	$row_content[$count++] = "Updated";
 	include("../../_includes/system/export/write-row.inc.php");
 
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 	
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 			
 			if ($row->admin == "1") {
 				
@@ -115,11 +115,11 @@ if ($export == "1") {
 			WHERE u.id = us.user_id
 			  AND u.active = '0'
 			ORDER BY u.first_name, u.last_name, u.username, u.email_address";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 	
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 	
 			if ($row->admin == "1") {
 				
@@ -164,14 +164,14 @@ if ($export == "1") {
 Below is a list of all users that have access to <?php echo $software_title; ?>.<BR><BR>
 [<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
 
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-if (mysql_num_rows($result) > 0) { ?>
+if (mysqli_num_rows($result) > 0) { ?>
 
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Active Users (<?php echo mysql_num_rows($result); ?>)</font>
+            <font class="main_table_heading">Active Users (<?php echo mysqli_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Username</font>
@@ -181,7 +181,7 @@ if (mysql_num_rows($result) > 0) { ?>
         </td>
     </tr><?php
 
-    while ($row = mysql_fetch_object($result)) { ?>
+    while ($row = mysqli_fetch_object($result)) { ?>
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
@@ -202,13 +202,13 @@ $sql = "SELECT id, first_name, last_name, username, email_address, admin
 		FROM users
 		WHERE active = '0'
 		ORDER BY first_name, last_name, username, email_address";
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-if (mysql_num_rows($result) > 0) { ?>
+if (mysqli_num_rows($result) > 0) { ?>
 
     <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive Users (<?php echo mysql_num_rows($result); ?>)</font>
+            <font class="main_table_heading">Inactive Users (<?php echo mysqli_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Username</font>
@@ -218,7 +218,7 @@ if (mysql_num_rows($result) > 0) { ?>
         </td>
     </tr><?php
 
-    while ($row = mysql_fetch_object($result)) { ?>
+    while ($row = mysqli_fetch_object($result)) { ?>
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">

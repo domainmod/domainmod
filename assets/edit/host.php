@@ -40,12 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_host != "" && $new_url != "") {
 
 		$sql = "UPDATE hosting
-				SET name = '" . mysql_real_escape_string($new_host) . "', 
-					url = '" . mysql_real_escape_string($new_url) . "',
-					notes = '" . mysql_real_escape_string($new_notes) . "',
+				SET name = '" . mysqli_real_escape_string($new_host) . "', 
+					url = '" . mysqli_real_escape_string($new_url) . "',
+					notes = '" . mysqli_real_escape_string($new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_whid . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$new_host = $new_host;
 		$new_notes = $new_notes;
@@ -69,9 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT name, url, notes
 			FROM hosting
 			WHERE id = '" . $whid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) { 
+	while ($row = mysqli_fetch_object($result)) { 
 	
 		$new_host = $row->name;
 		$new_url = $row->url;
@@ -85,9 +85,9 @@ if ($del == "1") {
 	$sql = "SELECT hosting_id
 			FROM domains
 			WHERE hosting_id = '" . $whid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_domains = 1;
 	}
 	
@@ -107,7 +107,7 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM hosting 
 			WHERE id = '" . $whid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
 	$_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Deleted<BR>";
 	

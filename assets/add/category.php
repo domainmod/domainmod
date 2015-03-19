@@ -37,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$sql = "INSERT INTO categories 
 				(name, stakeholder, notes, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_category) . "', '" . mysql_real_escape_string($new_stakeholder) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+				('" . mysqli_real_escape_string($new_category) . "', '" . mysqli_real_escape_string($new_stakeholder) . "', '" . mysqli_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$_SESSION['result_message'] = "Category <font class=\"highlight\">" . $new_category . "</font> Added<BR>";
 		

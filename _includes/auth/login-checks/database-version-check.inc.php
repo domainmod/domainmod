@@ -18,9 +18,9 @@
 <?php
 $sql_db_check = "SELECT db_version
 				FROM settings";
-$result_db_check = mysql_query($sql_db_check,$connection) or die(mysql_error());
+$result_db_check = mysqli_query($connection, $sql_db_check) or die(mysqli_error());
 
-while ($row_db_check = mysql_fetch_object($result_db_check)) {
+while ($row_db_check = mysqli_fetch_object($result_db_check)) {
 
 	if ($row_db_check->db_version != $most_recent_db_version) { 
 	

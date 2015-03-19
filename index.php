@@ -51,11 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			WHERE username = '$new_username'
 			  AND password = password('$new_password')
 			  AND active = '1'";
-	$result = mysql_query($sql,$connection) or die('Login Failed'); 
+	$result = mysqli_query($connection, $sql) or die('Login Failed');
 	
-   if (mysql_num_rows($result) == 1) {
+   if (mysqli_num_rows($result) == 1) {
 	   
-	   while ($row = mysql_fetch_object($result)) {
+	   while ($row = mysqli_fetch_object($result)) {
 
 			$_SESSION['user_id'] = $row->id;
 			$_SESSION['first_name'] = $row->first_name;
@@ -69,9 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			
 			$sql_settings = "SELECT *
 							 FROM settings";
-			$result_settings = mysql_query($sql_settings,$connection);
+			$result_settings = mysqli_query($connection, $sql_settings);
 			
-			while ($row_settings = mysql_fetch_object($result_settings)) {
+			while ($row_settings = mysqli_fetch_object($result_settings)) {
 				
 				$_SESSION['system_full_url'] = $row_settings->full_url;
 				$_SESSION['system_db_version'] = $row_settings->db_version;
@@ -96,9 +96,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			$sql_user_settings = "SELECT *
 								  FROM user_settings
 								  WHERE user_id = '" . $_SESSION['user_id'] . "'";
-			$result_user_settings = mysql_query($sql_user_settings,$connection);
+			$result_user_settings = mysqli_query($connection, $sql_user_settings);
 
-			while ($row_user_settings = mysql_fetch_object($result_user_settings)) {
+			while ($row_user_settings = mysqli_fetch_object($result_user_settings)) {
 
 				$_SESSION['default_currency'] = $row_user_settings->default_currency;
 				$_SESSION['default_timezone'] = $row_user_settings->default_timezone;
@@ -143,9 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			$sql_currencies = "SELECT name, symbol, symbol_order, symbol_space
 							   FROM currencies
 							   WHERE currency = '" . $_SESSION['default_currency'] . "'";
-			$result_currencies = mysql_query($sql_currencies,$connection);
+			$result_currencies = mysqli_query($connection, $sql_currencies);
 
-			while ($row_currencies = mysql_fetch_object($result_currencies)) {
+			while ($row_currencies = mysqli_fetch_object($result_currencies)) {
 				$_SESSION['default_currency_name'] = $row_currencies->name;
 				$_SESSION['default_currency_symbol'] = $row_currencies->symbol;
 				$_SESSION['default_currency_symbol_order'] = $row_currencies->symbol_order;

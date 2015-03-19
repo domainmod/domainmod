@@ -25,14 +25,14 @@
 // 						   WHERE a.server_id = s.id
 // 						     AND X
 // 						   ORDER BY s.name, a.unix_startdate DESC";
-// $result_dw_account_temp = mysql_query($sql_dw_account_temp,$connection) or die(mysql_error());
+// $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or die(mysqli_error());
 // $from_main_dw_account_page = 0;
 // include("_includes/dw/display-account.inc.php");
 ?>
 <?php if ($from_main_dw_account_page == 0) { ?><BR><BR><?php } ?>
 <table class="main_table" cellpadding="0" cellspacing="0"><?php
 
-    while ($row_dw_account_temp = mysql_fetch_object($result_dw_account_temp)) {
+    while ($row_dw_account_temp = mysqli_fetch_object($result_dw_account_temp)) {
 
         $visible_domain = wordwrap($row_dw_account_temp->domain, 20, "<BR>", true); ?>
         
@@ -54,9 +54,9 @@
                                  FROM dw_dns_zones
                                  WHERE domain = '" . $row_dw_account_temp->domain . "'
                                    AND server_id = '" . $row_dw_account_temp->dw_server_id . "'";
-                    $result_zone = mysql_query($sql_zone,$connection);
+                    $result_zone = mysqli_query($connection, $sql_zone);
             
-                    while ($row_zone = mysql_fetch_object($result_zone)) { ?>
+                    while ($row_zone = mysqli_fetch_object($result_zone)) { ?>
         
                         <BR>[<a class="covert_link" href="list-dns-zones.php?domain=<?php echo $row_dw_account_temp->domain; ?>">dns zone</a>]<?php
         

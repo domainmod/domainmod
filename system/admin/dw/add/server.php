@@ -45,8 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO dw_servers
 				(name, host, protocol, port, username, hash, notes, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_name) . "', '" . mysql_real_escape_string($new_host) . "', '" . mysql_real_escape_string($new_protocol) . "', '" . mysql_real_escape_string($new_port) . "', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_hash) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+				('" . mysqli_real_escape_string($new_name) . "', '" . mysqli_real_escape_string($new_host) . "', '" . mysqli_real_escape_string($new_protocol) . "', '" . mysqli_real_escape_string($new_port) . "', '" . mysqli_real_escape_string($new_username) . "', '" . mysqli_real_escape_string($new_hash) . "', '" . mysqli_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 		$_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font> Added<BR>";
 

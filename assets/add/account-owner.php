@@ -36,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO owners 
 				(name, notes, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_owner) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+				('" . mysqli_real_escape_string($new_owner) . "', '" . mysqli_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$_SESSION['result_message'] = "Owner <font class=\"highlight\">" . $new_owner . "</font> Added<BR>";
 		

@@ -40,11 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_type != "") {
 
 		$sql = "UPDATE ssl_cert_types
-				SET type = '" . mysql_real_escape_string($new_type) . "', 
-					notes = '" . mysql_real_escape_string($new_notes) . "',
+				SET type = '" . mysqli_real_escape_string($new_type) . "', 
+					notes = '" . mysqli_real_escape_string($new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_ssltid . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$new_type = $new_type;
 		$new_notes = $new_notes;
@@ -67,9 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT type, notes
 			FROM ssl_cert_types
 			WHERE id = '" . $ssltid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) { 
+	while ($row = mysqli_fetch_object($result)) { 
 	
 		$new_type = $row->type;
 		$new_notes = $row->notes;
@@ -82,9 +82,9 @@ if ($del == "1") {
 	$sql = "SELECT type_id
 			FROM ssl_certs
 			WHERE type_id = '" . $ssltid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_ssl_cert = 1;
 	}
 	
@@ -104,7 +104,7 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM ssl_cert_types
 			WHERE id = '" . $ssltid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
 	$_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Deleted<BR>";
 	

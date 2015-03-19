@@ -33,16 +33,16 @@ include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp
 $sql = "SELECT id, domain 
 		FROM domains 
 		ORDER BY domain asc";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
-while ($row = mysql_fetch_object($result)) {
+while ($row = mysqli_fetch_object($result)) {
 	
 	$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $row->domain);
 	
 	$sql_update = "UPDATE domains
 				   SET tld = '$tld'
 				   WHERE id = '$row->id'";
-	$result_update = mysql_query($sql_update,$connection);
+	$result_update = mysqli_query($connection, $sql_update);
 
 }
 

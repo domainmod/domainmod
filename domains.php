@@ -90,8 +90,8 @@ if ($segid != "") {
 	$seg_sql = "SELECT segment 
 				FROM segments 
 				WHERE id = '$segid'";
-	$seg_result = mysql_query($seg_sql,$connection);
-	while ($seg_row = mysql_fetch_object($seg_result)) { $temp_segment = $seg_row->segment; }
+	$seg_result = mysqli_query($connection, $seg_sql);
+	while ($seg_row = mysqli_fetch_object($seg_result)) { $temp_segment = $seg_row->segment; }
 	$segid_string = " AND d.domain IN ($temp_segment)"; 
 
 } else { 
@@ -246,8 +246,8 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total
 					  $quick_search_string
 					  $sort_by_string";	
 
-$result_grand_total = mysql_query($sql_grand_total,$connection) or die(mysql_error());
-while ($row_grand_total = mysql_fetch_object($result_grand_total)) {
+$result_grand_total = mysqli_query($connection, $sql_grand_total) or die(mysqli_error());
+while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 }
 
@@ -261,10 +261,10 @@ $grand_total = $temp_output_amount;
 
 if ($segid != "") {
 	
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 
 	$active_domains = "'";
-	while ($row = mysql_fetch_object($result)) { $active_domains .= $row->domain . "', '";	}
+	while ($row = mysqli_fetch_object($result)) { $active_domains .= $row->domain . "', '";	}
 	$active_domains .= "'";
 	$active_domains = substr($active_domains, 0, -4);
 	
@@ -272,35 +272,35 @@ if ($segid != "") {
 						  SET filtered = '0'
 						  WHERE active = '1'
 						    AND segment_id = '$segid'";
-	$result_filter_update = mysql_query($sql_filter_update,$connection);
+	$result_filter_update = mysqli_query($connection, $sql_filter_update);
 
 	$sql_filter_update = "UPDATE segment_data
 						  SET filtered = '1'
 						  WHERE active = '1'
 							AND segment_id = '$segid'
 							AND domain NOT IN ($active_domains)";
-	$result_filter_update = mysql_query($sql_filter_update,$connection);
+	$result_filter_update = mysqli_query($connection, $sql_filter_update);
 
 	$sql_filter_update = "UPDATE segment_data
 						  SET filtered = '1'
 						  WHERE active = '1'
 							AND segment_id = '$segid'
 							AND domain NOT LIKE '%" . $search_for . "%'";
-	$result_filter_update = mysql_query($sql_filter_update,$connection);
+	$result_filter_update = mysqli_query($connection, $sql_filter_update);
 
 	$sql_filter_update = "UPDATE segment_data
 						  SET filtered = '1'
 						  WHERE active = '1'
 							AND segment_id = '$segid'
 							AND domain NOT IN (" . $_SESSION['quick_search'] . ")";
-	$result_filter_update = mysql_query($sql_filter_update,$connection);
+	$result_filter_update = mysqli_query($connection, $sql_filter_update);
 
 }
 
 if ($export == "1") {
 
-	$result = mysql_query($sql,$connection) or die(mysql_error());
-	$total_rows = number_format(mysql_num_rows($result));
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$total_rows = number_format(mysqli_num_rows($result));
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "domain_results_" . $current_timestamp_unix . ".csv";
@@ -350,32 +350,32 @@ if ($export == "1") {
 						WHERE segment_id = '" . $segid . "'
 						  AND inactive = '1'
 						ORDER BY domain";
-		$result_segment = mysql_query($sql_segment,$connection);
-		$totalrows_inactive = mysql_num_rows($result_segment);
+		$result_segment = mysqli_query($connection, $sql_segment);
+		$totalrows_inactive = mysqli_num_rows($result_segment);
 	
 		$sql_segment = "SELECT domain
 						FROM segment_data
 						WHERE segment_id = '" . $segid . "'
 						  AND missing = '1'
 						ORDER BY domain";
-		$result_segment = mysql_query($sql_segment,$connection);
-		$totalrows_missing = mysql_num_rows($result_segment);
+		$result_segment = mysqli_query($connection, $sql_segment);
+		$totalrows_missing = mysqli_num_rows($result_segment);
 	
 		$sql_segment = "SELECT domain
 						FROM segment_data
 						WHERE segment_id = '" . $segid . "'
 						  AND filtered = '1'
 						ORDER BY domain";
-		$result_segment = mysql_query($sql_segment,$connection);
-		$totalrows_filtered = mysql_num_rows($result_segment);
+		$result_segment = mysqli_query($connection, $sql_segment);
+		$totalrows_filtered = mysqli_num_rows($result_segment);
 
 		if ($segid != "") {
 		
 			$sql_segment = "SELECT number_of_domains
 							FROM segments
 							WHERE id = '" . $segid . "'";
-			$result_segment = mysql_query($sql_segment,$connection);
-			while ($row_segment = mysql_fetch_object($result_segment)) { $number_of_domains = $row_segment->number_of_domains; }
+			$result_segment = mysqli_query($connection, $sql_segment);
+			while ($row_segment = mysqli_fetch_object($result_segment)) { $number_of_domains = $row_segment->number_of_domains; }
 		
 		}
 
@@ -385,9 +385,9 @@ if ($export == "1") {
 		$sql_filter = "SELECT name
 					   FROM segments
 					   WHERE id = '" . $segid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "Segment Filter:";
 			$row_content[$count++] = $row_filter->name;
@@ -455,9 +455,9 @@ if ($export == "1") {
 		$sql_filter = "SELECT name
 					   FROM registrars
 					   WHERE id = '" . $rid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "Registrar:";
 			$row_content[$count++] = $row_filter->name;
@@ -474,9 +474,9 @@ if ($export == "1") {
 					   WHERE ra.registrar_id = r.id
 						 AND ra.owner_id = o.id
 						 AND ra.id = '" . $raid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "Registrar Account:";
 			$row_content[$count++] = $row_filter->registrar_name . " - " . $row_filter->owner_name . " - " . $row_filter->username;
@@ -491,9 +491,9 @@ if ($export == "1") {
 		$sql_filter = "SELECT name
 					   FROM dns
 					   WHERE id = '" . $dnsid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "DNS Profile:";
 			$row_content[$count++] = $row_filter->name;
@@ -508,9 +508,9 @@ if ($export == "1") {
 		$sql_filter = "SELECT name, ip
 					   FROM ip_addresses
 					   WHERE id = '" . $ipid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "IP Address:";
 			$row_content[$count++] = $row_filter->name . " (" . $row_filter->ip . ")";
@@ -525,9 +525,9 @@ if ($export == "1") {
 		$sql_filter = "SELECT name
 					   FROM hosting
 					   WHERE id = '" . $whid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "Web Host:";
 			$row_content[$count++] = $row_filter->name;
@@ -542,9 +542,9 @@ if ($export == "1") {
 		$sql_filter = "SELECT name
 					   FROM categories
 					   WHERE id = '" . $pcid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "Category:";
 			$row_content[$count++] = $row_filter->name;
@@ -559,9 +559,9 @@ if ($export == "1") {
 		$sql_filter = "SELECT name
 					   FROM owners
 					   WHERE id = '" . $oid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "Owner:";
 			$row_content[$count++] = $row_filter->name;
@@ -625,7 +625,7 @@ if ($export == "1") {
 	$sql_field = "SELECT name
 				  FROM domain_fields
 				  ORDER BY name";
-	$result_field = mysql_query($sql_field,$connection);
+	$result_field = mysqli_query($connection, $sql_field);
 
 	$row_content[$count++] = "Domain Status";
 	$row_content[$count++] = "Expiry Date";
@@ -652,7 +652,7 @@ if ($export == "1") {
 	$row_content[$count++] = "Owner";
 	$row_content[$count++] = "Notes";
 
-	while ($row_field = mysql_fetch_object($result_field)) {
+	while ($row_field = mysqli_fetch_object($result_field)) {
 		
 		$row_content[$count++] = $row_field->name;
 	
@@ -662,7 +662,7 @@ if ($export == "1") {
 	$row_content[$count++] = "Updated";
 	include("_includes/system/export/write-row.inc.php");
 
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		
 		$temp_initial_fee = $row->initial_fee * $row->conversion;
         $temp_renewal_fee = $row->renewal_fee * $row->conversion;
@@ -762,14 +762,14 @@ if ($export == "1") {
 		$sql_field = "SELECT field_name
 					  FROM domain_fields
 					  ORDER BY name";
-		$result_field = mysql_query($sql_field,$connection);
+		$result_field = mysqli_query($connection, $sql_field);
 
-        if (mysql_num_rows($result_field) > 0) {
+        if (mysqli_num_rows($result_field) > 0) {
 
             $array_count = 0;
             $field_data = "";
 
-            while ($row_field = mysql_fetch_object($result_field)) {
+            while ($row_field = mysqli_fetch_object($result_field)) {
 
                 $field_array[$array_count] = $row_field->field_name;
                 $array_count++;
@@ -781,9 +781,9 @@ if ($export == "1") {
                 $sql_data = "SELECT " . $field . "
                              FROM domain_field_data
                              WHERE domain_id = '" . $row->id . "'";
-                $result_data = mysql_query($sql_data, $connection);
+                $result_data = mysqli_query($connection, $sql_data);
 
-                while ($row_data = mysql_fetch_object($result_data)) {
+                while ($row_data = mysqli_fetch_object($result_data)) {
 
                     $row_content[$count++] = $row_data->{$field};
 
@@ -827,19 +827,19 @@ if ($_SESSION['need_domain'] == "1" && $_SESSION['need_registrar'] != "1" && $_S
 	echo "<strong><font class=\"highlight\">0</font></strong> Domains found. Please <a href=\"add/domain.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
-$totalrows = mysql_num_rows(mysql_query($sql));
+$totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
 $navigate = pageBrowser($totalrows,15,$result_limit, "&pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by",$_REQUEST[numBegin],$_REQUEST[begin],$_REQUEST[num]);
 $sql = $sql.$navigate[0];
-$result = mysql_query($sql,$connection);
-$total_rows = number_format(mysql_num_rows($result));
+$result = mysqli_query($connection, $sql);
+$total_rows = number_format(mysqli_num_rows($result));
 
 if ($segid != "") {
 
 	$sql_segment = "SELECT number_of_domains
 					FROM segments
 					WHERE id = '$segid'";
-	$result_segment = mysql_query($sql_segment,$connection);
-	while ($row_segment = mysql_fetch_object($result_segment)) { $number_of_domains = $row_segment->number_of_domains; }
+	$result_segment = mysqli_query($connection, $sql_segment);
+	while ($row_segment = mysqli_fetch_object($result_segment)) { $number_of_domains = $row_segment->number_of_domains; }
 
 }
 ?>
@@ -862,11 +862,11 @@ if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = "
 $sql_segment = "SELECT id, name
 				FROM segments
 				ORDER BY name asc";
-$result_segment = mysql_query($sql_segment,$connection);
+$result_segment = mysqli_query($connection, $sql_segment);
 
 echo "<select name=\"segid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Segment Filter - ALL</option>";
-while ($row_segment = mysql_fetch_object($result_segment)) { 
+while ($row_segment = mysqli_fetch_object($result_segment)) { 
 	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&segid=$row_segment->id&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_segment->id == $segid) echo " selected"; echo ">"; echo "$row_segment->name</option>";
 } 
 echo "</select>";
@@ -917,10 +917,10 @@ $sql_registrar = "SELECT r.id, r.name
 					$segment_string
 				  GROUP BY r.name
 				  ORDER BY r.name asc";
-$result_registrar = mysql_query($sql_registrar,$connection);
+$result_registrar = mysqli_query($connection, $sql_registrar);
 echo "<select name=\"rid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Registrar - ALL</option>";
-while ($row_registrar = mysql_fetch_object($result_registrar)) { 
+while ($row_registrar = mysqli_fetch_object($result_registrar)) { 
 	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$row_registrar->id&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_registrar->id == $rid) echo " selected"; echo ">"; echo "$row_registrar->name</option>";
 } 
 echo "</select>";
@@ -973,10 +973,10 @@ $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS 
 				  $segment_string
 				GROUP BY r.name, o.name, ra.username
 				ORDER BY r.name asc, o.name asc, ra.username asc"; 
-$result_account = mysql_query($sql_account,$connection);
+$result_account = mysqli_query($connection, $sql_account);
 echo "<select name=\"raid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Registrar Account - ALL</option>";
-while ($row_account = mysql_fetch_object($result_account)) { 
+while ($row_account = mysqli_fetch_object($result_account)) { 
 	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$row_account->ra_id&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_account->ra_id == $raid) echo " selected"; echo ">"; echo "$row_account->r_name, $row_account->o_name ($row_account->username)</option>";
 } 
 echo "</select>";
@@ -1027,10 +1027,10 @@ $sql_dns = "SELECT dns.id, dns.name
 			  $segment_string
 			GROUP BY dns.name
 			ORDER BY dns.name asc";
-$result_dns = mysql_query($sql_dns,$connection);
+$result_dns = mysqli_query($connection, $sql_dns);
 echo "<select name=\"dnsid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">DNS Profile - ALL</option>";
-while ($row_dns = mysql_fetch_object($result_dns)) { 
+while ($row_dns = mysqli_fetch_object($result_dns)) { 
 	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$row_dns->id&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_dns->id == $dnsid) echo " selected"; echo ">"; echo "$row_dns->name</option>";
 } 
 echo "</select>";
@@ -1081,10 +1081,10 @@ if ($segid != "") { $segment_string = " AND domain IN (SELECT domain FROM segmen
 				 $segment_string
 			   GROUP BY ip.name
 			   ORDER BY ip.name asc";
-$result_ip = mysql_query($sql_ip,$connection);
+$result_ip = mysqli_query($connection, $sql_ip);
 echo "<select name=\"ipid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">IP Address - ALL</option>";
-while ($row_ip = mysql_fetch_object($result_ip)) { 
+while ($row_ip = mysqli_fetch_object($result_ip)) { 
 	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$row_ip->id&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_ip->id == $ipid) echo " selected"; echo ">"; echo "$row_ip->name ($row_ip->ip)</option>";
 } 
 echo "</select>";
@@ -1135,10 +1135,10 @@ if ($segid != "") { $segment_string = " AND domain IN (SELECT domain FROM segmen
 					  $segment_string
 					GROUP BY h.name
 					ORDER BY h.name asc";
-$result_hosting = mysql_query($sql_hosting,$connection);
+$result_hosting = mysqli_query($connection, $sql_hosting);
 echo "<select name=\"whid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Web Hosting Provider - ALL</option>";
-while ($row_hosting = mysql_fetch_object($result_hosting)) { 
+while ($row_hosting = mysqli_fetch_object($result_hosting)) { 
 	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$row_hosting->id&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_hosting->id == $whid) echo " selected"; echo ">"; echo "$row_hosting->name</option>";
 } 
 echo "</select>";
@@ -1189,10 +1189,10 @@ $sql_category = "SELECT c.id, c.name
 				   $segment_string
 				 GROUP BY c.name
 				 ORDER BY c.name asc";
-$result_category = mysql_query($sql_category,$connection);
+$result_category = mysqli_query($connection, $sql_category);
 echo "<select name=\"pcid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Category - ALL</option>";
-while ($row_category = mysql_fetch_object($result_category)) { 
+while ($row_category = mysqli_fetch_object($result_category)) { 
 	echo "<option value=\"$PHP_SELF?pcid=$row_category->id&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_category->id == $pcid) echo " selected"; echo ">"; echo "$row_category->name</option>";
 } 
 echo "</select>";
@@ -1243,10 +1243,10 @@ $sql_owner = "SELECT o.id, o.name
 				$segment_string
 			  GROUP BY o.name
 			  ORDER BY o.name asc";
-$result_owner = mysql_query($sql_owner,$connection);
+$result_owner = mysqli_query($connection, $sql_owner);
 echo "<select name=\"oid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Owner - ALL</option>";
-while ($row_owner = mysql_fetch_object($result_owner)) { 
+while ($row_owner = mysqli_fetch_object($result_owner)) { 
 	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$row_owner->id&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
 } 
 echo "</select>";
@@ -1296,10 +1296,10 @@ $sql_tld = "SELECT tld, count(*) AS total_tld_count
 			$segment_string
 			GROUP BY tld
 			ORDER BY tld asc";
-$result_tld = mysql_query($sql_tld,$connection);
+$result_tld = mysqli_query($connection, $sql_tld);
 echo "<select name=\"tld\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">TLD - ALL</option>";
-while ($row_tld = mysql_fetch_object($result_tld)) { 
+while ($row_tld = mysqli_fetch_object($result_tld)) { 
 	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$row_tld->tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_tld->tld == $tld) echo " selected"; echo ">"; echo ".$row_tld->tld</option>";
 } 
 echo "</select>";
@@ -1350,10 +1350,10 @@ $sql_active = "SELECT active, count(*) AS total_count
 				 $segment_string
 			   GROUP BY active
 			   ORDER BY active asc";
-$result_active = mysql_query($sql_active,$connection);
+$result_active = mysqli_query($connection, $sql_active);
 echo "<select name=\"is_active\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Transfers / Pending)</option>";
-while ($row_active = mysql_fetch_object($result_active)) { 
+while ($row_active = mysqli_fetch_object($result_active)) { 
 	echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$row_active->active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_active->active == $is_active) echo " selected"; echo ">"; if ($row_active->active == "0") { echo "Expired"; } elseif ($row_active->active == "10") { echo "Sold"; } elseif ($row_active->active == "1") { echo "Active"; } elseif ($row_active->active == "2") { echo "In Transfer"; } elseif ($row_active->active == "3") { echo "Pending (Renewal)"; } elseif ($row_active->active == "4") { echo "Pending (Other)"; } elseif ($row_active->active == "5") { echo "Pending (Registration)"; } echo "</option>";
 } 
 echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=ALL&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($is_active == "ALL") echo " selected"; echo ">"; echo "ALL</option>";
@@ -1419,24 +1419,24 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 						WHERE segment_id = '$segid'
 						  AND inactive = '1'
 						ORDER BY domain";
-		$result_segment = mysql_query($sql_segment,$connection);
-		$totalrows_inactive = mysql_num_rows($result_segment);
+		$result_segment = mysqli_query($connection, $sql_segment);
+		$totalrows_inactive = mysqli_num_rows($result_segment);
 	
 		$sql_segment = "SELECT domain
 						FROM segment_data
 						WHERE segment_id = '$segid'
 						  AND missing = '1'
 						ORDER BY domain";
-		$result_segment = mysql_query($sql_segment,$connection);
-		$totalrows_missing = mysql_num_rows($result_segment);
+		$result_segment = mysqli_query($connection, $sql_segment);
+		$totalrows_missing = mysqli_num_rows($result_segment);
 
 		$sql_segment = "SELECT domain
 						FROM segment_data
 						WHERE segment_id = '$segid'
 						  AND filtered = '1'
 						ORDER BY domain";
-		$result_segment = mysql_query($sql_segment,$connection);
-		$totalrows_filtered = mysql_num_rows($result_segment);
+		$result_segment = mysqli_query($connection, $sql_segment);
+		$totalrows_filtered = mysqli_num_rows($result_segment);
 		?>
 		<strong>Domains in Segment:</strong> <?php echo number_format($number_of_domains); ?>
 		<BR><BR><strong>Matching Domains:</strong> <?php echo $totalrows; ?>
@@ -1451,7 +1451,7 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 		<?php } ?>
 
 <?php } ?>
-<?php if (mysql_num_rows($result) > 0) { ?>
+<?php if (mysqli_num_rows($result) > 0) { ?>
 <?php if ($segid != "") { ?>
 	<BR><BR><strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
 <?php } else { ?>
@@ -1516,7 +1516,7 @@ $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
 	</td>
 <?php } ?>
 </tr>
-<?php while ($row = mysql_fetch_object($result)) { ?>
+<?php while ($row = mysqli_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">

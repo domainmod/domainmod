@@ -36,9 +36,9 @@ if ($demo_install != "1") {
 	$sql_server = "SELECT id, `host`, protocol, `port`, username, `hash`
 				   FROM dw_servers
 				   ORDER BY name";
-	$result_server = mysql_query($sql_server,$connection) or die(mysql_error());
+	$result_server = mysqli_query($connection, $sql_server) or die(mysqli_error());
 	
-	if (mysql_num_rows($result_server) == 0) {
+	if (mysqli_num_rows($result_server) == 0) {
 		
 		if ($direct == "1") {
 			
@@ -52,13 +52,13 @@ if ($demo_install != "1") {
 		$build_start_time_overall = date("Y-m-d H:i:s");
 
 		$sql = "DROP TABLE IF EXISTS dw_accounts";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
 		$sql = "DROP TABLE IF EXISTS dw_dns_zones";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
 		$sql = "DROP TABLE IF EXISTS dw_dns_records";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 		$sql = "UPDATE dw_servers
 				SET build_status_overall = '0',
@@ -72,7 +72,7 @@ if ($demo_install != "1") {
 					dw_accounts = '0',
 					dw_dns_zones = '0',
 					dw_dns_records = '0'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 		$sql = "CREATE TABLE IF NOT EXISTS dw_accounts (
 				id int(10) NOT NULL auto_increment,
@@ -106,7 +106,7 @@ if ($demo_install != "1") {
 				insert_time datetime NOT NULL,
 				PRIMARY KEY  (id)
 				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 		$sql = "CREATE TABLE IF NOT EXISTS dw_dns_zones (
 				id int(10) NOT NULL auto_increment,
@@ -116,7 +116,7 @@ if ($demo_install != "1") {
 				insert_time datetime NOT NULL,
 				PRIMARY KEY  (id)
 				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 		$sql = "CREATE TABLE IF NOT EXISTS dw_dns_records (
 				id int(10) NOT NULL auto_increment,
@@ -148,9 +148,9 @@ if ($demo_install != "1") {
 				insert_time datetime NOT NULL,
 				PRIMARY KEY  (id)
 				) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-		while ($row_server = mysql_fetch_object($result_server)) {
+		while ($row_server = mysqli_fetch_object($result_server)) {
 
 			$build_start_time = date("Y-m-d H:i:s");
 
@@ -158,7 +158,7 @@ if ($demo_install != "1") {
 					SET build_start_time = '" . $build_start_time . "',
 						build_status = '0'
 					WHERE id = '" . $row_server->id . "'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+			$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 			$api_call = "/xml-api/listaccts?searchtype=domain&search=";
 			include("api/dw.whm.inc.php");
@@ -175,7 +175,7 @@ if ($demo_install != "1") {
 					$sql = "INSERT INTO dw_accounts 
 							(server_id, domain, ip, `owner`, `user`, email, plan, theme, shell, `partition`, disklimit, diskused, maxaddons, maxftp, maxlst, maxparked, maxpop, maxsql, maxsub, startdate, unix_startdate, suspended, suspendreason, suspendtime, MAX_EMAIL_PER_HOUR, MAX_DEFER_FAIL_PERCENTAGE, MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION, insert_time) VALUES
 							('" . $row_server->id . "', '" . $hit->domain . "', '" . $hit->ip . "', '" . $hit->owner . "', '" . $hit->user . "', '" . $hit->email . "', '" . $hit->plan . "', '" . $hit->theme . "', '" . $hit->shell . "', '" . $hit->partition . "', '" . $disklimit_formatted . "', '" . $diskused_formatted . "', '" . $hit->maxaddons . "', '" . $hit->maxftp . "', '" . $hit->maxlst . "', '" . $hit->maxparked. "', '" . $hit->maxpop . "', '" . $hit->maxsql . "', '" . $hit->maxsub . "', '" . $hit->startdate . "', '" . $hit->unix_startdate . "', '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime . "', '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "', '" . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . date("Y-m-d H:i:s") . "')";
-					$result = mysql_query($sql,$connection) or die(mysql_error());
+					$result = mysqli_query($connection, $sql) or die(mysqli_error());
 				
 				}
 				
@@ -193,7 +193,7 @@ if ($demo_install != "1") {
 					$sql = "INSERT INTO dw_dns_zones 
 							(server_id, domain, zonefile, insert_time) VALUES 
 							('" . $row_server->id . "', '" . $hit->domain . "', '" . $hit->zonefile . "', '" . date("Y-m-d H:i:s") . "')";
-					$result = mysql_query($sql,$connection) or die(mysql_error());
+					$result = mysqli_query($connection, $sql) or die(mysqli_error());
 				
 				}
 				
@@ -203,9 +203,9 @@ if ($demo_install != "1") {
 						 FROM dw_dns_zones
 						 WHERE server_id = '" . $row_server->id . "'
 						 ORDER BY domain";
-			$result_temp = mysql_query($sql_temp,$connection) or die(mysql_error());
+			$result_temp = mysqli_query($connection, $sql_temp) or die(mysqli_error());
 			
-			while ($row_temp = mysql_fetch_object($result_temp)) {
+			while ($row_temp = mysqli_fetch_object($result_temp)) {
 			
 				$api_call = "/xml-api/dumpzone?domain=" . $row_temp->domain . "";
 				include("api/dw.whm.inc.php");
@@ -219,7 +219,7 @@ if ($demo_install != "1") {
 						$sql = "INSERT INTO dw_dns_records 
 								(server_id, dns_zone_id, domain, mname, rname, `serial`, refresh, retry, expire, minimum, nsdname, `name`, ttl, class, type, address, cname, `exchange`, preference, txtdata, line, nlines, raw, insert_time) VALUES
 								('" . $row_server->id . "', '" . $row_temp->id . "', '" . $row_temp->domain . "', '" . $hit->mname . "', '" . $hit->rname . "', '" . $hit->serial . "', '" . $hit->refresh . "', '" . $hit->retry . "', '" . $hit->expire . "', '" . $hit->minimum . "', '" . $hit->nsdname . "', '" . $hit->name . "', '" . $hit->ttl . "', '" . $hit->class . "', '" . $hit->type . "', '" . $hit->address . "', '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference . "', '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw . "', '" . date("Y-m-d H:i:s") . "')";
-						$result = mysql_query($sql,$connection) or die(mysql_error());
+						$result = mysqli_query($connection, $sql) or die(mysqli_error());
 					
 					}
 					
@@ -237,40 +237,40 @@ if ($demo_install != "1") {
 						build_time = '" . $total_build_time . "',
 						has_ever_been_built = '1'
 					WHERE id = '" . $row_server->id . "'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+			$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 		}
 
 		$sql = "DELETE FROM dw_dns_records 
 				WHERE type = ':RAW'
 				  AND raw = ''";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
 		$sql = "UPDATE dw_dns_records 
 				SET type = 'COMMENT'
 				WHERE type = ':RAW'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$sql = "UPDATE dw_dns_records 
 				SET type = 'ZONE TTL'
 				WHERE type = '\$TTL'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
 		$sql = "UPDATE dw_dns_records 
 				SET nlines = '1'
 				WHERE nlines = '0'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$sql = "SELECT domain, zonefile
 				FROM dw_dns_zones";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 			
 			$sql_update_dns_records = "UPDATE dw_dns_records
 									   SET zonefile = '" . $row->zonefile . "'
 									   WHERE domain = '" . $row->domain . "'";
-			$result_update_dns_records = mysql_query($sql_update_dns_records,$connection) or die(mysql_error());
+			$result_update_dns_records = mysqli_query($connection, $sql_update_dns_records) or die(mysqli_error());
 			
 		}
 	
@@ -292,7 +292,7 @@ if ($demo_install != "1") {
 			$sql = "UPDATE dw_dns_records
 					SET new_order = '" . $new_order++ . "'
 					WHERE type = '" . $key . "'";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+			$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
 		}
 	
@@ -301,34 +301,34 @@ if ($demo_install != "1") {
 	$sql_server_totals = "SELECT id, `host`, protocol, `port`, username, `hash`
 						  FROM dw_servers
 						  ORDER BY name";
-	$result_server_totals = mysql_query($sql_server_totals,$connection) or die(mysql_error());
+	$result_server_totals = mysqli_query($connection, $sql_server_totals) or die(mysqli_error());
 	
-	while ($row_server_totals = mysql_fetch_object($result_server_totals)) {
+	while ($row_server_totals = mysqli_fetch_object($result_server_totals)) {
 
 		$sql = "SELECT count(*) AS total_dw_accounts
 				FROM dw_accounts
 				WHERE server_id = '" . $row_server_totals->id . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-		while ($row = mysql_fetch_object($result)) $temp_total_dw_accounts = $row->total_dw_accounts;
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		while ($row = mysqli_fetch_object($result)) $temp_total_dw_accounts = $row->total_dw_accounts;
 	
 		$sql = "SELECT count(*) AS total_dw_dns_zones
 				FROM dw_dns_zones
 				WHERE server_id = '" . $row_server_totals->id . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-		while ($row = mysql_fetch_object($result)) $temp_total_dw_dns_zones = $row->total_dw_dns_zones;
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		while ($row = mysqli_fetch_object($result)) $temp_total_dw_dns_zones = $row->total_dw_dns_zones;
 	
 		$sql = "SELECT count(*) AS total_dw_dns_records
 				FROM dw_dns_records
 				WHERE server_id = '" . $row_server_totals->id . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-		while ($row = mysql_fetch_object($result)) $temp_total_dw_dns_records = $row->total_dw_dns_records;
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		while ($row = mysqli_fetch_object($result)) $temp_total_dw_dns_records = $row->total_dw_dns_records;
 	
 		$sql = "UPDATE dw_servers
 				SET dw_accounts = '" . $temp_total_dw_accounts . "',
 					dw_dns_zones = '" . $temp_total_dw_dns_zones . "',
 					dw_dns_records = '" . $temp_total_dw_dns_records . "'
 				WHERE id = '" . $row_server_totals->id . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$temp_total_dw_accounts = "";
 		$temp_total_dw_dns_zones = "";
@@ -347,13 +347,13 @@ if ($demo_install != "1") {
 				build_end_time_overall = '" . $build_end_time_overall . "',
 				build_time_overall = '" . $total_build_time_overall . "',
 				has_ever_been_built_overall = '1'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$sql = "SELECT dw_accounts, dw_dns_zones, dw_dns_records
 			FROM dw_server_totals";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$temp_dw_accounts = $row->dw_accounts;
 		$temp_dw_dns_zones = $row->dw_dns_zones;
 		$temp_dw_dns_records = $row->dw_dns_records;
@@ -374,7 +374,7 @@ if ($demo_install != "1") {
 					dw_accounts = '0',
 					dw_dns_zones = '0',
 					dw_dns_records = '0'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 	}
 

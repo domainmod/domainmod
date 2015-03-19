@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 				number_of_ssl_certs = '$new_number_of_ssl_certs',
 				update_time = '$current_timestamp'
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$_SESSION['number_of_domains'] = $new_number_of_domains;
 	$_SESSION['number_of_ssl_certs'] = $new_number_of_ssl_certs;
@@ -118,9 +118,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
  		$sql = "SELECT *
 				FROM user_settings
 				WHERE user_id = '" . $_SESSION['user_id'] . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 			
 			$new_number_of_domains = $row->number_of_domains;
 			$new_number_of_ssl_certs = $row->number_of_ssl_certs;

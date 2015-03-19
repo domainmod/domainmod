@@ -42,11 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_owner != "") {
 
 		$sql = "UPDATE owners
-				SET name = '" . mysql_real_escape_string($new_owner) . "',
-					notes = '" . mysql_real_escape_string($new_notes) . "',
+				SET name = '" . mysqli_real_escape_string($new_owner) . "',
+					notes = '" . mysqli_real_escape_string($new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_oid . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$new_owner = $new_owner;
 		$new_notes = $new_notes;
@@ -69,9 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT name, notes
 			FROM owners
 			WHERE id = '" . $oid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) { 
+	while ($row = mysqli_fetch_object($result)) { 
 	
 		$new_owner = $row->name;
 		$new_notes = $row->notes;
@@ -85,36 +85,36 @@ if ($del == "1") {
 	$sql = "SELECT owner_id
 			FROM registrar_accounts
 			WHERE owner_id = '" . $oid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_registrar_accounts = 1;
 	}
 
 	$sql = "SELECT owner_id
 			FROM ssl_accounts
 			WHERE owner_id = '" . $oid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_ssl_accounts = 1;
 	}
 
 	$sql = "SELECT owner_id
 			FROM domains
 			WHERE owner_id = '" . $oid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_domains = 1;
 	}
 
 	$sql = "SELECT owner_id
 			FROM ssl_certs
 			WHERE owner_id = '" . $oid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_ssl_certs = 1;
 	}
 	
@@ -137,7 +137,7 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM owners 
 			WHERE id = '" . $oid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
 	$_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Deleted<BR>";
 	

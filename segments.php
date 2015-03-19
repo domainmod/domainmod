@@ -44,9 +44,9 @@ if ($export == "1") {
         $sql_seg = "SELECT name, number_of_domains
                     FROM segments
                     WHERE id = '$segid'";
-        $result_seg = mysql_query($sql_seg,$connection);
+        $result_seg = mysqli_query($connection, $sql_seg);
 
-        while ($row_seg = mysql_fetch_object($result_seg)) {
+        while ($row_seg = mysqli_fetch_object($result_seg)) {
 
             $segment_name = $row_seg->name;
             $number_of_domains = $row_seg->number_of_domains;
@@ -59,9 +59,9 @@ if ($export == "1") {
 
         $sql_seg = "SELECT count(*) AS total_segments
                     FROM segments";
-        $result_seg = mysql_query($sql_seg,$connection);
+        $result_seg = mysqli_query($connection, $sql_seg);
 
-        while ($row_seg = mysql_fetch_object($result_seg)) {
+        while ($row_seg = mysqli_fetch_object($result_seg)) {
 
             $number_of_segments = $row_seg->total_segments;
 
@@ -69,9 +69,9 @@ if ($export == "1") {
 
         $sql_seg = "SELECT count(*) AS total_segment_domains
                     FROM segment_data";
-        $result_seg = mysql_query($sql_seg,$connection);
+        $result_seg = mysqli_query($connection, $sql_seg);
 
-        while ($row_seg = mysql_fetch_object($result_seg)) {
+        while ($row_seg = mysqli_fetch_object($result_seg)) {
 
             $number_of_segment_domains = $row_seg->total_segment_domains;
 
@@ -86,7 +86,7 @@ if ($export == "1") {
 		$seg_clause
 		ORDER BY s.name ASC, sd.domain ASC";
 
-    $result = mysql_query($sql,$connection) or die(mysql_error());
+    $result = mysqli_query($connection, $sql) or die(mysqli_error());
 
     $current_timestamp_unix = strtotime($current_timestamp);
 
@@ -144,9 +144,9 @@ if ($export == "1") {
     $row_content[$count++] = "Update Time";
     include("_includes/system/export/write-row.inc.php");
 
-    if (mysql_num_rows($result) > 0) {
+    if (mysqli_num_rows($result) > 0) {
 
-        while ($row = mysql_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
             $row_content[$count++] = $row->name;
             $row_content[$count++] = $row->description;
@@ -190,7 +190,7 @@ function str_stop($string, $max_length){
 <body>
 <?php include("_includes/layout/header.inc.php"); ?>
 <?php
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
 ?>
 Segments are lists of domains that can be used to help filter and manage your <a href="domains.php">domain results</a>.<BR>
 <BR>
@@ -201,17 +201,17 @@ Segment filters will tell you which domains match with domains that are saved in
 $sql_segment_check = "SELECT id
 					  FROM segments
 					  LIMIT 1";
-$result_segment_check = mysql_query($sql_segment_check,$connection) or die(mysql_error());
-if (mysql_num_rows($result_segment_check) == 0) {
+$result_segment_check = mysqli_query($connection, $sql_segment_check) or die(mysqli_error());
+if (mysqli_num_rows($result_segment_check) == 0) {
 ?>
 	You don't currently have any Segments. <a href="add/segment.php">Click here to add one</a>.<BR><BR>
 <?php
 }
-if (mysql_num_rows($result) > 0) { ?>
+if (mysqli_num_rows($result) > 0) { ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Segments (<?php echo mysql_num_rows($result); ?>)</font>
+            <font class="main_table_heading">Segments (<?php echo mysqli_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Domains</font>
@@ -225,7 +225,7 @@ if (mysql_num_rows($result) > 0) { ?>
     </tr>
 
     <?php 
-	while ($row = mysql_fetch_object($result)) { ?>
+	while ($row = mysqli_fetch_object($result)) { ?>
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active" valign="top">

@@ -30,9 +30,9 @@ $did = $_GET['did'];
 $sql = "SELECT domain, notes
 		FROM domains
 		WHERE id = '$did'";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
-while ($row = mysql_fetch_object($result)) { 
+while ($row = mysqli_fetch_object($result)) { 
 
 	$new_domain = $row->domain;
 	$new_notes = $row->notes;

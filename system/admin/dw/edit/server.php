@@ -49,16 +49,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" && $new_hash != "") {
 
 		$sql = "UPDATE dw_servers
-				SET name = '" . mysql_real_escape_string($new_name) . "', 
-					host = '" . mysql_real_escape_string($new_host) . "',
-					protocol = '" . mysql_real_escape_string($new_protocol) . "',
-					port = '" . mysql_real_escape_string($new_port) . "',
-					username = '" . mysql_real_escape_string($new_username) . "',
-					hash = '" . mysql_real_escape_string($new_hash) . "',
-					notes = '" . mysql_real_escape_string($new_notes) . "',
+				SET name = '" . mysqli_real_escape_string($new_name) . "', 
+					host = '" . mysqli_real_escape_string($new_host) . "',
+					protocol = '" . mysqli_real_escape_string($new_protocol) . "',
+					port = '" . mysqli_real_escape_string($new_port) . "',
+					username = '" . mysqli_real_escape_string($new_username) . "',
+					hash = '" . mysqli_real_escape_string($new_hash) . "',
+					notes = '" . mysqli_real_escape_string($new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_dwsid . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 		$dwsid = $new_dwsid;
 		
@@ -83,9 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT id, name, host, protocol, port, username, hash, notes
 			FROM dw_servers
 			WHERE id = '" . $dwsid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	while ($row = mysql_fetch_object($result)) { 
+	while ($row = mysqli_fetch_object($result)) { 
 
 		$new_name = $row->name;
 		$new_host = $row->host;
@@ -109,9 +109,9 @@ if ($really_del == "1") {
 	$sql = "SELECT name, host
 			FROM dw_servers
 			WHERE id = '" . $dwsid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		
 		$new_name = $row->name;
 		$new_host = $row->host;
@@ -120,19 +120,19 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM dw_accounts
 			WHERE server_id = '" . $dwsid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 
 	$sql = "DELETE FROM dw_dns_records
 			WHERE server_id = '" . $dwsid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 
 	$sql = "DELETE FROM dw_dns_zones
 			WHERE server_id = '" . $dwsid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 
 	$sql = "DELETE FROM dw_servers
 			WHERE id = '" . $dwsid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 
 	include("../../../../cron/_includes/dw-update-totals.inc.php");
 

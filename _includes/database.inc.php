@@ -16,9 +16,8 @@
 // http://www.gnu.org/licenses/
 ?>
 <?php
-$connection = mysql_connect($dbhostname,$dbusername,$dbpassword) or die(mysql_error());
-$database = mysql_select_db($dbname,$connection) or die(mysql_error());
-mysql_query("SET NAMES UTF8", $connection) or die(mysql_error());
-mysql_query("SET CHARACTER SET utf8", $connection) or die(mysql_error());
-mysql_query("SET COLLATION_CONNECTION = utf8_unicode_ci", $connection) or die(mysql_error());
+$connection = mysqli_connect($dbhostname, $dbusername, $dbpassword, $dbname) or die(mysqli_error());
+mysqli_query($connection, "SET NAMES UTF8") or die(mysqli_error());
+mysqli_query($connection, "SET CHARACTER SET utf8") or die(mysqli_error());
+mysqli_query($connection, "SET COLLATION_CONNECTION = utf8_unicode_ci") or die(mysqli_error());
 ?>

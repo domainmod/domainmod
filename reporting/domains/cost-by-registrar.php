@@ -75,8 +75,8 @@ $sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS re
 		  " . $range_string . "
 		GROUP BY r.name, o.name, ra.username
 		ORDER BY r.name, o.name, ra.username";
-$result = mysql_query($sql,$connection) or die(mysql_error());
-$total_rows = mysql_num_rows($result);
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_domains_total
 					FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
@@ -89,8 +89,8 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, cou
 					  AND d.active NOT IN ('0', '10')
 					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 					  " . $range_string . "";
-$result_grand_total = mysql_query($sql_grand_total,$connection) or die(mysql_error());
-while ($row_grand_total = mysql_fetch_object($result_grand_total)) {
+$result_grand_total = mysqli_query($connection, $sql_grand_total) or die(mysqli_error());
+while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 	$number_of_domains_total = $row_grand_total->number_of_domains_total;
 }
@@ -107,7 +107,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
@@ -160,9 +160,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 		$new_registrar = "";
 		$last_registrar = "";
 
-		if (mysql_num_rows($result) > 0) {
+		if (mysqli_num_rows($result) > 0) {
 
-			while ($row = mysql_fetch_object($result)) {
+			while ($row = mysqli_fetch_object($result)) {
 	
 				$new_registrar = $row->registrar_name;
 	
@@ -178,8 +178,8 @@ if ($submission_failed != "1" && $total_rows > 0) {
 										  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 										  AND r.id = '" . $row->id . "'
 										  " . $range_string . "";
-				$result_registrar_total = mysql_query($sql_registrar_total,$connection) or die(mysql_error());
-				while ($row_registrar_total = mysql_fetch_object($result_registrar_total)) { 
+				$result_registrar_total = mysqli_query($connection, $sql_registrar_total) or die(mysqli_error());
+				while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) { 
 					$temp_registrar_total = $row_registrar_total->registrar_total; 
 					$number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar; 
 				}
@@ -300,7 +300,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 	$new_registrar = "";
 	$last_registrar = "";
 
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 
 		$new_registrar = $row->registrar_name;
 
@@ -316,8 +316,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 								  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 								  AND r.id = '" . $row->id . "'
 								  " . $range_string . "";
-		$result_registrar_total = mysql_query($sql_registrar_total,$connection) or die(mysql_error());
-		while ($row_registrar_total = mysql_fetch_object($result_registrar_total)) { 
+		$result_registrar_total = mysqli_query($connection, $sql_registrar_total) or die(mysqli_error());
+		while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) { 
 			$temp_registrar_total = $row_registrar_total->registrar_total; 
 			$number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar; 
 		}

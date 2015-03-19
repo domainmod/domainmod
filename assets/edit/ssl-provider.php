@@ -40,12 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_ssl_provider != "" && $new_url != "") {
 
 		$sql = "UPDATE ssl_providers
-				SET name = '" . mysql_real_escape_string($new_ssl_provider) . "', 
-					url = '" . mysql_real_escape_string($new_url) . "', 
-					notes = '" . mysql_real_escape_string($new_notes) . "',
+				SET name = '" . mysqli_real_escape_string($new_ssl_provider) . "', 
+					url = '" . mysqli_real_escape_string($new_url) . "', 
+					notes = '" . mysqli_real_escape_string($new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_sslpid . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$sslpid = $new_sslpid;
 
@@ -66,9 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT name, url, notes
 			FROM ssl_providers
 			WHERE id = '" . $sslpid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	while ($row = mysql_fetch_object($result)) { 
+	while ($row = mysqli_fetch_object($result)) { 
 	
 		$new_ssl_provider = $row->name;
 		$new_url = $row->url;
@@ -82,18 +82,18 @@ if ($del == "1") {
 	$sql = "SELECT ssl_provider_id
 			FROM ssl_accounts
 			WHERE ssl_provider_id = '" . $sslpid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_ssl_provider_accounts = 1;
 	}
 
 	$sql = "SELECT ssl_provider_id
 			FROM ssl_certs
 			WHERE ssl_provider_id = '" . $sslpid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_ssl_certs = 1;
 	}
 
@@ -114,15 +114,15 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM ssl_fees
 			WHERE ssl_provider_id = '" . $sslpid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$sql = "DELETE FROM ssl_accounts
 			WHERE ssl_provider_id = '" . $sslpid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$sql = "DELETE FROM ssl_providers 
 			WHERE id = '" . $sslpid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Deleted<BR>";
 

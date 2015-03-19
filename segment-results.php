@@ -84,11 +84,11 @@ if ($type == "inactive") {
 			ORDER BY domain";
 
 }
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
 if ($export == "1") {
 
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
 	$current_timestamp_unix = strtotime($current_timestamp);
 	if ($type == "inactive") { 
@@ -155,7 +155,7 @@ if ($export == "1") {
 
 	if ($type == "inactive" || $type == "filtered") {
 
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 			
 			$temp_initial_fee = $row->initial_fee * $row->conversion;
 			$total_initial_fee_export = $total_initial_fee_export + $temp_initial_fee;
@@ -221,7 +221,7 @@ if ($export == "1") {
 		
 	} elseif ($type == "missing") {
 
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 			
 			$row_content[$count++] = $row->domain;
 			include("_includes/system/export/write-row.inc.php");
@@ -268,8 +268,8 @@ if ($export == "1") {
 $sql_name = "SELECT name
 			 FROM segments
 			 WHERE id = '$segid'";
-$result_name = mysql_query($sql_name,$connection);
-while ($row_name = mysql_fetch_object($result_name)) { $segment_name = $row_name->name; }
+$result_name = mysqli_query($connection, $sql_name);
+while ($row_name = mysqli_fetch_object($result_name)) { $segment_name = $row_name->name; }
 ?>
 
 <?php
@@ -291,7 +291,7 @@ if ($type == "inactive") {
 }
 ?>
 <?php
-while ($row = mysql_fetch_object($result)) {
+while ($row = mysqli_fetch_object($result)) {
 	echo $row->domain . "<BR>";
 }
 ?>

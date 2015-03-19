@@ -28,9 +28,9 @@ if ($demo_install != "1") {
 
 	$sql = "SELECT expiration_email_days
 			FROM settings";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$number_of_days = $row->expiration_email_days;
 	}
 	
@@ -38,9 +38,9 @@ if ($demo_install != "1") {
 	
 	$sql_settings = "SELECT full_url, email_address
 					 FROM settings";
-	$result_settings = mysql_query($sql_settings,$connection);
+	$result_settings = mysqli_query($connection, $sql_settings);
 	
-	while ($row_settings = mysql_fetch_object($result_settings)) {
+	while ($row_settings = mysqli_fetch_object($result_settings)) {
 		$full_url = $row_settings->full_url;
 		$from_address = $row_settings->email_address;
 		$return_path = $row_settings->email_address;
@@ -51,7 +51,7 @@ if ($demo_install != "1") {
 					WHERE active NOT IN ('0', '10')
 					  AND expiry_date <= '$current_timestamp_basic_plus_x_days'
 					ORDER BY expiry_date, domain";
-	$result_domains = mysql_query($sql_domains,$connection);
+	$result_domains = mysqli_query($connection, $sql_domains);
 	
 	$sql_ssl = "SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
 				FROM ssl_certs AS sslc, ssl_cert_types AS sslt
@@ -59,18 +59,18 @@ if ($demo_install != "1") {
 				  AND sslc.active NOT IN ('0')
 				  AND sslc.expiry_date <= '$current_timestamp_basic_plus_x_days'
 				ORDER BY sslc.expiry_date, sslc.name";
-	$result_ssl = mysql_query($sql_ssl,$connection);
+	$result_ssl = mysqli_query($connection, $sql_ssl);
 	
 	$sql_recipients = "SELECT u.email_address
 					   FROM users AS u, user_settings AS us
 					   WHERE u.id = us.user_id
 						 AND u.active = '1'
 						 AND us.expiration_emails = '1'";
-	$result_recipients = mysql_query($sql_recipients,$connection);
+	$result_recipients = mysqli_query($connection, $sql_recipients);
 	
-	if ((mysql_num_rows($result_domains) != 0 || mysql_num_rows($result_ssl) != 0) && mysql_num_rows($result_recipients) > 0) {
+	if ((mysqli_num_rows($result_domains) != 0 || mysqli_num_rows($result_ssl) != 0) && mysqli_num_rows($result_recipients) > 0) {
 	
-		while ($row_recipients = mysql_fetch_object($result_recipients)) {
+		while ($row_recipients = mysqli_fetch_object($result_recipients)) {
 	
 			$subject = "Upcoming Expirations - $current_timestamp_long";
 			$headline = "Upcoming Expirations - $current_timestamp_long";
@@ -93,10 +93,10 @@ if ($demo_install != "1") {
 						$message .= "<BR>If you would like to change the frequency of this email notification please contact your " . $software_title . " administrator. <BR>";
 						$message .= "<BR>";
 				
-						if (mysql_num_rows($result_domains) != 0) {
+						if (mysqli_num_rows($result_domains) != 0) {
 						
 							$message .= "<strong><u>Domains</u></strong><BR>";
-							while ($row_domains = mysql_fetch_object($result_domains)) {
+							while ($row_domains = mysqli_fetch_object($result_domains)) {
 								
 								if ($row_domains->expiry_date < $current_timestamp_basic) {
 							
@@ -112,10 +112,10 @@ if ($demo_install != "1") {
 							
 						}
 				
-						if (mysql_num_rows($result_ssl) != 0) {
+						if (mysqli_num_rows($result_ssl) != 0) {
 						
 							$message .= "<BR><strong><u>SSL Certificates</u></strong><BR>";
-							while ($row_ssl = mysql_fetch_object($result_ssl)) {
+							while ($row_ssl = mysqli_fetch_object($result_ssl)) {
 								
 								if ($row_ssl->expiry_date < $current_timestamp_basic) {
 							

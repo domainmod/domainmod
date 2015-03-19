@@ -40,20 +40,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO registrar_accounts 
 				(owner_id, registrar_id, username, password, notes, reseller, insert_time) VALUES 
-				('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_password) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_reseller . "', '" . $current_timestamp . "')";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+				('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . mysqli_real_escape_string($new_username) . "', '" . mysqli_real_escape_string($new_password) . "', '" . mysqli_real_escape_string($new_notes) . "', '" . $new_reseller . "', '" . $current_timestamp . "')";
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$sql = "SELECT name
 				FROM registrars
 				WHERE id = '" . $new_registrar_id . "'";
-		$result = mysql_query($sql,$connection);
-		while ($row = mysql_fetch_object($result)) { $temp_registrar = $row->name; }
+		$result = mysqli_query($connection, $sql);
+		while ($row = mysqli_fetch_object($result)) { $temp_registrar = $row->name; }
 
 		$sql = "SELECT name
 				FROM owners
 				WHERE id = '" . $new_owner_id . "'";
-		$result = mysql_query($sql,$connection);
-		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
+		$result = mysqli_query($connection, $sql);
+		while ($row = mysqli_fetch_object($result)) { $temp_owner = $row->name; }
 
 		$_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">" . $new_username . " (" . $temp_registrar . ", " . $temp_owner . ")</font> Added<BR>";
 
@@ -91,9 +91,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_owner = "SELECT id, name
 			  FROM owners
 			  ORDER BY name asc";
-$result_owner = mysql_query($sql_owner,$connection) or die(mysql_error());
+$result_owner = mysqli_query($connection, $sql_owner) or die(mysqli_error());
 echo "<select name=\"new_owner_id\">";
-while ($row_owner = mysql_fetch_object($result_owner)) {
+while ($row_owner = mysqli_fetch_object($result_owner)) {
 
 	if ($row_owner->id == $_SESSION['default_owner_domains']) {
 
@@ -113,9 +113,9 @@ echo "</select>";
 $sql_registrar = "SELECT id, name
 				  FROM registrars
 				  ORDER BY name asc";
-$result_registrar = mysql_query($sql_registrar,$connection) or die(mysql_error());
+$result_registrar = mysqli_query($connection, $sql_registrar) or die(mysqli_error());
 echo "<select name=\"new_registrar_id\">";
-while ($row_registrar = mysql_fetch_object($result_registrar)) {
+while ($row_registrar = mysqli_fetch_object($result_registrar)) {
 
 	if ($row_registrar->id == $_SESSION['default_registrar']) {
 

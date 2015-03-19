@@ -51,7 +51,7 @@ $sql = "SELECT r.id AS rid, r.name AS rname, r.url, r.notes, r.insert_time, r.up
 
 if ($export == "1") {
 
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "registrar_list_" . $current_timestamp_unix . ".csv";
@@ -73,11 +73,11 @@ if ($export == "1") {
 	$row_content[$count++] = "Updated";
 	include("../_includes/system/export/write-row.inc.php");
 
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 	
 		$has_active = "1";
 
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 	
 			$new_rid = $row->rid;
 		
@@ -88,9 +88,9 @@ if ($export == "1") {
 			$sql_total_count = "SELECT count(*) AS total_count
 								FROM registrar_accounts
 								WHERE registrar_id = '" . $row->rid . "'";
-			$result_total_count = mysql_query($sql_total_count,$connection);
+			$result_total_count = mysqli_query($connection, $sql_total_count);
 	
-			while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+			while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
 				$total_accounts = $row_total_count->total_count;
 			}
 	
@@ -98,9 +98,9 @@ if ($export == "1") {
 								 FROM domains
 								 WHERE active NOT IN ('0', '10')
 								   AND registrar_id = '" . $row->rid . "'";
-			$result_domain_count = mysql_query($sql_domain_count,$connection);
+			$result_domain_count = mysqli_query($connection, $sql_domain_count);
 		
-			while ($row_domain_count = mysql_fetch_object($result_domain_count)) { 
+			while ($row_domain_count = mysqli_fetch_object($result_domain_count)) { 
 				$total_domains = $row_domain_count->total_count;
 			}
 			
@@ -151,20 +151,20 @@ if ($export == "1") {
 	
 	}
 	
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	if (mysql_num_rows($result) > 0) { 
+	if (mysqli_num_rows($result) > 0) { 
 
 		$has_inactive = "1";
 
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 	
 			$sql_total_count = "SELECT count(*) AS total_count
 								FROM registrar_accounts
 								WHERE registrar_id = '" . $row->rid . "'";
-			$result_total_count = mysql_query($sql_total_count,$connection);
+			$result_total_count = mysqli_query($connection, $sql_total_count);
 	
-			while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+			while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
 				$total_accounts = $row_total_count->total_count;
 			}
 
@@ -208,15 +208,15 @@ if ($export == "1") {
 Below is a list of all the Domain Registrars that are stored in your <?php echo $software_title; ?>.<BR><BR>
 [<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
 
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-if (mysql_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
 
 	$has_active = "1"; ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Active Registrars (<?php echo mysql_num_rows($result); ?>)</font>
+            <font class="main_table_heading">Active Registrars (<?php echo mysqli_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Accounts</font>
@@ -229,7 +229,7 @@ if (mysql_num_rows($result) > 0) {
         </td>
     </tr><?php 
 
-    while ($row = mysql_fetch_object($result)) {
+    while ($row = mysqli_fetch_object($result)) {
 
 	    $new_rid = $row->rid;
     
@@ -245,9 +245,9 @@ if (mysql_num_rows($result) > 0) {
                 $sql_total_count = "SELECT count(*) AS total_count
 									FROM registrar_accounts
 									WHERE registrar_id = '" . $row->rid . "'";
-                $result_total_count = mysql_query($sql_total_count,$connection);
+                $result_total_count = mysqli_query($connection, $sql_total_count);
         
-                while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+                while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
                     $total_accounts = $row_total_count->total_count;
                 }
                 
@@ -266,9 +266,9 @@ if (mysql_num_rows($result) > 0) {
 									 FROM domains
 									 WHERE active NOT IN ('0', '10')
 									   AND registrar_id = '" . $row->rid . "'";
-                $result_domain_count = mysql_query($sql_domain_count,$connection);
+                $result_domain_count = mysqli_query($connection, $sql_domain_count);
         
-                while ($row_domain_count = mysql_fetch_object($result_domain_count)) { 
+                while ($row_domain_count = mysqli_fetch_object($result_domain_count)) { 
                     $total_domains = $row_domain_count->total_count;
                 }		
         
@@ -314,9 +314,9 @@ if ($exclude_registrar_string == "") {
 
 }
 
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-if (mysql_num_rows($result) > 0) { 
+if (mysqli_num_rows($result) > 0) { 
 
 	$has_inactive = "1";
 	if ($has_active == "1") echo "<BR>";
@@ -324,7 +324,7 @@ if (mysql_num_rows($result) > 0) {
 
         <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
-                <font class="main_table_heading">Inactive Registrars (<?php echo mysql_num_rows($result); ?>)</font>
+                <font class="main_table_heading">Inactive Registrars (<?php echo mysqli_num_rows($result); ?>)</font>
             </td>
             <td class="main_table_cell_heading_inactive">
                 <font class="main_table_heading">Accounts</font>
@@ -334,7 +334,7 @@ if (mysql_num_rows($result) > 0) {
             </td>
         </tr><?php 
     
-    while ($row = mysql_fetch_object($result)) { ?>
+    while ($row = mysqli_fetch_object($result)) { ?>
     
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
@@ -344,9 +344,9 @@ if (mysql_num_rows($result) > 0) {
                 $sql_total_count = "SELECT count(*) AS total_count
 									FROM registrar_accounts
 									WHERE registrar_id = '" . $row->rid . "'";
-                $result_total_count = mysql_query($sql_total_count,$connection);
+                $result_total_count = mysqli_query($connection, $sql_total_count);
         
-                while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+                while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
                     $total_accounts = $row_total_count->total_count;
                 }
                 

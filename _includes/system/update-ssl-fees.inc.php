@@ -34,19 +34,19 @@ $sql_ssl_fee_fix1 = "UPDATE ssl_certs
 					 SET fee_fixed = '0', 
 						 fee_id = '0'
                      WHERE active NOT IN ('0', '10')";
-$result_ssl_fee_fix1 = mysql_query($sql_ssl_fee_fix1,$connection) or die(mysql_error());
+$result_ssl_fee_fix1 = mysqli_query($connection, $sql_ssl_fee_fix1) or die(mysqli_error());
 
 $sql_ssl_fee_fix2 = "UPDATE ssl_fees 
 					 SET fee_fixed = '0',
-					 	 update_time = '" . mysql_real_escape_string($current_timestamp) . "'";
-$result_ssl_fee_fix2 = mysql_query($sql_ssl_fee_fix2,$connection) or die(mysql_error());
+					 	 update_time = '" . mysqli_real_escape_string($current_timestamp) . "'";
+$result_ssl_fee_fix2 = mysqli_query($connection, $sql_ssl_fee_fix2) or die(mysqli_error());
 
 $sql_ssl_fee_fix3 = "SELECT id, ssl_provider_id, type_id
 					 FROM ssl_fees
 					 WHERE fee_fixed = '0'";
-$result_ssl_fee_fix3 = mysql_query($sql_ssl_fee_fix3,$connection) or die(mysql_error());
+$result_ssl_fee_fix3 = mysqli_query($connection, $sql_ssl_fee_fix3) or die(mysqli_error());
 
-while ($row_ssl_fee_fix3 = mysql_fetch_object($result_ssl_fee_fix3)) {
+while ($row_ssl_fee_fix3 = mysqli_fetch_object($result_ssl_fee_fix3)) {
 
 	$sql_ssl_fee_fix4 = "UPDATE ssl_certs
 						 SET fee_id = '$row_ssl_fee_fix3->id'
@@ -54,7 +54,7 @@ while ($row_ssl_fee_fix3 = mysql_fetch_object($result_ssl_fee_fix3)) {
 						   AND type_id = '$row_ssl_fee_fix3->type_id'
 						   AND fee_fixed = '0'
 						   AND active NOT IN ('0', '10')";
-	$result_ssl_fee_fix4 = mysql_query($sql_ssl_fee_fix4,$connection) or die(mysql_error());
+	$result_ssl_fee_fix4 = mysqli_query($connection, $sql_ssl_fee_fix4) or die(mysqli_error());
 
     $sql_domain_fee_fix5 = "UPDATE ssl_certs sslc
                             JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
@@ -63,14 +63,14 @@ while ($row_ssl_fee_fix3 = mysql_fetch_object($result_ssl_fee_fix3)) {
 							WHERE sslc.ssl_provider_id = '" . $row_ssl_fee_fix3->ssl_provider_id . "'
 							  AND sslc.type_id = '" . $row_ssl_fee_fix3->type_id . "'
 							  AND sslc.active NOT IN ('0', '10')";
-    $result_domain_fee_fix5 = mysql_query($sql_domain_fee_fix5,$connection) or die(mysql_error());
+    $result_domain_fee_fix5 = mysqli_query($connection, $sql_domain_fee_fix5) or die(mysqli_error());
 
 	$sql_ssl_fee_fix6 = "UPDATE ssl_fees
 						 SET fee_fixed = '1',
-						 	 update_time = '" . mysql_real_escape_string($current_timestamp) . "'
+						 	 update_time = '" . mysqli_real_escape_string($current_timestamp) . "'
 						 WHERE ssl_provider_id = '$row_ssl_fee_fix3->ssl_provider_id'
 						   AND type_id = '$row_ssl_fee_fix3->type_id'";
-	$result_ssl_fee_fix6 = mysql_query($sql_ssl_fee_fix6,$connection) or die(mysql_error());
+	$result_ssl_fee_fix6 = mysqli_query($connection, $sql_ssl_fee_fix6) or die(mysqli_error());
 	
 }
 
@@ -78,9 +78,9 @@ $sql_find_missing_ssl_fees = "SELECT count(id) as total_count
 							  FROM ssl_certs
 							  WHERE fee_id = '0'
 							    AND active NOT IN ('0', '10')";
-$result_find_missing_ssl_fees = mysql_query($sql_find_missing_ssl_fees,$connection) or die(mysql_error());
+$result_find_missing_ssl_fees = mysqli_query($connection, $sql_find_missing_ssl_fees) or die(mysqli_error());
 
-while ($row_find_missing_ssl_fees = mysql_fetch_object($result_find_missing_ssl_fees)) { $total_results_find_missing_ssl_fees = $row_find_missing_ssl_fees->total_count; }
+while ($row_find_missing_ssl_fees = mysqli_fetch_object($result_find_missing_ssl_fees)) { $total_results_find_missing_ssl_fees = $row_find_missing_ssl_fees->total_count; }
 
 if ($total_results_find_missing_ssl_fees != 0) { 
     $_SESSION['missing_ssl_fees'] = 1; 

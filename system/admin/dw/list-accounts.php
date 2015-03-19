@@ -96,7 +96,7 @@ if ($domain != "") {
 
 if ($export == "1") {
 
-	$result_dw_account_temp = mysql_query($sql_dw_account_temp,$connection) or die(mysql_error());
+	$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or die(mysqli_error());
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "dw_account_list_" . $current_timestamp_unix . ".csv";
@@ -111,7 +111,7 @@ if ($export == "1") {
 	fputcsv($file_content, $blank_line);
 
 	$row_content[$count++] = "Number of Accounts:";
-	$row_content[$count++] = number_format(mysql_num_rows($result_dw_account_temp));
+	$row_content[$count++] = number_format(mysqli_num_rows($result_dw_account_temp));
 	include("../../../_includes/system/export/write-row.inc.php");
 
 	fputcsv($file_content, $blank_line);
@@ -167,9 +167,9 @@ if ($export == "1") {
 	$row_content[$count++] = "Inserted (into DW)";
 	include("../../../_includes/system/export/write-row.inc.php");
 
-	if (mysql_num_rows($result_dw_account_temp) > 0) {
+	if (mysqli_num_rows($result_dw_account_temp) > 0) {
 
-		while ($row_dw_account_temp = mysql_fetch_object($result_dw_account_temp)) {
+		while ($row_dw_account_temp = mysqli_fetch_object($result_dw_account_temp)) {
 
 			$row_content[$count++] = $row_dw_account_temp->dw_server_name;
 			$row_content[$count++] = $row_dw_account_temp->dw_server_host;
@@ -220,12 +220,12 @@ if ($export == "1") {
 <?php include("../../../_includes/layout/header.inc.php"); ?>
 	<font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR><?php
 
-$totalrows = mysql_num_rows(mysql_query($sql_dw_account_temp));
+$totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_account_temp));
 $navigate = pageBrowser($totalrows,15,10,"&search_for=" . $search_for . "",$_REQUEST[numBegin],$_REQUEST[begin],$_REQUEST[num]);
 $sql_dw_account_temp = $sql_dw_account_temp.$navigate[0];
-$result_dw_account_temp = mysql_query($sql_dw_account_temp,$connection) or die(mysql_error());
+$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or die(mysqli_error());
 
-if(mysql_num_rows($result_dw_account_temp) == 0) {
+if(mysqli_num_rows($result_dw_account_temp) == 0) {
 	
 	echo "Your search returned 0 results.";
 	
@@ -250,7 +250,7 @@ if(mysql_num_rows($result_dw_account_temp) == 0) {
 	// 						   WHERE a.server_id = s.id
 	// 						     AND X
 	// 						   ORDER BY s.name, a.unix_startdate DESC";
-	// $result_dw_account_temp = mysql_query($sql_dw_account_temp,$connection) or die(mysql_error());
+	// $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or die(mysqli_error());
 	$from_main_dw_account_page = 1;
 	include("../../../_includes/dw/display-account.inc.php");
 

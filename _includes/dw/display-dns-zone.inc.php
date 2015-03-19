@@ -25,13 +25,13 @@
 //							WHERE z.server_id = s.id
 //							  AND X
 //							ORDER BY s.name, z.zonefile, z.domain";
-// $result_dw_dns_zone_temp = mysql_query($sql_dw_dns_zone_temp,$connection) or die(mysql_error());
+// $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or die(mysqli_error());
 // $from_main_dw_dns_zone_page = 0;
 // include("_includes/dw/display-dns-zone.inc.php");
 ?>
 <table class="main_table" cellpadding="0" cellspacing="0"><?php
 
-    while ($row_dw_dns_zone_temp = mysql_fetch_object($result_dw_dns_zone_temp)) {
+    while ($row_dw_dns_zone_temp = mysqli_fetch_object($result_dw_dns_zone_temp)) {
 
         $visible_domain = wordwrap($row_dw_dns_zone_temp->domain, 20, "<BR>", true); ?>
 
@@ -55,9 +55,9 @@
                         $sql_temp = "SELECT id
                                      FROM dw_accounts
                                      WHERE domain = '" . $row_dw_dns_zone_temp->domain . "'";
-                        $result_temp = mysql_query($sql_temp,$connection);
+                        $result_temp = mysqli_query($connection, $sql_temp);
                 
-                        if (mysql_num_rows($result_temp) > 0 && $from_main_dw_dns_zone_page == 1) { ?>
+                        if (mysqli_num_rows($result_temp) > 0 && $from_main_dw_dns_zone_page == 1) { ?>
         
                             <BR><BR>[<a class="covert_link" href="list-accounts.php?domain=<?php echo $row_dw_dns_zone_temp->domain; ?>">account</a>]<?php
         
@@ -77,9 +77,9 @@
 											WHERE server_id = '" . $row_dw_dns_zone_temp->dw_server_id . "'
 											  AND domain = '" . $row_dw_dns_zone_temp->domain . "'
 											ORDER BY new_order";
-						$result_get_records = mysql_query($sql_get_records,$connection); 
+						$result_get_records = mysqli_query($connection, $sql_get_records);
 						
-						while ($row_get_records = mysql_fetch_object($result_get_records)) { ?>
+						while ($row_get_records = mysqli_fetch_object($result_get_records)) { ?>
 	
 							<tr class="main_table_row_active_no_right_padding">
 								<td class="main_table_cell_active_top_aligned_no_right_padding" width="70" align="right" valign="top">

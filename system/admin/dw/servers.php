@@ -39,7 +39,7 @@ $sql = "SELECT id, name, host, protocol, port, username, hash, notes, dw_account
 
 if ($export == "1") {
 
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "dw_servers_" . $current_timestamp_unix . ".csv";
@@ -65,9 +65,9 @@ if ($export == "1") {
 	$row_content[$count++] = "Updated";
 	include("../../../_includes/system/export/write-row.inc.php");
 
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 	
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 
 			$row_content[$count++] = $row->name;
 			$row_content[$count++] = $row->host;
@@ -101,9 +101,9 @@ if ($export == "1") {
 <body>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
 <?php
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-if (mysql_num_rows($result) > 0) { ?>
+if (mysqli_num_rows($result) > 0) { ?>
 
 	[<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]
 
@@ -129,7 +129,7 @@ if (mysql_num_rows($result) > 0) { ?>
             </td>
         </tr><?php
     
-        while ($row = mysql_fetch_object($result)) { ?>
+        while ($row = mysqli_fetch_object($result)) { ?>
     
             <tr class="main_table_row_active">
                 <td class="main_table_cell_active">

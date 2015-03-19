@@ -36,9 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 			FROM users 
 			WHERE id = '" . $_SESSION['user_id'] . "' 
 			  AND email_address = '" . $_SESSION['email_address'] . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 
-   if (mysql_num_rows($result) == 1) {
+   if (mysqli_num_rows($result) == 1) {
 
 		$sql_update = "UPDATE users 
 					   SET password = password('$new_password'), 
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 						   update_time = '$current_timestamp'
 					   WHERE id = '" . $_SESSION['user_id'] . "' 
 					     AND email_address = '" . $_SESSION['email_address'] . "'";
-		$result_update = mysql_query($sql_update,$connection) or die("Your password could not be updated. Please try again later.");
+		$result_update = mysqli_query($connection, $sql_update) or die("Your password could not be updated. Please try again later.");
 
 		$_SESSION['result_message'] .= "Your password has been changed<BR>";
 

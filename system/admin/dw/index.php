@@ -45,9 +45,9 @@ if ($action != "") {
 			$sql = "SELECT name, host
 					FROM dw_servers
 					WHERE id = '" . $id . "'";
-			$result = mysql_query($sql,$connection);
+			$result = mysqli_query($connection, $sql);
 			
-			while ($row = mysql_fetch_object($result)) {
+			while ($row = mysqli_fetch_object($result)) {
 
 				$_SESSION['dw_view_all'] = "";
 				$_SESSION['dw_server_id'] = $id;
@@ -72,9 +72,9 @@ if ($action != "") {
 			$sql = "SELECT name, host
 					FROM dw_servers
 					WHERE id = '" . $id . "'";
-			$result = mysql_query($sql,$connection);
+			$result = mysqli_query($connection, $sql);
 			
-			while ($row = mysql_fetch_object($result)) {
+			while ($row = mysqli_fetch_object($result)) {
 
 				$_SESSION['dw_view_all'] = "";
 				$_SESSION['dw_server_id'] = $id;
@@ -109,8 +109,8 @@ $software_section = "admin-dw-main";
 $sql = "SELECT id
 		FROM dw_servers
 		LIMIT 1";
-$result = mysql_query($sql,$connection);
-if (mysql_num_rows($result) == 0) {
+$result = mysqli_query($connection, $sql);
+if (mysqli_num_rows($result) == 0) {
 
 	$has_servers = 0;
 
@@ -125,19 +125,19 @@ if (mysql_num_rows($result) == 0) {
 <?php
 $sql_accounts = "SELECT id
 				 FROM dw_accounts";
-$result_accounts = mysql_query($sql_accounts,$connection);
-$temp_total_accounts = mysql_num_rows($result_accounts);
+$result_accounts = mysqli_query($connection, $sql_accounts);
+$temp_total_accounts = mysqli_num_rows($result_accounts);
 
 $sql_dns_zones = "SELECT id
 				  FROM dw_dns_records";
-$result_dns_zones = mysql_query($sql_dns_zones,$connection);
-$temp_total_dns_zones = mysql_num_rows($result_dns_zones);
+$result_dns_zones = mysqli_query($connection, $sql_dns_zones);
+$temp_total_dns_zones = mysqli_num_rows($result_dns_zones);
 
 $sql_build_finished = "SELECT build_status_overall
 					   FROM dw_servers
 					   LIMIT 1";
-$result_build_finished = mysql_query($sql_build_finished,$connection);
-while ($row_build_finished = mysql_fetch_object($result_build_finished)) {
+$result_build_finished = mysqli_query($connection, $sql_build_finished);
+while ($row_build_finished = mysqli_fetch_object($result_build_finished)) {
 	$is_the_build_finished = $row_build_finished->build_status_overall;
 }
 
@@ -158,11 +158,11 @@ if ($is_the_build_finished == 1 && ($temp_total_accounts != 0 || $temp_total_dns
         $sql_dw_account = "SELECT id, name, dw_accounts
 						   FROM dw_servers
 						   ORDER BY name, host";
-        $result_dw_account = mysql_query($sql_dw_account,$connection); ?>
+        $result_dw_account = mysqli_query($connection, $sql_dw_account); ?>
     
         <option value="<?php echo $PHP_SELF; ?>?action=dw_accounts&view_all=1">VIEW ALL</option><?php
     
-        while ($row_dw_account = mysql_fetch_object($result_dw_account)) { ?>
+        while ($row_dw_account = mysqli_fetch_object($result_dw_account)) { ?>
     
             <option value="<?php echo $PHP_SELF; ?>?action=dw_accounts&id=<?php echo $row_dw_account->id; ?>"><?php echo $row_dw_account->name; ?> (<?php echo number_format($row_dw_account->dw_accounts); ?> Accounts)</option><?php
     
@@ -183,11 +183,11 @@ if ($is_the_build_finished == 1 && ($temp_total_accounts != 0 || $temp_total_dns
         $sql_dw_dns_records = "SELECT id, name, dw_dns_zones, dw_dns_records
 							   FROM dw_servers
 							   ORDER BY name, host";
-        $result_dw_dns_records = mysql_query($sql_dw_dns_records,$connection); ?>
+        $result_dw_dns_records = mysqli_query($connection, $sql_dw_dns_records); ?>
     
         <option value="<?php echo $PHP_SELF; ?>?action=dw_dns_zones&view_all=1">VIEW ALL</option><?php
     
-        while ($row_dw_dns_records = mysql_fetch_object($result_dw_dns_records)) { ?>
+        while ($row_dw_dns_records = mysqli_fetch_object($result_dw_dns_records)) { ?>
     
             <option value="<?php echo $PHP_SELF; ?>?action=dw_dns_zones&id=<?php echo $row_dw_dns_records->id; ?>"><?php echo $row_dw_dns_records->name; ?> (<?php echo number_format($row_dw_dns_records->dw_dns_zones); ?> Zones, <?php echo number_format($row_dw_dns_records->dw_dns_records); ?> Records)</option><?php
     
@@ -206,8 +206,8 @@ $sql_build_info = "SELECT build_status_overall, build_start_time_overall, build_
 				   FROM dw_servers
 				   ORDER BY build_end_time_overall desc
 				   LIMIT 1";
-$result_build_info = mysql_query($sql_build_info,$connection);
-$temp_build_info = mysql_num_rows($result_build_info);
+$result_build_info = mysqli_query($connection, $sql_build_info);
+$temp_build_info = mysqli_num_rows($result_build_info);
 
 if ($temp_build_info != 0) { ?>
 
@@ -220,7 +220,7 @@ if ($temp_build_info != 0) { ?>
         
         } else {
         
-            while ($row_build_info = mysql_fetch_object($result_build_info)) { 
+            while ($row_build_info = mysqli_fetch_object($result_build_info)) { 
     
                 if ($row_build_info->build_start_time_overall != "0000-00-00 00:00:00" && $row_build_info->build_end_time_overall != "0000-00-00 00:00:00") {
     
@@ -239,9 +239,9 @@ if ($temp_build_info != 0) { ?>
                     $sql_check_builds = "SELECT id
                                          FROM dw_servers
                                          WHERE build_status = '0'";
-                    $result_check_builds = mysql_query($sql_check_builds,$connection);
+                    $result_check_builds = mysqli_query($connection, $sql_check_builds);
                     
-                    if (mysql_num_rows($result_check_builds) == 0) {
+                    if (mysqli_num_rows($result_check_builds) == 0) {
     
                         $temp_build_status_overall = "<font class=\"default_highlight\"><strong>Cleanup...</strong></font>";
     
@@ -332,15 +332,15 @@ if ($temp_build_info != 0) { ?>
         $sql = "SELECT name, host, build_status, build_start_time, build_end_time, build_time, has_ever_been_built
                 FROM dw_servers
                 ORDER BY name, host";
-        $result = mysql_query($sql,$connection);
+        $result = mysqli_query($connection, $sql);
         
-        if (mysql_num_rows($result) == 0) {
+        if (mysqli_num_rows($result) == 0) {
             
             echo "";
         
         } else {
         
-            while ($row = mysql_fetch_object($result)) { 
+            while ($row = mysqli_fetch_object($result)) { 
     
                 if ($row->build_start_time != "0000-00-00 00:00:00" && $row->build_end_time != "0000-00-00 00:00:00") {
     
@@ -434,21 +434,21 @@ if ($temp_build_info != 0) { ?>
 
 $sql_data_check = "SELECT dw_accounts, dw_dns_zones, dw_dns_records
 				   FROM dw_server_totals";
-$result_data_check = mysql_query($sql_data_check,$connection);
+$result_data_check = mysqli_query($connection, $sql_data_check);
 
-while ($row_data_check = mysql_fetch_object($result_data_check)) {
+while ($row_data_check = mysqli_fetch_object($result_data_check)) {
 	$temp_dw_accounts = $row_data_check->dw_accounts;
 	$temp_dw_dns_zones = $row_data_check->dw_dns_zones;
 	$temp_dw_dns_records = $row_data_check->dw_dns_records;
 }
 
-if (mysql_num_rows($result) == 0) {
+if (mysqli_num_rows($result) == 0) {
 	
 	// Placeholder
 
 } else {
 
-	if (mysql_num_rows(mysql_query("SHOW TABLES LIKE '" . dw_server_totals . "'")) == 1) {
+	if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . dw_server_totals . "'")) == 1) {
 
 		$table_exists = 1;
 
@@ -479,9 +479,9 @@ if (mysql_num_rows($result) == 0) {
 
             $sql = "SELECT dw_servers, dw_accounts, dw_dns_zones, dw_dns_records
                     FROM dw_server_totals";
-            $result = mysql_query($sql,$connection);
+            $result = mysqli_query($connection, $sql);
 
-            while ($row = mysql_fetch_object($result)) { 
+            while ($row = mysqli_fetch_object($result)) { 
 			
                 if ($row->dw_servers > 1) { ?>
         
@@ -508,9 +508,9 @@ if (mysql_num_rows($result) == 0) {
                     FROM dw_servers
                     WHERE has_ever_been_built = '1'
                     ORDER BY name";
-            $result = mysql_query($sql,$connection);
+            $result = mysqli_query($connection, $sql);
     
-            while ($row = mysql_fetch_object($result)) { ?>
+            while ($row = mysqli_fetch_object($result)) { ?>
         
                 <tr class="main_table_row_active">
                     <td class="main_table_cell_active">
@@ -541,23 +541,23 @@ $sql_accounts_without_a_dns_zone = "SELECT domain
 									WHERE domain NOT IN (SELECT domain 
 														 FROM dw_dns_zones)
 									ORDER BY domain";
-$result_accounts_without_a_dns_zone = mysql_query($sql_accounts_without_a_dns_zone,$connection);
-$temp_accounts_without_a_dns_zone = mysql_num_rows($result_accounts_without_a_dns_zone);
+$result_accounts_without_a_dns_zone = mysqli_query($connection, $sql_accounts_without_a_dns_zone);
+$temp_accounts_without_a_dns_zone = mysqli_num_rows($result_accounts_without_a_dns_zone);
 
 $sql_dns_zones_without_an_account = "SELECT domain
 									 FROM dw_dns_zones
 									 WHERE domain NOT IN (SELECT domain 
 									 					  FROM dw_accounts)
 									ORDER BY domain";
-$result_dns_zones_without_an_account = mysql_query($sql_dns_zones_without_an_account,$connection);
-$temp_dns_zones_without_an_account = mysql_num_rows($result_dns_zones_without_an_account);
+$result_dns_zones_without_an_account = mysqli_query($connection, $sql_dns_zones_without_an_account);
+$temp_dns_zones_without_an_account = mysqli_num_rows($result_dns_zones_without_an_account);
 
 $sql_suspended_accounts = "SELECT domain
 						   FROM dw_accounts
 						   WHERE suspended = '1'
 						   ORDER BY domain";
-$result_suspended_accounts = mysql_query($sql_suspended_accounts,$connection);
-$temp_suspended_accounts = mysql_num_rows($result_suspended_accounts);
+$result_suspended_accounts = mysqli_query($connection, $sql_suspended_accounts);
+$temp_suspended_accounts = mysqli_num_rows($result_suspended_accounts);
 
 if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account != 0 || $temp_suspended_accounts != 0)) { ?>
 
@@ -570,7 +570,7 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
     
         <BR><BR><strong>Accounts without a DNS Zone</strong><BR><?php
     
-        while ($row_accounts_without_a_dns_zone = mysql_fetch_object($result_accounts_without_a_dns_zone)) {
+        while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
         
             // $account_list_raw .= "<a class=\"invisiblelink\" href=\"list-accounts.php?domain=" . $row_accounts_without_a_dns_zone->domain . "\">" . $row_accounts_without_a_dns_zone->domain . "</a>, ";
             $account_list_raw .= $row_accounts_without_a_dns_zone->domain . ", ";
@@ -599,7 +599,7 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
     
         <BR><BR><strong>DNS Zones without an Account</strong><BR><?php
     
-        while ($row_dns_zones_without_an_account = mysql_fetch_object($result_dns_zones_without_an_account)) {
+        while ($row_dns_zones_without_an_account = mysqli_fetch_object($result_dns_zones_without_an_account)) {
         
             // $zone_list_raw .= "<a class=\"invisiblelink\" href=\"list-dns-zones.php?domain=" . $row_dns_zones_without_an_account->domain . "\">" . $row_dns_zones_without_an_account->domain . "</a>, ";
             $zone_list_raw .= $row_dns_zones_without_an_account->domain . ", ";
@@ -628,7 +628,7 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
     
         <BR><BR><strong>Suspended Accounts</strong><BR><?php
     
-        while ($row_suspended_accounts = mysql_fetch_object($result_suspended_accounts)) {
+        while ($row_suspended_accounts = mysqli_fetch_object($result_suspended_accounts)) {
         
             // $suspended_list_raw .= "<a class=\"invisiblelink\" href=\"list-accounts.php?domain=" . $row_suspended_accounts->domain . "\">" . $row_suspended_accounts->domain . "</a>, ";
             $suspended_list_raw .= $row_suspended_accounts->domain . ", ";

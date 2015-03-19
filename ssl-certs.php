@@ -156,8 +156,8 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total
 					  $search_string
 					  $sort_by_string";	
 
-$result_grand_total = mysql_query($sql_grand_total,$connection) or die(mysql_error());
-while ($row_grand_total = mysql_fetch_object($result_grand_total)) {
+$result_grand_total = mysqli_query($connection, $sql_grand_total) or die(mysqli_error());
+while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 }
 
@@ -171,8 +171,8 @@ $grand_total = $temp_output_amount;
 
 if ($export == "1") {
 
-	$result = mysql_query($sql,$connection) or die(mysql_error());
-	$total_rows = number_format(mysql_num_rows($result));
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$total_rows = number_format(mysqli_num_rows($result));
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "ssl_results_" . $current_timestamp_unix . ".csv";
@@ -210,9 +210,9 @@ if ($export == "1") {
 		$sql_filter = "SELECT domain
 					   FROM domains
 					   WHERE id = '" . $did . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "Associated Domain:";
 			$row_content[$count++] = $row_filter->domain;
@@ -227,9 +227,9 @@ if ($export == "1") {
 		$sql_filter = "SELECT name
 					   FROM ssl_providers
 					   WHERE id = '" . $sslpid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "SSL Provider:";
 			$row_content[$count++] = $row_filter->name;
@@ -246,9 +246,9 @@ if ($export == "1") {
 					   WHERE sslpa.ssl_provider_id = sslp.id
 						 AND sslpa.owner_id = o.id
 						 AND sslpa.id = '" . $sslpaid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "SSL Provider Account:";
 			$row_content[$count++] = $row_filter->ssl_provider_name . " - " . $row_filter->owner_name . " - " . $row_filter->username;
@@ -263,9 +263,9 @@ if ($export == "1") {
 		$sql_filter = "SELECT type
 					   FROM ssl_cert_types
 					   WHERE id = '" . $ssltid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "SSL Type:";
 			$row_content[$count++] = $row_filter->type;
@@ -280,9 +280,9 @@ if ($export == "1") {
 		$sql_filter = "SELECT name, ip
 					   FROM ip_addresses
 					   WHERE id = '" . $sslipid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "SSL IP Address:";
 			$row_content[$count++] = $row_filter->name . " (" . $row_filter->ip . ")";
@@ -297,9 +297,9 @@ if ($export == "1") {
 		$sql_filter = "SELECT name
 					   FROM categories
 					   WHERE id = '" . $sslpcid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "SSL Category:";
 			$row_content[$count++] = $row_filter->name;
@@ -314,9 +314,9 @@ if ($export == "1") {
 		$sql_filter = "SELECT name
 					   FROM owners
 					   WHERE id = '" . $oid . "'";
-		$result_filter = mysql_query($sql_filter,$connection);
+		$result_filter = mysqli_query($connection, $sql_filter);
 
-		while ($row_filter = mysql_fetch_object($result_filter)) {
+		while ($row_filter = mysqli_fetch_object($result_filter)) {
 
 			$row_content[$count++] = "Owner:";
 			$row_content[$count++] = $row_filter->name;
@@ -389,9 +389,9 @@ if ($export == "1") {
 	$sql_field = "SELECT name
 				  FROM ssl_cert_fields
 				  ORDER BY name";
-	$result_field = mysql_query($sql_field,$connection);
+	$result_field = mysqli_query($connection, $sql_field);
 	
-	while ($row_field = mysql_fetch_object($result_field)) {
+	while ($row_field = mysqli_fetch_object($result_field)) {
 		
 		$row_content[$count++] = $row_field->name;
 
@@ -401,7 +401,7 @@ if ($export == "1") {
 	$row_content[$count++] = "Updated";
 	include("_includes/system/export/write-row.inc.php");
 
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		
 		$temp_initial_fee = $row->initial_fee * $row->conversion;
         $temp_renewal_fee = $row->renewal_fee * $row->conversion;
@@ -469,14 +469,14 @@ if ($export == "1") {
 		$sql_field = "SELECT field_name
 					  FROM ssl_cert_fields
 					  ORDER BY name";
-		$result_field = mysql_query($sql_field,$connection);
+		$result_field = mysqli_query($connection, $sql_field);
 
-        if (mysql_num_rows($result_field) > 0) {
+        if (mysqli_num_rows($result_field) > 0) {
 
             $array_count = 0;
             $field_data = "";
 
-            while ($row_field = mysql_fetch_object($result_field)) {
+            while ($row_field = mysqli_fetch_object($result_field)) {
 
                 $field_array[$array_count] = $row_field->field_name;
                 $array_count++;
@@ -488,9 +488,9 @@ if ($export == "1") {
                 $sql_data = "SELECT " . $field . "
                              FROM ssl_cert_field_data
                              WHERE ssl_id = '" . $row->id . "'";
-                $result_data = mysql_query($sql_data, $connection);
+                $result_data = mysqli_query($connection, $sql_data);
 
-                while ($row_data = mysql_fetch_object($result_data)) {
+                while ($row_data = mysqli_fetch_object($result_data)) {
 
                     $row_content[$count++] = $row_data->{$field};
 
@@ -539,11 +539,11 @@ if ($_SESSION['need_domain'] == "1" && $_SESSION['need_ssl_provider'] == "0" && 
 	echo "Before you can add an SSL Certificate you must have at least one domain stored in your $software_title. Please <a href=\"domains.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
-$totalrows = mysql_num_rows(mysql_query($sql));
+$totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
 $navigate = pageBrowser($totalrows,15,$result_limit, "&oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=" . $_SESSION['search_for_ssl'] . "",$_REQUEST[numBegin],$_REQUEST[begin],$_REQUEST[num]);
 $sql = $sql.$navigate[0];
-$result = mysql_query($sql,$connection);
-$total_rows = number_format(mysql_num_rows($result));
+$result = mysqli_query($connection, $sql);
+$total_rows = number_format(mysqli_num_rows($result));
 ?>
 <form name="ssl_cert_search_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <div class="search-block-outer">
@@ -588,10 +588,10 @@ $sql_domain = "SELECT d.id, d.domain
 			     $search_string
 			   GROUP BY d.domain
 			   ORDER BY d.domain asc"; 
-$result_domain = mysql_query($sql_domain,$connection);
+$result_domain = mysqli_query($connection, $sql_domain);
 echo "<select name=\"did\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?oid=$oid&did=&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">Domain - ALL</option>";
-while ($row_domain = mysql_fetch_object($result_domain)) { 
+while ($row_domain = mysqli_fetch_object($result_domain)) { 
 	echo "<option value=\"$PHP_SELF?oid=$oid&did=$row_domain->id&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_domain->id == $did) echo " selected"; echo ">"; echo "$row_domain->domain</option>";
 } 
 echo "</select>";
@@ -637,10 +637,10 @@ $sql_ssl_provider = "SELECT sslp.id, sslp.name
 					   $search_string
 					 GROUP BY sslp.name
 					 ORDER BY sslp.name asc";
-$result_ssl_provider = mysql_query($sql_ssl_provider,$connection);
+$result_ssl_provider = mysqli_query($connection, $sql_ssl_provider);
 echo "<select name=\"sslpid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">SSL Provider - ALL</option>";
-while ($row_ssl_provider = mysql_fetch_object($result_ssl_provider)) { 
+while ($row_ssl_provider = mysqli_fetch_object($result_ssl_provider)) { 
 	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$row_ssl_provider->id&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_ssl_provider->id == $sslpid) echo " selected"; echo ">"; echo "$row_ssl_provider->name</option>";
 } 
 echo "</select>";
@@ -688,10 +688,10 @@ $sql_account = "SELECT sslpa.id AS sslpa_id, sslpa.username, sslp.name AS sslp_n
 				  $search_string
 				GROUP BY sslp.name, o.name, sslpa.username
 				ORDER BY sslp.name asc, o.name asc, sslpa.username asc";
-$result_account = mysql_query($sql_account,$connection);
+$result_account = mysqli_query($connection, $sql_account);
 echo "<select name=\"sslpaid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">SSL Provider Account - ALL</option>";
-while ($row_account = mysql_fetch_object($result_account)) { 
+while ($row_account = mysqli_fetch_object($result_account)) { 
 	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$row_account->sslpa_id&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_account->sslpa_id == $sslpaid) echo " selected"; echo ">"; echo "$row_account->sslp_name, $row_account->owner_name ($row_account->username)</option>";
 } 
 echo "</select>";
@@ -737,10 +737,10 @@ $sql_type = "SELECT sslc.type_id, sslcf.type
 			   $search_string
 			 GROUP BY sslcf.type
 			 ORDER BY sslcf.type asc";
-$result_type = mysql_query($sql_type,$connection);
+$result_type = mysqli_query($connection, $sql_type);
 echo "<select name=\"ssltid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">SSL Type - ALL</option>";
-while ($row_type = mysql_fetch_object($result_type)) { 
+while ($row_type = mysqli_fetch_object($result_type)) { 
 	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$row_type->type_id&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_type->type_id == $ssltid) echo " selected"; echo ">"; echo "$row_type->type</option>";
 } 
 echo "</select>";
@@ -786,10 +786,10 @@ $sql_ip = "SELECT ip.id AS ip_id, ip.name AS ip_name, ip.ip
 		     $search_string
 		   GROUP BY ip.name, ip.ip
 		   ORDER BY ip.name, ip.ip";
-$result_ip = mysql_query($sql_ip,$connection);
+$result_ip = mysqli_query($connection, $sql_ip);
 echo "<select name=\"sslipid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">IP Address - ALL</option>";
-while ($row_ip = mysql_fetch_object($result_ip)) { 
+while ($row_ip = mysqli_fetch_object($result_ip)) { 
 	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$row_ip->ip_id&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_ip->ip_id == $sslipid) echo " selected"; echo ">"; echo "$row_ip->ip_name ($row_ip->ip)</option>";
 } 
 echo "</select>";
@@ -835,10 +835,10 @@ $sql_cat = "SELECT c.id AS cat_id, c.name AS cat_name
 			  $search_string
 		   GROUP BY c.name
 		   ORDER BY c.name";
-$result_cat = mysql_query($sql_cat,$connection);
+$result_cat = mysqli_query($connection, $sql_cat);
 echo "<select name=\"sslpcid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">Category - ALL</option>";
-while ($row_cat = mysql_fetch_object($result_cat)) { 
+while ($row_cat = mysqli_fetch_object($result_cat)) { 
 	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$row_cat->cat_id&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_cat->cat_id == $sslpcid) echo " selected"; echo ">"; echo "$row_cat->cat_name</option>";
 } 
 echo "</select>";
@@ -884,10 +884,10 @@ $sql_owner = "SELECT o.id, o.name
 				$search_string
 			  GROUP BY o.name
 			  ORDER BY o.name asc";
-$result_owner = mysql_query($sql_owner,$connection);
+$result_owner = mysqli_query($connection, $sql_owner);
 echo "<select name=\"oid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?oid=&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">Owner - ALL</option>";
-while ($row_owner = mysql_fetch_object($result_owner)) { 
+while ($row_owner = mysqli_fetch_object($result_owner)) { 
 	echo "<option value=\"$PHP_SELF?oid=$row_owner->id&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
 } 
 echo "</select>";
@@ -931,10 +931,10 @@ $sql_active = "SELECT active, count(*) AS total_count
 			     $sslpcid_string
 			   GROUP BY active
 			   ORDER BY active asc";
-$result_active = mysql_query($sql_active,$connection);
+$result_active = mysqli_query($connection, $sql_active);
 echo "<select name=\"is_active\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Pending)</option>";
-while ($row_active = mysql_fetch_object($result_active)) {
+while ($row_active = mysqli_fetch_object($result_active)) {
 	echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$row_active->active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_active->active == $is_active) echo " selected"; echo ">"; if ($row_active->active == "0") { echo "Expired"; } elseif ($row_active->active == "1") { echo "Active"; } elseif ($row_active->active == "3") { echo "Pending (Renewal)"; } elseif ($row_active->active == "4") { echo "Pending (Other)"; } elseif ($row_active->active == "5") { echo "Pending (Registration)"; } echo "</option>";
 } 
 echo "<option value=\"$PHP_SELF?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=ALL&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($is_active == "ALL") echo " selected"; echo ">"; echo "ALL</option>";
@@ -981,7 +981,7 @@ echo "</select>";
 </div>
 </form>
 <div style="clear: both;"></div>
-<?php if (mysql_num_rows($result) > 0) { ?>
+<?php if (mysqli_num_rows($result) > 0) { ?>
 <BR><strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
 <strong>Number of SSL Certs:</strong> <?php echo number_format($totalrows); ?><BR><BR>
 <?php include("_includes/layout/pagination.menu.inc.php"); ?>
@@ -1037,7 +1037,7 @@ echo "</select>";
 	</td>
 <?php } ?>
 </tr>
-<?php while ($row = mysql_fetch_object($result)) { ?>
+<?php while ($row = mysqli_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
 <?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
 	<td class="main_table_cell_active">

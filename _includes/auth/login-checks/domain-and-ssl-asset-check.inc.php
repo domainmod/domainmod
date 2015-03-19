@@ -19,8 +19,8 @@
 $sql_asset_check = "SELECT id
 					FROM registrars
 					LIMIT 1";
-$result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
-if (mysql_num_rows($result_asset_check) == 0) { 
+$result_asset_check = mysqli_query($connection, $sql_asset_check) or die(mysqli_error());
+if (mysqli_num_rows($result_asset_check) == 0) { 
 	$_SESSION['need_registrar'] = "1";
 } else {
 	$_SESSION['need_registrar'] = "0";
@@ -29,8 +29,8 @@ if (mysql_num_rows($result_asset_check) == 0) {
 $sql_asset_check = "SELECT id
 					FROM registrar_accounts
 					LIMIT 1";
-$result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
-if (mysql_num_rows($result_asset_check) == 0) { 
+$result_asset_check = mysqli_query($connection, $sql_asset_check) or die(mysqli_error());
+if (mysqli_num_rows($result_asset_check) == 0) { 
 	$_SESSION['need_registrar_account'] = "1";
 } else {
 	$_SESSION['need_registrar_account'] = "0";
@@ -39,8 +39,8 @@ if (mysql_num_rows($result_asset_check) == 0) {
 $sql_asset_check = "SELECT id
 					FROM domains
 					LIMIT 1";
-$result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
-if (mysql_num_rows($result_asset_check) == 0) { 
+$result_asset_check = mysqli_query($connection, $sql_asset_check) or die(mysqli_error());
+if (mysqli_num_rows($result_asset_check) == 0) { 
 	$_SESSION['need_domain'] = "1";
 } else {
 	$_SESSION['need_domain'] = "0";
@@ -49,8 +49,8 @@ if (mysql_num_rows($result_asset_check) == 0) {
 $sql_asset_check = "SELECT id
 					FROM ssl_providers
 					LIMIT 1";
-$result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
-if (mysql_num_rows($result_asset_check) == 0) { 
+$result_asset_check = mysqli_query($connection, $sql_asset_check) or die(mysqli_error());
+if (mysqli_num_rows($result_asset_check) == 0) { 
 	$_SESSION['need_ssl_provider'] = "1";
 } else {
 	$_SESSION['need_ssl_provider'] = "0";
@@ -59,8 +59,8 @@ if (mysql_num_rows($result_asset_check) == 0) {
 $sql_asset_check = "SELECT id
 					FROM ssl_accounts
 					LIMIT 1";
-$result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
-if (mysql_num_rows($result_asset_check) == 0) { 
+$result_asset_check = mysqli_query($connection, $sql_asset_check) or die(mysqli_error());
+if (mysqli_num_rows($result_asset_check) == 0) { 
 	$_SESSION['need_ssl_account'] = "1";
 } else {
 	$_SESSION['need_ssl_account'] = "0";
@@ -69,9 +69,9 @@ if (mysql_num_rows($result_asset_check) == 0) {
 $sql_asset_check = "SELECT id
 					FROM ssl_certs
 					LIMIT 1";
-$result_asset_check = mysql_query($sql_asset_check,$connection) or die(mysql_error());
+$result_asset_check = mysqli_query($connection, $sql_asset_check) or die(mysqli_error());
 
-if (mysql_num_rows($result_asset_check) == 0) { 
+if (mysqli_num_rows($result_asset_check) == 0) { 
 
 	$_SESSION['need_ssl_cert'] = "1";
 

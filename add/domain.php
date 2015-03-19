@@ -46,11 +46,11 @@ $new_notes = $_POST['new_notes'];
 $sql = "SELECT field_name
 		FROM domain_fields
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
 $count = 0;
 
-while ($row = mysql_fetch_object($result)) {
+while ($row = mysqli_fetch_object($result)) {
 	
 	$field_array[$count] = $row->field_name;
 	$count++;
@@ -71,18 +71,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "SELECT domain
 				FROM domains
 				WHERE domain = '" . $new_domain . "'";
-		$result = mysql_query($sql,$connection);
+		$result = mysqli_query($connection, $sql);
 		
-		if (mysql_num_rows($result) == 0) {
+		if (mysqli_num_rows($result) == 0) {
 
 			$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 			
 			$sql = "SELECT registrar_id, owner_id
 					FROM registrar_accounts
 					WHERE id = '" . $new_account_id . "'";
-			$result = mysql_query($sql,$connection);
+			$result = mysqli_query($connection, $sql);
 			
-			while ($row = mysql_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
+			while ($row = mysqli_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
 
 			if ($new_privacy == "1") {
 
@@ -98,35 +98,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     FROM fees
                     WHERE registrar_id = '" . $new_registrar_id . "'
                       AND tld = '" . $tld . "'";
-            $result = mysql_query($sql,$connection);
+            $result = mysqli_query($connection, $sql);
 
-            while ($row = mysql_fetch_object($result)) { $new_fee_id = $row->id; $new_total_cost = $row->total_cost; }
+            while ($row = mysqli_fetch_object($result)) { $new_fee_id = $row->id; $new_total_cost = $row->total_cost; }
 	
 			$sql = "INSERT INTO domains
 					(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id, fee_id, total_cost, function, notes, privacy, active, insert_time) VALUES
-					('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . $new_account_id . "', '" . mysql_real_escape_string($new_domain) . "', '" . $tld . "', '" . $new_expiry_date . "', '" . $new_cat_id . "', '" . $new_dns_id . "', '" . $new_ip_id . "', '" . $new_hosting_id . "', '" . $new_fee_id . "', '" . $new_total_cost . "', '" . mysql_real_escape_string($new_function) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $current_timestamp . "')";
-			$result = mysql_query($sql,$connection) or die(mysql_error());
+					('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . $new_account_id . "', '" . mysqli_real_escape_string($new_domain) . "', '" . $tld . "', '" . $new_expiry_date . "', '" . $new_cat_id . "', '" . $new_dns_id . "', '" . $new_ip_id . "', '" . $new_hosting_id . "', '" . $new_fee_id . "', '" . $new_total_cost . "', '" . mysqli_real_escape_string($new_function) . "', '" . mysqli_real_escape_string($new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $current_timestamp . "')";
+			$result = mysqli_query($connection, $sql) or die(mysqli_error());
 			
 			$sql = "SELECT id
 					FROM domains
 					WHERE domain = '" . $new_domain . "'
 					  AND insert_time = '" . $current_timestamp . "'";
-			$result = mysql_query($sql,$connection);
-			while ($row = mysql_fetch_object($result)) { $temp_domain_id = $row->id; }
+			$result = mysqli_query($connection, $sql);
+			while ($row = mysqli_fetch_object($result)) { $temp_domain_id = $row->id; }
 
 			$sql = "INSERT INTO domain_field_data
 					(domain_id, insert_time) VALUES 
 					('" . $temp_domain_id . "', '" . $current_timestamp . "')";
-			$result = mysql_query($sql,$connection);
+			$result = mysqli_query($connection, $sql);
 
 			$sql = "SELECT field_name
 					FROM domain_fields
 					ORDER BY name";
-			$result = mysql_query($sql,$connection);
+			$result = mysqli_query($connection, $sql);
 			
 			$count = 0;
 			
-			while ($row = mysql_fetch_object($result)) {
+			while ($row = mysqli_fetch_object($result)) {
 				
 				$field_array[$count] = $row->field_name;
 				$count++;
@@ -138,9 +138,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$full_field = "new_" . $field;
 				
 				$sql = "UPDATE domain_field_data
-						SET `" . $field . "` = '" . mysql_real_escape_string(${$full_field}) . "' 
+						SET `" . $field . "` = '" . mysqli_real_escape_string(${$full_field}) . "' 
 						WHERE domain_id = '" . $temp_domain_id . "'";
-				$result = mysql_query($sql,$connection);
+				$result = mysqli_query($connection, $sql);
 			
 			}
 
@@ -193,7 +193,7 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                 WHERE ra.owner_id = o.id
                   AND ra.registrar_id = r.id
                 ORDER BY r_name, o_name, ra.username";
-$result_account = mysql_query($sql_account,$connection) or die(mysql_error());
+$result_account = mysqli_query($connection, $sql_account) or die(mysqli_error());
 echo "<select name=\"new_account_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -206,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-while ($row_account = mysql_fetch_object($result_account)) { ?>
+while ($row_account = mysqli_fetch_object($result_account)) { ?>
 
     <option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $to_compare) echo " selected"; ?>><?php echo $row_account->r_name; ?>, <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
 
@@ -219,7 +219,7 @@ echo "</select>";
 $sql_dns = "SELECT id, name
 			FROM dns
 			ORDER BY name";
-$result_dns = mysql_query($sql_dns,$connection) or die(mysql_error());
+$result_dns = mysqli_query($connection, $sql_dns) or die(mysqli_error());
 echo "<select name=\"new_dns_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -232,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-while ($row_dns = mysql_fetch_object($result_dns)) { ?>
+while ($row_dns = mysqli_fetch_object($result_dns)) { ?>
 
 	<option value="<?php echo $row_dns->id; ?>"<?php if ($row_dns->id == $to_compare) echo " selected";?>><?php echo $row_dns->name; ?></option><?php
 
@@ -245,7 +245,7 @@ echo "</select>";
 $sql_ip = "SELECT id, name, ip
 		   FROM ip_addresses
 		   ORDER BY name, ip";
-$result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
+$result_ip = mysqli_query($connection, $sql_ip) or die(mysqli_error());
 echo "<select name=\"new_ip_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -258,7 +258,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-while ($row_ip = mysql_fetch_object($result_ip)) { ?>
+while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
 
 	<option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $to_compare) echo " selected";?>><?php echo $row_ip->name; ?> (<?php echo $row_ip->ip; ?>)</option><?php
 
@@ -271,7 +271,7 @@ echo "</select>";
 $sql_hosting = "SELECT id, name
 				FROM hosting
 				ORDER BY name";
-$result_hosting = mysql_query($sql_hosting,$connection) or die(mysql_error());
+$result_hosting = mysqli_query($connection, $sql_hosting) or die(mysqli_error());
 echo "<select name=\"new_hosting_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -284,7 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-while ($row_hosting = mysql_fetch_object($result_hosting)) { ?>
+while ($row_hosting = mysqli_fetch_object($result_hosting)) { ?>
 
 	<option value="<?php echo $row_hosting->id; ?>"<?php if ($row_hosting->id == $to_compare) echo " selected";?>><?php echo $row_hosting->name; ?></option><?php
 
@@ -297,7 +297,7 @@ echo "</select>";
 $sql_cat = "SELECT id, name
 			FROM categories
 			ORDER BY name";
-$result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
+$result_cat = mysqli_query($connection, $sql_cat) or die(mysqli_error());
 echo "<select name=\"new_cat_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -310,7 +310,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-while ($row_cat = mysql_fetch_object($result_cat)) { ?>
+while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
 
 	<option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $to_compare) echo " selected";?>><?php echo $row_cat->name; ?></option><?php
 
@@ -346,15 +346,15 @@ echo "</select>";
 $sql = "SELECT field_name
 		FROM domain_fields
 		ORDER BY type_id, name";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
-if (mysql_num_rows($result) > 0) { ?>
+if (mysqli_num_rows($result) > 0) { ?>
 	
 	<BR><font class="subheadline">Custom Fields</font><BR><BR><?php
 
 	$count = 0;
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		
 		$field_array[$count] = $row->field_name;
 		$count++;
@@ -367,9 +367,9 @@ if (mysql_num_rows($result) > 0) { ?>
 				FROM domain_fields AS df, custom_field_types AS cft
 				WHERE df.type_id = cft.id
 				  AND df.field_name = '" . $field . "'";
-		$result = mysql_query($sql,$connection);
+		$result = mysqli_query($connection, $sql);
 		
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 
 			if ($row->type_id == "1") { // Check Box ?>
 

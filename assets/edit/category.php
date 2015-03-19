@@ -43,12 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_category != "") {
 
 		$sql = "UPDATE categories
-				SET name = '" . mysql_real_escape_string($new_category) . "', 
-					stakeholder = '" . mysql_real_escape_string($new_stakeholder) . "',
-					notes = '" . mysql_real_escape_string($new_notes) . "',
+				SET name = '" . mysqli_real_escape_string($new_category) . "', 
+					stakeholder = '" . mysqli_real_escape_string($new_stakeholder) . "',
+					notes = '" . mysqli_real_escape_string($new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_pcid . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$new_category = $new_category;
 		$new_stakeholder = $new_stakeholder;
@@ -72,9 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT name, stakeholder, notes
 			FROM categories
 			WHERE id = '" . $pcid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) { 
+	while ($row = mysqli_fetch_object($result)) { 
 	
 		$new_category = $row->name;
 		$new_stakeholder = $row->stakeholder;
@@ -87,9 +87,9 @@ if ($del == "1") {
 	$sql = "SELECT cat_id
 			FROM domains
 			WHERE cat_id = '" . $pcid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_domains = 1;
 	}
 	
@@ -109,7 +109,7 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM categories 
 			WHERE id = '" . $pcid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
 	$_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Deleted<BR>";
 	

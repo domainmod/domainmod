@@ -74,8 +74,8 @@ $sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.
 		  " . $range_string . "
 		GROUP BY sslp.name, o.name, sslpa.username
 		ORDER BY sslp.name, o.name, sslpa.username";
-$result = mysql_query($sql,$connection) or die(mysql_error());
-$total_rows = mysql_num_rows($result);
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
 					FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
@@ -88,8 +88,8 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, 
 					  AND sslc.active NOT IN ('0')
 					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 					  " . $range_string . "";
-$result_grand_total = mysql_query($sql_grand_total,$connection) or die(mysql_error());
-while ($row_grand_total = mysql_fetch_object($result_grand_total)) {
+$result_grand_total = mysqli_query($connection, $sql_grand_total) or die(mysqli_error());
+while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 	$number_of_certs_total = $row_grand_total->number_of_certs_total;
 }
@@ -106,7 +106,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
@@ -159,9 +159,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 		$new_provider = "";
 		$last_provider = "";
 
-		if (mysql_num_rows($result) > 0) {
+		if (mysqli_num_rows($result) > 0) {
 	
-			while ($row = mysql_fetch_object($result)) {
+			while ($row = mysqli_fetch_object($result)) {
 	
 				$new_provider = $row->provider_name;
 	
@@ -177,8 +177,8 @@ if ($submission_failed != "1" && $total_rows > 0) {
 										 AND cc.user_id = '" . $_SESSION['user_id'] . "'
 										 AND sslp.id = '" . $row->id . "'
 										 " . $range_string . "";
-				$result_provider_total = mysql_query($sql_provider_total,$connection) or die(mysql_error());
-				while ($row_provider_total = mysql_fetch_object($result_provider_total)) { 
+				$result_provider_total = mysqli_query($connection, $sql_provider_total) or die(mysqli_error());
+				while ($row_provider_total = mysqli_fetch_object($result_provider_total)) { 
 					$temp_provider_total = $row_provider_total->provider_total; 
 					$number_of_certs_provider = $row_provider_total->number_of_certs_provider; 
 				}
@@ -298,7 +298,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 	$new_provider = "";
 	$last_provider = "";
 
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 
 		$new_provider = $row->provider_name;
 
@@ -314,8 +314,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 								 AND cc.user_id = '" . $_SESSION['user_id'] . "'
 								 AND sslp.id = '" . $row->id . "'
 								 " . $range_string . "";
-		$result_provider_total = mysql_query($sql_provider_total,$connection) or die(mysql_error());
-		while ($row_provider_total = mysql_fetch_object($result_provider_total)) { 
+		$result_provider_total = mysqli_query($connection, $sql_provider_total) or die(mysqli_error());
+		while ($row_provider_total = mysqli_fetch_object($result_provider_total)) { 
 			$temp_provider_total = $row_provider_total->provider_total; 
 			$number_of_certs_provider = $row_provider_total->number_of_certs_provider; 
 		}

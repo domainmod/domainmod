@@ -39,12 +39,12 @@ if ($new_username != "") {
 		   WHERE username = '$new_username'
 		     AND active = '1'";
 
-   $result = mysql_query($sql,$connection) 
-             or die('Query failed. 1. ' . mysql_error()); 
+   $result = mysqli_query($connection, $sql)
+             or die('Query failed. 1. ' . mysqli_error()); 
 
-	if (mysql_num_rows($result) == 1) {
+	if (mysqli_num_rows($result) == 1) {
    
-		while($row = mysql_fetch_object($result)) {
+		while($row = mysqli_fetch_object($result)) {
 	
 			$new_password = substr(md5(time()),0,8);
 			
@@ -54,7 +54,7 @@ if ($new_username != "") {
 							   update_time = '$current_timestamp'
 						   WHERE username = '$row->username'
 						     AND email_address = '$row->email_address'";
-			$result_update = mysql_query($sql_update,$connection);
+			$result_update = mysqli_query($connection, $sql_update);
 			
 			include("../../_includes/email/send-new-password.inc.php");
 					

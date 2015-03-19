@@ -40,12 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_registrar != "" && $new_url != "") {
 
 		$sql = "UPDATE registrars
-				SET name = '" . mysql_real_escape_string($new_registrar) . "', 
-					url = '" . mysql_real_escape_string($new_url) . "', 
-					notes = '" . mysql_real_escape_string($new_notes) . "',
+				SET name = '" . mysqli_real_escape_string($new_registrar) . "', 
+					url = '" . mysqli_real_escape_string($new_url) . "', 
+					notes = '" . mysqli_real_escape_string($new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_rid . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$rid = $new_rid;
 
@@ -66,9 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT name, url, notes
 			FROM registrars
 			WHERE id = '" . $rid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	while ($row = mysql_fetch_object($result)) { 
+	while ($row = mysqli_fetch_object($result)) { 
 	
 		$new_registrar = $row->name;
 		$new_url = $row->url;
@@ -82,18 +82,18 @@ if ($del == "1") {
 	$sql = "SELECT registrar_id
 			FROM registrar_accounts
 			WHERE registrar_id = '" . $rid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_registrar_accounts = 1;
 	}
 
 	$sql = "SELECT registrar_id
 			FROM domains
 			WHERE registrar_id = '" . $rid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_domains = 1;
 	}
 
@@ -114,15 +114,15 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM fees
 			WHERE registrar_id = '" . $rid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$sql = "DELETE FROM registrar_accounts
 			WHERE registrar_id = '" . $rid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$sql = "DELETE FROM registrars 
 			WHERE id = '" . $rid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Deleted<BR>";
 

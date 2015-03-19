@@ -75,32 +75,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ($new_dns1 == '') { $new_number_of_servers = '0'; }
 
 		$sql_update = "UPDATE dns
-					   SET name = '" . mysql_real_escape_string($new_name) . "',
-					   	   dns1 = '" . mysql_real_escape_string($new_dns1) . "',
-						   dns2 = '" . mysql_real_escape_string($new_dns2) . "',
-						   dns3 = '" . mysql_real_escape_string($new_dns3) . "',
-						   dns4 = '" . mysql_real_escape_string($new_dns4) . "',
-						   dns5 = '" . mysql_real_escape_string($new_dns5) . "',
-						   dns6 = '" . mysql_real_escape_string($new_dns6) . "',
-						   dns7 = '" . mysql_real_escape_string($new_dns7) . "',
-						   dns8 = '" . mysql_real_escape_string($new_dns8) . "',
-						   dns9 = '" . mysql_real_escape_string($new_dns9) . "',
-						   dns10 = '" . mysql_real_escape_string($new_dns10) . "',
-						   ip1 = '" . mysql_real_escape_string($new_ip1) . "',
-						   ip2 = '" . mysql_real_escape_string($new_ip2) . "',
-						   ip3 = '" . mysql_real_escape_string($new_ip3) . "',
-						   ip4 = '" . mysql_real_escape_string($new_ip4) . "',
-						   ip5 = '" . mysql_real_escape_string($new_ip5) . "',
-						   ip6 = '" . mysql_real_escape_string($new_ip6) . "',
-						   ip7 = '" . mysql_real_escape_string($new_ip7) . "',
-						   ip8 = '" . mysql_real_escape_string($new_ip8) . "',
-						   ip9 = '" . mysql_real_escape_string($new_ip9) . "',
-						   ip10 = '" . mysql_real_escape_string($new_ip10) . "',
-						   notes = '" . mysql_real_escape_string($new_notes) . "',
+					   SET name = '" . mysqli_real_escape_string($new_name) . "',
+					   	   dns1 = '" . mysqli_real_escape_string($new_dns1) . "',
+						   dns2 = '" . mysqli_real_escape_string($new_dns2) . "',
+						   dns3 = '" . mysqli_real_escape_string($new_dns3) . "',
+						   dns4 = '" . mysqli_real_escape_string($new_dns4) . "',
+						   dns5 = '" . mysqli_real_escape_string($new_dns5) . "',
+						   dns6 = '" . mysqli_real_escape_string($new_dns6) . "',
+						   dns7 = '" . mysqli_real_escape_string($new_dns7) . "',
+						   dns8 = '" . mysqli_real_escape_string($new_dns8) . "',
+						   dns9 = '" . mysqli_real_escape_string($new_dns9) . "',
+						   dns10 = '" . mysqli_real_escape_string($new_dns10) . "',
+						   ip1 = '" . mysqli_real_escape_string($new_ip1) . "',
+						   ip2 = '" . mysqli_real_escape_string($new_ip2) . "',
+						   ip3 = '" . mysqli_real_escape_string($new_ip3) . "',
+						   ip4 = '" . mysqli_real_escape_string($new_ip4) . "',
+						   ip5 = '" . mysqli_real_escape_string($new_ip5) . "',
+						   ip6 = '" . mysqli_real_escape_string($new_ip6) . "',
+						   ip7 = '" . mysqli_real_escape_string($new_ip7) . "',
+						   ip8 = '" . mysqli_real_escape_string($new_ip8) . "',
+						   ip9 = '" . mysqli_real_escape_string($new_ip9) . "',
+						   ip10 = '" . mysqli_real_escape_string($new_ip10) . "',
+						   notes = '" . mysqli_real_escape_string($new_notes) . "',
 						   number_of_servers = '" . $new_number_of_servers . "',
 						   update_time = '" . $current_timestamp . "'
 					   WHERE id = '" . $new_dnsid . "'";
-		$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
+		$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());
 
 		$new_name = $new_name;
 		$new_dns1 = $new_dns1;
@@ -127,9 +127,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes
 			FROM dns
 			WHERE id = '" . $dnsid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) { 
+	while ($row = mysqli_fetch_object($result)) { 
 	
 		$new_name = $row->name;
 		$new_dns1 = $row->dns1;
@@ -162,9 +162,9 @@ if ($del == "1") {
 	$sql = "SELECT dns_id
 			FROM domains
 			WHERE dns_id = '" . $dnsid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_domains = 1;
 	}
 	
@@ -184,7 +184,7 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM dns 
 			WHERE id = '" . $dnsid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
 	$_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Deleted<BR>";
 	

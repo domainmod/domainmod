@@ -99,7 +99,7 @@ if ($domain != "") {
 
 if ($export == "1") {
 
-	$result_dw_dns_zone_temp = mysql_query($sql_dw_dns_zone_temp,$connection) or die(mysql_error());
+	$result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or die(mysqli_error());
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "dw_dns_zones_" . $current_timestamp_unix . ".csv";
@@ -138,16 +138,16 @@ if ($export == "1") {
 		}
 	
 	}
-	$result_total_dns_record_count = mysql_query($sql_total_dns_record_count,$connection);
+	$result_total_dns_record_count = mysqli_query($connection, $sql_total_dns_record_count);
 	
-	while ($row_total_dns_record_count = mysql_fetch_object($result_total_dns_record_count)) {
+	while ($row_total_dns_record_count = mysqli_fetch_object($result_total_dns_record_count)) {
 		
 		$total_dns_record_count_temp = $row_total_dns_record_count->total_dns_record_count;
 		
 	}
 
 	$row_content[$count++] = "Number of DNS Zones:";
-	$row_content[$count++] = number_format(mysql_num_rows($result_dw_dns_zone_temp));
+	$row_content[$count++] = number_format(mysqli_num_rows($result_dw_dns_zone_temp));
 	include("../../../_includes/system/export/write-row.inc.php");
 
 	$row_content[$count++] = "Number of DNS Records:";
@@ -203,18 +203,18 @@ if ($export == "1") {
 	$row_content[$count++] = "Inserted (into DW)";
 	include("../../../_includes/system/export/write-row.inc.php");
 
-	if (mysql_num_rows($result_dw_dns_zone_temp) > 0) {
+	if (mysqli_num_rows($result_dw_dns_zone_temp) > 0) {
 
-		while ($row_dw_dns_zone_temp = mysql_fetch_object($result_dw_dns_zone_temp)) {
+		while ($row_dw_dns_zone_temp = mysqli_fetch_object($result_dw_dns_zone_temp)) {
 
 			$sql_get_records = "SELECT *
 								FROM dw_dns_records
 								WHERE server_id = '" . $row_dw_dns_zone_temp->dw_server_id . "'
 								  AND domain = '" . $row_dw_dns_zone_temp->domain . "'
 								ORDER BY new_order";
-			$result_get_records = mysql_query($sql_get_records,$connection); 
+			$result_get_records = mysqli_query($connection, $sql_get_records);
 			
-			while ($row_get_records = mysql_fetch_object($result_get_records)) {
+			while ($row_get_records = mysqli_fetch_object($result_get_records)) {
 	
 				$row_content[$count++] = $row_dw_dns_zone_temp->dw_server_name;
 				$row_content[$count++] = $row_dw_dns_zone_temp->dw_server_host;
@@ -263,12 +263,12 @@ if ($export == "1") {
 <?php include("../../../_includes/layout/header.inc.php"); ?>
 	<font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR><?php
 
-$totalrows = mysql_num_rows(mysql_query($sql_dw_dns_zone_temp));
+$totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_dns_zone_temp));
 $navigate = pageBrowser($totalrows,15,10,"&search_for=" . $search_for . "",$_REQUEST[numBegin],$_REQUEST[begin],$_REQUEST[num]);
 $sql_dw_dns_zone_temp = $sql_dw_dns_zone_temp.$navigate[0];
-$result_dw_dns_zone_temp = mysql_query($sql_dw_dns_zone_temp,$connection) or die(mysql_error());
+$result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or die(mysqli_error());
 
-if(mysql_num_rows($result_dw_dns_zone_temp) == 0) {
+if(mysqli_num_rows($result_dw_dns_zone_temp) == 0) {
 	
 	echo "Your search returned 0 results.";
 	
@@ -309,9 +309,9 @@ if(mysql_num_rows($result_dw_dns_zone_temp) == 0) {
 		}
 	
 	}
-	$result_total_dns_record_count = mysql_query($sql_total_dns_record_count,$connection);
+	$result_total_dns_record_count = mysqli_query($connection, $sql_total_dns_record_count);
 	
-	while ($row_total_dns_record_count = mysql_fetch_object($result_total_dns_record_count)) {
+	while ($row_total_dns_record_count = mysqli_fetch_object($result_total_dns_record_count)) {
 		
 		$total_dns_record_count_temp = $row_total_dns_record_count->total_dns_record_count;
 		
@@ -327,7 +327,7 @@ if(mysql_num_rows($result_dw_dns_zone_temp) == 0) {
 	//							WHERE z.server_id = s.id
 	//							  AND X
 	//							ORDER BY s.name, z.zonefile, z.domain";
-	// $result_dw_dns_zone_temp = mysql_query($sql_dw_dns_zone_temp,$connection) or die(mysql_error());
+	// $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or die(mysqli_error());
 	$from_main_dw_dns_zone_page = 1;
 	include("../../../_includes/dw/display-dns-zone.inc.php");
 

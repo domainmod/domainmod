@@ -47,13 +47,13 @@ $new_sslcid = $_POST['new_sslcid'];
 $sql = "SELECT field_name
 		FROM ssl_cert_fields
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
-if (mysql_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
 
     $count = 0;
 
-    while ($row = mysql_fetch_object($result)) {
+    while ($row = mysqli_fetch_object($result)) {
 
         $field_array[$count] = $row->field_name;
         $count++;
@@ -76,19 +76,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "SELECT ssl_provider_id, owner_id
 				FROM ssl_accounts
 				WHERE id = '" . $new_account_id . "'";
-		$result = mysql_query($sql,$connection);
+		$result = mysqli_query($connection, $sql);
 		
-		while ($row = mysql_fetch_object($result)) { $new_ssl_provider_id = $row->ssl_provider_id; $new_owner_id = $row->owner_id; }
+		while ($row = mysqli_fetch_object($result)) { $new_ssl_provider_id = $row->ssl_provider_id; $new_owner_id = $row->owner_id; }
 
 		$sql_fee_id = "SELECT id
 					   FROM ssl_fees
 					   WHERE ssl_provider_id = '" . $new_ssl_provider_id . "'
 					     AND type_id = '" . $new_type_id . "'";
-		$result_fee_id = mysql_query($sql_fee_id,$connection);
+		$result_fee_id = mysqli_query($connection, $sql_fee_id);
 		
-		if (mysql_num_rows($result_fee_id) >= 1) { 
+		if (mysqli_num_rows($result_fee_id) >= 1) { 
 		
-			while ($row_fee_id = mysql_fetch_object($result_fee_id)) {
+			while ($row_fee_id = mysqli_fetch_object($result_fee_id)) {
 				$temp_fee_id = $row_fee_id->id;
 			}
 			$temp_fee_fixed = "1"; 
@@ -106,37 +106,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 FROM ssl_fees
                 WHERE ssl_provider_id = '" . $new_ssl_provider_id . "'
                   AND type_id = '" . $new_type_id . "'";
-        $result = mysql_query($sql,$connection);
+        $result = mysqli_query($connection, $sql);
 
-        while ($row = mysql_fetch_object($result)) { $new_total_cost = $row->total_cost; }
+        while ($row = mysqli_fetch_object($result)) { $new_total_cost = $row->total_cost; }
 
 		$sql_update = "UPDATE ssl_certs
 					   SET owner_id = '" . $new_owner_id . "',
 					   	   ssl_provider_id = '" . $new_ssl_provider_id . "',
 						   account_id = '" . $new_account_id . "',
 						   domain_id = '" . $new_domain_id . "',
-						   name = '" . mysql_real_escape_string($new_name) . "',
+						   name = '" . mysqli_real_escape_string($new_name) . "',
 						   type_id = '" . $new_type_id . "',
 						   ip_id = '" . $new_ip_id . "',
 						   cat_id = '" . $new_cat_id . "',
 						   expiry_date = '" . $new_expiry_date . "',
 						   fee_id = '" . $temp_fee_id . "',
 						   total_cost = '" . $new_total_cost . "',
-						   notes = '" . mysql_real_escape_string($new_notes) . "',
+						   notes = '" . mysqli_real_escape_string($new_notes) . "',
 						   active = '" . $new_active . "',
 						   fee_fixed = '" . $temp_fee_fixed . "',
 						   update_time = '" . $current_timestamp . "'
 					   WHERE id = '" . $new_sslcid . "'";
-		$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
+		$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());
 
 		$sql = "SELECT field_name
 				FROM ssl_cert_fields
 				ORDER BY name";
-		$result = mysql_query($sql,$connection);
+		$result = mysqli_query($connection, $sql);
 		
 		$count = 0;
 		
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 			
 			$field_array[$count] = $row->field_name;
 			$count++;
@@ -148,10 +148,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$full_field = "new_" . $field;
 			
 			$sql = "UPDATE ssl_cert_field_data
-					SET `" . $field . "` = '" . mysql_real_escape_string(${$full_field}) . "', 
+					SET `" . $field . "` = '" . mysqli_real_escape_string(${$full_field}) . "', 
 						update_time = '" . $current_timestamp . "'
 					WHERE ssl_id = '" . $new_sslcid . "'";
-			$result = mysql_query($sql,$connection);
+			$result = mysqli_query($connection, $sql);
 		
 		}
 		
@@ -180,9 +180,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			  AND sslc.ip_id = ip.id
 			  AND sslc.cat_id = cat.id
 			  AND sslc.id = '" . $sslcid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) { 
+	while ($row = mysqli_fetch_object($result)) { 
 	
 		$new_domain_id = $row->domain_id;
 		$new_name = $row->name;
@@ -208,17 +208,17 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM ssl_certs
 			WHERE id = '" . $sslcid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 
 	$sql = "DELETE FROM ssl_cert_field_data
 			WHERE ssl_id = '" . $sslcid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
 	$sql = "SELECT type
 			FROM ssl_cert_types
 			WHERE id = '" . $new_type_id . "'";
-	$result = mysql_query($sql,$connection);
-	while ($row = mysql_fetch_object($result)) { $temp_type = $row->type; }
+	$result = mysqli_query($connection, $sql);
+	while ($row = mysqli_fetch_object($result)) { $temp_type = $row->type; }
 	
 	$_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name ($temp_type)</font> Deleted<BR>";
 
@@ -250,9 +250,9 @@ $sql_domain = "SELECT id, domain
 			   FROM domains
 			   WHERE (active NOT IN ('0', '10') OR id = '" . $new_domain_id . "')
 			   ORDER BY domain";
-$result_domain = mysql_query($sql_domain,$connection) or die(mysql_error());
+$result_domain = mysqli_query($connection, $sql_domain) or die(mysqli_error());
 echo "<select name=\"new_domain_id\">";
-while ($row_domain = mysql_fetch_object($result_domain)) { ?>
+while ($row_domain = mysqli_fetch_object($result_domain)) { ?>
 
 	<option value="<?php echo $row_domain->id; ?>"<?php if ($row_domain->id == $new_domain_id) echo " selected";?>><?php echo $row_domain->domain; ?></option><?php
 
@@ -267,9 +267,9 @@ $sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS 
 				WHERE sslpa.owner_id = o.id
 				  AND sslpa.ssl_provider_id = sslp.id
 				ORDER BY sslp_name asc, o_name asc, sslpa.username asc";
-$result_account = mysql_query($sql_account,$connection) or die(mysql_error());
+$result_account = mysqli_query($connection, $sql_account) or die(mysqli_error());
 echo "<select name=\"new_account_id\">";
-while ($row_account = mysql_fetch_object($result_account)) { ?>
+while ($row_account = mysqli_fetch_object($result_account)) { ?>
 
 	<option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $new_account_id) echo " selected";?>><?php echo $row_account->sslp_name; ?>, <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
 
@@ -282,9 +282,9 @@ echo "</select>";
 $sql_type = "SELECT id, type
 			 FROM ssl_cert_types
 			 ORDER BY type asc";
-$result_type = mysql_query($sql_type,$connection) or die(mysql_error());
+$result_type = mysqli_query($connection, $sql_type) or die(mysqli_error());
 echo "<select name=\"new_type_id\">";
-while ($row_type = mysql_fetch_object($result_type)) { ?>
+while ($row_type = mysqli_fetch_object($result_type)) { ?>
 
 	<option value="<?php echo $row_type->id; ?>"<?php if ($row_type->id == $new_type_id) echo " selected";?>><?php echo $row_type->type; ?></option><?php
 
@@ -297,9 +297,9 @@ echo "</select>";
 $sql_ip = "SELECT id, ip, name
 		   FROM ip_addresses
 		   ORDER BY name, ip";
-$result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
+$result_ip = mysqli_query($connection, $sql_ip) or die(mysqli_error());
 echo "<select name=\"new_ip_id\">";
-while ($row_ip = mysql_fetch_object($result_ip)) { ?>
+while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
 
 	<option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $new_ip_id) echo " selected";?>><?php echo $row_ip->name; ?> (<?php echo $row_ip->ip; ?>)</option><?php
 
@@ -312,9 +312,9 @@ echo "</select>";
 $sql_cat = "SELECT id, name
 			FROM categories
 			ORDER BY name";
-$result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
+$result_cat = mysqli_query($connection, $sql_cat) or die(mysqli_error());
 echo "<select name=\"new_cat_id\">";
-while ($row_cat = mysql_fetch_object($result_cat)) { ?>
+while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
 
 	<option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $new_cat_id) echo " selected";?>><?php echo $row_cat->name; ?></option><?php
 
@@ -341,15 +341,15 @@ echo "</select>";
 $sql = "SELECT field_name
 		FROM ssl_cert_fields
 		ORDER BY type_id, name";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
-if (mysql_num_rows($result) > 0) { ?>
+if (mysqli_num_rows($result) > 0) { ?>
 
 	<BR><font class="subheadline">Custom Fields</font><BR><BR><?php
 
 	$count = 0;
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		
 		$field_array[$count] = $row->field_name;
 		$count++;
@@ -362,16 +362,16 @@ if (mysql_num_rows($result) > 0) { ?>
 				FROM ssl_cert_fields AS sf, custom_field_types AS cft
 				WHERE sf.type_id = cft.id
 				  AND sf.field_name = '" . $field . "'";
-		$result = mysql_query($sql,$connection);
+		$result = mysqli_query($connection, $sql);
 	
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 			
 			$sql_data = "SELECT " . $row->field_name . " 
 						 FROM ssl_cert_field_data
 						 WHERE ssl_id = '" . $sslcid . "'";
-			$result_data = mysql_query($sql_data,$connection);
+			$result_data = mysqli_query($connection, $sql_data);
 			
-			while ($row_data = mysql_fetch_object($result_data)) {
+			while ($row_data = mysqli_fetch_object($result_data)) {
 				
 				$field_data = $row_data->{$row->field_name};
 	

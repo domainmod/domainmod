@@ -30,9 +30,9 @@ $sslcid = $_GET['sslcid'];
 $sql = "SELECT name, notes
 		FROM ssl_certs
 		WHERE id = '$sslcid'";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
-while ($row = mysql_fetch_object($result)) { 
+while ($row = mysqli_fetch_object($result)) { 
 
 	$new_name = $row->name;
 	$new_notes = $row->notes;

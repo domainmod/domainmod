@@ -51,9 +51,9 @@ $new_uid = $_POST['new_uid'];
 $sql = "SELECT username
 		FROM users
 		WHERE id = '" . $uid . "'";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
-while ($row = mysql_fetch_object($result)) {
+while ($row = mysqli_fetch_object($result)) {
 	
 	if ($row->username == "admin" && $_SESSION['username'] != "admin") {
 
@@ -71,10 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 	// Check to see if another user already has the username
 	$sql = "SELECT username
 			FROM users
-			WHERE username = '" . mysql_real_escape_string($new_username) . "'
+			WHERE username = '" . mysqli_real_escape_string($new_username) . "'
 			AND id != '" . $new_uid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
-	$is_username_taken = mysql_num_rows($result);
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$is_username_taken = mysqli_num_rows($result);
 	if ($is_username_taken > 0) { $invalid_username = 1; $new_username = ""; }
 	
 	// Make sure they aren't trying to assign a reserved username
@@ -82,10 +82,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 		$sql = "SELECT username
 				FROM users
-				WHERE username = '" . mysql_real_escape_string($new_username) . "'
+				WHERE username = '" . mysqli_real_escape_string($new_username) . "'
 				AND id = '" . $new_uid . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
-		$is_it_my_username = mysql_num_rows($result);
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		$is_it_my_username = mysqli_num_rows($result);
 		
 		if ($is_it_my_username == 0) {
 
@@ -101,15 +101,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != "" && $new_email_address != "" && $invalid_username != 1) {
 
 	$sql = "UPDATE users
-			SET first_name = '" . mysql_real_escape_string($new_first_name). "',
-				last_name = '" . mysql_real_escape_string($new_last_name). "',
-				username = '" . mysql_real_escape_string($new_username) . "',
-				email_address = '" . mysql_real_escape_string($new_email_address) . "',
+			SET first_name = '" . mysqli_real_escape_string($new_first_name). "',
+				last_name = '" . mysqli_real_escape_string($new_last_name). "',
+				username = '" . mysqli_real_escape_string($new_username) . "',
+				email_address = '" . mysqli_real_escape_string($new_email_address) . "',
 				admin = '" . $new_is_admin . "',
 				active = '" . $new_is_active . "',
 				update_time = '" . $current_timestamp . "'
 			WHERE id = '" . $new_uid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
 	$_SESSION['result_message'] .= "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</font> Updated<BR>";
 	
@@ -138,9 +138,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		$sql = "SELECT first_name, last_name, username, email_address, admin, active
 				FROM users
 				WHERE id = '" . $uid . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 			
 			$new_first_name = $row->first_name;
 			$new_last_name = $row->last_name;
@@ -164,8 +164,8 @@ if ($really_del == "1") {
 	$sql = "SELECT id
 			FROM users
 			WHERE username = 'admin'";
-	$result = mysql_query($sql,$connection);
-	while ($row = mysql_fetch_object($result)) {
+	$result = mysqli_query($connection, $sql);
+	while ($row = mysqli_fetch_object($result)) {
 		$temp_uid = $row->id;
 	}
 
@@ -178,11 +178,11 @@ if ($really_del == "1") {
 
 		$sql = "DELETE FROM user_settings
 				WHERE user_id = '" . $uid . "'";
-		$result = mysql_query($sql,$connection);
+		$result = mysqli_query($connection, $sql);
 
 		$sql = "DELETE FROM users
 				WHERE id = '" . $uid . "'";
-		$result = mysql_query($sql,$connection);
+		$result = mysqli_query($connection, $sql);
 		
 		$_SESSION['result_message'] = "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</font> Deleted<BR>";
 		

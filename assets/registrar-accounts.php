@@ -68,7 +68,7 @@ $sql = "SELECT ra.id AS raid, ra.username, ra.password, ra.owner_id, ra.registra
 
 if ($export == "1") {
 
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "registrar_account_list_" . $current_timestamp_unix . ".csv";
@@ -92,11 +92,11 @@ if ($export == "1") {
 	$row_content[$count++] = "Updated";
 	include("../_includes/system/export/write-row.inc.php");
 
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 		
 		$has_active = 1;
 	
-		while ($row = mysql_fetch_object($result)) { 
+		while ($row = mysqli_fetch_object($result)) { 
 	
 			$new_raid = $row->raid;
 		
@@ -108,8 +108,8 @@ if ($export == "1") {
 								 FROM domains
 								 WHERE account_id = '" . $row->raid . "'
 								   AND active NOT IN ('0', '10')";
-			$result_domain_count = mysql_query($sql_domain_count,$connection);
-			while ($row_domain_count = mysql_fetch_object($result_domain_count)) {
+			$result_domain_count = mysqli_query($connection, $sql_domain_count);
+			while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
 				$total_domain_count = $row_domain_count->total_domain_count;
 			}
 		
@@ -174,13 +174,13 @@ if ($export == "1") {
 			GROUP BY ra.username, oname, rname
 			ORDER BY rname, username, oname";
 	
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	if (mysql_num_rows($result) > 0) { 
+	if (mysqli_num_rows($result) > 0) { 
 	
 		$has_inactive = "1";
 	
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 	
 			if ($row->raid == $_SESSION['default_registrar_account']) {
 			
@@ -234,9 +234,9 @@ if ($export == "1") {
 Below is a list of all the Domain Registrar Accounts that are stored in your <?php echo $software_title; ?>.<BR><BR>
 [<a href="<?php echo $PHP_SELF; ?>?export=1&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&oid=<?php echo $oid; ?>">EXPORT</a>]<?php
 
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-if (mysql_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
 	
 	$has_active = 1; ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
@@ -245,7 +245,7 @@ if (mysql_num_rows($result) > 0) {
             <font class="main_table_heading">Registrar Name</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Active Accounts (<?php echo mysql_num_rows($result); ?>)</font>
+            <font class="main_table_heading">Active Accounts (<?php echo mysqli_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Owner</font>
@@ -255,7 +255,7 @@ if (mysql_num_rows($result) > 0) {
         </td>
     </tr><?php 
 
-    while ($row = mysql_fetch_object($result)) { 
+    while ($row = mysqli_fetch_object($result)) { 
 
 	    $new_raid = $row->raid;
     
@@ -278,9 +278,9 @@ if (mysql_num_rows($result) > 0) {
 									 FROM domains
 									 WHERE account_id = '" . $row->raid . "'
 									   AND active NOT IN ('0', '10')";
-				$result_domain_count = mysql_query($sql_domain_count,$connection);
+				$result_domain_count = mysqli_query($connection, $sql_domain_count);
 
-				while ($row_domain_count = mysql_fetch_object($result_domain_count)) { 
+				while ($row_domain_count = mysqli_fetch_object($result_domain_count)) { 
 					echo "<a class=\"nobold\" href=\"../domains.php?oid=$row->oid&rid=$row->rid&raid=$row->raid\">" . number_format($row_domain_count->total_domain_count) . "</a>"; 
 				} ?>
 			</td>
@@ -314,9 +314,9 @@ $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.rese
 		GROUP BY ra.username, oname, rname
 		ORDER BY rname, username, oname";
 
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-if (mysql_num_rows($result) > 0) { 
+if (mysqli_num_rows($result) > 0) { 
 
 	$has_inactive = "1";
 	if ($has_active == "1") echo "<BR>";
@@ -327,14 +327,14 @@ if (mysql_num_rows($result) > 0) {
             <font class="main_table_heading">Registrar Name</font>
         </td>
         <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive Accounts (<?php echo mysql_num_rows($result); ?>)</font>
+            <font class="main_table_heading">Inactive Accounts (<?php echo mysqli_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Owner</font>
         </td>
     </tr><?php 
 
-	while ($row = mysql_fetch_object($result)) { ?>
+	while ($row = mysqli_fetch_object($result)) { ?>
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
@@ -363,9 +363,9 @@ if (!$has_active && !$has_inactive) {
 	$sql = "SELECT id
 			FROM registrars
 			LIMIT 1";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	if (mysql_num_rows($result) == 0) {  ?>
+	if (mysqli_num_rows($result) == 0) {  ?>
 
 		<BR>Before adding a Registrar Account you must add at least one Registrar. <a href="add/registrar.php">Click here to add a Registrar</a>.<BR><?php 
 

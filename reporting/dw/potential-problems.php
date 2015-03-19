@@ -35,23 +35,23 @@ $sql_accounts_without_a_dns_zone = "SELECT domain
 									WHERE domain NOT IN (SELECT domain 
 														 FROM dw_dns_zones)
 									ORDER BY domain";
-$result_accounts_without_a_dns_zone = mysql_query($sql_accounts_without_a_dns_zone,$connection);
-$temp_accounts_without_a_dns_zone = mysql_num_rows($result_accounts_without_a_dns_zone);
+$result_accounts_without_a_dns_zone = mysqli_query($connection, $sql_accounts_without_a_dns_zone);
+$temp_accounts_without_a_dns_zone = mysqli_num_rows($result_accounts_without_a_dns_zone);
 
 $sql_dns_zones_without_an_account = "SELECT domain
 									 FROM dw_dns_zones
 									 WHERE domain NOT IN (SELECT domain 
 									 					  FROM dw_accounts)
 									ORDER BY domain";
-$result_dns_zones_without_an_account = mysql_query($sql_dns_zones_without_an_account,$connection);
-$temp_dns_zones_without_an_account = mysql_num_rows($result_dns_zones_without_an_account);
+$result_dns_zones_without_an_account = mysqli_query($connection, $sql_dns_zones_without_an_account);
+$temp_dns_zones_without_an_account = mysqli_num_rows($result_dns_zones_without_an_account);
 
 $sql_suspended_accounts = "SELECT domain
 						   FROM dw_accounts
 						   WHERE suspended = '1'
 						   ORDER BY domain";
-$result_suspended_accounts = mysql_query($sql_suspended_accounts,$connection);
-$temp_suspended_accounts = mysql_num_rows($result_suspended_accounts);
+$result_suspended_accounts = mysqli_query($connection, $sql_suspended_accounts);
+$temp_suspended_accounts = mysqli_num_rows($result_suspended_accounts);
 
 if ($export == "1") {
 
@@ -73,7 +73,7 @@ if ($export == "1") {
 		$row_content[$count++] = "Accounts without a DNS Zone (" . $temp_accounts_without_a_dns_zone . ")";
 		include("../../_includes/system/export/write-row.inc.php");
 
-        while ($row_accounts_without_a_dns_zone = mysql_fetch_object($result_accounts_without_a_dns_zone)) {
+        while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
 
 			$row_content[$count++] = $row_accounts_without_a_dns_zone->domain;
 
@@ -93,7 +93,7 @@ if ($export == "1") {
 		$row_content[$count++] = "DNS Zones without an Account (" . $temp_dns_zones_without_an_account . ")";
 		include("../../_includes/system/export/write-row.inc.php");
 
-        while ($row_dns_zones_without_an_account = mysql_fetch_object($result_dns_zones_without_an_account)) {
+        while ($row_dns_zones_without_an_account = mysqli_fetch_object($result_dns_zones_without_an_account)) {
 
 			$row_content[$count++] = $row_dns_zones_without_an_account->domain;
 
@@ -114,7 +114,7 @@ if ($export == "1") {
 		$row_content[$count++] = "Suspended Accounts (" . $temp_suspended_accounts . ")";
 		include("../../_includes/system/export/write-row.inc.php");
 
-        while ($row_suspended_accounts = mysql_fetch_object($result_suspended_accounts)) {
+        while ($row_suspended_accounts = mysqli_fetch_object($result_suspended_accounts)) {
 
 			$row_content[$count++] = $row_suspended_accounts->domain;
 
@@ -161,7 +161,7 @@ if ($generate == 1) {
     
         <strong>Accounts without a DNS Zone (<?php echo $temp_accounts_without_a_dns_zone; ?>)</strong><BR><?php
     
-        while ($row_accounts_without_a_dns_zone = mysql_fetch_object($result_accounts_without_a_dns_zone)) {
+        while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
         
             $account_list_raw .= $row_accounts_without_a_dns_zone->domain . ", ";
         
@@ -191,7 +191,7 @@ if ($generate == 1) {
     
         <strong>DNS Zones without an Account (<?php echo $temp_dns_zones_without_an_account; ?>)</strong><BR><?php
     
-        while ($row_dns_zones_without_an_account = mysql_fetch_object($result_dns_zones_without_an_account)) {
+        while ($row_dns_zones_without_an_account = mysqli_fetch_object($result_dns_zones_without_an_account)) {
         
             $zone_list_raw .= $row_dns_zones_without_an_account->domain . ", ";
         
@@ -221,7 +221,7 @@ if ($generate == 1) {
     
         <strong>Suspended Accounts (<?php echo $temp_suspended_accounts; ?>)</strong><BR><?php
     
-        while ($row_suspended_accounts = mysql_fetch_object($result_suspended_accounts)) {
+        while ($row_suspended_accounts = mysqli_fetch_object($result_suspended_accounts)) {
         
             $suspended_list_raw .= $row_suspended_accounts->domain . ", ";
         

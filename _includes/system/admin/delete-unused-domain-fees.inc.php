@@ -34,7 +34,7 @@ include("../../auth/admin-user-check.inc.php");
 
 $sql = "DELETE FROM fees
         WHERE id NOT IN (SELECT fee_id FROM domains)";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
 if ($direct == "1") {
 

@@ -37,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO registrars
 				(name, url, notes, insert_time) VALUES 
-				('" . mysql_real_escape_string($new_registrar) . "', '" . mysql_real_escape_string($new_url) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+				('" . mysqli_real_escape_string($new_registrar) . "', '" . mysqli_real_escape_string($new_url) . "', '" . mysqli_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$_SESSION['result_message'] = "Registrar <font class=\"highlight\">" . $new_registrar . "</font> Added<BR>";
 

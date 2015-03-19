@@ -45,32 +45,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "UPDATE registrar_accounts
 				SET owner_id = '" . $new_owner_id . "',
 					registrar_id = '" . $new_registrar_id . "',
-					username = '" . mysql_real_escape_string($new_username) . "',
-					password = '" . mysql_real_escape_string($new_password) . "',
-					notes = '" . mysql_real_escape_string($new_notes) . "',
+					username = '" . mysqli_real_escape_string($new_username) . "',
+					password = '" . mysqli_real_escape_string($new_password) . "',
+					notes = '" . mysqli_real_escape_string($new_notes) . "',
 					reseller = '" . $new_reseller . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_raid . "'";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$sql = "UPDATE domains
 				SET owner_id = '" . $new_owner_id . "'
 				WHERE account_id = '" . $new_raid . "'";
-		$result = mysql_query($sql,$connection);
+		$result = mysqli_query($connection, $sql);
 		
 		$raid = $new_raid; 
 
 		$sql = "SELECT name
 				FROM registrars
 				WHERE id = '" . $new_registrar_id . "'";
-		$result = mysql_query($sql,$connection);
-		while ($row = mysql_fetch_object($result)) { $temp_registrar = $row->name; }
+		$result = mysqli_query($connection, $sql);
+		while ($row = mysqli_fetch_object($result)) { $temp_registrar = $row->name; }
 
 		$sql = "SELECT name
 				FROM owners
 				WHERE id = '" . $new_owner_id . "'";
-		$result = mysql_query($sql,$connection);
-		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
+		$result = mysqli_query($connection, $sql);
+		while ($row = mysqli_fetch_object($result)) { $temp_owner = $row->name; }
 		
 		$_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar, $temp_owner)</font> Updated<BR>";
 
@@ -88,9 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT owner_id, registrar_id, username, password, notes, reseller
 			FROM registrar_accounts
 			WHERE id = '" . $raid . "'"; 
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) { 
+	while ($row = mysqli_fetch_object($result)) { 
 	
 		$new_owner_id = $row->owner_id;
 		$new_registrar_id = $row->registrar_id;
@@ -107,9 +107,9 @@ if ($del == "1") {
 	$sql = "SELECT account_id
 			FROM domains
 			WHERE account_id = '" . $raid . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_domains = 1;
 	}
 	
@@ -132,9 +132,9 @@ if ($really_del == "1") {
 			WHERE ra.owner_id = o.id
 			  AND ra.registrar_id = r.id
 			  AND ra.id = '" . $raid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-	while ($row = mysql_fetch_object($result)) { 
+	while ($row = mysqli_fetch_object($result)) { 
 		$temp_username = $row->username; 
 		$temp_owner_name = $row->owner_name; 
 		$temp_registrar_name = $row->registrar_name;
@@ -142,7 +142,7 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM registrar_accounts 
 			WHERE id = '$raid'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
 	$_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$temp_username ($temp_registrar_name, $temp_owner_name)</font> Deleted<BR>";
 
@@ -167,9 +167,9 @@ if ($really_del == "1") {
 $sql_owner = "SELECT id, name
 			  FROM owners
 			  ORDER BY name asc";
-$result_owner = mysql_query($sql_owner,$connection) or die(mysql_error());
+$result_owner = mysqli_query($connection, $sql_owner) or die(mysqli_error());
 echo "<select name=\"new_owner_id\">";
-while ($row_owner = mysql_fetch_object($result_owner)) {
+while ($row_owner = mysqli_fetch_object($result_owner)) {
 
 	if ($row_owner->id == $new_owner_id) {
 
@@ -189,9 +189,9 @@ echo "</select>";
 $sql_registrar = "SELECT id, name
 				  FROM registrars
 				  ORDER BY name asc";
-$result_registrar = mysql_query($sql_registrar,$connection) or die(mysql_error());
+$result_registrar = mysqli_query($connection, $sql_registrar) or die(mysqli_error());
 echo "<select name=\"new_registrar_id\">";
-while ($row_registrar = mysql_fetch_object($result_registrar)) {
+while ($row_registrar = mysqli_fetch_object($result_registrar)) {
 
 	if ($row_registrar->id == $new_registrar_id) {
 

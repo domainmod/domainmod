@@ -54,14 +54,14 @@ if ($all == "1") {
 
 }
 
-$result = mysql_query($sql,$connection) or die(mysql_error());
-$total_rows = mysql_num_rows($result);
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$total_rows = mysqli_num_rows($result);
 
 if ($total_rows > 0) {
 
 	if ($export == "1") {
 
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
@@ -103,9 +103,9 @@ if ($total_rows > 0) {
 		$new_tld = "";
 		$last_tld = "";
 
-		if (mysql_num_rows($result) > 0) {
+		if (mysqli_num_rows($result) > 0) {
 	
-			while ($row = mysql_fetch_object($result)) {
+			while ($row = mysqli_fetch_object($result)) {
 				
 				$new_registrar = $row->registrar;
 				$new_tld = $row->tld;
@@ -164,9 +164,9 @@ if ($total_rows > 0) {
 									 WHERE registrar_id = '" . $row->id . "'
 									   AND fee_id = '" . $row->fee_id . "'
 									   AND active NOT IN ('0', '10')";
-				$result_domain_count = mysql_query($sql_domain_count,$connection);
+				$result_domain_count = mysqli_query($connection, $sql_domain_count);
 
-				while ($row_domain_count = mysql_fetch_object($result_domain_count)) {
+				while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
 
 					$row_content[$count++] = $row_domain_count->total_domain_count;
 
@@ -255,7 +255,7 @@ if ($total_rows > 0) {
         $new_tld = "";
         $last_tld = "";
     
-        while ($row = mysql_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
             
             $new_registrar = $row->registrar;
             $new_tld = $row->tld;
@@ -338,8 +338,8 @@ if ($total_rows > 0) {
 											 WHERE registrar_id = '" . $row->id . "'
 											   AND fee_id = '" . $row->fee_id . "'
 											   AND active NOT IN ('0', '10')";
-						$result_domain_count = mysql_query($sql_domain_count,$connection);
-						while ($row_domain_count = mysql_fetch_object($result_domain_count)) {
+						$result_domain_count = mysqli_query($connection, $sql_domain_count);
+						while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
 							
 							if ($row_domain_count->total_domain_count == 0) {
 
@@ -433,8 +433,8 @@ if ($total_rows > 0) {
 											 WHERE registrar_id = '" . $row->id . "'
 											   AND fee_id = '" . $row->fee_id . "'
 											   AND active NOT IN ('0', '10')";
-						$result_domain_count = mysql_query($sql_domain_count,$connection);
-						while ($row_domain_count = mysql_fetch_object($result_domain_count)) {
+						$result_domain_count = mysqli_query($connection, $sql_domain_count);
+						while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
 							
 							if ($row_domain_count->total_domain_count == 0) {
 

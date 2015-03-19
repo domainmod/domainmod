@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			SET expiration_emails = '$new_expiration_email',
 				update_time = '$current_timestamp'
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$_SESSION['expiration_email'] = $new_expiration_email;
 
@@ -48,9 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT expiration_emails
 			FROM user_settings
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		
 		$new_expiration_email = $row->expiration_emails;
 

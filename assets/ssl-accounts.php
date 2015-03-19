@@ -54,7 +54,7 @@ $sql = "SELECT sa.id AS sslpaid, sa.username, sa.password, sa.owner_id, sa.ssl_p
 
 if ($export == "1") {
 
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "ssl_provider_account_list_" . $current_timestamp_unix . ".csv";
@@ -78,11 +78,11 @@ if ($export == "1") {
 	$row_content[$count++] = "Updated";
 	include("../_includes/system/export/write-row.inc.php");
 
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 		
 		$has_active = 1;
 	
-		while ($row = mysql_fetch_object($result)) { 
+		while ($row = mysqli_fetch_object($result)) { 
 	
 			$new_sslpaid = $row->sslpaid;
 		
@@ -94,8 +94,8 @@ if ($export == "1") {
 								FROM ssl_certs
 								WHERE account_id = '$row->sslpaid'
 								  AND active NOT IN ('0')";
-			$result_total_count = mysql_query($sql_total_count,$connection);
-			while ($row_cert_count = mysql_fetch_object($result_total_count)) {
+			$result_total_count = mysqli_query($connection, $sql_total_count);
+			while ($row_cert_count = mysqli_fetch_object($result_total_count)) {
 				$total_cert_count = $row_cert_count->total_cert_count;
 			}
 	
@@ -159,13 +159,13 @@ if ($export == "1") {
 			  " . $oid_string . "
 			GROUP BY sa.username, oname, sslpname
 			ORDER BY sslpname, username, oname";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	if (mysql_num_rows($result) > 0) { 
+	if (mysqli_num_rows($result) > 0) { 
 	
 		$has_inactive = "1";
 	
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 	
 			if ($row->sslpaid == $_SESSION['default_ssl_provider_account']) {
 			
@@ -219,9 +219,9 @@ if ($export == "1") {
 Below is a list of all the SSL Provider Accounts that are stored in your <?php echo $software_title; ?>.<BR><BR>
 [<a href="<?php echo $PHP_SELF; ?>?export=1&sslpid=<?php echo $sslpid; ?>&sslpaid=<?php echo $sslpaid; ?>&oid=<?php echo $oid; ?>">EXPORT</a>]<?php
 
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-if (mysql_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
 	
 	$has_active = 1; ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
@@ -230,7 +230,7 @@ if (mysql_num_rows($result) > 0) {
             <font class="main_table_heading">SSL Provider</font>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Active Accounts (<?php echo mysql_num_rows($result); ?>)</font>
+            <font class="main_table_heading">Active Accounts (<?php echo mysqli_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Owner</font>
@@ -240,7 +240,7 @@ if (mysql_num_rows($result) > 0) {
         </td>
     </tr><?php 
 
-    while ($row = mysql_fetch_object($result)) { 
+    while ($row = mysqli_fetch_object($result)) { 
 
 	    $new_sslpaid = $row->sslpaid;
     
@@ -263,9 +263,9 @@ if (mysql_num_rows($result) > 0) {
 									FROM ssl_certs
 									WHERE account_id = '$row->sslpaid'
 									  AND active NOT IN ('0')";
-				$result_total_count = mysql_query($sql_total_count,$connection);
+				$result_total_count = mysqli_query($connection, $sql_total_count);
 
-				while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+				while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
 					echo "<a class=\"nobold\" href=\"../ssl-certs.php?oid=$row->oid&sslpid=$row->sslpid&sslpaid=$row->sslpaid\">" . number_format($row_total_count->total_cert_count) . "</a>"; 
 				} ?>
 			</td>
@@ -298,9 +298,9 @@ $sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, s
 		  " . $oid_string . "
 		GROUP BY sa.username, oname, sslpname
 		ORDER BY sslpname, username, oname";
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-if (mysql_num_rows($result) > 0) { 
+if (mysqli_num_rows($result) > 0) { 
 
 	$has_inactive = "1";
 	if ($has_active == "1") echo "<BR>";
@@ -311,7 +311,7 @@ if (mysql_num_rows($result) > 0) {
             <font class="main_table_heading">SSL Provider</font>
         </td>
         <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive Accounts (<?php echo mysql_num_rows($result); ?>)</font>
+            <font class="main_table_heading">Inactive Accounts (<?php echo mysqli_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Owner</font>
@@ -321,7 +321,7 @@ if (mysql_num_rows($result) > 0) {
         </td>
     </tr><?php 
 
-	while ($row = mysql_fetch_object($result)) {  ?>
+	while ($row = mysqli_fetch_object($result)) {  ?>
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
@@ -353,9 +353,9 @@ if (!$has_active && !$has_inactive) {
 	$sql = "SELECT id
 			FROM ssl_providers
 			LIMIT 1";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 
-	if (mysql_num_rows($result) == 0) { ?>
+	if (mysqli_num_rows($result) == 0) { ?>
 
 		<BR>Before adding an SSL Provider Account you must add at least one SSL Provider. <a href="add/ssl-provider.php">Click here to add an SSL Provider</a>.<BR><?php 
 

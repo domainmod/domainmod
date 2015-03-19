@@ -40,20 +40,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT into ssl_accounts
 				(owner_id, ssl_provider_id, username, password, notes, reseller, insert_time) VALUES 
-				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . mysql_real_escape_string($new_username) . "', '" . mysql_real_escape_string($new_password) . "', '" . mysql_real_escape_string($new_notes) . "', '" . $new_reseller . "', '" . $current_timestamp . "')";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . mysqli_real_escape_string($new_username) . "', '" . mysqli_real_escape_string($new_password) . "', '" . mysqli_real_escape_string($new_notes) . "', '" . $new_reseller . "', '" . $current_timestamp . "')";
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 		$sql = "SELECT name
 				FROM ssl_providers
 				WHERE id = '" . $new_ssl_provider_id . "'";
-		$result = mysql_query($sql,$connection);
-		while ($row = mysql_fetch_object($result)) { $temp_ssl_provider = $row->name; }
+		$result = mysqli_query($connection, $sql);
+		while ($row = mysqli_fetch_object($result)) { $temp_ssl_provider = $row->name; }
 
 		$sql = "SELECT name
 				FROM owners
 				WHERE id = '" . $new_owner_id . "'";
-		$result = mysql_query($sql,$connection);
-		while ($row = mysql_fetch_object($result)) { $temp_owner = $row->name; }
+		$result = mysqli_query($connection, $sql);
+		while ($row = mysqli_fetch_object($result)) { $temp_owner = $row->name; }
 		
 		$_SESSION['result_message'] = "SSL Account <font class=\"highlight\">$new_username (" . $temp_ssl_provider . ", " . $temp_owner . ")</font> Added<BR>";
 
@@ -91,9 +91,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_owner = "SELECT id, name
 			  FROM owners
 			  ORDER BY name asc";
-$result_owner = mysql_query($sql_owner,$connection) or die(mysql_error());
+$result_owner = mysqli_query($connection, $sql_owner) or die(mysqli_error());
 echo "<select name=\"new_owner_id\">";
-while ($row_owner = mysql_fetch_object($result_owner)) {
+while ($row_owner = mysqli_fetch_object($result_owner)) {
 
 	if ($row_owner->id == $_SESSION['default_owner_ssl']) {
 
@@ -113,9 +113,9 @@ echo "</select>";
 $sql_ssl_provider = "SELECT id, name
 					 FROM ssl_providers
 					 ORDER BY name asc";
-$result_ssl_provider = mysql_query($sql_ssl_provider,$connection) or die(mysql_error());
+$result_ssl_provider = mysqli_query($connection, $sql_ssl_provider) or die(mysqli_error());
 echo "<select name=\"new_ssl_provider_id\">";
-while ($row_ssl_provider = mysql_fetch_object($result_ssl_provider)) {
+while ($row_ssl_provider = mysqli_fetch_object($result_ssl_provider)) {
 
 	if ($row_ssl_provider->id == $_SESSION['default_ssl_provider']) {
 

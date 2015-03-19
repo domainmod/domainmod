@@ -43,7 +43,7 @@ $sql = "(SELECT c.id, c.name, c.stakeholder, c.notes, c.insert_time, c.update_ti
 
 if ($export == "1") {
 
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "category_list_" . $current_timestamp_unix . ".csv";
@@ -66,11 +66,11 @@ if ($export == "1") {
 	$row_content[$count++] = "Updated";
 	include("../_includes/system/export/write-row.inc.php");
 
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 
 		$has_active = "1";
 
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 
 			$new_pcid = $row->id;
 		
@@ -82,8 +82,8 @@ if ($export == "1") {
 								FROM domains
 								WHERE active NOT IN ('0', '10')
 								  AND cat_id = '" . $row->id . "'";
-			$result_total_count = mysql_query($sql_total_count,$connection);
-			while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+			$result_total_count = mysqli_query($connection, $sql_total_count);
+			while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
 				$total_domains = $row_total_count->total_count; 
 			}
 	
@@ -91,8 +91,8 @@ if ($export == "1") {
 								FROM ssl_certs
 								WHERE active NOT IN ('0')
 								  AND cat_id = '" . $row->id . "'";
-			$result_total_count = mysql_query($sql_total_count,$connection);
-			while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+			$result_total_count = mysqli_query($connection, $sql_total_count);
+			while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
 				$total_certs = $row_total_count->total_count; 
 			}
 	
@@ -151,13 +151,13 @@ if ($export == "1") {
 	
 	}
 	
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 		
 		$has_inactive = "1";
 	
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 	
 			if ($row->id == $_SESSION['default_category_domains']) {
 			
@@ -210,15 +210,15 @@ if ($export == "1") {
 Below is a list of all the Categories that are stored in your <?php echo $software_title; ?>.<BR><BR>
 [<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
 
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-if (mysql_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
 
 	$has_active = "1"; ?>
 	<table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
 		<td class="main_table_cell_heading_active">
-			<font class="main_table_heading">Active Categories (<?php echo mysql_num_rows($result); ?>)</font>
+			<font class="main_table_heading">Active Categories (<?php echo mysqli_num_rows($result); ?>)</font>
 		</td>
 		<td class="main_table_cell_heading_active">
 			<font class="main_table_heading">Stakeholder</font>
@@ -231,7 +231,7 @@ if (mysql_num_rows($result) > 0) {
 		</td>
 	</tr><?php 
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 
 		$new_pcid = $row->id;
 	
@@ -251,8 +251,8 @@ if (mysql_num_rows($result) > 0) {
 									FROM domains
 									WHERE active NOT IN ('0', '10')
 									  AND cat_id = '" . $row->id . "'";
-				$result_total_count = mysql_query($sql_total_count,$connection);
-				while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+				$result_total_count = mysqli_query($connection, $sql_total_count);
+				while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
 					$total_domains = $row_total_count->total_count; 
 				}
 				
@@ -271,8 +271,8 @@ if (mysql_num_rows($result) > 0) {
 									FROM ssl_certs
 									WHERE active NOT IN ('0')
 									  AND cat_id = '" . $row->id . "'";
-				$result_total_count = mysql_query($sql_total_count,$connection);
-				while ($row_total_count = mysql_fetch_object($result_total_count)) { 
+				$result_total_count = mysqli_query($connection, $sql_total_count);
+				while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
 					$total_certs = $row_total_count->total_count; 
 				}
 				
@@ -311,9 +311,9 @@ if ($exclude_category_string == "") {
 
 }
 
-$result = mysql_query($sql,$connection) or die(mysql_error());
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-if (mysql_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
 	
 	$has_inactive = "1";
 	if ($has_active == "1") echo "<BR>";
@@ -321,14 +321,14 @@ if (mysql_num_rows($result) > 0) {
 
     <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive Categories (<?php echo mysql_num_rows($result); ?>)</font>
+            <font class="main_table_heading">Inactive Categories (<?php echo mysqli_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Stakeholder</font>
         </td>
     </tr><?php 
 	
-	while ($row = mysql_fetch_object($result)) { ?>
+	while ($row = mysqli_fetch_object($result)) { ?>
 
         <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">

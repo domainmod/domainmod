@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				default_ssl_type = '$new_default_ssl_type',
 				default_ssl_provider = '$new_default_ssl_provider',
 				update_time = '$current_timestamp'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$_SESSION['system_default_category_domains'] = $new_default_category_domains;
 	$_SESSION['system_default_category_ssl'] = $new_default_category_ssl;
@@ -102,8 +102,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql = "SELECT id, name
 		FROM registrars
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
 	?>
 	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_registrar'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
@@ -119,8 +119,8 @@ $sql = "SELECT ra.id, ra.username, r.name AS r_name, o.name AS o_name
 		WHERE r.id = ra.registrar_id
 		  AND ra.owner_id = o.id
 		ORDER BY r.name, o.name, ra.username";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
 	?>
 	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_registrar_account'] == $row->id) echo " selected"; ?>><?php echo $row->r_name; ?> :: <?php echo $row->o_name; ?> :: <?php echo $row->username; ?></option>
     <?php
@@ -134,8 +134,8 @@ while ($row = mysql_fetch_object($result)) {
 $sql = "SELECT id, name
 		FROM dns
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
 	?>
 	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_dns'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
@@ -149,8 +149,8 @@ while ($row = mysql_fetch_object($result)) {
 $sql = "SELECT id, name
 		FROM hosting
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
 	?>
 	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_host'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
@@ -164,8 +164,8 @@ while ($row = mysql_fetch_object($result)) {
 $sql = "SELECT id, ip, name
 		FROM ip_addresses
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
 	?>
 	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ip_address_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?> (<?php echo $row->ip; ?>)</option>
     <?php
@@ -179,8 +179,8 @@ while ($row = mysql_fetch_object($result)) {
 $sql = "SELECT id, name
 		FROM categories
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
 	?>
 	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_category_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
@@ -194,8 +194,8 @@ while ($row = mysql_fetch_object($result)) {
 $sql = "SELECT id, name
 		FROM owners
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
 	?>
 	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_owner_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
@@ -210,8 +210,8 @@ while ($row = mysql_fetch_object($result)) {
 $sql = "SELECT id, name
 		FROM ssl_providers
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
 	?>
 	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_provider'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
@@ -227,8 +227,8 @@ $sql = "SELECT sslpa.id, sslpa.username, sslp.name AS p_name, o.name AS o_name
 		WHERE sslp.id = sslpa.ssl_provider_id
 		  AND sslpa.owner_id = o.id
 		ORDER BY sslp.name, o.name, sslpa.username";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
 	?>
 	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_provider_account'] == $row->id) echo " selected"; ?>><?php echo $row->p_name; ?> :: <?php echo $row->o_name; ?> :: <?php echo $row->username; ?></option>
     <?php
@@ -242,8 +242,8 @@ while ($row = mysql_fetch_object($result)) {
 $sql = "SELECT id, type
 		FROM ssl_cert_types
 		ORDER BY type";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
 	?>
 	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_type'] == $row->id) echo " selected"; ?>><?php echo $row->type; ?></option>
     <?php
@@ -257,8 +257,8 @@ while ($row = mysql_fetch_object($result)) {
 $sql = "SELECT id, ip, name
 		FROM ip_addresses
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
 	?>
 	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ip_address_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?> (<?php echo $row->ip; ?>)</option>
     <?php
@@ -272,8 +272,8 @@ while ($row = mysql_fetch_object($result)) {
 $sql = "SELECT id, name
 		FROM categories
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
 	?>
 	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_category_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php
@@ -287,8 +287,8 @@ while ($row = mysql_fetch_object($result)) {
 $sql = "SELECT id, name
 		FROM owners
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
 	?>
 	<option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_owner_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
     <?php

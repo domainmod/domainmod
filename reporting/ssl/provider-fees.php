@@ -56,14 +56,14 @@ if ($all == "1") {
 
 }
 
-$result = mysql_query($sql,$connection) or die(mysql_error());
-$total_rows = mysql_num_rows($result);
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$total_rows = mysqli_num_rows($result);
 
 if ($total_rows > 0) {
 
 	if ($export == "1") {
 
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
@@ -107,9 +107,9 @@ if ($total_rows > 0) {
 		$new_type = "";
 		$last_type = "";
 	
-		if (mysql_num_rows($result) > 0) {
+		if (mysqli_num_rows($result) > 0) {
 	
-			while ($row = mysql_fetch_object($result)) {
+			while ($row = mysqli_fetch_object($result)) {
 				
 				$new_ssl_provider = $row->ssl_provider;
 				$new_type = $row->type;
@@ -150,9 +150,9 @@ if ($total_rows > 0) {
 								  WHERE ssl_provider_id = '" . $row->id . "'
 								    AND fee_id = '" . $row->fee_id . "'
 									AND active NOT IN ('0')";
-				$result_ssl_count = mysql_query($sql_ssl_count,$connection);
+				$result_ssl_count = mysqli_query($connection, $sql_ssl_count);
 
-				while ($row_ssl_count = mysql_fetch_object($result_ssl_count)) {
+				while ($row_ssl_count = mysqli_fetch_object($result_ssl_count)) {
 
 					$row_content[$count++] = $row_ssl_count->total_ssl_count;
 
@@ -235,7 +235,7 @@ if ($total_rows > 0) {
         $new_type = "";
         $last_type = "";
     
-        while ($row = mysql_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
             
             $new_ssl_provider = $row->ssl_provider;
             $new_type = $row->type;
@@ -294,8 +294,8 @@ if ($total_rows > 0) {
 										  WHERE ssl_provider_id = '" . $row->id . "'
 										    AND fee_id = '" . $row->fee_id . "'
 											AND active NOT IN ('0')";
-						$result_ssl_count = mysql_query($sql_ssl_count,$connection);
-						while ($row_ssl_count = mysql_fetch_object($result_ssl_count)) {
+						$result_ssl_count = mysqli_query($connection, $sql_ssl_count);
+						while ($row_ssl_count = mysqli_fetch_object($result_ssl_count)) {
 							
 							if ($row_ssl_count->total_ssl_count == 0) {
 
@@ -365,8 +365,8 @@ if ($total_rows > 0) {
 										  WHERE ssl_provider_id = '" . $row->id . "'
 										    AND fee_id = '" . $row->fee_id . "'
 											AND active NOT IN ('0')";
-						$result_ssl_count = mysql_query($sql_ssl_count,$connection);
-						while ($row_ssl_count = mysql_fetch_object($result_ssl_count)) {
+						$result_ssl_count = mysqli_query($connection, $sql_ssl_count);
+						while ($row_ssl_count = mysqli_fetch_object($result_ssl_count)) {
 							
 							if ($row_ssl_count->total_ssl_count == 0) {
 

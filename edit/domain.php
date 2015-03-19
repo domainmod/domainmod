@@ -50,13 +50,13 @@ $new_did = $_POST['new_did'];
 $sql = "SELECT field_name
 		FROM domain_fields
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
-if (mysql_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
 
     $count = 0;
 
-    while ($row = mysql_fetch_object($result)) {
+    while ($row = mysqli_fetch_object($result)) {
 
         $field_array[$count] = $row->field_name;
         $count++;
@@ -81,19 +81,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "SELECT registrar_id, owner_id
 				FROM registrar_accounts
 				WHERE id = '" . $new_account_id . "'";
-		$result = mysql_query($sql,$connection);
+		$result = mysqli_query($connection, $sql);
 		
-		while ($row = mysql_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
+		while ($row = mysqli_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
 
 		$sql_fee_id = "SELECT id
 					   FROM fees
 					   WHERE registrar_id = '" . $new_registrar_id . "'
 						 AND tld = '" . $tld . "'";
-		$result_fee_id = mysql_query($sql_fee_id,$connection);
+		$result_fee_id = mysqli_query($connection, $sql_fee_id);
 		
-		if (mysql_num_rows($result_fee_id) >= 1) { 
+		if (mysqli_num_rows($result_fee_id) >= 1) {
 		
-			while ($row_fee_id = mysql_fetch_object($result_fee_id)) {
+			while ($row_fee_id = mysqli_fetch_object($result_fee_id)) {
 				$temp_fee_id = $row_fee_id->id;
 			}
 			$temp_fee_fixed = "1"; 
@@ -119,15 +119,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 FROM fees
                 WHERE registrar_id = '" . $new_registrar_id . "'
                   AND tld = '" . $tld . "'";
-        $result = mysql_query($sql,$connection);
+        $result = mysqli_query($connection, $sql);
 
-        while ($row = mysql_fetch_object($result)) { $new_total_cost = $row->total_cost; }
+        while ($row = mysqli_fetch_object($result)) { $new_total_cost = $row->total_cost; }
 
         $sql_update = "UPDATE domains
 					   SET owner_id = '" . $new_owner_id . "',
 						   registrar_id = '" . $new_registrar_id . "',
 						   account_id = '" . $new_account_id . "',
-						   domain = '" . mysql_real_escape_string($new_domain) . "',
+						   domain = '" . mysqli_real_escape_string($new_domain) . "',
 						   tld = '" . $tld . "',
 						   expiry_date = '" . $new_expiry_date . "',
 						   cat_id = '" . $new_cat_id . "',
@@ -136,23 +136,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   hosting_id = '" . $new_hosting_id . "',
 						   fee_id = '" . $temp_fee_id . "',
 						   total_cost = '" . $new_total_cost . "',
-						   function = '" . mysql_real_escape_string($new_function) . "',
-						   notes = '" . mysql_real_escape_string($new_notes) . "',
+						   function = '" . mysqli_real_escape_string($new_function) . "',
+						   notes = '" . mysqli_real_escape_string($new_notes) . "',
 						   privacy = '" . $new_privacy . "',
 						   active = '" . $new_active . "',
 						   fee_fixed = '" . $temp_fee_fixed . "',
 						   update_time = '" . $current_timestamp . "'
 					   WHERE id = '" . $new_did . "'";
-		$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
+		$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());
 
 		$sql = "SELECT field_name
 				FROM domain_fields
 				ORDER BY name";
-		$result = mysql_query($sql,$connection);
+		$result = mysqli_query($connection, $sql);
 		
 		$count = 0;
 		
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 			
 			$field_array[$count] = $row->field_name;
 			$count++;
@@ -164,10 +164,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$full_field = "new_" . $field;
 			
 			$sql = "UPDATE domain_field_data
-					SET `" . $field . "` = '" . mysql_real_escape_string(${$full_field}) . "', 
+					SET `" . $field . "` = '" . mysqli_real_escape_string(${$full_field}) . "',
 						update_time = '" . $current_timestamp . "'
 					WHERE domain_id = '" . $new_did . "'";
-			$result = mysql_query($sql,$connection);
+			$result = mysqli_query($connection, $sql);
 		
 		}
 
@@ -194,9 +194,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			FROM domains as d, registrar_accounts as ra
 			WHERE d.account_id = ra.id
 			  AND d.id = '" . $did . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) { 
+	while ($row = mysqli_fetch_object($result)) {
 	
 		$new_domain = $row->domain;
 		$new_expiry_date = $row->expiry_date;
@@ -219,9 +219,9 @@ if ($del == "1") {
 	$sql = "SELECT domain_id
 			FROM ssl_certs
 			WHERE domain_id = '" . $did . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		$existing_ssl_certs = 1;
 	}
 	
@@ -241,11 +241,11 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM domains
 			WHERE id = '" . $did . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 
 	$sql = "DELETE FROM domain_field_data
 			WHERE domain_id = '" . $did . "'";
-	$result = mysql_query($sql,$connection);
+	$result = mysqli_query($connection, $sql);
 	
 	$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Deleted<BR>";
 
@@ -282,9 +282,9 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
 				WHERE ra.owner_id = o.id
 				  AND ra.registrar_id = r.id
 				ORDER BY r_name asc, o_name asc, ra.username asc";
-$result_account = mysql_query($sql_account,$connection) or die(mysql_error());
+$result_account = mysqli_query($connection, $sql_account) or die(mysqli_error());
 echo "<select name=\"new_account_id\">";
-while ($row_account = mysql_fetch_object($result_account)) { ?>
+while ($row_account = mysqli_fetch_object($result_account)) { ?>
 
 	<option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $new_account_id) echo " selected";?>><?php echo $row_account->r_name; ?>, <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
 
@@ -297,9 +297,9 @@ echo "</select>";
 $sql_dns = "SELECT id, name
 			FROM dns
 			ORDER BY name asc";
-$result_dns = mysql_query($sql_dns,$connection) or die(mysql_error());
+$result_dns = mysqli_query($connection, $sql_dns) or die(mysqli_error());
 echo "<select name=\"new_dns_id\">";
-while ($row_dns = mysql_fetch_object($result_dns)) { ?>
+while ($row_dns = mysqli_fetch_object($result_dns)) { ?>
 
 	<option value="<?php echo $row_dns->id; ?>"<?php if ($row_dns->id == $new_dns_id) echo " selected";?>><?php echo $row_dns->name; ?></option><?php
 
@@ -312,10 +312,10 @@ echo "</select>";
 $sql_ip = "SELECT id, name, ip
 		   FROM ip_addresses
 		   ORDER BY name asc, ip asc";
-$result_ip = mysql_query($sql_ip,$connection) or die(mysql_error());
+$result_ip = mysqli_query($connection, $sql_ip) or die(mysqli_error());
 echo "<select name=\"new_ip_id\">";
 
-while ($row_ip = mysql_fetch_object($result_ip)) { ?>
+while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
 
 	<option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $new_ip_id) echo " selected";?>><?php echo $row_ip->name; ?> (<?php echo $row_ip->ip; ?>)</option><?php
 
@@ -328,9 +328,9 @@ echo "</select>";
 $sql_hosting = "SELECT id, name
 				FROM hosting
 				ORDER BY name asc";
-$result_hosting = mysql_query($sql_hosting,$connection) or die(mysql_error());
+$result_hosting = mysqli_query($connection, $sql_hosting) or die(mysqli_error());
 echo "<select name=\"new_hosting_id\">";
-while ($row_hosting = mysql_fetch_object($result_hosting)) { ?>
+while ($row_hosting = mysqli_fetch_object($result_hosting)) { ?>
 
 	<option value="<?php echo $row_hosting->id; ?>"<?php if ($row_hosting->id == $new_hosting_id) echo " selected";?>><?php echo $row_hosting->name; ?></option><?php
 
@@ -343,9 +343,9 @@ echo "</select>";
 $sql_cat = "SELECT id, name
 			FROM categories
 			ORDER BY name asc";
-$result_cat = mysql_query($sql_cat,$connection) or die(mysql_error());
+$result_cat = mysqli_query($connection, $sql_cat) or die(mysqli_error());
 echo "<select name=\"new_cat_id\">";
-while ($row_cat = mysql_fetch_object($result_cat)) { ?>
+while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
 
 	<option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $new_cat_id) echo " selected";?>><?php echo $row_cat->name; ?></option><?php
 
@@ -382,15 +382,15 @@ echo "</select>";
 $sql = "SELECT field_name
 		FROM domain_fields
 		ORDER BY type_id, name";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
-if (mysql_num_rows($result) > 0) { ?>
+if (mysqli_num_rows($result) > 0) { ?>
 
 	<BR><font class="subheadline">Custom Fields</font><BR><BR><?php
 
 	$count = 0;
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		
 		$field_array[$count] = $row->field_name;
 		$count++;
@@ -403,16 +403,16 @@ if (mysql_num_rows($result) > 0) { ?>
 				FROM domain_fields AS df, custom_field_types AS cft
 				WHERE df.type_id = cft.id
 				  AND df.field_name = '" . $field . "'";
-		$result = mysql_query($sql,$connection);
+		$result = mysqli_query($connection, $sql);
 		
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 			
 			$sql_data = "SELECT " . $row->field_name . " 
 						 FROM domain_field_data
 						 WHERE domain_id = '" . $did . "'";
-			$result_data = mysql_query($sql_data,$connection);
+			$result_data = mysqli_query($sql_data, $connection);
 			
-			while ($row_data = mysql_fetch_object($result_data)) {
+			while ($row_data = mysqli_fetch_object($result_data)) {
 				
 				$field_data = $row_data->{$row->field_name};
 	
@@ -478,20 +478,20 @@ if (mysql_num_rows($result) > 0) { ?>
 $sql_accounts = "SELECT id
 				 FROM dw_accounts
 				 WHERE domain = '" . $new_domain . "'";
-$result_accounts = mysql_query($sql_accounts,$connection);
+$result_accounts = mysqli_query($connection, $sql_accounts);
 
 $sql_dns_zones = "SELECT id
 				  FROM dw_dns_zones
 				  WHERE domain = '" . $new_domain . "'";
-$result_dns_zones = mysql_query($sql_dns_zones,$connection);
+$result_dns_zones = mysqli_query($connection, $sql_dns_zones);
 
-if (mysql_num_rows($result_accounts) > 0 || mysql_num_rows($result_dns_zones) > 0) { ?>
+if (mysqli_num_rows($result_accounts) > 0 || mysqli_num_rows($result_dns_zones) > 0) { ?>
 
     <BR><BR><font class="subheadline">Data Warehouse Information</font><?php
 	
 }
 
-if (mysql_num_rows($result_accounts) > 0) { ?>
+if (mysqli_num_rows($result_accounts) > 0) { ?>
 
     <BR><BR><strong>Accounts</strong><?php
 
@@ -500,21 +500,21 @@ if (mysql_num_rows($result_accounts) > 0) { ?>
 							WHERE a.server_id = s.id
 							  AND a.domain = '" . $new_domain . "'
 							ORDER BY s.name, a.unix_startdate DESC";
-	$result_dw_account_temp = mysql_query($sql_dw_account_temp,$connection) or die(mysql_error());
+	$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or die(mysqli_error());
 	// $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
 	// 						   FROM dw_accounts AS a, dw_servers AS s
 	// 						   WHERE a.server_id = s.id
 	// 						     AND X
 	// 						   ORDER BY s.name, a.unix_startdate DESC";
-	// $result_dw_account_temp = mysql_query($sql_dw_account_temp,$connection) or die(mysql_error());
+	// $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or die(mysqli_error());
 	$from_main_dw_account_page = 0;
 	include("../_includes/dw/display-account.inc.php");
 
 }
 
-if (mysql_num_rows($result_dns_zones) > 0) {
+if (mysqli_num_rows($result_dns_zones) > 0) {
 
-    if (mysql_num_rows($result_accounts) > 0) {
+    if (mysqli_num_rows($result_accounts) > 0) {
 
 	    echo "";
 
@@ -529,13 +529,13 @@ if (mysql_num_rows($result_dns_zones) > 0) {
 							 WHERE z.server_id = s.id
 							   AND z.domain = '" . $new_domain . "'
 							 ORDER BY s.name, z.zonefile, z.domain";
-	$result_dw_dns_zone_temp = mysql_query($sql_dw_dns_zone_temp,$connection) or die(mysql_error());
+	$result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or die(mysqli_error());
 	// $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
 	//							FROM dw_dns_zones AS z, dw_servers AS s
 	//							WHERE z.server_id = s.id
 	//							  AND X
 	//							ORDER BY s.name, z.zonefile, z.domain";
-	// $result_dw_dns_zone_temp = mysql_query($sql_dw_dns_zone_temp,$connection) or die(mysql_error());
+	// $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or die(mysqli_error());
 	$from_main_dw_dns_zone_page = 0;
 	include("../_includes/dw/display-dns-zone.inc.php");
 

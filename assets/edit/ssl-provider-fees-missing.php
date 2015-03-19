@@ -40,7 +40,7 @@ $sql = "SELECT sp.id AS ssl_provider_id, sp.name AS ssl_provider_name
 		  AND sc.fee_id = '0'
 		GROUP BY sp.name
 		ORDER BY sp.name asc";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 ?>
 The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these fees.<BR>
 <table class="main_table" cellpadding="0" cellspacing="0">
@@ -54,7 +54,7 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
     </tr>
 
 	<?php 
-    while ($row = mysql_fetch_object($result)) { ?>
+    while ($row = mysqli_fetch_object($result)) { ?>
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
@@ -69,10 +69,10 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
 										AND sslc.fee_id = '0'
 									  GROUP BY sslcf.type
 									  ORDER BY sslcf.type asc";
-                $result_missing_types = mysql_query($sql_missing_types,$connection);
+                $result_missing_types = mysqli_query($connection, $sql_missing_types);
                 $full_type_list = "";
 
-                while ($row_missing_types = mysql_fetch_object($result_missing_types)) {
+                while ($row_missing_types = mysqli_fetch_object($result_missing_types)) {
                     $full_type_list .= $row_missing_types->type . " / ";
                 }
 

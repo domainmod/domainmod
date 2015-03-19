@@ -46,9 +46,9 @@ if ($new_csfid == "") $new_csfid = $csfid;
 $sql = "SELECT id
 		FROM ssl_cert_fields
 		WHERE id = '" . $csfid . "'";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
-if (mysql_num_rows($result) == 0) {
+if (mysqli_num_rows($result) == 0) {
 
 		$_SESSION['result_message'] .= "You're trying to edit an invalid Custom SSL Field<BR>";
 		
@@ -60,18 +60,18 @@ if (mysql_num_rows($result) == 0) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 
 	$sql = "UPDATE ssl_cert_fields
-			SET name = '" . mysql_real_escape_string($new_name) . "',
-				description = '" . mysql_real_escape_string($new_description) . "',
-				notes = '" . mysql_real_escape_string($new_notes) . "',
+			SET name = '" . mysqli_real_escape_string($new_name) . "',
+				description = '" . mysqli_real_escape_string($new_description) . "',
+				notes = '" . mysqli_real_escape_string($new_notes) . "',
 				update_time = '" . $current_timestamp . "'
 			WHERE id = '" . $new_csfid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
 	$sql = "SELECT field_name
 			FROM ssl_cert_fields
 			WHERE id = '" . $new_csfid . "'";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
-	while ($row = mysql_fetch_object($result)) { $temp_field_name = $row->field_name; }
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	while ($row = mysqli_fetch_object($result)) { $temp_field_name = $row->field_name; }
 	
 	$_SESSION['result_message'] .= "Custom SSL Field <font class=\"highlight\">" . $new_name . " (" . $temp_field_name . ")</font> Updated<BR>";
 	
@@ -91,9 +91,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 				WHERE f.type_id = t.id
 				  AND f.id = '" . $csfid . "'
 				ORDER BY f.name";
-		$result = mysql_query($sql,$connection) or die(mysql_error());
+		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-		while ($row = mysql_fetch_object($result)) {
+		while ($row = mysqli_fetch_object($result)) {
 			
 			$new_name = $row->name;
 			$new_field_name = $row->field_name;
@@ -124,19 +124,19 @@ if ($really_del == "1") {
 		$sql = "SELECT name, field_name
 				FROM ssl_cert_fields
 				WHERE id = '" . $csfid . "'";
-		$result = mysql_query($sql,$connection);
-		while ($row = mysql_fetch_object($result)) {
+		$result = mysqli_query($connection, $sql);
+		while ($row = mysqli_fetch_object($result)) {
 			$temp_name = $row->name;
 			$temp_field_name = $row->field_name;
 		}
 
 		$sql = "ALTER TABLE `ssl_cert_field_data`
 				DROP `" . $temp_field_name . "`";
-		$result = mysql_query($sql,$connection);
+		$result = mysqli_query($connection, $sql);
 
 		$sql = "DELETE FROM ssl_cert_fields
 				WHERE id = '" . $csfid . "'";
-		$result = mysql_query($sql,$connection);
+		$result = mysqli_query($connection, $sql);
 
 		$_SESSION['result_message'] = "Custom SSL Field <font class=\"highlight\">" . $temp_name . " (" . $temp_field_name . ")</font> Deleted<BR>";
 		

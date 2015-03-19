@@ -31,25 +31,25 @@ if ($demo_install != "1") {
 			  AND f.id = d.fee_id
 			  AND d.active NOT IN ('0', '10')
 			  GROUP BY c.currency";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 	
 		$exclude_string .= "'" . $row->currency . "', ";
 	
 		$sql_user = "SELECT user_id, default_currency
 					 FROM user_settings";
-		$result_user = mysql_query($sql_user,$connection);
+		$result_user = mysqli_query($connection, $sql_user);
 		
-		while ($row_user = mysql_fetch_object($result_user)) {
+		while ($row_user = mysqli_fetch_object($result_user)) {
 	
 			$sql_existing = "SELECT id
 							 FROM currency_conversions
 							 WHERE currency_id = '" . $row->id . "'
 							   AND user_id = '" . $row_user->user_id . "'";
-			$result_existing = mysql_query($sql_existing,$connection) or die(mysql_error());
+			$result_existing = mysqli_query($connection, $sql_existing) or die(mysqli_error());
 			
-			if (mysql_num_rows($result_existing) == 0) {
+			if (mysqli_num_rows($result_existing) == 0) {
 				
 				$existing_currency = "";
 				
@@ -68,7 +68,7 @@ if ($demo_install != "1") {
 									   update_time = '" . $current_timestamp . "'
 								   WHERE currency_id = '" . $row->id . "'
 									 AND user_id = '" . $row_user->user_id . "'";
-					$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
+					$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());
 		
 				} else {
 		
@@ -92,7 +92,7 @@ if ($demo_install != "1") {
 									   update_time = '" . $current_timestamp . "'
 								   WHERE currency_id = '" . $row->id . "'
 									 AND user_id = '" . $row_user->user_id . "'";
-					$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
+					$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());
 		
 				}
 		
@@ -103,7 +103,7 @@ if ($demo_install != "1") {
 					$sql_insert = "INSERT INTO currency_conversions
 								   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
 								   ('" . $row->id . "', '" . $row_user->user_id . "', '1', '" . $current_timestamp . "', '" . $current_timestamp . "')";
-					$result_insert = mysql_query($sql_insert,$connection) or die(mysql_error());
+					$result_insert = mysqli_query($connection, $sql_insert) or die(mysqli_error());
 		
 				} else {
 		
@@ -125,7 +125,7 @@ if ($demo_install != "1") {
 					$sql_insert = "INSERT INTO currency_conversions
 								   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
 								   ('" . $row->id . "', '" . $row_user->user_id . "', '" . $conversion_rate . "', '" . $current_timestamp . "', '" . $current_timestamp . "')";
-					$result_insert = mysql_query($sql_insert,$connection) or die(mysql_error());
+					$result_insert = mysqli_query($connection, $sql_insert) or die(mysqli_error());
 		
 				}
 		
@@ -144,23 +144,23 @@ if ($demo_install != "1") {
 			  AND sslc.active NOT IN ('0')
 			  AND c.currency NOT IN (" . $exclude_string . ")
 			  GROUP BY c.currency";
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 	
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 	
 		$sql_user = "SELECT user_id, default_currency
 					 FROM user_settings";
-		$result_user = mysql_query($sql_user,$connection);
+		$result_user = mysqli_query($connection, $sql_user);
 		
-		while ($row_user = mysql_fetch_object($result_user)) {
+		while ($row_user = mysqli_fetch_object($result_user)) {
 	
 			$sql_existing = "SELECT id
 							 FROM currency_conversions
 							 WHERE currency_id = '" . $row->id . "'
 							   AND user_id = '" . $row_user->user_id . "'";
-			$result_existing = mysql_query($sql_existing,$connection) or die(mysql_error());
+			$result_existing = mysqli_query($connection, $sql_existing) or die(mysqli_error());
 			
-			if (mysql_num_rows($result_existing) == 0) {
+			if (mysqli_num_rows($result_existing) == 0) {
 				
 				$existing_currency = "";
 				
@@ -179,7 +179,7 @@ if ($demo_install != "1") {
 									   update_time = '" . $current_timestamp . "'
 								   WHERE currency_id = '" . $row->id . "'
 									 AND user_id = '" . $row_user->user_id . "'";
-					$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
+					$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());
 		
 				} else {
 		
@@ -203,7 +203,7 @@ if ($demo_install != "1") {
 									   update_time = '" . $current_timestamp . "'
 								   WHERE currency_id = '" . $row->id . "'
 									 AND user_id = '" . $row_user->user_id . "'";
-					$result_update = mysql_query($sql_update,$connection) or die(mysql_error());
+					$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());
 		
 				}
 		
@@ -214,7 +214,7 @@ if ($demo_install != "1") {
 					$sql_insert = "INSERT INTO currency_conversions
 								   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
 								   ('" . $row->id . "', '" . $row_user->user_id . "', '1', '" . $current_timestamp . "', '" . $current_timestamp . "')";
-					$result_insert = mysql_query($sql_insert,$connection) or die(mysql_error());
+					$result_insert = mysqli_query($connection, $sql_insert) or die(mysqli_error());
 		
 				} else {
 		
@@ -236,7 +236,7 @@ if ($demo_install != "1") {
 					$sql_insert = "INSERT INTO currency_conversions
 								   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
 								   ('" . $row->id . "', '" . $row_user->user_id . "', '" . $conversion_rate . "', '" . $current_timestamp . "', '" . $current_timestamp . "')";
-					$result_insert = mysql_query($sql_insert,$connection) or die(mysql_error());
+					$result_insert = mysqli_query($connection, $sql_insert) or die(mysqli_error());
 		
 				}
 		

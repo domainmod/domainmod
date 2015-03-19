@@ -42,8 +42,8 @@ $software_section = "admin-system-info";
 <?php
 $sql = "SELECT db_version
 		FROM settings";
-$result = mysql_query($sql,$connection) or die(mysql_error());
-while ($row = mysql_fetch_object($result)) {
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
+while ($row = mysqli_fetch_object($result)) {
 	$db_version = $row->db_version;
 }
 ?>

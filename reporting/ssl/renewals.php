@@ -77,12 +77,12 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date,
 		  AND sslc.active NOT IN ('0')
 		  " . $range_string . "
 		ORDER BY sslc.expiry_date asc, sslc.name asc";	
-$result = mysql_query($sql,$connection) or die(mysql_error());
-$total_results = mysql_num_rows($result);
+$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$total_results = mysqli_num_rows($result);
 
-$result_cost = mysql_query($sql,$connection) or die(mysql_error());
+$result_cost = mysqli_query($connection, $sql) or die(mysqli_error());
 $total_cost = 0;
-while ($row_cost = mysql_fetch_object($result_cost)) {
+while ($row_cost = mysqli_fetch_object($result_cost)) {
 	$temp_total_cost = $temp_total_cost + $row_cost->converted_renewal_fee;
 }
 
@@ -96,7 +96,7 @@ $total_cost = $temp_output_amount;
 
 if ($export == "1") {
 
-	$result = mysql_query($sql,$connection) or die(mysql_error());
+	$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	if ($all == "1") {
@@ -157,9 +157,9 @@ if ($export == "1") {
 	$sql_field = "SELECT name
 				  FROM ssl_cert_fields
 				  ORDER BY name";
-	$result_field = mysql_query($sql_field,$connection);
+	$result_field = mysqli_query($connection, $sql_field);
 	
-	while ($row_field = mysql_fetch_object($result_field)) {
+	while ($row_field = mysqli_fetch_object($result_field)) {
 		
 		$row_content[$count++] = $row_field->name;
 	
@@ -169,7 +169,7 @@ if ($export == "1") {
 	$row_content[$count++] = "Updated";
 	include("../../_includes/system/export/write-row.inc.php");
 
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		
 		if ($row->active == "0") { $ssl_status = "EXPIRED"; } 
 		elseif ($row->active == "1") { $ssl_status = "ACTIVE"; } 
@@ -206,12 +206,12 @@ if ($export == "1") {
 		$sql_field = "SELECT field_name
 					  FROM ssl_cert_fields
 					  ORDER BY name";
-		$result_field = mysql_query($sql_field,$connection);
+		$result_field = mysqli_query($connection, $sql_field);
 		
 		$array_count = 0;
 		$field_data = "";
 		
-		while ($row_field = mysql_fetch_object($result_field)) {
+		while ($row_field = mysqli_fetch_object($result_field)) {
 			
 			$field_array[$array_count] = $row_field->field_name;
 			$array_count++;
@@ -223,9 +223,9 @@ if ($export == "1") {
 			$sql_data = "SELECT " . $field . " 
 						 FROM ssl_cert_field_data
 						 WHERE ssl_id = '" . $row->id . "'";
-			$result_data = mysql_query($sql_data,$connection);
+			$result_data = mysqli_query($connection, $sql_data);
 			
-			while ($row_data = mysql_fetch_object($result_data)) {
+			while ($row_data = mysqli_fetch_object($result_data)) {
 		
 				$row_content[$count++] = $row_data->{$field};
 			
@@ -324,7 +324,7 @@ if ($export == "1") {
     </td>
 <?php } ?>
 </tr>
-<?php while ($row = mysql_fetch_object($result)) { ?>
+<?php while ($row = mysqli_fetch_object($result)) { ?>
 <?php 
 $renewal_fee_individual = $row->renewal_fee * $row->conversion;
 $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual; 
@@ -413,13 +413,13 @@ Last Update Time<BR>
 $sql = "SELECT name
 		FROM ssl_cert_fields
 		ORDER BY name";
-$result = mysql_query($sql,$connection);
+$result = mysqli_query($connection, $sql);
 
-if (mysql_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
 
 	echo "<BR><strong>Custom Fields</strong><BR>";
 
-	while ($row = mysql_fetch_object($result)) {
+	while ($row = mysqli_fetch_object($result)) {
 		echo $row->name . "<BR>";
 	}
 	
