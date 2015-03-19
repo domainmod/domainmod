@@ -410,7 +410,7 @@ if (mysqli_num_rows($result) > 0) { ?>
 			$sql_data = "SELECT " . $row->field_name . " 
 						 FROM domain_field_data
 						 WHERE domain_id = '" . $did . "'";
-			$result_data = mysqli_query($sql_data, $connection);
+			$result_data = mysqli_query($connection, $sql_data);
 			
 			while ($row_data = mysqli_fetch_object($result_data)) {
 				
