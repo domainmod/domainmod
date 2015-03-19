@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $sql = "INSERT INTO fees
                         (registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id, insert_time) VALUES
-                        ('" . $new_rid . "', '" . mysqli_real_escape_string($new_tld) . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "', '" . $new_privacy_fee . "', '" . $new_misc_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
+                        ('" . $new_rid . "', '" . mysqli_real_escape_string($connection, $new_tld) . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "', '" . $new_privacy_fee . "', '" . $new_misc_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
                 $result = mysqli_query($connection, $sql) or die(mysqli_error());
 
                 $sql = "SELECT id

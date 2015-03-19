@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 			$sql = "INSERT INTO domains
 					(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id, fee_id, total_cost, function, notes, privacy, active, insert_time) VALUES
-					('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . $new_account_id . "', '" . mysqli_real_escape_string($new_domain) . "', '" . $tld . "', '" . $new_expiry_date . "', '" . $new_cat_id . "', '" . $new_dns_id . "', '" . $new_ip_id . "', '" . $new_hosting_id . "', '" . $new_fee_id . "', '" . $new_total_cost . "', '" . mysqli_real_escape_string($new_function) . "', '" . mysqli_real_escape_string($new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $current_timestamp . "')";
+					('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . $new_account_id . "', '" . mysqli_real_escape_string($connection, $new_domain) . "', '" . $tld . "', '" . $new_expiry_date . "', '" . $new_cat_id . "', '" . $new_dns_id . "', '" . $new_ip_id . "', '" . $new_hosting_id . "', '" . $new_fee_id . "', '" . $new_total_cost . "', '" . mysqli_real_escape_string($connection, $new_function) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $current_timestamp . "')";
 			$result = mysqli_query($connection, $sql) or die(mysqli_error());
 			
 			$sql = "SELECT id
@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$full_field = "new_" . $field;
 				
 				$sql = "UPDATE domain_field_data
-						SET `" . $field . "` = '" . mysqli_real_escape_string(${$full_field}) . "' 
+						SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "'
 						WHERE domain_id = '" . $temp_domain_id . "'";
 				$result = mysqli_query($connection, $sql);
 			

@@ -85,12 +85,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO ssl_certs
 				(owner_id, ssl_provider_id, account_id, domain_id, name, type_id, ip_id, cat_id, expiry_date, fee_id, total_cost, notes, active, insert_time) VALUES
-				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . $new_account_id . "', '" . $new_domain_id . "', '" . mysqli_real_escape_string($new_name) . "', '" . $new_type_id . "', '" . $new_ip_id . "', '" . $new_cat_id . "', '" . $new_expiry_date . "', '" . $new_fee_id . "', '" . $new_total_cost . "', '" . mysqli_real_escape_string($new_notes) . "', '" . $new_active . "', '" . $current_timestamp . "')";
+				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . $new_account_id . "', '" . $new_domain_id . "', '" . mysqli_real_escape_string($connection, $new_name) . "', '" . $new_type_id . "', '" . $new_ip_id . "', '" . $new_cat_id . "', '" . $new_expiry_date . "', '" . $new_fee_id . "', '" . $new_total_cost . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_active . "', '" . $current_timestamp . "')";
 		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 		$sql = "SELECT id
 				FROM ssl_certs
-				WHERE name = '" . mysqli_real_escape_string($new_name) . "'
+				WHERE name = '" . mysqli_real_escape_string($connection, $new_name) . "'
 				  AND insert_time = '" . $current_timestamp . "'";
 		$result = mysqli_query($connection, $sql);
 		while ($row = mysqli_fetch_object($result)) { $temp_ssl_id = $row->id; }
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$full_field = "new_" . $field;
 			
 			$sql = "UPDATE ssl_cert_field_data
-					SET `" . $field . "` = '" . mysqli_real_escape_string(${$full_field}) . "' 
+					SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "'
 					WHERE ssl_id = '" . $temp_ssl_id . "'";
 			$result = mysqli_query($connection, $sql);
 		

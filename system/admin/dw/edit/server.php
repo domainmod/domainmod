@@ -49,13 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" && $new_hash != "") {
 
 		$sql = "UPDATE dw_servers
-				SET name = '" . mysqli_real_escape_string($new_name) . "', 
-					host = '" . mysqli_real_escape_string($new_host) . "',
-					protocol = '" . mysqli_real_escape_string($new_protocol) . "',
-					port = '" . mysqli_real_escape_string($new_port) . "',
-					username = '" . mysqli_real_escape_string($new_username) . "',
-					hash = '" . mysqli_real_escape_string($new_hash) . "',
-					notes = '" . mysqli_real_escape_string($new_notes) . "',
+				SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
+					host = '" . mysqli_real_escape_string($connection, $new_host) . "',
+					protocol = '" . mysqli_real_escape_string($connection, $new_protocol) . "',
+					port = '" . mysqli_real_escape_string($connection, $new_port) . "',
+					username = '" . mysqli_real_escape_string($connection, $new_username) . "',
+					hash = '" . mysqli_real_escape_string($connection, $new_hash) . "',
+					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_dwsid . "'";
 		$result = mysqli_query($connection, $sql) or die(mysqli_error());

@@ -40,9 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_registrar != "" && $new_url != "") {
 
 		$sql = "UPDATE registrars
-				SET name = '" . mysqli_real_escape_string($new_registrar) . "', 
-					url = '" . mysqli_real_escape_string($new_url) . "', 
-					notes = '" . mysqli_real_escape_string($new_notes) . "',
+				SET name = '" . mysqli_real_escape_string($connection, $new_registrar) . "',
+					url = '" . mysqli_real_escape_string($connection, $new_url) . "',
+					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_rid . "'";
 		$result = mysqli_query($connection, $sql) or die(mysqli_error());

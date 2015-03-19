@@ -41,10 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_name != "" && $new_ip != "") {
 
 		$sql_update = "UPDATE ip_addresses
-					   SET name = '" . mysqli_real_escape_string($new_name) . "',
-					   	   ip = '" . mysqli_real_escape_string($new_ip) . "',
-						   rdns = '" . mysqli_real_escape_string($new_rdns) . "',
-						   notes = '" . mysqli_real_escape_string($new_notes) . "',
+					   SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
+					   	   ip = '" . mysqli_real_escape_string($connection, $new_ip) . "',
+						   rdns = '" . mysqli_real_escape_string($connection, $new_rdns) . "',
+						   notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 						   update_time = '" . $current_timestamp . "'
 					   WHERE id = '" . $new_ipid . "'";
 		$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());

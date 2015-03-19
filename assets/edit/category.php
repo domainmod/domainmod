@@ -43,9 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_category != "") {
 
 		$sql = "UPDATE categories
-				SET name = '" . mysqli_real_escape_string($new_category) . "', 
-					stakeholder = '" . mysqli_real_escape_string($new_stakeholder) . "',
-					notes = '" . mysqli_real_escape_string($new_notes) . "',
+				SET name = '" . mysqli_real_escape_string($connection, $new_category) . "',
+					stakeholder = '" . mysqli_real_escape_string($connection, $new_stakeholder) . "',
+					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_pcid . "'";
 		$result = mysqli_query($connection, $sql) or die(mysqli_error());

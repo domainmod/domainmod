@@ -41,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
    if (mysqli_num_rows($result) == 1) {
 
 		$sql_update = "UPDATE users 
-					   SET first_name = '" . mysqli_real_escape_string($new_first_name) . "',
-					   	   last_name = '" . mysqli_real_escape_string($new_last_name) . "',
+					   SET first_name = '" . mysqli_real_escape_string($connection, $new_first_name) . "',
+					   	   last_name = '" . mysqli_real_escape_string($connection, $new_last_name) . "',
 						   email_address = '$new_email_address', 
 						   update_time = '$current_timestamp'
 					   WHERE id = '" . $_SESSION['user_id'] . "' 

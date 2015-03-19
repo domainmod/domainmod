@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO ip_addresses
 				(name, ip, rdns, notes, insert_time) VALUES 
-				('" . mysqli_real_escape_string($new_name) . "', '" . mysqli_real_escape_string($new_ip) . "', '" . mysqli_real_escape_string($new_rdns) . "', '" . mysqli_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
+				('" . mysqli_real_escape_string($connection, $new_name) . "', '" . mysqli_real_escape_string($connection, $new_ip) . "', '" . mysqli_real_escape_string($connection, $new_rdns) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
 
 		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		

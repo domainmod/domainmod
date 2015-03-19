@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					   SET owner_id = '" . $new_owner_id . "',
 						   registrar_id = '" . $new_registrar_id . "',
 						   account_id = '" . $new_account_id . "',
-						   domain = '" . mysqli_real_escape_string($new_domain) . "',
+						   domain = '" . mysqli_real_escape_string($connection, $new_domain) . "',
 						   tld = '" . $tld . "',
 						   expiry_date = '" . $new_expiry_date . "',
 						   cat_id = '" . $new_cat_id . "',
@@ -136,8 +136,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   hosting_id = '" . $new_hosting_id . "',
 						   fee_id = '" . $temp_fee_id . "',
 						   total_cost = '" . $new_total_cost . "',
-						   function = '" . mysqli_real_escape_string($new_function) . "',
-						   notes = '" . mysqli_real_escape_string($new_notes) . "',
+						   function = '" . mysqli_real_escape_string($connection, $new_function) . "',
+						   notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 						   privacy = '" . $new_privacy . "',
 						   active = '" . $new_active . "',
 						   fee_fixed = '" . $temp_fee_fixed . "',
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$full_field = "new_" . $field;
 			
 			$sql = "UPDATE domain_field_data
-					SET `" . $field . "` = '" . mysqli_real_escape_string(${$full_field}) . "',
+					SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "',
 						update_time = '" . $current_timestamp . "'
 					WHERE domain_id = '" . $new_did . "'";
 			$result = mysqli_query($connection, $sql);

@@ -99,11 +99,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$new_segment_formatted = preg_replace("/\r\n/", "','", $new_segment_formatted);
 			$new_segment_formatted = str_replace (" ", "", $new_segment_formatted);
 			$new_segment_formatted = trim($new_segment_formatted);
-			$new_segment_formatted = mysqli_real_escape_string($new_segment_formatted);
+			$new_segment_formatted = mysqli_real_escape_string($connection, $new_segment_formatted);
 	
 			$sql = "INSERT into segments
 					(name, description, segment, number_of_domains, notes, insert_time) VALUES 
-					('" . mysqli_real_escape_string($new_name) . "', '" . mysqli_real_escape_string($new_description) . "', '" . $new_segment_formatted . "', '" . $number_of_domains . "', '" . mysqli_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
+					('" . mysqli_real_escape_string($connection, $new_name) . "', '" . mysqli_real_escape_string($connection, $new_description) . "', '" . $new_segment_formatted . "', '" . $number_of_domains . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
 			$result = mysqli_query($connection, $sql) or die(mysqli_error());
 			
 			$sql = "SELECT id

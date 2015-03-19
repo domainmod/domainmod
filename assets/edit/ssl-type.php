@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_type != "") {
 
 		$sql = "UPDATE ssl_cert_types
-				SET type = '" . mysqli_real_escape_string($new_type) . "', 
-					notes = '" . mysqli_real_escape_string($new_notes) . "',
+				SET type = '" . mysqli_real_escape_string($connection, $new_type) . "',
+					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_ssltid . "'";
 		$result = mysqli_query($connection, $sql) or die(mysqli_error());

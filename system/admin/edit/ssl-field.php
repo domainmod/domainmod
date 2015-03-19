@@ -60,9 +60,9 @@ if (mysqli_num_rows($result) == 0) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 
 	$sql = "UPDATE ssl_cert_fields
-			SET name = '" . mysqli_real_escape_string($new_name) . "',
-				description = '" . mysqli_real_escape_string($new_description) . "',
-				notes = '" . mysqli_real_escape_string($new_notes) . "',
+			SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
+				description = '" . mysqli_real_escape_string($connection, $new_description) . "',
+				notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 				update_time = '" . $current_timestamp . "'
 			WHERE id = '" . $new_csfid . "'";
 	$result = mysqli_query($connection, $sql) or die(mysqli_error());

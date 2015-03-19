@@ -104,14 +104,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$new_segment_formatted = preg_replace("/\r\n/", "','", $new_segment_formatted);
 			$new_segment_formatted = str_replace (" ", "", $new_segment_formatted);
 			$new_segment_formatted = trim($new_segment_formatted);
-			$new_segment_formatted = mysqli_real_escape_string($new_segment_formatted);
+			$new_segment_formatted = mysqli_real_escape_string($connection, $new_segment_formatted);
 	
 			$sql = "UPDATE segments
-					SET name = '" . mysqli_real_escape_string($new_name) . "',
-						description = '" . mysqli_real_escape_string($new_description) . "',
+					SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
+						description = '" . mysqli_real_escape_string($connection, $new_description) . "',
 						segment = '" . $new_segment_formatted . "',
 						number_of_domains = '" . $number_of_domains . "',
-						notes = '" . mysqli_real_escape_string($new_notes) . "',
+						notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 						update_time = '" . $current_timestamp . "'
 					WHERE id = '" . $new_segid . "'";
 			$result = mysqli_query($connection, $sql) or die(mysqli_error());

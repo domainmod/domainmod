@@ -45,9 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "UPDATE ssl_accounts
 				SET owner_id = '" . $new_owner_id . "',
 					ssl_provider_id = '" . $new_ssl_provider_id . "',
-					username = '" . mysqli_real_escape_string($new_username) . "',
-					password = '" . mysqli_real_escape_string($new_password) . "',
-					notes = '" . mysqli_real_escape_string($new_notes) . "',
+					username = '" . mysqli_real_escape_string($connection, $new_username) . "',
+					password = '" . mysqli_real_escape_string($connection, $new_password) . "',
+					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 					reseller = '" . $new_reseller . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_sslpaid . "'";

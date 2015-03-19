@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 
 		$sql = "INSERT INTO domain_fields 
 				(name, field_name, description, type_id, notes, insert_time) VALUES 
-				('" . mysqli_real_escape_string($new_name) . "', '" . $new_field_name . "', '" . mysqli_real_escape_string($new_description) . "', '" . $new_field_type_id . "', '" . mysqli_real_escape_string($new_notes) . "', '" . $current_timestamp . "')";
+				('" . mysqli_real_escape_string($connection, $new_name) . "', '" . $new_field_name . "', '" . mysqli_real_escape_string($connection, $new_description) . "', '" . $new_field_type_id . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
 		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 
 		if ($new_field_type_id == '1') { // Check Box

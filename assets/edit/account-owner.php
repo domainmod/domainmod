@@ -42,8 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_owner != "") {
 
 		$sql = "UPDATE owners
-				SET name = '" . mysqli_real_escape_string($new_owner) . "',
-					notes = '" . mysqli_real_escape_string($new_notes) . "',
+				SET name = '" . mysqli_real_escape_string($connection, $new_owner) . "',
+					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_oid . "'";
 		$result = mysqli_query($connection, $sql) or die(mysqli_error());

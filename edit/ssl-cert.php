@@ -115,14 +115,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					   	   ssl_provider_id = '" . $new_ssl_provider_id . "',
 						   account_id = '" . $new_account_id . "',
 						   domain_id = '" . $new_domain_id . "',
-						   name = '" . mysqli_real_escape_string($new_name) . "',
+						   name = '" . mysqli_real_escape_string($connection, $new_name) . "',
 						   type_id = '" . $new_type_id . "',
 						   ip_id = '" . $new_ip_id . "',
 						   cat_id = '" . $new_cat_id . "',
 						   expiry_date = '" . $new_expiry_date . "',
 						   fee_id = '" . $temp_fee_id . "',
 						   total_cost = '" . $new_total_cost . "',
-						   notes = '" . mysqli_real_escape_string($new_notes) . "',
+						   notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 						   active = '" . $new_active . "',
 						   fee_fixed = '" . $temp_fee_fixed . "',
 						   update_time = '" . $current_timestamp . "'
@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$full_field = "new_" . $field;
 			
 			$sql = "UPDATE ssl_cert_field_data
-					SET `" . $field . "` = '" . mysqli_real_escape_string(${$full_field}) . "', 
+					SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "',
 						update_time = '" . $current_timestamp . "'
 					WHERE ssl_id = '" . $new_sslcid . "'";
 			$result = mysqli_query($connection, $sql);

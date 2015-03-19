@@ -40,9 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_host != "" && $new_url != "") {
 
 		$sql = "UPDATE hosting
-				SET name = '" . mysqli_real_escape_string($new_host) . "', 
-					url = '" . mysqli_real_escape_string($new_url) . "',
-					notes = '" . mysqli_real_escape_string($new_notes) . "',
+				SET name = '" . mysqli_real_escape_string($connection, $new_host) . "',
+					url = '" . mysqli_real_escape_string($connection, $new_url) . "',
+					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_whid . "'";
 		$result = mysqli_query($connection, $sql) or die(mysqli_error());

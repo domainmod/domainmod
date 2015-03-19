@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO registrar_accounts 
 				(owner_id, registrar_id, username, password, notes, reseller, insert_time) VALUES 
-				('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . mysqli_real_escape_string($new_username) . "', '" . mysqli_real_escape_string($new_password) . "', '" . mysqli_real_escape_string($new_notes) . "', '" . $new_reseller . "', '" . $current_timestamp . "')";
+				('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . mysqli_real_escape_string($connection, $new_username) . "', '" . mysqli_real_escape_string($connection, $new_password) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_reseller . "', '" . $current_timestamp . "')";
 		$result = mysqli_query($connection, $sql) or die(mysqli_error());
 		
 		$sql = "SELECT name
