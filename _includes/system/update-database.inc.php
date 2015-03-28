@@ -3288,6 +3288,24 @@ if ($current_db_version < $most_recent_db_version) {
 
     }
 
+    // upgrade database from 2.0054 to 2.0055
+    if ($current_db_version == 2.0054) {
+
+        $sql = "ALTER TABLE `user_settings`
+					ADD `display_inactive_assets` INT(1) NOT NULL DEFAULT '1' AFTER `display_ssl_fee`";
+        $result = mysqli_query($connection, $sql) or die(mysqli_error());
+
+        $_SESSION['display_inactive_assets'] = "1";
+
+        $sql = "UPDATE settings
+				SET db_version = '2.0055',
+					update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'";
+        $result = mysqli_query($connection, $sql) or die(mysqli_error());
+
+        $current_db_version = 2.0055;
+
+    }
+
     if ($direct == "1") {
 	
 		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
