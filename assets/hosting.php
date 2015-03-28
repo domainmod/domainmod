@@ -235,57 +235,66 @@ if (mysqli_num_rows($result) > 0) {
 
 }
 
-$exclude_web_host_string = substr($exclude_web_host_string_raw, 0, -2); 
+if ($_SESSION['display_inactive_assets'] == "1") {
 
-if ($exclude_web_host_string == "") {
+    $exclude_web_host_string = substr($exclude_web_host_string_raw, 0, -2);
 
-	$sql = "SELECT id, name, url, notes, insert_time, update_time
-			FROM hosting
-			ORDER BY name";
+    if ($exclude_web_host_string == "") {
 
-} else {
+        $sql = "SELECT id, name, url, notes, insert_time, update_time
+                FROM hosting
+                ORDER BY name";
 
-	$sql = "SELECT id, name, url, notes, insert_time, update_time
-			FROM hosting
-			WHERE id NOT IN (" . $exclude_web_host_string . ")
-			ORDER BY name";
+    } else {
 
-}
+        $sql = "SELECT id, name, url, notes, insert_time, update_time
+                FROM hosting
+                WHERE id NOT IN (" . $exclude_web_host_string . ")
+                ORDER BY name";
 
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
-$number_of_hosting_providers = mysqli_num_rows($result);
+    }
 
-if (mysqli_num_rows($result) > 0) { 
+    $result = mysqli_query($connection, $sql) or die(mysqli_error());
+    $number_of_hosting_providers = mysqli_num_rows($result);
 
-	$has_inactive = "1";
-	if ($has_active == "1") echo "<BR>";
-	if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+    if (mysqli_num_rows($result) > 0) {
 
-	<tr class="main_table_row_heading_inactive">
-		<td class="main_table_cell_heading_inactive">
-			<font class="main_table_heading">Inactive Hosts (<?php echo $number_of_hosting_providers; ?>)</font>
-		</td>
-		<td class="main_table_cell_heading_inactive">
-			<font class="main_table_heading">Options</font>
-		</td>
-	</tr><?php 
-	
-	while ($row = mysqli_fetch_object($result)) { ?>
+        $has_inactive = "1";
+        if ($has_active == "1") echo "<BR>";
+        if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
 
-        <tr class="main_table_row_inactive">
+        <tr class="main_table_row_heading_inactive">
+        <td class="main_table_cell_heading_inactive">
+            <font class="main_table_heading">Inactive Hosts (<?php echo $number_of_hosting_providers; ?>)</font>
+        </td>
+        <td class="main_table_cell_heading_inactive">
+            <font class="main_table_heading">Options</font>
+        </td>
+        </tr><?php
+
+        while ($row = mysqli_fetch_object($result)) { ?>
+
+            <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/host.php?whid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_host'] == "1") echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
+                <a class="invisiblelink"
+                   href="edit/host.php?whid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_host'] == "1") echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
-				<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
+                <a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
             </td>
-        </tr><?php 
-		
-	}
+            </tr><?php
+
+        }
+
+    }
 
 }
 
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+
+if ($_SESSION['display_inactive_assets'] != "1") { ?>
+    <BR><em>Inactive Hosts are currently not displayed. <a class="invisiblelink" href="../system/display-settings.php">Click here to display them</a>.</em><BR><?php
+}
 
 if ($has_active || $has_inactive) { ?>
 	<BR><font class="default_highlight">*</font> = Default Web Host<?php

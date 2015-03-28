@@ -136,7 +136,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['display_ssl_ip'] = $row_user_settings->display_ssl_ip;
 				$_SESSION['display_ssl_category'] = $row_user_settings->display_ssl_category;
 				$_SESSION['display_ssl_expiry_date'] = $row_user_settings->display_ssl_expiry_date;
-				$_SESSION['display_ssl_fee'] = $row_user_settings->display_ssl_fee;
+                $_SESSION['display_ssl_fee'] = $row_user_settings->display_ssl_fee;
+                $_SESSION['display_inactive_assets'] = $row_user_settings->display_inactive_assets;
 
 			}
 

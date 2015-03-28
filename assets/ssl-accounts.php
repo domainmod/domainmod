@@ -277,36 +277,38 @@ if (mysqli_num_rows($result) > 0) {
 	
 }
 
-$exclude_account_string = substr($exclude_account_string_raw, 0, -2); 
+if ($_SESSION['display_inactive_assets'] == "1") {
 
-if ($exclude_account_string != "") { 
+    $exclude_account_string = substr($exclude_account_string_raw, 0, -2);
 
-	$sslpaid_string = " AND sa.id not in ($exclude_account_string) "; 
-	
-} else { 
+    if ($exclude_account_string != "") {
 
-	$sslpaid_string = ""; 
+        $sslpaid_string = " AND sa.id not in ($exclude_account_string) ";
 
-}
+    } else {
 
-$sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname
-		FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
-		WHERE sa.owner_id = o.id
-		  AND sa.ssl_provider_id = sslp.id
-		  " . $sslpid_string . "
-		  " . $sslpaid_string . "
-		  " . $oid_string . "
-		GROUP BY sa.username, oname, sslpname
-		ORDER BY sslpname, username, oname";
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+        $sslpaid_string = "";
 
-if (mysqli_num_rows($result) > 0) { 
+    }
 
-	$has_inactive = "1";
-	if ($has_active == "1") echo "<BR>";
-	if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+    $sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname
+            FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
+            WHERE sa.owner_id = o.id
+              AND sa.ssl_provider_id = sslp.id
+              " . $sslpid_string . "
+              " . $sslpaid_string . "
+              " . $oid_string . "
+            GROUP BY sa.username, oname, sslpname
+            ORDER BY sslpname, username, oname";
+    $result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-    <tr class="main_table_row_heading_inactive">
+    if (mysqli_num_rows($result) > 0) {
+
+        $has_inactive = "1";
+        if ($has_active == "1") echo "<BR>";
+        if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+
+        <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">SSL Provider</font>
         </td>
@@ -317,32 +319,41 @@ if (mysqli_num_rows($result) > 0) {
             <font class="main_table_heading">Owner</font>
         </td>
         <td class="main_table_cell_heading_inactive">&nbsp;
-            
+
         </td>
-    </tr><?php 
+        </tr><?php
 
-	while ($row = mysqli_fetch_object($result)) {  ?>
+        while ($row = mysqli_fetch_object($result)) { ?>
 
-        <tr class="main_table_row_inactive">
+            <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->sslpname; ?></a>
+                <a class="invisiblelink"
+                   href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->sslpname; ?></a>
             </td>
             <td class="main_table_cell_inactive">
-				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                <a class="invisiblelink"
+                   href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
-				<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->oname; ?></a>
+                <a class="invisiblelink"
+                   href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->oname; ?></a>
             </td>
             <td class="main_table_cell_inactive">&nbsp;
-                
-            </td>
-        </tr><?php 
 
-	}
+            </td>
+            </tr><?php
+
+        }
+
+    }
 
 }
 
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+
+if ($_SESSION['display_inactive_assets'] != "1") { ?>
+    <BR><em>Inactive Accounts are currently not displayed. <a class="invisiblelink" href="../system/display-settings.php">Click here to display them</a>.</em><BR><?php
+}
 
 if ($has_active || $has_inactive) { ?>
 	<BR><font class="default_highlight">*</font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight">*</font> = Reseller Account<?php 

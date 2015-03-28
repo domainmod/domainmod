@@ -283,56 +283,66 @@ if (mysqli_num_rows($result) > 0) {
 
 }
 
-$exclude_dns_string = substr($exclude_dns_string_raw, 0, -2); 
+if ($_SESSION['display_inactive_assets'] == "1") {
 
-if ($exclude_dns_string == "") {
+    $exclude_dns_string = substr($exclude_dns_string_raw, 0, -2);
 
-	$sql = "SELECT id, name, number_of_servers
-			FROM dns
-			ORDER BY name, number_of_servers desc";
+    if ($exclude_dns_string == "") {
 
-} else {
+        $sql = "SELECT id, name, number_of_servers
+                FROM dns
+                ORDER BY name, number_of_servers DESC";
 
-	$sql = "SELECT id, name, number_of_servers
-			FROM dns
-			WHERE id NOT IN (" . $exclude_dns_string . ")
-			ORDER BY name, number_of_servers desc";
+    } else {
 
-}
+        $sql = "SELECT id, name, number_of_servers
+                FROM dns
+                WHERE id NOT IN (" . $exclude_dns_string . ")
+                ORDER BY name, number_of_servers DESC";
 
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+    }
 
-if (mysqli_num_rows($result) > 0) { 
+    $result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-	$has_inactive = "1";
-	if ($has_active == "1") echo "<BR>";
-	if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+    if (mysqli_num_rows($result) > 0) {
 
-    <tr class="main_table_row_heading_inactive">
+        $has_inactive = "1";
+        if ($has_active == "1") echo "<BR>";
+        if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+
+        <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Inactive Profiles (<?php echo mysqli_num_rows($result); ?>)</font>
         </td>
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Servers</font>
         </td>
-    </tr><?php 
-	
-	while ($row = mysqli_fetch_object($result)) { ?>
+        </tr><?php
 
-        <tr class="main_table_row_inactive">
+        while ($row = mysqli_fetch_object($result)) { ?>
+
+            <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_dns'] == $row->id) echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\">*</font></a>"; ?>
+                <a class="invisiblelink"
+                   href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_dns'] == $row->id) echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->number_of_servers; ?></a>
+                <a class="invisiblelink"
+                   href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->number_of_servers; ?></a>
             </td>
-        </tr><?php 
+            </tr><?php
 
-	}
+        }
+
+    }
 
 }
 
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+
+if ($_SESSION['display_inactive_assets'] != "1") { ?>
+    <BR><em>Inactive Profiles are currently not displayed. <a class="invisiblelink" href="../system/display-settings.php">Click here to display them</a>.</em><BR><?php
+}
 
 if ($has_active || $has_inactive) { ?>
 		<BR><font class="default_highlight">*</font> = Default DNS Profile<?php 

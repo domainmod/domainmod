@@ -292,37 +292,39 @@ if (mysqli_num_rows($result) > 0) {
 	
 }
 
-$exclude_account_string = substr($exclude_account_string_raw, 0, -2); 
+if ($_SESSION['display_inactive_assets'] == "1") {
 
-if ($exclude_account_string != "") { 
+    $exclude_account_string = substr($exclude_account_string_raw, 0, -2);
 
-	$raid_string = " AND ra.id not in ($exclude_account_string) "; 
-	
-} else { 
+    if ($exclude_account_string != "") {
 
-	$raid_string = ""; 
-	
-}
+        $raid_string = " AND ra.id not in ($exclude_account_string) ";
 
-$sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
-		FROM registrar_accounts AS ra, owners AS o, registrars AS r
-		WHERE ra.owner_id = o.id
-		  AND ra.registrar_id = r.id
-		  " . $rid_string . "
-		  " . $raid_string . "
-		  " . $oid_string . "
-		GROUP BY ra.username, oname, rname
-		ORDER BY rname, username, oname";
+    } else {
 
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+        $raid_string = "";
 
-if (mysqli_num_rows($result) > 0) { 
+    }
 
-	$has_inactive = "1";
-	if ($has_active == "1") echo "<BR>";
-	if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+    $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
+            FROM registrar_accounts AS ra, owners AS o, registrars AS r
+            WHERE ra.owner_id = o.id
+              AND ra.registrar_id = r.id
+              " . $rid_string . "
+              " . $raid_string . "
+              " . $oid_string . "
+            GROUP BY ra.username, oname, rname
+            ORDER BY rname, username, oname";
 
-    <tr class="main_table_row_heading_inactive">
+    $result = mysqli_query($connection, $sql) or die(mysqli_error());
+
+    if (mysqli_num_rows($result) > 0) {
+
+        $has_inactive = "1";
+        if ($has_active == "1") echo "<BR>";
+        if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+
+        <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Registrar Name</font>
         </td>
@@ -332,27 +334,36 @@ if (mysqli_num_rows($result) > 0) {
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Owner</font>
         </td>
-    </tr><?php 
+        </tr><?php
 
-	while ($row = mysqli_fetch_object($result)) { ?>
+        while ($row = mysqli_fetch_object($result)) { ?>
 
-        <tr class="main_table_row_inactive">
+            <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
-	                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->rname; ?></a>
+                <a class="invisiblelink"
+                   href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->rname; ?></a>
             </td>
             <td class="main_table_cell_inactive" valign="top">
-				<a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                <a class="invisiblelink"
+                   href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->oname; ?></a>
+                <a class="invisiblelink"
+                   href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->oname; ?></a>
             </td>
-        </tr><?php 
+            </tr><?php
 
-	}
+        }
+
+    }
 
 }
 
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+
+if ($_SESSION['display_inactive_assets'] != "1") { ?>
+    <BR><em>Inactive Accounts are currently not displayed. <a class="invisiblelink" href="../system/display-settings.php">Click here to display them</a>.</em><BR><?php
+}
 
 if ($has_active || $has_inactive) { ?>
 		<BR><font class="default_highlight">*</font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight">*</font> = Reseller Account<?php 

@@ -48,6 +48,7 @@ $new_display_ssl_ip = $_POST['new_display_ssl_ip'];
 $new_display_ssl_category = $_POST['new_display_ssl_category'];
 $new_display_ssl_expiry_date = $_POST['new_display_ssl_expiry_date'];
 $new_display_ssl_fee = $_POST['new_display_ssl_fee'];
+$new_display_inactive_assets = $_POST['new_display_inactive_assets'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new_number_of_ssl_certs != "") {
 
@@ -74,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 				display_ssl_category = '$new_display_ssl_category',
 				display_ssl_expiry_date = '$new_display_ssl_expiry_date',
 				display_ssl_fee = '$new_display_ssl_fee',
+				display_inactive_assets = '$new_display_inactive_assets',
 				number_of_ssl_certs = '$new_number_of_ssl_certs',
 				update_time = '$current_timestamp'
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
@@ -100,7 +102,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	$_SESSION['display_ssl_ip'] = $new_display_ssl_ip;
 	$_SESSION['display_ssl_category'] = $new_display_ssl_category;
 	$_SESSION['display_ssl_expiry_date'] = $new_display_ssl_expiry_date;
-	$_SESSION['display_ssl_fee'] = $new_display_ssl_fee;
+    $_SESSION['display_ssl_fee'] = $new_display_ssl_fee;
+    $_SESSION['display_inactive_assets'] = $new_display_inactive_assets;
 
 	header("Location: index.php");
 	exit;
@@ -142,7 +145,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 			$new_display_ssl_ip = $row->display_ssl_ip;
 			$new_display_ssl_category = $row->display_ssl_category;
 			$new_display_ssl_expiry_date = $row->display_ssl_expiry_date;
-			$new_display_ssl_fee = $row->display_ssl_fee;
+            $new_display_ssl_fee = $row->display_ssl_fee;
+            $new_display_inactive_assets = $row->display_inactive_assets;
 
 		}
 
@@ -216,8 +220,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_category" value="1"<?php if ($new_display_ssl_category == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_owner" value="1"<?php if ($new_display_ssl_owner == "1") echo " checked"; ?>></td>
     </tr>
-</table>        
+</table>
 <BR><BR>
+<font class="subheadline">Asset Management Pages</font><BR><BR>
+<strong>Display inactive Assets?</strong> <input type="checkbox" name="new_display_inactive_assets" value="1"<?php if ($new_display_inactive_assets == "1") echo " checked"; ?>>
+<BR><BR><BR>
 <input type="submit" name="button" value="Update Display Settings&raquo;">
 </form>
 <?php include("../_includes/layout/footer.inc.php"); ?>

@@ -303,32 +303,34 @@ if (mysqli_num_rows($result) > 0) {
 
 }
 
-$exclude_ip_address_string = substr($exclude_ip_address_string_raw, 0, -2); 
+if ($_SESSION['display_inactive_assets'] == "1") {
 
-if ($exclude_ip_address_string == "") {
+    $exclude_ip_address_string = substr($exclude_ip_address_string_raw, 0, -2);
 
-	$sql = "SELECT id, name, ip, rdns
-			FROM ip_addresses
-			ORDER BY name ASC, ip ASC";
+    if ($exclude_ip_address_string == "") {
 
-} else {
+        $sql = "SELECT id, name, ip, rdns
+                FROM ip_addresses
+                ORDER BY name ASC, ip ASC";
 
-	$sql = "SELECT id, name, ip, rdns
-			FROM ip_addresses
-			WHERE id NOT IN (" . $exclude_ip_address_string . ")
-			ORDER BY name ASC, ip ASC";
+    } else {
 
-}
+        $sql = "SELECT id, name, ip, rdns
+                FROM ip_addresses
+                WHERE id NOT IN (" . $exclude_ip_address_string . ")
+                ORDER BY name ASC, ip ASC";
 
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+    }
 
-if (mysqli_num_rows($result) > 0) {
-	
-	$has_inactive = "1";
-	if ($has_active == "1") echo "<BR>";
-	if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+    $result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-    <tr class="main_table_row_heading_inactive">
+    if (mysqli_num_rows($result) > 0) {
+
+        $has_inactive = "1";
+        if ($has_active == "1") echo "<BR>";
+        if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+
+        <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Inactive IP Names (<?php echo mysqli_num_rows($result); ?>)</font>
         </td>
@@ -338,27 +340,36 @@ if (mysqli_num_rows($result) > 0) {
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">rDNS</font>
         </td>
-    </tr><?php 
-	
-	while ($row = mysqli_fetch_object($result)) { ?>
+        </tr><?php
 
-        <tr class="main_table_row_inactive">
-            <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_ip_address_domains'] == $row->id) echo "<a title=\"Default Domain IP Address\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_ip_address_ssl'] == $row->id) echo "<a title=\"Default SSL IP Address\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
-            </td>
-            <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->ip; ?></a>
-            </td>
-            <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->rdns; ?></a>
-            </td>
-        </tr><?php 
+        while ($row = mysqli_fetch_object($result)) { ?>
 
-	}
+            <tr class="main_table_row_inactive">
+            <td class="main_table_cell_inactive">
+                <a class="invisiblelink"
+                   href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_ip_address_domains'] == $row->id) echo "<a title=\"Default Domain IP Address\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_ip_address_ssl'] == $row->id) echo "<a title=\"Default SSL IP Address\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
+            </td>
+            <td class="main_table_cell_inactive">
+                <a class="invisiblelink"
+                   href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->ip; ?></a>
+            </td>
+            <td class="main_table_cell_inactive">
+                <a class="invisiblelink"
+                   href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->rdns; ?></a>
+            </td>
+            </tr><?php
+
+        }
+
+    }
 
 }
 
 if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+
+if ($_SESSION['display_inactive_assets'] != "1") { ?>
+    <BR><em>Inactive IP Addresses are currently not displayed. <a class="invisiblelink" href="../system/display-settings.php">Click here to display them</a>.</em><BR><?php
+}
 
 if ($has_active || $has_inactive) { ?>
 	<BR><font class="default_highlight">*</font> = Default Domain IP Address&nbsp;&nbsp;<font class="default_highlight_secondary">*</font> = Default SSL IP Address<?php 
