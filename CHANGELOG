@@ -1,5 +1,8 @@
 DomainMOD Changelog
 ===================
+v0.86.0   2015-03-28   33e6ae7dbe5f40f8988955659c5d166f944619cd
+ - Added the ability to hide Inactive Assets
+
 v0.85.1   2015-03-19   bd4e249eadaf59078426b660aa37ad3a2a0bdf3b
  - Converted MySQL extension to MySQLi extension
 
