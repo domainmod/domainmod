@@ -138,6 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['display_ssl_expiry_date'] = $row_user_settings->display_ssl_expiry_date;
                 $_SESSION['display_ssl_fee'] = $row_user_settings->display_ssl_fee;
                 $_SESSION['display_inactive_assets'] = $row_user_settings->display_inactive_assets;
+                $_SESSION['display_dw_intro_page'] = $row_user_settings->display_dw_intro_page;
 
 			}
 
