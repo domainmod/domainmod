@@ -38,7 +38,7 @@ $software_section = "admin-dw-intro";
 </head>
 <body>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
-&raquo; <a href="index.php">Proceed to Data Warehouse</a><BR><BR>
+&raquo; <a href="dw.php">Proceed to Data Warehouse</a><BR><BR>
 
 <?php echo $software_title; ?> has a data warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also intend on adding support for Plesk once I've ironed out all the kinks in the framework (as well as figured out Plesk's ridiculous API documentation).<BR><BR>
 If you don't run a server that uses WHM, or you don't want to import your WHM data into <?php echo $software_title; ?>, you can ignore this section.<BR><BR>

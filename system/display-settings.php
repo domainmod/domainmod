@@ -49,6 +49,7 @@ $new_display_ssl_category = $_POST['new_display_ssl_category'];
 $new_display_ssl_expiry_date = $_POST['new_display_ssl_expiry_date'];
 $new_display_ssl_fee = $_POST['new_display_ssl_fee'];
 $new_display_inactive_assets = $_POST['new_display_inactive_assets'];
+$new_display_dw_intro_page = $_POST['new_display_dw_intro_page'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new_number_of_ssl_certs != "") {
 
@@ -76,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 				display_ssl_expiry_date = '$new_display_ssl_expiry_date',
 				display_ssl_fee = '$new_display_ssl_fee',
 				display_inactive_assets = '$new_display_inactive_assets',
+				display_dw_intro_page = '$new_display_dw_intro_page',
 				number_of_ssl_certs = '$new_number_of_ssl_certs',
 				update_time = '$current_timestamp'
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
@@ -104,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 	$_SESSION['display_ssl_expiry_date'] = $new_display_ssl_expiry_date;
     $_SESSION['display_ssl_fee'] = $new_display_ssl_fee;
     $_SESSION['display_inactive_assets'] = $new_display_inactive_assets;
+    $_SESSION['display_dw_intro_page'] = $new_display_dw_intro_page;
 
 	header("Location: index.php");
 	exit;
@@ -147,6 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 			$new_display_ssl_expiry_date = $row->display_ssl_expiry_date;
             $new_display_ssl_fee = $row->display_ssl_fee;
             $new_display_inactive_assets = $row->display_inactive_assets;
+            $new_display_dw_intro_page = $row->display_dw_intro_page;
 
 		}
 
@@ -224,6 +228,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 <BR><BR>
 <font class="subheadline">Asset Management Pages</font><BR><BR>
 <strong>Display inactive Assets?</strong> <input type="checkbox" name="new_display_inactive_assets" value="1"<?php if ($new_display_inactive_assets == "1") echo " checked"; ?>>
+<BR><BR><BR>
+<font class="subheadline">Data Warehouse</font><BR><BR>
+<strong>Display intro page?</strong> <input type="checkbox" name="new_display_dw_intro_page" value="1"<?php if ($new_display_dw_intro_page == "1") echo " checked"; ?>>
 <BR><BR><BR>
 <input type="submit" name="button" value="Update Display Settings&raquo;">
 </form>
