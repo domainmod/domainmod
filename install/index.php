@@ -105,6 +105,7 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
 				`display_ssl_category` int(1) NOT NULL default '0',
 				`display_ssl_fee` int(1) NOT NULL default '0',
 				`display_inactive_assets` int(1) NOT NULL default '1',
+				`display_dw_intro_page` int(1) NOT NULL default '1',
 				`insert_time` datetime NOT NULL,
 				`update_time` datetime NOT NULL,
 				PRIMARY KEY  (`id`)
@@ -803,6 +804,7 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
 		$_SESSION['display_ssl_expiry_date'] = $row_user_settings->display_ssl_expiry_date;
         $_SESSION['display_ssl_fee'] = $row_user_settings->display_ssl_fee;
         $_SESSION['display_inactive_assets'] = $row_user_settings->display_inactive_assets;
+        $_SESSION['display_dw_intro_page'] = $row_user_settings->display_dw_intro_page;
 
 	}
 

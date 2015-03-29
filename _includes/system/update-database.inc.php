@@ -3306,6 +3306,24 @@ if ($current_db_version < $most_recent_db_version) {
 
     }
 
+    // upgrade database from 2.0055 to 2.0056
+    if ($current_db_version == 2.0055) {
+
+        $sql = "ALTER TABLE `user_settings`
+					ADD `display_dw_intro_page` INT(1) NOT NULL DEFAULT '1' AFTER `display_inactive_assets`";
+        $result = mysqli_query($connection, $sql) or die(mysqli_error());
+
+        $_SESSION['display_dw_intro_page'] = "1";
+
+        $sql = "UPDATE settings
+				SET db_version = '2.0056',
+					update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'";
+        $result = mysqli_query($connection, $sql) or die(mysqli_error());
+
+        $current_db_version = 2.0056;
+
+    }
+
     if ($direct == "1") {
 	
 		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
