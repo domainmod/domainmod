@@ -1,4 +1,8 @@
 <?php
+// phpinfo();
+// exit;
+?>
+<?php
 // /system/admin/system-info.php
 // 
 // DomainMOD is an open source application written in PHP & MySQL used to track and manage your web resources.
@@ -47,7 +51,10 @@ while ($row = mysqli_fetch_object($result)) {
 	$db_version = $row->db_version;
 }
 ?>
-<strong>Database Version:</strong> v<?php echo number_format($db_version, 4); ?>
+<strong>DomainMOD DB:</strong> <?php echo number_format($db_version, 4); ?><BR>
+<strong>Operating System:</strong> <?php echo php_uname();; ?><BR>
+<strong>Web Server & PHP:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>
+<strong>MySQL:</strong> <?php echo mysqli_get_server_info($connection); ?><BR>
 
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
