@@ -32,19 +32,15 @@ function pageBrowser($totalrows, $numLimit, $amm, $queryStr, $numBegin, $begin, 
         $cycle = ceil($totalrows/$amm);
 
         if (!isset($numBegin) || $numBegin < 1) {
-
             $numBegin = 1;
-			$num = 1;
-
-		}
+            $num = 1;
+        }
 
         $minus = $numBegin-1;
         $start = $minus*$amm;
 
         if (!isset($begin)) {
-
             $begin = $start;
-
         }
 
         $preBegin = $numBegin-$numLimit;
@@ -84,13 +80,9 @@ function pageBrowser($totalrows, $numLimit, $amm, $queryStr, $numBegin, $begin, 
                 . "'>";
 
             if ($num == $i) {
-
                 $piece .= "</a><b>$i</b><a>";
-
             } else {
-
                 $piece .= "$i";
-
             }
 
             $piece .= "</a>\n";
@@ -106,13 +98,9 @@ function pageBrowser($totalrows, $numLimit, $amm, $queryStr, $numBegin, $begin, 
         $wheToWhe = "<b>" . number_format($wheBeg) . "</b>-<b>";
 
         if ($totalrows <= $wheEnd) {
-
             $wheToWhe .= $totalrows . "</b>";
-
         } else {
-
             $wheToWhe .= number_format($wheEnd) . "</b>";
-
         }
 
         $sqlprod = " LIMIT " . $begin . ", " . $amm;
