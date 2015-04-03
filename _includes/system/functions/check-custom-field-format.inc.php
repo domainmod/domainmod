@@ -20,11 +20,16 @@
  */
 ?>
 <?php
-function CheckCustomFieldFormat( $temp_input_custom_field ) {
-   if (preg_match('/^[a-zA-Z_]*$/i', $temp_input_custom_field, $custom_field)) {
-	  return $custom_field;
-   } else {
-	  return false;
-   }
-} 	
-?>
+function CheckCustomFieldFormat($input_custom_field) {
+
+    if (preg_match('/^[a-zA-Z_]*$/i', $input_custom_field, $custom_field)) {
+
+        return $custom_field;
+
+    } else {
+
+        return false;
+
+    }
+
+}
