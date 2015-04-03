@@ -16,7 +16,7 @@
 // http://www.gnu.org/licenses/
 ?>
 <?php
-if ($_SESSION['is_admin'] != 1) { 
+if ($_SESSION['is_admin'] != 1) {
     header("Location: $full_redirect");
     exit;
 }
