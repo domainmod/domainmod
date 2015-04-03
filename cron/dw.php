@@ -191,7 +191,7 @@ if ($demo_install != "1") {
                               . "', '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime
                               . "', '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "', '"
                               . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . date("Y-m-d H:i:s") . "')";
-					$result = mysqli_query($connection, $sql) or die(mysqli_error());
+                    $result = mysqli_query($connection, $sql) or die(mysqli_error());
 
                 }
 
@@ -348,7 +348,12 @@ if ($demo_install != "1") {
                 FROM dw_dns_zones
                 WHERE server_id = '" . $row_server_totals->id . "'";
         $result = mysqli_query($connection, $sql) or die(mysqli_error());
-        while ($row = mysqli_fetch_object($result)) $temp_total_dw_dns_zones = $row->total_dw_dns_zones;
+
+        while ($row = mysqli_fetch_object($result)) {
+
+            $temp_total_dw_dns_zones = $row->total_dw_dns_zones;
+
+        }
 
         $sql = "SELECT count(*) AS total_dw_dns_records
                 FROM dw_dns_records
