@@ -20,5 +20,4 @@
  */
 ?>
 <?php
-$current_timestamp_basic = date("Y-m-d",mktime(date("H"),date("i"),date("s"),date("m"),date("d"),date("Y")));
-?>
+$current_timestamp_basic = date("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));

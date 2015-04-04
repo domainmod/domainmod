@@ -58,4 +58,3 @@ $sql_insert_dw_totals = "INSERT INTO dw_server_totals
 						 (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time) VALUES 
 						 ('" . $temp_total_dw_servers . "', '" . $temp_total_dw_accounts . "', '" . $temp_total_dw_dns_zones . "', '" . $temp_total_dw_dns_records . "', '" . date("Y-m-d H:i:s") . "')";
 $result_insert_dw_totals = mysqli_query($connection, $sql_insert_dw_totals);
-?>

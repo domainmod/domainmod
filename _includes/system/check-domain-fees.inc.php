@@ -33,4 +33,3 @@ if ($total_results_find_missing_domain_fees != 0) {
 } else {
     $_SESSION['missing_domain_fees'] = 0;
 }
-?>

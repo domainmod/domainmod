@@ -22,4 +22,3 @@
 <?php
 fclose($file_content);
 exit;
-?>

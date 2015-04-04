@@ -31,4 +31,3 @@
 ?>
 <?php
 $temp_output_string = trim(preg_replace("/^\n+|^[\t\s]*\n+/m", "", $temp_input_string));
-?>

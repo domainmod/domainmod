@@ -33,4 +33,3 @@ if ($total_results_find_missing_ssl_cert_fees != 0) {
 } else {
     $_SESSION['missing_ssl_fees'] = 0;
 }
-?>

@@ -36,4 +36,3 @@ function CheckDomainFormat($temp_input_domain) {
     return $temp_input_domain;
 
 }
-?>

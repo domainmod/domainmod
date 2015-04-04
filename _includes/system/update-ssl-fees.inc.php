@@ -104,4 +104,3 @@ if ($direct == "1") {
 	$_SESSION['result_message'] .= "SSL Fees Updated<BR>";
 
 }
-?>

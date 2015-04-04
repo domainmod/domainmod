@@ -22,9 +22,8 @@
 <?php
 function CheckDateFormat($temp_input_date) {
    if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $temp_input_date, $piece)) {
-	  return checkdate($piece[2] , $piece[3] , $piece[1]);
+	  return checkdate($piece[2], $piece[3], $piece[1]);
    } else {
 	  return false;
    }
 } 	
-?>

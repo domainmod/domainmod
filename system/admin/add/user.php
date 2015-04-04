@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		
 	} else {
 
-		$new_password = substr(md5(time()),0,8);
+		$new_password = substr(md5(time()), 0, 8);
 
 		$sql = "INSERT INTO users 
 				(first_name, last_name, username, email_address, password, new_password, admin, active, insert_time) VALUES 

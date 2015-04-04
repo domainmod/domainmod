@@ -831,4 +831,3 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
 	exit;
 
 }
-?>

@@ -52,4 +52,3 @@ if ($direct == "1") {
     $_SESSION['result_message'] .= "Unused Domain Fees Deleted<BR>";
 
 }
-?>

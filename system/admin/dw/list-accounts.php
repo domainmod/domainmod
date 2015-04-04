@@ -225,7 +225,7 @@ if ($export == "1") {
 	<font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR><?php
 
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_account_temp));
-$navigate = pageBrowser($totalrows,15,10,"&search_for=" . $search_for . "",$_REQUEST[numBegin],$_REQUEST[begin],$_REQUEST[num]);
+$navigate = pageBrowser($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
 $sql_dw_account_temp = $sql_dw_account_temp.$navigate[0];
 $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or die(mysqli_error());
 

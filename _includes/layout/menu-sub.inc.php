@@ -641,4 +641,4 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/help/">Main</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/help/getting-started/">Getting Started</a>&nbsp;<?php
 
-} ?>
+}

@@ -25,4 +25,3 @@ include("_includes/auth/auth-check.inc.php");
 
 header("Location: _includes/auth/logout.inc.php");
 exit;
-?>

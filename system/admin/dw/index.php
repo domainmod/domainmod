@@ -40,4 +40,3 @@ if ($_SESSION['display_dw_intro_page'] == "1") {
     exit;
 
 }
-?>

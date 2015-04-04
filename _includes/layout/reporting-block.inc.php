@@ -68,4 +68,5 @@ Before running any reports you should <a href="<?php echo $web_root; ?>/_include
 	</div>
 </div>
 <div style="clear: both;"></div>
-<?php if ($report_name != "") echo "<BR>"; ?>
+<?php
+if ($report_name != "") echo "<BR>";

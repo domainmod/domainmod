@@ -95,4 +95,3 @@ if ($temp_input_conversion == "") {
 	}
 
 }
-?>

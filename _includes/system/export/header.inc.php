@@ -43,4 +43,3 @@ header("Pragma: no-cache");
 
 $file_content = fopen('php://output', 'w');
 fprintf($file_content, chr(0xEF).chr(0xBB).chr(0xBF));
-?>

@@ -58,4 +58,3 @@
                 include($full_server_path . "/_includes/layout/table-result-message.inc.php"); 
                 unset($_SESSION['result_message']);
             }
-            ?>

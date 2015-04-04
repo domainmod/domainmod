@@ -98,7 +98,7 @@ while ($row_ucr = mysqli_fetch_object($result_ucr)) {
 		
 			}
 			
-			$api_call_split = explode(",",$api_call_result);
+			$api_call_split = explode(",", $api_call_result);
 			$conversion_rate = $api_call_split[1];
 
 			$sql_ucr_update = "UPDATE currency_conversions
@@ -133,7 +133,7 @@ while ($row_ucr = mysqli_fetch_object($result_ucr)) {
 		
 			}
 			
-			$api_call_split = explode(",",$api_call_result);
+			$api_call_split = explode(",", $api_call_result);
 			$conversion_rate = $api_call_split[1];
 		
 			$sql_ucr_insert = "INSERT INTO currency_conversions
@@ -202,7 +202,7 @@ while ($row_ucr = mysqli_fetch_object($result_ucr)) {
 		
 			}
 			
-			$api_call_split = explode(",",$api_call_result);
+			$api_call_split = explode(",", $api_call_result);
 			$conversion_rate = $api_call_split[1];
 
 			$sql_ucr_update = "UPDATE currency_conversions
@@ -237,7 +237,7 @@ while ($row_ucr = mysqli_fetch_object($result_ucr)) {
 		
 			}
 			
-			$api_call_split = explode(",",$api_call_result);
+			$api_call_split = explode(",", $api_call_result);
 			$conversion_rate = $api_call_split[1];
 		
 			$sql_ucr_insert = "INSERT INTO currency_conversions
@@ -263,4 +263,3 @@ if ($direct == "1") {
 	$_SESSION['result_message'] .= "Conversion Rates Updated<BR>";
 
 }
-?>

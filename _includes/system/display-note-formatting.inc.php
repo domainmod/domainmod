@@ -34,4 +34,3 @@ $temp_input_string = trim($temp_input_string);
 $temp_input_string = str_replace("\n\n", "<BR><BR>", $temp_input_string);
 $temp_input_string = str_replace("\n", "<BR>", $temp_input_string);
 $temp_output_string = $temp_input_string;
-?>

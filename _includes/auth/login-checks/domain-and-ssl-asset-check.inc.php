@@ -84,4 +84,3 @@ if (mysqli_num_rows($result_asset_check) == 0) {
 	$_SESSION['need_ssl_cert'] = "0";
 
 }
-?>

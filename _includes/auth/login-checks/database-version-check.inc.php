@@ -38,4 +38,3 @@ while ($row_db_check = mysqli_fetch_object($result_db_check)) {
 	}
 
 }
-?>

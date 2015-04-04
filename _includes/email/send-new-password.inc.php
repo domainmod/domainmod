@@ -102,4 +102,3 @@ $message .= "
 </html>";
 
 mail("$to", "$subject", "$message", "$headers");
-?>

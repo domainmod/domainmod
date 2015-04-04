@@ -40,4 +40,3 @@ if ($_SESSION['is_logged_in'] == 1) {
 	}
     exit;
 }
-?>

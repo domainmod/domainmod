@@ -29,4 +29,3 @@ $dbhostname = "localhost";
 $dbname = "db_name";
 $dbusername = "db_username";
 $dbpassword = "dbPassword123";
-?>

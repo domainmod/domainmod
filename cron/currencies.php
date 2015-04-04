@@ -88,7 +88,7 @@ if ($demo_install != "1") {
 				
 					}
 					
-					$api_call_split = explode(",",$api_call_result);
+					$api_call_split = explode(",", $api_call_result);
 					$conversion_rate = $api_call_split[1];
 		
 					$sql_update = "UPDATE currency_conversions
@@ -123,7 +123,7 @@ if ($demo_install != "1") {
 				
 					}
 					
-					$api_call_split = explode(",",$api_call_result);
+					$api_call_split = explode(",", $api_call_result);
 					$conversion_rate = $api_call_split[1];
 				
 					$sql_insert = "INSERT INTO currency_conversions
@@ -199,7 +199,7 @@ if ($demo_install != "1") {
 				
 					}
 					
-					$api_call_split = explode(",",$api_call_result);
+					$api_call_split = explode(",", $api_call_result);
 					$conversion_rate = $api_call_split[1];
 		
 					$sql_update = "UPDATE currency_conversions
@@ -234,7 +234,7 @@ if ($demo_install != "1") {
 				
 					}
 					
-					$api_call_split = explode(",",$api_call_result);
+					$api_call_split = explode(",", $api_call_result);
 					$conversion_rate = $api_call_split[1];
 				
 					$sql_insert = "INSERT INTO currency_conversions
@@ -251,4 +251,3 @@ if ($demo_install != "1") {
 	}
 	
 }
-?>

@@ -22,4 +22,3 @@
 <?php
 session_name("domainmod_gc_ays");
 session_start();
-?>

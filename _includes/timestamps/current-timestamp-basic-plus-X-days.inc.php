@@ -20,5 +20,4 @@
  */
 ?>
 <?php
-$current_timestamp_basic_plus_x_days = date("Y-m-d",mktime(date("H"),date("i"),date("s"),date("m"),date("d")+$number_of_days,date("Y")));
-?>
+$current_timestamp_basic_plus_x_days = date("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d") + $number_of_days, date("Y")));

@@ -48,4 +48,3 @@ $sql_user_update = "UPDATE users
 $result_user_update = mysqli_query($connection, $sql_user_update) or die(mysqli_error());
 
 $_SESSION['last_login'] = $current_timestamp;
-?>

@@ -23,4 +23,3 @@
 fputcsv($file_content, $row_content); 
 $row_content = array();
 $count = 0;
-?>

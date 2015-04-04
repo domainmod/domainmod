@@ -50,7 +50,7 @@ if ($new_username != "") {
    
 		while($row = mysqli_fetch_object($result)) {
 	
-			$new_password = substr(md5(time()),0,8);
+			$new_password = substr(md5(time()), 0, 8);
 			
 			$sql_update = "UPDATE users 
 						   SET password = password('$new_password'), 
@@ -90,4 +90,3 @@ if ($new_username != "") {
 	}
 
 }
-?>

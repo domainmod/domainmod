@@ -64,4 +64,3 @@ if ($direct == "1") {
 	$_SESSION['result_message'] .= "Segments Updated<BR>";
 
 }
-?>

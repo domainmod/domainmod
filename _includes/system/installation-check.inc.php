@@ -46,4 +46,3 @@ if (is_dir($full_install_path)) {
 	}
 	
 }
-?>

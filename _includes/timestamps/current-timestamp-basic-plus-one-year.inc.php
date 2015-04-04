@@ -20,5 +20,4 @@
  */
 ?>
 <?php
-$current_timestamp_basic_plus_one_year = date("Y-m-d",mktime(date("H"),date("i"),date("s"),date("m"),date("d"),date("Y")+1));
-?>
+$current_timestamp_basic_plus_one_year = date("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y") + 1));
