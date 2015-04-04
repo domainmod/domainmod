@@ -24,7 +24,7 @@
 
     <div class="header-container">
         <div class="header-center">
-            <a href="<?php echo $web_root; ?>/"><img border="0" src="<?php echo $web_root; ?>/images/logo.png"></a>
+            <?php echo "<a href=\"" . $web_root . "/\"><img border=\"0\" src=\"" . $web_root . "/images/logo.png\"></a>"; ?>
         </div>
     </div>
 

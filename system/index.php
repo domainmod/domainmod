@@ -42,14 +42,15 @@ $software_section = "system";
 &raquo; <a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="change-password.php">Change Password</a><BR>
 <BR><BR><font class="subheadline">Maintenance Menu</font><BR><BR>
 &raquo; <a href="../_includes/system/update-conversion-rates.inc.php?direct=1">Update Conversion Rates</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/update-domain-fees.inc.php?direct=1">Update Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/update-ssl-fees.inc.php?direct=1">Update SSL Fees</a><BR>
-<?php if ($_SESSION['is_admin'] == 1) { ?>
+<?php
+if ($_SESSION['is_admin'] == 1) { ?>
     <BR><BR><font class="subheadline">Admin Menu</font><BR><BR>
     &raquo; <a href="admin/system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/defaults.php">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/users.php">Users</a><BR><BR>
     &raquo; <a href="admin/domain-fields.php">Custom Domain Fields</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/ssl-fields.php">Custom SSL Fields</a><BR><BR>
     &raquo; <a href="../_includes/system/admin/delete-unused-domain-fees.inc.php?direct=1">Delete Unused Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/admin/delete-unused-ssl-fees.inc.php?direct=1">Delete Unused SSL Fees</a><BR><BR>
     &raquo; <a href="admin/dw/">Data Warehouse</a><BR><BR>
-    &raquo; <a href="admin/system-info.php">System Information</a><BR>
-<?php } ?>
+    &raquo; <a href="admin/system-info.php">System Information</a><BR><?php
+} ?>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

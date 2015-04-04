@@ -48,10 +48,10 @@ $sql = "SELECT db_version
 		FROM settings";
 $result = mysqli_query($connection, $sql) or die(mysqli_error());
 while ($row = mysqli_fetch_object($result)) {
-	$db_version = $row->db_version;
+    $db_version = $row->db_version;
 }
 ?>
-<strong>Operating System:</strong> <?php echo php_uname();; ?><BR>
+<strong>Operating System:</strong> <?php echo php_uname(); ?><BR>
 <strong>Web Server:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>
 <strong>PHP:</strong> <?php echo phpversion(); ?><BR>
 <strong>MySQL:</strong> <?php echo mysqli_get_server_info($connection); ?><BR>

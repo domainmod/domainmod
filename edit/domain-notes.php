@@ -36,10 +36,10 @@ $sql = "SELECT domain, notes
 		WHERE id = '$did'";
 $result = mysqli_query($connection, $sql);
 
-while ($row = mysqli_fetch_object($result)) { 
+while ($row = mysqli_fetch_object($result)) {
 
-	$new_domain = $row->domain;
-	$new_notes = $row->notes;
+    $new_domain = $row->domain;
+    $new_notes = $row->notes;
 
 }
 ?>

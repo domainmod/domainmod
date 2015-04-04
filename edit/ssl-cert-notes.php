@@ -36,10 +36,10 @@ $sql = "SELECT name, notes
 		WHERE id = '$sslcid'";
 $result = mysqli_query($connection, $sql);
 
-while ($row = mysqli_fetch_object($result)) { 
+while ($row = mysqli_fetch_object($result)) {
 
-	$new_name = $row->name;
-	$new_notes = $row->notes;
+    $new_name = $row->name;
+    $new_notes = $row->notes;
 
 }
 ?>

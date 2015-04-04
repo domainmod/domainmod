@@ -23,4 +23,6 @@
 $demo_url = "demo.domainmod.org";
 $demo_username = "demo";
 $demo_password = "demo";
-if ($_SERVER['HTTP_HOST'] == $demo_url) $demo_install = "1";
+if ($_SERVER['HTTP_HOST'] == $demo_url) {
+    $demo_install = "1";
+}

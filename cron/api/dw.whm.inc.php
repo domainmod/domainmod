@@ -30,6 +30,6 @@ curl_setopt($curl, CURLOPT_HTTPHEADER, $header);																		# Set curl hea
 curl_setopt($curl, CURLOPT_URL, $query);																			# Set your URL
 $result = curl_exec($curl);																							# Execute Query, assign to $result
 if ($result == false) {
-	error_log("curl_exec error \"" . curl_error($curl) . "\" for " . $query . "");
+    error_log("curl_exec error \"" . curl_error($curl) . "\" for " . $query . "");
 }
 curl_close($curl);

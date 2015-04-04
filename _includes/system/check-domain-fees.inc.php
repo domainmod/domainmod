@@ -26,7 +26,9 @@ $sql_find_missing_domain_fees = "SELECT count(id) AS total_count
 								   AND active NOT IN ('0', '10')";
 $result_find_missing_domain_fees = mysqli_query($connection, $sql_find_missing_domain_fees);
 
-while ($row_find_missing_domain_fees = mysqli_fetch_object($result_find_missing_domain_fees)) { $total_results_find_missing_domain_fees = $row_find_missing_domain_fees->total_count; }
+while ($row_find_missing_domain_fees = mysqli_fetch_object($result_find_missing_domain_fees)) {
+    $total_results_find_missing_domain_fees = $row_find_missing_domain_fees->total_count;
+}
 
 if ($total_results_find_missing_domain_fees != 0) {
     $_SESSION['missing_domain_fees'] = 1;
