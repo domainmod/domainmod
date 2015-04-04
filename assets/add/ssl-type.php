@@ -36,23 +36,23 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_type != "") {
-		
-		$sql = "INSERT INTO ssl_cert_types
+    if ($new_type != "") {
+
+        $sql = "INSERT INTO ssl_cert_types
 				(type, notes, insert_time) VALUES 
 				('" . mysqli_real_escape_string($connection, $new_type) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
-		
-		$_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Added<BR>";
-		
-		header("Location: ../ssl-types.php");
-		exit;
+        $result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-	} else {
-	
-		$_SESSION['result_message'] .= "Please enter the SSL Type<BR>";
+        $_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Added<BR>";
 
-	}
+        header("Location: ../ssl-types.php");
+        exit;
+
+    } else {
+
+        $_SESSION['result_message'] .= "Please enter the SSL Type<BR>";
+
+    }
 
 }
 ?>

@@ -25,9 +25,11 @@ $sql_settings = "SELECT full_url, email_address
 $result_settings = mysqli_query($connection, $sql_settings) or die(mysqli_error());
 
 while ($row_settings = mysqli_fetch_object($result_settings)) {
-	$full_url = $row_settings->full_url;
-	$from_address = $row_settings->email_address;
-	$return_path = $row_settings->email_address;
+
+    $full_url = $row_settings->full_url;
+    $from_address = $row_settings->email_address;
+    $return_path = $row_settings->email_address;
+
 }
 
 $to = $row->email_address;

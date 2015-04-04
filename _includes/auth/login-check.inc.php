@@ -24,19 +24,21 @@ if ($_SESSION['is_logged_in'] == 1) {
 
     if (isset($_SESSION['running_login_checks'])) {
 
-		header("Location: _includes/auth/login-checks/main.inc.php");
-	    exit;
+        header("Location: _includes/auth/login-checks/main.inc.php");
+        exit;
 
-	}
-	
-	if ($web_root == "") {
+    }
 
-		header("Location: /domains.php");
+    if ($web_root == "") {
 
-	} else {
+        header("Location: /domains.php");
 
-		header("Location: " . $web_root . "/domains.php");
+    } else {
 
-	}
+        header("Location: " . $web_root . "/domains.php");
+
+    }
+
     exit;
+
 }

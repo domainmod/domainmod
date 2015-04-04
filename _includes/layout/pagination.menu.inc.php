@@ -21,22 +21,26 @@
 ?>
 <div class="pagination_menu_block">
 	<div class="pagination_menu_block_inner">
-		<?php echo $navigate[2]; ?>&nbsp;<?php if ($totalrows != '0') { ?><?php echo "(Listing $navigate[1] of " . number_format($totalrows) . ")"; ?><?php } ?>
-		<?php 
+        <?php echo $navigate[2]; ?>&nbsp;
+        <?php if ($totalrows != '0') {
+                  echo "(Listing $navigate[1] of " . number_format($totalrows) . ")";
+              } ?>
+		<?php
         if ($software_section == "domains" || $software_section == "ssl-certs") {
-            if ($software_section == "domains") { 
-            
+
+            if ($software_section == "domains") {
+
                 $export_filename = "domains.php";
-                
+
             } elseif ($software_section == "ssl-certs") {
-            
+
                 $export_filename = "ssl-certs.php";
-            
+
             } ?>
-            [<a href="<?php echo $export_filename; ?>?<?php echo $_SERVER['QUERY_STRING']; ?>&export=1">export results</a>]&nbsp;[<a href="system/display-settings.php">display settings</a>]<?php
-    
-        }
-        ?>
-	</div>
+            [<a href="<?php echo $export_filename . "?" . $_SERVER['QUERY_STRING']; ?>&export=1">export results</a>]
+            &nbsp;[<a href="system/display-settings.php">display settings</a>]<?php
+
+        } ?>
+    </div>
 </div>
 <div style="clear: both;"></div>

@@ -24,11 +24,16 @@
 
     <div class="header-container">
         <div class="header-left">
-            <a href="<?php echo $web_root; ?>/domains.php"><img border="0" src="<?php echo $web_root; ?>/images/logo.png"></a>
+            <a href="<?php echo $web_root . "/domains.php\"><img border=\"0\" src=\"" . $web_root; ?>/images/logo.png"></a>
         </div>
         <div class="header-right">
             <?php if ($_SESSION['is_logged_in'] == 1) { ?>
-                <em>logged in as <strong><?php echo $_SESSION['username']; ?></strong> (<a class="subtlelink" href="<?php echo $web_root; ?>/system/update-profile.php"><?php echo $_SESSION['first_name']; ?> <?php echo $_SESSION['last_name']; ?></a>)</em>&nbsp;&nbsp;[ <a target="_blank" href="http://domainmod.org/news/">News</a> ]&nbsp;&nbsp;[ <a target="_blank" href="http://domainmod.org/support/">Support</a> ]&nbsp;&nbsp;[ <a href="<?php echo $web_root; ?>/logout.php">Logout</a> ]
+                <em>logged in as <strong><?php echo $_SESSION['username']; ?></strong> (<a class="subtlelink"
+                href="<?php echo $web_root; ?>/system/update-profile.php"><?php echo $_SESSION['first_name'] . " "; ?>
+                <?php echo $_SESSION['last_name']; ?></a>)</em>&nbsp;&nbsp;[ <a target="_blank"
+                href="http://domainmod.org/news/">News</a> ]&nbsp;&nbsp;[ <a target="_blank"
+                href="http://domainmod.org/support/">Support</a> ]&nbsp;&nbsp;[ <a href="<?php echo $web_root;
+                ?>/logout.php">Logout</a> ]
             <?php } ?>
         </div>
     </div>
@@ -45,7 +50,7 @@
             <div style="clear: both;"></div>
         </div>
         <div class="main-inner">
-			<?php if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['running_login_checks'] != 1) { ?>
+            <?php if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['running_login_checks'] != 1) { ?>
             <hr width="100%" size="1" noshade><BR>
             <?php } ?>
             <font class="headline"><?php echo $page_title; ?></font>

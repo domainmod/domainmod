@@ -37,22 +37,30 @@ $result = mysqli_query($connection, $sql) or die(mysqli_error());
 $sql_get_total_dw_servers = "SELECT count(*) AS total_dw_servers
 							 FROM dw_servers";
 $result_get_total_dw_servers = mysqli_query($connection, $sql_get_total_dw_servers);
-while ($row_get_total_dw_servers = mysqli_fetch_object($result_get_total_dw_servers)) $temp_total_dw_servers = $row_get_total_dw_servers->total_dw_servers;
+while ($row_get_total_dw_servers = mysqli_fetch_object($result_get_total_dw_servers)) {
+    $temp_total_dw_servers = $row_get_total_dw_servers->total_dw_servers;
+}
 
 $sql_get_total_dw_accounts = "SELECT count(*) AS total_dw_accounts
 							  FROM dw_accounts";
 $result_get_total_dw_accounts = mysqli_query($connection, $sql_get_total_dw_accounts);
-while ($row_get_total_dw_accounts = mysqli_fetch_object($result_get_total_dw_accounts)) $temp_total_dw_accounts = $row_get_total_dw_accounts->total_dw_accounts;
+while ($row_get_total_dw_accounts = mysqli_fetch_object($result_get_total_dw_accounts)) {
+    $temp_total_dw_accounts = $row_get_total_dw_accounts->total_dw_accounts;
+}
 
 $sql_get_total_dnz_zones = "SELECT count(*) AS total_dw_dns_zones
 							FROM dw_dns_zones";
 $result_get_total_dnz_zones = mysqli_query($connection, $sql_get_total_dnz_zones);
-while ($row_get_total_dnz_zones = mysqli_fetch_object($result_get_total_dnz_zones)) $temp_total_dw_dns_zones = $row_get_total_dnz_zones->total_dw_dns_zones;
+while ($row_get_total_dnz_zones = mysqli_fetch_object($result_get_total_dnz_zones)) {
+    $temp_total_dw_dns_zones = $row_get_total_dnz_zones->total_dw_dns_zones;
+}
 
 $sql_get_total_dns_records = "SELECT count(*) AS total_dw_dns_records
 							  FROM dw_dns_records";
 $result_get_total_dns_records = mysqli_query($connection, $sql_get_total_dns_records);
-while ($row_get_total_dns_records = mysqli_fetch_object($result_get_total_dns_records)) $temp_total_dw_dns_records = $row_get_total_dns_records->total_dw_dns_records;
+while ($row_get_total_dns_records = mysqli_fetch_object($result_get_total_dns_records)) {
+    $temp_total_dw_dns_records = $row_get_total_dns_records->total_dw_dns_records;
+}
 
 $sql_insert_dw_totals = "INSERT INTO dw_server_totals
 						 (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time) VALUES 

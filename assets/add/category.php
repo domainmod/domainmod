@@ -37,23 +37,23 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_category != "") {
-		
-		$sql = "INSERT INTO categories 
+    if ($new_category != "") {
+
+        $sql = "INSERT INTO categories
 				(name, stakeholder, notes, insert_time) VALUES 
 				('" . mysqli_real_escape_string($connection, $new_category) . "', '" . mysqli_real_escape_string($connection, $new_stakeholder) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
-		
-		$_SESSION['result_message'] = "Category <font class=\"highlight\">" . $new_category . "</font> Added<BR>";
-		
-		header("Location: ../categories.php");
-		exit;
+        $result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-	} else {
-	
-		$_SESSION['result_message'] .= "Please enter the category name<BR>";
+        $_SESSION['result_message'] = "Category <font class=\"highlight\">" . $new_category . "</font> Added<BR>";
 
-	}
+        header("Location: ../categories.php");
+        exit;
+
+    } else {
+
+        $_SESSION['result_message'] .= "Please enter the category name<BR>";
+
+    }
 
 }
 ?>

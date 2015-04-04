@@ -66,13 +66,13 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
             </td>
             <td class="main_table_cell_active">
                 <?php
-				$sql_missing_types = "SELECT sslcf.type
-									  FROM ssl_certs AS sslc, ssl_cert_types AS sslcf
-									  WHERE sslc.type_id = sslcf.id
-									    AND sslc.ssl_provider_id = '" . $row->ssl_provider_id . "'
-										AND sslc.fee_id = '0'
-									  GROUP BY sslcf.type
-									  ORDER BY sslcf.type asc";
+                $sql_missing_types = "SELECT sslcf.type
+                                      FROM ssl_certs AS sslc, ssl_cert_types AS sslcf
+                                      WHERE sslc.type_id = sslcf.id
+                                        AND sslc.ssl_provider_id = '" . $row->ssl_provider_id . "'
+                                        AND sslc.fee_id = '0'
+                                      GROUP BY sslcf.type
+                                      ORDER BY sslcf.type asc";
                 $result_missing_types = mysqli_query($connection, $sql_missing_types);
                 $full_type_list = "";
 
@@ -82,7 +82,7 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
 
                 $full_type_list_formatted = substr($full_type_list, 0, -2); 
                 ?>
-                <a class="nobold" href="ssl-provider-fees.php?sslpid=<?php echo $row->ssl_provider_id; ?>"><?php echo $full_type_list_formatted; ?></a>
+                <a class="nobold" href="ssl-provider-fees.php?sslpid=<?php echo $row->ssl_provider_id . "\">" . $full_type_list_formatted; ?></a>
             </td>
         </tr>
     <?php 

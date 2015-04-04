@@ -57,7 +57,7 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
         </td>
     </tr>
 
-	<?php 
+    <?php
     while ($row = mysqli_fetch_object($result)) { ?>
 
         <tr class="main_table_row_active">
@@ -74,12 +74,13 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
 									 ORDER BY tld asc";
                 $result_missing_tlds = mysqli_query($connection, $sql_missing_tlds);
                 $full_tld_list = "";
+
                 while ($row_missing_tlds = mysqli_fetch_object($result_missing_tlds)) {
                     $full_tld_list .= $row_missing_tlds->tld . ", ";
                 }
-                $full_tld_list_formatted = substr($full_tld_list, 0, -2); 
+                $full_tld_list_formatted = substr($full_tld_list, 0, -2);
                 ?>
-                <a class="nobold" href="registrar-fees.php?rid=<?php echo $row->registrar_id; ?>"><?php echo $full_tld_list_formatted; ?></a>
+                <a class="nobold" href="registrar-fees.php?rid=<?php echo $row->registrar_id . "\"" . $full_tld_list_formatted; ?></a>
             </td>
         </tr>
 

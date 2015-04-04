@@ -21,12 +21,12 @@
 ?>
 <?php
 if ($_SESSION['is_logged_in'] != 1) {
-	
-	$_SESSION['user_redirect'] = $_SERVER["REQUEST_URI"];
-	
-	$_SESSION['result_message'] = "You must be logged in to access this area<BR>";
-	
-	header("Location: " . $web_root . "/index.php");
-	exit;
+
+    $_SESSION['user_redirect'] = $_SERVER["REQUEST_URI"];
+
+    $_SESSION['result_message'] = "You must be logged in to access this area<BR>";
+
+    header("Location: " . $web_root . "/index.php");
+    exit;
 
 }

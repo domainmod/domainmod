@@ -36,23 +36,23 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_owner != "") {
+    if ($new_owner != "") {
 
-		$sql = "INSERT INTO owners 
+        $sql = "INSERT INTO owners
 				(name, notes, insert_time) VALUES 
 				('" . mysqli_real_escape_string($connection, $new_owner) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
-		
-		$_SESSION['result_message'] = "Owner <font class=\"highlight\">" . $new_owner . "</font> Added<BR>";
-		
-		header("Location: ../account-owners.php");
-		exit;
+        $result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-	} else {
-	
-		$_SESSION['result_message'] .= "Please enter the owner's name<BR>";
+        $_SESSION['result_message'] = "Owner <font class=\"highlight\">" . $new_owner . "</font> Added<BR>";
 
-	}
+        header("Location: ../account-owners.php");
+        exit;
+
+    } else {
+
+        $_SESSION['result_message'] .= "Please enter the owner's name<BR>";
+
+    }
 
 }
 ?>

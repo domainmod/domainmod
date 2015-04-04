@@ -21,20 +21,20 @@
 ?>
 <?php
 $sql_db_check = "SELECT db_version
-				FROM settings";
+                 FROM settings";
 $result_db_check = mysqli_query($connection, $sql_db_check) or die(mysqli_error());
 
 while ($row_db_check = mysqli_fetch_object($result_db_check)) {
 
-	if ($row_db_check->db_version != $most_recent_db_version) { 
-	
-		include($_SESSION['full_server_path'] . "/_includes/system/update-database.inc.php");
-		$_SESSION['run_update_includes'] = "1";
+    if ($row_db_check->db_version != $most_recent_db_version) {
 
-	} else {
+        include($_SESSION['full_server_path'] . "/_includes/system/update-database.inc.php");
+        $_SESSION['run_update_includes'] = "1";
 
-		$_SESSION['needs_database_upgrade'] = "0";
+    } else {
 
-	}
+        $_SESSION['needs_database_upgrade'] = "0";
+
+    }
 
 }
