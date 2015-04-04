@@ -481,12 +481,12 @@ if (mysqli_num_rows($result) > 0) { ?>
 <?php
 $sql_accounts = "SELECT id
 				 FROM dw_accounts
-				 WHERE domain = '" . $new_domain . "'";
+				 WHERE domain = '" . mysqli_real_escape_string($new_domain) . "'";
 $result_accounts = mysqli_query($connection, $sql_accounts);
 
 $sql_dns_zones = "SELECT id
 				  FROM dw_dns_zones
-				  WHERE domain = '" . $new_domain . "'";
+				  WHERE domain = '" . mysqli_real_escape_string($new_domain) . "'";
 $result_dns_zones = mysqli_query($connection, $sql_dns_zones);
 
 if (mysqli_num_rows($result_accounts) > 0 || mysqli_num_rows($result_dns_zones) > 0) { ?>

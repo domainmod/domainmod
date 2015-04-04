@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$sql = "SELECT domain
 				FROM domains
-				WHERE domain = '" . $new_domain . "'";
+				WHERE domain = '" . mysqli_real_escape_string($new_domain) . "'";
 		$result = mysqli_query($connection, $sql);
 		
 		if (mysqli_num_rows($result) == 0) {
