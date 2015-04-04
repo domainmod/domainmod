@@ -170,47 +170,55 @@ if ($really_del == "1") {
 <form name="dw_edit_server_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 Enter the display name for this server.<BR><BR>
-<input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "") {
+<input name="new_name" type="text" size="50" maxlength="100" value="<?php
+if ($new_name != "") {
     echo htmlentities($new_name);
 } ?>">
 <BR><BR>
 <strong>Host Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 Enter the host name of your WHM installation (ie. server1.example.com).<BR><BR>
-<input name="new_host" type="text" size="50" maxlength="100" value="<?php if ($new_host != "") {
+<input name="new_host" type="text" size="50" maxlength="100" value="<?php
+if ($new_host != "") {
     echo $new_host;
 } ?>">
 <BR><BR>
 <strong>Protocol (5):</strong><BR><BR>
 Enter the protocol you connect with.<BR><BR>
 <select name="new_protocol">
-<option value="https"<?php if ($new_protocol == "https") {
+<option value="https"<?php
+if ($new_protocol == "https") {
     echo " selected";
 } ?>>Secured (https)</option>
-<option value="http"<?php if ($new_protocol == "http") {
+<option value="http"<?php
+if ($new_protocol == "http") {
     echo " selected";
 } ?>>Unsecured (http)</option>
 </select>
 <BR><BR>
 <strong>Port (5):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 Enter the port that you connect to (usually 2086 or 2087).<BR><BR>
-<input name="new_port" type="text" size="5" maxlength="5" value="<?php if ($new_port != "") {
+<input name="new_port" type="text" size="5" maxlength="5" value="<?php
+if ($new_port != "") {
     echo $new_port;
 } ?>">
 <BR><BR>
 <strong>Username (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 Enter the username for your WHM installation.<BR><BR>
-<input name="new_username" type="text" size="50" maxlength="100" value="<?php if ($new_username != "") {
+<input name="new_username" type="text" size="50" maxlength="100" value="<?php
+if ($new_username != "") {
     echo $new_username;
 } ?>">
 <BR><BR>
 <strong>Hash/Remote Access Key:</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 Enter the hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the right-hand side of the screen.<BR><BR>
-<textarea name="new_hash" cols="60" rows="5"><?php if ($new_hash != "") {
+<textarea name="new_hash" cols="60" rows="5"><?php
+if ($new_hash != "") {
     echo $new_hash;
 } ?></textarea>
 <BR><BR>
 <strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php if ($new_notes != "") {
+<textarea name="new_notes" cols="60" rows="5"><?php
+if ($new_notes != "") {
     echo $new_notes;
 } ?></textarea>
 <BR><BR>
