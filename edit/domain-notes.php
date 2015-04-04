@@ -46,7 +46,7 @@ while ($row = mysqli_fetch_object($result)) {
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
+<title><?php echo $software_title . " :: " . $page_title; ?></title>
 <?php include("../_includes/layout/head-tags-bare.inc.php"); ?>
 </head>
 <body>

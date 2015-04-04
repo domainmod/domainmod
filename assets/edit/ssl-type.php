@@ -120,7 +120,7 @@ if ($really_del == "1") {
 <?php include("../../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?php echo $software_title; ?> :: <?php echo $page_title; ?></title>
+<title><?php echo $software_title . " :: " . $page_title; ?></title>
 <?php include("../../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>

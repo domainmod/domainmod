@@ -33,7 +33,7 @@ $software_section = "reporting";
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
 <head>
-<title><?php echo $software_title; ?> :: <?php echo $page_title; ?> :: <?php echo $page_subtitle; ?></title>
+<title><?php echo $software_title . " :: " . $page_title; ?> :: <?php echo $page_subtitle; ?></title>
 <?php include("../_includes/layout/head-tags.inc.php"); ?>
 </head>
 <body>
