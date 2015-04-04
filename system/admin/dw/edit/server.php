@@ -50,100 +50,100 @@ $new_dwsid = $_POST['new_dwsid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" && $new_hash != "") {
+    if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" && $new_hash != "") {
 
-		$sql = "UPDATE dw_servers
-				SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
-					host = '" . mysqli_real_escape_string($connection, $new_host) . "',
-					protocol = '" . mysqli_real_escape_string($connection, $new_protocol) . "',
-					port = '" . mysqli_real_escape_string($connection, $new_port) . "',
-					username = '" . mysqli_real_escape_string($connection, $new_username) . "',
-					hash = '" . mysqli_real_escape_string($connection, $new_hash) . "',
-					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-					update_time = '" . $current_timestamp . "'
-				WHERE id = '" . $new_dwsid . "'";
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+        $sql = "UPDATE dw_servers
+                SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
+                    host = '" . mysqli_real_escape_string($connection, $new_host) . "',
+                    protocol = '" . mysqli_real_escape_string($connection, $new_protocol) . "',
+                    port = '" . mysqli_real_escape_string($connection, $new_port) . "',
+                    username = '" . mysqli_real_escape_string($connection, $new_username) . "',
+                    hash = '" . mysqli_real_escape_string($connection, $new_hash) . "',
+                    notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
+                    update_time = '" . $current_timestamp . "'
+                WHERE id = '" . $new_dwsid . "'";
+        $result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-		$dwsid = $new_dwsid;
-		
-		$_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font> Updated<BR>";
+        $dwsid = $new_dwsid;
 
-		header("Location: ../servers.php");
-		exit;
+        $_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font> Updated<BR>";
 
-	} else {
+        header("Location: ../servers.php");
+        exit;
 
-		if ($new_name == "") $_SESSION['result_message'] .= "Please enter a display name for the server<BR>";
-		if ($new_host == "") $_SESSION['result_message'] .= "Please enter the hostname<BR>";
-		if ($new_protocol == "") $_SESSION['result_message'] .= "Please enter the protocol<BR>";
-		if ($new_port == "") $_SESSION['result_message'] .= "Please enter the port<BR>";
-		if ($new_username == "") $_SESSION['result_message'] .= "Please enter the username<BR>";
-		if ($new_hash == "") $_SESSION['result_message'] .= "Please enter the hash<BR>";
+    } else {
 
-	}
+        if ($new_name == "") { $_SESSION['result_message'] .= "Please enter a display name for the server<BR>"; }
+        if ($new_host == "") { $_SESSION['result_message'] .= "Please enter the hostname<BR>"; }
+        if ($new_protocol == "") { $_SESSION['result_message'] .= "Please enter the protocol<BR>"; }
+        if ($new_port == "") { $_SESSION['result_message'] .= "Please enter the port<BR>"; }
+        if ($new_username == "") { $_SESSION['result_message'] .= "Please enter the username<BR>"; }
+        if ($new_hash == "") { $_SESSION['result_message'] .= "Please enter the hash<BR>"; }
+
+    }
 
 } else {
 
-	$sql = "SELECT id, name, host, protocol, port, username, hash, notes
-			FROM dw_servers
-			WHERE id = '" . $dwsid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
-	
-	while ($row = mysqli_fetch_object($result)) { 
+    $sql = "SELECT id, name, host, protocol, port, username, hash, notes
+            FROM dw_servers
+            WHERE id = '" . $dwsid . "'";
+    $result = mysqli_query($connection, $sql) or die(mysqli_error());
 
-		$new_name = $row->name;
-		$new_host = $row->host;
-		$new_protocol = $row->protocol;
-		$new_port = $row->port;
-		$new_username = $row->username;
-		$new_hash = $row->hash;
-		$new_notes = $row->notes;
+    while ($row = mysqli_fetch_object($result)) {
 
-	}
+        $new_name = $row->name;
+        $new_host = $row->host;
+        $new_protocol = $row->protocol;
+        $new_port = $row->port;
+        $new_username = $row->username;
+        $new_hash = $row->hash;
+        $new_notes = $row->notes;
+
+    }
 
 }
 if ($del == "1") {
-	
-	$_SESSION['result_message'] = "Are you sure you want to delete this Server?<BR><BR><a href=\"$PHP_SELF?dwsid=$dwsid&really_del=1\">YES, REALLY DELETE THIS SERVER</a><BR>";
+
+    $_SESSION['result_message'] = "Are you sure you want to delete this Server?<BR><BR><a href=\"$PHP_SELF?dwsid=$dwsid&really_del=1\">YES, REALLY DELETE THIS SERVER</a><BR>";
 
 }
 
 if ($really_del == "1") {
 
-	$sql = "SELECT name, host
-			FROM dw_servers
-			WHERE id = '" . $dwsid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) {
-		
-		$new_name = $row->name;
-		$new_host = $row->host;
+    $sql = "SELECT name, host
+            FROM dw_servers
+            WHERE id = '" . $dwsid . "'";
+    $result = mysqli_query($connection, $sql);
 
-	}
+    while ($row = mysqli_fetch_object($result)) {
 
-	$sql = "DELETE FROM dw_accounts
-			WHERE server_id = '" . $dwsid . "'";
-	$result = mysqli_query($connection, $sql);
+        $new_name = $row->name;
+        $new_host = $row->host;
 
-	$sql = "DELETE FROM dw_dns_records
-			WHERE server_id = '" . $dwsid . "'";
-	$result = mysqli_query($connection, $sql);
+    }
 
-	$sql = "DELETE FROM dw_dns_zones
-			WHERE server_id = '" . $dwsid . "'";
-	$result = mysqli_query($connection, $sql);
+    $sql = "DELETE FROM dw_accounts
+            WHERE server_id = '" . $dwsid . "'";
+    $result = mysqli_query($connection, $sql);
 
-	$sql = "DELETE FROM dw_servers
-			WHERE id = '" . $dwsid . "'";
-	$result = mysqli_query($connection, $sql);
+    $sql = "DELETE FROM dw_dns_records
+            WHERE server_id = '" . $dwsid . "'";
+    $result = mysqli_query($connection, $sql);
 
-	include("../../../../cron/_includes/dw-update-totals.inc.php");
+    $sql = "DELETE FROM dw_dns_zones
+            WHERE server_id = '" . $dwsid . "'";
+    $result = mysqli_query($connection, $sql);
 
-	$_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font> Deleted<BR>";
-	
-	header("Location: ../servers.php");
-	exit;
+    $sql = "DELETE FROM dw_servers
+            WHERE id = '" . $dwsid . "'";
+    $result = mysqli_query($connection, $sql);
+
+    include("../../../../cron/_includes/dw-update-totals.inc.php");
+
+    $_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font> Deleted<BR>";
+
+    header("Location: ../servers.php");
+    exit;
 
 }
 ?>
@@ -158,7 +158,7 @@ if ($really_del == "1") {
 <form name="dw_edit_server_form" method="post" action="<?php echo $PHP_SELF; ?>">
 <strong>Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 Enter the display name for this server.<BR><BR>
-<input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
+<input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "") { echo htmlentities($new_name); } ?>">
 <BR><BR>
 <strong>Host Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 Enter the host name of your WHM installation (ie. server1.example.com).<BR><BR>
@@ -167,8 +167,8 @@ Enter the host name of your WHM installation (ie. server1.example.com).<BR><BR>
 <strong>Protocol (5):</strong><BR><BR>
 Enter the protocol you connect with.<BR><BR>
 <select name="new_protocol">
-<option value="https"<?php if ($new_protocol == "https") echo " selected";?>>Secured (https)</option>
-<option value="http"<?php if ($new_protocol == "http") echo " selected";?>>Unsecured (http)</option>
+<option value="https"<?php if ($new_protocol == "https") { echo " selected"; } ?>>Secured (https)</option>
+<option value="http"<?php if ($new_protocol == "http") { echo " selected"; } ?>>Unsecured (http)</option>
 </select>
 <BR><BR>
 <strong>Port (5):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
