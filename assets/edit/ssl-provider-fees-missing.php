@@ -57,10 +57,10 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
         </td>
     </tr>
 
-	<?php 
+    <?php
     while ($row = mysqli_fetch_object($result)) { ?>
 
-        <tr class="main_table_row_active">
+    <tr class="main_table_row_active">
             <td class="main_table_cell_active">
                 <?php echo $row->ssl_provider_name; ?>
             </td>
@@ -80,7 +80,7 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
                     $full_type_list .= $row_missing_types->type . " / ";
                 }
 
-                $full_type_list_formatted = substr($full_type_list, 0, -2); 
+                $full_type_list_formatted = substr($full_type_list, 0, -2);
                 ?>
                 <a class="nobold" href="ssl-provider-fees.php?sslpid=<?php echo $row->ssl_provider_id . "\">" . $full_type_list_formatted; ?></a>
             </td>

@@ -25,7 +25,7 @@
         <?php if ($totalrows != '0') {
                   echo "(Listing $navigate[1] of " . number_format($totalrows) . ")";
               } ?>
-		<?php
+        <?php
         if ($software_section == "domains" || $software_section == "ssl-certs") {
 
             if ($software_section == "domains") {

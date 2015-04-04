@@ -76,7 +76,9 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
                 $full_tld_list = "";
 
                 while ($row_missing_tlds = mysqli_fetch_object($result_missing_tlds)) {
+
                     $full_tld_list .= $row_missing_tlds->tld . ", ";
+
                 }
                 $full_tld_list_formatted = substr($full_tld_list, 0, -2);
                 ?>
