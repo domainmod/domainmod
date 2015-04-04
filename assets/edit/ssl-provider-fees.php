@@ -360,7 +360,7 @@ if (mysqli_num_rows($result) != 0) {
                 $sql = "SELECT id, type
                         FROM ssl_cert_types
                         ORDER BY type";
-                $result = mysqli_query($connection $sql);
+                $result = mysqli_query($connection, $sql);
                 while ($row = mysqli_fetch_object($result)) {
 
 					if ($row->id == $new_type_id) {
