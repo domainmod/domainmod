@@ -20,7 +20,6 @@
  */
 ?>
 <?php
-// DEV branch test
 include("_includes/start-session.inc.php");
 include("_includes/config.inc.php");
 
