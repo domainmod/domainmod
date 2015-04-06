@@ -20,10 +20,14 @@
  */
 ?>
 <?php
-$most_recent_version = file_get_contents('https://raw.githubusercontent.com/aysmedia/domainmod/master/version-db.txt');
+if ($_SESSION['is_admin'] == 1) {
 
-if ($_SESSION['system_db_version'] != $most_recent_version) {
+    $most_recent_version = file_get_contents('https://raw.githubusercontent.com/aysmedia/domainmod/master/version-db.txt');
 
-    $_SESSION['result_message'] .= "A newer version of DomainMOD is available. <a target=\"_blank\" href=\"http://domainmod.org/upgrade/\">Click here for upgrade instructions</a>.<BR>";
+    if ($_SESSION['system_db_version'] != $most_recent_version) {
+
+        $_SESSION['result_message'] .= "A newer version of DomainMOD is available. <a target=\"_blank\" href=\"http://domainmod.org/upgrade/\">Click here for upgrade instructions</a>.<BR>";
+
+    }
 
 }
