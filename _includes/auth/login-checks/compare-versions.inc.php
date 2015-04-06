@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/auth/login-checks/database-version-check.inc.php
+ * /_includes/auth/login-checks/compare-versions.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,21 +20,13 @@
  */
 ?>
 <?php
-$sql_db_check = "SELECT db_version
-                 FROM settings";
-$result_db_check = mysqli_query($connection, $sql_db_check) or die(mysqli_error());
+if ($_SESSION['system_db_version'] != $most_recent_db_version) {
 
-while ($row_db_check = mysqli_fetch_object($result_db_check)) {
+    include($_SESSION['full_server_path'] . "/_includes/system/update-database.inc.php");
+    $_SESSION['run_update_includes'] = "1";
 
-    if ($row_db_check->db_version != $most_recent_db_version) {
+} else {
 
-        include($_SESSION['full_server_path'] . "/_includes/system/update-database.inc.php");
-        $_SESSION['run_update_includes'] = "1";
-
-    } else {
-
-        $_SESSION['needs_database_upgrade'] = "0";
-
-    }
+    $_SESSION['needs_database_upgrade'] = "0";
 
 }
