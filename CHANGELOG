@@ -1,5 +1,8 @@
 DomainMOD Changelog
 ===================
+v0.88.0   2015-04-06   6ed1c2384783121a61c22e84e4a469508e388a15
+ - Added a login check to see if a newer version of DomainMOD is available for download
+
 v0.87.0   2015-03-28   ca7ed25bec28e80d44402d4f2741903c0f753147
  - Added the ability to bypass the Data Warehouse intro
 
