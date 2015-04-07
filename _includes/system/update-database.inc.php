@@ -3346,6 +3346,12 @@ if ($current_db_version < $most_recent_db_version) {
 
     }
 
+    $_SESSION['system_upgrade_available'] = "0";
+
+    $sql = "UPDATE settings
+            SET upgrade_available = '0'";
+    $result = mysqli_query($connection,$sql) or die(mysqli_error());
+
     if ($direct == "1") {
 	
 		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
