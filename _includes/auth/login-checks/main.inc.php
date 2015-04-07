@@ -35,9 +35,6 @@ include("_includes/auth/login-checks/compare-versions.inc.php");
 // Check if there are Domain and SSL assets
 include("_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
-// Current version check (to see if there's a newer version of DomainMOD available)
-include("_includes/auth/login-checks/software-version-check.inc.php");
-
 unset($_SESSION['running_login_checks']);
 
 unset($_SESSION['installation_mode']);

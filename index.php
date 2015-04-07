@@ -78,7 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			while ($row_settings = mysqli_fetch_object($result_settings)) {
 				
 				$_SESSION['system_full_url'] = $row_settings->full_url;
-				$_SESSION['system_db_version'] = $row_settings->db_version;
+                $_SESSION['system_db_version'] = $row_settings->db_version;
+                $_SESSION['system_upgrade_available'] = $row_settings->upgrade_available;
 				$_SESSION['system_email_address'] = $row_settings->email_address;
 				$_SESSION['system_default_category_domains'] = $row_settings->default_category_domains;
 				$_SESSION['system_default_category_ssl'] = $row_settings->default_category_ssl;
@@ -163,7 +164,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
 			include("_includes/auth/login-checks/main.inc.php");
 
-			if (($_SESSION['run_update_includes'] == "1" || $last_login_date < $current_date) && $_SESSION['need_domain'] == "0") {
+           if ($_SESSION['system_upgrade_available'] == "1") {
+
+               if ($_SESSION['is_admin'] == "1") {
+
+                   $_SESSION['result_message'] .= "A new version of DomainMOD is available. <a target=\"_blank\" href=\"http://domainmod.org/upgrade/\">Click here for upgrade instructions</a>.<BR>";
+
+               }
+
+           }
+
+           if (($_SESSION['run_update_includes'] == "1" || $last_login_date < $current_date) && $_SESSION['need_domain'] == "0") {
 				
 				include("_includes/system/update-segments.inc.php");
 				include("_includes/system/update-tlds.inc.php");
@@ -178,34 +189,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['result_message'] .= "Your password should be changed for security purposes<BR>";
 				header("Location: system/change-password.php");
 				exit;
-				
-			}
-			
-			$_SESSION['run_update_includes'] = "";
 
-			if (isset($_SESSION['user_redirect'])) {
-			
-				$temp_redirect = $_SESSION['user_redirect'];
-				unset($_SESSION['user_redirect']);
-			
-				header("Location: $temp_redirect");
-				exit;
-			
-			} else {
-			
-				header("Location: domains.php");
-				exit;
-			
-			}
+           }
 
-	   }
+           $_SESSION['run_update_includes'] = "";
 
-	} else {
+           if (isset($_SESSION['user_redirect'])) {
 
-		$_SESSION['result_message'] = "Login Failed<BR>";
-	   
+               $temp_redirect = $_SESSION['user_redirect'];
+               unset($_SESSION['user_redirect']);
+
+               header("Location: $temp_redirect");
+               exit;
+
+           } else {
+
+               header("Location: domains.php");
+
+               exit;
+
+           }
+
+       }
+
+   } else {
+
+       $_SESSION['result_message'] = "Login Failed<BR>";
+
    }
-	
+
 } else {
 	
 

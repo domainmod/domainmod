@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/auth/login-checks/software-version-check.inc.php
+ * /cron/checkversion.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,13 +20,28 @@
  */
 ?>
 <?php
-if ($_SESSION['is_admin'] == 1) {
+include("../_includes/config.inc.php");
+include("../_includes/database.inc.php");
+include("../_includes/software.inc.php");
+include("../_includes/timestamps/current-timestamp.inc.php");
 
-    $most_recent_version = file_get_contents('https://raw.githubusercontent.com/aysmedia/domainmod/master/version-db.txt');
+include("../_includes/config-demo.inc.php");
 
-    if ($_SESSION['system_db_version'] != $most_recent_version) {
+if ($demo_install != "1") {
 
-        $_SESSION['result_message'] .= "A newer version of DomainMOD is available. <a target=\"_blank\" href=\"http://domainmod.org/upgrade/\">Click here for upgrade instructions</a>.<BR>";
+    $live_version = file_get_contents('https://raw.githubusercontent.com/aysmedia/domainmod/master/version-db.txt');
+
+    if ($most_recent_db_version != $live_version) {
+
+        $sql = "UPDATE settings
+                SET upgrade_available = '1'";
+        $result = mysqli_query($connection,$sql) or die(mysqli_error());
+
+    } else {
+
+        $sql = "UPDATE settings
+                SET upgrade_available = '0'";
+        $result = mysqli_query($connection,$sql) or die(mysqli_error());
 
     }
 

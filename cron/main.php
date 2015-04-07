@@ -28,5 +28,6 @@ if ($demo_install != "1") {
     include("dw.php");
     include("expirations.php");
     include("fixfees.php");
+    include("checkversion.php");
 
 }
