@@ -37,9 +37,9 @@ $software_section = "help";
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-There is a LOT of work that needs to be done in this help section, but the focus right now is the software itself.<BR>
+There is a LOT of work that needs to be done in this help section, but the focus right now is the software itself. I sincerely apologize for the lack of documentation, I really do.<BR>
 <BR>
-For now, please check out the <a href="getting-started/">Getting Started</a> section.<BR>
+For now, please check out the (minimal) <a target="_blank" href="http://domainmod.org/documentation/">Documentation</a> section on DomainMOD.org.<BR>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>
