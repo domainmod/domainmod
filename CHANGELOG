@@ -1,5 +1,8 @@
 DomainMOD Changelog
 ===================
+v0.89.0   2015-04-06   f93b7562cd0d06c47e3504892a43977df6c881cf
+ - Added a cron job to check for a newer version
+
 v0.88.0   2015-04-06   6ed1c2384783121a61c22e84e4a469508e388a15
  - Added a login check to see if a newer version of DomainMOD is available for download
 
