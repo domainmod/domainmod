@@ -27,5 +27,5 @@ $software_version = "1.0";
 $site_width = "96%";
 $site_width_login = "550";
 $code_home_url = "http://domainmod.org";
-$most_recent_db_version = "2.0056";
+$most_recent_db_version = "2.0057";
 header('Content-Type: text/html; charset=utf-8');

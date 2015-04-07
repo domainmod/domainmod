@@ -665,6 +665,7 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
 				`id` int(10) NOT NULL auto_increment,
 				`full_url` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default 'http://',
 				`db_version` float NOT NULL,
+				`upgrade_available` int(1) NOT NULL default '0',
 				`email_address` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				`default_category_domains` int(10) NOT NULL default '0',
 				`default_category_ssl` int(10) NOT NULL default '0',
