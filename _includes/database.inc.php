@@ -20,7 +20,13 @@
  */
 ?>
 <?php
-$connection = mysqli_connect($dbhostname, $dbusername, $dbpassword, $dbname) or die(mysqli_error());
+$connection = mysqli_connect($dbhostname, $dbusername, $dbpassword, $dbname);
+
+if(mysqli_connect_errno()) {
+    echo "Database Connection Error: " . mysqli_connect_errno();
+    exit();
+}
+
 mysqli_query($connection, "SET NAMES UTF8") or die(mysqli_error());
 mysqli_query($connection, "SET CHARACTER SET utf8") or die(mysqli_error());
 mysqli_query($connection, "SET COLLATION_CONNECTION = utf8_unicode_ci") or die(mysqli_error());
