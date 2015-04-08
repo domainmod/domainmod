@@ -44,8 +44,6 @@ function pageBrowser($totalrows, $numLimit, $amm, $queryStr, $numBegin, $begin, 
         }
 
         $preBegin = $numBegin-$numLimit;
-        $preStart = $amm*$numLimit;
-        $preStart = $start-$preStart;
         $preVBegin = $start-$amm;
         $preRedBegin = $numBegin-1;
 
