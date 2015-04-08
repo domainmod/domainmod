@@ -109,6 +109,7 @@ function pageBrowser($totalrows, $numLimit, $amm, $queryStr, $numBegin, $begin, 
 
         $wholePiece = "";
         $wheToWhe = "<b>0</b> - <b>0</b>";
+        $sqlprod = "";
 
     }
 
