@@ -103,33 +103,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$new_segment_formatted = preg_replace("/\r\n/", "','", $new_segment_formatted);
 			$new_segment_formatted = str_replace (" ", "", $new_segment_formatted);
 			$new_segment_formatted = trim($new_segment_formatted);
-			$new_segment_formatted = mysqli_real_escape_string($connection, $new_segment_formatted);
-	
-			$sql = "INSERT into segments
-					(name, description, segment, number_of_domains, notes, insert_time) VALUES 
-					('" . mysqli_real_escape_string($connection, $new_name) . "', '" . mysqli_real_escape_string($connection, $new_description) . "', '" . $new_segment_formatted . "', '" . $number_of_domains . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
-			$result = mysqli_query($connection, $sql) or die(mysqli_error());
-			
-			$sql = "SELECT id
-					FROM segments
-					WHERE name = '" . $new_name . "'
-					  AND segment = '" . $new_segment_formatted . "'
-					  AND insert_time = '" . $current_timestamp . "'";
-			$result = mysqli_query($connection, $sql);
-			while ($row = mysqli_fetch_object($result)) { $temp_segment_id = $row->id; }
-			
-			$sql = "DELETE FROM segment_data
-					WHERE segment_id = '" . $temp_segment_id . "'";
-			$result = mysqli_query($connection, $sql) or die(mysqli_error());
-	
-			foreach ($lines as $domain) {
-	
-				$sql = "INSERT INTO segment_data
-						(segment_id, domain, insert_time) VALUES 
-						('" . $temp_segment_id . "', '" . $domain . "', '" . $current_timestamp . "');";
-				$result = mysqli_query($connection, $sql) or die(mysqli_error());
-	
-			}
+
+            $stmt = mysqli_stmt_init($connection);
+            $query = "INSERT into segments (`name`, description, segment, number_of_domains, notes, insert_time) VALUES (?, ?, ?, ?, ?, ?)";
+
+            if (mysqli_stmt_prepare($stmt, $query)) {
+
+                mysqli_stmt_bind_param($stmt, "sssiss", $new_name, $new_description, $new_segment_formatted, $number_of_domains, $new_notes, $current_timestamp);
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_close($stmt);
+
+            }
+
+            $stmt = mysqli_stmt_init($connection);
+            $query = "SELECT id FROM segments WHERE name = ? AND segment = ? AND insert_time = ?";
+
+            if (mysqli_stmt_prepare($stmt, $query)) {
+
+                mysqli_stmt_bind_param($stmt, "sss", $new_name, $new_segment_formatted, $current_timestamp);
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_store_result($stmt);
+                mysqli_stmt_bind_result($stmt, $id);
+
+                while (mysqli_stmt_fetch($stmt)) {
+
+                    $temp_segment_id = $id;
+
+                }
+
+                mysqli_stmt_close($stmt);
+
+            }
+
+            $stmt = mysqli_stmt_init($connection);
+            $query = "DELETE FROM segment_data WHERE segment_id = ?";
+
+            if (mysqli_stmt_prepare($stmt, $query)) {
+
+                mysqli_stmt_bind_param($stmt, "i", $temp_segment_id);
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_close($stmt);
+
+            }
+
+            foreach ($lines as $domain) {
+
+                $stmt = mysqli_stmt_init($connection);
+                $query = "INSERT INTO segment_data (segment_id, domain, insert_time) VALUES (?, ?, ?)";
+
+                if (mysqli_stmt_prepare($stmt, $query)) {
+
+                    mysqli_stmt_bind_param($stmt, "iss", $temp_segment_id, $domain, $current_timestamp);
+                    mysqli_stmt_execute($stmt);
+                    mysqli_stmt_close($stmt);
+
+                }
+
+            }
+
+            mysqli_close($connection);
 	
 			$_SESSION['result_message'] = "Segment <font class=\"highlight\">$new_name</font> Added<BR>";
 	
