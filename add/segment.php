@@ -165,8 +165,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             include("../_includes/system/update-segments.inc.php");
 
-            mysqli_close($connection);
-
             header("Location: ../segments.php");
 			exit;
 			

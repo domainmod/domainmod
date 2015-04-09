@@ -160,8 +160,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 			include("../_includes/system/update-segments.inc.php");
 
-            mysqli_close($connection);
-
             header("Location: ../segments.php");
 			exit;
 		
@@ -260,14 +258,10 @@ if ($really_del == "1") {
 
     $_SESSION['result_message'] = "Segment <font class=\"highlight\">$temp_segment_name</font> Deleted<BR>";
 
-    mysqli_close($connection);
-
     header("Location: ../segments.php");
 	exit;
 
 }
-
-mysqli_close($connection);
 ?>
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
