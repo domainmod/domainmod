@@ -27,6 +27,7 @@ include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/system/functions/check-domain-format.inc.php");
+include("../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Adding A New Segment";
 $software_section = "segment-add";
@@ -113,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 mysqli_stmt_execute($stmt);
                 mysqli_stmt_close($stmt);
 
-            }
+            } else { OutputSQLError($connection, "ERROR"); }
 
             $stmt = mysqli_stmt_init($connection);
             $query = "SELECT id FROM segments WHERE name = ? AND segment = ? AND insert_time = ?";
@@ -133,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 mysqli_stmt_close($stmt);
 
-            }
+            } else { OutputSQLError($connection, "ERROR"); }
 
             $stmt = mysqli_stmt_init($connection);
             $query = "DELETE FROM segment_data WHERE segment_id = ?";
@@ -144,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 mysqli_stmt_execute($stmt);
                 mysqli_stmt_close($stmt);
 
-            }
+            } else { OutputSQLError($connection, "ERROR"); }
 
             foreach ($lines as $domain) {
 
@@ -157,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     mysqli_stmt_execute($stmt);
                     mysqli_stmt_close($stmt);
 
-                }
+                } else { OutputSQLError($connection, "ERROR"); }
 
             }
 

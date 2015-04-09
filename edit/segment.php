@@ -27,6 +27,7 @@ include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/system/functions/check-domain-format.inc.php");
+include("../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Editing A Segment";
 $software_section = "segment-edit";
@@ -125,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 mysqli_stmt_execute($stmt);
                 mysqli_stmt_close($stmt);
 
-            }
+            } else { OutputSQLError($connection, "ERROR"); }
 
             $stmt = mysqli_stmt_init($connection);
             $query = "DELETE FROM segment_data
@@ -137,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 mysqli_stmt_execute($stmt);
                 mysqli_stmt_close($stmt);
 
-            }
+            } else { OutputSQLError($connection, "ERROR"); }
 
             foreach ($lines as $domain) {
 
@@ -150,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     mysqli_stmt_execute($stmt);
                     mysqli_stmt_close($stmt);
 
-                }
+                } else { OutputSQLError($connection, "ERROR"); }
 
             }
 
@@ -181,6 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         mysqli_stmt_bind_param($stmt, "i", $segid);
         mysqli_stmt_execute($stmt);
+        mysqli_stmt_store_result($stmt);
         mysqli_stmt_bind_result($stmt, $id, $name, $description, $segment, $notes);
 
         while (mysqli_stmt_fetch($stmt)) {
@@ -195,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         mysqli_stmt_close($stmt);
 
-    }
+    } else { OutputSQLError($connection, "ERROR"); }
 
     $new_segment = preg_replace("/', '/", "\r\n", $new_segment);
     $new_segment = preg_replace("/','/", "\r\n", $new_segment);
@@ -220,6 +222,7 @@ if ($really_del == "1") {
 
         mysqli_stmt_bind_param($stmt, "i", $segid);
         mysqli_stmt_execute($stmt);
+        mysqli_stmt_store_result($stmt);
         mysqli_stmt_bind_result($stmt, $name);
 
         while (mysqli_stmt_fetch($stmt)) {
@@ -230,7 +233,7 @@ if ($really_del == "1") {
 
         mysqli_stmt_close($stmt);
 
-    }
+    } else { OutputSQLError($connection, "ERROR"); }
 
     $stmt = mysqli_stmt_init($connection);
     $query = "DELETE FROM segments
@@ -242,7 +245,7 @@ if ($really_del == "1") {
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
 
-    }
+    } else { OutputSQLError($connection, "ERROR"); }
 
     $stmt = mysqli_stmt_init($connection);
     $query = "DELETE FROM segment_data
@@ -254,7 +257,7 @@ if ($really_del == "1") {
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
 
-    }
+    } else { OutputSQLError($connection, "ERROR"); }
 
     $_SESSION['result_message'] = "Segment <font class=\"highlight\">$temp_segment_name</font> Deleted<BR>";
 
