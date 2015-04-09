@@ -108,38 +108,61 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$new_segment_formatted = preg_replace("/\r\n/", "','", $new_segment_formatted);
 			$new_segment_formatted = str_replace (" ", "", $new_segment_formatted);
 			$new_segment_formatted = trim($new_segment_formatted);
-			$new_segment_formatted = mysqli_real_escape_string($connection, $new_segment_formatted);
-	
-			$sql = "UPDATE segments
-					SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
-						description = '" . mysqli_real_escape_string($connection, $new_description) . "',
-						segment = '" . $new_segment_formatted . "',
-						number_of_domains = '" . $number_of_domains . "',
-						notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-						update_time = '" . $current_timestamp . "'
-					WHERE id = '" . $new_segid . "'";
-			$result = mysqli_query($connection, $sql) or die(mysqli_error());
-	
-			$sql = "DELETE FROM segment_data
-					WHERE segment_id = '" . $new_segid . "'";
-			$result = mysqli_query($connection, $sql) or die(mysqli_error());
-	
-			foreach ($lines as $domain) {
-	
-				$sql = "INSERT INTO segment_data
-						(segment_id, domain, update_time) VALUES 
-						('" . $new_segid . "', '" . $domain . "', '" . $current_timestamp . "');";
-				$result = mysqli_query($connection, $sql) or die(mysqli_error());
-	
-			}
-			
-			$segid = $new_segid;
+
+            $stmt = mysqli_stmt_init($connection);
+            $query = "UPDATE segments
+                      SET `name` = ?,
+                          description = ?,
+                          segment = ?,
+                          number_of_domains = ?,
+                          notes = ?,
+                          update_time = ?
+                      WHERE id = ?";
+
+            if (mysqli_stmt_prepare($stmt, $query)) {
+
+                mysqli_stmt_bind_param($stmt, "sssissi", $new_name, $new_description, $new_segment_formatted, $number_of_domains, $new_notes, $current_timestamp, $segid);
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_close($stmt);
+
+            }
+
+            $stmt = mysqli_stmt_init($connection);
+            $query = "DELETE FROM segment_data
+                      WHERE segment_id = ?";
+
+            if (mysqli_stmt_prepare($stmt, $query)) {
+
+                mysqli_stmt_bind_param($stmt, "i", $new_segid);
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_close($stmt);
+
+            }
+
+            foreach ($lines as $domain) {
+
+                $stmt = mysqli_stmt_init($connection);
+                $query = "INSERT INTO segment_data (segment_id, domain, update_time) VALUES (?, ?, ?);";
+
+                if (mysqli_stmt_prepare($stmt, $query)) {
+
+                    mysqli_stmt_bind_param($stmt, "iss", $new_segid, $domain, $current_timestamp);
+                    mysqli_stmt_execute($stmt);
+                    mysqli_stmt_close($stmt);
+
+                }
+
+            }
+
+            $segid = $new_segid;
 			
 			$_SESSION['result_message'] = "Segment <font class=\"highlight\">$new_name</font> Updated<BR>";
 	
 			include("../_includes/system/update-segments.inc.php");
 
-			header("Location: ../segments.php");
+            mysqli_close($connection);
+
+            header("Location: ../segments.php");
 			exit;
 		
 		}
@@ -153,23 +176,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT name, description, segment, notes
-			FROM segments
-			WHERE id = '" . $segid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) { 
-	
-		$new_name = $row->name;
-		$new_description = $row->description;
-		$new_segment = $row->segment;
-		$new_notes = $row->notes;
-	
-	}
+    $stmt = mysqli_stmt_init($connection);
+    $query = "SELECT id, `name`, description, segment, notes FROM segments WHERE id = ?";
 
-	$new_segment = preg_replace("/', '/", "\r\n", $new_segment);
-	$new_segment = preg_replace("/','/", "\r\n", $new_segment);
-	$new_segment = preg_replace("/'/", "", $new_segment);
+    if (mysqli_stmt_prepare($stmt, $query)) {
+
+        mysqli_stmt_bind_param($stmt, "i", $segid);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_bind_result($stmt, $id, $name, $description, $segment, $notes);
+
+        while (mysqli_stmt_fetch($stmt)) {
+
+            $new_id = $id;
+            $new_name = $name;
+            $new_description = $description;
+            $new_segment = $segment;
+            $new_notes = $notes;
+
+        }
+
+        mysqli_stmt_close($stmt);
+
+    }
+
+    $new_segment = preg_replace("/', '/", "\r\n", $new_segment);
+    $new_segment = preg_replace("/','/", "\r\n", $new_segment);
+    $new_segment = preg_replace("/'/", "", $new_segment);
 
 }
 
@@ -180,29 +212,62 @@ if ($del == "1") {
 }
 
 if ($really_del == "1") {
-	
-	$sql = "SELECT name
-			FROM segments
-			WHERE id = '" . $segid . "'";
-	$result = mysqli_query($connection, $sql);
-	while ($row = mysqli_fetch_object($result)) {
-		$temp_segment_name = $row->name;
-	}
 
-	$sql = "DELETE FROM segments 
-			WHERE id = '" . $segid . "'";
-	$result = mysqli_query($connection, $sql);
+    $stmt = mysqli_stmt_init($connection);
+    $query = "SELECT `name`
+              FROM segments
+              WHERE id = ?";
 
-	$sql = "DELETE FROM segment_data
-			WHERE segment_id = '" . $segid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	$_SESSION['result_message'] = "Segment <font class=\"highlight\">$temp_segment_name</font> Deleted<BR>";
+    if (mysqli_stmt_prepare($stmt, $query)) {
 
-	header("Location: ../segments.php");
+        mysqli_stmt_bind_param($stmt, "i", $segid);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_bind_result($stmt, $name);
+
+        while (mysqli_stmt_fetch($stmt)) {
+
+            $temp_segment_name = $name;
+
+        }
+
+        mysqli_stmt_close($stmt);
+
+    }
+
+    $stmt = mysqli_stmt_init($connection);
+    $query = "DELETE FROM segments
+              WHERE id = ?";
+
+    if (mysqli_stmt_prepare($stmt, $query)) {
+
+        mysqli_stmt_bind_param($stmt, "i", $segid);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+
+    }
+
+    $stmt = mysqli_stmt_init($connection);
+    $query = "DELETE FROM segment_data
+              WHERE segment_id = ?";
+
+    if (mysqli_stmt_prepare($stmt, $query)) {
+
+        mysqli_stmt_bind_param($stmt, "i", $segid);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+
+    }
+
+    $_SESSION['result_message'] = "Segment <font class=\"highlight\">$temp_segment_name</font> Deleted<BR>";
+
+    mysqli_close($connection);
+
+    header("Location: ../segments.php");
 	exit;
 
 }
+
+mysqli_close($connection);
 ?>
 <?php include("../_includes/doctype.inc.php"); ?>
 <html>
