@@ -161,13 +161,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             }
 
+            $_SESSION['result_message'] = "Segment <font class=\"highlight\">$new_name</font> Added<BR>";
+
+            include("../_includes/system/update-segments.inc.php");
+
             mysqli_close($connection);
-	
-			$_SESSION['result_message'] = "Segment <font class=\"highlight\">$new_name</font> Added<BR>";
-	
-			include("../_includes/system/update-segments.inc.php");
-	
-			header("Location: ../segments.php");
+
+            header("Location: ../segments.php");
 			exit;
 			
 		}
