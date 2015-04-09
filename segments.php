@@ -26,6 +26,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
+include("_includes/system/functions/cut-segment.inc.php");
 
 $page_title = "Segment Filters";
 $software_section = "segments";
@@ -171,19 +172,6 @@ if ($export == "1") {
     include("_includes/system/export/footer.inc.php");
 
 }
-
-function str_stop($string, $max_length){
-    if (strlen($string) > $max_length){ 
-        $string = substr($string, 0, $max_length); 
-        $pos = strrpos($string, ", "); 
-        if($pos === false) { 
-               return substr($string, 0, $max_length)."..."; 
-           } 
-        return substr($string, 0, $pos)."..."; 
-    }else{ 
-        return $string; 
-    } 
-} 
 ?>
 <?php include("_includes/doctype.inc.php"); ?>
 <html>
@@ -242,8 +230,8 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <?php
                 $temp_segment = preg_replace("/','/", ", ", $row->segment);
                 $temp_segment = preg_replace("/'/", "", $temp_segment);
-                $cut_string = str_stop($temp_segment, 100);
-				?>
+                $cut_string = cut_segment($temp_segment, 100);
+                ?>
                 <a class="invisiblelink" href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $cut_string; ?></a>
             </td>
             <td class="main_table_cell_active" valign="top">
