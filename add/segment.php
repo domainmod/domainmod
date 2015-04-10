@@ -53,7 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		while (list($key, $new_domain) = each($lines)) {
 	
 			if (!CheckDomainFormat($new_domain)) {
-				if ($invalid_domain_count < $invalid_domains_to_display) $temp_result_message .= "Line " . number_format($key + 1) . " contains an invalid domain<BR>";
+				if ($invalid_domain_count < $invalid_domains_to_display) {
+					$temp_result_message .= "Line " . number_format($key + 1) . " contains an invalid domain<BR>";
+				}
 				$invalid_domains = 1;
 				$invalid_domain_count++;
 			}
