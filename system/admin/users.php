@@ -57,7 +57,7 @@ if ($_SESSION['username'] == "admin") {
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "user_list_" . $current_timestamp_unix . ".csv";
@@ -119,7 +119,7 @@ if ($export == "1") {
 			WHERE u.id = us.user_id
 			  AND u.active = '0'
 			ORDER BY u.first_name, u.last_name, u.username, u.email_address";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 	if (mysqli_num_rows($result) > 0) {
 	
@@ -168,7 +168,7 @@ if ($export == "1") {
 Below is a list of all users that have access to <?php echo $software_title; ?>.<BR><BR>
 [<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
 
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 if (mysqli_num_rows($result) > 0) { ?>
 
@@ -206,7 +206,7 @@ $sql = "SELECT id, first_name, last_name, username, email_address, admin
 		FROM users
 		WHERE active = '0'
 		ORDER BY first_name, last_name, username, email_address";
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 if (mysqli_num_rows($result) > 0) { ?>
 

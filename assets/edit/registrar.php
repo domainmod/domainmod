@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_rid . "'";
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 		$rid = $new_rid;
 
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT name, url, notes
 			FROM registrars
 			WHERE id = '" . $rid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 	while ($row = mysqli_fetch_object($result)) { 
 	
@@ -86,7 +86,7 @@ if ($del == "1") {
 	$sql = "SELECT registrar_id
 			FROM registrar_accounts
 			WHERE registrar_id = '" . $rid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 	while ($row = mysqli_fetch_object($result)) {
 		$existing_registrar_accounts = 1;
@@ -95,7 +95,7 @@ if ($del == "1") {
 	$sql = "SELECT registrar_id
 			FROM domains
 			WHERE registrar_id = '" . $rid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 	while ($row = mysqli_fetch_object($result)) {
 		$existing_domains = 1;
@@ -118,15 +118,15 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM fees
 			WHERE registrar_id = '" . $rid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 	$sql = "DELETE FROM registrar_accounts
 			WHERE registrar_id = '" . $rid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 	$sql = "DELETE FROM registrars 
 			WHERE id = '" . $rid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 	$_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Deleted<BR>";
 

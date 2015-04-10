@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			WHERE username = '$new_username'
 			  AND password = password('$new_password')
 			  AND active = '1'";
-	$result = mysqli_query($connection, $sql) or die('Login Failed');
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
    if (mysqli_num_rows($result) == 1) {
 	   

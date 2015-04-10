@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_oid . "'";
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 		$new_owner = $new_owner;
 		$new_notes = $new_notes;

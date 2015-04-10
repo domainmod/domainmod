@@ -126,7 +126,7 @@ if ($software_section == "domains") { ?>
 					FROM domain_fields AS df, custom_field_types AS cft
 					WHERE df.type_id = cft.id
 					AND df.id = '" . $field_id . "'";
-			$result = mysqli_query($connection, $sql) or die(mysqli_error());
+			$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 			while ($row = mysqli_fetch_object($result)) {
 				
 				$temp_field_name = $row->name;

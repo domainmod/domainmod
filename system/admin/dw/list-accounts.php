@@ -100,7 +100,7 @@ if ($domain != "") {
 
 if ($export == "1") {
 
-	$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or die(mysqli_error());
+	$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "dw_account_list_" . $current_timestamp_unix . ".csv";
@@ -227,7 +227,7 @@ if ($export == "1") {
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_account_temp));
 $navigate = pageBrowser($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
 $sql_dw_account_temp = $sql_dw_account_temp.$navigate[0];
-$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or die(mysqli_error());
+$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 if(mysqli_num_rows($result_dw_account_temp) == 0) {
 	
@@ -254,7 +254,7 @@ if(mysqli_num_rows($result_dw_account_temp) == 0) {
 	// 						   WHERE a.server_id = s.id
 	// 						     AND X
 	// 						   ORDER BY s.name, a.unix_startdate DESC";
-	// $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or die(mysqli_error());
+	// $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	$from_main_dw_account_page = 1;
 	include("../../../_includes/dw/display-account.inc.php");
 

@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
                     update_time = '" . $current_timestamp . "'
                 WHERE id = '" . $new_dwsid . "'";
-        $result = mysqli_query($connection, $sql) or die(mysqli_error());
+        $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
         $dwsid = $new_dwsid;
 
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "SELECT id, name, host, protocol, port, username, hash, notes
             FROM dw_servers
             WHERE id = '" . $dwsid . "'";
-    $result = mysqli_query($connection, $sql) or die(mysqli_error());
+    $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
     while ($row = mysqli_fetch_object($result)) {
 

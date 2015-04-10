@@ -35,7 +35,7 @@ if ($demo_install != "1") {
 			  AND f.id = d.fee_id
 			  AND d.active NOT IN ('0', '10')
 			  GROUP BY c.currency";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 	while ($row = mysqli_fetch_object($result)) {
 	
@@ -51,7 +51,7 @@ if ($demo_install != "1") {
 							 FROM currency_conversions
 							 WHERE currency_id = '" . $row->id . "'
 							   AND user_id = '" . $row_user->user_id . "'";
-			$result_existing = mysqli_query($connection, $sql_existing) or die(mysqli_error());
+			$result_existing = mysqli_query($connection, $sql_existing) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 			
 			if (mysqli_num_rows($result_existing) == 0) {
 				
@@ -72,7 +72,7 @@ if ($demo_install != "1") {
 									   update_time = '" . $current_timestamp . "'
 								   WHERE currency_id = '" . $row->id . "'
 									 AND user_id = '" . $row_user->user_id . "'";
-					$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());
+					$result_update = mysqli_query($connection, $sql_update) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 				} else {
 		
@@ -96,7 +96,7 @@ if ($demo_install != "1") {
 									   update_time = '" . $current_timestamp . "'
 								   WHERE currency_id = '" . $row->id . "'
 									 AND user_id = '" . $row_user->user_id . "'";
-					$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());
+					$result_update = mysqli_query($connection, $sql_update) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 				}
 		
@@ -107,7 +107,7 @@ if ($demo_install != "1") {
 					$sql_insert = "INSERT INTO currency_conversions
 								   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
 								   ('" . $row->id . "', '" . $row_user->user_id . "', '1', '" . $current_timestamp . "', '" . $current_timestamp . "')";
-					$result_insert = mysqli_query($connection, $sql_insert) or die(mysqli_error());
+					$result_insert = mysqli_query($connection, $sql_insert) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 				} else {
 		
@@ -129,7 +129,7 @@ if ($demo_install != "1") {
 					$sql_insert = "INSERT INTO currency_conversions
 								   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
 								   ('" . $row->id . "', '" . $row_user->user_id . "', '" . $conversion_rate . "', '" . $current_timestamp . "', '" . $current_timestamp . "')";
-					$result_insert = mysqli_query($connection, $sql_insert) or die(mysqli_error());
+					$result_insert = mysqli_query($connection, $sql_insert) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 				}
 		
@@ -148,7 +148,7 @@ if ($demo_install != "1") {
 			  AND sslc.active NOT IN ('0')
 			  AND c.currency NOT IN (" . $exclude_string . ")
 			  GROUP BY c.currency";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 	while ($row = mysqli_fetch_object($result)) {
 	
@@ -162,7 +162,7 @@ if ($demo_install != "1") {
 							 FROM currency_conversions
 							 WHERE currency_id = '" . $row->id . "'
 							   AND user_id = '" . $row_user->user_id . "'";
-			$result_existing = mysqli_query($connection, $sql_existing) or die(mysqli_error());
+			$result_existing = mysqli_query($connection, $sql_existing) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 			
 			if (mysqli_num_rows($result_existing) == 0) {
 				
@@ -183,7 +183,7 @@ if ($demo_install != "1") {
 									   update_time = '" . $current_timestamp . "'
 								   WHERE currency_id = '" . $row->id . "'
 									 AND user_id = '" . $row_user->user_id . "'";
-					$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());
+					$result_update = mysqli_query($connection, $sql_update) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 				} else {
 		
@@ -207,7 +207,7 @@ if ($demo_install != "1") {
 									   update_time = '" . $current_timestamp . "'
 								   WHERE currency_id = '" . $row->id . "'
 									 AND user_id = '" . $row_user->user_id . "'";
-					$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());
+					$result_update = mysqli_query($connection, $sql_update) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 				}
 		
@@ -218,7 +218,7 @@ if ($demo_install != "1") {
 					$sql_insert = "INSERT INTO currency_conversions
 								   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
 								   ('" . $row->id . "', '" . $row_user->user_id . "', '1', '" . $current_timestamp . "', '" . $current_timestamp . "')";
-					$result_insert = mysqli_query($connection, $sql_insert) or die(mysqli_error());
+					$result_insert = mysqli_query($connection, $sql_insert) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 				} else {
 		
@@ -240,7 +240,7 @@ if ($demo_install != "1") {
 					$sql_insert = "INSERT INTO currency_conversions
 								   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
 								   ('" . $row->id . "', '" . $row_user->user_id . "', '" . $conversion_rate . "', '" . $current_timestamp . "', '" . $current_timestamp . "')";
-					$result_insert = mysqli_query($connection, $sql_insert) or die(mysqli_error());
+					$result_insert = mysqli_query($connection, $sql_insert) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 				}
 		

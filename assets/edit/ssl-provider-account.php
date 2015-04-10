@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					reseller = '" . $new_reseller . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_sslpaid . "'";
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 		$sslpaid = $new_sslpaid; 
 
@@ -131,7 +131,7 @@ if ($really_del == "1") {
 			WHERE a.owner_id = o.id
 			  AND a.ssl_provider_id = p.id
 			  AND a.id = '" . $sslpaid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 	while ($row = mysqli_fetch_object($result)) { 
 		$temp_username = $row->username; 
@@ -141,7 +141,7 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM ssl_accounts 
 			WHERE id = '" . $sslpaid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 	$_SESSION['result_message'] = "SSL Account <font class=\"highlight\">$temp_username ($temp_ssl_provider_name, $temp_owner_name)</font> Deleted<BR>";
 
@@ -166,7 +166,7 @@ if ($really_del == "1") {
 $sql_owner = "SELECT id, name
 			  FROM owners
 			  ORDER BY name asc";
-$result_owner = mysqli_query($connection, $sql_owner) or die(mysqli_error());
+$result_owner = mysqli_query($connection, $sql_owner) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 echo "<select name=\"new_owner_id\">";
 while ($row_owner = mysqli_fetch_object($result_owner)) {
 
@@ -188,7 +188,7 @@ echo "</select>";
 $sql_ssl_provider = "SELECT id, name
 					 FROM ssl_providers
 					 ORDER BY name asc";
-$result_ssl_provider = mysqli_query($connection, $sql_ssl_provider) or die(mysqli_error());
+$result_ssl_provider = mysqli_query($connection, $sql_ssl_provider) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 echo "<select name=\"new_ssl_provider_id\">";
 while ($row_ssl_provider = mysqli_fetch_object($result_ssl_provider)) {
 

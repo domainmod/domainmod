@@ -74,7 +74,7 @@ $sql = "SELECT d.id, YEAR(d.expiry_date) AS year, MONTH(d.expiry_date) AS month
 		  " . $range_string . "
 		GROUP BY year, month
 		ORDER BY year, month";
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) as grand_total, count(*) AS number_of_domains_total
@@ -85,7 +85,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) as grand_total, cou
 					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 					  AND d.active NOT IN ('0', '10')
 					  " . $range_string . "";
-$result_grand_total = mysqli_query($connection, $sql_grand_total) or die(mysqli_error());
+$result_grand_total = mysqli_query($connection, $sql_grand_total) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 	$number_of_domains_total = $row_grand_total->number_of_domains_total;
@@ -103,7 +103,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
@@ -169,7 +169,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 								   AND YEAR(d.expiry_date) = '" . $row->year . "'
 								   AND MONTH(d.expiry_date) = '" . $row->month . "'
 		  						   " . $range_string . "";
-			$result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or die(mysqli_error());
+			$result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 			
 			while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
 				$monthly_cost = $row_monthly_cost->monthly_cost;
@@ -205,7 +205,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 								  AND d.active NOT IN ('0', '10')
 								  AND YEAR(d.expiry_date) = '" . $row->year . "'
 								  " . $range_string . "";
-			$result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or die(mysqli_error());
+			$result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 			
 			while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
 				$yearly_cost = $row_yearly_cost->yearly_cost;
@@ -304,7 +304,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 							   AND YEAR(d.expiry_date) = '" . $row->year . "'
 							   AND MONTH(d.expiry_date) = '" . $row->month . "'
 		  					   " . $range_string . "";
-		$result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or die(mysqli_error());
+		$result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 		while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
 			$monthly_cost = $row_monthly_cost->monthly_cost;
@@ -342,7 +342,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 								  AND d.active NOT IN ('0', '10')
 								  AND YEAR(d.expiry_date) = '" . $row->year . "'
 		  						  " . $range_string . "";
-			$result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or die(mysqli_error());
+			$result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 			
 			while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
 				$yearly_cost = $row_yearly_cost->yearly_cost;

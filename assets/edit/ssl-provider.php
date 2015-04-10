@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_sslpid . "'";
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 		$sslpid = $new_sslpid;
 
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT name, url, notes
 			FROM ssl_providers
 			WHERE id = '" . $sslpid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 	while ($row = mysqli_fetch_object($result)) { 
 	
@@ -86,7 +86,7 @@ if ($del == "1") {
 	$sql = "SELECT ssl_provider_id
 			FROM ssl_accounts
 			WHERE ssl_provider_id = '" . $sslpid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 	while ($row = mysqli_fetch_object($result)) {
 		$existing_ssl_provider_accounts = 1;
@@ -95,7 +95,7 @@ if ($del == "1") {
 	$sql = "SELECT ssl_provider_id
 			FROM ssl_certs
 			WHERE ssl_provider_id = '" . $sslpid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 	while ($row = mysqli_fetch_object($result)) {
 		$existing_ssl_certs = 1;
@@ -118,15 +118,15 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM ssl_fees
 			WHERE ssl_provider_id = '" . $sslpid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 	$sql = "DELETE FROM ssl_accounts
 			WHERE ssl_provider_id = '" . $sslpid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 	$sql = "DELETE FROM ssl_providers 
 			WHERE id = '" . $sslpid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 	$_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Deleted<BR>";
 

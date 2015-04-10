@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   number_of_servers = '" . $new_number_of_servers . "',
 						   update_time = '" . $current_timestamp . "'
 					   WHERE id = '" . $new_dnsid . "'";
-		$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());
+		$result_update = mysqli_query($connection, $sql_update) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 		$new_name = $new_name;
 		$new_dns1 = $new_dns1;

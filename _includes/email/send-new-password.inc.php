@@ -22,7 +22,7 @@
 <?php
 $sql_settings = "SELECT full_url, email_address
 				 FROM settings";
-$result_settings = mysqli_query($connection, $sql_settings) or die(mysqli_error());
+$result_settings = mysqli_query($connection, $sql_settings) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 while ($row_settings = mysqli_fetch_object($result_settings)) {
 

@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 				email_address = '$new_email_address',
 				expiration_email_days = '$new_expiration_email_days',
 				update_time = '$current_timestamp'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 	$_SESSION['system_full_url'] = $new_full_url;
 	$_SESSION['system_email_address'] = $new_email_address;
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 		
 		$sql = "SELECT full_url, email_address, expiration_email_days
 				FROM settings";
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 		while ($row = mysqli_fetch_object($result)) {
 			

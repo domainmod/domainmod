@@ -43,7 +43,7 @@ $sql = "SELECT id, name, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, 
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "dns_profile_list_" . $current_timestamp_unix . ".csv";
@@ -168,7 +168,7 @@ if ($export == "1") {
 	
 	}
 	
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 	if (mysqli_num_rows($result) > 0) { 
 	
@@ -306,7 +306,7 @@ if ($_SESSION['display_inactive_assets'] == "1") {
 
     }
 
-    $result = mysqli_query($connection, $sql) or die(mysqli_error());
+    $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
     if (mysqli_num_rows($result) > 0) {
 

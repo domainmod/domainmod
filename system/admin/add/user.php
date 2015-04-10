@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		$sql = "INSERT INTO users 
 				(first_name, last_name, username, email_address, password, new_password, admin, active, insert_time) VALUES 
 				('" . mysqli_real_escape_string($connection, $new_first_name) . "', '" . mysqli_real_escape_string($connection, $new_last_name) . "', '" . mysqli_real_escape_string($connection, $new_username) . "', '" . mysqli_real_escape_string($connection, $new_email_address) . "', password('" . $new_password . "'), '1', '" . $new_admin . "', '" . $new_active . "', '" . $current_timestamp . "')";
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 		$sql = "SELECT id
 				FROM users

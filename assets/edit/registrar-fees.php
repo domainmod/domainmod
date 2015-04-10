@@ -73,21 +73,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         currency_id = '" . $currency[$count] . "',
                         update_time = '" . $current_timestamp . "'
                     WHERE id = '" . $fee_id[$count] . "'";
-            $result = mysqli_query($connection, $sql) or die(mysqli_error());
+            $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
             $sql = "UPDATE domains d
                     JOIN fees f ON d.fee_id = f.id
                     SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
                     WHERE d.privacy = '1'
                       AND d.fee_id = '" . $fee_id[$count] . "'";
-            $result = mysqli_query($connection, $sql) or die(mysqli_error());
+            $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
             $sql = "UPDATE domains d
                     JOIN fees f ON d.fee_id = f.id
                     SET d.total_cost = f.renewal_fee + f.misc_fee
                     WHERE d.privacy = '0'
                       AND d.fee_id = '" . $fee_id[$count] . "'";
-            $result = mysqli_query($connection, $sql) or die(mysqli_error());
+            $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
             $count++;
 
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     FROM fees
                     WHERE registrar_id = '" . $new_rid . "'
                       AND tld = '" . $new_tld . "'";
-            $result = mysqli_query($connection, $sql) or die(mysqli_error());
+            $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
             if (mysqli_num_rows($result) > 0) {
 
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             update_time = '" . $current_timestamp . "'
                         WHERE registrar_id = '" . $new_rid . "'
                           AND tld = '" . $new_tld . "'";
-                $result = mysqli_query($connection, $sql) or die(mysqli_error());
+                $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
                 $sql = "SELECT id
                         FROM fees
@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                           AND currency_id = '" . $new_currency_id . "'
                         LIMIT 1";
 
-                $result = mysqli_query($connection, $sql) or die(mysqli_error());
+                $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
                 while ($row = mysqli_fetch_object($result)) {
                     $new_fee_id = $row->id;
@@ -148,21 +148,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             update_time = '" . $current_timestamp . "'
                         WHERE registrar_id = '" . $new_rid . "'
                           AND tld = '" . $new_tld . "'";
-                $result = mysqli_query($connection, $sql) or die(mysqli_error());
+                $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
                 $sql = "UPDATE domains d
                     JOIN fees f ON d.fee_id = f.id
                     SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
                     WHERE d.privacy = '1'
                       AND d.fee_id = '" . $new_fee_id . "'";
-                $result = mysqli_query($connection, $sql) or die(mysqli_error());
+                $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
                 $sql = "UPDATE domains d
                     JOIN fees f ON d.fee_id = f.id
                     SET d.total_cost = f.renewal_fee + f.misc_fee
                     WHERE d.privacy = '0'
                       AND d.fee_id = '" . $new_fee_id . "'";
-                $result = mysqli_query($connection, $sql) or die(mysqli_error());
+                $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
                 $rid = $new_rid;
 
@@ -177,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = "INSERT INTO fees
                         (registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id, insert_time) VALUES
                         ('" . $new_rid . "', '" . mysqli_real_escape_string($connection, $new_tld) . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "', '" . $new_privacy_fee . "', '" . $new_misc_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
-                $result = mysqli_query($connection, $sql) or die(mysqli_error());
+                $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
                 $sql = "SELECT id
                         FROM fees
@@ -186,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                           AND currency_id = '" . $new_currency_id . "'
                         ORDER BY id DESC
                         LIMIT 1";
-                $result = mysqli_query($connection, $sql) or die(mysqli_error());
+                $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
                 while ($row = mysqli_fetch_object($result)) {
                     $new_fee_id = $row->id;
@@ -197,21 +197,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             update_time = '" . $current_timestamp . "'
                         WHERE registrar_id = '" . $new_rid . "'
                           AND tld = '" . $new_tld . "'";
-                $result = mysqli_query($connection, $sql) or die(mysqli_error());
+                $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
                 $sql = "UPDATE domains d
                     JOIN fees f ON d.fee_id = f.id
                     SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
                     WHERE d.privacy = '1'
                       AND d.fee_id = '" . $new_fee_id . "'";
-                $result = mysqli_query($connection, $sql) or die(mysqli_error());
+                $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
                 $sql = "UPDATE domains d
                     JOIN fees f ON d.fee_id = f.id
                     SET d.total_cost = f.renewal_fee + f.misc_fee
                     WHERE d.privacy = '0'
                       AND d.fee_id = '" . $new_fee_id . "'";
-                $result = mysqli_query($connection, $sql) or die(mysqli_error());
+                $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
 
@@ -254,7 +254,7 @@ if ($really_del == "1") {
 				WHERE id = '" . $feeid . "'
 				  AND registrar_id = '" . $rid . "'
 				  AND tld = '" . $tld . "'";
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 		$sql = "UPDATE domains
 				SET fee_id = '0',
@@ -262,7 +262,7 @@ if ($really_del == "1") {
 				WHERE fee_id = '" . $feeid . "'
 				  AND registrar_id = '" . $rid . "'
 				  AND tld = '" . $tld . "'";
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 		
 		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
 
@@ -290,7 +290,7 @@ if ($really_del == "1") {
 $sql = "SELECT name
 		FROM registrars
 		WHERE id = '" . $rid . "'";
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 while ($row = mysqli_fetch_object($result)) { $temp_registrar_name = $row->name; } ?>
 The below fees are for the registrar <a href="registrar.php?rid=<?php echo $rid; ?>"><?php echo $temp_registrar_name; ?></a>.<BR><BR>
 <?php
@@ -300,7 +300,7 @@ $sql = "SELECT tld
 		  AND fee_id = '0'
 		GROUP BY tld
 		ORDER BY tld asc";
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 if (mysqli_num_rows($result) > 0) {
 ?>
     <BR><a name="missingfees"></a><font class="subheadline">Missing TLD Fees</font><BR><BR>
@@ -329,7 +329,7 @@ $sql = "SELECT tld
 		  AND active not in ('0', '10')
 		GROUP BY tld
 		ORDER BY tld";
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 if (mysqli_num_rows($result) != 0) {
 ?>
@@ -341,7 +341,7 @@ if (mysqli_num_rows($result) != 0) {
                      FROM domains
                      WHERE registrar_id = '" . $rid . "'
                        AND tld = '" . $row->tld . "'";
-        $result_temp = mysqli_query($connection, $sql_temp) or die(mysqli_error());
+        $result_temp = mysqli_query($connection, $sql_temp) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
         while ($row_temp = mysqli_fetch_object($result_temp)) { $temp_fee_id = $row_temp->fee_id; }
         
         if ($temp_fee_id == "0") {
@@ -392,7 +392,7 @@ if (mysqli_num_rows($result) != 0) {
 			$sql = "SELECT id, currency, name, symbol
 					FROM currencies
 					ORDER BY currency";
-			$result = mysqli_query($connection, $sql) or die(mysqli_error());
+			$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 			while ($row = mysqli_fetch_object($result)) {
 			
 			if ($row->currency == $_SESSION['default_currency']) {
@@ -433,7 +433,7 @@ $sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.priv
 		WHERE f.currency_id = c.id
 		  AND f.registrar_id = '" . $rid . "'
 		ORDER BY f.tld asc";
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 $count = 0;
 while ($row = mysqli_fetch_object($result)) {
 ?>
@@ -461,7 +461,7 @@ while ($row = mysqli_fetch_object($result)) {
                 $sql_currency = "SELECT id, currency, name, symbol
                                  FROM currencies
                                  ORDER BY currency";
-                $result_currency = mysqli_query($connection, $sql_currency) or die(mysqli_error());
+                $result_currency = mysqli_query($connection, $sql_currency) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
                 while ($row_currency = mysqli_fetch_object($result_currency)) {
 
                     if ($row_currency->currency == $row->currency) {

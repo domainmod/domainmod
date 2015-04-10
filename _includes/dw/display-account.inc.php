@@ -29,7 +29,7 @@
 // 						   WHERE a.server_id = s.id
 // 						     AND X
 // 						   ORDER BY s.name, a.unix_startdate DESC";
-// $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or die(mysqli_error());
+// $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 // $from_main_dw_account_page = 0;
 // include("_includes/dw/display-account.inc.php");
 ?>

@@ -81,10 +81,10 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date,
 		  AND sslc.active NOT IN ('0')
 		  " . $range_string . "
 		ORDER BY sslc.expiry_date asc, sslc.name asc";	
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 $total_results = mysqli_num_rows($result);
 
-$result_cost = mysqli_query($connection, $sql) or die(mysqli_error());
+$result_cost = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 $total_cost = 0;
 while ($row_cost = mysqli_fetch_object($result_cost)) {
 	$temp_total_cost = $temp_total_cost + $row_cost->converted_renewal_fee;
@@ -100,7 +100,7 @@ $total_cost = $temp_output_amount;
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	if ($all == "1") {

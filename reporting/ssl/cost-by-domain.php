@@ -77,7 +77,7 @@ $sql = "SELECT d.id, d.domain, SUM(sslc.total_cost * cc.conversion) as total_cos
 		  " . $range_string . "
 		GROUP BY d.domain
 		ORDER BY d.domain";
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) as grand_total, count(*) AS number_of_certs_total
@@ -89,7 +89,7 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) as grand_total, 
 					  AND sslc.active NOT IN ('0')
 					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 					  " . $range_string . "";
-$result_grand_total = mysqli_query($connection, $sql_grand_total) or die(mysqli_error());
+$result_grand_total = mysqli_query($connection, $sql_grand_total) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 	$number_of_certs_total = $row_grand_total->number_of_certs_total;
@@ -107,7 +107,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {

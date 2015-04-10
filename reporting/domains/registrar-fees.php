@@ -58,14 +58,14 @@ if ($all == "1") {
 
 }
 
-$result = mysqli_query($connection, $sql) or die(mysqli_error());
+$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 $total_rows = mysqli_num_rows($result);
 
 if ($total_rows > 0) {
 
 	if ($export == "1") {
 
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {

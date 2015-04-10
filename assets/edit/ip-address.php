@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 						   update_time = '" . $current_timestamp . "'
 					   WHERE id = '" . $new_ipid . "'";
-		$result_update = mysqli_query($connection, $sql_update) or die(mysqli_error());
+		$result_update = mysqli_query($connection, $sql_update) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 		$new_name = $new_name;
 		$new_ip = $new_ip;

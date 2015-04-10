@@ -69,12 +69,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 				notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 				update_time = '" . $current_timestamp . "'
 			WHERE id = '" . $new_csfid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	
 	$sql = "SELECT field_name
 			FROM ssl_cert_fields
 			WHERE id = '" . $new_csfid . "'";
-	$result = mysqli_query($connection, $sql) or die(mysqli_error());
+	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 	while ($row = mysqli_fetch_object($result)) { $temp_field_name = $row->field_name; }
 	
 	$_SESSION['result_message'] .= "Custom SSL Field <font class=\"highlight\">" . $new_name . " (" . $temp_field_name . ")</font> Updated<BR>";
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 				WHERE f.type_id = t.id
 				  AND f.id = '" . $csfid . "'
 				ORDER BY f.name";
-		$result = mysqli_query($connection, $sql) or die(mysqli_error());
+		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
 
 		while ($row = mysqli_fetch_object($result)) {
 			
