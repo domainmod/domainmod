@@ -20,7 +20,6 @@
  */
 ?>
 <?php
-//   if (preg_match('/^[A-Z0-9.-]+\.[A-Z]{2,10}$/i', $temp_input_domain, $domain)) {
 function CheckDomainFormat($temp_input_domain) {
 
     /*

@@ -155,10 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             include("../_includes/system/check-domain-fees.inc.php");
 			include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
-			// header("Location: domain.php");
-			// exit;
-
-		} else {
+        } else {
 
 			$_SESSION['result_message'] .= "The domain you entered is already in $software_title<BR>";
 

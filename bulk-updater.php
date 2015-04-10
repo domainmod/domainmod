@@ -592,7 +592,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = "SELECT id
 						FROM domains
 						WHERE domain in (" . $new_data_formatted . ")";
-                // $result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
                 $result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
                 if (mysqli_num_rows($result) > 0) {
@@ -607,18 +606,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $sql_domain = "DELETE FROM domains
                                    WHERE id IN (" . $domain_id_list_formatted . ")";
-                    // $result_domain = mysqli_query($connection, $sql_domain) or OutputOldSQLError($connection);
                     $result_domain = mysqli_query($connection, $sql_domain) or OutputOldSQLError($connection);
 
                     $sql_domain = "DELETE FROM domain_field_data
                                    WHERE domain_id IN (" . $domain_id_list_formatted . ")";
-                    // $result_domain = mysqli_query($connection, $sql_domain) or OutputOldSQLError($connection);
                     $result_domain = mysqli_query($connection, $sql_domain) or OutputOldSQLError($connection);
 
                     $sql_ssl = "SELECT id
                                 FROM ssl_certs
                                 WHERE domain_id IN (" . $domain_id_list_formatted . ")";
-                    // $result_ssl = mysqli_query($connection, $sql_ssl) or OutputOldSQLError($connection);
                     $result_ssl = mysqli_query($connection, $sql_ssl) or OutputOldSQLError($connection);
 
                     if (mysqli_num_rows($result_ssl) > 0) {
@@ -633,12 +629,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $sql_ssl = "DELETE FROM ssl_certs
                                     WHERE domain_id IN (" . $domain_id_list_formatted . ")";
-                        // $result_ssl = mysqli_query($connection, $sql_ssl) or OutputOldSQLError($connection);
                         $result_ssl = mysqli_query($connection, $sql_ssl) or OutputOldSQLError($connection);
 
                         $sql_ssl = "DELETE FROM ssl_cert_field_data
                                     WHERE ssl_id IN (" . $ssl_id_list_formatted . ")";
-                        // $result_ssl = mysqli_query($connection, $sql_ssl) or OutputOldSQLError($connection);
                         $result_ssl = mysqli_query($connection, $sql_ssl) or OutputOldSQLError($connection);
 
                     }

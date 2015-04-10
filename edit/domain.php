@@ -506,14 +506,10 @@ if (mysqli_num_rows($result_accounts) > 0) { ?>
 							  AND a.domain = '" . $new_domain . "'
 							ORDER BY s.name, a.unix_startdate DESC";
 	$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or OutputOldSQLError($connection);
-	// $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-	// 						   FROM dw_accounts AS a, dw_servers AS s
-	// 						   WHERE a.server_id = s.id
-	// 						     AND X
-	// 						   ORDER BY s.name, a.unix_startdate DESC";
-	// $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or OutputOldSQLError($connection);
-	$from_main_dw_account_page = 0;
-	include("../_includes/dw/display-account.inc.php");
+
+    $from_main_dw_account_page = 0;
+
+    include("../_includes/dw/display-account.inc.php");
 
 }
 
@@ -535,14 +531,10 @@ if (mysqli_num_rows($result_dns_zones) > 0) {
 							   AND z.domain = '" . $new_domain . "'
 							 ORDER BY s.name, z.zonefile, z.domain";
 	$result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or OutputOldSQLError($connection);
-	// $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-	//							FROM dw_dns_zones AS z, dw_servers AS s
-	//							WHERE z.server_id = s.id
-	//							  AND X
-	//							ORDER BY s.name, z.zonefile, z.domain";
-	// $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or OutputOldSQLError($connection);
-	$from_main_dw_dns_zone_page = 0;
-	include("../_includes/dw/display-dns-zone.inc.php");
+
+    $from_main_dw_dns_zone_page = 0;
+
+    include("../_includes/dw/display-dns-zone.inc.php");
 
 }
 ?>

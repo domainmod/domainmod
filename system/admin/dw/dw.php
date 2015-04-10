@@ -575,10 +575,9 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
         <BR><BR><strong>Accounts without a DNS Zone</strong><BR><?php
     
         while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
-        
-            // $account_list_raw .= "<a class=\"invisiblelink\" href=\"list-accounts.php?domain=" . $row_accounts_without_a_dns_zone->domain . "\">" . $row_accounts_without_a_dns_zone->domain . "</a>, ";
+
             $account_list_raw .= $row_accounts_without_a_dns_zone->domain . ", ";
-        
+
         }
         
         $account_list = substr($account_list_raw, 0, -2);
@@ -633,10 +632,9 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
         <BR><BR><strong>Suspended Accounts</strong><BR><?php
     
         while ($row_suspended_accounts = mysqli_fetch_object($result_suspended_accounts)) {
-        
-            // $suspended_list_raw .= "<a class=\"invisiblelink\" href=\"list-accounts.php?domain=" . $row_suspended_accounts->domain . "\">" . $row_suspended_accounts->domain . "</a>, ";
+
             $suspended_list_raw .= $row_suspended_accounts->domain . ", ";
-        
+
         }
         
         $suspended_list = substr($suspended_list_raw, 0, -2);

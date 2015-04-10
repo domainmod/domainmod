@@ -247,16 +247,9 @@ if(mysqli_num_rows($result_dw_account_temp) == 0) {
 	<strong>[<a href="<?php echo $PHP_SELF; ?>?export=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong><BR><BR>
 	
 	<strong>Number of Accounts:</strong> <?php echo $totalrows; ?><BR><BR>
-	<?php include("../../../_includes/layout/pagination.menu.inc.php"); ?><BR><?php
-
-	// QUERY AT TOP OF PAGE
-	// $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-	// 						   FROM dw_accounts AS a, dw_servers AS s
-	// 						   WHERE a.server_id = s.id
-	// 						     AND X
-	// 						   ORDER BY s.name, a.unix_startdate DESC";
-	// $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or OutputOldSQLError($connection);
-	$from_main_dw_account_page = 1;
+	<?php include("../../../_includes/layout/pagination.menu.inc.php"); ?><BR>
+    <?php
+    $from_main_dw_account_page = 1;
 	include("../../../_includes/dw/display-account.inc.php");
 
 }

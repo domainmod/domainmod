@@ -135,10 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         include("../_includes/system/check-ssl-fees.inc.php");
 		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
-		// header("Location: ../ssl-certs.php");
-		// exit;
-
-	} else {
+    } else {
 	
 		if ($new_name == "") { $_SESSION['result_message'] .= "Enter a name for the SSL certificate<BR>"; }
 		if (!CheckDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }

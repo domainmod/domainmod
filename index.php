@@ -33,13 +33,13 @@ include("_includes/timestamps/current-timestamp.inc.php");
 include("_includes/system/functions/error-reporting.inc.php");
 
 if ($_SESSION['installation_mode'] == 1) {
-	
-	// $page_title = "Installation";
+
+	$page_title = "";
 	$software_section = "installation";
 
 } else {
 
-	// $page_title = "Please Login";
+	$page_title = "";
 	$software_section = "login";
 
 }
