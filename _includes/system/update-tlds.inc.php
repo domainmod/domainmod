@@ -29,6 +29,7 @@ if ($direct == "1") {
 	include("../database.inc.php");
 	include("../software.inc.php");
 	include("../auth/auth-check.inc.php");
+    include("functions/error-reporting.inc.php");
 
 }
 

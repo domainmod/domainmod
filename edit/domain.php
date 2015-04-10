@@ -28,6 +28,7 @@ include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/system/functions/check-domain-format.inc.php");
 include("../_includes/system/functions/check-date-format.inc.php");
+include("../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Editing A Domain";
 $software_section = "domain-edit";
@@ -147,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   fee_fixed = '" . $temp_fee_fixed . "',
 						   update_time = '" . $current_timestamp . "'
 					   WHERE id = '" . $new_did . "'";
-		$result_update = mysqli_query($connection, $sql_update) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+		$result_update = mysqli_query($connection, $sql_update) or OutputOldSQLError($connection);
 
 		$sql = "SELECT field_name
 				FROM domain_fields
@@ -198,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			FROM domains as d, registrar_accounts as ra
 			WHERE d.account_id = ra.id
 			  AND d.id = '" . $did . "'";
-	$result = mysqli_query($connection, $sql);
+	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 	
 	while ($row = mysqli_fetch_object($result)) {
 	
@@ -286,7 +287,7 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
 				WHERE ra.owner_id = o.id
 				  AND ra.registrar_id = r.id
 				ORDER BY r_name asc, o_name asc, ra.username asc";
-$result_account = mysqli_query($connection, $sql_account) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_account = mysqli_query($connection, $sql_account) or OutputOldSQLError($connection);
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysqli_fetch_object($result_account)) { ?>
 
@@ -301,7 +302,7 @@ echo "</select>";
 $sql_dns = "SELECT id, name
 			FROM dns
 			ORDER BY name asc";
-$result_dns = mysqli_query($connection, $sql_dns) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_dns = mysqli_query($connection, $sql_dns) or OutputOldSQLError($connection);
 echo "<select name=\"new_dns_id\">";
 while ($row_dns = mysqli_fetch_object($result_dns)) { ?>
 
@@ -316,7 +317,7 @@ echo "</select>";
 $sql_ip = "SELECT id, name, ip
 		   FROM ip_addresses
 		   ORDER BY name asc, ip asc";
-$result_ip = mysqli_query($connection, $sql_ip) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_ip = mysqli_query($connection, $sql_ip) or OutputOldSQLError($connection);
 echo "<select name=\"new_ip_id\">";
 
 while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
@@ -332,7 +333,7 @@ echo "</select>";
 $sql_hosting = "SELECT id, name
 				FROM hosting
 				ORDER BY name asc";
-$result_hosting = mysqli_query($connection, $sql_hosting) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_hosting = mysqli_query($connection, $sql_hosting) or OutputOldSQLError($connection);
 echo "<select name=\"new_hosting_id\">";
 while ($row_hosting = mysqli_fetch_object($result_hosting)) { ?>
 
@@ -347,7 +348,7 @@ echo "</select>";
 $sql_cat = "SELECT id, name
 			FROM categories
 			ORDER BY name asc";
-$result_cat = mysqli_query($connection, $sql_cat) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_cat = mysqli_query($connection, $sql_cat) or OutputOldSQLError($connection);
 echo "<select name=\"new_cat_id\">";
 while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
 
@@ -504,13 +505,13 @@ if (mysqli_num_rows($result_accounts) > 0) { ?>
 							WHERE a.server_id = s.id
 							  AND a.domain = '" . $new_domain . "'
 							ORDER BY s.name, a.unix_startdate DESC";
-	$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+	$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or OutputOldSQLError($connection);
 	// $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
 	// 						   FROM dw_accounts AS a, dw_servers AS s
 	// 						   WHERE a.server_id = s.id
 	// 						     AND X
 	// 						   ORDER BY s.name, a.unix_startdate DESC";
-	// $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+	// $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or OutputOldSQLError($connection);
 	$from_main_dw_account_page = 0;
 	include("../_includes/dw/display-account.inc.php");
 
@@ -533,13 +534,13 @@ if (mysqli_num_rows($result_dns_zones) > 0) {
 							 WHERE z.server_id = s.id
 							   AND z.domain = '" . $new_domain . "'
 							 ORDER BY s.name, z.zonefile, z.domain";
-	$result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+	$result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or OutputOldSQLError($connection);
 	// $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
 	//							FROM dw_dns_zones AS z, dw_servers AS s
 	//							WHERE z.server_id = s.id
 	//							  AND X
 	//							ORDER BY s.name, z.zonefile, z.domain";
-	// $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+	// $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or OutputOldSQLError($connection);
 	$from_main_dw_dns_zone_page = 0;
 	include("../_includes/dw/display-dns-zone.inc.php");
 

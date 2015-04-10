@@ -26,6 +26,7 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = $reporting_section_title;
 $page_subtitle = "SSL Provider Fee Report";
@@ -60,14 +61,14 @@ if ($all == "1") {
 
 }
 
-$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 $total_rows = mysqli_num_rows($result);
 
 if ($total_rows > 0) {
 
 	if ($export == "1") {
 
-		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {

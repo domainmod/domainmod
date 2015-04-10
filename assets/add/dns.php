@@ -26,6 +26,7 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Adding A New DNS Profile";
 $software_section = "dns-add";
@@ -75,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				(name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, number_of_servers, insert_time) VALUES 
 				('" . mysqli_real_escape_string($connection, $new_name) . "', '" . mysqli_real_escape_string($connection, $new_dns1) . "', '" . mysqli_real_escape_string($connection, $new_dns2) . "', '" . mysqli_real_escape_string($connection, $new_dns3) . "', '" . mysqli_real_escape_string($connection, $new_dns4) . "', '" . mysqli_real_escape_string($connection, $new_dns5) . "', '" . mysqli_real_escape_string($connection, $new_dns6) . "', '" . mysqli_real_escape_string($connection, $new_dns7) . "', '" . mysqli_real_escape_string($connection, $new_dns8) . "', '" . mysqli_real_escape_string($connection, $new_dns9) . "', '" . mysqli_real_escape_string($connection, $new_dns10) . "', '" . mysqli_real_escape_string($connection, $new_ip1) . "', '" . mysqli_real_escape_string($connection, $new_ip2) . "', '" . mysqli_real_escape_string($connection, $new_ip3) . "', '" . mysqli_real_escape_string($connection, $new_ip4) . "', '" . mysqli_real_escape_string($connection, $new_ip5) . "', '" . mysqli_real_escape_string($connection, $new_ip6) . "', '" . mysqli_real_escape_string($connection, $new_ip7) . "', '" . mysqli_real_escape_string($connection, $new_ip8) . "', '" . mysqli_real_escape_string($connection, $new_ip9) . "', '" . mysqli_real_escape_string($connection, $new_ip10) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_number_of_servers . "', '" . $current_timestamp . "')";
 
-		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 		
 		$_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">" . $new_name . "</font> Added<BR>";
 

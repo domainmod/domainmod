@@ -24,6 +24,7 @@ include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+include("../_includes/system/functions/error-reporting.inc.php");
 
 include("../_includes/config-demo.inc.php");
 
@@ -35,13 +36,13 @@ if ($demo_install != "1") {
 
         $sql = "UPDATE settings
                 SET upgrade_available = '1'";
-        $result = mysqli_query($connection,$sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+        $result = mysqli_query($connection,$sql) or OutputOldSQLError($connection);
 
     } else {
 
         $sql = "UPDATE settings
                 SET upgrade_available = '0'";
-        $result = mysqli_query($connection,$sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+        $result = mysqli_query($connection,$sql) or OutputOldSQLError($connection);
 
     }
 

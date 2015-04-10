@@ -26,6 +26,7 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Adding A New SSL Provider";
 $software_section = "ssl-providers-add";
@@ -42,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "INSERT INTO ssl_providers
 				(name, url, notes, insert_time) VALUES 
 				('" . mysqli_real_escape_string($connection, $new_ssl_provider) . "', '" . mysqli_real_escape_string($connection, $new_url) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
-		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
 		$_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Added<BR>";
 		

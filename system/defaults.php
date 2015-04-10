@@ -26,6 +26,7 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
+include("../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "User Defaults";
 $software_section = "system-user-defaults";
@@ -121,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				default_ssl_provider = '$new_default_ssl_provider',
 				update_time = '$current_timestamp'
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
-	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
 	$_SESSION['default_currency'] = $new_default_currency;
 	$_SESSION['default_timezone'] = $new_default_timezone;
@@ -166,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
  		$sql = "SELECT *
 				FROM user_settings
 				WHERE user_id = '" . $_SESSION['user_id'] . "'";
-		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 		
 		while ($row = mysqli_fetch_object($result)) {
 			

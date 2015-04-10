@@ -26,6 +26,7 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
+include("../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Update Profile";
 $software_section = "system-update-profile";
@@ -51,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 						   update_time = '$current_timestamp'
 					   WHERE id = '" . $_SESSION['user_id'] . "' 
 					     AND email_address = '" . $_SESSION['email_address'] . "'";
-		$result_update = mysqli_query($connection, $sql_update) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+		$result_update = mysqli_query($connection, $sql_update) or OutputOldSQLError($connection);
 		
 		$_SESSION['email_address'] = $new_email_address;
 		$_SESSION['first_name'] = $new_first_name;

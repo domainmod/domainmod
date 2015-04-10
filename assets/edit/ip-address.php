@@ -26,6 +26,7 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Editing An IP Address";
 $software_section = "ip-addresses-edit";
@@ -51,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 						   update_time = '" . $current_timestamp . "'
 					   WHERE id = '" . $new_ipid . "'";
-		$result_update = mysqli_query($connection, $sql_update) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+		$result_update = mysqli_query($connection, $sql_update) or OutputOldSQLError($connection);
 
 		$new_name = $new_name;
 		$new_ip = $new_ip;

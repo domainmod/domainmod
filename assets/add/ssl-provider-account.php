@@ -26,6 +26,7 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Adding A New SSL Provider Account";
 $software_section = "ssl-provider-accounts-add";
@@ -45,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "INSERT into ssl_accounts
 				(owner_id, ssl_provider_id, username, password, notes, reseller, insert_time) VALUES 
 				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . mysqli_real_escape_string($connection, $new_username) . "', '" . mysqli_real_escape_string($connection, $new_password) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_reseller . "', '" . $current_timestamp . "')";
-		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
 		$sql = "SELECT name
 				FROM ssl_providers
@@ -95,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_owner = "SELECT id, name
 			  FROM owners
 			  ORDER BY name asc";
-$result_owner = mysqli_query($connection, $sql_owner) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_owner = mysqli_query($connection, $sql_owner) or OutputOldSQLError($connection);
 echo "<select name=\"new_owner_id\">";
 while ($row_owner = mysqli_fetch_object($result_owner)) {
 
@@ -117,7 +118,7 @@ echo "</select>";
 $sql_ssl_provider = "SELECT id, name
 					 FROM ssl_providers
 					 ORDER BY name asc";
-$result_ssl_provider = mysqli_query($connection, $sql_ssl_provider) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_ssl_provider = mysqli_query($connection, $sql_ssl_provider) or OutputOldSQLError($connection);
 echo "<select name=\"new_ssl_provider_id\">";
 while ($row_ssl_provider = mysqli_fetch_object($result_ssl_provider)) {
 

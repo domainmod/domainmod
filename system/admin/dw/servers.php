@@ -31,6 +31,7 @@ include("../../../_includes/database.inc.php");
 include("../../../_includes/software.inc.php");
 include("../../../_includes/auth/auth-check.inc.php");
 include("../../../_includes/timestamps/current-timestamp.inc.php");
+include("../../../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Data Warehouse Servers";
 $software_section = "admin-dw-manage-servers";
@@ -43,7 +44,7 @@ $sql = "SELECT id, name, host, protocol, port, username, hash, notes, dw_account
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "dw_servers_" . $current_timestamp_unix . ".csv";
@@ -105,7 +106,7 @@ if ($export == "1") {
 <body>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
 <?php
-$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
 if (mysqli_num_rows($result) > 0) { ?>
 

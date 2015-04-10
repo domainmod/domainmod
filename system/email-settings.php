@@ -26,6 +26,7 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
+include("../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Email Settings";
 $software_section = "system-email-settings";
@@ -38,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			SET expiration_emails = '$new_expiration_email',
 				update_time = '$current_timestamp'
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
-	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
 	$_SESSION['expiration_email'] = $new_expiration_email;
 
@@ -52,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT expiration_emails
 			FROM user_settings
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
-	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 	
 	while ($row = mysqli_fetch_object($result)) {
 		

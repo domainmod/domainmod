@@ -26,6 +26,7 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+include("../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "SSL Certificate Types";
 $software_section = "ssl-types";
@@ -43,7 +44,7 @@ $sql = "SELECT id, type, notes, insert_time, update_time
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "ssl_certificate_type_list_" . $current_timestamp_unix . ".csv";
@@ -126,7 +127,7 @@ if ($export == "1") {
 	
 	}
 	
-	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 	
 	if (mysqli_num_rows($result) > 0) { 
 	
@@ -172,7 +173,7 @@ if ($export == "1") {
 Below is a list of all the SSL Certificates Types that are stored in <?php echo $software_title; ?>.<BR><BR>
 [<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
 
-$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
 if (mysqli_num_rows($result) > 0) {
 	
@@ -246,7 +247,7 @@ if ($_SESSION['display_inactive_assets'] == "1") {
 
     }
 
-    $result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+    $result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
     if (mysqli_num_rows($result) > 0) {
 

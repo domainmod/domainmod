@@ -21,7 +21,7 @@
 ?>
 <?php
 $sql = "DROP TABLE IF EXISTS dw_server_totals";
-$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
 $sql = "CREATE TABLE IF NOT EXISTS `dw_server_totals` (
 		`id` int(10) NOT NULL auto_increment,
@@ -32,7 +32,7 @@ $sql = "CREATE TABLE IF NOT EXISTS `dw_server_totals` (
 		`insert_time` datetime NOT NULL,
 		PRIMARY KEY  (`id`)
 		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
 $sql_get_total_dw_servers = "SELECT count(*) AS total_dw_servers
 							 FROM dw_servers";

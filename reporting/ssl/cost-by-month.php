@@ -28,6 +28,7 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/timestamps/current-timestamp-basic.inc.php");
 include("../../_includes/system/functions/check-date-format.inc.php");
+include("../../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = $reporting_section_title;
 $page_subtitle = "SSL Certificate Cost by Month Report";
@@ -74,7 +75,7 @@ $sql = "SELECT sslc.id, YEAR(sslc.expiry_date) AS year, MONTH(sslc.expiry_date) 
 		  " . $range_string . "
 		GROUP BY year, month
 		ORDER BY year, month";
-$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) as grand_total, count(*) AS number_of_certs_total
@@ -85,7 +86,7 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) as grand_total, 
 					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 					  AND sslc.active NOT IN ('0')
 					  " . $range_string . "";
-$result_grand_total = mysqli_query($connection, $sql_grand_total) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_grand_total = mysqli_query($connection, $sql_grand_total) or OutputOldSQLError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 	$number_of_certs_total = $row_grand_total->number_of_certs_total;
@@ -103,7 +104,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
-		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {
@@ -171,7 +172,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 									   AND YEAR(sslc.expiry_date) = '" . $row->year . "'
 									   AND MONTH(sslc.expiry_date) = '" . $row->month . "'
 									   " . $range_string . "";
-				$result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+				$result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or OutputOldSQLError($connection);
 				
 				while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
 					$monthly_cost = $row_monthly_cost->monthly_cost;
@@ -207,7 +208,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 									  AND sslc.active NOT IN ('0')
 									  AND YEAR(sslc.expiry_date) = '" . $row->year . "'
 									  " . $range_string . "";
-				$result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+				$result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or OutputOldSQLError($connection);
 				
 				while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
 					$yearly_cost = $row_yearly_cost->yearly_cost;
@@ -307,7 +308,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 							   AND YEAR(sslc.expiry_date) = '" . $row->year . "'
 							   AND MONTH(sslc.expiry_date) = '" . $row->month . "'
 		  					   " . $range_string . "";
-		$result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+		$result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or OutputOldSQLError($connection);
 		
 		while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
 			$monthly_cost = $row_monthly_cost->monthly_cost;
@@ -345,7 +346,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 								  AND sslc.active NOT IN ('0')
 								  AND YEAR(sslc.expiry_date) = '" . $row->year . "'
 		  						  " . $range_string . "";
-			$result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+			$result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or OutputOldSQLError($connection);
 			
 			while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
 				$yearly_cost = $row_yearly_cost->yearly_cost;

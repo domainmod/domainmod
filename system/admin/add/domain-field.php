@@ -32,6 +32,7 @@ include("../../../_includes/software.inc.php");
 include("../../../_includes/timestamps/current-timestamp.inc.php");
 include("../../../_includes/auth/auth-check.inc.php");
 include("../../../_includes/system/functions/check-custom-field-format.inc.php");
+include("../../../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Adding A Custom Domain Field";
 $software_section = "admin-domain-field-add";
@@ -60,25 +61,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 		$sql = "INSERT INTO domain_fields 
 				(name, field_name, description, type_id, notes, insert_time) VALUES 
 				('" . mysqli_real_escape_string($connection, $new_name) . "', '" . $new_field_name . "', '" . mysqli_real_escape_string($connection, $new_description) . "', '" . $new_field_type_id . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
-		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
 		if ($new_field_type_id == '1') { // Check Box
 
 			$sql = "ALTER TABLE `domain_field_data`  
 					ADD `" . $new_field_name . "` INT(1) NOT NULL DEFAULT '0'";
-			$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+			$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 			
 		} elseif ($new_field_type_id == '2') { // Text
 
 			$sql = "ALTER TABLE `domain_field_data`  
 					ADD `" . $new_field_name . "` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-			$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+			$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 			
 		} elseif ($new_field_type_id == '3') { // Text Area
 
 			$sql = "ALTER TABLE `domain_field_data`  
 					ADD `" . $new_field_name . "` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-			$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+			$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 		
 		}
 
@@ -119,7 +120,7 @@ The Database Field Name can contain only letters and underscores (ie. sample_fie
 $sql = "SELECT id, name
 		FROM custom_field_types
 		ORDER BY name";
-$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 echo "<select name=\"new_field_type_id\">";
 while ($row = mysqli_fetch_object($result)) { ?>
 

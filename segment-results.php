@@ -26,6 +26,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
+include("_includes/system/functions/error-reporting.inc.php");
 
 $segid = $_GET['segid'];
 $export = $_GET['export'];
@@ -92,7 +93,7 @@ $result = mysqli_query($connection, $sql);
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 	
 	$current_timestamp_unix = strtotime($current_timestamp);
 	if ($type == "inactive") { 

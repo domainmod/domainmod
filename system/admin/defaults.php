@@ -31,6 +31,7 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
+include("../../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "System Defaults";
 $software_section = "admin-system-defaults";
@@ -69,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				default_ssl_type = '$new_default_ssl_type',
 				default_ssl_provider = '$new_default_ssl_provider',
 				update_time = '$current_timestamp'";
-	$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 
 	$_SESSION['system_default_category_domains'] = $new_default_category_domains;
 	$_SESSION['system_default_category_ssl'] = $new_default_category_ssl;

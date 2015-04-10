@@ -28,6 +28,7 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/timestamps/current-timestamp-basic.inc.php");
 include("../../_includes/system/functions/check-date-format.inc.php");
+include("../../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = $reporting_section_title;
 $page_subtitle = "SSL Certificate Cost by Owner Report";
@@ -77,7 +78,7 @@ $sql = "SELECT o.id, o.name, SUM(sslc.total_cost * cc.conversion) as total_cost,
 		  " . $range_string . "
 		GROUP BY name
 		ORDER BY name";
-$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) as grand_total, count(*) AS number_of_certs_total
@@ -89,7 +90,7 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) as grand_total, 
 					  AND sslc.active NOT IN ('0')
 					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 					  " . $range_string . "";
-$result_grand_total = mysqli_query($connection, $sql_grand_total) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_grand_total = mysqli_query($connection, $sql_grand_total) or OutputOldSQLError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 	$number_of_certs_total = $row_grand_total->number_of_certs_total;
@@ -107,7 +108,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
-		$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {

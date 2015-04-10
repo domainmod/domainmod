@@ -29,6 +29,7 @@ include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
 include("../_includes/system/functions/check-domain-format.inc.php");
 include("../_includes/system/functions/check-date-format.inc.php");
+include("../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Adding A New Domain";
 $software_section = "domain-add";
@@ -109,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$sql = "INSERT INTO domains
 					(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id, fee_id, total_cost, function, notes, privacy, active, insert_time) VALUES
 					('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . $new_account_id . "', '" . mysqli_real_escape_string($connection, $new_domain) . "', '" . $tld . "', '" . $new_expiry_date . "', '" . $new_cat_id . "', '" . $new_dns_id . "', '" . $new_ip_id . "', '" . $new_hosting_id . "', '" . $new_fee_id . "', '" . $new_total_cost . "', '" . mysqli_real_escape_string($connection, $new_function) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $current_timestamp . "')";
-			$result = mysqli_query($connection, $sql) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+			$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
 			
 			$sql = "SELECT id
 					FROM domains
@@ -197,7 +198,7 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                 WHERE ra.owner_id = o.id
                   AND ra.registrar_id = r.id
                 ORDER BY r_name, o_name, ra.username";
-$result_account = mysqli_query($connection, $sql_account) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_account = mysqli_query($connection, $sql_account) or OutputOldSQLError($connection);
 echo "<select name=\"new_account_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -223,7 +224,7 @@ echo "</select>";
 $sql_dns = "SELECT id, name
 			FROM dns
 			ORDER BY name";
-$result_dns = mysqli_query($connection, $sql_dns) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_dns = mysqli_query($connection, $sql_dns) or OutputOldSQLError($connection);
 echo "<select name=\"new_dns_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -249,7 +250,7 @@ echo "</select>";
 $sql_ip = "SELECT id, name, ip
 		   FROM ip_addresses
 		   ORDER BY name, ip";
-$result_ip = mysqli_query($connection, $sql_ip) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_ip = mysqli_query($connection, $sql_ip) or OutputOldSQLError($connection);
 echo "<select name=\"new_ip_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -275,7 +276,7 @@ echo "</select>";
 $sql_hosting = "SELECT id, name
 				FROM hosting
 				ORDER BY name";
-$result_hosting = mysqli_query($connection, $sql_hosting) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_hosting = mysqli_query($connection, $sql_hosting) or OutputOldSQLError($connection);
 echo "<select name=\"new_hosting_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -301,7 +302,7 @@ echo "</select>";
 $sql_cat = "SELECT id, name
 			FROM categories
 			ORDER BY name";
-$result_cat = mysqli_query($connection, $sql_cat) or trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+$result_cat = mysqli_query($connection, $sql_cat) or OutputOldSQLError($connection);
 echo "<select name=\"new_cat_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
