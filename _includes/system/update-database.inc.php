@@ -3357,7 +3357,7 @@ if ($current_db_version < $most_recent_db_version) {
 	
 		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
 			
-		header("Location: " . $_SERVER['HTTP_REFERER']);
+		header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
 		exit;
 		
 	} else {
@@ -3372,7 +3372,7 @@ if ($current_db_version < $most_recent_db_version) {
 	
 		$_SESSION['result_message'] .= "Your Database is already up-to-date<BR>";
 		
-		header("Location: " . $_SERVER['HTTP_REFERER']);
+		header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
 		exit;
 	
 	} else {

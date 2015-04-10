@@ -257,7 +257,7 @@ if ($direct == "1") {
 
 	$_SESSION['result_message'] .= "Conversion Rates Updated<BR>";
 	
-	header("Location: " . $_SERVER['HTTP_REFERER']);
+	header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
 	exit;
 
 } else {
