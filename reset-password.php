@@ -74,7 +74,9 @@ if ($new_username != "") {
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-		if ($new_username == "") $_SESSION['result_message'] .= "Enter your username<BR>";
+		if ($new_username == "") {
+		    $_SESSION['result_message'] .= "Enter your username<BR>";
+		}
 	}
 
 }
