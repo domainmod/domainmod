@@ -2,7 +2,7 @@
 
     Project Home: http://domainmod.org  
     Project Demo: http://demo.domainmod.org  
-    Source Code: http://github.com/aysmedia/domainmod/  
+    Source Code: http://github.com/domainmod/domainmod/  
 
 
 ## About
@@ -18,11 +18,11 @@ So go ahead, take the live demo for a test drive before you install! http://demo
 ## Downloading
 There are currently two options for downloading DomainMOD. Whenever possible I recommend that you use option #2, the git repository download directly from your web server. Not only is it a nice quick install, but it makes upgrading a breeze.
 
-1. Visit the following URL to download the most up-to-date version of DomainMOD: https://github.com/aysmedia/domainmod/archive/master.zip
+1. Visit the following URL to download the most up-to-date version of DomainMOD: https://github.com/domainmod/domainmod/archive/master.zip
 
 2. Use git right from your web server to retrieve the source code. To do so, change to the directory where you want to install DomainMOD and run the following command:  
 
-        git clone git://github.com/aysmedia/domainmod.git  
+        git clone git://github.com/domainmod/domainmod.git  
 
 
 ## Installing
@@ -42,7 +42,7 @@ If you have any problems during installation please see the Support section.
 ## Upgrading
 WARNING: Before upgrading, it is strongly recommended that you make a backup of your DomainMOD installation directory and database. If something goes wrong during the upgrade there may be no recovering, and having a backup of your installation directory and database will allow you to easily restore your previous installation.
 
-1. If you installed DomainMOD by downloading the .ZIP file, visit the following URL to download the most up-to-date version: https://github.com/aysmedia/domainmod/archive/master.zip  
+1. If you installed DomainMOD by downloading the .ZIP file, visit the following URL to download the most up-to-date version: https://github.com/domainmod/domainmod/archive/master.zip  
 
    Once the download completes, upload and unpack the new archive overtop of where you installed the previous version (or unpack it and then upload it, whichever you prefer).  
 
