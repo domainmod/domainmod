@@ -26,7 +26,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
-include("_includes/system/functions/cut-segment.inc.php");
+include("_includes/classes/Segment.class.php");
 include("_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Segment Filters";
@@ -196,12 +196,12 @@ $sql_segment_check = "SELECT id
 					  LIMIT 1";
 $result_segment_check = mysqli_query($connection, $sql_segment_check) or outputOldSqlError($connection);
 if (mysqli_num_rows($result_segment_check) == 0) {
-?>
-	You don't currently have any Segments. <a href="add/segment.php">Click here to add one</a>.<BR><BR>
+    ?>
+    You don't currently have any Segments. <a href="add/segment.php">Click here to add one</a>.<BR><BR>
 <?php
 }
 if (mysqli_num_rows($result) > 0) { ?>
-    <table class="main_table" cellpadding="0" cellspacing="0">
+<table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Segments (<?php echo mysqli_num_rows($result); ?>)</font>
@@ -217,8 +217,8 @@ if (mysqli_num_rows($result) > 0) { ?>
         </td>
     </tr>
 
-    <?php 
-	while ($row = mysqli_fetch_object($result)) { ?>
+    <?php
+    while ($row = mysqli_fetch_object($result)) { ?>
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active" valign="top">
@@ -231,20 +231,21 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <?php
                 $temp_segment = preg_replace("/','/", ", ", $row->segment);
                 $temp_segment = preg_replace("/'/", "", $temp_segment);
-                $cut_string = cutSegment($temp_segment, 100);
+                $segment = new Segment();
+                $trimmed_segment = $segment->trim($temp_segment, 100);
                 ?>
-                <a class="invisiblelink" href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $cut_string; ?></a>
+                <a class="invisiblelink" href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $trimmed_segment; ?></a>
             </td>
             <td class="main_table_cell_active" valign="top">
                 <a class="invisiblelink" href="segments.php?export=1&segid=<?php echo $row->id; ?>">EXPORT</a>
             </td>
         </tr>
 
-    <?php 
-	} ?>
-<?php 
-} ?>
-    </table>
+    <?php
+    } ?>
+    <?php
+    } ?>
+</table>
 <?php include("_includes/layout/footer.inc.php"); ?>
 </body>
 </html>
