@@ -36,13 +36,13 @@ if ($demo_install != "1") {
 
         $sql = "UPDATE settings
                 SET upgrade_available = '1'";
-        $result = mysqli_query($connection,$sql) or OutputOldSQLError($connection);
+        $result = mysqli_query($connection,$sql) or outputOldSqlError($connection);
 
     } else {
 
         $sql = "UPDATE settings
                 SET upgrade_available = '0'";
-        $result = mysqli_query($connection,$sql) or OutputOldSQLError($connection);
+        $result = mysqli_query($connection,$sql) or outputOldSqlError($connection);
 
     }
 

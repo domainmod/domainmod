@@ -43,10 +43,10 @@ $new_end_date = $_REQUEST['new_end_date'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
-		if ((!CheckDateFormat($new_start_date) || !CheckDateFormat($new_end_date)) || $new_start_date > $new_end_date) { 
+		if ((!checkDateFormat($new_start_date) || !checkDateFormat($new_end_date)) || $new_start_date > $new_end_date) {
 
-			if (!CheckDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
-			if (!CheckDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
+			if (!checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
+			if (!checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
 			if ($new_start_date > $new_end_date) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
 
 			$submission_failed = "1";
@@ -78,7 +78,7 @@ $sql = "SELECT o.id, o.name, SUM(d.total_cost * cc.conversion) as total_cost, co
 		  " . $range_string . "
 		GROUP BY name
 		ORDER BY name";
-$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) as grand_total, count(*) AS number_of_domains_total
@@ -90,7 +90,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) as grand_total, cou
 					  AND d.active NOT IN ('0', '10')
 					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 					  " . $range_string . "";
-$result_grand_total = mysqli_query($connection, $sql_grand_total) or OutputOldSQLError($connection);
+$result_grand_total = mysqli_query($connection, $sql_grand_total) or outputOldSqlError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 	$number_of_domains_total = $row_grand_total->number_of_domains_total;
@@ -108,7 +108,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
-		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {

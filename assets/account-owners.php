@@ -48,7 +48,7 @@ $sql = "(SELECT o.id, o.name, o.notes, o.insert_time, o.update_time
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "account_owner_list_" . $current_timestamp_unix . ".csv";
@@ -174,7 +174,7 @@ if ($export == "1") {
 	
 	}
 	
-	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 	
 	if (mysqli_num_rows($result) > 0) {
 		
@@ -250,7 +250,7 @@ if ($export == "1") {
 Below is a list of all the Account Owners that are stored in <?php echo $software_title; ?>.<BR><BR>
 [<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
 
-$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
 if (mysqli_num_rows($result) > 0) {
 
@@ -391,7 +391,7 @@ if ($_SESSION['display_inactive_assets'] == "1") {
 
     }
 
-    $result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+    $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
     if (mysqli_num_rows($result) > 0) {
 

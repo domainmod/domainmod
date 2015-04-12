@@ -76,7 +76,7 @@ if (mysqli_num_rows($result) > 0) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (CheckDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "" && $new_ip_id != "" && $new_cat_id != "" && $new_domain_id != "0" && $new_account_id != "0" && $new_type_id != "0" && $new_ip_id != "0" && $new_cat_id != "0") {
+	if (checkDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "" && $new_ip_id != "" && $new_cat_id != "" && $new_domain_id != "0" && $new_account_id != "0" && $new_type_id != "0" && $new_ip_id != "0" && $new_cat_id != "0") {
 
 		$sql = "SELECT ssl_provider_id, owner_id
 				FROM ssl_accounts
@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   fee_fixed = '" . $temp_fee_fixed . "',
 						   update_time = '" . $current_timestamp . "'
 					   WHERE id = '" . $new_sslcid . "'";
-		$result_update = mysqli_query($connection, $sql_update) or OutputOldSQLError($connection);
+		$result_update = mysqli_query($connection, $sql_update) or outputOldSqlError($connection);
 
 		$sql = "SELECT field_name
 				FROM ssl_cert_fields
@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	} else {
 	
 		if ($new_name == "") { $_SESSION['result_message'] .= "Enter the SSL certificate name<BR>"; }
-		if (!CheckDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }
+		if (!checkDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }
 
 	}
 
@@ -255,7 +255,7 @@ $sql_domain = "SELECT id, domain
 			   FROM domains
 			   WHERE (active NOT IN ('0', '10') OR id = '" . $new_domain_id . "')
 			   ORDER BY domain";
-$result_domain = mysqli_query($connection, $sql_domain) or OutputOldSQLError($connection);
+$result_domain = mysqli_query($connection, $sql_domain) or outputOldSqlError($connection);
 echo "<select name=\"new_domain_id\">";
 while ($row_domain = mysqli_fetch_object($result_domain)) { ?>
 
@@ -272,7 +272,7 @@ $sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS 
 				WHERE sslpa.owner_id = o.id
 				  AND sslpa.ssl_provider_id = sslp.id
 				ORDER BY sslp_name asc, o_name asc, sslpa.username asc";
-$result_account = mysqli_query($connection, $sql_account) or OutputOldSQLError($connection);
+$result_account = mysqli_query($connection, $sql_account) or outputOldSqlError($connection);
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysqli_fetch_object($result_account)) { ?>
 
@@ -287,7 +287,7 @@ echo "</select>";
 $sql_type = "SELECT id, type
 			 FROM ssl_cert_types
 			 ORDER BY type asc";
-$result_type = mysqli_query($connection, $sql_type) or OutputOldSQLError($connection);
+$result_type = mysqli_query($connection, $sql_type) or outputOldSqlError($connection);
 echo "<select name=\"new_type_id\">";
 while ($row_type = mysqli_fetch_object($result_type)) { ?>
 
@@ -302,7 +302,7 @@ echo "</select>";
 $sql_ip = "SELECT id, ip, name
 		   FROM ip_addresses
 		   ORDER BY name, ip";
-$result_ip = mysqli_query($connection, $sql_ip) or OutputOldSQLError($connection);
+$result_ip = mysqli_query($connection, $sql_ip) or outputOldSqlError($connection);
 echo "<select name=\"new_ip_id\">";
 while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
 
@@ -317,7 +317,7 @@ echo "</select>";
 $sql_cat = "SELECT id, name
 			FROM categories
 			ORDER BY name";
-$result_cat = mysqli_query($connection, $sql_cat) or OutputOldSQLError($connection);
+$result_cat = mysqli_query($connection, $sql_cat) or outputOldSqlError($connection);
 echo "<select name=\"new_cat_id\">";
 while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
 

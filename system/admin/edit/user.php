@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 			FROM users
 			WHERE username = '" . mysqli_real_escape_string($connection, $new_username) . "'
 			AND id != '" . $new_uid . "'";
-	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 	$is_username_taken = mysqli_num_rows($result);
 	if ($is_username_taken > 0) { $invalid_username = 1; $new_username = ""; }
 	
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 				FROM users
 				WHERE username = '" . mysqli_real_escape_string($connection, $new_username) . "'
 				AND id = '" . $new_uid . "'";
-		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 		$is_it_my_username = mysqli_num_rows($result);
 		
 		if ($is_it_my_username == 0) {
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 				active = '" . $new_is_active . "',
 				update_time = '" . $current_timestamp . "'
 			WHERE id = '" . $new_uid . "'";
-	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 	
 	$_SESSION['result_message'] .= "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</font> Updated<BR>";
 	
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		$sql = "SELECT first_name, last_name, username, email_address, admin, active
 				FROM users
 				WHERE id = '" . $uid . "'";
-		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 		
 		while ($row = mysqli_fetch_object($result)) {
 			

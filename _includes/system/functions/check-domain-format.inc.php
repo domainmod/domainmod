@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-function CheckDomainFormat($temp_input_domain) {
+function checkDomainFormat($temp_input_domain) {
 
     /*
 

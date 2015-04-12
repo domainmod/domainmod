@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 						   update_time = '$current_timestamp'
 					   WHERE id = '" . $_SESSION['user_id'] . "' 
 					     AND email_address = '" . $_SESSION['email_address'] . "'";
-		$result_update = mysqli_query($connection, $sql_update) or OutputOldSQLError($connection);
+		$result_update = mysqli_query($connection, $sql_update) or outputOldSqlError($connection);
 		
 		$_SESSION['email_address'] = $new_email_address;
 		$_SESSION['first_name'] = $new_first_name;

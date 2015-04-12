@@ -45,6 +45,6 @@ $sql_user_update = "UPDATE users
 						update_time = '$current_timestamp'
 					WHERE id = '" . $_SESSION['user_id'] . "'
 					  AND email_address = '" . $_SESSION['email_address'] . "'";
-$result_user_update = mysqli_query($connection, $sql_user_update) or OutputOldSQLError($connection);
+$result_user_update = mysqli_query($connection, $sql_user_update) or outputOldSqlError($connection);
 
 $_SESSION['last_login'] = $current_timestamp;

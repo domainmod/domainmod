@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "INSERT INTO hosting 
 				(name, url, notes, insert_time) VALUES 
 				('" . mysqli_real_escape_string($connection, $new_host) . "', '" . mysqli_real_escape_string($connection, $new_url) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
-		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 		
 		$_SESSION['result_message'] = "Web Host <font class=\"highlight\">" . $new_host . "</font> Added<BR>";
 		

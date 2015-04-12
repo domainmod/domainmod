@@ -20,14 +20,14 @@
  */
 ?>
 <?php
-function OutputSQLError($db_connection, $msg_to_display) {
+function outputSqlError($db_connection, $msg_to_display) {
 
     return trigger_error(htmlentities($msg_to_display . ": " . mysqli_error($db_connection)), E_USER_ERROR);
 
 }
 
 // This function is only temporary. After I convert all database queries to prepared statements this won't be needed.
-function OutputOldSQLError($db_connection) {
+function outputOldSqlError($db_connection) {
 
     return trigger_error(htmlentities(mysqli_error($db_connection)), E_USER_ERROR);
 

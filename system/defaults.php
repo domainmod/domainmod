@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				default_ssl_provider = '$new_default_ssl_provider',
 				update_time = '$current_timestamp'
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
-	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
 	$_SESSION['default_currency'] = $new_default_currency;
 	$_SESSION['default_timezone'] = $new_default_timezone;
@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
  		$sql = "SELECT *
 				FROM user_settings
 				WHERE user_id = '" . $_SESSION['user_id'] . "'";
-		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 		
 		while ($row = mysqli_fetch_object($result)) {
 			

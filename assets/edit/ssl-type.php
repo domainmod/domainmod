@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_ssltid . "'";
-		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 		
 		$new_type = $new_type;
 		$new_notes = $new_notes;

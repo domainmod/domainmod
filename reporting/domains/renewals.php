@@ -43,10 +43,10 @@ $new_expiry_end = $_REQUEST['new_expiry_end'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (!CheckDateFormat($new_expiry_start) || !CheckDateFormat($new_expiry_end) || $new_expiry_start > $new_expiry_end) {
+	if (!checkDateFormat($new_expiry_start) || !checkDateFormat($new_expiry_end) || $new_expiry_start > $new_expiry_end) {
 
-		if (!CheckDateFormat($new_expiry_start)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
-		if (!CheckDateFormat($new_expiry_end)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
+		if (!checkDateFormat($new_expiry_start)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
+		if (!checkDateFormat($new_expiry_end)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
 		if ($new_expiry_start > $new_expiry_end) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
 
 	}
@@ -82,10 +82,10 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
 		  AND d.active NOT IN ('0', '10')
 		  " . $range_string . "
 		ORDER BY d.expiry_date asc, d.domain";	
-$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 $total_results = mysqli_num_rows($result);
 
-$result_cost = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+$result_cost = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 $total_cost = 0;
 while ($row_cost = mysqli_fetch_object($result_cost)) {
 	$temp_total_cost = $temp_total_cost + $row_cost->converted_renewal_fee;
@@ -101,7 +101,7 @@ $total_cost = $temp_output_amount;
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	if ($all == "1") {

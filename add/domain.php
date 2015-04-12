@@ -71,7 +71,7 @@ foreach($field_array as $field) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (CheckDateFormat($new_expiry_date) && CheckDomainFormat($new_domain) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0") {
+	if (checkDateFormat($new_expiry_date) && checkDomainFormat($new_domain) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0") {
 		
 		$sql = "SELECT domain
 				FROM domains
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$sql = "INSERT INTO domains
 					(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id, hosting_id, fee_id, total_cost, function, notes, privacy, active, insert_time) VALUES
 					('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . $new_account_id . "', '" . mysqli_real_escape_string($connection, $new_domain) . "', '" . $tld . "', '" . $new_expiry_date . "', '" . $new_cat_id . "', '" . $new_dns_id . "', '" . $new_ip_id . "', '" . $new_hosting_id . "', '" . $new_fee_id . "', '" . $new_total_cost . "', '" . mysqli_real_escape_string($connection, $new_function) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $current_timestamp . "')";
-			$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+			$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 			
 			$sql = "SELECT id
 					FROM domains
@@ -163,8 +163,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	} else {
 	
-		if (!CheckDomainFormat($new_domain)) { $_SESSION['result_message'] .= "The domain format is incorrect<BR>"; }
-		if (!CheckDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }
+		if (!checkDomainFormat($new_domain)) { $_SESSION['result_message'] .= "The domain format is incorrect<BR>"; }
+		if (!checkDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }
 
 	}
 
@@ -195,7 +195,7 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                 WHERE ra.owner_id = o.id
                   AND ra.registrar_id = r.id
                 ORDER BY r_name, o_name, ra.username";
-$result_account = mysqli_query($connection, $sql_account) or OutputOldSQLError($connection);
+$result_account = mysqli_query($connection, $sql_account) or outputOldSqlError($connection);
 echo "<select name=\"new_account_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -221,7 +221,7 @@ echo "</select>";
 $sql_dns = "SELECT id, name
 			FROM dns
 			ORDER BY name";
-$result_dns = mysqli_query($connection, $sql_dns) or OutputOldSQLError($connection);
+$result_dns = mysqli_query($connection, $sql_dns) or outputOldSqlError($connection);
 echo "<select name=\"new_dns_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -247,7 +247,7 @@ echo "</select>";
 $sql_ip = "SELECT id, name, ip
 		   FROM ip_addresses
 		   ORDER BY name, ip";
-$result_ip = mysqli_query($connection, $sql_ip) or OutputOldSQLError($connection);
+$result_ip = mysqli_query($connection, $sql_ip) or outputOldSqlError($connection);
 echo "<select name=\"new_ip_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -273,7 +273,7 @@ echo "</select>";
 $sql_hosting = "SELECT id, name
 				FROM hosting
 				ORDER BY name";
-$result_hosting = mysqli_query($connection, $sql_hosting) or OutputOldSQLError($connection);
+$result_hosting = mysqli_query($connection, $sql_hosting) or outputOldSqlError($connection);
 echo "<select name=\"new_hosting_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -299,7 +299,7 @@ echo "</select>";
 $sql_cat = "SELECT id, name
 			FROM categories
 			ORDER BY name";
-$result_cat = mysqli_query($connection, $sql_cat) or OutputOldSQLError($connection);
+$result_cat = mysqli_query($connection, $sql_cat) or outputOldSqlError($connection);
 echo "<select name=\"new_cat_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

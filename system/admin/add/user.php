@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
         mysqli_stmt_close($stmt);
 
-	} else { OutputSQLError($connection, "ERROR"); }
+	} else { outputSqlError($connection, "ERROR"); }
 
     if ($existing_username == 1) {
 
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		    mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
 
-		} else { OutputSQLError($connection, "ERROR"); }
+		} else { outputSqlError($connection, "ERROR"); }
 
         $stmt = mysqli_stmt_init($connection);
         $query = "SELECT id
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
             mysqli_stmt_close($stmt);
 
-        } else { OutputSQLError($connection, "ERROR"); }
+        } else { outputSqlError($connection, "ERROR"); }
 
         $stmt = mysqli_stmt_init($connection);
         $query = "INSERT INTO user_settings
@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
 
-        } else { OutputSQLError($connection, "ERROR"); }
+        } else { outputSqlError($connection, "ERROR"); }
 
         $_SESSION['result_message'] .= "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " ("
             . $new_username . " / " . $new_password . ")</font> Added<BR><BR>You can either manually email the above

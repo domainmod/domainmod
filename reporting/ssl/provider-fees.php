@@ -61,14 +61,14 @@ if ($all == "1") {
 
 }
 
-$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 $total_rows = mysqli_num_rows($result);
 
 if ($total_rows > 0) {
 
 	if ($export == "1") {
 
-		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {

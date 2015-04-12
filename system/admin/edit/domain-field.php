@@ -70,12 +70,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 				notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 				update_time = '" . $current_timestamp . "'
 			WHERE id = '" . $new_cdfid . "'";
-	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 	
 	$sql = "SELECT field_name
 			FROM domain_fields
 			WHERE id = '" . $new_cdfid . "'";
-	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 	while ($row = mysqli_fetch_object($result)) { $temp_field_name = $row->field_name; }
 	
 	$_SESSION['result_message'] .= "Custom Domain Field <font class=\"highlight\">" . $new_name . " (" . $temp_field_name . ")</font> Updated<BR>";
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 				WHERE f.type_id = t.id
 				  AND f.id = '" . $cdfid . "'
 				ORDER BY f.name";
-		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
 		while ($row = mysqli_fetch_object($result)) {
 			

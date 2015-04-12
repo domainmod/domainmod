@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		while (list($key, $new_domain) = each($lines)) {
 	
-			if (!CheckDomainFormat($new_domain)) {
+			if (!checkDomainFormat($new_domain)) {
 				if ($invalid_domain_count < $invalid_domains_to_display) $temp_result_message .= "Line " . number_format($key + 1) . " contains an invalid domain<BR>";
 				$invalid_domains = 1;
 				$invalid_domain_count++;
@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 			while (list($key, $new_domain) = each($lines)) {
 	
-				if (!CheckDomainFormat($new_domain)) {
+				if (!checkDomainFormat($new_domain)) {
 					echo "invalid domain $key"; exit;
 				}
 	
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 mysqli_stmt_execute($stmt);
                 mysqli_stmt_close($stmt);
 
-            } else { OutputSQLError($connection, "ERROR"); }
+            } else { outputSqlError($connection, "ERROR"); }
 
             $stmt = mysqli_stmt_init($connection);
             $query = "DELETE FROM segment_data
@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 mysqli_stmt_execute($stmt);
                 mysqli_stmt_close($stmt);
 
-            } else { OutputSQLError($connection, "ERROR"); }
+            } else { outputSqlError($connection, "ERROR"); }
 
             foreach ($lines as $domain) {
 
@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     mysqli_stmt_execute($stmt);
                     mysqli_stmt_close($stmt);
 
-                } else { OutputSQLError($connection, "ERROR"); }
+                } else { outputSqlError($connection, "ERROR"); }
 
             }
 
@@ -197,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         mysqli_stmt_close($stmt);
 
-    } else { OutputSQLError($connection, "ERROR"); }
+    } else { outputSqlError($connection, "ERROR"); }
 
     $new_segment = preg_replace("/', '/", "\r\n", $new_segment);
     $new_segment = preg_replace("/','/", "\r\n", $new_segment);
@@ -233,7 +233,7 @@ if ($really_del == "1") {
 
         mysqli_stmt_close($stmt);
 
-    } else { OutputSQLError($connection, "ERROR"); }
+    } else { outputSqlError($connection, "ERROR"); }
 
     $stmt = mysqli_stmt_init($connection);
     $query = "DELETE FROM segments
@@ -245,7 +245,7 @@ if ($really_del == "1") {
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
 
-    } else { OutputSQLError($connection, "ERROR"); }
+    } else { outputSqlError($connection, "ERROR"); }
 
     $stmt = mysqli_stmt_init($connection);
     $query = "DELETE FROM segment_data
@@ -257,7 +257,7 @@ if ($really_del == "1") {
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
 
-    } else { OutputSQLError($connection, "ERROR"); }
+    } else { outputSqlError($connection, "ERROR"); }
 
     $_SESSION['result_message'] = "Segment <font class=\"highlight\">$temp_segment_name</font> Deleted<BR>";
 

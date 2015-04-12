@@ -33,17 +33,17 @@ if ($demo_install != "1") {
     $sql_domain_fee_fix1 = "UPDATE domains
                             SET fee_fixed = '0',
                                 fee_id = '0'";
-    $result_domain_fee_fix1 = mysqli_query($connection, $sql_domain_fee_fix1) or OutputOldSQLError($connection);
+    $result_domain_fee_fix1 = mysqli_query($connection, $sql_domain_fee_fix1) or outputOldSqlError($connection);
 
     $sql_domain_fee_fix2 = "UPDATE fees
                             SET fee_fixed = '0',
                                 update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'";
-    $result_domain_fee_fix2 = mysqli_query($connection, $sql_domain_fee_fix2) or OutputOldSQLError($connection);
+    $result_domain_fee_fix2 = mysqli_query($connection, $sql_domain_fee_fix2) or outputOldSqlError($connection);
 
     $sql_domain_fee_fix3 = "SELECT id, registrar_id, tld
                             FROM fees
                             WHERE fee_fixed = '0'";
-    $result_domain_fee_fix3 = mysqli_query($connection, $sql_domain_fee_fix3) or OutputOldSQLError($connection);
+    $result_domain_fee_fix3 = mysqli_query($connection, $sql_domain_fee_fix3) or outputOldSqlError($connection);
 
     while ($row_domain_fee_fix3 = mysqli_fetch_object($result_domain_fee_fix3)) {
 
@@ -52,7 +52,7 @@ if ($demo_install != "1") {
                                 WHERE registrar_id = '" . $row_domain_fee_fix3->registrar_id . "'
                                   AND tld = '" . $row_domain_fee_fix3->tld . "'
                                   AND fee_fixed = '0'";
-        $result_domain_fee_fix4 = mysqli_query($connection, $sql_domain_fee_fix4) or OutputOldSQLError($connection);
+        $result_domain_fee_fix4 = mysqli_query($connection, $sql_domain_fee_fix4) or outputOldSqlError($connection);
 
         $sql_domain_fee_fix5 = "UPDATE domains d
                                 JOIN fees f ON d.fee_id = f.id
@@ -62,7 +62,7 @@ if ($demo_install != "1") {
                                   AND d.tld = '" .$row_domain_fee_fix3->tld. "'
                                   AND d.privacy = '1'
                                   AND d.active NOT IN ('0', '10')";
-        $result_domain_fee_fix5 = mysqli_query($connection, $sql_domain_fee_fix5) or OutputOldSQLError($connection);
+        $result_domain_fee_fix5 = mysqli_query($connection, $sql_domain_fee_fix5) or outputOldSqlError($connection);
 
         $sql_domain_fee_fix6 = "UPDATE domains d
                                 JOIN fees f ON d.fee_id = f.id
@@ -72,31 +72,31 @@ if ($demo_install != "1") {
                                   AND d.tld = '" .$row_domain_fee_fix3->tld. "'
                                   AND d.privacy = '0'
                                   AND d.active NOT IN ('0', '10')";
-        $result_domain_fee_fix6 = mysqli_query($connection, $sql_domain_fee_fix6) or OutputOldSQLError($connection);
+        $result_domain_fee_fix6 = mysqli_query($connection, $sql_domain_fee_fix6) or outputOldSqlError($connection);
 
         $sql_domain_fee_fix7 = "UPDATE fees
                                 SET fee_fixed = '1',
                                     update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'
                                 WHERE registrar_id = '" . $row_domain_fee_fix3->registrar_id . "'
                                   AND tld = '" . $row_domain_fee_fix3->tld . "'";
-        $result_domain_fee_fix7 = mysqli_query($connection, $sql_domain_fee_fix7) or OutputOldSQLError($connection);
+        $result_domain_fee_fix7 = mysqli_query($connection, $sql_domain_fee_fix7) or outputOldSqlError($connection);
 
     }
 
     $sql_ssl_fee_fix1 = "UPDATE ssl_certs
                          SET fee_fixed = '0',
                              fee_id = '0'";
-    $result_ssl_fee_fix1 = mysqli_query($connection, $sql_ssl_fee_fix1) or OutputOldSQLError($connection);
+    $result_ssl_fee_fix1 = mysqli_query($connection, $sql_ssl_fee_fix1) or outputOldSqlError($connection);
 
     $sql_ssl_fee_fix2 = "UPDATE ssl_fees
                          SET fee_fixed = '0',
                              update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'";
-    $result_ssl_fee_fix2 = mysqli_query($connection, $sql_ssl_fee_fix2) or OutputOldSQLError($connection);
+    $result_ssl_fee_fix2 = mysqli_query($connection, $sql_ssl_fee_fix2) or outputOldSqlError($connection);
 
     $sql_ssl_fee_fix3 = "SELECT id, ssl_provider_id, type_id
                          FROM ssl_fees
                          WHERE fee_fixed = '0'";
-    $result_ssl_fee_fix3 = mysqli_query($connection, $sql_ssl_fee_fix3) or OutputOldSQLError($connection);
+    $result_ssl_fee_fix3 = mysqli_query($connection, $sql_ssl_fee_fix3) or outputOldSqlError($connection);
 
     while ($row_ssl_fee_fix3 = mysqli_fetch_object($result_ssl_fee_fix3)) {
 
@@ -105,7 +105,7 @@ if ($demo_install != "1") {
                              WHERE ssl_provider_id = '$row_ssl_fee_fix3->ssl_provider_id'
                                AND type_id = '$row_ssl_fee_fix3->type_id'
                                AND fee_fixed = '0'";
-        $result_ssl_fee_fix4 = mysqli_query($connection, $sql_ssl_fee_fix4) or OutputOldSQLError($connection);
+        $result_ssl_fee_fix4 = mysqli_query($connection, $sql_ssl_fee_fix4) or outputOldSqlError($connection);
 
         $sql_domain_fee_fix5 = "UPDATE ssl_certs sslc
                                 JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
@@ -114,14 +114,14 @@ if ($demo_install != "1") {
                                 WHERE sslc.ssl_provider_id = '" . $row_ssl_fee_fix3->ssl_provider_id . "'
                                   AND sslc.type_id = '" . $row_ssl_fee_fix3->type_id . "'
                                   AND sslc.active NOT IN ('0', '10')";
-        $result_domain_fee_fix5 = mysqli_query($connection, $sql_domain_fee_fix5) or OutputOldSQLError($connection);
+        $result_domain_fee_fix5 = mysqli_query($connection, $sql_domain_fee_fix5) or outputOldSqlError($connection);
 
         $sql_ssl_fee_fix6 = "UPDATE ssl_fees
                              SET fee_fixed = '1',
                                  update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'
                              WHERE ssl_provider_id = '$row_ssl_fee_fix3->ssl_provider_id'
                                AND type_id = '$row_ssl_fee_fix3->type_id'";
-        $result_ssl_fee_fix6 = mysqli_query($connection, $sql_ssl_fee_fix6) or OutputOldSQLError($connection);
+        $result_ssl_fee_fix6 = mysqli_query($connection, $sql_ssl_fee_fix6) or outputOldSqlError($connection);
 
     }
 

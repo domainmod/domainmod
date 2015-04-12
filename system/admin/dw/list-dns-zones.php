@@ -104,7 +104,7 @@ if ($domain != "") {
 
 if ($export == "1") {
 
-	$result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or OutputOldSQLError($connection);
+	$result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or outputOldSqlError($connection);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "dw_dns_zones_" . $current_timestamp_unix . ".csv";
@@ -271,7 +271,7 @@ if ($export == "1") {
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_dns_zone_temp));
 $navigate = pageBrowser($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
 $sql_dw_dns_zone_temp = $sql_dw_dns_zone_temp.$navigate[0];
-$result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or OutputOldSQLError($connection);
+$result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or outputOldSqlError($connection);
 
 if(mysqli_num_rows($result_dw_dns_zone_temp) == 0) {
 	
@@ -332,7 +332,7 @@ if(mysqli_num_rows($result_dw_dns_zone_temp) == 0) {
 	//							WHERE z.server_id = s.id
 	//							  AND X
 	//							ORDER BY s.name, z.zonefile, z.domain";
-	// $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or OutputOldSQLError($connection);
+	// $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or outputOldSqlError($connection);
 	$from_main_dw_dns_zone_page = 1;
 	include("../../../_includes/dw/display-dns-zone.inc.php");
 

@@ -101,7 +101,7 @@ if ($domain != "") {
 
 if ($export == "1") {
 
-	$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or OutputOldSQLError($connection);
+	$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or outputOldSqlError($connection);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "dw_account_list_" . $current_timestamp_unix . ".csv";
@@ -228,7 +228,7 @@ if ($export == "1") {
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_account_temp));
 $navigate = pageBrowser($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
 $sql_dw_account_temp = $sql_dw_account_temp.$navigate[0];
-$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or OutputOldSQLError($connection);
+$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or outputOldSqlError($connection);
 
 if(mysqli_num_rows($result_dw_account_temp) == 0) {
 	

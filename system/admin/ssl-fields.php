@@ -45,7 +45,7 @@ $sql = "SELECT f.id, f.name, f.field_name, f.description, f.notes, f.insert_time
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "custom_ssl_field_list_" . $current_timestamp_unix . ".csv";
@@ -98,7 +98,7 @@ Below is a list of all the Custom SSL Fields that have been added to <?php echo 
 Custom SSL Fields help extend the functionality of <?php echo $software_title; ?> by allowing the user to create their own data fields. For example, if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. And when you export your SSL data, the information contained in your custom fields will automatically be included in the exported data.
 <BR><BR><?php
 
-$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
 if (mysqli_num_rows($result) > 0) { ?>
 

@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-function CheckCustomFieldFormat($input_custom_field) {
+function checkCustomFieldFormat($input_custom_field) {
 
     if (preg_match('/^[a-zA-Z_]*$/i', $input_custom_field, $custom_field)) {
 

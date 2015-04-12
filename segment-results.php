@@ -93,7 +93,7 @@ $result = mysqli_query($connection, $sql);
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 	
 	$current_timestamp_unix = strtotime($current_timestamp);
 	if ($type == "inactive") { 

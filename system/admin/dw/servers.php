@@ -44,7 +44,7 @@ $sql = "SELECT id, name, host, protocol, port, username, hash, notes, dw_account
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "dw_servers_" . $current_timestamp_unix . ".csv";
@@ -106,7 +106,7 @@ if ($export == "1") {
 <body>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
 <?php
-$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
 if (mysqli_num_rows($result) > 0) { ?>
 

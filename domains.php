@@ -116,7 +116,7 @@ if ($_SESSION['quick_search'] != "") {
 	
 	while (list($key, $new_domain) = each($lines)) {
 
-		if (!CheckDomainFormat($new_domain)) {
+		if (!checkDomainFormat($new_domain)) {
 			if ($invalid_domain_count < $invalid_domains_to_display) $temp_result_message .= "Line " . number_format($key + 1) . " contains an invalid domain<BR>";
 			$invalid_domains = 1;
 			$invalid_domain_count++;
@@ -251,7 +251,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total
 					  $quick_search_string
 					  $sort_by_string";	
 
-$result_grand_total = mysqli_query($connection, $sql_grand_total) or OutputOldSQLError($connection);
+$result_grand_total = mysqli_query($connection, $sql_grand_total) or outputOldSqlError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 }
@@ -304,7 +304,7 @@ if ($segid != "") {
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 	$total_rows = number_format(mysqli_num_rows($result));
 
 	$current_timestamp_unix = strtotime($current_timestamp);

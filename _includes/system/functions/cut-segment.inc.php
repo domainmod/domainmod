@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-function cut_segment($string, $max_length) {
+function cutSegment($string, $max_length) {
 
     if (strlen($string) > $max_length) {
 

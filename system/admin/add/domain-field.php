@@ -43,7 +43,7 @@ $new_description = $_POST['new_description'];
 $new_field_type_id = $_POST['new_field_type_id'];
 $new_notes = $_POST['new_notes'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name != "" && CheckCustomFieldFormat($new_field_name)) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name != "" && checkCustomFieldFormat($new_field_name)) {
 	
 	$sql = "SELECT field_name
 			FROM domain_fields
@@ -61,25 +61,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 		$sql = "INSERT INTO domain_fields 
 				(name, field_name, description, type_id, notes, insert_time) VALUES 
 				('" . mysqli_real_escape_string($connection, $new_name) . "', '" . $new_field_name . "', '" . mysqli_real_escape_string($connection, $new_description) . "', '" . $new_field_type_id . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
-		$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
 		if ($new_field_type_id == '1') { // Check Box
 
 			$sql = "ALTER TABLE `domain_field_data`  
 					ADD `" . $new_field_name . "` INT(1) NOT NULL DEFAULT '0'";
-			$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+			$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 			
 		} elseif ($new_field_type_id == '2') { // Text
 
 			$sql = "ALTER TABLE `domain_field_data`  
 					ADD `" . $new_field_name . "` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-			$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+			$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 			
 		} elseif ($new_field_type_id == '3') { // Text Area
 
 			$sql = "ALTER TABLE `domain_field_data`  
 					ADD `" . $new_field_name . "` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-			$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+			$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 		
 		}
 
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		if ($new_name == "") $_SESSION['result_message'] .= "Enter the Display Name<BR>";
-		if (!CheckCustomFieldFormat($new_field_name)) $_SESSION['result_message'] .= "The Database Field Name format is incorrect<BR>";
+		if (!checkCustomFieldFormat($new_field_name)) $_SESSION['result_message'] .= "The Database Field Name format is incorrect<BR>";
 		
 	}
 
@@ -120,7 +120,7 @@ The Database Field Name can contain only letters and underscores (ie. sample_fie
 $sql = "SELECT id, name
 		FROM custom_field_types
 		ORDER BY name";
-$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 echo "<select name=\"new_field_type_id\">";
 while ($row = mysqli_fetch_object($result)) { ?>
 

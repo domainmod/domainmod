@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		while (list($key, $new_domain) = each($lines)) {
 	
-			if (!CheckDomainFormat($new_domain)) {
+			if (!checkDomainFormat($new_domain)) {
 				if ($invalid_domain_count < $invalid_domains_to_display) {
 					$temp_result_message .= "Line " . number_format($key + 1) . " contains an invalid domain<BR>";
 				}
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 			while (list($key, $new_domain) = each($lines)) {
 	
-				if (!CheckDomainFormat($new_domain)) {
+				if (!checkDomainFormat($new_domain)) {
 					echo "invalid domain $key"; exit;
 				}
 	
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 mysqli_stmt_execute($stmt);
                 mysqli_stmt_close($stmt);
 
-            } else { OutputSQLError($connection, "ERROR"); }
+            } else { outputSqlError($connection, "ERROR"); }
 
             $stmt = mysqli_stmt_init($connection);
             $query = "SELECT id FROM segments WHERE name = ? AND segment = ? AND insert_time = ?";
@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 mysqli_stmt_close($stmt);
 
-            } else { OutputSQLError($connection, "ERROR"); }
+            } else { outputSqlError($connection, "ERROR"); }
 
             $stmt = mysqli_stmt_init($connection);
             $query = "DELETE FROM segment_data WHERE segment_id = ?";
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 mysqli_stmt_execute($stmt);
                 mysqli_stmt_close($stmt);
 
-            } else { OutputSQLError($connection, "ERROR"); }
+            } else { outputSqlError($connection, "ERROR"); }
 
             foreach ($lines as $domain) {
 
@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     mysqli_stmt_execute($stmt);
                     mysqli_stmt_close($stmt);
 
-                } else { OutputSQLError($connection, "ERROR"); }
+                } else { outputSqlError($connection, "ERROR"); }
 
             }
 

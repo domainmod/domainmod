@@ -161,7 +161,7 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total
 					  $search_string
 					  $sort_by_string";	
 
-$result_grand_total = mysqli_query($connection, $sql_grand_total) or OutputOldSQLError($connection);
+$result_grand_total = mysqli_query($connection, $sql_grand_total) or outputOldSqlError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 }
@@ -176,7 +176,7 @@ $grand_total = $temp_output_amount;
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or OutputOldSQLError($connection);
+	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 	$total_rows = number_format(mysqli_num_rows($result));
 
 	$current_timestamp_unix = strtotime($current_timestamp);
