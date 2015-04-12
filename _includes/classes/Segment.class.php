@@ -1,6 +1,7 @@
 <?php
+
 /**
- * /_includes/system/functions/cut-segment.inc.php
+ * /_includes/classes/Segment.class.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,25 +21,31 @@
  */
 ?>
 <?php
-function cutSegment($string, $max_length) {
 
-    if (strlen($string) > $max_length) {
+class Segment
+{
 
-        $string = substr($string, 0, $max_length);
-        $pos = strrpos($string, ", ");
+    function trim($string, $max_length)
+    {
 
-        if ($pos === false) {
+        if (strlen($string) > $max_length) {
 
-            return substr($string, 0, $max_length) . "...";
+            $string = substr($string, 0, $max_length);
+            $pos = strrpos($string, ", ");
+
+            if ($pos === false) {
+
+                return substr($string, 0, $max_length) . "...";
+
+            }
+
+            return substr($string, 0, $pos) . "...";
+
+        } else {
+
+            return $string;
 
         }
-
-        return substr($string, 0, $pos) . "...";
-
-    } else {
-
-        return $string;
-
     }
 
 }
