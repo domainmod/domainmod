@@ -3351,7 +3351,7 @@ if ($current_db_version < $most_recent_db_version) {
 
     $sql = "UPDATE settings
             SET upgrade_available = '0'";
-    $result = mysqli_query($connection,$sql) or outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
     if ($direct == "1") {
 	
