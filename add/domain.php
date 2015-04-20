@@ -53,20 +53,24 @@ $sql = "SELECT field_name
 		ORDER BY name";
 $result = mysqli_query($connection, $sql);
 
-$count = 0;
+if (mysqli_num_rows($result) > 0) {
 
-while ($row = mysqli_fetch_object($result)) {
-	
-	$field_array[$count] = $row->field_name;
-	$count++;
+    $count = 0;
 
-}
+    while ($row = mysqli_fetch_object($result)) {
 
-foreach($field_array as $field) {
+        $field_array[$count] = $row->field_name;
+        $count++;
 
-	$full_field = "new_" . $field . "";
-	${'new_' . $field} = $_POST[$full_field];
-	
+    }
+
+    foreach ($field_array as $field) {
+
+        $full_field = "new_" . $field . "";
+        ${'new_' . $field} = $_POST[$full_field];
+
+    }
+
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -128,26 +132,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					FROM domain_fields
 					ORDER BY name";
 			$result = mysqli_query($connection, $sql);
-			
-			$count = 0;
-			
-			while ($row = mysqli_fetch_object($result)) {
-				
-				$field_array[$count] = $row->field_name;
-				$count++;
-			
-			}
-			
-			foreach($field_array as $field) {
-				
-				$full_field = "new_" . $field;
-				
-				$sql = "UPDATE domain_field_data
-						SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "'
-						WHERE domain_id = '" . $temp_domain_id . "'";
-				$result = mysqli_query($connection, $sql);
-			
-			}
+
+            if (mysqli_num_rows($result) > 0) {
+
+                $count = 0;
+
+                while ($row = mysqli_fetch_object($result)) {
+
+                    $field_array[$count] = $row->field_name;
+                    $count++;
+
+                }
+
+                foreach ($field_array as $field) {
+
+                    $full_field = "new_" . $field;
+
+                    $sql = "UPDATE domain_field_data
+                            SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "'
+                            WHERE domain_id = '" . $temp_domain_id . "'";
+                    $result = mysqli_query($connection, $sql);
+
+                }
+
+            }
 
             $_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
 

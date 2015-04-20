@@ -50,21 +50,24 @@ $sql = "SELECT field_name
 		ORDER BY name";
 $result = mysqli_query($connection, $sql);
 
-$count = 0;
+if (mysqli_num_rows($result) > 0) {
 
-while ($row = mysqli_fetch_object($result)) {
-	
-	$field_array[$count] = $row->field_name;
-	$count++;
+    $count = 0;
 
-}
+    while ($row = mysqli_fetch_object($result)) {
 
-/* TODO: Figure out why this gives errors (but still works) in DEV environment */
-foreach($field_array as $field) {
+        $field_array[$count] = $row->field_name;
+        $count++;
 
-	$full_field = "new_" . $field . "";
-	${'new_' . $field} = $_POST[$full_field];
-	
+    }
+
+    foreach($field_array as $field) {
+
+        $full_field = "new_" . $field . "";
+        ${'new_' . $field} = $_POST[$full_field];
+
+    }
+
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -109,28 +112,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				FROM ssl_cert_fields
 				ORDER BY name";
 		$result = mysqli_query($connection, $sql);
-		
-		$count = 0;
-		
-		while ($row = mysqli_fetch_object($result)) {
-			
-			$field_array[$count] = $row->field_name;
-			$count++;
-		
-		}
-		
-		foreach($field_array as $field) {
-			
-			$full_field = "new_" . $field;
-			
-			$sql = "UPDATE ssl_cert_field_data
-					SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "'
-					WHERE ssl_id = '" . $temp_ssl_id . "'";
-			$result = mysqli_query($connection, $sql);
-		
-		}
 
-		$_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
+        if (mysqli_num_rows($result) > 0) {
+
+            $count = 0;
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $field_array[$count] = $row->field_name;
+                $count++;
+
+            }
+
+            foreach($field_array as $field) {
+
+                $full_field = "new_" . $field;
+
+                $sql = "UPDATE ssl_cert_field_data
+                        SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "'
+                        WHERE ssl_id = '" . $temp_ssl_id . "'";
+                $result = mysqli_query($connection, $sql);
+
+            }
+
+        }
+
+        $_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
 
         include("../_includes/system/check-ssl-fees.inc.php");
 		include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
