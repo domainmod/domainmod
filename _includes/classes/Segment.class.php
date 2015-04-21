@@ -25,7 +25,7 @@ namespace DomainMOD;
 class Segment
 {
 
-    function trim($string, $max_length)
+    function trimLength($string, $max_length)
     {
 
         if (strlen($string) > $max_length) {

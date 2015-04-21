@@ -232,7 +232,7 @@ if (mysqli_num_rows($result) > 0) { ?>
                 $temp_segment = preg_replace("/','/", ", ", $row->segment);
                 $temp_segment = preg_replace("/'/", "", $temp_segment);
                 $segment = new DomainMOD\Segment();
-                $trimmed_segment = $segment->trim($temp_segment, 100);
+                $trimmed_segment = $segment->trimLength($temp_segment, 100);
                 ?>
                 <a class="invisiblelink" href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $trimmed_segment; ?></a>
             </td>
