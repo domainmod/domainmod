@@ -31,8 +31,10 @@ include("../../../_includes/database.inc.php");
 include("../../../_includes/software.inc.php");
 include("../../../_includes/timestamps/current-timestamp.inc.php");
 include("../../../_includes/auth/auth-check.inc.php");
-include("../../../_includes/system/functions/check-custom-field-format.inc.php");
+include("../../../_includes/classes/CustomField.class.php");
 include("../../../_includes/system/functions/error-reporting.inc.php");
+
+$custom_field = new DomainMOD\CustomField();
 
 $page_title = "Adding A Custom SSL Field";
 $software_section = "admin-ssl-field-add";
@@ -43,7 +45,7 @@ $new_description = $_POST['new_description'];
 $new_field_type_id = $_POST['new_field_type_id'];
 $new_notes = $_POST['new_notes'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name != "" && checkCustomFieldFormat($new_field_name)) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name != "" && $custom_field->checkFieldFormat($new_field_name)) {
 	
 	$sql = "SELECT field_name
 			FROM ssl_cert_fields
@@ -95,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		if ($new_name == "") $_SESSION['result_message'] .= "Enter the display name<BR>";
-		if (!checkCustomFieldFormat($new_field_name)) $_SESSION['result_message'] .= "The Database Field Name format is incorrect<BR>";
+		if (!$custom_field->checkFieldFormat($new_field_name)) $_SESSION['result_message'] .= "The Database Field Name format is incorrect<BR>";
 		
 	}
 
