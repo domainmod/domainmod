@@ -28,8 +28,8 @@ include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp-basic.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
 include("_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
+include("_includes/classes/Date.class.php");
 include("_includes/system/functions/check-domain-format.inc.php");
-include("_includes/system/functions/check-date-format.inc.php");
 include("_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Bulk Domain Updater";
@@ -193,11 +193,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 				include("_includes/system/update-segments.inc.php");
 	
-			} elseif ($action == "AD") { 
-			
-				if (!checkDateFormat($new_expiry_date) || $new_pcid == "" || $new_dnsid == "" || $new_ipid == "" || $new_whid == "" || $new_raid == "" || $new_pcid == "0" || $new_dnsid == "0" || $new_ipid == "0" || $new_whid == "0" || $new_raid == "0") {
+			} elseif ($action == "AD") {
+
+                $date = new DomainMOD\Date();
+
+                if (!$date->checkDateFormat($new_expiry_date) || $new_pcid == "" || $new_dnsid == "" || $new_ipid == "" || $new_whid == "" || $new_raid == "" || $new_pcid == "0" || $new_dnsid == "0" || $new_ipid == "0" || $new_whid == "0" || $new_raid == "0") {
 	
-					if (!checkDateFormat($new_expiry_date)) $_SESSION['result_message'] .= "You have entered an invalid expiry date<BR>";
+					if (!$date->checkDateFormat($new_expiry_date)) $_SESSION['result_message'] .= "You have entered an invalid expiry date<BR>";
 					if ($new_pcid == "" || $new_pcid == "0") $_SESSION['result_message'] .= "Please choose the new Category<BR>";
 					if ($new_dnsid == "" || $new_dnsid == "0") $_SESSION['result_message'] .= "Please choose the new DNS Profile<BR>";
 					if ($new_ipid == "" || $new_ipid == "0") $_SESSION['result_message'] .= "Please choose the new IP Address<BR>";
@@ -897,7 +899,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 			} elseif ($action == "CED") { 
 	
-				if (!checkDateFormat($new_expiry_date)) {
+				if (!$date->checkDateFormat($new_expiry_date)) {
 	
 					$_SESSION['result_message'] = "The expiry date you entered is invalid<BR>";
 					$submission_failed = 1;

@@ -26,8 +26,8 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+include("../../_includes/classes/Date.class.php");
 include("../_includes/system/functions/check-domain-format.inc.php");
-include("../_includes/system/functions/check-date-format.inc.php");
 include("../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = "Editing A Domain";
@@ -79,7 +79,9 @@ if (mysqli_num_rows($result) > 0) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (checkDateFormat($new_expiry_date) && checkDomainFormat($new_domain) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0") {
+    $date = new DomainMOD\Date();
+
+    if ($date->checkDateFormat($new_expiry_date) && checkDomainFormat($new_domain) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0") {
 
 		$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 
@@ -189,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	} else {
 	
 		if (!checkDomainFormat($new_domain)) { $_SESSION['result_message'] .= "The domain format is incorrect<BR>"; }
-		if (!checkDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }
+		if (!$date->checkDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }
 
 	}
 

@@ -34,8 +34,6 @@ include("../../../_includes/auth/auth-check.inc.php");
 include("../../../_includes/classes/CustomField.class.php");
 include("../../../_includes/system/functions/error-reporting.inc.php");
 
-$custom_field = new DomainMOD\CustomField();
-
 $page_title = "Adding A Custom SSL Field";
 $software_section = "admin-ssl-field-add";
 
@@ -44,6 +42,8 @@ $new_field_name = $_POST['new_field_name'];
 $new_description = $_POST['new_description'];
 $new_field_type_id = $_POST['new_field_type_id'];
 $new_notes = $_POST['new_notes'];
+
+$custom_field = new DomainMOD\CustomField();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name != "" && $custom_field->checkFieldFormat($new_field_name)) {
 

@@ -27,7 +27,7 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/timestamps/current-timestamp-basic.inc.php");
-include("../../_includes/system/functions/check-date-format.inc.php");
+include("../../_includes/classes/Date.class.php");
 include("../../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = $reporting_section_title;
@@ -41,18 +41,20 @@ $new_start_date = $_REQUEST['new_start_date'];
 $new_end_date = $_REQUEST['new_end_date'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	
-		if ((!checkDateFormat($new_start_date) || !checkDateFormat($new_end_date)) || $new_start_date > $new_end_date) {
 
-			if (!checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
-			if (!checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
-			if ($new_start_date > $new_end_date) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
+    $date = new DomainMOD\Date();
 
-			$submission_failed = "1";
+    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date > $new_end_date) {
 
-		}
+        if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
+        if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
+        if ($new_start_date > $new_end_date) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
 
-		$all = "0";
+        $submission_failed = "1";
+
+    }
+
+    $all = "0";
 
 }
 

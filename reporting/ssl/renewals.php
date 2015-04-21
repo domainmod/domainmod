@@ -27,7 +27,7 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/timestamps/current-timestamp-basic.inc.php");
-include("../../_includes/system/functions/check-date-format.inc.php");
+include("../../_includes/classes/Date.class.php");
 include("../../_includes/system/functions/error-reporting.inc.php");
 
 $page_title = $reporting_section_title;
@@ -43,10 +43,12 @@ $new_expiry_end = $_REQUEST['new_expiry_end'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if (!checkDateFormat($new_expiry_start) || !checkDateFormat($new_expiry_end) || $new_expiry_start > $new_expiry_end) {
+    $date = new DomainMOD\Date();
 
-		if (!checkDateFormat($new_expiry_start)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
-		if (!checkDateFormat($new_expiry_end)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
+    if (!$date->checkDateFormat($new_expiry_start) || !$date->checkDateFormat($new_expiry_end) || $new_expiry_start > $new_expiry_end) {
+
+        if (!$date->checkDateFormat($new_expiry_start)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
+		if (!$date->checkDateFormat($new_expiry_end)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
 		if ($new_expiry_start > $new_expiry_end) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
 
 	}
