@@ -25,6 +25,7 @@ include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
+include("../_includes/classes/Note.class.php");
 
 $page_title = "Viewing a Domain's Notes";
 $software_section = "domains";
@@ -54,10 +55,9 @@ while ($row = mysqli_fetch_object($result)) {
 <strong>Notes For <?php echo $new_domain; ?></strong><BR>
 <BR>
 <?php
-$temp_input_string = $new_notes;
-include("../_includes/system/display-note-formatting.inc.php");
-$new_notes = $temp_output_string;
-echo $new_notes;
+$note = new DomainMOD\Note();
+$html_notes = $note->formatHtml($new_notes);
+echo $html_notes;
 ?>
 <?php include("../_includes/layout/footer-bare.inc.php"); ?>
 </body>
