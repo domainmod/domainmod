@@ -46,60 +46,60 @@ $new_field_type_id = $_POST['new_field_type_id'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name != "" && $custom_field->checkFieldFormat($new_field_name)) {
-	
-	$sql = "SELECT field_name
-			FROM ssl_cert_fields
-			WHERE field_name = '" . $new_field_name . "'";
-	$result = mysqli_query($connection, $sql);
 
-	if (mysqli_num_rows($result) > 0) { $existing_field_name = 1; }
-	
-	if ($existing_field_name == 1) {
+    $sql = "SELECT field_name
+            FROM ssl_cert_fields
+            WHERE field_name = '" . $new_field_name . "'";
+    $result = mysqli_query($connection, $sql);
 
-		$_SESSION['result_message'] .= "The Database Field Name you entered already exists<BR>";
-		
-	} else {
+    if (mysqli_num_rows($result) > 0) { $existing_field_name = 1; }
 
-		$sql = "INSERT INTO ssl_cert_fields 
-				(name, field_name, description, type_id, notes, insert_time) VALUES 
-				('" . mysqli_real_escape_string($connection, $new_name) . "', '" . mysqli_real_escape_string($connection, $new_field_name) . "', '" . mysqli_real_escape_string($connection, $new_description) . "', '" . $new_field_type_id . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
-		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+    if ($existing_field_name == 1) {
 
-		if ($new_field_type_id == '1') { // Check Box
+        $_SESSION['result_message'] .= "The Database Field Name you entered already exists<BR>";
 
-			$sql = "ALTER TABLE `ssl_cert_field_data`  
-					ADD `" . $new_field_name . "` INT(1) NOT NULL DEFAULT '0'";
-			$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
-			
-		} elseif ($new_field_type_id == '2') { // Text
+    } else {
 
-			$sql = "ALTER TABLE `ssl_cert_field_data`  
-					ADD `" . $new_field_name . "` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-			$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
-			
-		} elseif ($new_field_type_id == '3') { // Text Area
+        $sql = "INSERT INTO ssl_cert_fields
+                (name, field_name, description, type_id, notes, insert_time) VALUES
+                ('" . mysqli_real_escape_string($connection, $new_name) . "', '" . mysqli_real_escape_string($connection, $new_field_name) . "', '" . mysqli_real_escape_string($connection, $new_description) . "', '" . $new_field_type_id . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
+        $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
-			$sql = "ALTER TABLE `ssl_cert_field_data`  
-					ADD `" . $new_field_name . "` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-			$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
-		
-		}
+        if ($new_field_type_id == '1') { // Check Box
 
-		$_SESSION['result_message'] .= "Custom SSL Field <font class=\"highlight\">" . $new_name . " (" . $new_field_name . ")</font> Added<BR>";
+            $sql = "ALTER TABLE `ssl_cert_field_data`
+                    ADD `" . $new_field_name . "` INT(1) NOT NULL DEFAULT '0'";
+            $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
-		header("Location: ../ssl-fields.php");
-		exit;
+        } elseif ($new_field_type_id == '2') { // Text
 
-	}
+            $sql = "ALTER TABLE `ssl_cert_field_data`
+                    ADD `" . $new_field_name . "` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
+            $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+
+        } elseif ($new_field_type_id == '3') { // Text Area
+
+            $sql = "ALTER TABLE `ssl_cert_field_data`
+                    ADD `" . $new_field_name . "` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
+            $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+
+        }
+
+        $_SESSION['result_message'] .= "Custom SSL Field <font class=\"highlight\">" . $new_name . " (" . $new_field_name . ")</font> Added<BR>";
+
+        header("Location: ../ssl-fields.php");
+        exit;
+
+    }
 
 } else {
 
-	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	
-		if ($new_name == "") $_SESSION['result_message'] .= "Enter the display name<BR>";
-		if (!$custom_field->checkFieldFormat($new_field_name)) $_SESSION['result_message'] .= "The Database Field Name format is incorrect<BR>";
-		
-	}
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        if ($new_name == "") $_SESSION['result_message'] .= "Enter the display name<BR>";
+        if (!$custom_field->checkFieldFormat($new_field_name)) $_SESSION['result_message'] .= "The Database Field Name format is incorrect<BR>";
+
+    }
 
 }
 ?>

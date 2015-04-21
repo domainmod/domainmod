@@ -48,58 +48,58 @@ $new_notes = $_POST['new_notes'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name != "" && $custom_field->checkFieldFormat($new_field_name)) {
 
     $sql = "SELECT field_name
-			FROM domain_fields
-			WHERE field_name = '" . $new_field_name . "'";
-	$result = mysqli_query($connection, $sql);
+            FROM domain_fields
+            WHERE field_name = '" . $new_field_name . "'";
+    $result = mysqli_query($connection, $sql);
 
-	if (mysqli_num_rows($result) > 0) { $existing_field_name = 1; }
-	
-	if ($existing_field_name == 1) {
+    if (mysqli_num_rows($result) > 0) { $existing_field_name = 1; }
 
-		$_SESSION['result_message'] .= "The Database Field Name you entered already exists<BR>";
-		
-	} else {
+    if ($existing_field_name == 1) {
 
-		$sql = "INSERT INTO domain_fields 
-				(name, field_name, description, type_id, notes, insert_time) VALUES 
-				('" . mysqli_real_escape_string($connection, $new_name) . "', '" . $new_field_name . "', '" . mysqli_real_escape_string($connection, $new_description) . "', '" . $new_field_type_id . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
-		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+        $_SESSION['result_message'] .= "The Database Field Name you entered already exists<BR>";
 
-		if ($new_field_type_id == '1') { // Check Box
+    } else {
 
-			$sql = "ALTER TABLE `domain_field_data`  
-					ADD `" . $new_field_name . "` INT(1) NOT NULL DEFAULT '0'";
-			$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
-			
-		} elseif ($new_field_type_id == '2') { // Text
+        $sql = "INSERT INTO domain_fields
+                (name, field_name, description, type_id, notes, insert_time) VALUES
+                ('" . mysqli_real_escape_string($connection, $new_name) . "', '" . $new_field_name . "', '" . mysqli_real_escape_string($connection, $new_description) . "', '" . $new_field_type_id . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
+        $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
-			$sql = "ALTER TABLE `domain_field_data`  
-					ADD `" . $new_field_name . "` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-			$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
-			
-		} elseif ($new_field_type_id == '3') { // Text Area
+        if ($new_field_type_id == '1') { // Check Box
 
-			$sql = "ALTER TABLE `domain_field_data`  
-					ADD `" . $new_field_name . "` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-			$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
-		
-		}
+            $sql = "ALTER TABLE `domain_field_data`
+                    ADD `" . $new_field_name . "` INT(1) NOT NULL DEFAULT '0'";
+            $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
-		$_SESSION['result_message'] .= "Custom Domain Field <font class=\"highlight\">" . $new_name . " (" . $new_field_name . ")</font> Added<BR>";
+        } elseif ($new_field_type_id == '2') { // Text
 
-		header("Location: ../domain-fields.php");
-		exit;
+            $sql = "ALTER TABLE `domain_field_data`
+                    ADD `" . $new_field_name . "` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
+            $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
-	}
+        } elseif ($new_field_type_id == '3') { // Text Area
+
+            $sql = "ALTER TABLE `domain_field_data`
+                    ADD `" . $new_field_name . "` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
+            $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+
+        }
+
+        $_SESSION['result_message'] .= "Custom Domain Field <font class=\"highlight\">" . $new_name . " (" . $new_field_name . ")</font> Added<BR>";
+
+        header("Location: ../domain-fields.php");
+        exit;
+
+    }
 
 } else {
 
-	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	
-		if ($new_name == "") $_SESSION['result_message'] .= "Enter the Display Name<BR>";
-		if (!$custom_field->checkFieldFormat($new_field_name)) $_SESSION['result_message'] .= "The Database Field Name format is incorrect<BR>";
-		
-	}
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        if ($new_name == "") $_SESSION['result_message'] .= "Enter the Display Name<BR>";
+        if (!$custom_field->checkFieldFormat($new_field_name)) $_SESSION['result_message'] .= "The Database Field Name format is incorrect<BR>";
+
+    }
 
 }
 ?>
