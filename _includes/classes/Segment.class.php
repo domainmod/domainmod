@@ -1,5 +1,4 @@
 <?php
-
 /**
  * /_includes/classes/Segment.class.php
  *
@@ -21,6 +20,7 @@
  */
 ?>
 <?php
+namespace DomainMOD;
 
 class Segment
 {
