@@ -27,7 +27,7 @@ include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/classes/Note.class.php");
 
-$page_title = "Viewing an SSL Certificates's Notes";
+$page_title = "Viewing an SSL Certificate's Notes";
 $software_section = "ssl-certs";
 
 $sslcid = $_GET['sslcid'];
