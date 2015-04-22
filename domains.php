@@ -26,7 +26,7 @@ include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
-include("_includes/system/functions/check-domain-format.inc.php");
+include("_includes/classes/Domain.class.php");
 include("_includes/system/functions/pagination.inc.php");
 include("_includes/system/functions/error-reporting.inc.php");
 
@@ -113,10 +113,12 @@ if ($_SESSION['quick_search'] != "") {
 	$lines = explode("\r\n", $_SESSION['quick_search']);
 	$invalid_domain_count = 0;
 	$invalid_domains_to_display = 5;
-	
-	while (list($key, $new_domain) = each($lines)) {
 
-		if (!checkDomainFormat($new_domain)) {
+    $domain = new DomainMOD\Domain();
+
+    while (list($key, $new_domain) = each($lines)) {
+
+		if (!$domain->checkDomainFormat($new_domain)) {
 			if ($invalid_domain_count < $invalid_domains_to_display) $temp_result_message .= "Line " . number_format($key + 1) . " contains an invalid domain<BR>";
 			$invalid_domains = 1;
 			$invalid_domain_count++;
