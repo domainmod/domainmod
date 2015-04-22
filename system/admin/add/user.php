@@ -31,7 +31,9 @@ include("../../../_includes/database.inc.php");
 include("../../../_includes/software.inc.php");
 include("../../../_includes/timestamps/current-timestamp.inc.php");
 include("../../../_includes/auth/auth-check.inc.php");
-include("../../../_includes/system/functions/error-reporting.inc.php");
+include("../../../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Adding A New User";
 $software_section = "admin-user-add";
@@ -64,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
         mysqli_stmt_close($stmt);
 
-	} else { outputSqlError($connection, "ERROR"); }
+	} else { $error->outputSqlError($connection, "ERROR"); }
 
     if ($existing_username == 1) {
 
@@ -87,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		    mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
 
-		} else { outputSqlError($connection, "ERROR"); }
+		} else { $error->outputSqlError($connection, "ERROR"); }
 
         $stmt = mysqli_stmt_init($connection);
         $query = "SELECT id
@@ -111,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
             mysqli_stmt_close($stmt);
 
-        } else { outputSqlError($connection, "ERROR"); }
+        } else { $error->outputSqlError($connection, "ERROR"); }
 
         $stmt = mysqli_stmt_init($connection);
         $query = "INSERT INTO user_settings
@@ -156,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
 
-        } else { outputSqlError($connection, "ERROR"); }
+        } else { $error->outputSqlError($connection, "ERROR"); }
 
         $_SESSION['result_message'] .= "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " ("
             . $new_username . " / " . $new_password . ")</font> Added<BR><BR>You can either manually email the above

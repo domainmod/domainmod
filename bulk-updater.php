@@ -30,7 +30,9 @@ include("_includes/timestamps/current-timestamp.inc.php");
 include("_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
 include("_includes/classes/Date.class.php");
 include("_includes/classes/Domain.class.php");
-include("_includes/system/functions/error-reporting.inc.php");
+include("_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Bulk Domain Updater";
 $software_section = "bulk-updater";
@@ -165,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$sql = "SELECT domain, expiry_date
 						FROM domains
 						WHERE domain IN (" . $new_data_formatted . ")";
-				$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 				
 				while ($row = mysqli_fetch_object($result)) {
 				
@@ -264,7 +266,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						$sql = "INSERT INTO domains
 								(owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, total_cost, dns_id, ip_id, hosting_id, function, notes, privacy, active, fee_fixed, insert_time) VALUES
 								('" . $temp_owner_id . "', '" . $temp_registrar_id . "', '" . $new_raid . "', '" . mysqli_real_escape_string($connection, $new_domain) . "', '" . $new_tld . "', '" . $new_expiry_date . "', '" . $new_pcid . "', '" . $temp_fee_id . "', '" . $new_total_cost . "', '" . $new_dnsid . "', '" . $new_ipid . "', '" . $new_whid . "', '" . mysqli_real_escape_string($connection, $new_function) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $temp_fee_fixed . "', '" . $current_timestamp . "')";
-						$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+						$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 						$temp_fee_id = 0;
 
 						$sql = "SELECT id
@@ -324,7 +326,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$sql = "SELECT domain, expiry_date
 						FROM domains
 						WHERE domain IN (" . $new_data_formatted . ")";
-				$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 				
 				while ($row = mysqli_fetch_object($result)) {
 				
@@ -394,7 +396,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								WHERE domain IN (" . $new_data_formatted . ")";
 
 					}
-					$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 					
 					$_SESSION['result_message'] = "Category Changed<BR>";
 	
@@ -425,7 +427,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								WHERE domain IN (" . $new_data_formatted . ")";
 
 					}
-					$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 					
 					$_SESSION['result_message'] = "DNS Profile Changed<BR>";
 				}
@@ -455,7 +457,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								WHERE domain IN (" . $new_data_formatted . ")";
 
 					}
-					$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 	
 					$_SESSION['result_message'] = "IP Address Changed<BR>";
 	
@@ -474,7 +476,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								   SET notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 								   	   update_time = '" . $current_timestamp . "'
 								   WHERE domain IN (" . $new_data_formatted . ")";
-					$result_update = mysqli_query($connection, $sql_update) or outputOldSqlError($connection);
+					$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 					
 					$_SESSION['result_message'] = "Note Added<BR>";
 	
@@ -496,7 +498,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							  AND ra.id = '" . $new_raid . "'
 							GROUP BY r.name, o.name, ra.username
 							ORDER BY r.name asc, o.name asc, ra.username asc";
-					$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 			
 					while ($row = mysqli_fetch_object($result)) {
 						$new_owner_id = $row->o_id;
@@ -527,26 +529,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								WHERE domain IN (" . $new_data_formatted . ")";
 						
 					}
-					$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $sql = "UPDATE domains
                             SET fee_id = '0', total_cost = '0'
                             WHERE domain IN (" . $new_data_formatted . ")";
-                    $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $sql = "SELECT d.id, f.id AS fee_id
                             FROM domains AS d, fees AS f
                             WHERE d.registrar_id = f.registrar_id
                               AND d.tld = f.tld
                               AND d.domain IN (" . $new_data_formatted . ")";
-                    $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     while ($row = mysqli_fetch_object($result)) {
 
                         $sql_update = "UPDATE domains
                                        SET fee_id = '" . $row->fee_id . "'
                                        WHERE id = '" . $row->id . "'";
-                        $result_update = mysqli_query($connection, $sql_update) or outputOldSqlError($connection);
+                        $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 
                     }
 
@@ -555,14 +557,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
                             WHERE d.privacy = '1'
                               AND d.domain IN (" . $new_data_formatted . ")";
-                    $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $sql = "UPDATE domains d
                             JOIN fees f ON d.fee_id = f.id
                             SET d.total_cost = f.renewal_fee + f.misc_fee
                             WHERE d.privacy = '0'
                               AND d.domain IN (" . $new_data_formatted . ")";
-                    $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $_SESSION['result_message'] = "Registrar Account Changed<BR>";
 
@@ -595,7 +597,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								WHERE domain IN (" . $new_data_formatted . ")";
 
                     }
-                    $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $_SESSION['result_message'] = "Web Hosting Provider Changed<BR>";
 
@@ -606,7 +608,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = "SELECT id
 						FROM domains
 						WHERE domain in (" . $new_data_formatted . ")";
-                $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 if (mysqli_num_rows($result) > 0) {
 
@@ -620,16 +622,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $sql_domain = "DELETE FROM domains
                                    WHERE id IN (" . $domain_id_list_formatted . ")";
-                    $result_domain = mysqli_query($connection, $sql_domain) or outputOldSqlError($connection);
+                    $result_domain = mysqli_query($connection, $sql_domain) or $error->outputOldSqlError($connection);
 
                     $sql_domain = "DELETE FROM domain_field_data
                                    WHERE domain_id IN (" . $domain_id_list_formatted . ")";
-                    $result_domain = mysqli_query($connection, $sql_domain) or outputOldSqlError($connection);
+                    $result_domain = mysqli_query($connection, $sql_domain) or $error->outputOldSqlError($connection);
 
                     $sql_ssl = "SELECT id
                                 FROM ssl_certs
                                 WHERE domain_id IN (" . $domain_id_list_formatted . ")";
-                    $result_ssl = mysqli_query($connection, $sql_ssl) or outputOldSqlError($connection);
+                    $result_ssl = mysqli_query($connection, $sql_ssl) or $error->outputOldSqlError($connection);
 
                     if (mysqli_num_rows($result_ssl) > 0) {
 
@@ -643,11 +645,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $sql_ssl = "DELETE FROM ssl_certs
                                     WHERE domain_id IN (" . $domain_id_list_formatted . ")";
-                        $result_ssl = mysqli_query($connection, $sql_ssl) or outputOldSqlError($connection);
+                        $result_ssl = mysqli_query($connection, $sql_ssl) or $error->outputOldSqlError($connection);
 
                         $sql_ssl = "DELETE FROM ssl_cert_field_data
                                     WHERE ssl_id IN (" . $ssl_id_list_formatted . ")";
-                        $result_ssl = mysqli_query($connection, $sql_ssl) or outputOldSqlError($connection);
+                        $result_ssl = mysqli_query($connection, $sql_ssl) or $error->outputOldSqlError($connection);
 
                     }
 
@@ -675,7 +677,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							WHERE domain IN (" . $new_data_formatted . ")";
 
 				}
-				$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 				
 				$_SESSION['result_message'] = "Domains marked as expired<BR>";
 
@@ -699,7 +701,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							WHERE domain IN (" . $new_data_formatted . ")";
 
 				}
-				$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 				
 				$_SESSION['result_message'] = "Domains marked as sold<BR>";
 
@@ -723,7 +725,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				}
-				$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 				
 				$_SESSION['result_message'] = "Domains marked as active<BR>";
 
@@ -747,7 +749,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							WHERE domain IN ($new_data_formatted)";
 					
 				}
-				$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 				
 				$_SESSION['result_message'] = "Domains marked as 'In Transfer'<BR>";
 
@@ -771,7 +773,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				}
-				$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 				
 				$_SESSION['result_message'] = "Domains marked as 'Pending (Registration)'<BR>";
 
@@ -795,7 +797,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				}
-				$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 				
 				$_SESSION['result_message'] = "Domains marked as 'Pending (Renewal)'<BR>";
 
@@ -819,7 +821,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							WHERE domain IN (" . $new_data_formatted . ")";
 					
 				}
-				$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 				
 				$_SESSION['result_message'] = "Domains marked as 'Pending (Other)'<BR>";
 
@@ -843,20 +845,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							WHERE domain IN (" . $new_data_formatted . ")";
 
                 }
-				$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $sql = "SELECT d.id, (f.renewal_fee + f.privacy_fee + f.misc_fee) AS total_cost
                             FROM domains AS d, fees AS f
                             WHERE d.fee_id = f.id
                               AND d.domain IN (" . $new_data_formatted . ")";
-                $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 while ($row = mysqli_fetch_object($result)) {
 
                     $sql_update = "UPDATE domains
                                        SET total_cost = '" . $row->total_cost . "'
                                        WHERE id = '" . $row->id . "'";
-                    $result_update = mysqli_query($connection, $sql_update) or outputOldSqlError($connection);
+                    $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 
                 }
 
@@ -882,20 +884,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							WHERE domain IN (" . $new_data_formatted . ")";
 
 				}
-				$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $sql = "SELECT d.id, (f.renewal_fee + f.misc_fee) AS total_cost
                             FROM domains AS d, fees AS f
                             WHERE d.fee_id = f.id
                               AND d.domain IN (" . $new_data_formatted . ")";
-                $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 while ($row = mysqli_fetch_object($result)) {
 
                     $sql_update = "UPDATE domains
                                        SET total_cost = '" . $row->total_cost . "'
                                        WHERE id = '" . $row->id . "'";
-                    $result_update = mysqli_query($connection, $sql_update) or outputOldSqlError($connection);
+                    $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 
                 }
 
@@ -926,7 +928,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								WHERE domain IN (" . $new_data_formatted . ")";
 	
 					}
-					$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 					
 					$_SESSION['result_message'] = "Expiry Date Updated<BR>";
 
@@ -937,7 +939,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$sql = "SELECT id
 						FROM domains
 						WHERE domain in (" . $new_data_formatted . ")";
-				$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 				
 				while ($row = mysqli_fetch_object($result)) {
 					
@@ -973,7 +975,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							SET notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 								update_time = '" . $current_timestamp . "'
 							WHERE id in (" . $domain_id_list_formatted . ")";
-					$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 					
 				}
 				
@@ -1087,7 +1089,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
             FROM domain_fields AS df, custom_field_types AS cft
             WHERE df.type_id = cft.id
             ORDER BY df.name";
-    $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
     while ($row = mysqli_fetch_object($result)) { ?>
     
         <option value="bulk-updater.php?action=UCF<?php echo $row->type_id; ?>&field_id=<?php echo $row->id; ?>"<?php if ($row->id == $field_id) echo " selected"; ?>><?php echo $row->name; ?> (<?php echo $row->type; ?>)</option><?php
@@ -1138,7 +1140,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
                     WHERE ra.owner_id = o.id
                       AND ra.registrar_id = r.id
                     ORDER BY r_name, o_name, ra.username";
-    $result_account = mysqli_query($connection, $sql_account) or outputOldSqlError($connection);
+    $result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_raid\">";
     while ($row_account = mysqli_fetch_object($result_account)) { ?>
     
@@ -1153,7 +1155,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     $sql_dns = "SELECT id, name
 				FROM dns
 				ORDER BY name";
-    $result_dns = mysqli_query($connection, $sql_dns) or outputOldSqlError($connection);
+    $result_dns = mysqli_query($connection, $sql_dns) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_dnsid\">";
     while ($row_dns = mysqli_fetch_object($result_dns)) { ?>
     
@@ -1168,7 +1170,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     $sql_ip = "SELECT id, name, ip
 			   FROM ip_addresses
 			   ORDER BY name, ip";
-    $result_ip = mysqli_query($connection, $sql_ip) or outputOldSqlError($connection);
+    $result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_ipid\">";
     while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
 
@@ -1184,7 +1186,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 				 FROM hosting
 				 ORDER BY name";
 
-    $result_host = mysqli_query($connection, $sql_host) or outputOldSqlError($connection);
+    $result_host = mysqli_query($connection, $sql_host) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_whid\">";
     while ($row_host = mysqli_fetch_object($result_host)) { ?>
 
@@ -1200,7 +1202,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 				FROM categories
 				ORDER BY name";
 
-    $result_cat = mysqli_query($connection, $sql_cat) or outputOldSqlError($connection);
+    $result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_pcid\">";
     while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
     

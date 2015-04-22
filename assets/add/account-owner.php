@@ -26,7 +26,9 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/system/functions/error-reporting.inc.php");
+include("../../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Adding A New Account Owner";
 $software_section = "account-owners-add";
@@ -40,9 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($new_owner != "") {
 
         $sql = "INSERT INTO owners
-				(name, notes, insert_time) VALUES 
+				(name, notes2, insert_time) VALUES
 				('" . mysqli_real_escape_string($connection, $new_owner) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
-        $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $_SESSION['result_message'] = "Owner <font class=\"highlight\">" . $new_owner . "</font> Added<BR>";
 

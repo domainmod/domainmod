@@ -26,7 +26,9 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/system/functions/error-reporting.inc.php");
+include("../../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Editing A DNS Profile";
 $software_section = "dns-edit";
@@ -105,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   number_of_servers = '" . $new_number_of_servers . "',
 						   update_time = '" . $current_timestamp . "'
 					   WHERE id = '" . $new_dnsid . "'";
-		$result_update = mysqli_query($connection, $sql_update) or outputOldSqlError($connection);
+		$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 
 		$new_name = $new_name;
 		$new_dns1 = $new_dns1;

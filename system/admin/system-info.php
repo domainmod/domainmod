@@ -31,7 +31,9 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
-include("../../_includes/system/functions/error-reporting.inc.php");
+include("../../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "System Information";
 $software_section = "admin-system-info";
@@ -47,7 +49,7 @@ $software_section = "admin-system-info";
 <?php
 $sql = "SELECT db_version
 		FROM settings";
-$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 while ($row = mysqli_fetch_object($result)) {
     $db_version = $row->db_version;
 }

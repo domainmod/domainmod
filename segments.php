@@ -27,7 +27,9 @@ include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
 include("_includes/classes/Segment.class.php");
-include("_includes/system/functions/error-reporting.inc.php");
+include("_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Segment Filters";
 $software_section = "segments";
@@ -91,7 +93,7 @@ if ($export == "1") {
             WHERE s.id = sd.segment_id
             $seg_clause
             ORDER BY s.name ASC, sd.domain ASC";
-    $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_timestamp_unix = strtotime($current_timestamp);
 
@@ -182,7 +184,7 @@ if ($export == "1") {
 <body>
 <?php include("_includes/layout/header.inc.php"); ?>
 <?php
-$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 ?>
 Segments are lists of domains that can be used to help filter and manage your <a href="domains.php">domain results</a>.<BR>
 <BR>
@@ -193,7 +195,7 @@ Segment filters will tell you which domains match with domains that are saved in
 $sql_segment_check = "SELECT id
 					  FROM segments
 					  LIMIT 1";
-$result_segment_check = mysqli_query($connection, $sql_segment_check) or outputOldSqlError($connection);
+$result_segment_check = mysqli_query($connection, $sql_segment_check) or $error->outputOldSqlError($connection);
 if (mysqli_num_rows($result_segment_check) == 0) {
     ?>
     You don't currently have any Segments. <a href="add/segment.php">Click here to add one</a>.<BR><BR>

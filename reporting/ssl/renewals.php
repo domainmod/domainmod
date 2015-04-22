@@ -28,7 +28,9 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/timestamps/current-timestamp-basic.inc.php");
 include("../../_includes/classes/Date.class.php");
-include("../../_includes/system/functions/error-reporting.inc.php");
+include("../../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = $reporting_section_title;
 $page_subtitle = "SSL Certificate Renewal Report";
@@ -84,10 +86,10 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date,
 		  AND sslc.active NOT IN ('0')
 		  " . $range_string . "
 		ORDER BY sslc.expiry_date asc, sslc.name asc";	
-$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $total_results = mysqli_num_rows($result);
 
-$result_cost = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+$result_cost = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $total_cost = 0;
 while ($row_cost = mysqli_fetch_object($result_cost)) {
 	$temp_total_cost = $temp_total_cost + $row_cost->converted_renewal_fee;
@@ -103,7 +105,7 @@ $total_cost = $temp_output_amount;
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	if ($all == "1") {

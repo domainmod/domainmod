@@ -30,7 +30,9 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/system/functions/error-reporting.inc.php");
+include("../../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Reset Password";
 $software_section = "system";
@@ -44,7 +46,7 @@ if ($new_username != "") {
 		   WHERE username = '$new_username'
 		     AND active = '1'";
 
-   $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+   $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 	if (mysqli_num_rows($result) == 1) {
    

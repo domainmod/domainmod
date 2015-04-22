@@ -30,7 +30,9 @@ include("_includes/software.inc.php");
 include("_includes/auth/login-check.inc.php");
 include("_includes/system/installation-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
-include("_includes/system/functions/error-reporting.inc.php");
+include("_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 if ($_SESSION['installation_mode'] == 1) {
 
@@ -56,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			WHERE username = '$new_username'
 			  AND password = password('$new_password')
 			  AND active = '1'";
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 	
    if (mysqli_num_rows($result) == 1) {
 	   

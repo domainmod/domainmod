@@ -27,6 +27,6 @@ if(mysqli_connect_errno()) {
     exit();
 }
 
-mysqli_query($connection, "SET NAMES UTF8") or outputOldSqlError($connection);
-mysqli_query($connection, "SET CHARACTER SET utf8") or outputOldSqlError($connection);
-mysqli_query($connection, "SET COLLATION_CONNECTION = utf8_unicode_ci") or outputOldSqlError($connection);
+mysqli_query($connection, "SET NAMES UTF8") or $error->outputOldSqlError($connection);
+mysqli_query($connection, "SET CHARACTER SET utf8") or $error->outputOldSqlError($connection);
+mysqli_query($connection, "SET COLLATION_CONNECTION = utf8_unicode_ci") or $error->outputOldSqlError($connection);

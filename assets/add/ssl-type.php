@@ -26,7 +26,9 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/system/functions/error-reporting.inc.php");
+include("../../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Adding A New SSL Type";
 $software_section = "ssl-types-add";
@@ -42,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = "INSERT INTO ssl_cert_types
 				(type, notes, insert_time) VALUES 
 				('" . mysqli_real_escape_string($connection, $new_type) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
-        $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Added<BR>";
 

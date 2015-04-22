@@ -26,7 +26,9 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
-include("../_includes/system/functions/error-reporting.inc.php");
+include("../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Display Settings";
 $software_section = "system-display-settings";
@@ -86,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 				number_of_ssl_certs = '$new_number_of_ssl_certs',
 				update_time = '$current_timestamp'
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 	$_SESSION['number_of_domains'] = $new_number_of_domains;
 	$_SESSION['number_of_ssl_certs'] = $new_number_of_ssl_certs;
@@ -129,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
  		$sql = "SELECT *
 				FROM user_settings
 				WHERE user_id = '" . $_SESSION['user_id'] . "'";
-		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		while ($row = mysqli_fetch_object($result)) {
 			

@@ -26,7 +26,9 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
-include("../_includes/system/functions/error-reporting.inc.php");
+include("../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Domain Registrars";
 $software_section = "registrars";
@@ -42,7 +44,7 @@ $sql = "SELECT r.id AS rid, r.name AS rname, r.url, r.notes, r.insert_time, r.up
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "registrar_list_" . $current_timestamp_unix . ".csv";
@@ -142,7 +144,7 @@ if ($export == "1") {
 	
 	}
 	
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 	
 	if (mysqli_num_rows($result) > 0) { 
 
@@ -199,7 +201,7 @@ if ($export == "1") {
 Below is a list of all the Domain Registrars that are stored in <?php echo $software_title; ?>.<BR><BR>
 [<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
 
-$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 if (mysqli_num_rows($result) > 0) {
 
@@ -307,7 +309,7 @@ if ($_SESSION['display_inactive_assets'] == "1") {
 
     }
 
-    $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     if (mysqli_num_rows($result) > 0) {
 

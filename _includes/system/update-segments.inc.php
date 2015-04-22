@@ -29,9 +29,12 @@ if ($direct == "1") {
 	include("../database.inc.php");
 	include("../software.inc.php");
 	include("../auth/auth-check.inc.php");
-    include("functions/error-reporting.inc.php");
 
 }
+
+include("../classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp.inc.php");
 

@@ -26,7 +26,9 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/auth/auth-check.inc.php");
-include("../_includes/system/functions/error-reporting.inc.php");
+include("../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Change Password";
 $software_section = "system-change-password";
@@ -51,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 						   update_time = '$current_timestamp'
 					   WHERE id = '" . $_SESSION['user_id'] . "' 
 					     AND email_address = '" . $_SESSION['email_address'] . "'";
-		$result_update = mysqli_query($connection, $sql_update) or outputOldSqlError($connection);
+		$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 
 		$_SESSION['result_message'] .= "Your password has been changed<BR>";
 

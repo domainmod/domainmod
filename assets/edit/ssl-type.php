@@ -26,7 +26,9 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/system/functions/error-reporting.inc.php");
+include("../../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Editing An SSL Type";
 $software_section = "ssl-types-edit";
@@ -49,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_ssltid . "'";
-		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$new_type = $new_type;
 		$new_notes = $new_notes;

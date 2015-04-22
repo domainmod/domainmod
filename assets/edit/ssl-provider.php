@@ -26,7 +26,9 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/system/functions/error-reporting.inc.php");
+include("../../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Editing An SSL Provider";
 $software_section = "ssl-providers-edit";
@@ -50,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 					update_time = '" . $current_timestamp . "'
 				WHERE id = '" . $new_sslpid . "'";
-		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$sslpid = $new_sslpid;
 
@@ -71,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$sql = "SELECT name, url, notes
 			FROM ssl_providers
 			WHERE id = '" . $sslpid . "'";
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 	
 	while ($row = mysqli_fetch_object($result)) { 
 	
@@ -87,7 +89,7 @@ if ($del == "1") {
 	$sql = "SELECT ssl_provider_id
 			FROM ssl_accounts
 			WHERE ssl_provider_id = '" . $sslpid . "'";
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 	
 	while ($row = mysqli_fetch_object($result)) {
 		$existing_ssl_provider_accounts = 1;
@@ -96,7 +98,7 @@ if ($del == "1") {
 	$sql = "SELECT ssl_provider_id
 			FROM ssl_certs
 			WHERE ssl_provider_id = '" . $sslpid . "'";
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 	
 	while ($row = mysqli_fetch_object($result)) {
 		$existing_ssl_certs = 1;
@@ -119,15 +121,15 @@ if ($really_del == "1") {
 
 	$sql = "DELETE FROM ssl_fees
 			WHERE ssl_provider_id = '" . $sslpid . "'";
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 	$sql = "DELETE FROM ssl_accounts
 			WHERE ssl_provider_id = '" . $sslpid . "'";
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 	$sql = "DELETE FROM ssl_providers 
 			WHERE id = '" . $sslpid . "'";
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 	$_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Deleted<BR>";
 

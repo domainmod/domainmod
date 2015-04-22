@@ -31,7 +31,9 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
-include("../../_includes/system/functions/error-reporting.inc.php");
+include("../../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "System Settings";
 $software_section = "admin-system-settings";
@@ -48,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 				email_address = '$new_email_address',
 				expiration_email_days = '$new_expiration_email_days',
 				update_time = '$current_timestamp'";
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 	$_SESSION['system_full_url'] = $new_full_url;
 	$_SESSION['system_email_address'] = $new_email_address;
@@ -72,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 		
 		$sql = "SELECT full_url, email_address, expiration_email_days
 				FROM settings";
-		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		while ($row = mysqli_fetch_object($result)) {
 			

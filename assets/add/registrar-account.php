@@ -26,7 +26,9 @@ include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/system/functions/error-reporting.inc.php");
+include("../../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Adding A New Registrar Account";
 $software_section = "registrar-accounts-add";
@@ -46,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "INSERT INTO registrar_accounts 
 				(owner_id, registrar_id, username, password, notes, reseller, insert_time) VALUES 
 				('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . mysqli_real_escape_string($connection, $new_username) . "', '" . mysqli_real_escape_string($connection, $new_password) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_reseller . "', '" . $current_timestamp . "')";
-		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$sql = "SELECT name
 				FROM registrars
@@ -96,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_owner = "SELECT id, name
 			  FROM owners
 			  ORDER BY name asc";
-$result_owner = mysqli_query($connection, $sql_owner) or outputOldSqlError($connection);
+$result_owner = mysqli_query($connection, $sql_owner) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_owner_id\">";
 while ($row_owner = mysqli_fetch_object($result_owner)) {
 
@@ -118,7 +120,7 @@ echo "</select>";
 $sql_registrar = "SELECT id, name
 				  FROM registrars
 				  ORDER BY name asc";
-$result_registrar = mysqli_query($connection, $sql_registrar) or outputOldSqlError($connection);
+$result_registrar = mysqli_query($connection, $sql_registrar) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_registrar_id\">";
 while ($row_registrar = mysqli_fetch_object($result_registrar)) {
 

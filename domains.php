@@ -27,8 +27,10 @@ include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
 include("_includes/classes/Domain.class.php");
+include("_includes/classes/Error.class.php");
 include("_includes/system/functions/pagination.inc.php");
-include("_includes/system/functions/error-reporting.inc.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Domains";
 $software_section = "domains";
@@ -253,7 +255,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total
 					  $quick_search_string
 					  $sort_by_string";	
 
-$result_grand_total = mysqli_query($connection, $sql_grand_total) or outputOldSqlError($connection);
+$result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 }
@@ -306,7 +308,7 @@ if ($segid != "") {
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 	$total_rows = number_format(mysqli_num_rows($result));
 
 	$current_timestamp_unix = strtotime($current_timestamp);

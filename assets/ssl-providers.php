@@ -26,7 +26,9 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
-include("../_includes/system/functions/error-reporting.inc.php");
+include("../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "SSL Certificate Providers";
 $software_section = "ssl-providers";
@@ -44,7 +46,7 @@ $sql = "SELECT id, name, url, notes, insert_time, update_time
 
 if ($export == "1") {
 
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 	$current_timestamp_unix = strtotime($current_timestamp);
 	$export_filename = "ssl_provider_list_" . $current_timestamp_unix . ".csv";
@@ -139,7 +141,7 @@ if ($export == "1") {
 
 	}
 	
-	$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 	
 	if (mysqli_num_rows($result) > 0) { 
 	
@@ -195,7 +197,7 @@ if ($export == "1") {
 Below is a list of all the SSL Certificate Providers that are stored in <?php echo $software_title; ?>.<BR><BR>
 [<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
 
-$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 if (mysqli_num_rows($result) > 0) {
 
@@ -297,7 +299,7 @@ if ($_SESSION['display_inactive_assets'] == "1") {
 
     }
 
-    $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     if (mysqli_num_rows($result) > 0) {
 

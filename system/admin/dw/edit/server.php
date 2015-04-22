@@ -31,7 +31,9 @@ include("../../../../_includes/database.inc.php");
 include("../../../../_includes/software.inc.php");
 include("../../../../_includes/auth/auth-check.inc.php");
 include("../../../../_includes/timestamps/current-timestamp.inc.php");
-include("../../../../_includes/system/functions/error-reporting.inc.php");
+include("../../../../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Editing A Server";
 $software_section = "admin-dw-manage-servers-edit";
@@ -63,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
                     update_time = '" . $current_timestamp . "'
                 WHERE id = '" . $new_dwsid . "'";
-        $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $dwsid = $new_dwsid;
 
@@ -100,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "SELECT id, name, host, protocol, port, username, hash, notes
             FROM dw_servers
             WHERE id = '" . $dwsid . "'";
-    $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     while ($row = mysqli_fetch_object($result)) {
 

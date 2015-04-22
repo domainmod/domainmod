@@ -22,16 +22,19 @@
 <?php
 $direct = $_GET['direct'];
 
-if ($direct == "1") { 
+if ($direct == "1") {
 
 	include("../start-session.inc.php");
 	include("../config.inc.php");
 	include("../database.inc.php");
 	include("../software.inc.php");
 	include("../auth/auth-check.inc.php");
-    include("functions/error-reporting.inc.php");
 
 }
+
+include("../classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp.inc.php");
 
@@ -39,17 +42,17 @@ $sql_domain_fee_fix1 = "UPDATE domains
 						SET fee_fixed = '0', 
 							fee_id = '0'
                         WHERE active NOT IN ('0', '10')";
-$result_domain_fee_fix1 = mysqli_query($connection, $sql_domain_fee_fix1) or outputOldSqlError($connection);
+$result_domain_fee_fix1 = mysqli_query($connection, $sql_domain_fee_fix1) or $error->outputOldSqlError($connection);
 
 $sql_domain_fee_fix2 = "UPDATE fees
 						SET fee_fixed = '0',
 							update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'";
-$result_domain_fee_fix2 = mysqli_query($connection, $sql_domain_fee_fix2) or outputOldSqlError($connection);
+$result_domain_fee_fix2 = mysqli_query($connection, $sql_domain_fee_fix2) or $error->outputOldSqlError($connection);
 
 $sql_domain_fee_fix3 = "SELECT id, registrar_id, tld
 						FROM fees
 						WHERE fee_fixed = '0'";
-$result_domain_fee_fix3 = mysqli_query($connection, $sql_domain_fee_fix3) or outputOldSqlError($connection);
+$result_domain_fee_fix3 = mysqli_query($connection, $sql_domain_fee_fix3) or $error->outputOldSqlError($connection);
 
 while ($row_domain_fee_fix3 = mysqli_fetch_object($result_domain_fee_fix3)) {
 
@@ -59,7 +62,7 @@ while ($row_domain_fee_fix3 = mysqli_fetch_object($result_domain_fee_fix3)) {
 							  AND tld = '" .$row_domain_fee_fix3->tld. "'
 							  AND fee_fixed = '0'
 							  AND active NOT IN ('0', '10')";
-    $result_domain_fee_fix4 = mysqli_query($connection, $sql_domain_fee_fix4) or outputOldSqlError($connection);
+    $result_domain_fee_fix4 = mysqli_query($connection, $sql_domain_fee_fix4) or $error->outputOldSqlError($connection);
 
     $sql_domain_fee_fix5 = "UPDATE domains d
                             JOIN fees f ON d.fee_id = f.id
@@ -69,7 +72,7 @@ while ($row_domain_fee_fix3 = mysqli_fetch_object($result_domain_fee_fix3)) {
 							  AND d.tld = '" .$row_domain_fee_fix3->tld. "'
 							  AND d.privacy = '1'
 							  AND d.active NOT IN ('0', '10')";
-    $result_domain_fee_fix5 = mysqli_query($connection, $sql_domain_fee_fix5) or outputOldSqlError($connection);
+    $result_domain_fee_fix5 = mysqli_query($connection, $sql_domain_fee_fix5) or $error->outputOldSqlError($connection);
 
     $sql_domain_fee_fix6 = "UPDATE domains d
                             JOIN fees f ON d.fee_id = f.id
@@ -79,14 +82,14 @@ while ($row_domain_fee_fix3 = mysqli_fetch_object($result_domain_fee_fix3)) {
 							  AND d.tld = '" .$row_domain_fee_fix3->tld. "'
 							  AND d.privacy = '0'
 							  AND d.active NOT IN ('0', '10')";
-    $result_domain_fee_fix6 = mysqli_query($connection, $sql_domain_fee_fix6) or outputOldSqlError($connection);
+    $result_domain_fee_fix6 = mysqli_query($connection, $sql_domain_fee_fix6) or $error->outputOldSqlError($connection);
 
     $sql_domain_fee_fix7 = "UPDATE fees
 							SET fee_fixed = '1',
 								update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'
 							WHERE registrar_id = '" .$row_domain_fee_fix3->registrar_id. "'
 							  AND tld = '" .$row_domain_fee_fix3->tld. "'";
-	$result_domain_fee_fix7 = mysqli_query($connection, $sql_domain_fee_fix7) or outputOldSqlError($connection);
+	$result_domain_fee_fix7 = mysqli_query($connection, $sql_domain_fee_fix7) or $error->outputOldSqlError($connection);
 	
 }
 
@@ -94,7 +97,7 @@ $sql_find_missing_domain_fees = "SELECT count(id) AS total_count
 								 FROM domains
 								 WHERE fee_id = '0'
 								   AND active NOT IN ('0', '10')";
-$result_find_missing_domain_fees = mysqli_query($connection, $sql_find_missing_domain_fees) or outputOldSqlError($connection);
+$result_find_missing_domain_fees = mysqli_query($connection, $sql_find_missing_domain_fees) or $error->outputOldSqlError($connection);
 
 while ($row_find_missing_domain_fees = mysqli_fetch_object($result_find_missing_domain_fees)) { $total_results_find_missing_domain_fees = $row_find_missing_domain_fees->total_count; }
 

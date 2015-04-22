@@ -28,7 +28,9 @@ include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/timestamps/current-timestamp-basic.inc.php");
 include("../../_includes/classes/Date.class.php");
-include("../../_includes/system/functions/error-reporting.inc.php");
+include("../../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = $reporting_section_title;
 $page_subtitle = "Domain Cost by Web Host Report";
@@ -80,7 +82,7 @@ $sql = "SELECT wh.id, wh.name, SUM(d.total_cost * cc.conversion) as total_cost, 
 		  " . $range_string . "
 		GROUP BY wh.name
 		ORDER BY wh.name";
-$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) as grand_total, count(*) AS number_of_domains_total
@@ -92,7 +94,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) as grand_total, cou
 					  AND d.active NOT IN ('0', '10')
 					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 					  " . $range_string . "";
-$result_grand_total = mysqli_query($connection, $sql_grand_total) or outputOldSqlError($connection);
+$result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 	$number_of_domains_total = $row_grand_total->number_of_domains_total;
@@ -110,7 +112,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 	if ($export == "1") {
 
-		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 	
 		$current_timestamp_unix = strtotime($current_timestamp);
 		if ($all == "1") {

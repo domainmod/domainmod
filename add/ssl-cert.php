@@ -27,8 +27,10 @@ include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
-include("../../_includes/classes/Date.class.php");
-include("../_includes/system/functions/error-reporting.inc.php");
+include("../_includes/classes/Date.class.php");
+include("../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Adding A New SSL Certificate";
 $software_section = "ssl-cert-add";
@@ -96,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "INSERT INTO ssl_certs
 				(owner_id, ssl_provider_id, account_id, domain_id, name, type_id, ip_id, cat_id, expiry_date, fee_id, total_cost, notes, active, insert_time) VALUES
 				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . $new_account_id . "', '" . $new_domain_id . "', '" . mysqli_real_escape_string($connection, $new_name) . "', '" . $new_type_id . "', '" . $new_ip_id . "', '" . $new_cat_id . "', '" . $new_expiry_date . "', '" . $new_fee_id . "', '" . $new_total_cost . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_active . "', '" . $current_timestamp . "')";
-		$result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
+		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "SELECT id
 				FROM ssl_certs
@@ -174,7 +176,7 @@ $sql_domain = "SELECT id, domain
 			   FROM domains
 			   WHERE active NOT IN ('0', '10')
 			   ORDER BY domain asc";
-$result_domain = mysqli_query($connection, $sql_domain) or outputOldSqlError($connection);
+$result_domain = mysqli_query($connection, $sql_domain) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_domain_id\">";
 while ($row_domain = mysqli_fetch_object($result_domain)) { ?>
 
@@ -191,7 +193,7 @@ $sql_account = "SELECT sslpa.id, sslpa.username, o.name as o_name, sslp.name as 
 				WHERE sslpa.owner_id = o.id
 				  AND sslpa.ssl_provider_id = sslp.id
 				ORDER BY sslp_name, o_name, sslpa.username";
-$result_account = mysqli_query($connection, $sql_account) or outputOldSqlError($connection);
+$result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_account_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -217,7 +219,7 @@ echo "</select>";
 $sql_type = "SELECT id, type
 			 FROM ssl_cert_types
 			 ORDER BY type";
-$result_type = mysqli_query($connection, $sql_type) or outputOldSqlError($connection);
+$result_type = mysqli_query($connection, $sql_type) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_type_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -243,7 +245,7 @@ echo "</select>";
 $sql_ip = "SELECT id, ip, name
 		   FROM ip_addresses
 		   ORDER BY name, ip";
-$result_ip = mysqli_query($connection, $sql_ip) or outputOldSqlError($connection);
+$result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_ip_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -269,7 +271,7 @@ echo "</select>";
 $sql_cat = "SELECT id, name
 			FROM categories
 			ORDER BY name";
-$result_cat = mysqli_query($connection, $sql_cat) or outputOldSqlError($connection);
+$result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_cat_id\">";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

@@ -26,8 +26,10 @@ include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/classes/Date.class.php");
-include("../_includes/system/functions/error-reporting.inc.php");
+include("../_includes/classes/Date.class.php");
+include("../_includes/classes/Error.class.php");
+
+$error = new DomainMOD\Error();
 
 $page_title = "Editing An SSL Certificate";
 $software_section = "ssl-cert-edit";
@@ -134,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   fee_fixed = '" . $temp_fee_fixed . "',
 						   update_time = '" . $current_timestamp . "'
 					   WHERE id = '" . $new_sslcid . "'";
-		$result_update = mysqli_query($connection, $sql_update) or outputOldSqlError($connection);
+		$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 
 		$sql = "SELECT field_name
 				FROM ssl_cert_fields
@@ -257,7 +259,7 @@ $sql_domain = "SELECT id, domain
 			   FROM domains
 			   WHERE (active NOT IN ('0', '10') OR id = '" . $new_domain_id . "')
 			   ORDER BY domain";
-$result_domain = mysqli_query($connection, $sql_domain) or outputOldSqlError($connection);
+$result_domain = mysqli_query($connection, $sql_domain) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_domain_id\">";
 while ($row_domain = mysqli_fetch_object($result_domain)) { ?>
 
@@ -274,7 +276,7 @@ $sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS 
 				WHERE sslpa.owner_id = o.id
 				  AND sslpa.ssl_provider_id = sslp.id
 				ORDER BY sslp_name asc, o_name asc, sslpa.username asc";
-$result_account = mysqli_query($connection, $sql_account) or outputOldSqlError($connection);
+$result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysqli_fetch_object($result_account)) { ?>
 
@@ -289,7 +291,7 @@ echo "</select>";
 $sql_type = "SELECT id, type
 			 FROM ssl_cert_types
 			 ORDER BY type asc";
-$result_type = mysqli_query($connection, $sql_type) or outputOldSqlError($connection);
+$result_type = mysqli_query($connection, $sql_type) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_type_id\">";
 while ($row_type = mysqli_fetch_object($result_type)) { ?>
 
@@ -304,7 +306,7 @@ echo "</select>";
 $sql_ip = "SELECT id, ip, name
 		   FROM ip_addresses
 		   ORDER BY name, ip";
-$result_ip = mysqli_query($connection, $sql_ip) or outputOldSqlError($connection);
+$result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_ip_id\">";
 while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
 
@@ -319,7 +321,7 @@ echo "</select>";
 $sql_cat = "SELECT id, name
 			FROM categories
 			ORDER BY name";
-$result_cat = mysqli_query($connection, $sql_cat) or outputOldSqlError($connection);
+$result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_cat_id\">";
 while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
 
