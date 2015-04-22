@@ -25,25 +25,25 @@ namespace DomainMOD;
 class Segment
 {
 
-    function trimLength($string, $max_length)
+    function trimLength($input_segment, $max_length)
     {
 
-        if (strlen($string) > $max_length) {
+        if (strlen($input_segment) > $max_length) {
 
-            $string = substr($string, 0, $max_length);
-            $pos = strrpos($string, ", ");
+            $output_segment = substr($input_segment, 0, $max_length);
+            $pos = strrpos($output_segment, ", ");
 
             if ($pos === false) {
 
-                return substr($string, 0, $max_length) . "...";
+                return substr($output_segment, 0, $max_length) . "...";
 
             }
 
-            return substr($string, 0, $pos) . "...";
+            return substr($output_segment, 0, $pos) . "...";
 
         } else {
 
-            return $string;
+            return $input_segment;
 
         }
     }

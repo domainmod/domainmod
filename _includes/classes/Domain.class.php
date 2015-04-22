@@ -29,8 +29,8 @@ class Domain
 
         /*
 
-           if (preg_match('/^[A-Z0-9.-]+\.[A-Z0-9-]{2,50}$/i', $input_domain, $domain)) {
-              return $domain;
+           if (preg_match('/^[A-Z0-9.-]+\.[A-Z0-9-]{2,50}$/i', $input_domain, $output_domain)) {
+              return $output_domain;
            } else {
               return false;
            }

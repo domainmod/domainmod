@@ -25,11 +25,11 @@ namespace DomainMOD;
 class Date
 {
 
-    function checkDateFormat($date) {
+    function checkDateFormat($input_date) {
 
-        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date, $piece)) {
+        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $input_date, $output_date)) {
 
-            return checkdate($piece[2], $piece[3], $piece[1]);
+            return checkdate($output_date[2], $output_date[3], $output_date[1]);
 
         } else {
 

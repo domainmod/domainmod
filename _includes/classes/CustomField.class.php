@@ -25,12 +25,12 @@ namespace DomainMOD;
 class CustomField
 {
 
-    function checkFieldFormat($field_name)
+    function checkFieldFormat($input_field)
     {
 
-        if (preg_match('/^[a-zA-Z_]+$/i', $field_name, $custom_field)) {
+        if (preg_match('/^[a-zA-Z_]+$/i', $input_field, $output_field)) {
 
-            return $custom_field;
+            return $output_field;
 
         } else {
 

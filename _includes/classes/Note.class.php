@@ -25,14 +25,14 @@ namespace DomainMOD;
 class Note
 {
 
-    function formatHtml($notes)
+    function formatHtml($input_notes)
     {
 
-        $html_notes = trim($notes);
-        $html_notes = str_replace("\n\n", "<BR><BR>", $html_notes);
-        $html_notes = str_replace("\n", "<BR>", $html_notes);
+        $output_notes = trim($input_notes);
+        $output_notes = str_replace("\n\n", "<BR><BR>", $output_notes);
+        $output_notes = str_replace("\n", "<BR>", $output_notes);
 
-        return $html_notes;
+        return $output_notes;
 
     }
 
