@@ -27,7 +27,7 @@ include("_includes/software.inc.php");
 include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
 include("_includes/classes/Error.class.php");
-include("_includes/system/functions/pagination.inc.php");
+include("_includes/classes/Layout.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -547,7 +547,8 @@ if ($_SESSION['need_domain'] == "1" && $_SESSION['need_ssl_provider'] == "0" && 
 	exit;
 }
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
-$navigate = pageBrowser($totalrows, 15, $result_limit, "&oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=" . $_SESSION['search_for_ssl'] . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
+$layout = new DomainMOD\Layout();
+$navigate = $layout->pageBrowser($totalrows, 15, $result_limit, "&oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=" . $_SESSION['search_for_ssl'] . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
 $sql = $sql.$navigate[0];
 $result = mysqli_query($connection, $sql);
 $total_rows = number_format(mysqli_num_rows($result));

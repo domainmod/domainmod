@@ -32,7 +32,7 @@ include("../../../_includes/software.inc.php");
 include("../../../_includes/auth/auth-check.inc.php");
 include("../../../_includes/timestamps/current-timestamp.inc.php");
 include("../../../_includes/classes/Error.class.php");
-include("../../../_includes/system/functions/pagination.inc.php");
+include("../../../_includes/classes/Layout.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -271,7 +271,8 @@ if ($export == "1") {
 	<font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR><?php
 
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_dns_zone_temp));
-$navigate = pageBrowser($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
+$layout = new DomainMOD\Layout();
+$navigate = $layout->pageBrowser($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
 $sql_dw_dns_zone_temp = $sql_dw_dns_zone_temp.$navigate[0];
 $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or $error->outputOldSqlError($connection);
 
