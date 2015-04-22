@@ -38,7 +38,7 @@ $export = $_GET['export'];
 $sql = "SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.insert_time, s.update_time, sd.domain
 		FROM segments AS s, segment_data AS sd
 		WHERE s.id = sd.segment_id
-		GROUP BY s.name
+		GROUP BY s.id
 		ORDER BY s.name ASC, sd.domain ASC";
 
 if ($export == "1") {
@@ -87,11 +87,10 @@ if ($export == "1") {
 
     // The only difference between this SELECT statement and the primary one above is that it uses a GROUP BY clause
     $sql = "SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.insert_time, s.update_time, sd.domain
-		FROM segments AS s, segment_data AS sd
-		WHERE s.id = sd.segment_id
-		$seg_clause
-		ORDER BY s.name ASC, sd.domain ASC";
-
+            FROM segments AS s, segment_data AS sd
+            WHERE s.id = sd.segment_id
+            $seg_clause
+            ORDER BY s.name ASC, sd.domain ASC";
     $result = mysqli_query($connection, $sql) or outputOldSqlError($connection);
 
     $current_timestamp_unix = strtotime($current_timestamp);
