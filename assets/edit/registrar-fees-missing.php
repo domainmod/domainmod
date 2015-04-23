@@ -82,7 +82,7 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
                 }
                 $full_tld_list_formatted = substr($full_tld_list, 0, -2);
                 ?>
-                <a class="nobold" href="registrar-fees.php?rid=<?php echo $row->registrar_id . "\"" . $full_tld_list_formatted; ?></a>
+                <a class="nobold" href="registrar-fees.php?rid=<?php echo $row->registrar_id . "\">" . $full_tld_list_formatted; ?></a>
             </td>
         </tr>
 
