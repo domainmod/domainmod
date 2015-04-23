@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_data == "") {
 
-		$_SESSION['result_message'] = "Please enter the list of domains to apply the action to<BR>";
+        $_SESSION['result_message'] = "Please enter the list of domains to apply the action to<BR>";
 
 	} else {
 
@@ -110,8 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			}
 	
 		}
-		
-		if ($new_data == "" || $invalid_domains == 1) { 
+
+        if ($new_data == "" || $invalid_domains == 1) {
 		
 			if ($invalid_domains == 1) {
 	
@@ -142,21 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$submission_failed = 1;
 	
 		} else {
-		
-			$lines = explode("\r\n", $new_data);
-			$number_of_domains = count($lines);
 
-            $domain = new DomainMOD\Domain();
-
-            while (list($key, $new_domain) = each($lines)) {
-	
-				if (!$domain->checkDomainFormat($new_domain)) {
-					echo "invalid domain $key"; exit;
-				}
-	
-			}
-
-			$new_data_formatted = "'" . $new_data;
+            $new_data_formatted = "'" . $new_data;
 			$new_data_formatted = $new_data_formatted . "'";
 			$new_data_formatted = preg_replace("/\r\n/", "','", $new_data_formatted);
 			$new_data_formatted = str_replace (" ", "", $new_data_formatted);
