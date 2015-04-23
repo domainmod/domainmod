@@ -54,7 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_name != "" && $new_segment != "") {
 
 		$lines = explode("\r\n", $new_segment);
-		$invalid_domain_count = 0;
+        $number_of_domains = count($lines);
+        $invalid_domain_count = 0;
 		$invalid_domains_to_display = 5;
 
         $domain = new DomainMOD\Domain();
@@ -97,8 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		} else {
 
-			$lines = explode("\r\n", $new_segment);
-			$number_of_domains = count($lines);
+            $lines = explode("\r\n", $new_segment);
 
             $domain = new DomainMOD\Domain();
 
