@@ -212,9 +212,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					}
 		
 					$lines = explode("\r\n", $new_data);
-					$number_of_domains = count($lines);
-			
-					reset($lines);
+
+                    reset($lines);
 			
 					// cycle through domains here
 					while (list($key, $new_domain) = each($lines)) {
