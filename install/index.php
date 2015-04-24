@@ -24,9 +24,12 @@ include("../_includes/start-session.inc.php");
 include("../_includes/config.inc.php");
 include("../_includes/database.inc.php");
 include("../_includes/software.inc.php");
-include("../_includes/system/installation-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
+include("../_includes/classes/System.class.php");
 include("../_includes/classes/Error.class.php");
+
+$system = new DomainMOD\System();
+$system->installCheck($connection, $web_root, $full_server_path);
 
 $error = new DomainMOD\Error();
 

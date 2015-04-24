@@ -28,9 +28,12 @@ $_SESSION['full_server_path'] = $full_server_path;
 include("_includes/database.inc.php");
 include("_includes/software.inc.php");
 include("_includes/auth/login-check.inc.php");
-include("_includes/system/installation-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
+include("_includes/classes/System.class.php");
 include("_includes/classes/Error.class.php");
+
+$system = new DomainMOD\System();
+$system->installCheck($connection, $web_root, $full_server_path);
 
 $error = new DomainMOD\Error();
 
