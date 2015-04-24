@@ -46,6 +46,7 @@ class Segment
             return $input_segment;
 
         }
+
     }
 
 }
