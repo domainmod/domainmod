@@ -138,9 +138,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
         if (mysqli_stmt_prepare($stmt, $query)) {
 
+            $temp_currency = 'CAD';
+
             mysqli_stmt_bind_param($stmt, "isiiiiiiiiiiiiii",
                 $temp_user_id,
-                'CAD',
+                $temp_currency,
                 $_SESSION['system_default_category_domains'],
                 $_SESSION['system_default_category_ssl'],
                 $_SESSION['system_default_dns'],
