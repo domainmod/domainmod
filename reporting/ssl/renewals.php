@@ -216,33 +216,37 @@ if ($export == "1") {
 					  FROM ssl_cert_fields
 					  ORDER BY name";
 		$result_field = mysqli_query($connection, $sql_field);
-		
-		$array_count = 0;
-		$field_data = "";
-		
-		while ($row_field = mysqli_fetch_object($result_field)) {
-			
-			$field_array[$array_count] = $row_field->field_name;
-			$array_count++;
-		
-		}
-		
-		foreach($field_array as $field) {
-		
-			$sql_data = "SELECT " . $field . " 
+
+        if (mysqli_num_rows($result_field) > 0) {
+
+            $array_count = 0;
+            $field_data = "";
+
+            while ($row_field = mysqli_fetch_object($result_field)) {
+
+                $field_array[$array_count] = $row_field->field_name;
+                $array_count++;
+
+            }
+
+            foreach($field_array as $field) {
+
+                $sql_data = "SELECT " . $field . "
 						 FROM ssl_cert_field_data
 						 WHERE ssl_id = '" . $row->id . "'";
-			$result_data = mysqli_query($connection, $sql_data);
-			
-			while ($row_data = mysqli_fetch_object($result_data)) {
-		
-				$row_content[$count++] = $row_data->{$field};
-			
-			}
-		
-		}
+                $result_data = mysqli_query($connection, $sql_data);
 
-		$row_content[$count++] = $row->insert_time;
+                while ($row_data = mysqli_fetch_object($result_data)) {
+
+                    $row_content[$count++] = $row_data->{$field};
+
+                }
+
+            }
+
+        }
+
+        $row_content[$count++] = $row->insert_time;
 		$row_content[$count++] = $row->update_time;
 		include("../../_includes/system/export/write-row.inc.php");
 
