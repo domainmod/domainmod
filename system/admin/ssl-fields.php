@@ -32,59 +32,64 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/classes/Error.class.php");
+include("../../_includes/classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
 $page_title = "Custom SSL Fields";
 $software_section = "admin-ssl-fields";
 
-$export = $_GET['export'];
+$export_data = $_GET['export_data'];
 
 $sql = "SELECT f.id, f.name, f.field_name, f.description, f.notes, f.insert_time, f.update_time, t.name AS type
 		FROM ssl_cert_fields AS f, custom_field_types AS t
 		WHERE f.type_id = t.id
 		ORDER BY f.name";
 
-if ($export == "1") {
+if ($export_data == "1") {
 
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "custom_ssl_field_list_" . $current_timestamp_unix . ".csv";
-	include("../../_includes/system/export/header.inc.php");
+    $export = new DomainMOD\Export();
+    $export_file = $export->openFile('custom_ssl_field_list');
 
-	$row_content[$count++] = $page_title;
-	include("../../_includes/system/export/write-row.inc.php");
+    $row_contents = array($page_title);
+    $export->writeRow($export_file, $row_contents);
 
-	fputcsv($file_content, $blank_line);
+    $export->writeBlankRow($export_file);
 
-	$row_content[$count++] = "Display Name";
-	$row_content[$count++] = "DB Field";
-	$row_content[$count++] = "Data Type";
-	$row_content[$count++] = "Description";
-	$row_content[$count++] = "Notes";
-	$row_content[$count++] = "Inserted";
-	$row_content[$count++] = "Updated";
-	include("../../_includes/system/export/write-row.inc.php");
+    $row_contents = array(
+        'Display Name',
+        'DB Field',
+        'Data Type',
+        'Description',
+        'Notes',
+        'Inserted',
+        'Updated'
+    );
+    $export->writeRow($export_file, $row_contents);
 
-	if (mysqli_num_rows($result) > 0) {
+    if (mysqli_num_rows($result) > 0) {
 
 		while ($row = mysqli_fetch_object($result)) {
 
-			$row_content[$count++] = $row->name;
-			$row_content[$count++] = $row->field_name;
-			$row_content[$count++] = $row->type;
-			$row_content[$count++] = $row->description;
-			$row_content[$count++] = $row->notes;
-			$row_content[$count++] = $row->insert_time;
-			$row_content[$count++] = $row->update_time;
-			include("../../_includes/system/export/write-row.inc.php");
+            $row_contents = array(
+                $row->name,
+                $row->field_name,
+                $row->type,
+                $row->description,
+                $row->notes,
+                $row->insert_time,
+                $row->update_time
+            );
 
-		}
+            $export->writeRow($export_file, $row_contents);
+
+        }
 
 	}
 
-	include("../../_includes/system/export/footer.inc.php");
+    $export->closeFile($export_file);
 
 }
 ?>
@@ -104,7 +109,7 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 
 if (mysqli_num_rows($result) > 0) { ?>
 
-	[<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]
+	[<a href="<?php echo $PHP_SELF; ?>?export_data=1">EXPORT</a>]
 
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">

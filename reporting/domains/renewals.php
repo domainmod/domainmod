@@ -29,6 +29,7 @@ include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/timestamps/current-timestamp-basic.inc.php");
 include("../../_includes/classes/Date.class.php");
 include("../../_includes/classes/Error.class.php");
+include("../../_includes/classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -38,20 +39,20 @@ $software_section = "reporting-domain-renewal-report";
 $report_name = "domain-renewal-report";
 
 // Form Variables
-$export = $_GET['export'];
+$export_data = $_GET['export_data'];
 $all = $_GET['all'];
-$new_expiry_start = $_REQUEST['new_expiry_start'];
-$new_expiry_end = $_REQUEST['new_expiry_end'];
+$new_start_date = $_REQUEST['new_start_date'];
+$new_end_date = $_REQUEST['new_end_date'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
-    if (!$date->checkDateFormat($new_expiry_start) || !$date->checkDateFormat($new_expiry_end) || $new_expiry_start > $new_expiry_end) {
+    if (!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date) || $new_start_date > $new_end_date) {
 
-		if (!$date->checkDateFormat($new_expiry_start)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
-		if (!$date->checkDateFormat($new_expiry_end)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
-		if ($new_expiry_start > $new_expiry_end) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
+		if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
+		if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
+		if ($new_start_date > $new_end_date) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
 
 	}
 
@@ -65,7 +66,7 @@ if ($all == "1") {
 	
 } else {
 
-	$range_string = " AND d.expiry_date between '$new_expiry_start' AND '$new_expiry_end' ";
+	$range_string = " AND d.expiry_date between '$new_start_date' AND '$new_end_date' ";
 	
 }
 
@@ -103,85 +104,97 @@ $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
 include("../../_includes/system/convert-and-format-currency.inc.php");
 $total_cost = $temp_output_amount;
 
-if ($export == "1") {
+if ($export_data == "1") {
 
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-	$current_timestamp_unix = strtotime($current_timestamp);
-	if ($all == "1") {
-		$export_filename = "domain_renewal_report_all_" . $current_timestamp_unix . ".csv";
-	} else {
-		$export_filename = "domain_renewal_report_" . $new_expiry_start . "--" . $new_expiry_end . ".csv";
-	}
-	include("../../_includes/system/export/header.inc.php");
+    $export = new DomainMOD\Export();
 
-	$row_content[$count++] = $page_subtitle;
-	include("../../_includes/system/export/write-row.inc.php");
+    if ($all == "1") {
 
-	fputcsv($file_content, $blank_line);
+        $export_file = $export->openFile('domain_renewal_report_all');
 
-	if ($all != "1") {
+    } else {
 
-		$row_content[$count++] = "Date Range:";
-		$row_content[$count++] = $new_expiry_start;
-		$row_content[$count++] = $new_expiry_end;
+        $export_file = $export->openFileAppend(
+            'domain_renewal_report',
+            $new_start_date . '--' . $new_end_date
+        );
 
-	} else {
+    }
 
-		$row_content[$count++] = "Date Range:";
-		$row_content[$count++] = "ALL";
+    $row_contents = array($page_subtitle);
+    $export->writeRow($export_file, $row_contents);
 
-	}
-	include("../../_includes/system/export/write-row.inc.php");
+    $export->writeBlankRow($export_file);
 
-	$row_content[$count++] = "Total Cost:";
-	$row_content[$count++] = $total_cost;
-	$row_content[$count++] = $_SESSION['default_currency'];
-	include("../../_includes/system/export/write-row.inc.php");
+    if ($all != "1") {
 
-	$row_content[$count++] = "Number of Domains:";
-	$row_content[$count++] = number_format($total_results);
-	include("../../_includes/system/export/write-row.inc.php");
+        $row_contents = array('Date Range:', $new_start_date, $new_end_date);
 
-	fputcsv($file_content, $blank_line);
+    } else {
 
-	$row_content[$count++] = "Domain Status";
-	$row_content[$count++] = "Expiry Date";
-	$row_content[$count++] = "Renew?";
-	$row_content[$count++] = "Renewal Fee";
-	$row_content[$count++] = "Domain";
-	$row_content[$count++] = "TLD";
-	$row_content[$count++] = "Function";
-	$row_content[$count++] = "WHOIS Status";
-	$row_content[$count++] = "Registrar";
-	$row_content[$count++] = "Registrar Account";
-	$row_content[$count++] = "Username";
-	$row_content[$count++] = "DNS Profile";
-	$row_content[$count++] = "IP Address Name";
-	$row_content[$count++] = "IP Address";
-	$row_content[$count++] = "IP Address rDNS";
-	$row_content[$count++] = "Web Host";
-	$row_content[$count++] = "Category";
-	$row_content[$count++] = "Category Stakeholder";
-	$row_content[$count++] = "Owner";
-	$row_content[$count++] = "Notes";
+        $row_contents = array('Date Range:', 'ALL');
 
-	$sql_field = "SELECT name
+    }
+    $export->writeRow($export_file, $row_contents);
+
+    $row_contents = array(
+        'Total Cost:',
+        $total_cost,
+        $_SESSION['default_currency']
+    );
+    $export->writeRow($export_file, $row_contents);
+
+    $row_contents = array(
+        'Number of Domains:',
+        number_format($total_results)
+    );
+    $export->writeRow($export_file, $row_contents);
+
+    $export->writeBlankRow($export_file);
+
+    unset($row_contents);
+    $count = 0;
+
+    $row_contents[$count++] = 'Domain Status';
+    $row_contents[$count++] = 'Expiry Date';
+    $row_contents[$count++] = 'Renew?';
+    $row_contents[$count++] = 'Renewal Fee';
+    $row_contents[$count++] = 'Domain';
+    $row_contents[$count++] = 'TLD';
+    $row_contents[$count++] = 'Function';
+    $row_contents[$count++] = 'WHOIS Status';
+    $row_contents[$count++] = 'Registrar';
+    $row_contents[$count++] = 'Registrar Account';
+    $row_contents[$count++] = 'Username';
+    $row_contents[$count++] = 'DNS Profile';
+    $row_contents[$count++] = 'IP Address Name';
+    $row_contents[$count++] = 'IP Address';
+    $row_contents[$count++] = 'IP Address rDNS';
+    $row_contents[$count++] = 'Web Host';
+    $row_contents[$count++] = 'Category';
+    $row_contents[$count++] = 'Category Stakeholder';
+    $row_contents[$count++] = 'Owner';
+    $row_contents[$count++] = 'Notes';
+
+    $sql_field = "SELECT name
 				  FROM domain_fields
 				  ORDER BY name";
 	$result_field = mysqli_query($connection, $sql_field);
 
 	while ($row_field = mysqli_fetch_object($result_field)) {
 		
-		$row_content[$count++] = $row_field->name;
+		$row_contents[$count++] = $row_field->name;
 	
 	}
 
-	$row_content[$count++] = "Inserted";
-	$row_content[$count++] = "Updated";
-	include("../../_includes/system/export/write-row.inc.php");
+	$row_contents[$count++] = 'Inserted';
+	$row_contents[$count++] = 'Updated';
 
-	while ($row = mysqli_fetch_object($result)) {
+    $export->writeRow($export_file, $row_contents);
+
+    while ($row = mysqli_fetch_object($result)) {
 
 		if ($row->active == "0") { $domain_status = "EXPIRED"; } 
 		elseif ($row->active == "1") { $domain_status = "ACTIVE"; } 
@@ -206,26 +219,29 @@ if ($export == "1") {
 		include("../../_includes/system/convert-and-format-currency.inc.php");
 		$export_renewal_fee = $temp_output_amount;
 
-		$row_content[$count++] = $domain_status;
-		$row_content[$count++] = $row->expiry_date;
-		$row_content[$count++] = "";
-		$row_content[$count++] = $export_renewal_fee;
-		$row_content[$count++] = $row->domain;
-		$row_content[$count++] = "." . $row->tld;
-		$row_content[$count++] = $row->function;
-		$row_content[$count++] = $privacy_status;
-		$row_content[$count++] = $row->registrar_name;
-		$row_content[$count++] = $row->registrar_name . ", " . $row->owner_name . " (" . $row->username . ")";
-		$row_content[$count++] = $row->username;
-		$row_content[$count++] = $row->dns_profile;
-		$row_content[$count++] = $row->name;
-		$row_content[$count++] = $row->ip;
-		$row_content[$count++] = $row->rdns;
-		$row_content[$count++] = $row->wh_name;
-		$row_content[$count++] = $row->category_name;
-		$row_content[$count++] = $row->category_stakeholder;
-		$row_content[$count++] = $row->owner_name;
-		$row_content[$count++] = $row->notes;
+        unset($row_contents);
+        $count = 0;
+
+        $row_contents[$count++] = $domain_status;
+		$row_contents[$count++] = $row->expiry_date;
+		$row_contents[$count++] = '';
+		$row_contents[$count++] = $export_renewal_fee;
+		$row_contents[$count++] = $row->domain;
+		$row_contents[$count++] = '.' . $row->tld;
+		$row_contents[$count++] = $row->function;
+		$row_contents[$count++] = $privacy_status;
+		$row_contents[$count++] = $row->registrar_name;
+		$row_contents[$count++] = $row->registrar_name . ', ' . $row->owner_name . ' (' . $row->username . ')';
+		$row_contents[$count++] = $row->username;
+		$row_contents[$count++] = $row->dns_profile;
+		$row_contents[$count++] = $row->name;
+		$row_contents[$count++] = $row->ip;
+		$row_contents[$count++] = $row->rdns;
+		$row_contents[$count++] = $row->wh_name;
+		$row_contents[$count++] = $row->category_name;
+		$row_contents[$count++] = $row->category_stakeholder;
+		$row_contents[$count++] = $row->owner_name;
+		$row_contents[$count++] = $row->notes;
 
 		$sql_field = "SELECT field_name
 					  FROM domain_fields
@@ -253,7 +269,7 @@ if ($export == "1") {
 
                 while ($row_data = mysqli_fetch_object($result_data)) {
 
-                    $row_content[$count++] = $row_data->{$field};
+                    $row_contents[$count++] = $row_data->{$field};
 
                 }
 
@@ -261,13 +277,14 @@ if ($export == "1") {
 
         }
 
-        $row_content[$count++] = $row->insert_time;
-		$row_content[$count++] = $row->update_time;
-		include("../../_includes/system/export/write-row.inc.php");
+        $row_contents[$count++] = $row->insert_time;
+		$row_contents[$count++] = $row->update_time;
 
-	}
+        $export->writeRow($export_file, $row_contents);
 
-	include("../../_includes/system/export/footer.inc.php");
+    }
+
+    $export->closeFile($export_file);
 
 }
 ?>
@@ -283,19 +300,19 @@ if ($export == "1") {
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
     <form name="export_domains_form" method="post" action="<?php echo $PHP_SELF; ?>">
         <a href="<?php echo $PHP_SELF; ?>?all=1">View All</a> or Expiring Between
-        <input name="new_expiry_start" type="text" size="10" maxlength="10" <?php if ($new_expiry_start == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_start\""; } ?>> 
+        <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_start_date\""; } ?>> 
         and 
-        <input name="new_expiry_end" type="text" size="10" maxlength="10" <?php if ($new_expiry_end == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_expiry_end\""; } ?>> 
+        <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_end_date\""; } ?>> 
         &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
         <?php if ($total_results > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export=1&new_expiry_start=<?php echo $new_expiry_start; ?>&new_expiry_end=<?php echo $new_expiry_end; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
     </form>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 <?php if ($total_results > 0) { ?>
 <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR>
 <?php if ($all != "1") { ?>
-	<strong>Date Range:</strong> <?php echo $new_expiry_start; ?> - <?php echo $new_expiry_end; ?><BR><BR>
+	<strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
 <?php } else { ?>
 	<strong>Date Range:</strong> ALL<BR><BR>
 <?php } ?>

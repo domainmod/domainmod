@@ -25,6 +25,7 @@ include("../../_includes/config.inc.php");
 include("../../_includes/database.inc.php");
 include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
+include("../../_includes/classes/Export.class.php");
 
 $page_title = $reporting_section_title;
 $page_subtitle = "Data Warehouse Potential Problems Report";
@@ -32,7 +33,7 @@ $software_section = "reporting-dw-potential-problems-report";
 $report_name = "dw-potential-problems-report";
 
 $generate = $_GET['generate'];
-$export = $_GET['export'];
+$export_data = $_GET['export_data'];
 
 $sql_accounts_without_a_dns_zone = "SELECT domain
 									FROM dw_accounts
@@ -57,34 +58,37 @@ $sql_suspended_accounts = "SELECT domain
 $result_suspended_accounts = mysqli_query($connection, $sql_suspended_accounts);
 $temp_suspended_accounts = mysqli_num_rows($result_suspended_accounts);
 
-if ($export == "1") {
+if ($export_data == "1") {
 
-	$current_timestamp_unix = strtotime(date("Y-m-d H:i:s"));
-	$export_filename = "dw_potential_problems_report_" . $current_timestamp_unix . ".csv";
-	include("../../_includes/system/export/header.inc.php");
+    $export = new DomainMOD\Export();
 
-	$row_content[$count++] = $page_subtitle;
-	include("../../_includes/system/export/write-row.inc.php");
+    $export_file = $export->openFile('dw_potential_problems_report');
 
-	fputcsv($file_content, $blank_line);
+    $row_contents = array($page_subtitle);
+    $export->writeRow($export_file, $row_contents);
 
-	if ($temp_accounts_without_a_dns_zone == 0) {
+    $export->writeBlankRow($export_file);
+
+    if ($temp_accounts_without_a_dns_zone == 0) {
         
         $accounts_without_a_dns_zone_flag = 1;
         
     } else {
 
-		$row_content[$count++] = "Accounts without a DNS Zone (" . $temp_accounts_without_a_dns_zone . ")";
-		include("../../_includes/system/export/write-row.inc.php");
+        $row_contents = array('Accounts without a DNS Zone (' . $temp_accounts_without_a_dns_zone . ')');
+        $export->writeRow($export_file, $row_contents);
+
+        unset($row_contents);
+        $count = 0;
 
         while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
 
-			$row_content[$count++] = $row_accounts_without_a_dns_zone->domain;
+			$row_contents[$count++] = $row_accounts_without_a_dns_zone->domain;
 
         }
-		include("../../_includes/system/export/write-row.inc.php");
+        $export->writeRow($export_file, $row_contents);
 
-		fputcsv($file_content, $blank_line);
+        $export->writeBlankRow($export_file);
 
     }
 
@@ -93,43 +97,48 @@ if ($export == "1") {
         $dns_zones_without_an_account_flag = 1;
         
     } else {
-    
-		$row_content[$count++] = "DNS Zones without an Account (" . $temp_dns_zones_without_an_account . ")";
-		include("../../_includes/system/export/write-row.inc.php");
+
+        $row_contents = array('DNS Zones without an Account (' . $temp_dns_zones_without_an_account . ')');
+        $export->writeRow($export_file, $row_contents);
+
+        unset($row_contents);
+        $count = 0;
 
         while ($row_dns_zones_without_an_account = mysqli_fetch_object($result_dns_zones_without_an_account)) {
 
-			$row_content[$count++] = $row_dns_zones_without_an_account->domain;
+			$row_contents[$count++] = $row_dns_zones_without_an_account->domain;
 
         }
-		include("../../_includes/system/export/write-row.inc.php");
+        $export->writeRow($export_file, $row_contents);
 
-		fputcsv($file_content, $blank_line);
+        $export->writeBlankRow($export_file);
 
     }
-
 
     if ($temp_suspended_accounts == 0) {
         
         $suspended_accounts_flag = 1;
         
     } else {
-    
-		$row_content[$count++] = "Suspended Accounts (" . $temp_suspended_accounts . ")";
-		include("../../_includes/system/export/write-row.inc.php");
+
+        $row_contents = array('Suspended Accounts (' . $temp_suspended_accounts . ')');
+        $export->writeRow($export_file, $row_contents);
+
+        unset($row_contents);
+        $count = 0;
 
         while ($row_suspended_accounts = mysqli_fetch_object($result_suspended_accounts)) {
 
-			$row_content[$count++] = $row_suspended_accounts->domain;
+			$row_contents[$count++] = $row_suspended_accounts->domain;
 
         }
-		include("../../_includes/system/export/write-row.inc.php");
+        $export->writeRow($export_file, $row_contents);
 
-		fputcsv($file_content, $blank_line);
+        $export->writeBlankRow($export_file);
 
     }
 
-	include("../../_includes/system/export/footer.inc.php");
+    $export->closeFile($export_file);
 
 }
 ?>
@@ -146,7 +155,7 @@ if ($export == "1") {
     <form name="export_dw_form" method="post" action="<?php echo $PHP_SELF; ?>">
         <a href="<?php echo $PHP_SELF; ?>?generate=1">Generate</a>
         <?php if ($generate == 1) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
     </form>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>

@@ -27,6 +27,7 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/classes/Error.class.php");
+include("../../_includes/classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -36,7 +37,7 @@ $software_section = "reporting-ssl-provider-fee-report";
 $report_name = "ssl-provider-fee-report";
 
 // Form Variables
-$export = $_GET['export'];
+$export_data = $_GET['export_data'];
 $all = $_GET['all'];
 
 if ($all == "1") {
@@ -68,48 +69,54 @@ $total_rows = mysqli_num_rows($result);
 
 if ($total_rows > 0) {
 
-	if ($export == "1") {
+	if ($export_data == "1") {
 
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
-		$current_timestamp_unix = strtotime($current_timestamp);
-		if ($all == "1") {
-			$export_filename = "ssl_provider_fee_report_all_" . $current_timestamp_unix . ".csv";
-		} else {
-			$export_filename = "ssl_provider_fee_report_active_" . $current_timestamp_unix . ".csv";
-		}
-		include("../../_includes/system/export/header.inc.php");
-	
-		$row_content[$count++] = $page_subtitle;
-		include("../../_includes/system/export/write-row.inc.php");
-	
-		fputcsv($file_content, $blank_line);
-	
-		if ($all == "1") {
 
-			$row_content[$count++] = "All SSL Provider Fees";
+        $export = new DomainMOD\Export();
 
-		} else {
+        if ($all == "1") {
 
-			$row_content[$count++] = "Active SSL Provider Fees";
+            $export_file = $export->openFile('ssl_provider_fee_report_all');
 
-		}
-		include("../../_includes/system/export/write-row.inc.php");
+        } else {
 
-		fputcsv($file_content, $blank_line);
+            $export_file = $export->openFile('ssl_provider_fee_report_active');
 
-		$row_content[$count++] = "SSL Provider";
-		$row_content[$count++] = "Certificate Type";
-		$row_content[$count++] = "Initial Fee";
-        $row_content[$count++] = "Renewal Fee";
-        $row_content[$count++] = "Misc Fee";
-		$row_content[$count++] = "Currency";
-		$row_content[$count++] = "Certs";
-		$row_content[$count++] = "Inserted";
-		$row_content[$count++] = "Updated";
-		include("../../_includes/system/export/write-row.inc.php");
-	
-		$new_ssl_provider = "";
+        }
+
+        $row_contents = array($page_subtitle);
+        $export->writeRow($export_file, $row_contents);
+
+        $export->writeBlankRow($export_file);
+
+        if ($all == "1") {
+
+            $row_contents = array('All SSL Provider Fees');
+
+        } else {
+
+            $row_contents = array('Active SSL Provider Fees');
+
+        }
+        $export->writeRow($export_file, $row_contents);
+
+        $export->writeBlankRow($export_file);
+
+        $row_contents = array(
+            'SSL Provider',
+            'Certificate Type',
+            'Initial Fee',
+            'Renewal Fee',
+            'Misc Fee',
+            'Currency',
+            'Certs',
+            'Inserted',
+            'Updated'
+        );
+        $export->writeRow($export_file, $row_contents);
+
+        $new_ssl_provider = "";
 		$last_ssl_provider = "";
 		$new_type = "";
 		$last_type = "";
@@ -145,12 +152,15 @@ if ($total_rows > 0) {
                 include("../../_includes/system/convert-and-format-currency.inc.php");
                 $row->misc_fee = $temp_output_amount;
 
-                $row_content[$count++] = $row->ssl_provider;
-				$row_content[$count++] = $row->type;
-				$row_content[$count++] = $row->initial_fee;
-                $row_content[$count++] = $row->renewal_fee;
-                $row_content[$count++] = $row->misc_fee;
-				$row_content[$count++] = $row->currency;
+                unset($row_contents);
+                $count = 0;
+
+                $row_contents[$count++] = $row->ssl_provider;
+				$row_contents[$count++] = $row->type;
+				$row_contents[$count++] = $row->initial_fee;
+                $row_contents[$count++] = $row->renewal_fee;
+                $row_contents[$count++] = $row->misc_fee;
+				$row_contents[$count++] = $row->currency;
 
 				$sql_ssl_count = "SELECT count(*) AS total_ssl_count
 								  FROM ssl_certs
@@ -161,24 +171,24 @@ if ($total_rows > 0) {
 
 				while ($row_ssl_count = mysqli_fetch_object($result_ssl_count)) {
 
-					$row_content[$count++] = $row_ssl_count->total_ssl_count;
+					$row_contents[$count++] = $row_ssl_count->total_ssl_count;
 
 				}
 
-				$row_content[$count++] = $row->insert_time;
-				$row_content[$count++] = $row->update_time;
-				include("../../_includes/system/export/write-row.inc.php");
+				$row_contents[$count++] = $row->insert_time;
+				$row_contents[$count++] = $row->update_time;
+                $export->writeRow($export_file, $row_contents);
 
-				$last_ssl_provider = $row->ssl_provider;
+                $last_ssl_provider = $row->ssl_provider;
 				$last_type = $row->type;
 	
 			}
 	
 		}
 
-		include("../../_includes/system/export/footer.inc.php");
+        $export->closeFile($export_file);
 
-	}
+    }
 
 }
 ?>
@@ -194,7 +204,7 @@ if ($total_rows > 0) {
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
     <a href="<?php echo $PHP_SELF; ?>?all=1">View All</a> or <a href="<?php echo $PHP_SELF; ?>?all=0">Active Only</a>
     <?php if ($total_rows > 0) { ?>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export=1&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export_data=1&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
     <?php } ?>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 

@@ -27,6 +27,7 @@ include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/classes/Error.class.php");
+include("../_includes/classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -36,7 +37,7 @@ $software_section = "ssl-provider-accounts";
 $sslpid = $_GET['sslpid'];
 $sslpaid = $_GET['sslpaid'];
 $oid = $_GET['oid'];
-$export = $_GET['export'];
+$export_data = $_GET['export_data'];
 
 if ($sslpid != "") { $sslpid_string = " AND sa.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
 if ($sslpaid != "") { $sslpaid_string = " AND sa.id = '$sslpaid' "; } else { $sslpaid_string = ""; }
@@ -59,33 +60,34 @@ $sql = "SELECT sa.id AS sslpaid, sa.username, sa.password, sa.owner_id, sa.ssl_p
 		GROUP BY sa.username, oname, sslpname
 		ORDER BY sslpname, username, oname";
 
-if ($export == "1") {
+if ($export_data == "1") {
 
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "ssl_provider_account_list_" . $current_timestamp_unix . ".csv";
-	include("../_includes/system/export/header.inc.php");
+    $export = new DomainMOD\Export();
+    $export_file = $export->openFile('ssl_provider_account_list');
 
-	$row_content[$count++] = $page_title;
-	include("../_includes/system/export/write-row.inc.php");
+    $row_contents = array($page_title);
+    $export->writeRow($export_file, $row_contents);
 
-	fputcsv($file_content, $blank_line);
+    $export->writeBlankRow($export_file);
 
-	$row_content[$count++] = "Status";
-	$row_content[$count++] = "SSL Provider";
-	$row_content[$count++] = "Username";
-	$row_content[$count++] = "Password";
-	$row_content[$count++] = "Owner";
-	$row_content[$count++] = "SSL Certs";
-	$row_content[$count++] = "Default Account?";
-	$row_content[$count++] = "Reseller Account?";
-	$row_content[$count++] = "Notes";
-	$row_content[$count++] = "Inserted";
-	$row_content[$count++] = "Updated";
-	include("../_includes/system/export/write-row.inc.php");
+    $row_contents = array(
+        'Status',
+        'SSL Provider',
+        'Username',
+        'Password',
+        'Owner',
+        'SSL Certs',
+        'Default Account?',
+        'Reseller Account?',
+        'Notes',
+        'Inserted',
+        'Updated'
+    );
+    $export->writeRow($export_file, $row_contents);
 
-	if (mysqli_num_rows($result) > 0) {
+    if (mysqli_num_rows($result) > 0) {
 		
 		$has_active = 1;
 	
@@ -126,20 +128,22 @@ if ($export == "1") {
 	
 			}
 
-			$row_content[$count++] = "Active";
-			$row_content[$count++] = $row->sslpname;
-			$row_content[$count++] = $row->username;
-			$row_content[$count++] = $row->password;
-			$row_content[$count++] = $row->oname;
-			$row_content[$count++] = $total_cert_count;
-			$row_content[$count++] = $is_default;
-			$row_content[$count++] = $is_reseller;
-			$row_content[$count++] = $row->notes;
-			$row_content[$count++] = $row->insert_time;
-			$row_content[$count++] = $row->update_time;
-			include("../_includes/system/export/write-row.inc.php");
+            $row_contents = array(
+                'Active',
+                $row->sslpname,
+                $row->username,
+                $row->password,
+                $row->oname,
+                $total_cert_count,
+                $is_default,
+                $is_reseller,
+                $row->notes,
+                $row->insert_time,
+                $row->update_time
+            );
+            $export->writeRow($export_file, $row_contents);
 
-			$current_sslpaid = $row->sslpaid;
+            $current_sslpaid = $row->sslpaid;
 		
 		}
 		
@@ -194,24 +198,26 @@ if ($export == "1") {
 	
 			}
 
-			$row_content[$count++] = "Inactive";
-			$row_content[$count++] = $row->sslpname;
-			$row_content[$count++] = $row->username;
-			$row_content[$count++] = $row->password;
-			$row_content[$count++] = $row->oname;
-			$row_content[$count++] = 0;
-			$row_content[$count++] = $is_default;
-			$row_content[$count++] = $is_reseller;
-			$row_content[$count++] = $row->notes;
-			$row_content[$count++] = $row->insert_time;
-			$row_content[$count++] = $row->update_time;
-			include("../_includes/system/export/write-row.inc.php");
+            $row_contents = array(
+                'Inactive',
+                $row->sslpname,
+                $row->username,
+                $row->password,
+                $row->oname,
+                '0',
+                $is_default,
+                $is_reseller,
+                $row->notes,
+                $row->insert_time,
+                $row->update_time
+            );
+            $export->writeRow($export_file, $row_contents);
 
-		}
+        }
 	
 	}
 
-	include("../_includes/system/export/footer.inc.php");
+    $export->closeFile($export_file);
 
 }
 ?>
@@ -224,7 +230,7 @@ if ($export == "1") {
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
 Below is a list of all the SSL Provider Accounts that are stored in <?php echo $software_title; ?>.<BR><BR>
-[<a href="<?php echo $PHP_SELF; ?>?export=1&sslpid=<?php echo $sslpid; ?>&sslpaid=<?php echo $sslpaid; ?>&oid=<?php echo $oid; ?>">EXPORT</a>]<?php
+[<a href="<?php echo $PHP_SELF; ?>?export_data=1&sslpid=<?php echo $sslpid; ?>&sslpaid=<?php echo $sslpaid; ?>&oid=<?php echo $oid; ?>">EXPORT</a>]<?php
 
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 

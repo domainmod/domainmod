@@ -33,12 +33,13 @@ include("../../../_includes/auth/auth-check.inc.php");
 include("../../../_includes/timestamps/current-timestamp.inc.php");
 include("../../../_includes/classes/Error.class.php");
 include("../../../_includes/classes/Layout.class.php");
+include("../../../_includes/classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
 $domain = $_GET['domain'];
 $search_for = $_REQUEST['search_for'];
-$export = $_GET['export'];
+$export_data = $_GET['export_data'];
 
 // Search Navigation Variables
 $numBegin = $_REQUEST['numBegin'];
@@ -54,7 +55,7 @@ if ($_SESSION['dw_view_all'] == "1") {
 	
 } else {
 
-	$page_subtitle = "Listing Accounts on " . $_SESSION['dw_server_name'] . " (" . $_SESSION['dw_server_host'] . ")";
+	$page_subtitle = 'Listing Accounts on ' . $_SESSION['dw_server_name'] . ' (' . $_SESSION['dw_server_host'] . ')';
 	
 }
 $software_section = "admin-dw-list-accounts";
@@ -101,119 +102,128 @@ if ($domain != "") {
 
 }
 
-if ($export == "1") {
+if ($export_data == "1") {
 
 	$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or $error->outputOldSqlError($connection);
 
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "dw_account_list_" . $current_timestamp_unix . ".csv";
-	include("../../../_includes/system/export/header.inc.php");
+    $export = new DomainMOD\Export();
+    $export_file = $export->openFile('dw_account_list');
 
-	$row_content[$count++] = $page_title;
-	include("../../../_includes/system/export/write-row.inc.php");
+    $row_contents = array($page_title);
+    $export->writeRow($export_file, $row_contents);
 
-	$row_content[$count++] = $page_subtitle;
-	include("../../../_includes/system/export/write-row.inc.php");
+    $row_contents = array($page_subtitle);
+    $export->writeRow($export_file, $row_contents);
 
-	fputcsv($file_content, $blank_line);
+    $export->writeBlankRow($export_file);
 
-	$row_content[$count++] = "Number of Accounts:";
-	$row_content[$count++] = number_format(mysqli_num_rows($result_dw_account_temp));
-	include("../../../_includes/system/export/write-row.inc.php");
+    $row_contents = array(
+        'Number of Accounts:',
+        number_format(mysqli_num_rows($result_dw_account_temp))
+    );
+    $export->writeRow($export_file, $row_contents);
 
-	fputcsv($file_content, $blank_line);
+    $export->writeBlankRow($export_file);
 
-	if ($search_for != "") { 
+    if ($search_for != "") {
+
+        $row_contents = array(
+            'Keyword Search:',
+            "\"" . $search_for . "\""
+        );
+        $export->writeRow($export_file, $row_contents);
+
+        $export->writeBlankRow($export_file);
+
+    }
 	
-		$row_content[$count++] = "Keyword Search:";
-		$row_content[$count++] = "\"" . $search_for . "\"";
-		include("../../../_includes/system/export/write-row.inc.php");
-	
-		fputcsv($file_content, $blank_line);
-	
-	}
-	
-	if ($domain != "") { 
-	
-		$row_content[$count++] = "Domain Filter:";
-		$row_content[$count++] = $domain;
-		include("../../../_includes/system/export/write-row.inc.php");
-	
-		fputcsv($file_content, $blank_line);
-	
-	}
+	if ($domain != "") {
 
-	$row_content[$count++] = "Server Name";
-	$row_content[$count++] = "Server Host";
-	$row_content[$count++] = "Domain";
-	$row_content[$count++] = "IP Address";
-	$row_content[$count++] = "Owner";
-	$row_content[$count++] = "User";
-	$row_content[$count++] = "Email";
-	$row_content[$count++] = "Plan";
-	$row_content[$count++] = "Theme";
-	$row_content[$count++] = "Shell";
-	$row_content[$count++] = "Partition";
-	$row_content[$count++] = "Disk Limit (MB)";
-	$row_content[$count++] = "Disk Used (MB)";
-	$row_content[$count++] = "Max Addons";
-	$row_content[$count++] = "Max FTP";
-	$row_content[$count++] = "Max Email Lists";
-	$row_content[$count++] = "Max Parked Domains";
-	$row_content[$count++] = "Max POP Accounts";
-	$row_content[$count++] = "Max SQL Databases";
-	$row_content[$count++] = "Max Subdomains";
-	$row_content[$count++] = "Start Date";
-	$row_content[$count++] = "Start Date (Unix)";
-	$row_content[$count++] = "Suspended?";
-	$row_content[$count++] = "Suspend Reason";
-	$row_content[$count++] = "Suspend Time (Unix)";
-	$row_content[$count++] = "Max Emails Per Hour";
-	$row_content[$count++] = "Max Email Failure % (For Rate Limiting)";
-	$row_content[$count++] = "Min Email Failure # (For Rate Limiting)";
-	$row_content[$count++] = "Inserted (into DW)";
-	include("../../../_includes/system/export/write-row.inc.php");
+        $row_contents = array(
+            'Domain Filter:',
+            $domain
+        );
+        $export->writeRow($export_file, $row_contents);
 
-	if (mysqli_num_rows($result_dw_account_temp) > 0) {
+        $export->writeBlankRow($export_file);
+
+    }
+
+    $row_contents = array(
+        'Server Name',
+        'Server Host',
+        'Domain',
+        'IP Address',
+        'Owner',
+        'User',
+        'Email',
+        'Plan',
+        'Theme',
+        'Shell',
+        'Partition',
+        'Disk Limit (MB)',
+        'Disk Used (MB)',
+        'Max Addons',
+        'Max FTP',
+        'Max Email Lists',
+        'Max Parked Domains',
+        'Max POP Accounts',
+        'Max SQL Databases',
+        'Max Subdomains',
+        'Start Date',
+        'Start Date (Unix)',
+        'Suspended?',
+        'Suspend Reason',
+        'Suspend Time (Unix)',
+        'Max Emails Per Hour',
+        'Max Email Failure % (For Rate Limiting)',
+        'Min Email Failure # (For Rate Limiting)',
+        'Inserted (into DW)'
+    );
+    $export->writeRow($export_file, $row_contents);
+
+    if (mysqli_num_rows($result_dw_account_temp) > 0) {
 
 		while ($row_dw_account_temp = mysqli_fetch_object($result_dw_account_temp)) {
 
-			$row_content[$count++] = $row_dw_account_temp->dw_server_name;
-			$row_content[$count++] = $row_dw_account_temp->dw_server_host;
-			$row_content[$count++] = $row_dw_account_temp->domain;
-			$row_content[$count++] = $row_dw_account_temp->ip;
-			$row_content[$count++] = $row_dw_account_temp->owner;
-			$row_content[$count++] = $row_dw_account_temp->user;
-			$row_content[$count++] = $row_dw_account_temp->email;
-			$row_content[$count++] = $row_dw_account_temp->plan;
-			$row_content[$count++] = $row_dw_account_temp->theme;
-			$row_content[$count++] = $row_dw_account_temp->shell;
-			$row_content[$count++] = $row_dw_account_temp->partition;
-			$row_content[$count++] = $row_dw_account_temp->disklimit;
-			$row_content[$count++] = $row_dw_account_temp->diskused;
-			$row_content[$count++] = $row_dw_account_temp->maxaddons;
-			$row_content[$count++] = $row_dw_account_temp->maxftp;
-			$row_content[$count++] = $row_dw_account_temp->maxlst;
-			$row_content[$count++] = $row_dw_account_temp->maxparked;
-			$row_content[$count++] = $row_dw_account_temp->maxpop;
-			$row_content[$count++] = $row_dw_account_temp->maxsql;
-			$row_content[$count++] = $row_dw_account_temp->maxsub;
-			$row_content[$count++] = $row_dw_account_temp->startdate;
-			$row_content[$count++] = $row_dw_account_temp->unix_startdate;
-			$row_content[$count++] = $row_dw_account_temp->suspended;
-			$row_content[$count++] = $row_dw_account_temp->suspendreason;
-			$row_content[$count++] = $row_dw_account_temp->suspendtime;
-			$row_content[$count++] = $row_dw_account_temp->MAX_EMAIL_PER_HOUR;
-			$row_content[$count++] = $row_dw_account_temp->MAX_DEFER_FAIL_PERCENTAGE;
-			$row_content[$count++] = $row_dw_account_temp->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION;
-			$row_content[$count++] = $row_dw_account_temp->insert_time;
-			include("../../../_includes/system/export/write-row.inc.php");
+            $row_contents = array(
+                $row_dw_account_temp->dw_server_name,
+                $row_dw_account_temp->dw_server_host,
+                $row_dw_account_temp->domain,
+                $row_dw_account_temp->ip,
+                $row_dw_account_temp->owner,
+                $row_dw_account_temp->user,
+                $row_dw_account_temp->email,
+                $row_dw_account_temp->plan,
+                $row_dw_account_temp->theme,
+                $row_dw_account_temp->shell,
+                $row_dw_account_temp->partition,
+                $row_dw_account_temp->disklimit,
+                $row_dw_account_temp->diskused,
+                $row_dw_account_temp->maxaddons,
+                $row_dw_account_temp->maxftp,
+                $row_dw_account_temp->maxlst,
+                $row_dw_account_temp->maxparked,
+                $row_dw_account_temp->maxpop,
+                $row_dw_account_temp->maxsql,
+                $row_dw_account_temp->maxsub,
+                $row_dw_account_temp->startdate,
+                $row_dw_account_temp->unix_startdate,
+                $row_dw_account_temp->suspended,
+                $row_dw_account_temp->suspendreason,
+                $row_dw_account_temp->suspendtime,
+                $row_dw_account_temp->MAX_EMAIL_PER_HOUR,
+                $row_dw_account_temp->MAX_DEFER_FAIL_PERCENTAGE,
+                $row_dw_account_temp->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION,
+                $row_dw_account_temp->insert_time
+            );
+            $export->writeRow($export_file, $row_contents);
 
-		}
+        }
 	
 	}
 
-	include("../../../_includes/system/export/footer.inc.php");
+    $export->closeFile($export_file);
 
 }
 ?>
@@ -247,7 +257,7 @@ if(mysqli_num_rows($result_dw_account_temp) == 0) {
 		<input type="hidden" name="numBegin" value="1">
 	</form><BR>
 	
-	<strong>[<a href="<?php echo $PHP_SELF; ?>?export=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong><BR><BR>
+	<strong>[<a href="<?php echo $PHP_SELF; ?>?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong><BR><BR>
 	
 	<strong>Number of Accounts:</strong> <?php echo $totalrows; ?><BR><BR>
 	<?php include("../../../_includes/layout/pagination.menu.inc.php"); ?><BR>

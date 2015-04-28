@@ -32,70 +32,74 @@ include("../../../_includes/software.inc.php");
 include("../../../_includes/auth/auth-check.inc.php");
 include("../../../_includes/timestamps/current-timestamp.inc.php");
 include("../../../_includes/classes/Error.class.php");
+include("../../../_includes/classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
 $page_title = "Data Warehouse Servers";
 $software_section = "admin-dw-manage-servers";
 
-$export = $_GET['export'];
+$export_data = $_GET['export_data'];
 
 $sql = "SELECT id, name, host, protocol, port, username, hash, notes, dw_accounts, dw_dns_zones, dw_dns_records, build_end_time, insert_time, update_time
 		FROM dw_servers
 		ORDER BY name, host";
 
-if ($export == "1") {
+if ($export_data == "1") {
 
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "dw_servers_" . $current_timestamp_unix . ".csv";
-	include("../../../_includes/system/export/header.inc.php");
+    $export = new DomainMOD\Export();
+    $export_file = $export->openFile('dw_servers');
 
-	$row_content[$count++] = $page_title;
-	include("../../../_includes/system/export/write-row.inc.php");
+    $row_contents = array($page_title);
+    $export->writeRow($export_file, $row_contents);
 
-	fputcsv($file_content, $blank_line);
+    $export->writeBlankRow($export_file);
 
-	$row_content[$count++] = "Name";
-	$row_content[$count++] = "Host";
-	$row_content[$count++] = "Protocol";
-	$row_content[$count++] = "Port";
-	$row_content[$count++] = "Username";
-	$row_content[$count++] = "Hash";
-	$row_content[$count++] = "Notes";
-	$row_content[$count++] = "DW Accounts";
-	$row_content[$count++] = "DW DNS Zones";
-	$row_content[$count++] = "DW DNS Records";
-	$row_content[$count++] = "DW Last Built";
-	$row_content[$count++] = "Inserted";
-	$row_content[$count++] = "Updated";
-	include("../../../_includes/system/export/write-row.inc.php");
+    $row_contents = array(
+        'Name',
+        'Host',
+        'Protocol',
+        'Port',
+        'Username',
+        'Hash',
+        'Notes',
+        'DW Accounts',
+        'DW DNS Zones',
+        'DW DNS Records',
+        'DW Last Built',
+        'Inserted',
+        'Updated'
+    );
+    $export->writeRow($export_file, $row_contents);
 
-	if (mysqli_num_rows($result) > 0) {
+    if (mysqli_num_rows($result) > 0) {
 	
 		while ($row = mysqli_fetch_object($result)) {
 
-			$row_content[$count++] = $row->name;
-			$row_content[$count++] = $row->host;
-			$row_content[$count++] = $row->protocol;
-			$row_content[$count++] = $row->port;
-			$row_content[$count++] = $row->username;
-			$row_content[$count++] = $row->hash;
-			$row_content[$count++] = $row->notes;
-			$row_content[$count++] = $row->dw_accounts;
-			$row_content[$count++] = $row->dw_dns_zones;
-			$row_content[$count++] = $row->dw_dns_records;
-			$row_content[$count++] = $row->build_end_time;
-			$row_content[$count++] = $row->insert_time;
-			$row_content[$count++] = $row->update_time;
-			include("../../../_includes/system/export/write-row.inc.php");
-	
-		}
+            $row_contents = array(
+                $row->name,
+                $row->host,
+                $row->protocol,
+                $row->port,
+                $row->username,
+                $row->hash,
+                $row->notes,
+                $row->dw_accounts,
+                $row->dw_dns_zones,
+                $row->dw_dns_records,
+                $row->build_end_time,
+                $row->insert_time,
+                $row->update_time
+            );
+            $export->writeRow($export_file, $row_contents);
+
+        }
 			
 	}
 
-	include("../../../_includes/system/export/footer.inc.php");
+    $export->closeFile($export_file);
 
 }
 ?>
@@ -112,7 +116,7 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 
 if (mysqli_num_rows($result) > 0) { ?>
 
-	[<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]
+	[<a href="<?php echo $PHP_SELF; ?>?export_data=1">EXPORT</a>]
 
     <table class="main_table" cellpadding="0" cellspacing="0">
         <tr class="main_table_row_heading_active">

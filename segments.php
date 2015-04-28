@@ -28,6 +28,7 @@ include("_includes/auth/auth-check.inc.php");
 include("_includes/timestamps/current-timestamp.inc.php");
 include("_includes/classes/Segment.class.php");
 include("_includes/classes/Error.class.php");
+include("_includes/classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -35,7 +36,7 @@ $page_title = "Segment Filters";
 $software_section = "segments";
 
 $segid = $_GET['segid'];
-$export = $_GET['export'];
+$export_data = $_GET['export_data'];
 
 $sql = "SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.insert_time, s.update_time, sd.domain
 		FROM segments AS s, segment_data AS sd
@@ -43,7 +44,7 @@ $sql = "SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.no
 		GROUP BY s.id
 		ORDER BY s.name ASC, sd.domain ASC";
 
-if ($export == "1") {
+if ($export_data == "1") {
 
     if ($segid != "") {
 
@@ -95,83 +96,96 @@ if ($export == "1") {
             ORDER BY s.name ASC, sd.domain ASC";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_timestamp_unix = strtotime($current_timestamp);
-
     if ($segid != "") {
 
-        $export_filename = "segment_" . $current_timestamp_unix . ".csv";
+        $base_filename = "segment";
 
     } else {
 
-        $export_filename = "segment_list_" . $current_timestamp_unix . ".csv";
+        $base_filename = "segment_list";
 
     }
 
-    include("_includes/system/export/header.inc.php");
+    $export = new DomainMOD\Export();
+    $export_file = $export->openFile("$base_filename");
 
     if ($segid != "") {
 
-        $row_content[$count++] = "Segment:";
-        $row_content[$count++] = $segment_name;
-        include("_includes/system/export/write-row.inc.php");
+        $row_contents = array(
+            'Segment:',
+            $segment_name
+        );
+        $export->writeRow($export_file, $row_contents);
 
-        $row_content[$count++] = "Number of Domains in Segment:";
-        $row_content[$count++] = $number_of_domains;
-        include("_includes/system/export/write-row.inc.php");
+        $row_contents = array(
+            'Number of Domains in Segment:',
+            $number_of_domains
+        );
+        $export->writeRow($export_file, $row_contents);
 
     } else {
 
-        $row_content[$count++] = $page_title;
-        include("_includes/system/export/write-row.inc.php");
+        $row_contents = array($page_title);
+        $export->writeRow($export_file, $row_contents);
 
-        fputcsv($file_content, $blank_line);
+        $export->writeBlankRow($export_file);
 
-        $row_content[$count++] = "Total Number of Segments:";
-        $row_content[$count++] = number_format($number_of_segments);
-        include("_includes/system/export/write-row.inc.php");
+        $row_contents = array(
+            'Total Number of Segments:',
+            number_format($number_of_segments)
+        );
+        $export->writeRow($export_file, $row_contents);
 
-        $row_content[$count++] = "Total Number of Domains:";
-        $row_content[$count++] = number_format($number_of_segment_domains);
-        include("_includes/system/export/write-row.inc.php");
+        $row_contents = array(
+            'Total Number of Domains:',
+            number_format($number_of_segment_domains)
+        );
+        $export->writeRow($export_file, $row_contents);
 
     }
 
-    fputcsv($file_content, $blank_line);
+    $export->writeBlankRow($export_file);
 
-    $row_content[$count++] = "Segment";
-    $row_content[$count++] = "Description";
-    $row_content[$count++] = "Domain";
+    unset($row_contents);
+    $count = 0;
+
+    $row_contents[$count++] = "Segment";
+    $row_contents[$count++] = "Description";
+    $row_contents[$count++] = "Domain";
     if ($segid == "") {
 
-        $row_content[$count++] = "Number of Domains in Segment";
+        $row_contents[$count++] = "Number of Domains in Segment";
 
     }
-    $row_content[$count++] = "Notes";
-    $row_content[$count++] = "Insert Time";
-    $row_content[$count++] = "Update Time";
-    include("_includes/system/export/write-row.inc.php");
+    $row_contents[$count++] = "Notes";
+    $row_contents[$count++] = "Insert Time";
+    $row_contents[$count++] = "Update Time";
+    $export->writeRow($export_file, $row_contents);
 
     if (mysqli_num_rows($result) > 0) {
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $row_content[$count++] = $row->name;
-            $row_content[$count++] = $row->description;
-            $row_content[$count++] = $row->domain;
+            unset($row_contents);
+            $count = 0;
+
+            $row_contents[$count++] = $row->name;
+            $row_contents[$count++] = $row->description;
+            $row_contents[$count++] = $row->domain;
             if ($segid == "") {
 
-                $row_content[$count++] = $row->number_of_domains;
+                $row_contents[$count++] = $row->number_of_domains;
             }
-            $row_content[$count++] = $row->notes;
-            $row_content[$count++] = $row->insert_time;
-            $row_content[$count++] = $row->update_time;
-            include("_includes/system/export/write-row.inc.php");
+            $row_contents[$count++] = $row->notes;
+            $row_contents[$count++] = $row->insert_time;
+            $row_contents[$count++] = $row->update_time;
+            $export->writeRow($export_file, $row_contents);
 
         }
 
     }
 
-    include("_includes/system/export/footer.inc.php");
+    $export->closeFile($export_file);
 
 }
 ?>
@@ -190,7 +204,7 @@ Segments are lists of domains that can be used to help filter and manage your <a
 <BR>
 Segment filters will tell you which domains match with domains that are saved in <?php echo $software_title; ?>, as well as which domains don't match, and you can easily view and export the results.<BR>
 <BR>
-[<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]
+[<a href="<?php echo $PHP_SELF; ?>?export_data=1">EXPORT</a>]
 <?php
 $sql_segment_check = "SELECT id
 					  FROM segments
@@ -238,7 +252,7 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <a class="invisiblelink" href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $trimmed_segment; ?></a>
             </td>
             <td class="main_table_cell_active" valign="top">
-                <a class="invisiblelink" href="segments.php?export=1&segid=<?php echo $row->id; ?>">EXPORT</a>
+                <a class="invisiblelink" href="segments.php?export_data=1&segid=<?php echo $row->id; ?>">EXPORT</a>
             </td>
         </tr>
 

@@ -27,54 +27,56 @@ include("../_includes/software.inc.php");
 include("../_includes/auth/auth-check.inc.php");
 include("../_includes/timestamps/current-timestamp.inc.php");
 include("../_includes/classes/Error.class.php");
+include("../_includes/classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
 $page_title = "Domain Registrar & SSL Provider Account Owners";
 $software_section = "account-owners";
 
-$export = $_GET['export'];
+$export_data = $_GET['export_data'];
 
 $sql = "(SELECT o.id, o.name, o.notes, o.insert_time, o.update_time
-		 FROM owners AS o, domains AS d
-		 WHERE o.id = d.owner_id
-		   AND d.active NOT IN ('0', '10')
-		 GROUP BY o.name)
-		UNION
-		(SELECT o.id, o.name, o.notes, o.insert_time, o.update_time
-		 FROM owners AS o, ssl_certs AS sslc
-		 WHERE o.id = sslc.owner_id
-		   AND sslc.active NOT IN ('0')
-		 GROUP BY o.name)
-		ORDER BY name";
+         FROM owners AS o, domains AS d
+         WHERE o.id = d.owner_id
+           AND d.active NOT IN ('0', '10')
+         GROUP BY o.name)
+        UNION
+        (SELECT o.id, o.name, o.notes, o.insert_time, o.update_time
+         FROM owners AS o, ssl_certs AS sslc
+         WHERE o.id = sslc.owner_id
+           AND sslc.active NOT IN ('0')
+         GROUP BY o.name)
+         ORDER BY name";
 
-if ($export == "1") {
+if ($export_data == "1") {
 
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "account_owner_list_" . $current_timestamp_unix . ".csv";
-	include("../_includes/system/export/header.inc.php");
+    $export = new DomainMOD\Export();
+    $export_file = $export->openFile('account_owner_list');
 
-	$row_content[$count++] = $page_title;
-	include("../_includes/system/export/write-row.inc.php");
+    $row_contents = array($page_title);
+    $export->writeRow($export_file, $row_contents);
 
-	fputcsv($file_content, $blank_line);
+    $export->writeBlankRow($export_file);
 
-	$row_content[$count++] = "Status";
-	$row_content[$count++] = "Owner";
-	$row_content[$count++] = "Registrar Accounts";
-	$row_content[$count++] = "Domains";
-	$row_content[$count++] = "SSL Provider Accounts";
-	$row_content[$count++] = "SSL Certs";
-	$row_content[$count++] = "Default Domain Owner?";
-	$row_content[$count++] = "Default SSL Owner?";
-	$row_content[$count++] = "Notes";
-	$row_content[$count++] = "Inserted";
-	$row_content[$count++] = "Updated";
-	include("../_includes/system/export/write-row.inc.php");
+    $row_contents = array(
+        'Status',
+        'Owner',
+        'Registrar Accounts',
+        'Domains',
+        'SSL Provider Accounts',
+        'SSL Certs',
+        'Default Domain Owner?',
+        'Default SSL Owner?',
+        'Notes',
+        'Inserted',
+        'Updated'
+    );
+    $export->writeRow($export_file, $row_contents);
 
-	if (mysqli_num_rows($result) > 0) {
+    if (mysqli_num_rows($result) > 0) {
 	
 		$has_active = "1";
 	
@@ -140,24 +142,26 @@ if ($export == "1") {
 			
 			}
 
-			$row_content[$count++] = "Active";
-			$row_content[$count++] = $row->name;
-			$row_content[$count++] = $total_registrar_accounts;
-			$row_content[$count++] = $total_domains;
-			$row_content[$count++] = $total_ssl_provider_accounts;
-			$row_content[$count++] = $total_certs;
-			$row_content[$count++] = $is_default_domains;
-			$row_content[$count++] = $is_default_ssl;
-			$row_content[$count++] = $row->notes;
-			$row_content[$count++] = $row->insert_time;
-			$row_content[$count++] = $row->update_time;
-			include("../_includes/system/export/write-row.inc.php");
-	
-			$current_oid = $row->id;
-	
-		}
-	
-	}
+            $row_contents = array(
+                'Active',
+                $row->name,
+                $total_registrar_accounts,
+                $total_domains,
+                $total_ssl_provider_accounts,
+                $total_certs,
+                $is_default_domains,
+                $is_default_ssl,
+                $row->notes,
+                $row->insert_time,
+                $row->update_time
+            );
+            $export->writeRow($export_file, $row_contents);
+
+            $current_oid = $row->id;
+
+        }
+
+    }
 
 	$exclude_owner_string = substr($exclude_owner_string_raw, 0, -2); 
 	
@@ -220,24 +224,26 @@ if ($export == "1") {
 			
 			}
 
-			$row_content[$count++] = "Inactive";
-			$row_content[$count++] = $row->name;
-			$row_content[$count++] = $total_registrar_accounts;
-			$row_content[$count++] = 0;
-			$row_content[$count++] = $total_ssl_provider_accounts;
-			$row_content[$count++] = 0;
-			$row_content[$count++] = $is_default_domains;
-			$row_content[$count++] = $is_default_ssl;
-			$row_content[$count++] = $row->notes;
-			$row_content[$count++] = $row->insert_time;
-			$row_content[$count++] = $row->update_time;
-			include("../_includes/system/export/write-row.inc.php");
+            $row_contents = array(
+                'Inactive',
+                $row->name,
+                $total_registrar_accounts,
+                '0',
+                $total_ssl_provider_accounts,
+                '0',
+                $is_default_domains,
+                $is_default_ssl,
+                $row->notes,
+                $row->insert_time,
+                $row->update_time
+            );
+            $export->writeRow($export_file, $row_contents);
 
-		}
-	
-	}
+        }
 
-	include("../_includes/system/export/footer.inc.php");
+    }
+
+    $export->closeFile($export_file);
 
 }
 ?>
@@ -250,7 +256,7 @@ if ($export == "1") {
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
 Below is a list of all the Account Owners that are stored in <?php echo $software_title; ?>.<BR><BR>
-[<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
+[<a href="<?php echo $PHP_SELF; ?>?export_data=1">EXPORT</a>]<?php
 
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 

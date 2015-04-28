@@ -32,13 +32,14 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/classes/Error.class.php");
+include("../../_includes/classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
 $page_title = $software_title . " Users";
 $software_section = "admin-user-list";
 
-$export = $_GET['export'];
+$export_data = $_GET['export_data'];
 
 if ($_SESSION['username'] == "admin") {
 
@@ -58,34 +59,35 @@ if ($_SESSION['username'] == "admin") {
 
 }
 
-if ($export == "1") {
+if ($export_data == "1") {
 
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-	$current_timestamp_unix = strtotime($current_timestamp);
-	$export_filename = "user_list_" . $current_timestamp_unix . ".csv";
-	include("../../_includes/system/export/header.inc.php");
+    $export = new DomainMOD\Export();
+    $export_file = $export->openFile('user_list');
 
-	$row_content[$count++] = $page_title;
-	include("../../_includes/system/export/write-row.inc.php");
+    $row_contents = array($page_title);
+    $export->writeRow($export_file, $row_contents);
 
-	fputcsv($file_content, $blank_line);
+    $export->writeBlankRow($export_file);
 
-	$row_content[$count++] = "Status";
-	$row_content[$count++] = "First Name";
-	$row_content[$count++] = "Last Name";
-	$row_content[$count++] = "Username";
-	$row_content[$count++] = "Email Address";
-	$row_content[$count++] = "Is Admin?";
-	$row_content[$count++] = "Default Currency";
-	$row_content[$count++] = "Default Timezone";
-	$row_content[$count++] = "Number of Logins";
-	$row_content[$count++] = "Last Login";
-	$row_content[$count++] = "Inserted";
-	$row_content[$count++] = "Updated";
-	include("../../_includes/system/export/write-row.inc.php");
+    $row_contents = array(
+        'Status',
+        'First Name',
+        'Last Name',
+        'Username',
+        'Email Address',
+        'Is Admin?',
+        'Default Currency',
+        'Default Timezone',
+        'Number of Logins',
+        'Last Login',
+        'Inserted',
+        'Updated'
+    );
+    $export->writeRow($export_file, $row_contents);
 
-	if (mysqli_num_rows($result) > 0) {
+    if (mysqli_num_rows($result) > 0) {
 	
 		while ($row = mysqli_fetch_object($result)) {
 			
@@ -99,21 +101,23 @@ if ($export == "1") {
 				
 			}
 
-			$row_content[$count++] = "Active";
-			$row_content[$count++] = $row->first_name;
-			$row_content[$count++] = $row->last_name;
-			$row_content[$count++] = $row->username;
-			$row_content[$count++] = $row->email_address;
-			$row_content[$count++] = $is_admin;
-			$row_content[$count++] = $row->default_currency;
-			$row_content[$count++] = $row->default_timezone;
-			$row_content[$count++] = $row->number_of_logins;
-			$row_content[$count++] = $row->last_login;
-			$row_content[$count++] = $row->insert_time;
-			$row_content[$count++] = $row->update_time;
-			include("../../_includes/system/export/write-row.inc.php");
-	
-		}
+            $row_contents = array(
+                'Active',
+                $row->first_name,
+                $row->last_name,
+                $row->username,
+                $row->email_address,
+                $is_admin,
+                $row->default_currency,
+                $row->default_timezone,
+                $row->number_of_logins,
+                $row->last_login,
+                $row->insert_time,
+                $row->update_time
+            );
+            $export->writeRow($export_file, $row_contents);
+
+        }
 			
 	}
 	
@@ -138,25 +142,27 @@ if ($export == "1") {
 				
 			}
 
-			$row_content[$count++] = "Inactive";
-			$row_content[$count++] = $row->first_name;
-			$row_content[$count++] = $row->last_name;
-			$row_content[$count++] = $row->username;
-			$row_content[$count++] = $row->email_address;
-			$row_content[$count++] = $is_admin;
-			$row_content[$count++] = $row->default_currency;
-			$row_content[$count++] = $row->default_timezone;
-			$row_content[$count++] = $row->number_of_logins;
-			$row_content[$count++] = $row->last_login;
-			$row_content[$count++] = $row->insert_time;
-			$row_content[$count++] = $row->update_time;
-			include("../../_includes/system/export/write-row.inc.php");
+            $row_contents = array(
+                'Inactive',
+                $row->first_name,
+                $row->last_name,
+                $row->username,
+                $row->email_address,
+                $is_admin,
+                $row->default_currency,
+                $row->default_timezone,
+                $row->number_of_logins,
+                $row->last_login,
+                $row->insert_time,
+                $row->update_time
+            );
+            $export->writeRow($export_file, $row_contents);
 
-		}
+        }
 
 	}
 
-	include("../../_includes/system/export/footer.inc.php");
+    $export->closeFile($export_file);
 
 }
 ?>
@@ -169,7 +175,7 @@ if ($export == "1") {
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
 Below is a list of all users that have access to <?php echo $software_title; ?>.<BR><BR>
-[<a href="<?php echo $PHP_SELF; ?>?export=1">EXPORT</a>]<?php
+[<a href="<?php echo $PHP_SELF; ?>?export_data=1">EXPORT</a>]<?php
 
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 

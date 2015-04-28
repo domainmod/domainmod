@@ -29,6 +29,7 @@ include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/timestamps/current-timestamp-basic.inc.php");
 include("../../_includes/classes/Date.class.php");
 include("../../_includes/classes/Error.class.php");
+include("../../_includes/classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -38,7 +39,7 @@ $software_section = "reporting-domain-cost-by-registrar-report";
 $report_name = "domain-cost-by-registrar-report";
 
 // Form Variables
-$export = $_GET['export'];
+$export_data = $_GET['export_data'];
 $all = $_GET['all'];
 $new_start_date = $_REQUEST['new_start_date'];
 $new_end_date = $_REQUEST['new_end_date'];
@@ -114,59 +115,69 @@ $grand_total = $temp_output_amount;
 
 if ($submission_failed != "1" && $total_rows > 0) {
 
-	if ($export == "1") {
+	if ($export_data == "1") {
 
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
-		$current_timestamp_unix = strtotime($current_timestamp);
-		if ($all == "1") {
-			$export_filename = "domain_cost_by_registrar_report_all_" . $current_timestamp_unix . ".csv";
-		} else {
-			$export_filename = "domain_cost_by_registrar_report_" . $new_start_date . "--" . $new_end_date . ".csv";
-		}
-		include("../../_includes/system/export/header.inc.php");
-	
-		$row_content[$count++] = $page_subtitle;
-		include("../../_includes/system/export/write-row.inc.php");
-	
-		fputcsv($file_content, $blank_line);
 
-		if ($all != "1") {
+        $export = new DomainMOD\Export();
 
-			$row_content[$count++] = "Date Range:";
-			$row_content[$count++] = $new_start_date;
-			$row_content[$count++] = $new_end_date;
+        if ($all == "1") {
+
+            $export_file = $export->openFile('domain_cost_by_registrar_report_all');
 
         } else {
 
-			$row_content[$count++] = "Date Range:";
-			$row_content[$count++] = "ALL";
+            $export_file = $export->openFileAppend(
+                'domain_cost_by_registrar_report',
+                $new_start_date . '--' . $new_end_date
+            );
 
         }
-		include("../../_includes/system/export/write-row.inc.php");
 
-		$row_content[$count++] = "Total Cost:";
-		$row_content[$count++] = $grand_total;
-		$row_content[$count++] = $_SESSION['default_currency'];
-		include("../../_includes/system/export/write-row.inc.php");
+        $row_contents = array($page_subtitle);
+        $export->writeRow($export_file, $row_contents);
 
-		$row_content[$count++] = "Number of Domains:";
-		$row_content[$count++] = $number_of_domains_total;
-		include("../../_includes/system/export/write-row.inc.php");
+        $export->writeBlankRow($export_file);
 
-		fputcsv($file_content, $blank_line);
+        if ($all != "1") {
 
-		$row_content[$count++] = "Registrar";
-		$row_content[$count++] = "Domains";
-		$row_content[$count++] = "Cost";
-		$row_content[$count++] = "Per Domain";
-		$row_content[$count++] = "Registrar Account";
-		$row_content[$count++] = "Domains";
-		$row_content[$count++] = "Cost";
-		$row_content[$count++] = "Per Domain";
-		include("../../_includes/system/export/write-row.inc.php");
+            $row_contents = array('Date Range:', $new_start_date, $new_end_date);
 
-		$new_registrar = "";
+        } else {
+
+            $row_contents = array('Date Range:', 'ALL');
+
+        }
+        $export->writeRow($export_file, $row_contents);
+
+        $row_contents = array(
+            'Total Cost:',
+            $grand_total,
+            $_SESSION['default_currency']
+        );
+        $export->writeRow($export_file, $row_contents);
+
+        $row_contents = array(
+            'Number of Domains:',
+            $number_of_domains_total
+        );
+        $export->writeRow($export_file, $row_contents);
+
+        $export->writeBlankRow($export_file);
+
+        $row_contents = array(
+            'Registrar',
+            'Domains',
+            'Cost',
+            'Per Domain',
+            'Registrar Account',
+            'Domains',
+            'Cost',
+            'Per Domain'
+        );
+        $export->writeRow($export_file, $row_contents);
+
+        $new_registrar = "";
 		$last_registrar = "";
 
 		if (mysqli_num_rows($result) > 0) {
@@ -229,25 +240,27 @@ if ($submission_failed != "1" && $total_rows > 0) {
 				include("../../_includes/system/convert-and-format-currency.inc.php");
 				$per_domain_registrar = $temp_output_amount;
 
-				$row_content[$count++] = $row->registrar_name;
-				$row_content[$count++] = $number_of_domains_registrar;
-				$row_content[$count++] = $temp_registrar_total;
-				$row_content[$count++] = $per_domain_registrar;
-				$row_content[$count++] = $row->owner_name . " (" . $row->username . ")";
-				$row_content[$count++] = $row->number_of_domains;
-				$row_content[$count++] = $row->total_cost;
-				$row_content[$count++] = $per_domain_account;
-				include("../../_includes/system/export/write-row.inc.php");
+                $row_contents = array(
+                    $row->registrar_name,
+                    $number_of_domains_registrar,
+                    $temp_registrar_total,
+                    $per_domain_registrar,
+                    $row->owner_name . ' (' . $row->username . ')',
+                    $row->number_of_domains,
+                    $row->total_cost,
+                    $per_domain_account
+                );
+                $export->writeRow($export_file, $row_contents);
 
-				$last_registrar = $row->registrar_name;
+                $last_registrar = $row->registrar_name;
 
 			}
 
 		}
 
-		include("../../_includes/system/export/footer.inc.php");
+        $export->closeFile($export_file);
 
-	}
+    }
 
 }
 ?>
@@ -268,7 +281,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
         <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_end_date\""; } ?>> 
         &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
         <?php if ($total_rows > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
     </form>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>

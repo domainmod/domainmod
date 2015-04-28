@@ -27,6 +27,7 @@ include("../../_includes/software.inc.php");
 include("../../_includes/auth/auth-check.inc.php");
 include("../../_includes/timestamps/current-timestamp.inc.php");
 include("../../_includes/classes/Error.class.php");
+include("../../_includes/classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -36,7 +37,7 @@ $software_section = "reporting-domain-registrar-fee-report";
 $report_name = "domain-registrar-fee-report";
 
 // Form Variables
-$export = $_GET['export'];
+$export_data = $_GET['export_data'];
 $all = (integer) urlencode($_GET['all']);
 
 if ($all == "1") {
@@ -66,46 +67,56 @@ $total_rows = mysqli_num_rows($result);
 
 if ($total_rows > 0) {
 
-	if ($export == "1") {
+	if ($export_data == "1") {
 
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
-		$current_timestamp_unix = strtotime($current_timestamp);
-		if ($all == "1") {
-			$export_filename = "registrar_fee_report_all_" . $current_timestamp_unix . ".csv";
-		} else {
-			$export_filename = "registrar_fee_report_active_" . $current_timestamp_unix . ".csv";
-		}
-		include("../../_includes/system/export/header.inc.php");
-	
-		$row_content[$count++] = $page_subtitle;
-		include("../../_includes/system/export/write-row.inc.php");
-	
-		fputcsv($file_content, $blank_line);
 
-		if ($all == "1") {
-			$row_content[$count++] = "All Registrar Fees";
-		} else {
-			$row_content[$count++] = "Active Registrar Fees";
-		}
-		include("../../_includes/system/export/write-row.inc.php");
+        $export = new DomainMOD\Export();
 
-		fputcsv($file_content, $blank_line);
+        if ($all == "1") {
 
-		$row_content[$count++] = "Registrar";
-		$row_content[$count++] = "TLD";
-		$row_content[$count++] = "Initial Fee";
-		$row_content[$count++] = "Renewal Fee";
-        $row_content[$count++] = "Transfer Fee";
-        $row_content[$count++] = "Privacy Fee";
-        $row_content[$count++] = "Misc Fee";
-		$row_content[$count++] = "Currency";
-		$row_content[$count++] = "Domains";
-		$row_content[$count++] = "Inserted";
-		$row_content[$count++] = "Updated";
-		include("../../_includes/system/export/write-row.inc.php");
-	
-		$new_registrar = "";
+            $export_file = $export->openFile('registrar_fee_report_all');
+
+        } else {
+
+            $export_file = $export->openFile('registrar_fee_report_active');
+
+        }
+
+        $row_contents = array($page_subtitle);
+        $export->writeRow($export_file, $row_contents);
+
+        $export->writeBlankRow($export_file);
+
+        if ($all == "1") {
+
+            $row_contents = array('All Registrar Fees');
+        
+        } else {
+
+            $row_contents = array('Active Registrar Fees');
+        
+        }
+        $export->writeRow($export_file, $row_contents);
+        
+        $export->writeBlankRow($export_file);
+
+        $row_contents = array(
+            'Registrar',
+            'TLD',
+            'Initial Fee',
+            'Renewal Fee',
+            'Transfer Fee',
+            'Privacy Fee',
+            'Misc Fee',
+            'Currency',
+            'Domains',
+            'Inserted',
+            'Updated'
+        );
+        $export->writeRow($export_file, $row_contents);
+
+        $new_registrar = "";
 		$last_registrar = "";
 		$new_tld = "";
 		$last_tld = "";
@@ -157,14 +168,17 @@ if ($total_rows > 0) {
                 include("../../_includes/system/convert-and-format-currency.inc.php");
                 $row->misc_fee = $temp_output_amount;
 
-                $row_content[$count++] = $row->registrar;
-				$row_content[$count++] = '.' . $row->tld;
-				$row_content[$count++] = $row->initial_fee;
-				$row_content[$count++] = $row->renewal_fee;
-                $row_content[$count++] = $row->transfer_fee;
-                $row_content[$count++] = $row->privacy_fee;
-                $row_content[$count++] = $row->misc_fee;
-				$row_content[$count++] = $row->currency;
+                unset($row_contents);
+                $count = 0;
+
+                $row_contents[$count++] = $row->registrar;
+				$row_contents[$count++] = '.' . $row->tld;
+				$row_contents[$count++] = $row->initial_fee;
+				$row_contents[$count++] = $row->renewal_fee;
+                $row_contents[$count++] = $row->transfer_fee;
+                $row_contents[$count++] = $row->privacy_fee;
+                $row_contents[$count++] = $row->misc_fee;
+				$row_contents[$count++] = $row->currency;
 				
 				$sql_domain_count = "SELECT count(*) AS total_domain_count
 									 FROM domains
@@ -175,23 +189,23 @@ if ($total_rows > 0) {
 
 				while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
 
-					$row_content[$count++] = $row_domain_count->total_domain_count;
+					$row_contents[$count++] = $row_domain_count->total_domain_count;
 
 				}
 
-				$row_content[$count++] = $row->insert_time;
-				$row_content[$count++] = $row->update_time;
-				include("../../_includes/system/export/write-row.inc.php");
+				$row_contents[$count++] = $row->insert_time;
+				$row_contents[$count++] = $row->update_time;
+                $export->writeRow($export_file, $row_contents);
 
-				$last_registrar = $row->registrar;
+                $last_registrar = $row->registrar;
 	
 			}
 	
 		}
-	
-		include("../../_includes/system/export/footer.inc.php");
 
-	}
+        $export->closeFile($export_file);
+
+    }
 
 }
 ?>
@@ -207,7 +221,7 @@ if ($total_rows > 0) {
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
     <a href="<?php echo $PHP_SELF; ?>?all=1">View All</a> or <a href="<?php echo $PHP_SELF; ?>?all=0">Active Only</a>
     <?php if ($total_rows > 0) { ?>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export=1&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export_data=1&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
     <?php } ?>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 
