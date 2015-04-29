@@ -490,18 +490,34 @@ $sql_accounts = "SELECT id
 				 WHERE domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'";
 $result_accounts = mysqli_query($connection, $sql_accounts);
 
+if ($result_accounts === FALSE || mysqli_num_rows($result_accounts) <= 0) {
+
+    $no_results_accounts = 1;
+
+}
+
 $sql_dns_zones = "SELECT id
 				  FROM dw_dns_zones
 				  WHERE domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'";
 $result_dns_zones = mysqli_query($connection, $sql_dns_zones);
 
-if (mysqli_num_rows($result_accounts) > 0 || mysqli_num_rows($result_dns_zones) > 0) { ?>
+if ($result_dns_zones === FALSE || mysqli_num_rows($result_dns_zones) <= 0) {
 
-    <BR><BR><font class="subheadline">Data Warehouse Information</font><?php
-	
+    $no_results_dns_zones = 1;
+
 }
 
-if (mysqli_num_rows($result_accounts) > 0) { ?>
+if ($no_results_accounts !== 1 || $no_results_dns_zones !== 1) { ?>
+
+    <BR><BR><font class="subheadline">Data Warehouse Information for <?php echo $new_domain; ?></font><?php
+
+}
+
+if ($no_results_accounts === 1) {
+
+    // No matching DW accounts, or the query failed
+
+} else { ?>
 
     <BR><BR><strong>Accounts</strong><?php
 
@@ -518,18 +534,13 @@ if (mysqli_num_rows($result_accounts) > 0) { ?>
 
 }
 
-if (mysqli_num_rows($result_dns_zones) > 0) {
+if ($no_results_dns_zones === 1) {
 
-    if (mysqli_num_rows($result_accounts) > 0) {
+    // No matching DW DNS zones or the query failed
 
-	    echo "";
+} else { ?>
 
-	} else {
-
-	    echo "<BR><BR>";
-		
-	} ?>
-    <strong>DNS Zones & Records</strong><BR><BR><?php
+    <BR><BR><strong>DNS Zones & Records</strong><BR><BR><?php
 	$sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
 							 FROM dw_dns_zones AS z, dw_servers AS s
 							 WHERE z.server_id = s.id
@@ -543,7 +554,7 @@ if (mysqli_num_rows($result_dns_zones) > 0) {
 
 }
 ?>
-<BR><a href="<?php echo $PHP_SELF; ?>?did=<?php echo $did; ?>&del=1">DELETE THIS DOMAIN</a>
+<BR><BR><a href="<?php echo $PHP_SELF; ?>?did=<?php echo $did; ?>&del=1">DELETE THIS DOMAIN</a>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>
