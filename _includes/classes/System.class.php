@@ -25,10 +25,10 @@ namespace DomainMOD;
 class System
 {
 
-    function installCheck($connection, $web_root, $full_server_path)
+    function installCheck($connection, $web_root)
     {
 
-        $full_install_path = $full_server_path . "/install/";
+        $full_install_path = DIR_ROOT . "install/";
 
         if (is_dir($full_install_path)) {
 
