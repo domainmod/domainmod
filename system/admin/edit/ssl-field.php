@@ -21,17 +21,18 @@
 ?>
 <?php
 include("../../../_includes/start-session.inc.php");
+include("../../../_includes/init.inc.php");
 
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "../../../invalid.php";
-include("../../../_includes/auth/admin-user-check.inc.php");
+include(DIR_INC . "auth/admin-user-check.inc.php");
 
-include("../../../_includes/config.inc.php");
-include("../../../_includes/database.inc.php");
-include("../../../_includes/software.inc.php");
-include("../../../_includes/timestamps/current-timestamp.inc.php");
-include("../../../_includes/auth/auth-check.inc.php");
-include("../../../_includes/classes/Error.class.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -154,14 +155,14 @@ if ($really_del == "1") {
 
 }
 ?>
-<?php include("../../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../../../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_user_form" method="post" action="ssl-field.php">
 <strong>Display Name (75)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_name" type="text" size="30" maxlength="75" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>"><BR><BR>
 <strong>Database Field Name</strong><BR><BR><?php echo $new_field_name; ?><BR><BR>
@@ -177,6 +178,6 @@ if ($really_del == "1") {
 <input type="submit" name="button" value="Update Custom Field &raquo;">
 </form>
 <BR><BR><a href="ssl-field.php?csfid=<?php echo $csfid; ?>&del=1">DELETE THIS CUSTOM SSL FIELD</a>
-<?php include("../../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

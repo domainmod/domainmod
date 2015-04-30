@@ -21,11 +21,12 @@
 ?>
 <?php
 include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
-include("../_includes/classes/Note.class.php");
+include("../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "classes/Note.class.php");
 
 $page_title = "Viewing an SSL Certificate's Notes";
 $software_section = "ssl-certs";
@@ -44,14 +45,14 @@ while ($row = mysqli_fetch_object($result)) {
 
 }
 ?>
-<?php include("../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../_includes/layout/head-tags-bare.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags-bare.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/layout/header-bare.inc.php"); ?>
+<?php include(DIR_INC . "layout/header-bare.inc.php"); ?>
 <strong>Notes For <?php echo $new_name; ?></strong><BR>
 <BR>
 <?php
@@ -59,6 +60,6 @@ $note = new DomainMOD\Note();
 $html_notes = $note->formatHtml($new_notes);
 echo $html_notes;
 ?>
-<?php include("../_includes/layout/footer-bare.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer-bare.inc.php"); ?>
 </body>
 </html>

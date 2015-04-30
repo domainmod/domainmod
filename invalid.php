@@ -21,21 +21,22 @@
 ?>
 <?php
 include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/software.inc.php");
+include("_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "software.inc.php");
 
 $page_title = "Invalid Page";
 $software_section = "invalid";
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 The page you're trying to access is invalid.
-<?php include("_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

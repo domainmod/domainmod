@@ -22,7 +22,7 @@
 <?php
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "../../invalid.php";
-include($_SESSION['full_server_path'] . "/_includes/auth/admin-user-check.inc.php");
+include(DIR_INC . "auth/admin-user-check.inc.php");
 
 // Delete all unused domain fees
 $sql = "DELETE FROM fees

@@ -21,16 +21,14 @@
 ?>
 <?php
 include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-
-$_SESSION['full_server_path'] = $full_server_path;
-
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/login-check.inc.php");
-include("_includes/timestamps/current-timestamp.inc.php");
-include("_includes/classes/System.class.php");
-include("_includes/classes/Error.class.php");
+include("_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/login-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/System.class.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $system = new DomainMOD\System();
 $system->installCheck($connection, $web_root, $full_server_path);
@@ -52,7 +50,7 @@ if ($_SESSION['installation_mode'] == 1) {
 $new_username = $_POST['new_username'];
 $new_password = $_POST['new_password'];
 
-include("_includes/config-demo.inc.php");
+include(DIR_INC . "config-demo.inc.php");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
 	
@@ -168,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			$current_date = date("Y-m-d", strtotime($current_timestamp));
 			$last_login_date = date("Y-m-d", strtotime($row->last_login));
 
-			include("_includes/auth/login-checks/main.inc.php");
+			include(DIR_INC . "auth/login-checks/main.inc.php");
 
            if ($_SESSION['system_upgrade_available'] == "1") {
 
@@ -182,13 +180,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
            if (($_SESSION['run_update_includes'] == "1" || $last_login_date < $current_date) && $_SESSION['need_domain'] == "0") {
 				
-				include("_includes/system/update-segments.inc.php");
-				include("_includes/system/update-tlds.inc.php");
+				include(DIR_INC . "system/update-segments.inc.php");
+				include(DIR_INC . "system/update-tlds.inc.php");
 
 			}
 
-           include("_includes/system/check-domain-fees.inc.php");
-           include("_includes/system/check-ssl-fees.inc.php");
+           include(DIR_INC . "system/check-domain-fees.inc.php");
+           include(DIR_INC . "system/check-ssl-fees.inc.php");
 
            if ($_SESSION['is_new_password'] == 1) {
 				
@@ -244,7 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 }
 $new_password = "";
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <?php 
@@ -253,7 +251,7 @@ if ($page_title != "") { ?>
 } else { ?>
 	<title><?php echo $software_title; ?></title><?php
 } ?>
-<?php include("_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <?php
 if ($new_username == "") { ?>
@@ -261,7 +259,7 @@ if ($new_username == "") { ?>
 } else { ?>
 	<body onLoad="document.forms[0].elements[1].focus()";><?php 
 } ?>
-<?php include("_includes/layout/header-login.inc.php"); ?>
+<?php include(DIR_INC . "layout/header-login.inc.php"); ?>
 <?php 
 if ($_SESSION['installation_mode'] != 1) { ?>
 
@@ -281,6 +279,6 @@ if ($_SESSION['installation_mode'] != 1) { ?>
         </div>
     </form><?php 
 } ?>
-<?php include("_includes/layout/footer-login.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer-login.inc.php"); ?>
 </body>
 </html>

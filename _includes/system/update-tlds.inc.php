@@ -36,7 +36,7 @@ include("../classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
-include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 $sql = "SELECT id, domain 
 		FROM domains 

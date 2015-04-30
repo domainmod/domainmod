@@ -21,7 +21,7 @@
 ?>
 <?php
 include("_includes/start-session.inc.php");
-include("_includes/auth/auth-check.inc.php");
-
-header("Location: _includes/auth/logout.inc.php");
-exit;
+include("_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "auth/logout.inc.php");

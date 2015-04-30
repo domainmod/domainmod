@@ -31,10 +31,10 @@
     <div class="main-outer-login">
         <div class="main-inner">
             <BR><?php 
-                include($full_server_path . "/_includes/layout/table-maintenance.inc.php"); 
+                include(DIR_INC . "layout/table-maintenance.inc.php");
             ?>
             <?php 
             if ($_SESSION['result_message'] != "") {
-                include($full_server_path . "/_includes/layout/table-result-message.inc.php"); 
+                include(DIR_INC . "layout/table-result-message.inc.php");
                 unset($_SESSION['result_message']);
             }

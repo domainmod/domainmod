@@ -21,23 +21,24 @@
 ?>
 <?php
 include("../../_includes/start-session.inc.php");
-include("../../_includes/config.inc.php");
-include("../../_includes/database.inc.php");
-include("../../_includes/software.inc.php");
-include("../../_includes/auth/auth-check.inc.php");
+include("../../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
 
 $page_title = "Getting Started";
 $software_section = "help";
 ?>
-<?php include("../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 This is where the getting started guide will go.<BR>
-<?php include("../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

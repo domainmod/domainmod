@@ -21,16 +21,17 @@
 ?>
 <?php
 include("../../../_includes/start-session.inc.php");
+include("../../../_includes/init.inc.php");
 
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "../../../invalid.php";
-include("../../../_includes/auth/admin-user-check.inc.php");
+include(DIR_INC . "auth/admin-user-check.inc.php");
 
-include("../../../_includes/config.inc.php");
-include("../../../_includes/database.inc.php");
-include("../../../_includes/software.inc.php");
-include("../../../_includes/auth/auth-check.inc.php");
-include("../../../_includes/timestamps/current-timestamp.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 $id = $_GET['id'];
 $action = $_GET['action'];
@@ -99,15 +100,15 @@ if ($action != "") {
 $page_title = "Data Warehouse";
 $software_section = "admin-dw-main";
 ?>
-<?php include("../../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../../../_includes/layout/head-tags.inc.php"); ?>
-<?php include("../../../_includes/system/jumpmenu.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "system/jumpmenu.inc.php"); ?>
 </head>
 <body>
-<?php include("../../../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 
 <?php
 $sql = "SELECT id
@@ -654,6 +655,6 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
 	echo "<BR>";
 	
 } ?>
-<?php include("../../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

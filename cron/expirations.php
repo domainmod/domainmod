@@ -20,13 +20,14 @@
  */
 ?>
 <?php
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/timestamps/current-timestamp-basic.inc.php");
-include("../_includes/timestamps/current-timestamp-long.inc.php");
+include("../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "timestamps/current-timestamp-basic.inc.php");
+include(DIR_INC . "timestamps/current-timestamp-long.inc.php");
 
-include("../_includes/config-demo.inc.php");
+include(DIR_INC . "config-demo.inc.php");
 
 if ($demo_install != "1") {
 
@@ -38,7 +39,7 @@ if ($demo_install != "1") {
 		$number_of_days = $row->expiration_email_days;
 	}
 	
-	include("../_includes/timestamps/current-timestamp-basic-plus-X-days.inc.php");
+	include(DIR_INC . "timestamps/current-timestamp-basic-plus-X-days.inc.php");
 	
 	$sql_settings = "SELECT full_url, email_address
 					 FROM settings";

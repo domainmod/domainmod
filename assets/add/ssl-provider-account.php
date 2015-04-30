@@ -21,12 +21,13 @@
 ?>
 <?php
 include("../../_includes/start-session.inc.php");
-include("../../_includes/config.inc.php");
-include("../../_includes/database.inc.php");
-include("../../_includes/software.inc.php");
-include("../../_includes/auth/auth-check.inc.php");
-include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/classes/Error.class.php");
+include("../../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -66,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		if ($_SESSION['need_ssl_account'] == "1") {
 			
-			include("../../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
+			include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
 			header("Location: ../../ssl-certs.php");
 
 		} else {
@@ -84,14 +85,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 ?>
-<?php include("../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[2].focus()";>
-<?php include("../../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_ssl_account_form" method="post" action="ssl-provider-account.php">
 <strong>Owner</strong><BR><BR>
 <?php
@@ -155,6 +156,6 @@ echo "</select>";
 <BR><BR>
 <input type="submit" name="button" value="Add This SSL Provider Account &raquo;">
 </form>
-<?php include("../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

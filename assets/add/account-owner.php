@@ -21,12 +21,13 @@
 ?>
 <?php
 include("../../_includes/start-session.inc.php");
-include("../../_includes/config.inc.php");
-include("../../_includes/database.inc.php");
-include("../../_includes/software.inc.php");
-include("../../_includes/auth/auth-check.inc.php");
-include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/classes/Error.class.php");
+include("../../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -59,14 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 ?>
-<?php include("../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("../../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_owner_form" method="post" action="account-owner.php">
 <strong>Owner Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_owner" type="text" value="<?php echo $new_owner; ?>" size="50" maxlength="100">
@@ -76,6 +77,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR><BR>
 <input type="submit" name="button" value="Add This Account Owner &raquo;">
 </form>
-<?php include("../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

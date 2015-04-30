@@ -21,12 +21,13 @@
 ?>
 <?php
 include("../../_includes/start-session.inc.php");
-include("../../_includes/config.inc.php");
-include("../../_includes/database.inc.php");
-include("../../_includes/software.inc.php");
-include("../../_includes/auth/auth-check.inc.php");
-include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/classes/Error.class.php");
+include("../../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -153,21 +154,21 @@ if ($really_del == "1") {
 	
 	$_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$temp_username ($temp_registrar_name, $temp_owner_name)</font> Deleted<BR>";
 
-	include("../../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
+	include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
 	header("Location: ../registrar-accounts.php");
 	exit;
 
 }
 ?>
-<?php include("../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_account_form" method="post" action="registrar-account.php">
 <strong>Owner</strong><BR><BR>
 <?php
@@ -232,6 +233,6 @@ echo "</select>";
 <input type="submit" name="button" value="Update This Registrar Account &raquo;">
 </form>
 <BR><BR><a href="registrar-account.php?raid=<?php echo $raid; ?>&del=1">DELETE THIS REGISTRAR ACCOUNT</a>
-<?php include("../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

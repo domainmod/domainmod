@@ -21,14 +21,15 @@
 ?>
 <?php
 include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
-include("_includes/timestamps/current-timestamp.inc.php");
-include("_includes/classes/Segment.class.php");
-include("_includes/classes/Error.class.php");
-include("_includes/classes/Export.class.php");
+include("_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Segment.class.php");
+include(DIR_INC . "classes/Error.class.php");
+include(DIR_INC . "classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -189,14 +190,14 @@ if ($export_data == "1") {
 
 }
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 ?>
@@ -261,6 +262,6 @@ if (mysqli_num_rows($result) > 0) { ?>
     <?php
     } ?>
 </table>
-<?php include("_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

@@ -31,4 +31,4 @@
 [ <a href="<?php echo $web_root; ?>/ssl-accounts.php">SSL Accounts</a> ]&nbsp;
 [ <a href="<?php echo $web_root; ?>/ssl-types.php">SSL Cert Types</a> ]&nbsp;
 <?php
-include($full_server_path . "/_includes/layout/menu-sub.inc.php");
+include(DIR_INC . "layout/menu-sub.inc.php");

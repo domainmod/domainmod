@@ -21,24 +21,25 @@
 ?>
 <?php
 include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
+include("../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
 
 $page_title = $reporting_section_title;
 $page_subtitle = "Reporting Main";
 $software_section = "reporting";
 ?>
-<?php include("../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title . " :: " . $page_subtitle; ?></title>
-<?php include("../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/layout/header.inc.php"); ?>
-<?php include("../_includes/layout/reporting-block.inc.php"); ?>
-<?php include("../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

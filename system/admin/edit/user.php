@@ -21,17 +21,18 @@
 ?>
 <?php
 include("../../../_includes/start-session.inc.php");
+include("../../../_includes/init.inc.php");
 
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "../../../invalid.php";
-include("../../../_includes/auth/admin-user-check.inc.php");
+include(DIR_INC . "auth/admin-user-check.inc.php");
 
-include("../../../_includes/config.inc.php");
-include("../../../_includes/database.inc.php");
-include("../../../_includes/software.inc.php");
-include("../../../_includes/timestamps/current-timestamp.inc.php");
-include("../../../_includes/auth/auth-check.inc.php");
-include("../../../_includes/classes/Error.class.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -200,14 +201,14 @@ if ($really_del == "1") {
 
 }
 ?>
-<?php include("../../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../../../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_user_form" method="post" action="user.php">
 <strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") echo htmlentities($new_first_name); ?>"><BR><BR>
 <strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") echo htmlentities($new_last_name); ?>"><BR><BR>
@@ -259,6 +260,6 @@ if ($really_del == "1") {
 </form>
 <BR><BR><a href="../reset-password.php?new_username=<?php echo $new_username; ?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
 <BR><a href="user.php?uid=<?php echo $uid; ?>&del=1">DELETE THIS USER</a>
-<?php include("../../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

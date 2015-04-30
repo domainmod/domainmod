@@ -21,17 +21,18 @@
 ?>
 <?php
 include("../../../_includes/start-session.inc.php");
+include("../../../_includes/init.inc.php");
 
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "../../../invalid.php";
-include("../../../_includes/auth/admin-user-check.inc.php");
+include(DIR_INC . "auth/admin-user-check.inc.php");
 
-include("../../../_includes/config.inc.php");
-include("../../../_includes/database.inc.php");
-include("../../../_includes/software.inc.php");
-include("../../../_includes/timestamps/current-timestamp.inc.php");
-include("../../../_includes/auth/auth-check.inc.php");
-include("../../../_includes/classes/Error.class.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -169,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 		$temp_input_user_id = $temp_user_id;
 		$temp_input_default_currency = 'CAD';
-		include("../../../_includes/system/update-conversion-rates.inc.php");
+		include(DIR_INC . "system/update-conversion-rates.inc.php");
 
         header("Location: ../users.php");
         exit;
@@ -189,14 +190,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 }
 ?>
-<?php include("../../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../../../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("../../../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_user_form" method="post" action="user.php">
 <strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php echo $new_first_name; ?>"><BR><BR>
 <strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php echo $new_last_name; ?>"><BR><BR>
@@ -216,6 +217,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <BR><BR>
 <input type="submit" name="button" value="Add New User &raquo;">
 </form>
-<?php include("../../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

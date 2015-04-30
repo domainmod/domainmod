@@ -19,7 +19,7 @@
  *
  */
 ?>
-<?php include($_SESSION['full_server_path'] . "/_includes/system/jumpmenu.inc.php"); ?>
+<?php include(DIR_INC . "system/jumpmenu.inc.php"); ?>
 Before running any reports you should <a href="<?php echo $web_root; ?>/_includes/system/update-conversion-rates.inc.php?direct=1">update the conversion rates</a>.<BR><BR><BR>
 <div class="reporting-block-outer">
 	<div class="reporting-block-left">

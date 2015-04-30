@@ -21,17 +21,18 @@
 ?>
 <?php
 include("../../_includes/start-session.inc.php");
+include("../../_includes/init.inc.php");
 
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "../../invalid.php";
-include("../../_includes/auth/admin-user-check.inc.php");
+include(DIR_INC . "auth/admin-user-check.inc.php");
 
-include("../../_includes/config.inc.php");
-include("../../_includes/database.inc.php");
-include("../../_includes/software.inc.php");
-include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/auth/auth-check.inc.php");
-include("../../_includes/classes/Error.class.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -87,14 +88,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 	}
 }
 ?>
-<?php include("../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="system_settings_form" method="post" action="system-settings.php">
 <strong>Full <?php echo $software_title; ?> URL (100):</strong><BR><BR>
 Enter the full URL of your <?php echo $software_title; ?> installation, excluding the trailing slash (Example: http://example.com/domainmod).<BR><BR>
@@ -110,6 +111,6 @@ This is the number of days in the future to display in the expiration emails.<BR
 <BR><BR>
 <input type="submit" name="button" value="Update System Settings&raquo;">
 </form>
-<?php include("../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

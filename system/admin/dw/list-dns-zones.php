@@ -21,19 +21,20 @@
 ?>
 <?php
 include("../../../_includes/start-session.inc.php");
+include("../../../_includes/init.inc.php");
 
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "../../../invalid.php";
-include("../../../_includes/auth/admin-user-check.inc.php");
+include(DIR_INC . "auth/admin-user-check.inc.php");
 
-include("../../../_includes/config.inc.php");
-include("../../../_includes/database.inc.php");
-include("../../../_includes/software.inc.php");
-include("../../../_includes/auth/auth-check.inc.php");
-include("../../../_includes/timestamps/current-timestamp.inc.php");
-include("../../../_includes/classes/Error.class.php");
-include("../../../_includes/classes/Layout.class.php");
-include("../../../_includes/classes/Export.class.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Error.class.php");
+include(DIR_INC . "classes/Layout.class.php");
+include(DIR_INC . "classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -272,14 +273,14 @@ if ($export_data == "1") {
 
 }
 ?>
-<?php include("../../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../../../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("../../../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 	<font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR><?php
 
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_dns_zone_temp));
@@ -340,7 +341,7 @@ if(mysqli_num_rows($result_dw_dns_zone_temp) == 0) {
     <strong>Number of DNS Zones:</strong> <?php echo number_format($totalrows); ?><BR><BR>
 
 	<strong>Number of DNS Records:</strong> <?php echo number_format($total_dns_record_count_temp); ?><BR><BR>
-	<?php include("../../../_includes/layout/pagination.menu.inc.php"); ?><BR><?php
+	<?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?><BR><?php
 	// QUERY AT TOP OF PAGE
 	// $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
 	//							FROM dw_dns_zones AS z, dw_servers AS s
@@ -349,11 +350,11 @@ if(mysqli_num_rows($result_dw_dns_zone_temp) == 0) {
 	//							ORDER BY s.name, z.zonefile, z.domain";
 	// $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or $error->outputOldSqlError($connection);
 	$from_main_dw_dns_zone_page = 1;
-	include("../../../_includes/dw/display-dns-zone.inc.php");
+	include(DIR_INC . "dw/display-dns-zone.inc.php");
 
 }
 ?>
-<?php include("../../../_includes/layout/pagination.menu.inc.php"); ?>
-<?php include("../../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

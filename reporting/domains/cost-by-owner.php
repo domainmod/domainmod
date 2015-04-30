@@ -21,15 +21,16 @@
 ?>
 <?php
 include("../../_includes/start-session.inc.php");
-include("../../_includes/config.inc.php");
-include("../../_includes/database.inc.php");
-include("../../_includes/software.inc.php");
-include("../../_includes/auth/auth-check.inc.php");
-include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/timestamps/current-timestamp-basic.inc.php");
-include("../../_includes/classes/Date.class.php");
-include("../../_includes/classes/Error.class.php");
-include("../../_includes/classes/Export.class.php");
+include("../../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "timestamps/current-timestamp-basic.inc.php");
+include(DIR_INC . "classes/Date.class.php");
+include(DIR_INC . "classes/Error.class.php");
+include(DIR_INC . "classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -106,7 +107,7 @@ $temp_input_conversion = "";
 $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-include("../../_includes/system/convert-and-format-currency.inc.php");
+include(DIR_INC . "system/convert-and-format-currency.inc.php");
 $grand_total = $temp_output_amount;
 
 if ($submission_failed != "1" && $total_rows > 0) {
@@ -181,7 +182,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-				include("../../_includes/system/convert-and-format-currency.inc.php");
+				include(DIR_INC . "system/convert-and-format-currency.inc.php");
 				$per_domain = $temp_output_amount;
 	
 				$temp_input_amount = $row->total_cost;
@@ -189,7 +190,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-				include("../../_includes/system/convert-and-format-currency.inc.php");
+				include(DIR_INC . "system/convert-and-format-currency.inc.php");
 				$row->total_cost = $temp_output_amount;
 
                 $row_contents = array(
@@ -210,16 +211,16 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 }
 ?>
-<?php include("../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?> :: <?php echo $page_subtitle; ?></title>
-<?php include("../../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/layout/header.inc.php"); ?>
-<?php include("../../_includes/layout/reporting-block.inc.php"); ?>
-<?php include("../../_includes/layout/table-export-top.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
+<?php include(DIR_INC . "layout/table-export-top.inc.php"); ?>
     <form name="export_domains_form" method="post" action="cost-by-owner.php">
         <a href="cost-by-owner.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_start_date\""; } ?>> 
@@ -230,7 +231,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-owner.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
     </form>
-<?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
+<?php include(DIR_INC . "layout/table-export-bottom.inc.php"); ?>
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
 
@@ -266,7 +267,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include("../../_includes/system/convert-and-format-currency.inc.php");
+		include(DIR_INC . "system/convert-and-format-currency.inc.php");
 		$per_domain = $temp_output_amount;
 
 		$temp_input_amount = $row->total_cost;
@@ -274,7 +275,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include("../../_includes/system/convert-and-format-currency.inc.php");
+		include(DIR_INC . "system/convert-and-format-currency.inc.php");
 		$row->total_cost = $temp_output_amount; ?>
 	
 		<tr class="main_table_row_active">
@@ -290,6 +291,6 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 } 
 ?>
-<?php include("../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

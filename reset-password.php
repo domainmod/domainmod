@@ -21,11 +21,12 @@
 ?>
 <?php
 include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/login-check.inc.php");
-include("_includes/classes/Error.class.php");
+include("_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/login-check.inc.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -57,7 +58,7 @@ if ($new_username != "") {
 						     AND email_address = '$row->email_address'";
 			$result_update = mysqli_query($connection, $sql_update);
 			
-			include("_includes/email/send-new-password.inc.php");
+			include(DIR_INC . "email/send-new-password.inc.php");
 					
 			$_SESSION['result_message'] .= "Your new password has been emailed to you<BR>";
 			
@@ -83,14 +84,14 @@ if ($new_username != "") {
 
 }
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("_includes/layout/header-login.inc.php"); ?>
+<?php include(DIR_INC . "layout/header-login.inc.php"); ?>
 <div class="reset-password">
     <font class="headline">Reset Your Password</font>
     <BR><BR><BR>
@@ -100,6 +101,6 @@ if ($new_username != "") {
     </form>
     <BR><BR>[<a class="invisiblelink" href="index.php">Cancel Password Reset</a>]
 </div>
-<?php include("_includes/layout/footer-login.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer-login.inc.php"); ?>
 </body>
 </html>

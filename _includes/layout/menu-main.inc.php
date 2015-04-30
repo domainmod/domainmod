@@ -31,4 +31,4 @@
 <?php } ?>
 [ <a href="<?php echo $web_root; ?>/system/">Control Panel</a> ]&nbsp;
 <?php
-include($full_server_path . "/_includes/layout/menu-sub.inc.php");
+include(DIR_INC . "layout/menu-sub.inc.php");

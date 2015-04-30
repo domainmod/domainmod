@@ -21,12 +21,13 @@
 ?>
 <?php
 include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
-include("../_includes/classes/System.class.php");
-include("../_includes/classes/Error.class.php");
+include("../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/System.class.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $system = new DomainMOD\System();
 $system->installCheck($connection, $web_root, $full_server_path);

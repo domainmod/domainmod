@@ -21,14 +21,15 @@
 ?>
 <?php
 include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
-include("_includes/timestamps/current-timestamp.inc.php");
-include("_includes/classes/Error.class.php");
-include("_includes/classes/Export.class.php");
-include("_includes/classes/Layout.class.php");
+include("_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Error.class.php");
+include(DIR_INC . "classes/Export.class.php");
+include(DIR_INC . "classes/Layout.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -174,7 +175,7 @@ $temp_input_conversion = "";
 $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-include("_includes/system/convert-and-format-currency.inc.php");
+include(DIR_INC . "system/convert-and-format-currency.inc.php");
 $grand_total = $temp_output_amount;
 
 if ($export_data == "1") {
@@ -450,7 +451,7 @@ if ($export_data == "1") {
 		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include("_includes/system/convert-and-format-currency.inc.php");
+		include(DIR_INC . "system/convert-and-format-currency.inc.php");
 		$export_initial_fee = $temp_output_amount;
 
         $temp_input_amount = $temp_renewal_fee;
@@ -458,7 +459,7 @@ if ($export_data == "1") {
         $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
         $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
         $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-        include("_includes/system/convert-and-format-currency.inc.php");
+        include(DIR_INC . "system/convert-and-format-currency.inc.php");
         $export_renewal_fee = $temp_output_amount;
 
         $temp_input_amount = $temp_misc_fee;
@@ -466,7 +467,7 @@ if ($export_data == "1") {
         $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
         $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
         $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-        include("_includes/system/convert-and-format-currency.inc.php");
+        include(DIR_INC . "system/convert-and-format-currency.inc.php");
         $export_misc_fee = $temp_output_amount;
 
         $temp_input_amount = $temp_total_cost;
@@ -474,7 +475,7 @@ if ($export_data == "1") {
         $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
         $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
         $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-        include("_includes/system/convert-and-format-currency.inc.php");
+        include(DIR_INC . "system/convert-and-format-currency.inc.php");
         $export_total_cost = $temp_output_amount;
 
         unset($row_contents);
@@ -544,15 +545,15 @@ if ($export_data == "1") {
 
 }
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("_includes/layout/head-tags.inc.php"); ?>
-<?php include("_includes/system/jumpmenu.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "system/jumpmenu.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[10].focus()";>
-<?php include("_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 if ($_SESSION['need_ssl_provider'] == "1") {
 	echo "<strong><font class=\"highlight\">0</font></strong> SSL Providers found. Please <a href=\"assets/add/ssl-provider.php\">click here</a> to add one.<BR><BR>";
@@ -1019,7 +1020,7 @@ echo "</select>";
 <?php if (mysqli_num_rows($result) > 0) { ?>
 <BR><strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
 <strong>Number of SSL Certs:</strong> <?php echo number_format($totalrows); ?><BR><BR>
-<?php include("_includes/layout/pagination.menu.inc.php"); ?>
+<?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?>
 <?php if ($totalrows != '0') { ?>
 <table class="main_table" cellpadding="0" cellspacing="0">
 <tr class="main_table_row_heading_active">
@@ -1088,7 +1089,7 @@ echo "</select>";
 		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
 		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
 		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include("_includes/system/convert-and-format-currency.inc.php");
+		include(DIR_INC . "system/convert-and-format-currency.inc.php");
 		echo $temp_output_amount;
 		?>
         </a>
@@ -1146,10 +1147,10 @@ echo "</select>";
 </table>
 <BR>
 <?php } ?>
-<?php include("_includes/layout/pagination.menu.inc.php"); ?>
+<?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?>
 <?php } else { ?>
 			<BR>Your search returned zero results.
 <?php } ?>
-<?php include("_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

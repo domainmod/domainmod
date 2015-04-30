@@ -21,18 +21,19 @@
 ?>
 <?php
 include("../../_includes/start-session.inc.php");
+include("../../_includes/init.inc.php");
 
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "../../invalid.php";
-include("../../_includes/auth/admin-user-check.inc.php");
+include(DIR_INC . "auth/admin-user-check.inc.php");
 
-include("../../_includes/config.inc.php");
-include("../../_includes/database.inc.php");
-include("../../_includes/software.inc.php");
-include("../../_includes/auth/auth-check.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
 
 // Perform System Maintenance
-include("../../_includes/system/perform-maintenance.inc.php");
+include(DIR_INC . "system/perform-maintenance.inc.php");
 
 // Redirect to Control Panel after performing maintenance
 header("Location: ../index.php");

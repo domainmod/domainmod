@@ -22,7 +22,7 @@
 <?php
 if ($_SESSION['system_db_version'] != $most_recent_db_version) {
 
-    include($_SESSION['full_server_path'] . "/_includes/system/update-database.inc.php");
+    include(DIR_INC . "system/update-database.inc.php");
     $_SESSION['run_update_includes'] = "1";
 
 } else {

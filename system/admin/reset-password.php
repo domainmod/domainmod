@@ -21,16 +21,17 @@
 ?>
 <?php
 include("../../_includes/start-session.inc.php");
+include("../../_includes/init.inc.php");
 
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "../../invalid.php";
-include("../../_includes/auth/admin-user-check.inc.php");
-include("../../_includes/config.inc.php");
-include("../../_includes/database.inc.php");
-include("../../_includes/software.inc.php");
-include("../../_includes/auth/auth-check.inc.php");
-include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/classes/Error.class.php");
+include(DIR_INC . "auth/admin-user-check.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -62,7 +63,7 @@ if ($new_username != "") {
 						     AND email_address = '$row->email_address'";
 			$result_update = mysqli_query($connection, $sql_update);
 			
-			include("../../_includes/email/send-new-password.inc.php");
+			include(DIR_INC . "email/send-new-password.inc.php");
 					
 			$_SESSION['result_message'] .= "The password has been reset and emailed to the account holder<BR>";
 			

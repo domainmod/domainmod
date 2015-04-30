@@ -20,15 +20,16 @@
  */
 ?>
 <?php
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
-include("../_includes/classes/Error.class.php");
+include("../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
-include("../_includes/config-demo.inc.php");
+include(DIR_INC . "config-demo.inc.php");
 
 if ($demo_install != "1") {
 

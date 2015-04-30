@@ -20,20 +20,16 @@
  */
 ?>
 <?php
-include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
-include("_includes/timestamps/current-timestamp.inc.php");
+include(DIR_INC . "start-session.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
 
 $_SESSION['running_login_checks'] = 1;
 
-// Compare database and software versions (to see if a database upgraded is needed)
-include("_includes/auth/login-checks/compare-versions.inc.php");
+// Compare database and software versions (to see if a database upgrade is needed)
+include(DIR_INC . "auth/login-checks/compare-versions.inc.php");
 
 // Check if there are Domain and SSL assets
-include("_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
+include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
 unset($_SESSION['running_login_checks']);
 

@@ -21,13 +21,14 @@
 ?>
 <?php
 include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
-include("../_includes/classes/Domain.class.php");
-include("../_includes/classes/Error.class.php");
+include("../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Domain.class.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -48,7 +49,7 @@ $new_segid = $_POST['new_segid'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$temp_input_string = $new_segment;
-	include("../_includes/system/regex-bulk-form-strip-whitespace.inc.php");
+	include(DIR_INC . "system/regex-bulk-form-strip-whitespace.inc.php");
 	$new_segment = $temp_output_string;
 
 	if ($new_name != "" && $new_segment != "") {
@@ -165,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 			$_SESSION['result_message'] = "Segment <font class=\"highlight\">$new_name</font> Updated<BR>";
 	
-			include("../_includes/system/update-segments.inc.php");
+			include(DIR_INC . "system/update-segments.inc.php");
 
             header("Location: ../segments.php");
 			exit;
@@ -272,14 +273,14 @@ if ($really_del == "1") {
 
 }
 ?>
-<?php include("../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_segment_form" method="post" action="segment.php">
 <strong>Segment Name (35)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>" size="25" maxlength="35">
@@ -297,6 +298,6 @@ if ($really_del == "1") {
 <input type="submit" name="button" value="Update This Segment &raquo;">
 </form>
 <BR><BR><a href="segment.php?segid=<?php echo $segid; ?>&del=1">DELETE THIS SEGMENT</a>
-<?php include("../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

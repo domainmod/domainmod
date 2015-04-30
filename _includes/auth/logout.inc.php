@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-include("../start-session.inc.php");
-include("auth-check.inc.php");
+include(DIR_INC . "start-session.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
 
 $_SESSION = array();
 
@@ -34,5 +34,5 @@ if (ini_get("session.use_cookies")) {
 
 session_destroy();
 
-header("Location: ../../");
+header("Location: " . $web_root);
 exit;

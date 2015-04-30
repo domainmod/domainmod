@@ -21,13 +21,14 @@
 ?>
 <?php
 include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
-include("../_includes/classes/Domain.class.php");
-include("../_includes/classes/Error.class.php");
+include("../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Domain.class.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -43,7 +44,7 @@ $new_notes = $_POST['new_notes'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$temp_input_string = $new_segment;
-	include("../_includes/system/regex-bulk-form-strip-whitespace.inc.php");
+	include(DIR_INC . "system/regex-bulk-form-strip-whitespace.inc.php");
 	$new_segment = $temp_output_string;
 
 	if ($new_name != "" && $new_segment != "") {
@@ -172,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $_SESSION['result_message'] = "Segment <font class=\"highlight\">$new_name</font> Added<BR>";
 
-            include("../_includes/system/update-segments.inc.php");
+            include(DIR_INC . "system/update-segments.inc.php");
 
             header("Location: ../segments.php");
 			exit;
@@ -188,14 +189,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 ?>
-<?php include("../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_segment_form" method="post" action="segment.php">
 <strong>Segment Name (35)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" value="<?php echo $new_name; ?>" size="25" maxlength="35">
@@ -211,6 +212,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <BR><BR>
 <input type="submit" name="button" value="Add This Segment &raquo;">
 </form>
-<?php include("../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

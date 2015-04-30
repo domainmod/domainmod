@@ -31,10 +31,10 @@
 
 </div>
 <?php
-$full_filename = $full_server_path . "/_includes/layout/footer.DEMO.inc.php";
+$full_filename = DIR_INC . "layout/footer.DEMO.inc.php";
 
 if (file_exists($full_filename)) {
 
-    include($full_server_path . "/_includes/layout/footer.DEMO.inc.php");
+    include(DIR_INC . "layout/footer.DEMO.inc.php");
 
 }

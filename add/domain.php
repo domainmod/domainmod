@@ -21,15 +21,16 @@
 ?>
 <?php
 include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
-include("../_includes/timestamps/current-timestamp-basic-plus-one-year.inc.php");
-include("../_includes/classes/Date.class.php");
-include("../_includes/classes/Domain.class.php");
-include("../_includes/classes/Error.class.php");
+include("../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "timestamps/current-timestamp-basic-plus-one-year.inc.php");
+include(DIR_INC . "classes/Date.class.php");
+include(DIR_INC . "classes/Domain.class.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -164,9 +165,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
 
-            include("../_includes/system/update-segments.inc.php");
-            include("../_includes/system/check-domain-fees.inc.php");
-			include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
+            include(DIR_INC . "system/update-segments.inc.php");
+            include(DIR_INC . "system/check-domain-fees.inc.php");
+			include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
         } else {
 
@@ -183,14 +184,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 ?>
-<?php include("../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
-<?php include("../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_domain_form" method="post" action="domain.php">
 <strong>Domain (255)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_domain" type="text" size="50" maxlength="255" value="<?php echo $new_domain; ?>">
@@ -443,6 +444,6 @@ if (mysqli_num_rows($result) > 0) { ?>
 ?>
 <input type="submit" name="button" value="Add This Domain &raquo;">
 </form>
-<?php include("../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

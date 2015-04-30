@@ -21,17 +21,18 @@
 ?>
 <?php
 include("../../../../_includes/start-session.inc.php");
+include("../../../../_includes/init.inc.php");
 
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "../../../../invalid.php";
-include("../../../../_includes/auth/admin-user-check.inc.php");
+include(DIR_INC . "auth/admin-user-check.inc.php");
 
-include("../../../../_includes/config.inc.php");
-include("../../../../_includes/database.inc.php");
-include("../../../../_includes/software.inc.php");
-include("../../../../_includes/auth/auth-check.inc.php");
-include("../../../../_includes/timestamps/current-timestamp.inc.php");
-include("../../../../_includes/classes/Error.class.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -162,14 +163,14 @@ if ($really_del == "1") {
 
 }
 ?>
-<?php include("../../../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../../../../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../../../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="dw_edit_server_form" method="post" action="server.php">
 <strong>Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 Enter the display name for this server.<BR><BR>
@@ -229,6 +230,6 @@ if ($new_notes != "") {
 <input type="submit" name="button" value="Update Server &raquo;">
 </form>
 <BR><BR><a href="server.php?dwsid=" . $dwsid . "&del=1"; ?>">DELETE THIS SERVER</a>
-<?php include("../../../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

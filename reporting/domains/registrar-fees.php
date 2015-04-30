@@ -21,13 +21,14 @@
 ?>
 <?php
 include("../../_includes/start-session.inc.php");
-include("../../_includes/config.inc.php");
-include("../../_includes/database.inc.php");
-include("../../_includes/software.inc.php");
-include("../../_includes/auth/auth-check.inc.php");
-include("../../_includes/timestamps/current-timestamp.inc.php");
-include("../../_includes/classes/Error.class.php");
-include("../../_includes/classes/Export.class.php");
+include("../../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Error.class.php");
+include(DIR_INC . "classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -133,7 +134,7 @@ if ($total_rows > 0) {
 				$temp_input_currency_symbol = $row->symbol;
 				$temp_input_currency_symbol_order = $row->symbol_order;
 				$temp_input_currency_symbol_space = $row->symbol_space;
-				include("../../_includes/system/convert-and-format-currency.inc.php");
+				include(DIR_INC . "system/convert-and-format-currency.inc.php");
 				$row->initial_fee = $temp_output_amount;
 	
 				$temp_input_amount = $row->renewal_fee;
@@ -141,7 +142,7 @@ if ($total_rows > 0) {
 				$temp_input_currency_symbol = $row->symbol;
 				$temp_input_currency_symbol_order = $row->symbol_order;
 				$temp_input_currency_symbol_space = $row->symbol_space;
-				include("../../_includes/system/convert-and-format-currency.inc.php");
+				include(DIR_INC . "system/convert-and-format-currency.inc.php");
 				$row->renewal_fee = $temp_output_amount;
 
                 $temp_input_amount = $row->transfer_fee;
@@ -149,7 +150,7 @@ if ($total_rows > 0) {
                 $temp_input_currency_symbol = $row->symbol;
                 $temp_input_currency_symbol_order = $row->symbol_order;
                 $temp_input_currency_symbol_space = $row->symbol_space;
-                include("../../_includes/system/convert-and-format-currency.inc.php");
+                include(DIR_INC . "system/convert-and-format-currency.inc.php");
                 $row->transfer_fee = $temp_output_amount;
 
                 $temp_input_amount = $row->privacy_fee;
@@ -157,7 +158,7 @@ if ($total_rows > 0) {
                 $temp_input_currency_symbol = $row->symbol;
                 $temp_input_currency_symbol_order = $row->symbol_order;
                 $temp_input_currency_symbol_space = $row->symbol_space;
-                include("../../_includes/system/convert-and-format-currency.inc.php");
+                include(DIR_INC . "system/convert-and-format-currency.inc.php");
                 $row->privacy_fee = $temp_output_amount;
 
                 $temp_input_amount = $row->misc_fee;
@@ -165,7 +166,7 @@ if ($total_rows > 0) {
                 $temp_input_currency_symbol = $row->symbol;
                 $temp_input_currency_symbol_order = $row->symbol_order;
                 $temp_input_currency_symbol_space = $row->symbol_space;
-                include("../../_includes/system/convert-and-format-currency.inc.php");
+                include(DIR_INC . "system/convert-and-format-currency.inc.php");
                 $row->misc_fee = $temp_output_amount;
 
                 unset($row_contents);
@@ -209,21 +210,21 @@ if ($total_rows > 0) {
 
 }
 ?>
-<?php include("../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?> :: <?php echo $page_subtitle; ?></title>
-<?php include("../../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/layout/header.inc.php"); ?>
-<?php include("../../_includes/layout/reporting-block.inc.php"); ?>
-<?php include("../../_includes/layout/table-export-top.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
+<?php include(DIR_INC . "layout/table-export-top.inc.php"); ?>
     <a href="registrar-fees.php?all=1">View All</a> or <a href="registrar-fees.php?all=0">Active Only</a>
     <?php if ($total_rows > 0) { ?>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="registrar-fees.php?export_data=1&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
     <?php } ?>
-<?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
+<?php include(DIR_INC . "layout/table-export-bottom.inc.php"); ?>
 
 <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
 <BR>
@@ -297,7 +298,7 @@ if ($total_rows > 0) { ?>
                     $temp_input_currency_symbol = $row->symbol;
                     $temp_input_currency_symbol_order = $row->symbol_order;
                     $temp_input_currency_symbol_space = $row->symbol_space;
-                    include("../../_includes/system/convert-and-format-currency.inc.php");
+                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
                     $row->initial_fee = $temp_output_amount;
                     ?>
                     <?php echo $row->initial_fee; ?>
@@ -309,7 +310,7 @@ if ($total_rows > 0) { ?>
                     $temp_input_currency_symbol = $row->symbol;
                     $temp_input_currency_symbol_order = $row->symbol_order;
                     $temp_input_currency_symbol_space = $row->symbol_space;
-                    include("../../_includes/system/convert-and-format-currency.inc.php");
+                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
                     $row->renewal_fee = $temp_output_amount;
                     ?>
                     <?php echo $row->renewal_fee; ?>
@@ -321,7 +322,7 @@ if ($total_rows > 0) { ?>
                     $temp_input_currency_symbol = $row->symbol;
                     $temp_input_currency_symbol_order = $row->symbol_order;
                     $temp_input_currency_symbol_space = $row->symbol_space;
-                    include("../../_includes/system/convert-and-format-currency.inc.php");
+                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
                     $row->transfer_fee = $temp_output_amount;
                     ?>
                     <?php echo $row->transfer_fee; ?>
@@ -333,7 +334,7 @@ if ($total_rows > 0) { ?>
                     $temp_input_currency_symbol = $row->symbol;
                     $temp_input_currency_symbol_order = $row->symbol_order;
                     $temp_input_currency_symbol_space = $row->symbol_space;
-                    include("../../_includes/system/convert-and-format-currency.inc.php");
+                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
                     $row->privacy_fee = $temp_output_amount;
                     ?>
                     <?php echo $row->privacy_fee; ?>
@@ -345,7 +346,7 @@ if ($total_rows > 0) { ?>
                     $temp_input_currency_symbol = $row->symbol;
                     $temp_input_currency_symbol_order = $row->symbol_order;
                     $temp_input_currency_symbol_space = $row->symbol_space;
-                    include("../../_includes/system/convert-and-format-currency.inc.php");
+                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
                     $row->misc_fee = $temp_output_amount;
                     ?>
                     <?php echo $row->misc_fee; ?>
@@ -392,7 +393,7 @@ if ($total_rows > 0) { ?>
                     $temp_input_currency_symbol = $row->symbol;
                     $temp_input_currency_symbol_order = $row->symbol_order;
                     $temp_input_currency_symbol_space = $row->symbol_space;
-                    include("../../_includes/system/convert-and-format-currency.inc.php");
+                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
                     $row->initial_fee = $temp_output_amount;
                     ?>
                     <?php echo $row->initial_fee; ?>
@@ -404,7 +405,7 @@ if ($total_rows > 0) { ?>
                     $temp_input_currency_symbol = $row->symbol;
                     $temp_input_currency_symbol_order = $row->symbol_order;
                     $temp_input_currency_symbol_space = $row->symbol_space;
-                    include("../../_includes/system/convert-and-format-currency.inc.php");
+                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
                     $row->renewal_fee = $temp_output_amount;
                     ?>
                     <?php echo $row->renewal_fee; ?>
@@ -416,7 +417,7 @@ if ($total_rows > 0) { ?>
                     $temp_input_currency_symbol = $row->symbol;
                     $temp_input_currency_symbol_order = $row->symbol_order;
                     $temp_input_currency_symbol_space = $row->symbol_space;
-                    include("../../_includes/system/convert-and-format-currency.inc.php");
+                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
                     $row->transfer_fee = $temp_output_amount;
                     ?>
                     <?php echo $row->transfer_fee; ?>
@@ -428,7 +429,7 @@ if ($total_rows > 0) { ?>
                     $temp_input_currency_symbol = $row->symbol;
                     $temp_input_currency_symbol_order = $row->symbol_order;
                     $temp_input_currency_symbol_space = $row->symbol_space;
-                    include("../../_includes/system/convert-and-format-currency.inc.php");
+                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
                     $row->privacy_fee = $temp_output_amount;
                     ?>
                     <?php echo $row->privacy_fee; ?>
@@ -440,7 +441,7 @@ if ($total_rows > 0) { ?>
                     $temp_input_currency_symbol = $row->symbol;
                     $temp_input_currency_symbol_order = $row->symbol_order;
                     $temp_input_currency_symbol_space = $row->symbol_space;
-                    include("../../_includes/system/convert-and-format-currency.inc.php");
+                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
                     $row->misc_fee = $temp_output_amount;
                     ?>
                     <?php echo $row->misc_fee; ?>
@@ -484,6 +485,6 @@ if ($total_rows > 0) { ?>
     <?php
 }
 ?>
-<?php include("../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

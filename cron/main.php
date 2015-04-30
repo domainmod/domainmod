@@ -20,7 +20,8 @@
  */
 ?>
 <?php
-include("../_includes/config-demo.inc.php");
+include("../_includes/init.inc.php");
+include(DIR_INC . "config-demo.inc.php");
 
 if ($demo_install != "1") {
 

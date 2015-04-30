@@ -21,14 +21,15 @@
 ?>
 <?php
 include("../_includes/start-session.inc.php");
-include("../_includes/config.inc.php");
-include("../_includes/database.inc.php");
-include("../_includes/software.inc.php");
-include("../_includes/auth/auth-check.inc.php");
-include("../_includes/timestamps/current-timestamp.inc.php");
-include("../_includes/classes/Date.class.php");
-include("../_includes/classes/Domain.class.php");
-include("../_includes/classes/Error.class.php");
+include("../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Date.class.php");
+include(DIR_INC . "classes/Domain.class.php");
+include(DIR_INC . "classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -185,8 +186,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Updated<BR>";
 
-        include("../_includes/system/update-segments.inc.php");
-        include("../_includes/system/check-domain-fees.inc.php");
+        include(DIR_INC . "system/update-segments.inc.php");
+        include(DIR_INC . "system/check-domain-fees.inc.php");
 
 		header("Location: domain.php?did=$did");
 		exit;
@@ -259,22 +260,22 @@ if ($really_del == "1") {
 	
 	$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Deleted<BR>";
 
-	include("../_includes/system/update-segments.inc.php");
-	include("../_includes/auth/login-checks/domain-and-ssl-asset-check.inc.php");
+	include(DIR_INC . "system/update-segments.inc.php");
+	include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
 	header("Location: ../domains.php");
 	exit;
 
 }
 ?>
-<?php include("../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../_includes/layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_domain_form" method="post" action="domain.php">
 <strong>Domain (255)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_domain" type="text" size="50" maxlength="255" value="<?php if ($new_domain != "") echo htmlentities($new_domain); ?>">
@@ -530,7 +531,7 @@ if ($no_results_accounts === 1) {
 
     $from_main_dw_account_page = 0;
 
-    include("../_includes/dw/display-account.inc.php");
+    include(DIR_INC . "dw/display-account.inc.php");
 
 }
 
@@ -550,11 +551,11 @@ if ($no_results_dns_zones === 1) {
 
     $from_main_dw_dns_zone_page = 0;
 
-    include("../_includes/dw/display-dns-zone.inc.php");
+    include(DIR_INC . "dw/display-dns-zone.inc.php");
 
 }
 ?>
 <BR><BR><a href="domain.php?did=<?php echo $did; ?>&del=1">DELETE THIS DOMAIN</a>
-<?php include("../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

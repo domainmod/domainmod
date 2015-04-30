@@ -21,12 +21,13 @@
 ?>
 <?php
 include("../../../_includes/start-session.inc.php");
+include("../../../_includes/init.inc.php");
 
 // If the user isn't an administrator, redirect them to $full_redirect
 $full_redirect = "../../../invalid.php";
-include("../../../_includes/auth/admin-user-check.inc.php");
+include(DIR_INC . "auth/admin-user-check.inc.php");
 
-include("../../../_includes/auth/auth-check.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
 ?>
 <?php
 if ($_SESSION['display_dw_intro_page'] == "1") {

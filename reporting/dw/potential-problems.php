@@ -21,11 +21,12 @@
 ?>
 <?php
 include("../../_includes/start-session.inc.php");
-include("../../_includes/config.inc.php");
-include("../../_includes/database.inc.php");
-include("../../_includes/software.inc.php");
-include("../../_includes/auth/auth-check.inc.php");
-include("../../_includes/classes/Export.class.php");
+include("../../_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "classes/Export.class.php");
 
 $page_title = $reporting_section_title;
 $page_subtitle = "Data Warehouse Potential Problems Report";
@@ -142,23 +143,23 @@ if ($export_data == "1") {
 
 }
 ?>
-<?php include("../../_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?> :: <?php echo $page_subtitle; ?></title>
-<?php include("../../_includes/layout/head-tags.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
-<?php include("../../_includes/layout/header.inc.php"); ?>
-<?php include("../../_includes/layout/reporting-block.inc.php"); ?>
-<?php include("../../_includes/layout/table-export-top.inc.php"); ?>
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
+<?php include(DIR_INC . "layout/table-export-top.inc.php"); ?>
     <form name="export_dw_form" method="post" action="potential-problems.php">
         <a href="potential-problems.php?generate=1">Generate</a>
         <?php if ($generate == 1) { ?>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="potential-problems.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
     </form>
-<?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
+<?php include(DIR_INC . "layout/table-export-bottom.inc.php"); ?>
 <?php if ($generate == 1) { ?>
 <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
 <BR>
@@ -255,6 +256,6 @@ if ($generate == 1) {
     }
 
 } ?>
-<?php include("../../_includes/layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

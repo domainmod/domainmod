@@ -48,7 +48,7 @@ include("../classes/Error.class.php");
 
 $error = new DomainMOD\Error();
 
-include($_SESSION['full_server_path'] . "/_includes/timestamps/current-timestamp.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 $sql_ucr = "SELECT c.id, c.currency
 			FROM currencies AS c, fees AS f, domains AS d

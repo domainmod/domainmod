@@ -21,13 +21,14 @@
 ?>
 <?php
 include("_includes/start-session.inc.php");
-include("_includes/config.inc.php");
-include("_includes/database.inc.php");
-include("_includes/software.inc.php");
-include("_includes/auth/auth-check.inc.php");
-include("_includes/timestamps/current-timestamp.inc.php");
-include("_includes/classes/Error.class.php");
-include("_includes/classes/Export.class.php");
+include("_includes/init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Error.class.php");
+include(DIR_INC . "classes/Export.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -197,7 +198,7 @@ if ($export_data == "1") {
             $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
             $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
             $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-            include("_includes/system/convert-and-format-currency.inc.php");
+            include(DIR_INC . "system/convert-and-format-currency.inc.php");
             $export_initial_fee = $temp_output_amount;
 
             $temp_input_amount = $temp_renewal_fee;
@@ -205,7 +206,7 @@ if ($export_data == "1") {
             $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
             $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
             $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-            include("_includes/system/convert-and-format-currency.inc.php");
+            include(DIR_INC . "system/convert-and-format-currency.inc.php");
             $export_renewal_fee = $temp_output_amount;
 
             $row_contents = array(
@@ -250,14 +251,14 @@ if ($export_data == "1") {
 
 }
 ?>
-<?php include("_includes/doctype.inc.php"); ?>
+<?php include(DIR_INC . "doctype.inc.php"); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
-<?php include("_includes/layout/head-tags-bare.inc.php"); ?>
+<?php include(DIR_INC . "layout/head-tags-bare.inc.php"); ?>
 </head>
 <body>
-<?php include("_includes/layout/header-bare.inc.php"); ?>
+<?php include(DIR_INC . "layout/header-bare.inc.php"); ?>
 <?php
 $sql_name = "SELECT name
 			 FROM segments
@@ -289,6 +290,6 @@ while ($row = mysqli_fetch_object($result)) {
     echo $row->domain . "<BR>";
 }
 ?>
-<?php include("_includes/layout/footer-bare.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer-bare.inc.php"); ?>
 </body>
 </html>
