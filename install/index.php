@@ -30,7 +30,7 @@ include(DIR_INC . "classes/System.class.php");
 include(DIR_INC . "classes/Error.class.php");
 
 $system = new DomainMOD\System();
-$system->installCheck($connection, $web_root, $full_server_path);
+$system->installCheck($connection, $web_root);
 
 $error = new DomainMOD\Error();
 

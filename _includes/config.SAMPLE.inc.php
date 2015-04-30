@@ -22,7 +22,6 @@
 <?php
 // Path Settings
 $web_root = "/dm"; // don't include trailing slash (if you're installing in the root just leave this blank)
-$full_server_path = "/home/user/public_html/dm";  // don't include trailing slash
 
 // Database Settings
 $dbhostname = "localhost";
