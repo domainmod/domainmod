@@ -241,7 +241,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Domain?<BR><BR><a href=\"$PHP_SELF?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Domain?<BR><BR><a href=\"domain.php?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
 
 	}
 
@@ -275,7 +275,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="edit_domain_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_domain_form" method="post" action="domain.php">
 <strong>Domain (255)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_domain" type="text" size="50" maxlength="255" value="<?php if ($new_domain != "") echo htmlentities($new_domain); ?>">
 <BR><BR>
@@ -554,7 +554,7 @@ if ($no_results_dns_zones === 1) {
 
 }
 ?>
-<BR><BR><a href="<?php echo $PHP_SELF; ?>?did=<?php echo $did; ?>&del=1">DELETE THIS DOMAIN</a>
+<BR><BR><a href="domain.php?did=<?php echo $did; ?>&del=1">DELETE THIS DOMAIN</a>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

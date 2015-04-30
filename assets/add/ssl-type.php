@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="add_type_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="add_type_form" method="post" action="ssl-type.php">
 <strong>Type (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_type" type="text" value="<?php echo $new_type; ?>" size="50" maxlength="100">
 <BR><BR>

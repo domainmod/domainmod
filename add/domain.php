@@ -191,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="add_domain_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="add_domain_form" method="post" action="domain.php">
 <strong>Domain (255)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_domain" type="text" size="50" maxlength="255" value="<?php echo $new_domain; ?>">
 <BR><BR>

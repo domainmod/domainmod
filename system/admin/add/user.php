@@ -197,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
-<form name="add_user_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="add_user_form" method="post" action="user.php">
 <strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php echo $new_first_name; ?>"><BR><BR>
 <strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php echo $new_last_name; ?>"><BR><BR>
 <strong>Username (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_username" type="text" size="20" maxlength="30" value="<?php echo $new_username; ?>"><BR><BR>

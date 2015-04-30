@@ -196,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="add_segment_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="add_segment_form" method="post" action="segment.php">
 <strong>Segment Name (35)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" value="<?php echo $new_name; ?>" size="25" maxlength="35">
 <BR><BR>

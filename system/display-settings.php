@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="display_settings_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="display_settings_form" method="post" action="display-settings.php">
 <BR><font class="subheadline">Main Domain Page</font><BR><BR>
 <strong>Number of domains per page:</strong> <input name="new_number_of_domains" type="text" size="3" maxlength="5" value="<?php if ($new_number_of_domains != "") echo $new_number_of_domains; ?>">
 <BR><BR>

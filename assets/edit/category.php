@@ -106,7 +106,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Category?<BR><BR><a href=\"$PHP_SELF?pcid=$pcid&really_del=1\">YES, REALLY DELETE THIS CATEGORY</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Category?<BR><BR><a href=\"category.php?pcid=$pcid&really_del=1\">YES, REALLY DELETE THIS CATEGORY</a><BR>";
 
 	}
 
@@ -133,7 +133,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_category_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_category_form" method="post" action="category.php">
 <strong>Category Name (150)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_category" type="text" value="<?php if ($new_category != "") echo htmlentities($new_category); ?>
 " size="50" maxlength="150">
@@ -148,7 +148,7 @@ if ($really_del == "1") {
 <input type="hidden" name="new_pcid" value="<?php echo $pcid; ?>">
 <input type="submit" name="button" value="Update This Category &raquo;">
 </form>
-<BR><BR><a href="<?php echo $PHP_SELF; ?>?pcid=<?php echo $pcid; ?>&del=1">DELETE THIS CATEGORY</a>
+<BR><BR><a href="category.php?pcid=<?php echo $pcid; ?>&del=1">DELETE THIS CATEGORY</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

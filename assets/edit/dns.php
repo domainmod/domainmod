@@ -181,7 +181,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this DNS Profile?<BR><BR><a href=\"$PHP_SELF?dnsid=$dnsid&really_del=1\">YES, REALLY DELETE THIS DNS PROFILE</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this DNS Profile?<BR><BR><a href=\"dns.php?dnsid=$dnsid&really_del=1\">YES, REALLY DELETE THIS DNS PROFILE</a><BR>";
 
 	}
 
@@ -208,7 +208,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_dns_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_dns_form" method="post" action="dns.php">
 <strong>Profile Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
 <BR><BR>
@@ -320,7 +320,7 @@ if ($really_del == "1") {
 <BR><BR>
 <input type="submit" name="button" value="Update This DNS Profile &raquo;">
 </form>
-<BR><BR><a href="<?php echo $PHP_SELF; ?>?dnsid=<?php echo $dnsid; ?>&del=1">DELETE THIS DNS PROFILE</a>
+<BR><BR><a href="dns.php?dnsid=<?php echo $dnsid; ?>&del=1">DELETE THIS DNS PROFILE</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

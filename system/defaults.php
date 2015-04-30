@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="default_user_settings_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="default_user_settings_form" method="post" action="defaults.php">
 <BR><font class="subheadline">System Defaults</font><BR><BR>
 <strong>Default Currency</strong><BR><BR>
 <select name="new_default_currency">

@@ -249,7 +249,7 @@ if(mysqli_num_rows($result_dw_account_temp) == 0) {
 	
 } else { ?>
 
-	<form name="form1" method="post" action="<?php echo $PHP_SELF; ?>">
+	<form name="form1" method="post" action="list-accounts.php">
 		<input type="text" name="search_for" size="17" value="<?php echo $search_for; ?>">&nbsp;
 		<input type="submit" name="button" value="Search &raquo;">
 		<input type="hidden" name="begin" value="0">
@@ -257,7 +257,7 @@ if(mysqli_num_rows($result_dw_account_temp) == 0) {
 		<input type="hidden" name="numBegin" value="1">
 	</form><BR>
 	
-	<strong>[<a href="<?php echo $PHP_SELF; ?>?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong><BR><BR>
+	<strong>[<a href="list-accounts.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong><BR><BR>
 	
 	<strong>Number of Accounts:</strong> <?php echo $totalrows; ?><BR><BR>
 	<?php include("../../../_includes/layout/pagination.menu.inc.php"); ?><BR>

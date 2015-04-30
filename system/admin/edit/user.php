@@ -162,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 }
 if ($del == "1") {
 
-	$_SESSION['result_message'] = "Are you sure you want to delete this User?<BR><BR><a href=\"" . $PHP_SELF . "?uid=" . $uid . "&really_del=1\">YES, REALLY DELETE THIS USER</a><BR>";
+	$_SESSION['result_message'] = "Are you sure you want to delete this User?<BR><BR><a href=\"user.php?uid=" . $uid . "&really_del=1\">YES, REALLY DELETE THIS USER</a><BR>";
 
 }
 
@@ -208,7 +208,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
-<form name="edit_user_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_user_form" method="post" action="user.php">
 <strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") echo htmlentities($new_first_name); ?>"><BR><BR>
 <strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") echo htmlentities($new_last_name); ?>"><BR><BR>
 <?php if ($new_username == "admin" || $new_username == "administrator") { ?>
@@ -258,7 +258,7 @@ if ($really_del == "1") {
 <input type="submit" name="button" value="Update User &raquo;">
 </form>
 <BR><BR><a href="../reset-password.php?new_username=<?php echo $new_username; ?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
-<BR><a href="<?php echo $PHP_SELF; ?>?uid=<?php echo $uid; ?>&del=1">DELETE THIS USER</a>
+<BR><a href="user.php?uid=<?php echo $uid; ?>&del=1">DELETE THIS USER</a>
 <?php include("../../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 if ($del == "1") {
 
-    $_SESSION['result_message'] = "Are you sure you want to delete this Server?<BR><BR><a href=\"$PHP_SELF?dwsid=$dwsid&really_del=1\">YES, REALLY DELETE THIS SERVER</a><BR>";
+    $_SESSION['result_message'] = "Are you sure you want to delete this Server?<BR><BR><a href=\"server.php?dwsid=$dwsid&really_del=1\">YES, REALLY DELETE THIS SERVER</a><BR>";
 
 }
 
@@ -170,7 +170,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../../../../_includes/layout/header.inc.php"); ?>
-<form name="dw_edit_server_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="dw_edit_server_form" method="post" action="server.php">
 <strong>Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 Enter the display name for this server.<BR><BR>
 <input name="new_name" type="text" size="50" maxlength="100" value="<?php
@@ -228,7 +228,7 @@ if ($new_notes != "") {
 <input type="hidden" name="new_dwsid" value="<?php echo $dwsid; ?>">
 <input type="submit" name="button" value="Update Server &raquo;">
 </form>
-<BR><BR><a href="<?php echo $PHP_SELF . "?dwsid=" . $dwsid . "&del=1"; ?>">DELETE THIS SERVER</a>
+<BR><BR><a href="server.php?dwsid=" . $dwsid . "&del=1"; ?>">DELETE THIS SERVER</a>
 <?php include("../../../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

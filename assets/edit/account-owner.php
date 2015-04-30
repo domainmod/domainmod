@@ -134,7 +134,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Owner?<BR><BR><a href=\"$PHP_SELF?oid=$oid&really_del=1\">YES, REALLY DELETE THIS OWNER</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Owner?<BR><BR><a href=\"account-owner.php?oid=$oid&really_del=1\">YES, REALLY DELETE THIS OWNER</a><BR>";
 
 	}
 
@@ -161,7 +161,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_owner_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_owner_form" method="post" action="account-owner.php">
 <strong>Owner Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_owner" type="text" value="<?php if ($new_owner != "") echo htmlentities($new_owner); ?>
 " size="50" maxlength="100">
@@ -172,7 +172,7 @@ if ($really_del == "1") {
 <BR><BR>
 <input type="submit" name="button" value="Update This Account Owner &raquo;">
 </form>
-<BR><BR><a href="<?php echo $PHP_SELF; ?>?oid=<?php echo $oid; ?>&del=1">DELETE THIS OWNER</a>
+<BR><BR><a href="account-owner.php?oid=<?php echo $oid; ?>&del=1">DELETE THIS OWNER</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

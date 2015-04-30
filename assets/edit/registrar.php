@@ -111,7 +111,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Registrar?<BR><BR><a href=\"$PHP_SELF?rid=$rid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Registrar?<BR><BR><a href=\"registrar.php?rid=$rid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
 
 	}
 
@@ -148,7 +148,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_registrar_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_registrar_form" method="post" action="registrar.php">
 <strong>Registrar Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_registrar" type="text" value="<?php echo htmlentities($new_registrar); ?>" size="50" maxlength="100">
 <BR><BR>
@@ -162,7 +162,7 @@ if ($really_del == "1") {
 <input type="submit" name="button" value="Update This Registrar &raquo;">
 </form>
 <BR><BR><a href="registrar-fees.php?rid=<?php echo $rid; ?>">EDIT THIS REGISTRAR'S FEES</a><BR>
-<BR><a href="<?php echo $PHP_SELF; ?>?rid=<?php echo $rid; ?>&del=1">DELETE THIS REGISTRAR</a>
+<BR><a href="registrar.php?rid=<?php echo $rid; ?>&del=1">DELETE THIS REGISTRAR</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

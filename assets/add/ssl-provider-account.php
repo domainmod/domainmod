@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body onLoad="document.forms[0].elements[2].focus()";>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="add_ssl_account_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="add_ssl_account_form" method="post" action="ssl-provider-account.php">
 <strong>Owner</strong><BR><BR>
 <?php
 $sql_owner = "SELECT id, name

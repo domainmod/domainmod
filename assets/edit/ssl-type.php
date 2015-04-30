@@ -101,7 +101,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this SSL Type?<BR><BR><a href=\"$PHP_SELF?ssltid=$ssltid&really_del=1\">YES, REALLY DELETE THIS TYPE</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this SSL Type?<BR><BR><a href=\"ssl-type.php?ssltid=$ssltid&really_del=1\">YES, REALLY DELETE THIS TYPE</a><BR>";
 
 	}
 
@@ -128,7 +128,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_type_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_type_form" method="post" action="ssl-type.php">
 <strong>Type Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_type" type="text" value="<?php if ($new_type != "") echo htmlentities($new_type); ?>
 " size="50" maxlength="100">
@@ -139,7 +139,7 @@ if ($really_del == "1") {
 <BR><BR>
 <input type="submit" name="button" value="Update This SSL Type &raquo;">
 </form>
-<BR><BR><a href="<?php echo $PHP_SELF; ?>?ssltid=<?php echo $ssltid; ?>&del=1">DELETE THIS TYPE</a>
+<BR><BR><a href="ssl-type.php?ssltid=<?php echo $ssltid; ?>&del=1">DELETE THIS TYPE</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

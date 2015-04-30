@@ -226,7 +226,7 @@ if ($export_data == "1") {
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
 Below is a list of all the Domain Registrar Accounts that are stored in <?php echo $software_title; ?>.<BR><BR>
-[<a href="<?php echo $PHP_SELF; ?>?export_data=1&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&oid=<?php echo $oid; ?>">EXPORT</a>]<?php
+[<a href="registrar-accounts.php?export_data=1&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&oid=<?php echo $oid; ?>">EXPORT</a>]<?php
 
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 

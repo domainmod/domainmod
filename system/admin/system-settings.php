@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="system_settings_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="system_settings_form" method="post" action="system-settings.php">
 <strong>Full <?php echo $software_title; ?> URL (100):</strong><BR><BR>
 Enter the full URL of your <?php echo $software_title; ?> installation, excluding the trailing slash (Example: http://example.com/domainmod).<BR><BR>
 <input name="new_full_url" type="text" size="50" maxlength="100" value="<?php if ($new_full_url != "") echo $new_full_url; ?>">

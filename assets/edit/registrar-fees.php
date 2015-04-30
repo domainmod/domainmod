@@ -232,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($del == "1") {
-	$_SESSION['result_message'] = "Are you sure you want to delete this Registrar Fee?<BR><BR><a href=\"$PHP_SELF?rid=$rid&tld=$tld&feeid=$feeid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR FEE</a><BR>";
+	$_SESSION['result_message'] = "Are you sure you want to delete this Registrar Fee?<BR><BR><a href=\"registrar-fees.php?rid=$rid&tld=$tld&feeid=$feeid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR FEE</a><BR>";
 }
 
 if ($really_del == "1") {
@@ -362,7 +362,7 @@ if (mysqli_num_rows($result) != 0) {
 }
 ?>
 <font class="subheadline">Add A New TLD Fee</font><BR>
-<form name="add_registrar_fee_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="add_registrar_fee_form" method="post" action="registrar-fees.php">
 <table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active">
@@ -419,7 +419,7 @@ if (mysqli_num_rows($result) != 0) {
 </form>
 <BR><BR>
 <font class="subheadline">TLD Fees</font><BR>
-<form name="edit_registrar_fee_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_registrar_fee_form" method="post" action="registrar-fees.php">
 <table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active"><strong>TLD</strong></td>

@@ -126,7 +126,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Registrar Account?<BR><BR><a href=\"$PHP_SELF?raid=$raid&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR ACCOUNT</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Registrar Account?<BR><BR><a href=\"registrar-account.php?raid=$raid&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR ACCOUNT</a><BR>";
 
 	}
 
@@ -168,7 +168,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_account_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_account_form" method="post" action="registrar-account.php">
 <strong>Owner</strong><BR><BR>
 <?php
 $sql_owner = "SELECT id, name
@@ -231,7 +231,7 @@ echo "</select>";
 <input type="hidden" name="new_raid" value="<?php echo $raid; ?>">
 <input type="submit" name="button" value="Update This Registrar Account &raquo;">
 </form>
-<BR><BR><a href="<?php echo $PHP_SELF; ?>?raid=<?php echo $raid; ?>&del=1">DELETE THIS REGISTRAR ACCOUNT</a>
+<BR><BR><a href="registrar-account.php?raid=<?php echo $raid; ?>&del=1">DELETE THIS REGISTRAR ACCOUNT</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

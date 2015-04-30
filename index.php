@@ -266,7 +266,7 @@ if ($new_username == "") { ?>
 if ($_SESSION['installation_mode'] != 1) { ?>
 
     <BR>
-    <form name="login_form" method="post" action="<?php echo $PHP_SELF; ?>">
+    <form name="login_form" method="post" action="index.php">
 		<?php if ($demo_install == "1") { ?><div align="center"><strong>Demo Username & Password:</strong> "demo"</div><BR><BR><?php } ?>
         <div class="login_form">
             <strong>Username:</strong>&nbsp;

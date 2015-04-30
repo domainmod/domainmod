@@ -213,7 +213,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del == "1") {
 
-	$_SESSION['result_message'] = "Are you sure you want to delete this Segment?<BR><BR><a href=\"$PHP_SELF?segid=$segid&really_del=1\">YES, REALLY DELETE THIS SEGMENT</a><BR>";
+	$_SESSION['result_message'] = "Are you sure you want to delete this Segment?<BR><BR><a href=\"segment.php?segid=$segid&really_del=1\">YES, REALLY DELETE THIS SEGMENT</a><BR>";
 
 }
 
@@ -280,7 +280,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="edit_segment_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_segment_form" method="post" action="segment.php">
 <strong>Segment Name (35)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>" size="25" maxlength="35">
 <BR><BR>
@@ -296,7 +296,7 @@ if ($really_del == "1") {
 <BR><BR>
 <input type="submit" name="button" value="Update This Segment &raquo;">
 </form>
-<BR><BR><a href="<?php echo $PHP_SELF; ?>?segid=<?php echo $segid; ?>&del=1">DELETE THIS SEGMENT</a>
+<BR><BR><a href="segment.php?segid=<?php echo $segid; ?>&del=1">DELETE THIS SEGMENT</a>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

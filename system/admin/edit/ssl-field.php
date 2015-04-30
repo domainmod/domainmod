@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 
 if ($del == "1") {
 
-	$_SESSION['result_message'] = "Are you sure you want to delete this Custom SSL Field?<BR><BR><a href=\"" . $PHP_SELF . "?csfid=" . $csfid . "&really_del=1\">YES, REALLY DELETE THIS CUSTOM SSL FIELD</a><BR>";
+	$_SESSION['result_message'] = "Are you sure you want to delete this Custom SSL Field?<BR><BR><a href=\"ssl-field.php?csfid=" . $csfid . "&really_del=1\">YES, REALLY DELETE THIS CUSTOM SSL FIELD</a><BR>";
 
 }
 
@@ -162,7 +162,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../../../_includes/layout/header.inc.php"); ?>
-<form name="edit_user_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_user_form" method="post" action="ssl-field.php">
 <strong>Display Name (75)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_name" type="text" size="30" maxlength="75" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>"><BR><BR>
 <strong>Database Field Name</strong><BR><BR><?php echo $new_field_name; ?><BR><BR>
 <strong>Data Type</strong><BR><BR>
@@ -176,7 +176,7 @@ if ($really_del == "1") {
 <BR><BR>
 <input type="submit" name="button" value="Update Custom Field &raquo;">
 </form>
-<BR><BR><a href="<?php echo $PHP_SELF; ?>?csfid=<?php echo $csfid; ?>&del=1">DELETE THIS CUSTOM SSL FIELD</a>
+<BR><BR><a href="ssl-field.php?csfid=<?php echo $csfid; ?>&del=1">DELETE THIS CUSTOM SSL FIELD</a>
 <?php include("../../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

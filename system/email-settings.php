@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="email_settings_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="email_settings_form" method="post" action="email-settings.php">
 <strong>Subscribe to Domain & SSL Certificate expiration emails?</strong>&nbsp;
 <select name="new_expiration_email">
 <option value="1"<?php if ($new_expiration_email == "1") echo " selected"; ?>>Yes</option>

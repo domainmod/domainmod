@@ -104,7 +104,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Web Host?<BR><BR><a href=\"$PHP_SELF?whid=$whid&really_del=1\">YES, REALLY DELETE THIS WEB HOST</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Web Host?<BR><BR><a href=\"host.php?whid=$whid&really_del=1\">YES, REALLY DELETE THIS WEB HOST</a><BR>";
 
 	}
 
@@ -131,7 +131,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_host_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_host_form" method="post" action="host.php">
 <strong>Web Host Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_host" type="text" value="<?php if ($new_host != "") echo htmlentities($new_host); ?>
 " size="50" maxlength="100">
@@ -145,7 +145,7 @@ if ($really_del == "1") {
 <BR><BR>
 <input type="submit" name="button" value="Update This Web Host &raquo;">
 </form>
-<BR><BR><a href="<?php echo $PHP_SELF; ?>?whid=<?php echo $whid; ?>&del=1">DELETE THIS WEB HOST</a>
+<BR><BR><a href="host.php?whid=<?php echo $whid; ?>&del=1">DELETE THIS WEB HOST</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

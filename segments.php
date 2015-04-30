@@ -204,7 +204,7 @@ Segments are lists of domains that can be used to help filter and manage your <a
 <BR>
 Segment filters will tell you which domains match with domains that are saved in <?php echo $software_title; ?>, as well as which domains don't match, and you can easily view and export the results.<BR>
 <BR>
-[<a href="<?php echo $PHP_SELF; ?>?export_data=1">EXPORT</a>]
+[<a href="segments.php?export_data=1">EXPORT</a>]
 <?php
 $sql_segment_check = "SELECT id
 					  FROM segments

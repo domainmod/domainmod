@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($del == "1") {
-	$_SESSION['result_message'] = "Are you sure you want to delete this SSL Provider Fee?<BR><BR><a href=\"$PHP_SELF?sslpid=$sslpid&ssltid=$ssltid&sslfeeid=$sslfeeid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER FEE</a><BR>";
+	$_SESSION['result_message'] = "Are you sure you want to delete this SSL Provider Fee?<BR><BR><a href=\"ssl-provider-fees.php?sslpid=$sslpid&ssltid=$ssltid&sslfeeid=$sslfeeid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER FEE</a><BR>";
 }
 if ($really_del == "1") {
 
@@ -353,7 +353,7 @@ if (mysqli_num_rows($result) != 0) {
 }
 ?>
 <font class="subheadline">Add SSL Type Fee</font><BR>
-<form name="add_ssl_provider_fee_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="add_ssl_provider_fee_form" method="post" action="ssl-provider-fees.php">
 <table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active">
@@ -423,7 +423,7 @@ if (mysqli_num_rows($result) != 0) {
 </form>
 <BR><BR>
 <font class="subheadline">SSL Type Fees</font><BR>
-<form name="edit_ssl_provider_fee_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_ssl_provider_fee_form" method="post" action="ssl-provider-fees.php">
 <table class="main_table" cellpadding="0" cellspacing="0">
 	<tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active"><strong>SSL Type</strong></td>

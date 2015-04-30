@@ -205,7 +205,7 @@ if ($export_data == "1") {
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
 Below is a list of all the Domain Registrars that are stored in <?php echo $software_title; ?>.<BR><BR>
-[<a href="<?php echo $PHP_SELF; ?>?export_data=1">EXPORT</a>]<?php
+[<a href="registrars.php?export_data=1">EXPORT</a>]<?php
 
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 

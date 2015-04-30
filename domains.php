@@ -895,7 +895,7 @@ if ($segid != "") {
 
 }
 ?>
-<form name="domain_search_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="domain_search_form" method="post" action="domains.php">
     <div class="search-block-outer">
         <div class="search-block-inner">
             <div class="search-block-left">
@@ -917,9 +917,9 @@ if ($segid != "") {
                 $result_segment = mysqli_query($connection, $sql_segment);
 
                 echo "<select name=\"segid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Segment Filter - ALL</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Segment Filter - ALL</option>";
                 while ($row_segment = mysqli_fetch_object($result_segment)) {
-                    echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&segid=$row_segment->id&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_segment->id == $segid) echo " selected"; echo ">"; echo "$row_segment->name</option>";
+                    echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&segid=$row_segment->id&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_segment->id == $segid) echo " selected"; echo ">"; echo "$row_segment->name</option>";
                 }
                 echo "</select>";
                 ?>
@@ -971,9 +971,9 @@ if ($segid != "") {
 				  ORDER BY r.name asc";
                 $result_registrar = mysqli_query($connection, $sql_registrar);
                 echo "<select name=\"rid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Registrar - ALL</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Registrar - ALL</option>";
                 while ($row_registrar = mysqli_fetch_object($result_registrar)) {
-                    echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$row_registrar->id&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_registrar->id == $rid) echo " selected"; echo ">"; echo "$row_registrar->name</option>";
+                    echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$row_registrar->id&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_registrar->id == $rid) echo " selected"; echo ">"; echo "$row_registrar->name</option>";
                 }
                 echo "</select>";
                 ?>
@@ -1027,9 +1027,9 @@ if ($segid != "") {
 				ORDER BY r.name asc, o.name asc, ra.username asc";
                 $result_account = mysqli_query($connection, $sql_account);
                 echo "<select name=\"raid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Registrar Account - ALL</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Registrar Account - ALL</option>";
                 while ($row_account = mysqli_fetch_object($result_account)) {
-                    echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$row_account->ra_id&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_account->ra_id == $raid) echo " selected"; echo ">"; echo "$row_account->r_name, $row_account->o_name ($row_account->username)</option>";
+                    echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$row_account->ra_id&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_account->ra_id == $raid) echo " selected"; echo ">"; echo "$row_account->r_name, $row_account->o_name ($row_account->username)</option>";
                 }
                 echo "</select>";
                 ?>
@@ -1081,9 +1081,9 @@ if ($segid != "") {
 			ORDER BY dns.name asc";
                 $result_dns = mysqli_query($connection, $sql_dns);
                 echo "<select name=\"dnsid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">DNS Profile - ALL</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">DNS Profile - ALL</option>";
                 while ($row_dns = mysqli_fetch_object($result_dns)) {
-                    echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$row_dns->id&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_dns->id == $dnsid) echo " selected"; echo ">"; echo "$row_dns->name</option>";
+                    echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$row_dns->id&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_dns->id == $dnsid) echo " selected"; echo ">"; echo "$row_dns->name</option>";
                 }
                 echo "</select>";
                 ?>
@@ -1135,9 +1135,9 @@ if ($segid != "") {
 			   ORDER BY ip.name asc";
                 $result_ip = mysqli_query($connection, $sql_ip);
                 echo "<select name=\"ipid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">IP Address - ALL</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">IP Address - ALL</option>";
                 while ($row_ip = mysqli_fetch_object($result_ip)) {
-                    echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$row_ip->id&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_ip->id == $ipid) echo " selected"; echo ">"; echo "$row_ip->name ($row_ip->ip)</option>";
+                    echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$row_ip->id&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_ip->id == $ipid) echo " selected"; echo ">"; echo "$row_ip->name ($row_ip->ip)</option>";
                 }
                 echo "</select>";
                 ?>
@@ -1189,9 +1189,9 @@ if ($segid != "") {
 					ORDER BY h.name asc";
                 $result_hosting = mysqli_query($connection, $sql_hosting);
                 echo "<select name=\"whid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Web Hosting Provider - ALL</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Web Hosting Provider - ALL</option>";
                 while ($row_hosting = mysqli_fetch_object($result_hosting)) {
-                    echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$row_hosting->id&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_hosting->id == $whid) echo " selected"; echo ">"; echo "$row_hosting->name</option>";
+                    echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$row_hosting->id&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_hosting->id == $whid) echo " selected"; echo ">"; echo "$row_hosting->name</option>";
                 }
                 echo "</select>";
                 ?>
@@ -1243,9 +1243,9 @@ if ($segid != "") {
 				 ORDER BY c.name asc";
                 $result_category = mysqli_query($connection, $sql_category);
                 echo "<select name=\"pcid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-                echo "<option value=\"$PHP_SELF?pcid=&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Category - ALL</option>";
+                echo "<option value=\"domains.php?pcid=&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Category - ALL</option>";
                 while ($row_category = mysqli_fetch_object($result_category)) {
-                    echo "<option value=\"$PHP_SELF?pcid=$row_category->id&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_category->id == $pcid) echo " selected"; echo ">"; echo "$row_category->name</option>";
+                    echo "<option value=\"domains.php?pcid=$row_category->id&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_category->id == $pcid) echo " selected"; echo ">"; echo "$row_category->name</option>";
                 }
                 echo "</select>";
                 ?>
@@ -1297,9 +1297,9 @@ if ($segid != "") {
 			  ORDER BY o.name asc";
                 $result_owner = mysqli_query($connection, $sql_owner);
                 echo "<select name=\"oid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Owner - ALL</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Owner - ALL</option>";
                 while ($row_owner = mysqli_fetch_object($result_owner)) {
-                    echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$row_owner->id&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
+                    echo "<option value=\"domains.php?pcid=$pcid&oid=$row_owner->id&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
                 }
                 echo "</select>";
                 ?>
@@ -1350,9 +1350,9 @@ if ($segid != "") {
 			ORDER BY tld asc";
                 $result_tld = mysqli_query($connection, $sql_tld);
                 echo "<select name=\"tld\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">TLD - ALL</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">TLD - ALL</option>";
                 while ($row_tld = mysqli_fetch_object($result_tld)) {
-                    echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$row_tld->tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_tld->tld == $tld) echo " selected"; echo ">"; echo ".$row_tld->tld</option>";
+                    echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$row_tld->tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_tld->tld == $tld) echo " selected"; echo ">"; echo ".$row_tld->tld</option>";
                 }
                 echo "</select>";
                 ?>
@@ -1404,11 +1404,11 @@ if ($segid != "") {
 			   ORDER BY active asc";
                 $result_active = mysqli_query($connection, $sql_active);
                 echo "<select name=\"is_active\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Transfers / Pending)</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Transfers / Pending)</option>";
                 while ($row_active = mysqli_fetch_object($result_active)) {
-                    echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$row_active->active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_active->active == $is_active) echo " selected"; echo ">"; if ($row_active->active == "0") { echo "Expired"; } elseif ($row_active->active == "10") { echo "Sold"; } elseif ($row_active->active == "1") { echo "Active"; } elseif ($row_active->active == "2") { echo "In Transfer"; } elseif ($row_active->active == "3") { echo "Pending (Renewal)"; } elseif ($row_active->active == "4") { echo "Pending (Other)"; } elseif ($row_active->active == "5") { echo "Pending (Registration)"; } echo "</option>";
+                    echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$row_active->active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($row_active->active == $is_active) echo " selected"; echo ">"; if ($row_active->active == "0") { echo "Expired"; } elseif ($row_active->active == "10") { echo "Sold"; } elseif ($row_active->active == "1") { echo "Active"; } elseif ($row_active->active == "2") { echo "In Transfer"; } elseif ($row_active->active == "3") { echo "Pending (Renewal)"; } elseif ($row_active->active == "4") { echo "Pending (Other)"; } elseif ($row_active->active == "5") { echo "Pending (Registration)"; } echo "</option>";
                 }
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=ALL&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($is_active == "ALL") echo " selected"; echo ">"; echo "ALL</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=ALL&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($is_active == "ALL") echo " selected"; echo ">"; echo "ALL</option>";
                 echo "</select>";
                 ?>
 
@@ -1418,15 +1418,15 @@ if ($segid != "") {
                 echo "<select name=\"result_limit\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 
                 if ($_SESSION['number_of_domains'] != "10" && $_SESSION['number_of_domains'] != "50" && $_SESSION['number_of_domains'] != "100" && $_SESSION['number_of_domains'] != "500" && $_SESSION['number_of_domains'] != "1000" && $_SESSION['number_of_domains'] != "1000000") {
-                    echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=" . $_SESSION['number_of_domains'] . "&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == $_SESSION['number_of_domains']) echo " selected"; echo ">"; echo "" . $_SESSION['number_of_domains'] . "</option>";
+                    echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=" . $_SESSION['number_of_domains'] . "&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == $_SESSION['number_of_domains']) echo " selected"; echo ">"; echo "" . $_SESSION['number_of_domains'] . "</option>";
                 }
 
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=10&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "10") echo " selected"; echo ">"; echo "10</option>";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=50&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "50") echo " selected"; echo ">"; echo "50</option>";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=100&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "100") echo " selected"; echo ">"; echo "100</option>";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=500&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "500") echo " selected"; echo ">"; echo "500</option>";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=1000&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "1000") echo " selected"; echo ">"; echo "1,000</option>";
-                echo "<option value=\"$PHP_SELF?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=1000000&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "1000000") echo " selected"; echo ">"; echo "ALL</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=10&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "10") echo " selected"; echo ">"; echo "10</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=50&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "50") echo " selected"; echo ">"; echo "50</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=100&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "100") echo " selected"; echo ">"; echo "100</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=500&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "500") echo " selected"; echo ">"; echo "500</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=1000&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "1000") echo " selected"; echo ">"; echo "1,000</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=1000000&sort_by=$sort_by&from_dropdown=1\""; if ($result_limit == "1000000") echo " selected"; echo ">"; echo "ALL</option>";
                 echo "</select>";
                 ?>
                 <BR>

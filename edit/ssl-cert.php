@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del == "1") {
 
-	$_SESSION['result_message'] = "Are you sure you want to delete this SSL Certificate?<BR><BR><a href=\"$PHP_SELF?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE ACCOUNT</a><BR>";
+	$_SESSION['result_message'] = "Are you sure you want to delete this SSL Certificate?<BR><BR><a href=\"ssl-cert.php?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE ACCOUNT</a><BR>";
 
 }
 
@@ -246,7 +246,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../_includes/layout/header.inc.php"); ?>
-<form name="edit_ssl_cert_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_ssl_cert_form" method="post" action="ssl-cert.php">
 <strong>Host / Label (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
 <BR><BR>
@@ -442,7 +442,7 @@ if (mysqli_num_rows($result) > 0) { ?>
 <input type="submit" name="button" value="Update This SSL Certificate &raquo;">
 </form>
 <BR><BR>
-<a href="<?php echo $PHP_SELF; ?>?sslcid=<?php echo $sslcid; ?>&del=1">DELETE THIS SSL CERTIFICATE</a>
+<a href="ssl-cert.php?sslcid=<?php echo $sslcid; ?>&del=1">DELETE THIS SSL CERTIFICATE</a>
 <?php include("../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

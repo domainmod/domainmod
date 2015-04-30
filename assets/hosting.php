@@ -184,7 +184,7 @@ if ($export_data == "1") {
 <?php
 ?>
 Below is a list of all the Web Hosting Providers that are stored in <?php echo $software_title; ?>.<BR><BR>
-[<a href="<?php echo $PHP_SELF; ?>?export_data=1">EXPORT</a>]<?php
+[<a href="hosting.php?export_data=1">EXPORT</a>]<?php
 
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $number_of_hosting_providers = mysqli_num_rows($result);

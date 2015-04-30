@@ -24,7 +24,7 @@ Before running any reports you should <a href="<?php echo $web_root; ?>/_include
 <div class="reporting-block-outer">
 	<div class="reporting-block-left">
         <font class="subheadline">Domain Reports</font><BR><BR>
-        <form name="reporting_menu_domain_form" method="post" action="<?php echo $PHP_SELF; ?>">
+        <form name="reporting_menu_domain_form" method="post" action="index.php">
             <select name="reporting_menu_domains" onChange="MM_jumpMenu('parent',this,0)">
             <option value="<?php echo $web_root; ?>/reporting/"<?php if ($report_name == "") echo " selected" ?>>Click to select a Domain Report</option>
             <option value="<?php echo $web_root; ?>/reporting/domains/cost-by-category.php"<?php if ($report_name == "domain-cost-by-category-report") echo " selected" ?>>Cost by Category</option>
@@ -42,7 +42,7 @@ Before running any reports you should <a href="<?php echo $web_root; ?>/_include
 	</div>
 	<div class="reporting-block-center">
         <font class="subheadline">SSL Certificate Reports</font><BR><BR>
-        <form name="reporting_menu_ssl_form" method="post" action="<?php echo $PHP_SELF; ?>">
+        <form name="reporting_menu_ssl_form" method="post" action="index.php">
             <select name="reporting_menu_ssl" onChange="MM_jumpMenu('parent',this,0)">
             <option value="<?php echo $web_root; ?>/reporting/"<?php if ($report_name == "") echo " selected" ?>>Click to select an SSL Report</option>
             <option value="<?php echo $web_root; ?>/reporting/ssl/cost-by-category.php"<?php if ($report_name == "ssl-cost-by-category-report") echo " selected" ?>>Cost by Category</option>
@@ -59,7 +59,7 @@ Before running any reports you should <a href="<?php echo $web_root; ?>/_include
 	</div>
 	<div class="reporting-block-right">
         <font class="subheadline">Data Warehouse Reports</font><BR><BR>
-        <form name="reporting_menu_dw_form" method="post" action="<?php echo $PHP_SELF; ?>">
+        <form name="reporting_menu_dw_form" method="post" action="index.php">
             <select name="reporting_menu_dw" onChange="MM_jumpMenu('parent',this,0)">
             <option value="<?php echo $web_root; ?>/reporting/"<?php if ($report_name == "") echo " selected" ?>>Click to select a DW Report</option>
             <option value="<?php echo $web_root; ?>/reporting/dw/potential-problems.php"<?php if ($report_name == "dw-potential-problems-report") echo " selected" ?>>Potential Problems</option>

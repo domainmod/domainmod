@@ -121,7 +121,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this SSL Account?<BR><BR><a href=\"$PHP_SELF?sslpaid=$sslpaid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER ACCOUNT</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this SSL Account?<BR><BR><a href=\"ssl-provider-account.php?sslpaid=$sslpaid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER ACCOUNT</a><BR>";
 
 	}
 
@@ -163,7 +163,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_ssl_account_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_ssl_account_form" method="post" action="ssl-provider-account.php">
 <strong>Owner</strong><BR><BR>
 <?php
 $sql_owner = "SELECT id, name
@@ -226,7 +226,7 @@ echo "</select>";
 <BR><BR>
 <input type="submit" name="button" value="Update This SSL Provider Account &raquo;">
 </form>
-<BR><BR><a href="<?php echo $PHP_SELF; ?>?sslpaid=<?php echo $sslpaid; ?>&del=1">DELETE THIS SSL PROVIDER ACCOUNT</a>
+<BR><BR><a href="ssl-provider-account.php?sslpaid=<?php echo $sslpaid; ?>&del=1">DELETE THIS SSL PROVIDER ACCOUNT</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

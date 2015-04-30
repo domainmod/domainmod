@@ -109,7 +109,7 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 
 if (mysqli_num_rows($result) > 0) { ?>
 
-	[<a href="<?php echo $PHP_SELF; ?>?export_data=1">EXPORT</a>]
+	[<a href="ssl-fields.php?export_data=1">EXPORT</a>]
 
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">

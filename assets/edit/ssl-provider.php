@@ -111,7 +111,7 @@ if ($del == "1") {
 
 	} else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this SSL Provider?<BR><BR><a href=\"$PHP_SELF?sslpid=$sslpid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this SSL Provider?<BR><BR><a href=\"ssl-provider.php?sslpid=$sslpid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER</a><BR>";
 
 	}
 
@@ -148,7 +148,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include("../../_includes/layout/header.inc.php"); ?>
-<form name="edit_ssl_provider_form" method="post" action="<?php echo $PHP_SELF; ?>">
+<form name="edit_ssl_provider_form" method="post" action="ssl-provider.php">
 <strong>SSL Provider Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_ssl_provider" type="text" value="<?php echo htmlentities($new_ssl_provider); ?>" size="50" maxlength="100">
 <BR><BR>
@@ -162,7 +162,7 @@ if ($really_del == "1") {
 <input type="submit" name="button" value="Update This SSL Provider &raquo;">
 </form>
 <BR><BR><a href="ssl-provider-fees.php?sslpid=<?php echo $sslpid; ?>">EDIT THIS SSL PROVIDER'S FEES</a><BR>
-<BR><a href="<?php echo $PHP_SELF; ?>?sslpid=<?php echo $sslpid; ?>&del=1">DELETE THIS SSL PROVIDER</a>
+<BR><a href="ssl-provider.php?sslpid=<?php echo $sslpid; ?>&del=1">DELETE THIS SSL PROVIDER</a>
 <?php include("../../_includes/layout/footer.inc.php"); ?>
 </body>
 </html>

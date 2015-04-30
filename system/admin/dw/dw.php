@@ -148,7 +148,7 @@ while ($row_build_finished = mysqli_fetch_object($result_build_finished)) {
 if ($is_the_build_finished == 1 && ($temp_total_accounts != 0 || $temp_total_dns_zones != 0)) { ?>
 
     <BR><font class="subheadline">View Data</font><BR><BR>
-    <form name="dw_view_data_form" method="post" action="<?php echo $PHP_SELF; ?>">
+    <form name="dw_view_data_form" method="post" action="dw.php">
     <?php
     
     if ($temp_total_accounts == 0) {
@@ -158,17 +158,17 @@ if ($is_the_build_finished == 1 && ($temp_total_accounts != 0 || $temp_total_dns
     } else { ?>
     
         <select name="dw_accounts" onChange="MM_jumpMenu('parent',this,0)">
-        <option value="<?php echo $PHP_SELF; ?>">Server Accounts</option><?php
+        <option value="dw.php">Server Accounts</option><?php
         $sql_dw_account = "SELECT id, name, dw_accounts
 						   FROM dw_servers
 						   ORDER BY name, host";
         $result_dw_account = mysqli_query($connection, $sql_dw_account); ?>
     
-        <option value="<?php echo $PHP_SELF; ?>?action=dw_accounts&view_all=1">VIEW ALL</option><?php
+        <option value="dw.php?action=dw_accounts&view_all=1">VIEW ALL</option><?php
     
         while ($row_dw_account = mysqli_fetch_object($result_dw_account)) { ?>
     
-            <option value="<?php echo $PHP_SELF; ?>?action=dw_accounts&id=<?php echo $row_dw_account->id; ?>"><?php echo $row_dw_account->name; ?> (<?php echo number_format($row_dw_account->dw_accounts); ?> Accounts)</option><?php
+            <option value="dw.php?action=dw_accounts&id=<?php echo $row_dw_account->id; ?>"><?php echo $row_dw_account->name; ?> (<?php echo number_format($row_dw_account->dw_accounts); ?> Accounts)</option><?php
     
         } ?>
         </select>
@@ -183,17 +183,17 @@ if ($is_the_build_finished == 1 && ($temp_total_accounts != 0 || $temp_total_dns
     } else { ?>
     
         <select name="dw_dns_zones" onChange="MM_jumpMenu('parent',this,0)">
-        <option value="<?php echo $PHP_SELF; ?>">DNS Zones & Records</option><?php
+        <option value="dw.php">DNS Zones & Records</option><?php
         $sql_dw_dns_records = "SELECT id, name, dw_dns_zones, dw_dns_records
 							   FROM dw_servers
 							   ORDER BY name, host";
         $result_dw_dns_records = mysqli_query($connection, $sql_dw_dns_records); ?>
     
-        <option value="<?php echo $PHP_SELF; ?>?action=dw_dns_zones&view_all=1">VIEW ALL</option><?php
+        <option value="dw.php?action=dw_dns_zones&view_all=1">VIEW ALL</option><?php
     
         while ($row_dw_dns_records = mysqli_fetch_object($result_dw_dns_records)) { ?>
     
-            <option value="<?php echo $PHP_SELF; ?>?action=dw_dns_zones&id=<?php echo $row_dw_dns_records->id; ?>"><?php echo $row_dw_dns_records->name; ?> (<?php echo number_format($row_dw_dns_records->dw_dns_zones); ?> Zones, <?php echo number_format($row_dw_dns_records->dw_dns_records); ?> Records)</option><?php
+            <option value="dw.php?action=dw_dns_zones&id=<?php echo $row_dw_dns_records->id; ?>"><?php echo $row_dw_dns_records->name; ?> (<?php echo number_format($row_dw_dns_records->dw_dns_zones); ?> Zones, <?php echo number_format($row_dw_dns_records->dw_dns_records); ?> Records)</option><?php
     
         } ?>
         </select>

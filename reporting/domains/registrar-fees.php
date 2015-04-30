@@ -219,9 +219,9 @@ if ($total_rows > 0) {
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
-    <a href="<?php echo $PHP_SELF; ?>?all=1">View All</a> or <a href="<?php echo $PHP_SELF; ?>?all=0">Active Only</a>
+    <a href="registrar-fees.php?all=1">View All</a> or <a href="registrar-fees.php?all=0">Active Only</a>
     <?php if ($total_rows > 0) { ?>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export_data=1&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="registrar-fees.php?export_data=1&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
     <?php } ?>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
 

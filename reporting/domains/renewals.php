@@ -298,14 +298,14 @@ if ($export_data == "1") {
 <?php include("../../_includes/layout/header.inc.php"); ?>
 <?php include("../../_includes/layout/reporting-block.inc.php"); ?>
 <?php include("../../_includes/layout/table-export-top.inc.php"); ?>
-    <form name="export_domains_form" method="post" action="<?php echo $PHP_SELF; ?>">
-        <a href="<?php echo $PHP_SELF; ?>?all=1">View All</a> or Expiring Between
+    <form name="export_domains_form" method="post" action="renewals.php">
+        <a href="renewals.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_start_date\""; } ?>> 
         and 
         <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_end_date\""; } ?>> 
         &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
         <?php if ($total_results > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="<?php echo $PHP_SELF; ?>?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="renewals.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
     </form>
 <?php include("../../_includes/layout/table-export-bottom.inc.php"); ?>
