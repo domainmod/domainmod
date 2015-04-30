@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/software.inc.php
+ * /_includes/init.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,11 +20,6 @@
  */
 ?>
 <?php
-$software_title = "DomainMOD";
-$software_title_slug = "domainmod";
-$reporting_section_title = "Reporting";
-$software_version = "1.0";
-$site_width = "96%";
-$site_width_login = "550";
-$code_home_url = "http://domainmod.org";
-$most_recent_db_version = "2.0057";
+define('DIR_ROOT', dirname(dirname(__FILE__)) . '/');
+define('DIR_INC', DIR_ROOT . '_includes/');
+header('Content-Type: text/html; charset=utf-8');
