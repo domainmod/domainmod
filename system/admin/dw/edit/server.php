@@ -229,7 +229,7 @@ if ($new_notes != "") {
 <input type="hidden" name="new_dwsid" value="<?php echo $dwsid; ?>">
 <input type="submit" name="button" value="Update Server &raquo;">
 </form>
-<BR><BR><a href="server.php?dwsid=" . $dwsid . "&del=1"; ?>">DELETE THIS SERVER</a>
+<BR><BR><a href="server.php?dwsid=<?php echo $dwsid; ?>&del=1">DELETE THIS SERVER</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>
