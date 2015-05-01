@@ -508,7 +508,7 @@ if (mysqli_num_rows($result) == 0) {
 
 } else {
 
-	if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . dw_server_totals . "'")) == 1) {
+	if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_server_totals` . "'")) == 1) {
 
 		$table_exists = 1;
 
