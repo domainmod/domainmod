@@ -184,7 +184,7 @@ if ($result_build_finished === FALSE || mysqli_num_rows($result_build_finished) 
 
 }
 
-if ($is_the_build_finished === 1 && ($no_results_accounts !== 1 || $no_results_dns_zones !== 1)) { ?>
+if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dns_zones !== 1)) { ?>
 
     <BR><font class="subheadline">View Data</font><BR><BR>
     <form name="dw_view_data_form" method="post">
