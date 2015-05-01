@@ -22,4 +22,12 @@
 <?php
 define('DIR_ROOT', dirname(dirname(__FILE__)) . '/');
 define('DIR_INC', DIR_ROOT . '_includes/');
-header('Content-Type: text/html; charset=utf-8');
+
+$software_title = "DomainMOD";
+$software_title_slug = "domainmod";
+$reporting_section_title = "Reporting";
+$software_version = "1.0"; // This is currently unused
+$site_width = "96%";
+$site_width_login = "550";
+$code_home_url = "http://domainmod.org";
+$most_recent_db_version = "2.0057";
