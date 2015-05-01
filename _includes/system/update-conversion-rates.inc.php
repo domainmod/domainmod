@@ -29,27 +29,6 @@
 // include("_includes/system/update-conversion-rates.inc.php");
 ?>
 <?php
-$direct = $_GET['direct'];
-
-if ($direct == "1") { 
-
-	include("../start-session.inc.php");
-	include("../config.inc.php");
-	include("../database.inc.php");
-	include("../software.inc.php");
-	include("../auth/auth-check.inc.php");
-
-    $temp_input_user_id = $_SESSION['user_id'];
-	$temp_input_default_currency = $_SESSION['default_currency'];
-
-}
-
-include("../classes/Error.class.php");
-
-$error = new DomainMOD\Error();
-
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
-
 $sql_ucr = "SELECT c.id, c.currency
 			FROM currencies AS c, fees AS f, domains AS d
 			WHERE c.id = f.currency_id
@@ -256,15 +235,4 @@ while ($row_ucr = mysqli_fetch_object($result_ucr)) {
 
 }
 
-if ($direct == "1") {
-
-	$_SESSION['result_message'] .= "Conversion Rates Updated<BR>";
-	
-	header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
-	exit;
-
-} else {
-	
-	$_SESSION['result_message'] .= "Conversion Rates Updated<BR>";
-
-}
+$_SESSION['result_message'] .= "Conversion Rates Updated<BR>";

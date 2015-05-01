@@ -20,25 +20,7 @@
  */
 ?>
 <?php
-$direct = $_GET['direct'];
-
-if ($direct == "1") { 
-
-	include("../start-session.inc.php");
-	include("../config.inc.php");
-	include("../database.inc.php");
-	include("../software.inc.php");
-	include("../auth/auth-check.inc.php");
-
-}
-
-include("../classes/Error.class.php");
-
-$error = new DomainMOD\Error();
-
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
-
-$sql_ssl_fee_fix1 = "UPDATE ssl_certs 
+$sql_ssl_fee_fix1 = "UPDATE ssl_certs
 					 SET fee_fixed = '0', 
 						 fee_id = '0'
                      WHERE active NOT IN ('0', '10')";
@@ -90,21 +72,14 @@ $result_find_missing_ssl_fees = mysqli_query($connection, $sql_find_missing_ssl_
 
 while ($row_find_missing_ssl_fees = mysqli_fetch_object($result_find_missing_ssl_fees)) { $total_results_find_missing_ssl_fees = $row_find_missing_ssl_fees->total_count; }
 
-if ($total_results_find_missing_ssl_fees != 0) { 
-    $_SESSION['missing_ssl_fees'] = 1; 
-} else {
-    $_SESSION['missing_ssl_fees'] = 0; 
-}
+if ($total_results_find_missing_ssl_fees != 0) {
 
-if ($direct == "1") {
-
-	$_SESSION['result_message'] .= "SSL Fees Updated<BR>";
-	
-	header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
-	exit;
+    $_SESSION['missing_ssl_fees'] = 1;
 
 } else {
-	
-	$_SESSION['result_message'] .= "SSL Fees Updated<BR>";
+
+    $_SESSION['missing_ssl_fees'] = 0;
 
 }
+
+$_SESSION['result_message'] .= "SSL Fees Updated<BR>";

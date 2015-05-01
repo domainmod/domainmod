@@ -580,13 +580,13 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/users.php">Users</a>&nbsp;
-	&raquo;&nbsp;Editing A User&nbsp;<?php 
+	&raquo;&nbsp;Editing A User&nbsp;<?php
 
-} elseif ($software_section == "admin-dw-main" || $software_section == "admin-dw-intro") { ?>
+} elseif ($software_section == "admin-dw-main" || $software_section == "admin-dw-intro" || $software_section == "admin-dw-rebuild") { ?>
 
-	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
-	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
-	&raquo;&nbsp;<strong>DW</strong>&nbsp;<?php
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
+    &raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
+    &raquo;&nbsp;<strong>DW</strong>&nbsp;<?php
 
 } elseif ($software_section == "admin-dw-list-accounts") { ?>
 

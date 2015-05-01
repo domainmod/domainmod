@@ -20,24 +20,6 @@
  */
 ?>
 <?php
-$direct = $_GET['direct'];
-
-if ($direct == "1") {
-
-	include("../start-session.inc.php");
-	include("../config.inc.php");
-	include("../database.inc.php");
-	include("../software.inc.php");
-	include("../auth/auth-check.inc.php");
-
-}
-
-include("../classes/Error.class.php");
-
-$error = new DomainMOD\Error();
-
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
-
 $sql_domain_fee_fix1 = "UPDATE domains
 						SET fee_fixed = '0', 
 							fee_id = '0'
@@ -101,21 +83,14 @@ $result_find_missing_domain_fees = mysqli_query($connection, $sql_find_missing_d
 
 while ($row_find_missing_domain_fees = mysqli_fetch_object($result_find_missing_domain_fees)) { $total_results_find_missing_domain_fees = $row_find_missing_domain_fees->total_count; }
 
-if ($total_results_find_missing_domain_fees != 0) { 
-    $_SESSION['missing_domain_fees'] = 1; 
-} else {
-    $_SESSION['missing_domain_fees'] = 0; 
-}
+if ($total_results_find_missing_domain_fees != 0) {
 
-if ($direct == "1") {
-
-	$_SESSION['result_message'] .= "Domain Fees Updated<BR>";
-	
-	header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
-	exit;
+    $_SESSION['missing_domain_fees'] = 1;
 
 } else {
-	
-	$_SESSION['result_message'] .= "Domain Fees Updated<BR>";
+
+    $_SESSION['missing_domain_fees'] = 0;
 
 }
+
+$_SESSION['result_message'] .= "Domain Fees Updated<BR>";

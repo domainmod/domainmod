@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/system/update-tlds.inc.php
+ * /_includes/system/update-ssl-fees.direct.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,20 +20,18 @@
  */
 ?>
 <?php
-$sql = "SELECT id, domain
-		FROM domains 
-		ORDER BY domain asc";
-$result = mysqli_query($connection, $sql);
+include("../start-session.inc.php");
+include("../init.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "timestamps/current-timestamp.inc.php");
+include(DIR_INC . "classes/Error.class.php");
 
-while ($row = mysqli_fetch_object($result)) {
-	
-	$tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $row->domain);
-	
-	$sql_update = "UPDATE domains
-				   SET tld = '$tld'
-				   WHERE id = '$row->id'";
-	$result_update = mysqli_query($connection, $sql_update);
+$error = new DomainMOD\Error();
 
-}
+include("update-ssl-fees.inc.php");
 
-$_SESSION['result_message'] .= "TLDs Updated<BR>";
+header("Location: " . $_SERVER['HTTP_REFERER']);
+exit;

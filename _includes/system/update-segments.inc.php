@@ -20,24 +20,6 @@
  */
 ?>
 <?php
-$direct = $_GET['direct'];
-
-if ($direct == "1") { 
-
-	include("../start-session.inc.php");
-	include("../config.inc.php");
-	include("../database.inc.php");
-	include("../software.inc.php");
-	include("../auth/auth-check.inc.php");
-
-}
-
-include("../classes/Error.class.php");
-
-$error = new DomainMOD\Error();
-
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
-
 $sql_segment1 = "UPDATE segment_data
 				 SET active = '1', 
 				 	 update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'
@@ -56,15 +38,4 @@ $sql_segment3 = "UPDATE segment_data
 				 WHERE domain NOT IN (SELECT domain FROM domains)";
 $result_segment3 = mysqli_query($connection, $sql_segment3);
 
-if ($direct == "1") {
-
-	$_SESSION['result_message'] .= "Segments Updated<BR>";
-	
-	header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
-	exit;
-
-} else {
-	
-	$_SESSION['result_message'] .= "Segments Updated<BR>";
-
-}
+$_SESSION['result_message'] .= "Segments Updated<BR>";

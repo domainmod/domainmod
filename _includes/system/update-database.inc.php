@@ -20,22 +20,7 @@
  */
 ?>
 <?php
-$direct = $_GET['direct'];
 $current_timestamp = date("Y-m-d H:i:s");
-
-if ($direct == "1") {
-
-	include("../start-session.inc.php");
-	include("../config.inc.php");
-	include("../database.inc.php");
-	include("../software.inc.php");
-	include("../auth/auth-check.inc.php");
-
-}
-
-include("../classes/Error.class.php");
-
-$error = new DomainMOD\Error();
 
 $sql = "SELECT db_version
 		FROM settings";
@@ -3356,32 +3341,10 @@ if ($current_db_version < $most_recent_db_version) {
             SET upgrade_available = '0'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    if ($direct == "1") {
-	
-		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
-			
-		header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
-		exit;
-		
-	} else {
-			
-		$_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
-		
-	}
+    $_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
 
 } else {
 
-	if ($direct == "1") {
-	
-		$_SESSION['result_message'] .= "Your Database is already up-to-date<BR>";
-		
-		header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
-		exit;
-	
-	} else {
-		
-		$_SESSION['result_message'] .= "Your Database is already up-to-date<BR>";
-	
-	}
-	
+    $_SESSION['result_message'] .= "Your Database is already up-to-date<BR>";
+
 }

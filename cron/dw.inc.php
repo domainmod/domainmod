@@ -1,6 +1,6 @@
 <?php
 /**
- * /cron/dw.php
+ * /cron/dw.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,15 +20,6 @@
  */
 ?>
 <?php
-include("../_includes/init.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "database.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
-include(DIR_INC . "classes/Error.class.php");
-
-$error = new DomainMOD\Error();
-
 include(DIR_INC . "config-demo.inc.php");
 
 if ($demo_install != "1") {
@@ -40,7 +31,7 @@ if ($demo_install != "1") {
 
     if (mysqli_num_rows($result_server) == 0) {
 
-        echo "You have not yet added any Servers to " . $software_title . ".<BR><BR>";
+        echo "You don't currently have any servers setup. <a href=\"" . $web_root . "/system/admin/dw/add/server.php\">Click here to add one</a>.<BR>";
         exit;
 
     } else {
@@ -175,14 +166,14 @@ if ($demo_install != "1") {
                              MAX_DEFER_FAIL_PERCENTAGE, MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION, insert_time)
                              VALUES
                              ('" . $row_server->id . "', '" . $hit->domain . "', '" . $hit->ip . "', '" . $hit->owner
-                              . "', '" . $hit->user . "', '" . $hit->email . "', '" . $hit->plan . "', '" . $hit->theme
-                              . "', '" . $hit->shell . "', '" . $hit->partition . "', '" . $disklimit_formatted
-                              . "', '" . $diskused_formatted . "', '" . $hit->maxaddons . "', '" . $hit->maxftp . "', '"
-                              . $hit->maxlst . "', '" . $hit->maxparked. "', '" . $hit->maxpop . "', '" . $hit->maxsql
-                              . "', '" . $hit->maxsub . "', '" . $hit->startdate . "', '" . $hit->unix_startdate
-                              . "', '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime
-                              . "', '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "', '"
-                              . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . date("Y-m-d H:i:s") . "')";
+                        . "', '" . $hit->user . "', '" . $hit->email . "', '" . $hit->plan . "', '" . $hit->theme
+                        . "', '" . $hit->shell . "', '" . $hit->partition . "', '" . $disklimit_formatted
+                        . "', '" . $diskused_formatted . "', '" . $hit->maxaddons . "', '" . $hit->maxftp . "', '"
+                        . $hit->maxlst . "', '" . $hit->maxparked. "', '" . $hit->maxpop . "', '" . $hit->maxsql
+                        . "', '" . $hit->maxsub . "', '" . $hit->startdate . "', '" . $hit->unix_startdate
+                        . "', '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime
+                        . "', '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "', '"
+                        . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . date("Y-m-d H:i:s") . "')";
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 }
@@ -202,7 +193,7 @@ if ($demo_install != "1") {
                             (server_id, domain, zonefile, insert_time)
                             VALUES
                             ('" . $row_server->id . "', '" . $hit->domain . "', '" . $hit->zonefile . "', '"
-                             . date("Y-m-d H:i:s") . "')";
+                        . date("Y-m-d H:i:s") . "')";
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 }
@@ -232,13 +223,13 @@ if ($demo_install != "1") {
                                  txtdata, line, nlines, raw, insert_time)
                                 VALUES
                                 ('" . $row_server->id . "', '" . $row_temp->id . "', '" . $row_temp->domain . "', '"
-                                 . $hit->mname . "', '" . $hit->rname . "', '" . $hit->serial . "', '" . $hit->refresh
-                                 . "', '" . $hit->retry . "', '" . $hit->expire . "', '" . $hit->minimum . "', '"
-                                 . $hit->nsdname . "', '" . $hit->name . "', '" . $hit->ttl . "', '" . $hit->class
-                                 . "', '" . $hit->type . "', '" . $hit->address . "', '" . $hit->cname . "', '"
-                                 . $hit->exchange . "', '" . $hit->preference . "', '" . $hit->txtdata . "', '"
-                                 . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw . "', '"
-                                 . date("Y-m-d H:i:s") . "')";
+                            . $hit->mname . "', '" . $hit->rname . "', '" . $hit->serial . "', '" . $hit->refresh
+                            . "', '" . $hit->retry . "', '" . $hit->expire . "', '" . $hit->minimum . "', '"
+                            . $hit->nsdname . "', '" . $hit->name . "', '" . $hit->ttl . "', '" . $hit->class
+                            . "', '" . $hit->type . "', '" . $hit->address . "', '" . $hit->cname . "', '"
+                            . $hit->exchange . "', '" . $hit->preference . "', '" . $hit->txtdata . "', '"
+                            . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw . "', '"
+                            . date("Y-m-d H:i:s") . "')";
                         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     }

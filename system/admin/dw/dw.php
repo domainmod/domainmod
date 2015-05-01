@@ -125,7 +125,7 @@ if (mysqli_num_rows($result) == 0) {
 
 }
 ?>
-&raquo; <a href="servers.php">Manage Servers</a><?php if ($has_servers == 1) { ?>&nbsp;&nbsp;/&nbsp;&nbsp;<a target="_blank" href="../../../cron/dw.php?direct=1">Build DW</a><?php } ?><BR>
+&raquo; <a href="servers.php">Manage Servers</a><?php if ($has_servers == 1) { ?>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="rebuild.php">Rebuild DW</a><?php } ?><BR>
 
 <?php
 $sql_accounts = "SELECT id
@@ -149,7 +149,7 @@ while ($row_build_finished = mysqli_fetch_object($result_build_finished)) {
 if ($is_the_build_finished == 1 && ($temp_total_accounts != 0 || $temp_total_dns_zones != 0)) { ?>
 
     <BR><font class="subheadline">View Data</font><BR><BR>
-    <form name="dw_view_data_form" method="post" action="dw.php">
+    <form name="dw_view_data_form" method="post">
     <?php
     
     if ($temp_total_accounts == 0) {
