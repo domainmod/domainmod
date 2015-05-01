@@ -22,15 +22,11 @@
 <?php
 include("../../../_includes/start-session.inc.php");
 include("../../../_includes/init.inc.php");
-
-// If the user isn't an administrator, redirect them to $full_redirect
-$full_redirect = "../../../invalid.php";
-include(DIR_INC . "auth/admin-user-check.inc.php");
-
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
+include(DIR_INC . "auth/admin-user-check.inc.php");
 
 $page_title = "Data Warehouse";
 $software_section = "admin-dw-intro";

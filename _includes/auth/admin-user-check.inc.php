@@ -20,9 +20,9 @@
  */
 ?>
 <?php
-if ($_SESSION['is_admin'] != 1) {
+if ($_SESSION['is_admin'] !== 1) {
 
-    header("Location: $full_redirect");
+    header("Location: " . $web_root . "/invalid.php");
     exit;
 
 }

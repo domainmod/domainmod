@@ -20,10 +20,6 @@
  */
 ?>
 <?php
-// If the user isn't an administrator, redirect them to $full_redirect
-$full_redirect = "../../invalid.php";
-include(DIR_INC . "auth/admin-user-check.inc.php");
-
 // Delete all unused domain fees
 $sql = "DELETE FROM fees
         WHERE id NOT IN (SELECT fee_id FROM domains)";

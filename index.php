@@ -170,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
            if ($_SESSION['system_upgrade_available'] == "1") {
 
-               if ($_SESSION['is_admin'] == "1") {
+               if ($_SESSION['is_admin'] === 1) {
 
                    $_SESSION['result_message'] .= "A new version of DomainMOD is available. <a target=\"_blank\" href=\"http://domainmod.org/upgrade/\">Click here for upgrade instructions</a>.<BR>";
 
