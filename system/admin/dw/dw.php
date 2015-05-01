@@ -115,13 +115,22 @@ $sql = "SELECT id
 		FROM dw_servers
 		LIMIT 1";
 $result = mysqli_query($connection, $sql);
-if (mysqli_num_rows($result) == 0) {
 
-	$has_servers = 0;
+if ($result === FALSE || mysqli_num_rows($result) <= 0) {
+
+    $no_results_servers = 1;
 
 } else {
 
-	$has_servers = 1;
+    if (mysqli_num_rows($result) == 0) {
+
+        $has_servers = 0;
+
+    } else {
+
+        $has_servers = 1;
+
+    }
 
 }
 ?>
@@ -131,22 +140,51 @@ if (mysqli_num_rows($result) == 0) {
 $sql_accounts = "SELECT id
 				 FROM dw_accounts";
 $result_accounts = mysqli_query($connection, $sql_accounts);
-$temp_total_accounts = mysqli_num_rows($result_accounts);
+
+if ($result_accounts === FALSE || mysqli_num_rows($result_accounts) <= 0) {
+
+    $no_results_accounts = 1;
+
+} else {
+
+    $temp_total_accounts = mysqli_num_rows($result_accounts);
+
+}
 
 $sql_dns_zones = "SELECT id
 				  FROM dw_dns_records";
 $result_dns_zones = mysqli_query($connection, $sql_dns_zones);
-$temp_total_dns_zones = mysqli_num_rows($result_dns_zones);
+
+if ($result_dns_zones === FALSE || mysqli_num_rows($result_dns_zones) <= 0) {
+
+    $no_results_dns_zones = 1;
+
+} else {
+
+    $temp_total_dns_zones = mysqli_num_rows($result_dns_zones);
+
+}
 
 $sql_build_finished = "SELECT build_status_overall
 					   FROM dw_servers
 					   LIMIT 1";
 $result_build_finished = mysqli_query($connection, $sql_build_finished);
-while ($row_build_finished = mysqli_fetch_object($result_build_finished)) {
-	$is_the_build_finished = $row_build_finished->build_status_overall;
+
+if ($result_build_finished === FALSE || mysqli_num_rows($result_build_finished) <= 0) {
+
+    $no_results_build_finished = 1;
+
+} else {
+
+    while ($row_build_finished = mysqli_fetch_object($result_build_finished)) {
+
+        $is_the_build_finished = $row_build_finished->build_status_overall;
+
+    }
+
 }
 
-if ($is_the_build_finished == 1 && ($temp_total_accounts != 0 || $temp_total_dns_zones != 0)) { ?>
+if ($is_the_build_finished === 1 && ($no_results_accounts !== 1 || $no_results_dns_zones !== 1)) { ?>
 
     <BR><font class="subheadline">View Data</font><BR><BR>
     <form name="dw_view_data_form" method="post">
@@ -212,9 +250,18 @@ $sql_build_info = "SELECT build_status_overall, build_start_time_overall, build_
 				   ORDER BY build_end_time_overall desc
 				   LIMIT 1";
 $result_build_info = mysqli_query($connection, $sql_build_info);
-$temp_build_info = mysqli_num_rows($result_build_info);
 
-if ($temp_build_info != 0) { ?>
+if ($result_build_info === FALSE || mysqli_num_rows($result_build_info) <= 0) {
+
+    $no_results_build_info = 1;
+
+} else {
+
+    $temp_build_info = mysqli_num_rows($result_build_info);
+
+}
+
+if ($no_results_build_info !== 1) { ?>
 
     <BR><font class="subheadline">Build Information</font><BR>
     <table class="main_table" cellpadding="0" cellspacing="0"><?php
@@ -245,19 +292,27 @@ if ($temp_build_info != 0) { ?>
                                          FROM dw_servers
                                          WHERE build_status = '0'";
                     $result_check_builds = mysqli_query($connection, $sql_check_builds);
-                    
-                    if (mysqli_num_rows($result_check_builds) == 0) {
-    
-                        $temp_build_status_overall = "<font class=\"default_highlight\"><strong>Cleanup...</strong></font>";
-    
+
+                    if ($result_check_builds === FALSE || mysqli_num_rows($result_check_builds) <= 0) {
+
+                        $no_results_check_builds = 1;
+
                     } else {
-    
-                        $temp_build_status_overall = "<font class=\"default_highlight\"><strong>Building...</strong></font>";
-    
+
+                        if (mysqli_num_rows($result_check_builds) == 0) {
+
+                            $temp_build_status_overall = "<font class=\"default_highlight\"><strong>Cleanup...</strong></font>";
+
+                        } else {
+
+                            $temp_build_status_overall = "<font class=\"default_highlight\"><strong>Building...</strong></font>";
+
+                        }
+
                     }
+
                     $is_building = 1;
-    
-                        
+
                 }
     
                 if ($row_build_info->build_start_time_overall == "0000-00-00 00:00:00" && $row_build_info->has_ever_been_built_overall == 0) {
@@ -338,81 +393,81 @@ if ($temp_build_info != 0) { ?>
                 FROM dw_servers
                 ORDER BY name, host";
         $result = mysqli_query($connection, $sql);
-        
+
         if (mysqli_num_rows($result) == 0) {
-            
+
             echo "";
-        
+
         } else {
-        
-            while ($row = mysqli_fetch_object($result)) { 
-    
+
+            while ($row = mysqli_fetch_object($result)) {
+
                 if ($row->build_start_time != "0000-00-00 00:00:00" && $row->build_end_time != "0000-00-00 00:00:00") {
-    
+
                         $temp_build_status = "<font color=\"green\"><strong>Successful</strong></font>";
-                        
+
                 }
-    
+
                 if ($row->build_start_time != "0000-00-00 00:00:00" && $row->build_end_time == "0000-00-00 00:00:00" && $row->build_status == 0) {
-    
+
                         $temp_build_status = "<font class=\"default_highlight\"><strong>Building...</strong></font>";
-                        
+
                 }
-    
+
                 if ($row->build_start_time == "0000-00-00 00:00:00" && $row->has_ever_been_built == 0) {
-    
+
                         if ($is_building == 1) {
-    
+
                             $temp_build_status = "<font class=\"default_highlight\">Pending</font>";
-                            
+
                         } else {
-    
+
                             $temp_build_status = "<font class=\"default_highlight\">Never Built</font>";
-                            
+
                         }
-    
+
                 }
-    
+
                 if ($row->build_start_time == "0000-00-00 00:00:00" && $row->has_ever_been_built == 1) {
-    
+
                         $temp_build_status = "<font class=\"default_highlight\">Pending</font>";
-                        
+
                 }
-    
+
                 if ($row->build_start_time != "0000-00-00 00:00:00" && $row->has_ever_been_built == 0) {
-    
+
                         $temp_build_status = "<font class=\"default_highlight\">Building...</font>";
-                        
+
                 }
-    
+
                 if ($row->build_start_time  == "0000-00-00 00:00:00") {
-                    
+
                     $temp_build_start_time = "-";
-                    
+
                 } else {
-                    
+
                     $temp_build_start_time = date("M jS @ g:i:sa", strtotime($row->build_start_time));
-                    
+
                 }
-        
+
                 if ($row->build_end_time  == "0000-00-00 00:00:00") {
-                    
+
                     $temp_build_end_time = "-";
-                    
+
                 } else {
-        
+
                     $temp_build_end_time = date("M jS @ g:i:sa", strtotime($row->build_end_time));
-                    
+
                 }
-    
+
                 if ($row->build_time <= 0) {
-                    
+
                     $temp_build_time = "-";
-                    
+
                 } elseif ($row->build_time > 0 && $row->build_time <= 60) {
-    
+
                     $temp_build_time = number_format($row->build_time) . "s";
-    
+
                 } else {
 
                     $number_of_minutes = intval($row->build_time / 60);
@@ -421,7 +476,7 @@ if ($temp_build_info != 0) { ?>
 					$temp_build_time = $number_of_minutes . "m " . $number_of_seconds . "s";
 
                 } ?>
-    
+
                 <tr class="main_table_row_active">
                     <td class="main_table_cell_active"><?php echo $row->name; ?></td>
                     <td class="main_table_cell_active"><?php echo $temp_build_start_time; ?></td>
@@ -429,9 +484,9 @@ if ($temp_build_info != 0) { ?>
                     <td class="main_table_cell_active"><?php echo $temp_build_time; ?></td>
                     <td class="main_table_cell_active"><?php echo $temp_build_status; ?></td>
                 </tr><?php
-        
+
             }
-            
+
         } ?>
     </table><?php
 	
