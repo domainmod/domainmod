@@ -20,7 +20,6 @@
  */
 ?>
 <?php
-include(DIR_INC . "start-session.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 
 $_SESSION = array();
