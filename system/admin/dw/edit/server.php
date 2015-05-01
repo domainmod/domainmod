@@ -171,7 +171,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="dw_edit_server_form" method="post" action="server.php">
+<form name="dw_edit_server_form" method="post">
 <strong>Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 Enter the display name for this server.<BR><BR>
 <input name="new_name" type="text" size="50" maxlength="100" value="<?php

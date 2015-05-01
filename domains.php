@@ -896,7 +896,7 @@ if ($segid != "") {
 
 }
 ?>
-<form name="domain_search_form" method="post" action="domains.php">
+<form name="domain_search_form" method="post">
     <div class="search-block-outer">
         <div class="search-block-inner">
             <div class="search-block-left">

@@ -274,7 +274,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
 <?php include(DIR_INC . "layout/table-export-top.inc.php"); ?>
-    <form name="export_ssl_form" method="post" action="cost-by-provider.php">
+    <form name="export_ssl_form" method="post">
         <a href="cost-by-provider.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_start_date\""; } ?>> 
         and 

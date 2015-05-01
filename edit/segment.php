@@ -281,7 +281,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="edit_segment_form" method="post" action="segment.php">
+<form name="edit_segment_form" method="post">
 <strong>Segment Name (35)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_name" type="text" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>" size="25" maxlength="35">
 <BR><BR>

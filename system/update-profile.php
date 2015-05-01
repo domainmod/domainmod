@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="change_email_address_form" method="post" action="update-profile.php">
+<form name="change_email_address_form" method="post">
 <strong>First Name (50):</strong><BR><BR>
 <input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") { echo $new_first_name; } else { echo $_SESSION['first_name']; }?>">
 <BR><BR>

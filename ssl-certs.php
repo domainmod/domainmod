@@ -581,7 +581,7 @@ $sql = $sql.$navigate[0];
 $result = mysqli_query($connection, $sql);
 $total_rows = number_format(mysqli_num_rows($result));
 ?>
-<form name="ssl_cert_search_form" method="post" action="ssl-certs.php">
+<form name="ssl_cert_search_form" method="post">
 <div class="search-block-outer">
 <div class="search-block-inner">
 <div class="search-block-left">

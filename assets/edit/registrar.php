@@ -149,7 +149,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="edit_registrar_form" method="post" action="registrar.php">
+<form name="edit_registrar_form" method="post">
 <strong>Registrar Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_registrar" type="text" value="<?php echo htmlentities($new_registrar); ?>" size="50" maxlength="100">
 <BR><BR>

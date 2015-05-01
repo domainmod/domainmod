@@ -209,7 +209,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="edit_user_form" method="post" action="user.php">
+<form name="edit_user_form" method="post">
 <strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") echo htmlentities($new_first_name); ?>"><BR><BR>
 <strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") echo htmlentities($new_last_name); ?>"><BR><BR>
 <?php if ($new_username == "admin" || $new_username == "administrator") { ?>

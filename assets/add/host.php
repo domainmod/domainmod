@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="add_host_form" method="post" action="host.php">
+<form name="add_host_form" method="post">
 <strong>Web Host Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_host" type="text" value="<?php echo $new_host; ?>" size="50" maxlength="100">
 <BR><BR>

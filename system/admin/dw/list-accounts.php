@@ -250,7 +250,7 @@ if(mysqli_num_rows($result_dw_account_temp) == 0) {
 	
 } else { ?>
 
-	<form name="form1" method="post" action="list-accounts.php">
+	<form name="form1" method="post">
 		<input type="text" name="search_for" size="17" value="<?php echo $search_for; ?>">&nbsp;
 		<input type="submit" name="button" value="Search &raquo;">
 		<input type="hidden" name="begin" value="0">

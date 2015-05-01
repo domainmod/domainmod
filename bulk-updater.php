@@ -1041,7 +1041,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <?php } ?>
 Instead of having to waste time editing domains one-by-one, you can use the below form to update various data for multiple domains all at once.<BR><BR>
-<form name="bulk_updater_form" method="post" action="bulk-updater.php">
+<form name="bulk_updater_form" method="post">
   <select name="jumpMenu" id="jumpMenu" onChange="MM_jumpMenu('parent',this,0)">
     <option value="bulk-updater.php"<?php if ($action == "") { echo " selected"; } ?>>Choose Action</option>
     <option value="bulk-updater.php?action=AD"<?php if ($action == "AD") { echo " selected"; } ?>>Add Domains</option>

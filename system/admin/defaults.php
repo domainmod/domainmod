@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="default_settings_form" method="post" action="defaults.php">
+<form name="default_settings_form" method="post">
 <BR><font class="subheadline">Domain Defaults</font><BR><BR>
 <strong>Default Domain Registrar</strong><BR><BR>
 <select name="new_default_registrar">

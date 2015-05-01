@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body onLoad="document.forms[0].elements[2].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="add_account_form" method="post" action="registrar-account.php">
+<form name="add_account_form" method="post">
 <strong>Owner</strong><BR><BR>
 <?php
 $sql_owner = "SELECT id, name

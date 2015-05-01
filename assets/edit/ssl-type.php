@@ -129,7 +129,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="edit_type_form" method="post" action="ssl-type.php">
+<form name="edit_type_form" method="post">
 <strong>Type Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_type" type="text" value="<?php if ($new_type != "") echo htmlentities($new_type); ?>
 " size="50" maxlength="100">

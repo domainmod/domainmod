@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="add_owner_form" method="post" action="account-owner.php">
+<form name="add_owner_form" method="post">
 <strong>Owner Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
 <input name="new_owner" type="text" value="<?php echo $new_owner; ?>" size="50" maxlength="100">
 <BR><BR>

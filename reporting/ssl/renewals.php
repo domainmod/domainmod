@@ -283,7 +283,7 @@ if ($export_data == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
 <?php include(DIR_INC . "layout/table-export-top.inc.php"); ?>
-    <form name="export_ssl_certs_form" method="post" action="renewals.php">
+    <form name="export_ssl_certs_form" method="post">
         <a href="renewals.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_start_date\""; } ?>> 
         and 

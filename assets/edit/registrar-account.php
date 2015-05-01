@@ -169,7 +169,7 @@ if ($really_del == "1") {
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="edit_account_form" method="post" action="registrar-account.php">
+<form name="edit_account_form" method="post">
 <strong>Owner</strong><BR><BR>
 <?php
 $sql_owner = "SELECT id, name
