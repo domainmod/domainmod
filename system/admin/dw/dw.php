@@ -114,6 +114,7 @@ $result = mysqli_query($connection, $sql);
 
 if ($result === FALSE || mysqli_num_rows($result) <= 0) {
 
+    // Query error or no results
     $no_results_servers = 1;
 
 } else {
@@ -139,6 +140,7 @@ $result_accounts = mysqli_query($connection, $sql_accounts);
 
 if ($result_accounts === FALSE || mysqli_num_rows($result_accounts) <= 0) {
 
+    // Query error or not results
     $no_results_accounts = 1;
 
 } else {
@@ -153,6 +155,7 @@ $result_dns_zones = mysqli_query($connection, $sql_dns_zones);
 
 if ($result_dns_zones === FALSE || mysqli_num_rows($result_dns_zones) <= 0) {
 
+    // Query error or no results
     $no_results_dns_zones = 1;
 
 } else {
@@ -168,6 +171,7 @@ $result_build_finished = mysqli_query($connection, $sql_build_finished);
 
 if ($result_build_finished === FALSE || mysqli_num_rows($result_build_finished) <= 0) {
 
+    // Query error or no results
     $no_results_build_finished = 1;
 
 } else {
@@ -492,10 +496,20 @@ $sql_data_check = "SELECT dw_accounts, dw_dns_zones, dw_dns_records
 				   FROM dw_server_totals";
 $result_data_check = mysqli_query($connection, $sql_data_check);
 
-while ($row_data_check = mysqli_fetch_object($result_data_check)) {
-	$temp_dw_accounts = $row_data_check->dw_accounts;
-	$temp_dw_dns_zones = $row_data_check->dw_dns_zones;
-	$temp_dw_dns_records = $row_data_check->dw_dns_records;
+if ($result_data_check === FALSE || mysqli_num_rows($result_data_check) <= 0) {
+
+    // Query error or no results
+
+} else {
+
+    while ($row_data_check = mysqli_fetch_object($result_data_check)) {
+
+        $temp_dw_accounts = $row_data_check->dw_accounts;
+        $temp_dw_dns_zones = $row_data_check->dw_dns_zones;
+        $temp_dw_dns_records = $row_data_check->dw_dns_records;
+
+    }
+
 }
 
 if (mysqli_num_rows($result) == 0) {
@@ -589,8 +603,7 @@ if (mysqli_num_rows($result) == 0) {
 		
 	}
 
-} 
-
+}
 
 $sql_accounts_without_a_dns_zone = "SELECT domain
 									FROM dw_accounts
@@ -598,7 +611,16 @@ $sql_accounts_without_a_dns_zone = "SELECT domain
 														 FROM dw_dns_zones)
 									ORDER BY domain";
 $result_accounts_without_a_dns_zone = mysqli_query($connection, $sql_accounts_without_a_dns_zone);
-$temp_accounts_without_a_dns_zone = mysqli_num_rows($result_accounts_without_a_dns_zone);
+
+if ($result_accounts_without_a_dns_zone === FALSE || mysqli_num_rows($result_accounts_without_a_dns_zone) <= 0) {
+
+    // Query error or no results
+
+} else {
+
+    $temp_accounts_without_a_dns_zone = mysqli_num_rows($result_accounts_without_a_dns_zone);
+
+}
 
 $sql_dns_zones_without_an_account = "SELECT domain
 									 FROM dw_dns_zones
@@ -606,14 +628,32 @@ $sql_dns_zones_without_an_account = "SELECT domain
 									 					  FROM dw_accounts)
 									ORDER BY domain";
 $result_dns_zones_without_an_account = mysqli_query($connection, $sql_dns_zones_without_an_account);
-$temp_dns_zones_without_an_account = mysqli_num_rows($result_dns_zones_without_an_account);
+
+if ($result_dns_zones_without_an_account === FALSE || mysqli_num_rows($result_dns_zones_without_an_account) <= 0) {
+
+    // Query error or no results
+
+} else {
+
+    $temp_dns_zones_without_an_account = mysqli_num_rows($result_dns_zones_without_an_account);
+
+}
 
 $sql_suspended_accounts = "SELECT domain
 						   FROM dw_accounts
 						   WHERE suspended = '1'
 						   ORDER BY domain";
 $result_suspended_accounts = mysqli_query($connection, $sql_suspended_accounts);
-$temp_suspended_accounts = mysqli_num_rows($result_suspended_accounts);
+
+if ($result_suspended_accounts === FALSE || mysqli_num_rows($result_suspended_accounts) <= 0) {
+
+    // Query error or no results
+
+} else {
+
+    $temp_suspended_accounts = mysqli_num_rows($result_suspended_accounts);
+
+}
 
 if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account != 0 || $temp_suspended_accounts != 0)) { ?>
 
