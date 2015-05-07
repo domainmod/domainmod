@@ -64,4 +64,20 @@ class System
 
     }
 
+    function performMaintenance($connection) {
+
+        // Delete all unused domain fees
+        $sql = "DELETE FROM fees
+                WHERE id NOT IN (SELECT fee_id FROM domains)";
+        mysqli_query($connection, $sql);
+
+        // Delete all unused SSL certificate fees
+        $sql = "DELETE FROM ssl_fees
+                WHERE id NOT IN (SELECT fee_id FROM ssl_certs)";
+        mysqli_query($connection, $sql);
+
+        $_SESSION['result_message'] .= "Maintenance Completed<BR>";
+
+    }
+
 }
