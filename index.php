@@ -27,8 +27,8 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/login-check.inc.php");
 include(DIR_INC . "timestamps/current-timestamp.inc.php");
-include(DIR_INC . "classes/System.class.php");
 include(DIR_INC . "classes/Error.class.php");
+include(DIR_INC . "classes/System.class.php");
 
 $system = new DomainMOD\System();
 $system->installCheck($connection, $web_root);
@@ -179,11 +179,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
            }
 
            if (($_SESSION['run_update_includes'] == "1" || $last_login_date < $current_date) && $_SESSION['need_domain'] == "0") {
-				
-				include(DIR_INC . "system/update-segments.inc.php");
-				include(DIR_INC . "system/update-tlds.inc.php");
 
-			}
+               include(DIR_INC . "system/update-segments.inc.php");
+               $system = new DomainMOD\System();
+               $system->updateTlds($connection);
+
+           }
 
            include(DIR_INC . "system/check-domain-fees.inc.php");
            include(DIR_INC . "system/check-ssl-fees.inc.php");

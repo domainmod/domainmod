@@ -32,6 +32,7 @@ include(DIR_INC . "timestamps/current-timestamp-basic-plus-one-year.inc.php");
 include(DIR_INC . "classes/Date.class.php");
 include(DIR_INC . "classes/Domain.class.php");
 include(DIR_INC . "classes/Error.class.php");
+include(DIR_INC . "classes/System.class.php");
 
 $error = new DomainMOD\Error();
 
@@ -304,9 +305,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     include(DIR_INC . "system/check-domain-fees.inc.php");
                     include(DIR_INC . "system/update-segments.inc.php");
-					include(DIR_INC . "system/update-tlds.inc.php");
+                    $system = new DomainMOD\System();
+                    $system->updateTlds($connection);
 
-				}
+                }
 	
 			} elseif ($action == "FR") { 
 			
