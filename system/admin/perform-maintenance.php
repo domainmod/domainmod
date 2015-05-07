@@ -27,9 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 include(DIR_INC . "auth/admin-user-check.inc.php");
+include(DIR_INC . "classes/System.class.php");
 
 // Perform System Maintenance
-include(DIR_INC . "system/perform-maintenance.inc.php");
+$maintenance = new DomainMOD\System();
+$maintenance->performMaintenance($connection);
 
 // Redirect to Control Panel after performing maintenance
 header("Location: ../index.php");
