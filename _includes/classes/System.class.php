@@ -80,4 +80,26 @@ class System
 
     }
 
+    function updateTlds($connection) {
+
+        $sql = "SELECT id, domain
+                FROM domains
+                ORDER BY domain asc";
+        $result = mysqli_query($connection, $sql);
+
+        while ($row = mysqli_fetch_object($result)) {
+
+            $tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $row->domain);
+
+            $sql_update = "UPDATE domains
+                           SET tld = '" . $tld . "'
+                           WHERE id = '" . $row->id . "'";
+            mysqli_query($connection, $sql_update);
+
+        }
+
+        $_SESSION['result_message'] .= "TLDs Updated<BR>";
+
+    }
+
 }
