@@ -25,7 +25,7 @@ namespace DomainMOD;
 class Domain
 {
 
-    function checkDomainFormat($input_domain) {
+    public function checkDomainFormat($input_domain) {
 
         /*
 

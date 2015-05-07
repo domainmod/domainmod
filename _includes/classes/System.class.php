@@ -25,7 +25,7 @@ namespace DomainMOD;
 class System
 {
 
-    function installCheck($connection, $web_root)
+    public function installCheck($connection, $web_root)
     {
 
         $full_install_path = DIR_ROOT . "install/";
@@ -64,7 +64,7 @@ class System
 
     }
 
-    function performMaintenance($connection) {
+    public function performMaintenance($connection) {
 
         // Delete all unused domain fees
         $sql = "DELETE FROM fees
@@ -80,7 +80,7 @@ class System
 
     }
 
-    function updateTlds($connection) {
+    public function updateTlds($connection) {
 
         $sql = "SELECT id, domain
                 FROM domains

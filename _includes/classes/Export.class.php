@@ -25,7 +25,7 @@ namespace DomainMOD;
 class Export
 {
 
-    function openFile($base_filename)
+    public function openFile($base_filename)
     {
 
         include(DIR_INC . 'timestamps/current-timestamp.inc.php');
@@ -49,7 +49,7 @@ class Export
      * The openFileAppend method is the same as the openFile method but it accepts an additional value that's appended
      * to the filename instead of the unix time
      */
-    function openFileAppend($base_filename, $append_data)
+    public function openFileAppend($base_filename, $append_data)
     {
 
         header('Content-Encoding: UTF-8');
@@ -66,14 +66,14 @@ class Export
 
     }
 
-    function writeRow($open_file, $row_contents)
+    public function writeRow($open_file, $row_contents)
     {
 
         fputcsv($open_file, $row_contents);
 
     }
 
-    function writeBlankRow($open_file)
+    public function writeBlankRow($open_file)
     {
 
         $blank_line = array('');
@@ -81,7 +81,7 @@ class Export
 
     }
 
-    function closeFile($open_file)
+    public function closeFile($open_file)
     {
 
         fclose($open_file);

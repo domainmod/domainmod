@@ -25,7 +25,8 @@ namespace DomainMOD;
 class Layout
 {
 
-    function pageBrowser($totalrows, $numLimit, $amm, $queryStr, $numBegin, $begin, $num) {
+    public function pageBrowser($totalrows, $numLimit, $amm, $queryStr, $numBegin, $begin, $num)
+    {
 
         $larrow = "&nbsp;&laquo; Prev &nbsp;";
         $rarrow = "&nbsp;Next &raquo;&nbsp;";

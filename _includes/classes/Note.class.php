@@ -25,7 +25,7 @@ namespace DomainMOD;
 class Note
 {
 
-    function formatHtml($input_notes)
+    public function formatHtml($input_notes)
     {
 
         $output_notes = trim($input_notes);

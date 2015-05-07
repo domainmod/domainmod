@@ -25,7 +25,7 @@ namespace DomainMOD;
 class Date
 {
 
-    function checkDateFormat($input_date) {
+    public function checkDateFormat($input_date) {
 
         if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $input_date, $output_date)) {
 
