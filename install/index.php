@@ -36,7 +36,7 @@ $error = new DomainMOD\Error();
 
 if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings . "'"))) {
 	
-	$_SESSION['result_message'] = "$software_title is already installed<BR>";
+	$_SESSION['result_message'] = "$software_title is already installed<BR><BR>You should delete the /install/ folder<BR>";
 
 	header("Location: ../");
 	exit;
@@ -834,7 +834,7 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
 
 	$_SESSION['installation_mode'] = 0;
 	$_SESSION['result_message'] = "$software_title has been installed<BR><BR>The default username and password are both set to \"admin\"<BR>";
-	
+
 	header("Location: ../");
 	exit;
 

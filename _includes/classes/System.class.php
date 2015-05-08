@@ -32,10 +32,10 @@ class System
 
         if (is_dir($full_install_path)) {
 
-            if(!mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_servers` . "'"))) {
+            if (!mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_servers` . "'"))) {
 
                 $installation_mode = 1;
-                $result_message = "<a href=\"" . $web_root . "/install/\">Please click here to install</a><BR>";
+                $result_message = "<a href=\"" . $web_root . "/install/\">Click here to install</a><BR>";
 
             } else {
 
@@ -43,6 +43,11 @@ class System
                 $result_message = '';
 
             }
+
+        } else {
+
+            $installation_mode = 0;
+            $result_message = '';
 
         }
 
