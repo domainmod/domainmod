@@ -76,66 +76,51 @@ if ($export_data == "1") {
         
     } else {
 
-        $row_contents = array('Accounts without a DNS Zone (' . $temp_accounts_without_a_dns_zone . ')');
-        $export->writeRow($export_file, $row_contents);
-
-        unset($row_contents);
-        $count = 0;
-
         while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
 
-			$row_contents[$count++] = $row_accounts_without_a_dns_zone->domain;
+            $row_contents = array(
+                "Accounts without a DNS Zone (" . $temp_accounts_without_a_dns_zone . ")",
+                $row_accounts_without_a_dns_zone->domain
+            );
+            $export->writeRow($export_file, $row_contents);
 
         }
-        $export->writeRow($export_file, $row_contents);
-
-        $export->writeBlankRow($export_file);
 
     }
 
     if ($temp_dns_zones_without_an_account == 0) {
-        
+
         $dns_zones_without_an_account_flag = 1;
-        
+
     } else {
-
-        $row_contents = array('DNS Zones without an Account (' . $temp_dns_zones_without_an_account . ')');
-        $export->writeRow($export_file, $row_contents);
-
-        unset($row_contents);
-        $count = 0;
 
         while ($row_dns_zones_without_an_account = mysqli_fetch_object($result_dns_zones_without_an_account)) {
 
-			$row_contents[$count++] = $row_dns_zones_without_an_account->domain;
+            $row_contents = array(
+                "DNS Zones without an Account (" . $temp_dns_zones_without_an_account . ")",
+                $row_dns_zones_without_an_account->domain
+            );
+            $export->writeRow($export_file, $row_contents);
 
         }
-        $export->writeRow($export_file, $row_contents);
-
-        $export->writeBlankRow($export_file);
 
     }
 
     if ($temp_suspended_accounts == 0) {
-        
+
         $suspended_accounts_flag = 1;
-        
+
     } else {
-
-        $row_contents = array('Suspended Accounts (' . $temp_suspended_accounts . ')');
-        $export->writeRow($export_file, $row_contents);
-
-        unset($row_contents);
-        $count = 0;
 
         while ($row_suspended_accounts = mysqli_fetch_object($result_suspended_accounts)) {
 
-			$row_contents[$count++] = $row_suspended_accounts->domain;
+            $row_contents = array(
+                "Suspended Accounts (" . $temp_suspended_accounts . ")",
+                $row_suspended_accounts->domain
+            );
+            $export->writeRow($export_file, $row_contents);
 
         }
-        $export->writeRow($export_file, $row_contents);
-
-        $export->writeBlankRow($export_file);
 
     }
 
