@@ -30,19 +30,10 @@ class System
 
         $full_install_path = DIR_ROOT . "install/";
 
-        if (is_dir($full_install_path)) {
+        if (is_dir($full_install_path) && !mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_servers` . "'"))) {
 
-            if (!mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_servers` . "'"))) {
-
-                $installation_mode = 1;
-                $result_message = "<a href=\"" . $web_root . "/install/\">Click here to install</a><BR>";
-
-            } else {
-
-                $installation_mode = 0;
-                $result_message = '';
-
-            }
+            $installation_mode = 1;
+            $result_message = "<a href=\"" . $web_root . "/install/\">Click here to install</a><BR>";
 
         } else {
 
