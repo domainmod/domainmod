@@ -832,7 +832,7 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
 		$_SESSION['default_currency_symbol_space'] = $row_currencies->symbol_space;
 	}
 
-	$_SESSION['institallation_mode'] = 0;
+	$_SESSION['installation_mode'] = 0;
 	$_SESSION['result_message'] = "$software_title has been installed<BR><BR>The default username and password are both set to \"admin\"<BR>";
 	
 	header("Location: ../");
