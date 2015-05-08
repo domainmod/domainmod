@@ -36,6 +36,7 @@ $page_title = "Reset Password";
 $software_section = "system";
 
 $new_username = $_GET['new_username'];
+$display = $_GET['display'];
 
 if ($new_username != "") {
 
@@ -58,12 +59,19 @@ if ($new_username != "") {
 						   WHERE username = '$row->username'
 						     AND email_address = '$row->email_address'";
 			$result_update = mysqli_query($connection, $sql_update);
-			
-			include(DIR_INC . "email/send-new-password.inc.php");
-					
-			$_SESSION['result_message'] .= "The password has been reset and emailed to the account holder<BR>";
-			
-			header("Location: edit/user.php?uid=$row->id");
+
+            if ($display == "1") {
+
+                $_SESSION['result_message'] .= "The new password for " . $row->username . " is " . $new_password . "<BR>";
+
+            } else {
+
+                include(DIR_INC . "email/send-new-password.inc.php");
+                $_SESSION['result_message'] .= "The password has been reset and emailed to the account holder<BR>";
+
+            }
+
+            header("Location: edit/user.php?uid=$row->id");
 			exit;
 			
 		}

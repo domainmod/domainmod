@@ -254,7 +254,8 @@ if ($really_del == "1") {
 <BR><BR>
 <input type="submit" name="button" value="Update User &raquo;">
 </form>
-<BR><BR><a href="../reset-password.php?new_username=<?php echo $new_username; ?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
+<BR><BR><a href="../reset-password.php?new_username=<?php echo $new_username; ?>&display=1">RESET AND DISPLAY PASSWORD</a><BR>
+<BR><a href="../reset-password.php?new_username=<?php echo $new_username; ?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
 <BR><a href="user.php?uid=<?php echo $uid; ?>&del=1">DELETE THIS USER</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
