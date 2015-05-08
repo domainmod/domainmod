@@ -43,8 +43,7 @@ if ($new_username != "") {
            FROM users
 		   WHERE username = '$new_username'
 		     AND active = '1'";
-
-   $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 	if (mysqli_num_rows($result) == 1) {
    
