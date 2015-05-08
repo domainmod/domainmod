@@ -32,21 +32,7 @@ class System
 
         if (is_dir($full_install_path)) {
 
-            if(!mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . categories . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . owners . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . currencies . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . dns . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . domains . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . fees . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . registrars . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . registrar_accounts . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . segments . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . ssl_accounts . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . ssl_certs . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . ssl_fees . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . ssl_providers . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . users . "'"))
-                || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings . "'"))) {
+            if(!mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_servers` . "'"))) {
 
                 $installation_mode = 1;
                 $result_message = "<a href=\"" . $web_root . "/install/\">Please click here to install</a><BR>";
