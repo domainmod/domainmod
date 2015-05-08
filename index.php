@@ -30,12 +30,14 @@ include(DIR_INC . "timestamps/current-timestamp.inc.php");
 include(DIR_INC . "classes/Error.class.php");
 include(DIR_INC . "classes/System.class.php");
 
-$system = new DomainMOD\System();
-$system->installCheck($connection, $web_root);
-
 $error = new DomainMOD\Error();
 
-if ($_SESSION['installation_mode'] == 1) {
+$system = new DomainMOD\System();
+list($installation_mode, $result_message) = $system->installCheck($connection, $web_root);
+$_SESSION['installation_mode'] = $installation_mode;
+$_SESSION['result_message'] .= $result_message;
+
+if ($_SESSION['installation_mode'] === 1) {
 
 	$page_title = "";
 	$software_section = "installation";
@@ -60,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 			  AND password = password('$new_password')
 			  AND active = '1'";
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
+
    if (mysqli_num_rows($result) == 1) {
 	   
 	   while ($row = mysqli_fetch_object($result)) {
@@ -182,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
                include(DIR_INC . "system/update-segments.inc.php");
                $system = new DomainMOD\System();
-               $system->updateTlds($connection);
+               $_SESSION['result_message'] .= $system->updateTlds($connection);
 
            }
 
@@ -262,7 +264,7 @@ if ($new_username == "") { ?>
 } ?>
 <?php include(DIR_INC . "layout/header-login.inc.php"); ?>
 <?php 
-if ($_SESSION['installation_mode'] != 1) { ?>
+if ($_SESSION['installation_mode'] === 0) { ?>
 
     <BR>
     <form name="login_form" method="post">

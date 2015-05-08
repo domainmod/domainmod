@@ -31,7 +31,7 @@ include(DIR_INC . "classes/System.class.php");
 
 // Perform System Maintenance
 $maintenance = new DomainMOD\System();
-$maintenance->performMaintenance($connection);
+$_SESSION['result_message'] .= $maintenance->performMaintenance($connection);
 
 // Redirect to Control Panel after performing maintenance
 header("Location: ../index.php");

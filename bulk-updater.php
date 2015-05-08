@@ -306,7 +306,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     include(DIR_INC . "system/check-domain-fees.inc.php");
                     include(DIR_INC . "system/update-segments.inc.php");
                     $system = new DomainMOD\System();
-                    $system->updateTlds($connection);
+                    $_SESSION['result_message'] .= $system->updateTlds($connection);
 
                 }
 	

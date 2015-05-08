@@ -48,19 +48,19 @@ class System
                 || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . users . "'"))
                 || !mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings . "'"))) {
 
-                $_SESSION['installation_mode'] = 1;
-                $_SESSION['first_login'] = 1;
-
-                $_SESSION['result_message'] .= "<a href=\"" . $web_root . "/install/\">Please click here to install</a>
-                                                <BR>";
+                $installation_mode = 1;
+                $result_message = "<a href=\"" . $web_root . "/install/\">Please click here to install</a><BR>";
 
             } else {
 
-                $_SESSION['installation_mode'] = 0;
+                $installation_mode = 0;
+                $result_message = '';
 
             }
 
         }
+
+        return array($installation_mode, $result_message);
 
     }
 
@@ -76,7 +76,7 @@ class System
                 WHERE id NOT IN (SELECT fee_id FROM ssl_certs)";
         mysqli_query($connection, $sql);
 
-        $_SESSION['result_message'] .= "Maintenance Completed<BR>";
+        return "Maintenance Completed<BR>";
 
     }
 
@@ -98,7 +98,7 @@ class System
 
         }
 
-        $_SESSION['result_message'] .= "TLDs Updated<BR>";
+        return "TLDs Updated<BR>";
 
     }
 
