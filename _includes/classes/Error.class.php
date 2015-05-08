@@ -31,7 +31,7 @@ class Error
 
     }
 
-    // This function is only temporary. After I convert all database queries to prepared statements this won't be needed.
+    // This function is temporary. After I convert all database queries to prepared statements this won't be needed.
     public function outputOldSqlError($db_connection) {
 
         return trigger_error(htmlentities(mysqli_error($db_connection)), E_USER_ERROR);
