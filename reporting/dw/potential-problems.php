@@ -26,7 +26,9 @@ include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
-include(DIR_INC . "classes/Export.class.php");
+require_once(DIR_INC . "functions.inc.php");
+
+spl_autoload_register('classAutoloader');
 
 $page_title = $reporting_section_title;
 $page_subtitle = "Data Warehouse Potential Problems Report";
