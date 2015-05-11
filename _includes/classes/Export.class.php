@@ -85,7 +85,6 @@ class Export
     {
 
         fclose($open_file);
-        exit;
 
     }
 
