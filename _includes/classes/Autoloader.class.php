@@ -25,7 +25,7 @@ namespace DomainMOD;
 class Autoloader
 {
 
-    static public function classAutoloader($class_full)
+    public static function classAutoloader($class_full)
     {
 
         $class_path = DIR_INC . "classes/";
