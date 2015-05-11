@@ -25,26 +25,7 @@ namespace DomainMOD;
 class Export
 {
 
-    public function openFile($base_filename, $timestamp)
-    {
-
-        $unix_time = strtotime($timestamp);
-
-        header('Content-Encoding: UTF-8');
-        header('Content-Type: text/csv; charset=UTF-8');
-        header("Content-Disposition: attachment; filename=\"" . $base_filename . "_" . $unix_time . ".csv\"");
-        header('Content-Transfer-Encoding: binary');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header("Pragma: no-cache");
-
-        $open_file = fopen('php://output', 'w');
-        fprintf($open_file, chr(0xEF) . chr(0xBB) . chr(0xBF));
-
-        return $open_file;
-
-    }
-
-    public function openFileAppend($base_filename, $append_data)
+    public function openFile($base_filename, $append_data)
     {
 
         header('Content-Encoding: UTF-8');
