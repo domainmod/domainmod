@@ -26,11 +26,11 @@ include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
-require_once(DIR_INC . "functions.inc.php");
+require_once(DIR_INC . "classes/Autoloader.class.php");
 include(DIR_INC . "timestamps/current-timestamp.inc.php");
 include(DIR_INC . "timestamps/current-timestamp-basic-plus-one-year.inc.php");
 
-spl_autoload_register('classAutoloader');
+spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
 
