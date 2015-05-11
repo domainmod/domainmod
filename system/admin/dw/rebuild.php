@@ -28,11 +28,11 @@ include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 include(DIR_INC . "auth/admin-user-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Rebuilding Data Warehouse...";
 $software_section = "admin-dw-rebuild";

@@ -27,11 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Change Password";
 $software_section = "system-change-password";
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 		$sql_update = "UPDATE users 
 					   SET password = password('$new_password'), 
 					   	   new_password = '0', 
-						   update_time = '$current_timestamp'
+						   update_time = '" . $time->time() . "'
 					   WHERE id = '" . $_SESSION['user_id'] . "' 
 					     AND email_address = '" . $_SESSION['email_address'] . "'";
 		$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);

@@ -30,6 +30,9 @@ require_once(DIR_INC . "classes/Autoloader.class.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
+$error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
+
 $page_title = $reporting_section_title;
 $page_subtitle = "Data Warehouse Potential Problems Report";
 $software_section = "reporting-dw-potential-problems-report";
@@ -43,7 +46,7 @@ $sql_accounts_without_a_dns_zone = "SELECT domain
 									WHERE domain NOT IN (SELECT domain 
 														 FROM dw_dns_zones)
 									ORDER BY domain";
-$result_accounts_without_a_dns_zone = mysqli_query($connection, $sql_accounts_without_a_dns_zone);
+$result_accounts_without_a_dns_zone = mysqli_query($connection, $sql_accounts_without_a_dns_zone) or $error->outputOldSqlError($connection);
 $temp_accounts_without_a_dns_zone = mysqli_num_rows($result_accounts_without_a_dns_zone);
 
 $sql_dns_zones_without_an_account = "SELECT domain
@@ -51,21 +54,21 @@ $sql_dns_zones_without_an_account = "SELECT domain
 									 WHERE domain NOT IN (SELECT domain 
 									 					  FROM dw_accounts)
 									ORDER BY domain";
-$result_dns_zones_without_an_account = mysqli_query($connection, $sql_dns_zones_without_an_account);
+$result_dns_zones_without_an_account = mysqli_query($connection, $sql_dns_zones_without_an_account) or $error->outputOldSqlError($connection);
 $temp_dns_zones_without_an_account = mysqli_num_rows($result_dns_zones_without_an_account);
 
 $sql_suspended_accounts = "SELECT domain
 						   FROM dw_accounts
 						   WHERE suspended = '1'
 						   ORDER BY domain";
-$result_suspended_accounts = mysqli_query($connection, $sql_suspended_accounts);
+$result_suspended_accounts = mysqli_query($connection, $sql_suspended_accounts) or $error->outputOldSqlError($connection);
 $temp_suspended_accounts = mysqli_num_rows($result_suspended_accounts);
 
 if ($export_data == "1") {
 
     $export = new DomainMOD\Export();
 
-    $export_file = $export->openFile('dw_potential_problems_report');
+    $export_file = $export->openFile('dw_potential_problems_report', $time->time());
 
     $row_contents = array($page_subtitle);
     $export->writeRow($export_file, $row_contents);

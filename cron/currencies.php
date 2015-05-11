@@ -25,11 +25,12 @@ include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
+$timestamp = $time->time();
 
 include(DIR_INC . "config-demo.inc.php");
 
@@ -75,7 +76,7 @@ if ($demo_install != "1") {
 		
 					$sql_update = "UPDATE currency_conversions
 								   SET conversion = '1',
-									   update_time = '" . $current_timestamp . "'
+									   update_time = '" . $timestamp . "'
 								   WHERE currency_id = '" . $row->id . "'
 									 AND user_id = '" . $row_user->user_id . "'";
 					$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
@@ -99,7 +100,7 @@ if ($demo_install != "1") {
 		
 					$sql_update = "UPDATE currency_conversions
 								   SET conversion = '" . $conversion_rate . "',
-									   update_time = '" . $current_timestamp . "'
+									   update_time = '" . $timestamp . "'
 								   WHERE currency_id = '" . $row->id . "'
 									 AND user_id = '" . $row_user->user_id . "'";
 					$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
@@ -112,7 +113,7 @@ if ($demo_install != "1") {
 		
 					$sql_insert = "INSERT INTO currency_conversions
 								   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
-								   ('" . $row->id . "', '" . $row_user->user_id . "', '1', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+								   ('" . $row->id . "', '" . $row_user->user_id . "', '1', '" . $timestamp . "', '" . $timestamp . "')";
 					$result_insert = mysqli_query($connection, $sql_insert) or $error->outputOldSqlError($connection);
 		
 				} else {
@@ -134,7 +135,7 @@ if ($demo_install != "1") {
 				
 					$sql_insert = "INSERT INTO currency_conversions
 								   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
-								   ('" . $row->id . "', '" . $row_user->user_id . "', '" . $conversion_rate . "', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+								   ('" . $row->id . "', '" . $row_user->user_id . "', '" . $conversion_rate . "', '" . $timestamp . "', '" . $timestamp . "')";
 					$result_insert = mysqli_query($connection, $sql_insert) or $error->outputOldSqlError($connection);
 		
 				}
@@ -186,7 +187,7 @@ if ($demo_install != "1") {
 		
 					$sql_update = "UPDATE currency_conversions
 								   SET conversion = '1',
-									   update_time = '" . $current_timestamp . "'
+									   update_time = '" . $timestamp . "'
 								   WHERE currency_id = '" . $row->id . "'
 									 AND user_id = '" . $row_user->user_id . "'";
 					$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
@@ -210,7 +211,7 @@ if ($demo_install != "1") {
 		
 					$sql_update = "UPDATE currency_conversions
 								   SET conversion = '" . $conversion_rate . "',
-									   update_time = '" . $current_timestamp . "'
+									   update_time = '" . $timestamp . "'
 								   WHERE currency_id = '" . $row->id . "'
 									 AND user_id = '" . $row_user->user_id . "'";
 					$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
@@ -223,7 +224,7 @@ if ($demo_install != "1") {
 		
 					$sql_insert = "INSERT INTO currency_conversions
 								   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
-								   ('" . $row->id . "', '" . $row_user->user_id . "', '1', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+								   ('" . $row->id . "', '" . $row_user->user_id . "', '1', '" . $timestamp . "', '" . $timestamp . "')";
 					$result_insert = mysqli_query($connection, $sql_insert) or $error->outputOldSqlError($connection);
 		
 				} else {
@@ -245,7 +246,7 @@ if ($demo_install != "1") {
 				
 					$sql_insert = "INSERT INTO currency_conversions
 								   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
-								   ('" . $row->id . "', '" . $row_user->user_id . "', '" . $conversion_rate . "', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+								   ('" . $row->id . "', '" . $row_user->user_id . "', '" . $conversion_rate . "', '" . $timestamp . "', '" . $timestamp . "')";
 					$result_insert = mysqli_query($connection, $sql_insert) or $error->outputOldSqlError($connection);
 		
 				}

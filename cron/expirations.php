@@ -24,10 +24,16 @@ include("../_includes/init.inc.php");
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
-include(DIR_INC . "timestamps/current-timestamp-basic.inc.php");
-include(DIR_INC . "timestamps/current-timestamp-long.inc.php");
 
 include(DIR_INC . "config-demo.inc.php");
+
+require_once(DIR_INC . "classes/Autoloader.class.php");
+
+spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
+
+$time = new DomainMOD\Timestamp();
+$timestamp_basic = $time->timeBasic();
+$timestamp_long = $time->timeLong();
 
 if ($demo_install != "1") {
 
@@ -39,8 +45,6 @@ if ($demo_install != "1") {
 		$number_of_days = $row->expiration_email_days;
 	}
 	
-	include(DIR_INC . "timestamps/current-timestamp-basic-plus-X-days.inc.php");
-	
 	$sql_settings = "SELECT full_url, email_address
 					 FROM settings";
 	$result_settings = mysqli_query($connection, $sql_settings);
@@ -51,10 +55,12 @@ if ($demo_install != "1") {
 		$return_path = $row_settings->email_address;
 	}
 	
-	$sql_domains = "SELECT id, expiry_date, domain
+	$timestamp_basic_plus_x_days = $time->timeBasicPlusDays($number_of_days);
+
+    $sql_domains = "SELECT id, expiry_date, domain
 					FROM domains
 					WHERE active NOT IN ('0', '10')
-					  AND expiry_date <= '$current_timestamp_basic_plus_x_days'
+					  AND expiry_date <= '$timestamp_basic_plus_x_days'
 					ORDER BY expiry_date, domain";
 	$result_domains = mysqli_query($connection, $sql_domains);
 	
@@ -62,7 +68,7 @@ if ($demo_install != "1") {
 				FROM ssl_certs AS sslc, ssl_cert_types AS sslt
 				WHERE sslc.type_id = sslt.id
 				  AND sslc.active NOT IN ('0')
-				  AND sslc.expiry_date <= '$current_timestamp_basic_plus_x_days'
+				  AND sslc.expiry_date <= '$timestamp_basic_plus_x_days'
 				ORDER BY sslc.expiry_date, sslc.name";
 	$result_ssl = mysqli_query($connection, $sql_ssl);
 	
@@ -77,8 +83,8 @@ if ($demo_install != "1") {
 	
 		while ($row_recipients = mysqli_fetch_object($result_recipients)) {
 	
-			$subject = "Upcoming Expirations - $current_timestamp_long";
-			$headline = "Upcoming Expirations - $current_timestamp_long";
+			$subject = "Upcoming Expirations - $timestamp_long";
+			$headline = "Upcoming Expirations - $timestamp_long";
 			
 			$headers = "";
 			$headers .= "MIME-Version: 1.0" . "\r\n";
@@ -103,7 +109,7 @@ if ($demo_install != "1") {
 							$message .= "<strong><u>Domains</u></strong><BR>";
 							while ($row_domains = mysqli_fetch_object($result_domains)) {
 								
-								if ($row_domains->expiry_date < $current_timestamp_basic) {
+								if ($row_domains->expiry_date < $timestamp_basic) {
 							
 									$message .= "<font color=\"#CC0000\">" . $row_domains->expiry_date . "</font>&nbsp;&nbsp;<a href=\"" . $row_domains->domain . "\">" . $row_domains->domain . "</a> [<a href=\"" . $full_url . "/edit/domain.php?did=" . $row_domains->id . "\">edit</a>]&nbsp;&nbsp;<font color=\"#CC0000\">*EXPIRED*</font><BR>";
 							
@@ -122,7 +128,7 @@ if ($demo_install != "1") {
 							$message .= "<BR><strong><u>SSL Certificates</u></strong><BR>";
 							while ($row_ssl = mysqli_fetch_object($result_ssl)) {
 								
-								if ($row_ssl->expiry_date < $current_timestamp_basic) {
+								if ($row_ssl->expiry_date < $timestamp_basic) {
 							
 									$message .= "<font color=\"#CC0000\">" . $row_ssl->expiry_date . "</font>&nbsp;&nbsp;" . $row_ssl->name . " (" . $row_ssl->type . ") [<a href=\"" . $full_url . "/edit/ssl-cert.php?sslcid=" . $row_ssl->id . "\">edit</a>]&nbsp;&nbsp;<font color=\"#CC0000\">*EXPIRED*</font><BR>";
 							

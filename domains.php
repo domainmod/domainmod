@@ -27,11 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Domains";
 $software_section = "domains";
@@ -313,7 +313,7 @@ if ($export_data == "1") {
     $total_rows = number_format(mysqli_num_rows($result));
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('domain_results');
+    $export_file = $export->openFile('domain_results', $time->time());
 
     $row_contents = array('Domain Search Results Export');
     $export->writeRow($export_file, $row_contents);

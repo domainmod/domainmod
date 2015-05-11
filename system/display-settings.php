@@ -27,11 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Display Settings";
 $software_section = "system-display-settings";
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 				display_inactive_assets = '$new_display_inactive_assets',
 				display_dw_intro_page = '$new_display_dw_intro_page',
 				number_of_ssl_certs = '$new_number_of_ssl_certs',
-				update_time = '$current_timestamp'
+				update_time = '" . $time->time() . "'
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 

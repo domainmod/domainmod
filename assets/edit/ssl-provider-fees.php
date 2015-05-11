@@ -27,11 +27,12 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
+$timestamp = $time->time();
 
 $page_title = "SSL Provider Fees";
 $software_section = "ssl-provider-fees";
@@ -71,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             renewal_fee = '" . $renewal_fee[$count] . "',
                             misc_fee = '" . $misc_fee[$count] . "',
                             currency_id = '" . $currency[$count] . "',
-                            update_time = '" . $current_timestamp . "'
+                            update_time = '" . $timestamp . "'
                         WHERE id = '" . $fee_id[$count] . "'";
             $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -112,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             renewal_fee = '" . $new_renewal_fee . "',
                             misc_fee = '" . $new_misc_fee . "',
                             currency_id = '" . $new_currency_id . "',
-                            update_time = '" . $current_timestamp . "'
+                            update_time = '" . $timestamp . "'
                         WHERE ssl_provider_id = '" . $new_sslpid . "'
                           AND type_id = '" . $new_type_id . "'";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -132,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $sql = "UPDATE ssl_certs
                         SET fee_id = '" . $new_fee_id . "',
-                            update_time = '" . $current_timestamp . "'
+                            update_time = '" . $timestamp . "'
                         WHERE ssl_provider_id = '" . $new_sslpid . "'
                           AND type_id = '" . $new_type_id . "'";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -163,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $sql = "INSERT INTO ssl_fees
                         (ssl_provider_id, type_id, initial_fee, renewal_fee, misc_fee, currency_id, insert_time) VALUES
-                        ('" . $new_sslpid . "', '" . $new_type_id . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_misc_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
+                        ('" . $new_sslpid . "', '" . $new_type_id . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_misc_fee . "', '" . $new_currency_id . "', '" . $timestamp . "')";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $sql = "SELECT id
@@ -181,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $sql = "UPDATE ssl_certs
                         SET fee_id = '" . $new_fee_id . "',
-                            update_time = '" . $current_timestamp . "'
+                            update_time = '" . $timestamp . "'
                         WHERE ssl_provider_id = '" . $new_sslpid . "'
                           AND type_id = '" . $new_type_id . "'";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -245,7 +246,7 @@ if ($really_del == "1") {
 		
 		$sql = "UPDATE ssl_certs
 				SET fee_id = '0',
-					update_time = '" . $current_timestamp . "'
+					update_time = '" . $timestamp . "'
 				WHERE fee_id = '" . $sslfeeid . "'
 				  AND ssl_provider_id = '" . $sslpid . "'
 				  AND type_id = '" . $ssltid . "'";

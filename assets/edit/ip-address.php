@@ -27,11 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Editing An IP Address";
 $software_section = "ip-addresses-edit";
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					   	   ip = '" . mysqli_real_escape_string($connection, $new_ip) . "',
 						   rdns = '" . mysqli_real_escape_string($connection, $new_rdns) . "',
 						   notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-						   update_time = '" . $current_timestamp . "'
+						   update_time = '" . $time->time() . "'
 					   WHERE id = '" . $new_ipid . "'";
 		$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 

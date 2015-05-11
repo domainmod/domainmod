@@ -27,11 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Email Settings";
 $software_section = "system-email-settings";
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	$sql = "UPDATE user_settings
 			SET expiration_emails = '$new_expiration_email',
-				update_time = '$current_timestamp'
+				update_time = '" . $time->time() . "'
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 

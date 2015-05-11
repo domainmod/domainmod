@@ -27,11 +27,12 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
+$timestamp = $time->time();
 
 $page_title = "Adding A New Segment";
 $software_section = "segment-add";
@@ -120,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (mysqli_stmt_prepare($stmt, $query)) {
 
-                mysqli_stmt_bind_param($stmt, "sssiss", $new_name, $new_description, $new_segment_formatted, $number_of_domains, $new_notes, $current_timestamp);
+                mysqli_stmt_bind_param($stmt, "sssiss", $new_name, $new_description, $new_segment_formatted, $number_of_domains, $new_notes, $timestamp);
                 mysqli_stmt_execute($stmt);
                 mysqli_stmt_close($stmt);
 
@@ -131,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (mysqli_stmt_prepare($stmt, $query)) {
 
-                mysqli_stmt_bind_param($stmt, "sss", $new_name, $new_segment_formatted, $current_timestamp);
+                mysqli_stmt_bind_param($stmt, "sss", $new_name, $new_segment_formatted, $timestamp);
                 mysqli_stmt_execute($stmt);
                 mysqli_stmt_store_result($stmt);
                 mysqli_stmt_bind_result($stmt, $id);
@@ -164,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if (mysqli_stmt_prepare($stmt, $query)) {
 
-                    mysqli_stmt_bind_param($stmt, "iss", $temp_segment_id, $domain, $current_timestamp);
+                    mysqli_stmt_bind_param($stmt, "iss", $temp_segment_id, $domain, $timestamp);
                     mysqli_stmt_execute($stmt);
                     mysqli_stmt_close($stmt);
 

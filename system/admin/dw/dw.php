@@ -27,7 +27,6 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 include(DIR_INC . "auth/admin-user-check.inc.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 $id = $_GET['id'];
 $action = $_GET['action'];

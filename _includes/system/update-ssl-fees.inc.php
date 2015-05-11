@@ -28,7 +28,7 @@ $result_ssl_fee_fix1 = mysqli_query($connection, $sql_ssl_fee_fix1) or $error->o
 
 $sql_ssl_fee_fix2 = "UPDATE ssl_fees 
 					 SET fee_fixed = '0',
-					 	 update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'";
+					 	 update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
 $result_ssl_fee_fix2 = mysqli_query($connection, $sql_ssl_fee_fix2) or $error->outputOldSqlError($connection);
 
 $sql_ssl_fee_fix3 = "SELECT id, ssl_provider_id, type_id
@@ -57,7 +57,7 @@ while ($row_ssl_fee_fix3 = mysqli_fetch_object($result_ssl_fee_fix3)) {
 
 	$sql_ssl_fee_fix6 = "UPDATE ssl_fees
 						 SET fee_fixed = '1',
-						 	 update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'
+						 	 update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
 						 WHERE ssl_provider_id = '$row_ssl_fee_fix3->ssl_provider_id'
 						   AND type_id = '$row_ssl_fee_fix3->type_id'";
 	$result_ssl_fee_fix6 = mysqli_query($connection, $sql_ssl_fee_fix6) or $error->outputOldSqlError($connection);

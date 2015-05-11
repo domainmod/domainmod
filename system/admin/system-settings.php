@@ -28,11 +28,11 @@ include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 include(DIR_INC . "auth/admin-user-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "System Settings";
 $software_section = "admin-system-settings";
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 			SET full_url = '$new_full_url',
 				email_address = '$new_email_address',
 				expiration_email_days = '$new_expiration_email_days',
-				update_time = '$current_timestamp'";
+				update_time = '" . $time->time() . "'";
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 	$_SESSION['system_full_url'] = $new_full_url;

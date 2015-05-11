@@ -28,11 +28,11 @@ include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 include(DIR_INC . "auth/admin-user-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "System Defaults";
 $software_section = "admin-system-defaults";
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				default_ssl_provider_account = '$new_default_ssl_provider_account',
 				default_ssl_type = '$new_default_ssl_type',
 				default_ssl_provider = '$new_default_ssl_provider',
-				update_time = '$current_timestamp'";
+				update_time = '" . $time->time() . "'";
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 	$_SESSION['system_default_category_domains'] = $new_default_category_domains;

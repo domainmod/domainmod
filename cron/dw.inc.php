@@ -36,7 +36,7 @@ if ($demo_install != "1") {
 
     } else {
 
-        $build_start_time_overall = date("Y-m-d H:i:s");
+        $build_start_time_overall = $time->time();
 
         $sql = "DROP TABLE IF EXISTS dw_accounts";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -139,7 +139,7 @@ if ($demo_install != "1") {
 
         while ($row_server = mysqli_fetch_object($result_server)) {
 
-            $build_start_time = date("Y-m-d H:i:s");
+            $build_start_time = $time->time();
 
             $sql = "UPDATE dw_servers
                     SET build_start_time = '" . $build_start_time . "',
@@ -173,7 +173,7 @@ if ($demo_install != "1") {
                         . "', '" . $hit->maxsub . "', '" . $hit->startdate . "', '" . $hit->unix_startdate
                         . "', '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime
                         . "', '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "', '"
-                        . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . date("Y-m-d H:i:s") . "')";
+                        . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . $time->time() . "')";
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 }
@@ -193,7 +193,7 @@ if ($demo_install != "1") {
                             (server_id, domain, zonefile, insert_time)
                             VALUES
                             ('" . $row_server->id . "', '" . $hit->domain . "', '" . $hit->zonefile . "', '"
-                        . date("Y-m-d H:i:s") . "')";
+                        . $time->time() . "')";
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 }
@@ -229,7 +229,7 @@ if ($demo_install != "1") {
                             . "', '" . $hit->type . "', '" . $hit->address . "', '" . $hit->cname . "', '"
                             . $hit->exchange . "', '" . $hit->preference . "', '" . $hit->txtdata . "', '"
                             . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw . "', '"
-                            . date("Y-m-d H:i:s") . "')";
+                            . $time->time() . "')";
                         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     }
@@ -238,7 +238,7 @@ if ($demo_install != "1") {
 
             }
 
-            $build_end_time = date("Y-m-d H:i:s");
+            $build_end_time = $time->time();
 
             $total_build_time = (strtotime($build_end_time) - strtotime($build_start_time));
 
@@ -364,7 +364,7 @@ if ($demo_install != "1") {
 
     include(DIR_ROOT . "cron/_includes/dw-update-totals.inc.php");
 
-    $build_end_time_overall = date("Y-m-d H:i:s");
+    $build_end_time_overall = $time->time();
 
     $total_build_time_overall = (strtotime($build_end_time_overall) - strtotime($build_start_time_overall));
 

@@ -27,11 +27,12 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
+$timestamp = $time->time();
 
 $page_title = "User Defaults";
 $software_section = "system-user-defaults";
@@ -98,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 			$sql_insert_currency = "INSERT INTO currency_conversions
 									(currency_id, user_id, conversion, insert_time, update_time) VALUES 
-									('" . $temp_new_currency_id . "', '" . $_SESSION['user_id'] . "', '1', '" . $current_timestamp . "', '" . $current_timestamp . "')";
+									('" . $temp_new_currency_id . "', '" . $_SESSION['user_id'] . "', '1', '" . $timestamp . "', '" . $timestamp . "')";
 			$result_insert_currency = mysqli_query($connection, $sql_insert_currency);
 
 		}
@@ -125,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				default_ssl_provider_account = '$new_default_ssl_provider_account',
 				default_ssl_type = '$new_default_ssl_type',
 				default_ssl_provider = '$new_default_ssl_provider',
-				update_time = '$current_timestamp'
+				update_time = '$timestamp'
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 

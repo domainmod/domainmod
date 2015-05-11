@@ -27,12 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
-include(DIR_INC . "timestamps/current-timestamp-basic.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = $reporting_section_title;
 $page_subtitle = "SSL Certificate Cost by Provider Report";
@@ -123,7 +122,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
         if ($all == "1") {
 
-            $export_file = $export->openFile('ssl_cost_by_provider_report_all');
+            $export_file = $export->openFile('ssl_cost_by_provider_report_all', $time->time());
 
         } else {
 
@@ -276,9 +275,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php include(DIR_INC . "layout/table-export-top.inc.php"); ?>
     <form name="export_ssl_form" method="post">
         <a href="cost-by-provider.php?all=1">View All</a> or Expiring Between
-        <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_start_date\""; } ?>> 
+        <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
         and 
-        <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"$current_timestamp_basic\""; } else { echo "value=\"$new_end_date\""; } ?>> 
+        <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
         &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
         <?php if ($total_rows > 0) { ?>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-provider.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>

@@ -22,19 +22,19 @@
 <?php
 $sql_segment1 = "UPDATE segment_data
 				 SET active = '1', 
-				 	 update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'
+				 	 update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
 				 WHERE domain IN (SELECT domain FROM domains WHERE active NOT IN ('0', '10'))";
 $result_segment1 = mysqli_query($connection, $sql_segment1);
 
 $sql_segment2 = "UPDATE segment_data
 				 SET inactive = '1', 
-				 	 update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'
+				 	 update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
 				 WHERE domain IN (SELECT domain FROM domains WHERE active IN ('0', '10'))";
 $result_segment2 = mysqli_query($connection, $sql_segment2);
 
 $sql_segment3 = "UPDATE segment_data
 				 SET missing = '1', 
-				 	 update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'
+				 	 update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
 				 WHERE domain NOT IN (SELECT domain FROM domains)";
 $result_segment3 = mysqli_query($connection, $sql_segment3);
 

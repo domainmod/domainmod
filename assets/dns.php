@@ -27,11 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "DNS Profiles";
 $software_section = "dns";
@@ -52,7 +52,7 @@ if ($export_data == "1") {
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('dns_profile_list');
+    $export_file = $export->openFile('dns_profile_list', $time->time());
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);

@@ -28,11 +28,11 @@ include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 include(DIR_INC . "auth/admin-user-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Adding A Server";
 $software_section = "admin-dw-manage-servers-add";
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO dw_servers
 				(name, host, protocol, port, username, hash, notes, insert_time) VALUES 
-				('" . mysqli_real_escape_string($connection, $new_name) . "', '" . mysqli_real_escape_string($connection, $new_host) . "', '" . mysqli_real_escape_string($connection, $new_protocol) . "', '" . mysqli_real_escape_string($connection, $new_port) . "', '" . mysqli_real_escape_string($connection, $new_username) . "', '" . mysqli_real_escape_string($connection, $new_hash) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
+				('" . mysqli_real_escape_string($connection, $new_name) . "', '" . mysqli_real_escape_string($connection, $new_host) . "', '" . mysqli_real_escape_string($connection, $new_protocol) . "', '" . mysqli_real_escape_string($connection, $new_port) . "', '" . mysqli_real_escape_string($connection, $new_username) . "', '" . mysqli_real_escape_string($connection, $new_hash) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $time->time() . "')";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font> Added<BR>";

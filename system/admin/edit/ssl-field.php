@@ -28,11 +28,11 @@ include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 include(DIR_INC . "auth/admin-user-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Editing A Custom SSL Field";
 $software_section = "admin-ssl-field-edit";
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 			SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
 				description = '" . mysqli_real_escape_string($connection, $new_description) . "',
 				notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-				update_time = '" . $current_timestamp . "'
+				update_time = '" . $time->time() . "'
 			WHERE id = '" . $new_csfid . "'";
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 	

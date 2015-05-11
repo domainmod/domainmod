@@ -27,11 +27,12 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
+$timestamp = $time->time();
 
 $page_title = "Editing A Domain";
 $software_section = "domain-edit";
@@ -152,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   privacy = '" . $new_privacy . "',
 						   active = '" . $new_active . "',
 						   fee_fixed = '" . $temp_fee_fixed . "',
-						   update_time = '" . $current_timestamp . "'
+						   update_time = '" . $timestamp . "'
 					   WHERE id = '" . $new_did . "'";
 		$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 
@@ -176,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 			$sql = "UPDATE domain_field_data
 					SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "',
-						update_time = '" . $current_timestamp . "'
+						update_time = '" . $timestamp . "'
 					WHERE domain_id = '" . $new_did . "'";
 			$result = mysqli_query($connection, $sql);
 		

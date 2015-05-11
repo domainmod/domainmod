@@ -35,11 +35,11 @@ unset($_SESSION['running_login_checks']);
 unset($_SESSION['installation_mode']);
 
 $sql_user_update = "UPDATE users
-					SET last_login = '$current_timestamp',
+					SET last_login = '" . $time->time() . "',
 						number_of_logins = number_of_logins + 1,
-						update_time = '$current_timestamp'
+						update_time = '" . $time->time() . "'
 					WHERE id = '" . $_SESSION['user_id'] . "'
 					  AND email_address = '" . $_SESSION['email_address'] . "'";
 $result_user_update = mysqli_query($connection, $sql_user_update) or $error->outputOldSqlError($connection);
 
-$_SESSION['last_login'] = $current_timestamp;
+$_SESSION['last_login'] = $time->time();

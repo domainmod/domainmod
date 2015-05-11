@@ -27,11 +27,12 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
+$timestamp = $time->time();
 
 $page_title = "Editing A Segment";
 $software_section = "segment-edit";
@@ -130,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (mysqli_stmt_prepare($stmt, $query)) {
 
-                mysqli_stmt_bind_param($stmt, "sssissi", $new_name, $new_description, $new_segment_formatted, $number_of_domains, $new_notes, $current_timestamp, $segid);
+                mysqli_stmt_bind_param($stmt, "sssissi", $new_name, $new_description, $new_segment_formatted, $number_of_domains, $new_notes, $timestamp, $segid);
                 mysqli_stmt_execute($stmt);
                 mysqli_stmt_close($stmt);
 
@@ -155,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if (mysqli_stmt_prepare($stmt, $query)) {
 
-                    mysqli_stmt_bind_param($stmt, "iss", $new_segid, $domain, $current_timestamp);
+                    mysqli_stmt_bind_param($stmt, "iss", $new_segid, $domain, $timestamp);
                     mysqli_stmt_execute($stmt);
                     mysqli_stmt_close($stmt);
 

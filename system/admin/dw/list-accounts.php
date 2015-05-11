@@ -28,11 +28,11 @@ include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 include(DIR_INC . "auth/admin-user-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $domain = $_GET['domain'];
 $search_for = $_REQUEST['search_for'];
@@ -104,7 +104,7 @@ if ($export_data == "1") {
 	$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('dw_account_list');
+    $export_file = $export->openFile('dw_account_list', $time->time());
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);

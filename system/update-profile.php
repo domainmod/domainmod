@@ -27,11 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Update Profile";
 $software_section = "system-update-profile";
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 					   SET first_name = '" . mysqli_real_escape_string($connection, $new_first_name) . "',
 					   	   last_name = '" . mysqli_real_escape_string($connection, $new_last_name) . "',
 						   email_address = '$new_email_address', 
-						   update_time = '$current_timestamp'
+						   update_time = '" . $time->time() . "'
 					   WHERE id = '" . $_SESSION['user_id'] . "' 
 					     AND email_address = '" . $_SESSION['email_address'] . "'";
 		$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);

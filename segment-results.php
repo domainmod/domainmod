@@ -27,11 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $segid = $_GET['segid'];
 $export_data = $_GET['export_data'];
@@ -115,7 +115,7 @@ if ($export_data == "1") {
     }
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile("$base_filename");
+    $export_file = $export->openFile("$base_filename", $time->time());
 
     if ($type == "inactive" || $type == "filtered") {
 

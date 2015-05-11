@@ -28,11 +28,12 @@ include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 include(DIR_INC . "auth/admin-user-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
+$timestamp = $time->time();
 
 $page_title = "Adding A New User";
 $software_section = "admin-user-add";
@@ -84,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 		if (mysqli_stmt_prepare($stmt, $query)) {
 
 		    mysqli_stmt_bind_param($stmt, "ssssssis", $new_first_name, $new_last_name, $new_username,
-                $new_email_address, $new_password, $new_admin, $new_active, $current_timestamp);
+                $new_email_address, $new_password, $new_admin, $new_active, $timestamp);
 		    mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
 
@@ -99,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
         if (mysqli_stmt_prepare($stmt, $query)) {
 
-            mysqli_stmt_bind_param($stmt, "sss", $new_first_name, $new_last_name, $current_timestamp);
+            mysqli_stmt_bind_param($stmt, "sss", $new_first_name, $new_last_name, $timestamp);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_store_result($stmt);
             mysqli_stmt_bind_result($stmt, $id);
@@ -155,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                 $_SESSION['system_default_ssl_provider'],
                 $_SESSION['system_default_ssl_provider_account'],
                 $_SESSION['system_default_ssl_type'],
-                $current_timestamp);
+                $timestamp);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
 

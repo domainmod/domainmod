@@ -28,7 +28,7 @@ $result_domain_fee_fix1 = mysqli_query($connection, $sql_domain_fee_fix1) or $er
 
 $sql_domain_fee_fix2 = "UPDATE fees
 						SET fee_fixed = '0',
-							update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'";
+							update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
 $result_domain_fee_fix2 = mysqli_query($connection, $sql_domain_fee_fix2) or $error->outputOldSqlError($connection);
 
 $sql_domain_fee_fix3 = "SELECT id, registrar_id, tld
@@ -68,7 +68,7 @@ while ($row_domain_fee_fix3 = mysqli_fetch_object($result_domain_fee_fix3)) {
 
     $sql_domain_fee_fix7 = "UPDATE fees
 							SET fee_fixed = '1',
-								update_time = '" . mysqli_real_escape_string($connection, $current_timestamp) . "'
+								update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
 							WHERE registrar_id = '" .$row_domain_fee_fix3->registrar_id. "'
 							  AND tld = '" .$row_domain_fee_fix3->tld. "'";
 	$result_domain_fee_fix7 = mysqli_query($connection, $sql_domain_fee_fix7) or $error->outputOldSqlError($connection);

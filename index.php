@@ -27,13 +27,13 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/login-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
-
+$time = new DomainMOD\Timestamp();
 $system = new DomainMOD\System();
+
 list($installation_mode, $result_message) = $system->installCheck($connection, $web_root);
 $_SESSION['installation_mode'] = $installation_mode;
 $_SESSION['result_message'] .= $result_message;
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 				$_SESSION['default_currency_symbol_space'] = $row_currencies->symbol_space;
 			}
 			
-			$current_date = date("Y-m-d", strtotime($current_timestamp));
+			$current_date = date("Y-m-d", strtotime($time->timeBasic()));
 			$last_login_date = date("Y-m-d", strtotime($row->last_login));
 
 			include(DIR_INC . "auth/login-checks/main.inc.php");

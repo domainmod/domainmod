@@ -27,11 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Adding A New Account Owner";
 $software_section = "account-owners-add";
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $sql = "INSERT INTO owners
 				(name, notes2, insert_time) VALUES
-				('" . mysqli_real_escape_string($connection, $new_owner) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
+				('" . mysqli_real_escape_string($connection, $new_owner) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $time->time() . "')";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $_SESSION['result_message'] = "Owner <font class=\"highlight\">" . $new_owner . "</font> Added<BR>";

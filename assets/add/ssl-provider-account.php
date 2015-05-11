@@ -27,11 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Adding A New SSL Provider Account";
 $software_section = "ssl-provider-accounts-add";
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT into ssl_accounts
 				(owner_id, ssl_provider_id, username, password, notes, reseller, insert_time) VALUES 
-				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . mysqli_real_escape_string($connection, $new_username) . "', '" . mysqli_real_escape_string($connection, $new_password) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_reseller . "', '" . $current_timestamp . "')";
+				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . mysqli_real_escape_string($connection, $new_username) . "', '" . mysqli_real_escape_string($connection, $new_password) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_reseller . "', '" . $time->time() . "')";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "SELECT name

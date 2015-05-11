@@ -27,12 +27,13 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
-include(DIR_INC . "timestamps/current-timestamp-basic-plus-one-year.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
+$timestamp = $time->time();
+$timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
 
 $page_title = "Adding A New SSL Certificate";
 $software_section = "ssl-cert-add";
@@ -99,19 +100,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO ssl_certs
 				(owner_id, ssl_provider_id, account_id, domain_id, name, type_id, ip_id, cat_id, expiry_date, fee_id, total_cost, notes, active, insert_time) VALUES
-				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . $new_account_id . "', '" . $new_domain_id . "', '" . mysqli_real_escape_string($connection, $new_name) . "', '" . $new_type_id . "', '" . $new_ip_id . "', '" . $new_cat_id . "', '" . $new_expiry_date . "', '" . $new_fee_id . "', '" . $new_total_cost . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_active . "', '" . $current_timestamp . "')";
+				('" . $new_owner_id . "', '" . $new_ssl_provider_id . "', '" . $new_account_id . "', '" . $new_domain_id . "', '" . mysqli_real_escape_string($connection, $new_name) . "', '" . $new_type_id . "', '" . $new_ip_id . "', '" . $new_cat_id . "', '" . $new_expiry_date . "', '" . $new_fee_id . "', '" . $new_total_cost . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_active . "', '" . $timestamp . "')";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "SELECT id
 				FROM ssl_certs
 				WHERE name = '" . mysqli_real_escape_string($connection, $new_name) . "'
-				  AND insert_time = '" . $current_timestamp . "'";
+				  AND insert_time = '" . $timestamp . "'";
 		$result = mysqli_query($connection, $sql);
 		while ($row = mysqli_fetch_object($result)) { $temp_ssl_id = $row->id; }
 
 		$sql = "INSERT INTO ssl_cert_field_data
 				(ssl_id, insert_time) VALUES 
-				('" . $temp_ssl_id . "', '" . $current_timestamp . "')";
+				('" . $temp_ssl_id . "', '" . $timestamp . "')";
 		$result = mysqli_query($connection, $sql);
 
 		$sql = "SELECT field_name
@@ -170,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <input name="new_name" type="text" size="50" maxlength="100" value="<?php echo $new_name; ?>">
 <BR><BR>
 <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-<input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $current_timestamp_basic_plus_one_year; } ?>">
+<input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") { echo $new_expiry_date; } else { echo $timestamp_basic_plus_one_year; } ?>">
 <BR><BR>
 <strong>Domain</strong><BR><BR>
 <?php

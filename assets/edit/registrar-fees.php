@@ -27,11 +27,12 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
+$timestamp = $time->time();
 
 $page_title = "Registrar Fees";
 $software_section = "registrar-fees";
@@ -77,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         privacy_fee = '" . $privacy_fee[$count] . "',
                         misc_fee = '" . $misc_fee[$count] . "',
                         currency_id = '" . $currency[$count] . "',
-                        update_time = '" . $current_timestamp . "'
+                        update_time = '" . $timestamp . "'
                     WHERE id = '" . $fee_id[$count] . "'";
             $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -131,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             privacy_fee = '" . $new_privacy_fee . "',
                             misc_fee = '" . $new_misc_fee . "',
                             currency_id = '" . $new_currency_id . "',
-                            update_time = '" . $current_timestamp . "'
+                            update_time = '" . $timestamp . "'
                         WHERE registrar_id = '" . $new_rid . "'
                           AND tld = '" . $new_tld . "'";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -151,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $sql = "UPDATE domains
                         SET fee_id = '" . $new_fee_id . "',
-                            update_time = '" . $current_timestamp . "'
+                            update_time = '" . $timestamp . "'
                         WHERE registrar_id = '" . $new_rid . "'
                           AND tld = '" . $new_tld . "'";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -182,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $sql = "INSERT INTO fees
                         (registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id, insert_time) VALUES
-                        ('" . $new_rid . "', '" . mysqli_real_escape_string($connection, $new_tld) . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "', '" . $new_privacy_fee . "', '" . $new_misc_fee . "', '" . $new_currency_id . "', '" . $current_timestamp . "')";
+                        ('" . $new_rid . "', '" . mysqli_real_escape_string($connection, $new_tld) . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "', '" . $new_privacy_fee . "', '" . $new_misc_fee . "', '" . $new_currency_id . "', '" . $timestamp . "')";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $sql = "SELECT id
@@ -200,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $sql = "UPDATE domains
                         SET fee_id = '" . $new_fee_id . "',
-                            update_time = '" . $current_timestamp . "'
+                            update_time = '" . $timestamp . "'
                         WHERE registrar_id = '" . $new_rid . "'
                           AND tld = '" . $new_tld . "'";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -264,7 +265,7 @@ if ($really_del == "1") {
 		
 		$sql = "UPDATE domains
 				SET fee_id = '0',
-					update_time = '" . $current_timestamp . "'
+					update_time = '" . $timestamp . "'
 				WHERE fee_id = '" . $feeid . "'
 				  AND registrar_id = '" . $rid . "'
 				  AND tld = '" . $tld . "'";

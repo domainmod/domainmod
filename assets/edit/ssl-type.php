@@ -27,11 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Editing An SSL Type";
 $software_section = "ssl-types-edit";
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sql = "UPDATE ssl_cert_types
 				SET type = '" . mysqli_real_escape_string($connection, $new_type) . "',
 					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-					update_time = '" . $current_timestamp . "'
+					update_time = '" . $time->time() . "'
 				WHERE id = '" . $new_ssltid . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		

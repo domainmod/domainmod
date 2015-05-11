@@ -27,11 +27,12 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
+$timestamp = $time->time();
 
 $page_title = "Editing An SSL Certificate";
 $software_section = "ssl-cert-edit";
@@ -136,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						   notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
 						   active = '" . $new_active . "',
 						   fee_fixed = '" . $temp_fee_fixed . "',
-						   update_time = '" . $current_timestamp . "'
+						   update_time = '" . $timestamp . "'
 					   WHERE id = '" . $new_sslcid . "'";
 		$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 
@@ -160,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 			$sql = "UPDATE ssl_cert_field_data
 					SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "',
-						update_time = '" . $current_timestamp . "'
+						update_time = '" . $timestamp . "'
 					WHERE ssl_id = '" . $new_sslcid . "'";
 			$result = mysqli_query($connection, $sql);
 		

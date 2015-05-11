@@ -27,11 +27,11 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Adding A New IP Address";
 $software_section = "ip-addresses-add";
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$sql = "INSERT INTO ip_addresses
 				(name, ip, rdns, notes, insert_time) VALUES 
-				('" . mysqli_real_escape_string($connection, $new_name) . "', '" . mysqli_real_escape_string($connection, $new_ip) . "', '" . mysqli_real_escape_string($connection, $new_rdns) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
+				('" . mysqli_real_escape_string($connection, $new_name) . "', '" . mysqli_real_escape_string($connection, $new_ip) . "', '" . mysqli_real_escape_string($connection, $new_rdns) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $time->time() . "')";
 
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		

@@ -28,11 +28,11 @@ include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 include(DIR_INC . "auth/admin-user-check.inc.php");
 require_once(DIR_INC . "classes/Autoloader.class.php");
-include(DIR_INC . "timestamps/current-timestamp.inc.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
 
 $page_title = "Adding A Custom Domain Field";
 $software_section = "admin-domain-field-add";
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 
         $sql = "INSERT INTO domain_fields
                 (name, field_name, description, type_id, notes, insert_time) VALUES
-                ('" . mysqli_real_escape_string($connection, $new_name) . "', '" . $new_field_name . "', '" . mysqli_real_escape_string($connection, $new_description) . "', '" . $new_field_type_id . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $current_timestamp . "')";
+                ('" . mysqli_real_escape_string($connection, $new_name) . "', '" . $new_field_name . "', '" . mysqli_real_escape_string($connection, $new_description) . "', '" . $new_field_type_id . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $time->time() . "')";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         if ($new_field_type_id == '1') { // Check Box
