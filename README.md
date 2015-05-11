@@ -107,8 +107,8 @@ Zone Filename, Original/Primary Source of Zone Data, Admin Email, Serial #, Refr
 TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data
 
 ### References
-WHM & cPanel: http://cpanel.net 
-API Documentation: http://docs.cpanel.net/twiki/bin/view/SoftwareDevelopmentKit/XmlApi 
+WHM & cPanel: http://cpanel.net  
+API Documentation: http://docs.cpanel.net/twiki/bin/view/SoftwareDevelopmentKit/XmlApi  
 
 
 ## Usage
