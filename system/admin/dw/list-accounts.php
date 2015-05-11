@@ -104,7 +104,7 @@ if ($export_data == "1") {
 	$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('dw_account_list', $time->time());
+    $export_file = $export->openFile('dw_account_list', strtotime($time->time()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);

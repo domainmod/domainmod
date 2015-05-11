@@ -107,7 +107,7 @@ if ($export_data == "1") {
 	$result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('dw_dns_zones', $time->time());
+    $export_file = $export->openFile('dw_dns_zones', strtotime($time->time()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);

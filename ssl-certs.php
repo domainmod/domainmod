@@ -184,7 +184,7 @@ if ($export_data == "1") {
 	$total_rows = number_format(mysqli_num_rows($result));
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('ssl_results', $time->time());
+    $export_file = $export->openFile('ssl_results', strtotime($time->time()));
 
     $row_contents = array('SSL Certificate Search Results Export');
     $export->writeRow($export_file, $row_contents);

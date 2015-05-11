@@ -112,11 +112,11 @@ if ($export_data == "1") {
 
     if ($all == "1") {
 
-        $export_file = $export->openFile('ssl_renewal_report_all', $time->time());
+        $export_file = $export->openFile('ssl_renewal_report_all', strtotime($time->time()));
 
     } else {
 
-        $export_file = $export->openFileAppend(
+        $export_file = $export->openFile(
             'ssl_renewal_report',
             $new_start_date . '--' . $new_end_date
         );

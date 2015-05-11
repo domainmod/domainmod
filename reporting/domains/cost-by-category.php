@@ -119,11 +119,11 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
         if ($all == "1") {
 
-            $export_file = $export->openFile('domain_cost_by_category_report_all', $time->time());
+            $export_file = $export->openFile('domain_cost_by_category_report_all', strtotime($time->time()));
 
         } else {
 
-            $export_file = $export->openFileAppend(
+            $export_file = $export->openFile(
                 'domain_cost_by_category_report',
                 $new_start_date . '--' . $new_end_date
             );

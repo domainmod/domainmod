@@ -49,7 +49,7 @@ if ($export_data == "1") {
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('custom_domain_field_list', $time->time());
+    $export_file = $export->openFile('custom_domain_field_list', strtotime($time->time()));
 
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
