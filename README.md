@@ -1,5 +1,7 @@
 [![DomainMOD](http://domainmod.org/images/logo.png)](http://domainmod.org)
 
+[![Build Status](https://scrutinizer-ci.com/g/domainmod/domainmod/badges/build.png?b=master)](https://scrutinizer-ci.com/g/domainmod/domainmod/build-status/master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/domainmod/domainmod/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/domainmod/domainmod/?branch=master)
+
     Project Home: http://domainmod.org  
     Project Demo: http://demo.domainmod.org  
     Source Code: http://github.com/domainmod/domainmod/  
