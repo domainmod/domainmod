@@ -2,10 +2,9 @@
 
 [![Build Status](https://scrutinizer-ci.com/g/domainmod/domainmod/badges/build.png?b=master)](https://scrutinizer-ci.com/g/domainmod/domainmod/?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/domainmod/domainmod/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/domainmod/domainmod/?branch=master)
 
-    Project Home: http://domainmod.org  
-    Project Demo: http://demo.domainmod.org  
-    Source Code: http://github.com/domainmod/domainmod/  
-
+Project Home: http://domainmod.org  
+Project Demo: http://demo.domainmod.org  
+Source Code: http://github.com/domainmod/domainmod/  
 
 ## About
 DomainMOD is an open source application written in PHP & MySQL used to manage your domains and other internet assets in a central location. DomainMOD also includes a Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports web servers running WHM/cPanel, but further support will be added in the future.
@@ -108,7 +107,7 @@ Zone Filename, Original/Primary Source of Zone Data, Admin Email, Serial #, Refr
 TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data
 
 ### References
-WHM & cPanel: http://cpanel.net  
+WHM & cPanel: http://cpanel.net 
 API Documentation: http://docs.cpanel.net/twiki/bin/view/SoftwareDevelopmentKit/XmlApi 
 
 
