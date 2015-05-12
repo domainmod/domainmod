@@ -27,7 +27,9 @@ class Format
 
     public function stripSpacing($input) {
 
-        return $output = trim(preg_replace("/^\n+|^[\t\s]*\n+/m", "", $input));
+        $output = trim(preg_replace("/^\n+|^[\t\s]*\n+/m", "", $input));
+
+        return $output;
 
     }
 
