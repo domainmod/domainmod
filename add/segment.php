@@ -46,11 +46,10 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	$temp_input_string = $new_segment;
-	include(DIR_INC . "system/regex-bulk-form-strip-whitespace.inc.php");
-	$new_segment = $temp_output_string;
+    $format = new DomainMOD\Format();
+    $new_segment = $format->stripSpacing($new_segment);
 
-	if ($new_name != "" && $new_segment != "") {
+    if ($new_name != "" && $new_segment != "") {
 
 		$lines = explode("\r\n", $new_segment);
 		$invalid_domain_count = 0;

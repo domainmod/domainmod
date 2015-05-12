@@ -88,11 +88,10 @@ $choose_text = "Click here to choose the new";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	$temp_input_string = $new_data;
-	include(DIR_INC . "system/regex-bulk-form-strip-whitespace.inc.php");
-	$new_data = $temp_output_string;
+    $format = new DomainMOD\Format();
+    $new_data = $format->stripSpacing($new_data);
 
-	if ($new_data == "") {
+    if ($new_data == "") {
 
         $_SESSION['result_message'] = "Please enter the list of domains to apply the action to<BR>";
 

@@ -110,9 +110,8 @@ if ($segid != "") {
 
 if ($_SESSION['quick_search'] != "") {
 
-    $temp_input_string = $_SESSION['quick_search'];
-    include(DIR_INC . "system/regex-bulk-form-strip-whitespace.inc.php");
-    $_SESSION['quick_search'] = $temp_output_string;
+    $format = new DomainMOD\Format();
+    $_SESSION['quick_search'] = $format->stripSpacing($_SESSION['quick_search']);
 
     $lines = explode("\r\n", $_SESSION['quick_search']);
     $invalid_domain_count = 0;

@@ -51,11 +51,10 @@ $new_segid = $_POST['new_segid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	$temp_input_string = $new_segment;
-	include(DIR_INC . "system/regex-bulk-form-strip-whitespace.inc.php");
-	$new_segment = $temp_output_string;
+    $format = new DomainMOD\Format();
+    $new_segment = $format->stripSpacing($new_segment);
 
-	if ($new_name != "" && $new_segment != "") {
+    if ($new_name != "" && $new_segment != "") {
 
 		$lines = explode("\r\n", $new_segment);
         $number_of_domains = count($lines);
