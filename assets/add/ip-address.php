@@ -47,13 +47,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != '' && $new_ip != '') {
 
-		$sql = "INSERT INTO ip_addresses
-				(name, ip, rdns, notes, insert_time) VALUES 
-				('" . mysqli_real_escape_string($connection, $new_name) . "', '" . mysqli_real_escape_string($connection, $new_ip) . "', '" . mysqli_real_escape_string($connection, $new_rdns) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $time->time() . "')";
+        $query = "INSERT INTO ip_addresses
+                  (`name`, ip, rdns, notes, insert_time)
+                  VALUES
+                  (?, ?, ?, ?, ?)";
+        $q = $conn->stmt_init();
 
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
-		$_SESSION['result_message'] = "IP Address <font class=\"highlight\">" . $new_name . " (" . $new_ip . ")</font> Added<BR>";
+        if ($q->prepare($query)) {
+
+            $q->bind_param('sssss', $new_name, $new_ip, $new_rdns, $new_notes, $time->time());
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $_SESSION['result_message'] = "IP Address <font class=\"highlight\">" . $new_name . " (" . $new_ip . ")</font>
+            Added<BR>";
 
 		header("Location: ../ip-addresses.php");
 		exit;
@@ -76,10 +85,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_ip_address_form" method="post">
-<strong>IP Address Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>IP Address Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
 <input name="new_name" type="text" size="50" maxlength="100" value="<?php echo $new_name; ?>">
 <BR><BR>
-<strong>IP Address (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>IP Address (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
 <input name="new_ip" type="text" size="50" maxlength="100" value="<?php echo $new_ip; ?>">
 <BR><BR>
 <strong>rDNS (100)</strong><BR><BR>

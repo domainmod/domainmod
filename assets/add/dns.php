@@ -79,13 +79,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ($new_dns2 == '') { $new_number_of_servers = '1'; }
 		if ($new_dns1 == '') { $new_number_of_servers = '0'; }
 
-		$sql = "INSERT INTO dns 
-				(name, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, number_of_servers, insert_time) VALUES 
-				('" . mysqli_real_escape_string($connection, $new_name) . "', '" . mysqli_real_escape_string($connection, $new_dns1) . "', '" . mysqli_real_escape_string($connection, $new_dns2) . "', '" . mysqli_real_escape_string($connection, $new_dns3) . "', '" . mysqli_real_escape_string($connection, $new_dns4) . "', '" . mysqli_real_escape_string($connection, $new_dns5) . "', '" . mysqli_real_escape_string($connection, $new_dns6) . "', '" . mysqli_real_escape_string($connection, $new_dns7) . "', '" . mysqli_real_escape_string($connection, $new_dns8) . "', '" . mysqli_real_escape_string($connection, $new_dns9) . "', '" . mysqli_real_escape_string($connection, $new_dns10) . "', '" . mysqli_real_escape_string($connection, $new_ip1) . "', '" . mysqli_real_escape_string($connection, $new_ip2) . "', '" . mysqli_real_escape_string($connection, $new_ip3) . "', '" . mysqli_real_escape_string($connection, $new_ip4) . "', '" . mysqli_real_escape_string($connection, $new_ip5) . "', '" . mysqli_real_escape_string($connection, $new_ip6) . "', '" . mysqli_real_escape_string($connection, $new_ip7) . "', '" . mysqli_real_escape_string($connection, $new_ip8) . "', '" . mysqli_real_escape_string($connection, $new_ip9) . "', '" . mysqli_real_escape_string($connection, $new_ip10) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_number_of_servers . "', '" . $time->time() . "')";
+        $query = "INSERT INTO dns
+                  (`name`, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6,
+                   ip7, ip8, ip9, ip10, notes, number_of_servers, insert_time)
+                   VALUES
+                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $q = $conn->stmt_init();
 
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
-		$_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">" . $new_name . "</font> Added<BR>";
+        if ($q->prepare($query)) {
+
+            $q->bind_param('ssssssssssssssssssssssss', $new_name, $new_dns1, $new_dns2, $new_dns3, $new_dns4, $new_dns5,
+                $new_dns6, $new_dns7, $new_dns8, $new_dns9, $new_dns10, $new_ip1, $new_ip2, $new_ip3, $new_ip4,
+                $new_ip5, $new_ip6, $new_ip7, $new_ip8, $new_ip9, $new_ip10, $new_notes, $new_number_of_servers,
+                $time->time());
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">" . $new_name . "</font> Added<BR>";
 
 		header("Location: ../dns.php");
 		exit;
@@ -112,13 +124,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_dns_form" method="post">
-<strong>Profile Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Profile Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>
+    <BR><BR>
 <input name="new_name" type="text" size="50" maxlength="255" value="<?php echo $new_name; ?>">
 <BR><BR>
 <table class="dns_table">
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 1</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+            <strong>DNS Server 1</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+                </font></a><BR><BR>
             <input name="new_dns1" type="text" size="28" maxlength="255" value="<?php echo $new_dns1; ?>">
 		</td>
     	<td class="dns_table_right">
@@ -128,7 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	</tr>
 	<tr>
     	<td class="dns_table_left">
-            <strong>DNS Server 2</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+            <strong>DNS Server 2</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+                </font></a><BR><BR>
             <input name="new_dns2" type="text" size="28" maxlength="255" value="<?php echo $new_dns2; ?>">
 		</td>
     	<td class="dns_table_right">

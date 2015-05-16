@@ -45,13 +45,22 @@ $new_notes = $_POST['new_notes'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_host != "" && $new_url != "") {
-		
-		$sql = "INSERT INTO hosting 
-				(name, url, notes, insert_time) VALUES 
-				('" . mysqli_real_escape_string($connection, $new_host) . "', '" . mysqli_real_escape_string($connection, $new_url) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $time->time() . "')";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
-		$_SESSION['result_message'] = "Web Host <font class=\"highlight\">" . $new_host . "</font> Added<BR>";
+
+        $query = "INSERT INTO hosting
+                  (`name`, url, notes, insert_time)
+                  VALUES
+                  (?, ?, ?, ?)";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('ssss', $new_host, $new_url, $new_notes, $time->time());
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $_SESSION['result_message'] = "Web Host <font class=\"highlight\">" . $new_host . "</font> Added<BR>";
 		
 		header("Location: ../hosting.php");
 		exit;
@@ -74,10 +83,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_host_form" method="post">
-<strong>Web Host Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Web Host Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
 <input name="new_host" type="text" value="<?php echo $new_host; ?>" size="50" maxlength="100">
 <BR><BR>
-<strong>Web Host's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Web Host's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
 <input name="new_url" type="text" value="<?php echo $new_url; ?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>

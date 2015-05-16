@@ -50,17 +50,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_type != "") {
 
-		$sql = "UPDATE ssl_cert_types
-				SET type = '" . mysqli_real_escape_string($connection, $new_type) . "',
-					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-					update_time = '" . $time->time() . "'
-				WHERE id = '" . $new_ssltid . "'";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
-		$new_type = $new_type;
-		$new_notes = $new_notes;
+        $query = "UPDATE ssl_cert_types
+                  SET type = ?,
+                      notes = ?,
+                      update_time = ?
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-		$ssltid = $new_ssltid;
+        if ($q->prepare($query)) {
+
+            $q->bind_param('sssi', $new_type, $new_notes, $time->time(), $new_ssltid);
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $ssltid = $new_ssltid;
 		
 		$_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Updated<BR>";
 
@@ -75,49 +80,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT type, notes
-			FROM ssl_cert_types
-			WHERE id = '" . $ssltid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) { 
-	
-		$new_type = $row->type;
-		$new_notes = $row->notes;
+    $query = "SELECT type, notes
+              FROM ssl_cert_types
+              WHERE id = ?";
+    $q = $conn->stmt_init();
 
-	}
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $ssltid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($new_type, $new_notes);
+        $q->fetch();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 if ($del == "1") {
 
-	$sql = "SELECT type_id
-			FROM ssl_certs
-			WHERE type_id = '" . $ssltid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) {
-		$existing_ssl_cert = 1;
-	}
-	
-	if ($existing_ssl_cert > 0) {
+    $query = "SELECT type_id
+              FROM ssl_certs
+              WHERE type_id = ?
+              LIMIT 1";
+    $q = $conn->stmt_init();
 
-		$_SESSION['result_message'] = "This Type has SSL certificates associated with it and cannot be deleted<BR>";
+    if ($q->prepare($query)) {
 
-	} else {
+        $q->bind_param('i', $ssltid);
+        $q->execute();
+        $q->store_result();
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this SSL Type?<BR><BR><a href=\"ssl-type.php?ssltid=$ssltid&really_del=1\">YES, REALLY DELETE THIS TYPE</a><BR>";
+        if ($q->num_rows() > 0) {
 
-	}
+            $_SESSION['result_message'] = "This Type has SSL certificates associated with it and cannot be deleted<BR>";
+
+        } else {
+
+            $_SESSION['result_message'] = "Are you sure you want to delete this SSL Type?<BR><BR><a
+                href=\"ssl-type.php?ssltid=$ssltid&really_del=1\">YES, REALLY DELETE THIS TYPE</a><BR>";
+
+        }
+
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 
 if ($really_del == "1") {
 
-	$sql = "DELETE FROM ssl_cert_types
-			WHERE id = '" . $ssltid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	$_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Deleted<BR>";
+    $query = "DELETE FROM ssl_cert_types
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $ssltid);
+        $q->execute();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Deleted<BR>";
 	
 	header("Location: ../ssl-types.php");
 	exit;
@@ -133,7 +158,8 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_type_form" method="post">
-<strong>Type Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Type Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>
+    <BR><BR>
 <input name="new_type" type="text" value="<?php if ($new_type != "") echo htmlentities($new_type); ?>
 " size="50" maxlength="100">
 <BR><BR>

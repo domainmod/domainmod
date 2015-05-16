@@ -51,23 +51,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_name != "" && $new_ip != "") {
 
-		$sql_update = "UPDATE ip_addresses
-					   SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
-					   	   ip = '" . mysqli_real_escape_string($connection, $new_ip) . "',
-						   rdns = '" . mysqli_real_escape_string($connection, $new_rdns) . "',
-						   notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-						   update_time = '" . $time->time() . "'
-					   WHERE id = '" . $new_ipid . "'";
-		$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
+        $query = "UPDATE ip_addresses
+                  SET name = ?,
+                      ip = ?,
+                      rdns = ?,
+                      notes = ?,
+                      update_time = ?
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-		$new_name = $new_name;
-		$new_ip = $new_ip;
-		$new_rdns = $new_rdns;
-		$new_notes = $new_notes;
-		
-		$ipid = $new_ipid;
-		
-		$_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Updated<BR>";
+        if ($q->prepare($query)) {
+
+            $q->bind_param('sssssi', $new_name, $new_ip, $new_rdns, $new_notes, $time->time(), $new_ipid);
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $ipid = $new_ipid;
+
+        $_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Updated<BR>";
 
 		header("Location: ../ip-addresses.php");
 		exit;
@@ -81,51 +84,70 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT name, ip, rdns, notes
-			FROM ip_addresses
-			WHERE id = '" . $ipid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) { 
-	
-		$new_name = $row->name;
-		$new_ip = $row->ip;
-		$new_rdns = $row->rdns;
-		$new_notes = $row->notes;
-	
-	}
+    $query = "SELECT `name`, ip, rdns, notes
+              FROM ip_addresses
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $ipid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($new_name, $new_ip, $new_rdns, $new_notes);
+        $q->fetch();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
+
 if ($del == "1") {
 
-	$sql = "SELECT ip_id
-			FROM domains
-			WHERE ip_id = '" . $ipid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) {
-		$existing_domains = 1;
-	}
-	
-	if ($existing_domains > 0) {
+    $query = "SELECT ip_id
+              FROM domains
+              WHERE ip_id = ?
+              LIMIT 1";
+    $q = $conn->stmt_init();
 
-		$_SESSION['result_message'] = "This IP Address has domains associated with it and cannot be deleted<BR>";
+    if ($q->prepare($query)) {
 
-	} else {
+        $q->bind_param('i', $ipid);
+        $q->execute();
+        $q->store_result();
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this IP Address?<BR><BR><a href=\"ip-address.php?ipid=$ipid&really_del=1\">YES, REALLY DELETE THIS IP ADDRESS</a><BR>";
+        if ($q->num_rows() > 0) {
 
-	}
+            $_SESSION['result_message'] = "This IP Address has domains associated with it and cannot be deleted<BR>";
+
+        } else {
+
+            $_SESSION['result_message'] = "Are you sure you want to delete this IP Address?<BR><BR><a
+                href=\"ip-address.php?ipid=$ipid&really_del=1\">YES, REALLY DELETE THIS IP ADDRESS</a><BR>";
+
+        }
+
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 
 if ($really_del == "1") {
 
-	$sql = "DELETE FROM ip_addresses 
-			WHERE id = '" . $ipid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	$_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Deleted<BR>";
+    $query = "DELETE FROM ip_addresses
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $ipid);
+        $q->execute();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Deleted<BR>";
 	
 	header("Location: ../ip-addresses.php");
 	exit;
@@ -141,10 +163,13 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_ip_address_form" method="post">
-<strong>IP Address Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
+<strong>IP Address Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
+<input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "")
+    echo htmlentities($new_name); ?>">
 <BR><BR>
-<strong>IP Address (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>IP Address (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
 <input name="new_ip" type="text" size="50" maxlength="100" value="<?php if ($new_ip != "") echo $new_ip; ?>">
 <BR><BR>
 <strong>rDNS (100)</strong><BR><BR>

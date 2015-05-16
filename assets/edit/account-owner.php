@@ -52,17 +52,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_owner != "") {
 
-		$sql = "UPDATE owners
-				SET name = '" . mysqli_real_escape_string($connection, $new_owner) . "',
-					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-					update_time = '" . $time->time() . "'
-				WHERE id = '" . $new_oid . "'";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
-		$new_owner = $new_owner;
-		$new_notes = $new_notes;
+        $query = "UPDATE owners
+                  SET `name` = ?,
+                      notes = ?,
+                      update_time = ?
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-		$oid = $new_oid;
+        if ($q->prepare($query)) {
+
+            $q->bind_param('sssi', $new_owner, $new_notes, $time->time(), $new_oid);
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $oid = $new_oid;
 		
 		$_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Updated<BR>";
 
@@ -77,68 +82,136 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT name, notes
-			FROM owners
-			WHERE id = '" . $oid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) { 
-	
-		$new_owner = $row->name;
-		$new_notes = $row->notes;
-	
-	}
+    $query = "SELECT `name`, notes
+              FROM owners
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $oid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($new_owner, $new_notes);
+        $q->fetch();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 
 if ($del == "1") {
 
-	$sql = "SELECT owner_id
-			FROM registrar_accounts
-			WHERE owner_id = '" . $oid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) {
-		$existing_registrar_accounts = 1;
-	}
+    $query = "SELECT owner_id
+              FROM registrar_accounts
+              WHERE owner_id = ?
+              LIMIT 1";
+    $q = $conn->stmt_init();
 
-	$sql = "SELECT owner_id
-			FROM ssl_accounts
-			WHERE owner_id = '" . $oid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) {
-		$existing_ssl_accounts = 1;
-	}
+    if ($q->prepare($query)) {
 
-	$sql = "SELECT owner_id
-			FROM domains
-			WHERE owner_id = '" . $oid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) {
-		$existing_domains = 1;
-	}
+        $q->bind_param('i', $oid);
+        $q->execute();
+        $q->store_result();
 
-	$sql = "SELECT owner_id
-			FROM ssl_certs
-			WHERE owner_id = '" . $oid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) {
-		$existing_ssl_certs = 1;
-	}
-	
-	if ($existing_registrar_accounts > 0 || $existing_ssl_accounts > 0 || $existing_domains > 0 || $existing_ssl_certs > 0) {
-		
-		if ($existing_registrar_accounts > 0) $_SESSION['result_message'] .= "This Owner has registrar accounts associated with it and cannot be deleted<BR>";
-		if ($existing_domains > 0) $_SESSION['result_message'] .= "This Owner has domains associated with it and cannot be deleted<BR>";
-		if ($existing_ssl_accounts > 0) $_SESSION['result_message'] .= "This Owner has SSL accounts associated with it and cannot be deleted<BR>";
-		if ($existing_ssl_certs > 0) $_SESSION['result_message'] .= "This Owner has SSL certificates associated with it and cannot be deleted<BR>";
+        if ($q->num_rows() > 0) {
+
+            $existing_registrar_accounts = 1;
+
+        }
+
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $query = "SELECT owner_id
+              FROM ssl_accounts
+              WHERE owner_id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $oid);
+        $q->execute();
+        $q->store_result();
+
+        if ($q->num_rows() > 0) {
+
+            $existing_ssl_accounts = 1;
+
+        }
+
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $query = "SELECT owner_id
+              FROM domains
+              WHERE owner_id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $oid);
+        $q->execute();
+        $q->store_result();
+
+        if ($q->num_rows() > 0) {
+
+            $existing_domains = 1;
+
+        }
+
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $query = "SELECT owner_id
+              FROM ssl_certs
+              WHERE owner_id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $oid);
+        $q->execute();
+        $q->store_result();
+
+        if ($q->num_rows() > 0) {
+
+            $existing_ssl_certs = 1;
+
+        }
+
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    if ($existing_registrar_accounts > 0 || $existing_ssl_accounts > 0 || $existing_domains > 0 ||
+        $existing_ssl_certs > 0) {
+
+        if ($existing_registrar_accounts > 0) {
+            $_SESSION['result_message'] .= "This Owner has registrar accounts associated with it and cannot be
+                deleted<BR>";
+        }
+
+		if ($existing_domains > 0) {
+            $_SESSION['result_message'] .= "This Owner has domains associated with it and cannot be deleted<BR>";
+        }
+
+        if ($existing_ssl_accounts > 0) {
+            $_SESSION['result_message'] .= "This Owner has SSL accounts associated with it and cannot be deleted<BR>";
+        }
+
+		if ($existing_ssl_certs > 0) {
+            $_SESSION['result_message'] .= "This Owner has SSL certificates associated with it and cannot be
+                deleted<BR>";
+        }
 
 	} else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Owner?<BR><BR><a href=\"account-owner.php?oid=$oid&really_del=1\">YES, REALLY DELETE THIS OWNER</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Owner?<BR><BR><a
+            href=\"account-owner.php?oid=$oid&really_del=1\">YES, REALLY DELETE THIS OWNER</a><BR>";
 
 	}
 
@@ -146,11 +219,19 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-	$sql = "DELETE FROM owners 
-			WHERE id = '" . $oid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	$_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Deleted<BR>";
+    $query = "DELETE FROM owners
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $oid);
+        $q->execute();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Deleted<BR>";
 	
 	header("Location: ../account-owners.php");
 	exit;
@@ -166,7 +247,8 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_owner_form" method="post">
-<strong>Owner Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Owner Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
 <input name="new_owner" type="text" value="<?php if ($new_owner != "") echo htmlentities($new_owner); ?>
 " size="50" maxlength="100">
 <BR><BR>

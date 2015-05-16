@@ -53,19 +53,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_category != "") {
 
-		$sql = "UPDATE categories
-				SET name = '" . mysqli_real_escape_string($connection, $new_category) . "',
-					stakeholder = '" . mysqli_real_escape_string($connection, $new_stakeholder) . "',
-					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-					update_time = '" . $time->time() . "'
-				WHERE id = '" . $new_pcid . "'";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
-		$new_category = $new_category;
-		$new_stakeholder = $new_stakeholder;
-		$new_notes = $new_notes;
+        $query = "UPDATE categories
+                  SET `name` = ?,
+                      stakeholder = ?,
+                      notes = ?,
+                      update_time = ?
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-		$pcid = $new_pcid;
+        if ($q->prepare($query)) {
+
+            $q->bind_param('ssssi', $new_category, $new_stakeholder, $new_notes, $time->time(), $new_pcid);
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $pcid = $new_pcid;
 		
 		$_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Updated<BR>";
 
@@ -80,49 +84,70 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT name, stakeholder, notes
-			FROM categories
-			WHERE id = '" . $pcid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) { 
-	
-		$new_category = $row->name;
-		$new_stakeholder = $row->stakeholder;
-		$new_notes = $row->notes;
-	}
+    $query = "SELECT `name`, stakeholder, notes
+              FROM categories
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $pcid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($new_category, $new_stakeholder, $new_notes);
+        $q->fetch();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
+
 if ($del == "1") {
 
-	$sql = "SELECT cat_id
-			FROM domains
-			WHERE cat_id = '" . $pcid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) {
-		$existing_domains = 1;
-	}
-	
-	if ($existing_domains > 0) {
+    $query = "SELECT cat_id
+              FROM domains
+              WHERE cat_id = ?
+              LIMIT 1";
+    $q = $conn->stmt_init();
 
-		$_SESSION['result_message'] = "This Category has domains associated with it and cannot be deleted<BR>";
+    if ($q->prepare($query)) {
 
-	} else {
+        $q->bind_param('i', $pcid);
+        $q->execute();
+        $q->store_result();
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Category?<BR><BR><a href=\"category.php?pcid=$pcid&really_del=1\">YES, REALLY DELETE THIS CATEGORY</a><BR>";
+        if ($q->num_rows() > 0) {
 
-	}
+            $_SESSION['result_message'] = "This Category has domains associated with it and cannot be deleted<BR>";
+
+        } else {
+
+            $_SESSION['result_message'] = "Are you sure you want to delete this Category?<BR><BR><a
+                href=\"category.php?pcid=" . $pcid . "&really_del=1\">YES, REALLY DELETE THIS CATEGORY</a><BR>";
+
+        }
+
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 
 if ($really_del == "1") {
 
-	$sql = "DELETE FROM categories 
-			WHERE id = '" . $pcid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	$_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Deleted<BR>";
+    $query = "DELETE FROM categories
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $pcid);
+        $q->execute();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Deleted<BR>";
 	
 	header("Location: ../categories.php");
 	exit;
@@ -138,13 +163,14 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_category_form" method="post">
-<strong>Category Name (150)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Category Name (150)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
 <input name="new_category" type="text" value="<?php if ($new_category != "") echo htmlentities($new_category); ?>
 " size="50" maxlength="150">
 <BR><BR>
 <strong>Stakeholder (100)</strong><BR><BR>
-<input name="new_stakeholder" type="text" value="<?php if ($new_stakeholder != "") echo htmlentities($new_stakeholder); ?>
-" size="50" maxlength="100">
+<input name="new_stakeholder" type="text" value="<?php if ($new_stakeholder != "")
+    echo htmlentities($new_stakeholder); ?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>

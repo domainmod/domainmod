@@ -20,49 +20,97 @@
  */
 ?>
 <?php
-$sql = "DROP TABLE IF EXISTS dw_server_totals";
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$query = "DROP TABLE IF EXISTS dw_server_totals";
+$q = $conn->stmt_init();
 
-$sql = "CREATE TABLE IF NOT EXISTS `dw_server_totals` (
-		`id` int(10) NOT NULL auto_increment,
-		`dw_servers` int(10) NOT NULL,
-		`dw_accounts` int(10) NOT NULL,
-		`dw_dns_zones` int(10) NOT NULL,
-		`dw_dns_records` int(10) NOT NULL,
-		`insert_time` datetime NOT NULL,
-		PRIMARY KEY  (`id`)
-		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+if ($q->prepare($query)) {
+    $q->execute();
+    $q->close();
 
-$sql_get_total_dw_servers = "SELECT count(*) AS total_dw_servers
-							 FROM dw_servers";
-$result_get_total_dw_servers = mysqli_query($connection, $sql_get_total_dw_servers);
-while ($row_get_total_dw_servers = mysqli_fetch_object($result_get_total_dw_servers)) {
-    $temp_total_dw_servers = $row_get_total_dw_servers->total_dw_servers;
-}
+} else { $error->outputSqlError($conn, "ERROR"); }
 
-$sql_get_total_dw_accounts = "SELECT count(*) AS total_dw_accounts
-							  FROM dw_accounts";
-$result_get_total_dw_accounts = mysqli_query($connection, $sql_get_total_dw_accounts);
-while ($row_get_total_dw_accounts = mysqli_fetch_object($result_get_total_dw_accounts)) {
-    $temp_total_dw_accounts = $row_get_total_dw_accounts->total_dw_accounts;
-}
+$query = "CREATE TABLE IF NOT EXISTS `dw_server_totals` (
+          `id` int(10) NOT NULL auto_increment,
+          `dw_servers` int(10) NOT NULL,
+          `dw_accounts` int(10) NOT NULL,
+          `dw_dns_zones` int(10) NOT NULL,
+          `dw_dns_records` int(10) NOT NULL,
+          `insert_time` datetime NOT NULL,
+          PRIMARY KEY  (`id`)
+          ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+$q = $conn->stmt_init();
 
-$sql_get_total_dnz_zones = "SELECT count(*) AS total_dw_dns_zones
-							FROM dw_dns_zones";
-$result_get_total_dnz_zones = mysqli_query($connection, $sql_get_total_dnz_zones);
-while ($row_get_total_dnz_zones = mysqli_fetch_object($result_get_total_dnz_zones)) {
-    $temp_total_dw_dns_zones = $row_get_total_dnz_zones->total_dw_dns_zones;
-}
+if ($q->prepare($query)) {
 
-$sql_get_total_dns_records = "SELECT count(*) AS total_dw_dns_records
-							  FROM dw_dns_records";
-$result_get_total_dns_records = mysqli_query($connection, $sql_get_total_dns_records);
-while ($row_get_total_dns_records = mysqli_fetch_object($result_get_total_dns_records)) {
-    $temp_total_dw_dns_records = $row_get_total_dns_records->total_dw_dns_records;
-}
+    $q->execute();
+    $q->close();
 
-$sql_insert_dw_totals = "INSERT INTO dw_server_totals
-						 (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time) VALUES 
-						 ('" . $temp_total_dw_servers . "', '" . $temp_total_dw_accounts . "', '" . $temp_total_dw_dns_zones . "', '" . $temp_total_dw_dns_records . "', '" . $time->time() . "')";
-$result_insert_dw_totals = mysqli_query($connection, $sql_insert_dw_totals);
+} else { $error->outputSqlError($conn, "ERROR"); }
+
+$query = "SELECT count(*) AS total_dw_servers
+          FROM dw_servers";
+$q = $conn->stmt_init();
+if ($q->prepare($query)) {
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($temp_total_dw_servers);
+    $q->fetch();
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
+
+$query = "SELECT count(*) AS total_dw_accounts
+          FROM dw_accounts";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($temp_total_dw_accounts);
+    $q->fetch();
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
+
+$query = "SELECT count(*) AS total_dw_dns_zones
+          FROM dw_dns_zones";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($temp_total_dw_dns_zones);
+    $q->fetch();
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
+
+$query = "SELECT count(*) AS total_dw_dns_records
+          FROM dw_dns_records";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($temp_total_dw_dns_records);
+    $q->fetch();
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
+
+$query = "INSERT INTO dw_server_totals
+          (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
+           VALUES
+          (?, ?, ?, ?, ?)";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+
+    $q->bind_param('iiiis', $temp_total_dw_servers, $temp_total_dw_accounts, $temp_total_dw_dns_zones,
+        $temp_total_dw_dns_records, $time->time());
+    $q->execute();
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }

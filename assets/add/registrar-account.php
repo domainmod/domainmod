@@ -47,26 +47,58 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" && $new_registrar_id != "0") {
+	if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" &&
+        $new_registrar_id != "0") {
 
-		$sql = "INSERT INTO registrar_accounts 
-				(owner_id, registrar_id, username, password, notes, reseller, insert_time) VALUES 
-				('" . $new_owner_id . "', '" . $new_registrar_id . "', '" . mysqli_real_escape_string($connection, $new_username) . "', '" . mysqli_real_escape_string($connection, $new_password) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_reseller . "', '" . $time->time() . "')";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
-		$sql = "SELECT name
-				FROM registrars
-				WHERE id = '" . $new_registrar_id . "'";
-		$result = mysqli_query($connection, $sql);
-		while ($row = mysqli_fetch_object($result)) { $temp_registrar = $row->name; }
+        $query = "INSERT INTO registrar_accounts
+                  (owner_id, registrar_id, username, `password`, notes, reseller, insert_time)
+                  VALUES
+                  (?, ?, ?, ?, ?, ?, ?)";
+        $q = $conn->stmt_init();
 
-		$sql = "SELECT name
-				FROM owners
-				WHERE id = '" . $new_owner_id . "'";
-		$result = mysqli_query($connection, $sql);
-		while ($row = mysqli_fetch_object($result)) { $temp_owner = $row->name; }
+        if ($q->prepare($query)) {
 
-		$_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">" . $new_username . " (" . $temp_registrar . ", " . $temp_owner . ")</font> Added<BR>";
+            $q->bind_param('iisssis', $new_owner_id, $new_registrar_id, $new_username, $new_password, $new_notes,
+                $new_reseller, $time->time());
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $query = "SELECT `name`
+                  FROM registrars
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $new_registrar_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_registrar);
+            $q->fetch();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $query = "SELECT `name`
+                  FROM owners
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $new_owner_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_owner);
+            $q->fetch();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">" . $new_username . " (" .
+            $temp_registrar . ", " . $temp_owner . ")</font> Added<BR>";
 
 		if ($_SESSION['need_registrar_account'] == "1") {
 			
@@ -99,46 +131,74 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <form name="add_account_form" method="post">
 <strong>Owner</strong><BR><BR>
 <?php
-$sql_owner = "SELECT id, name
-			  FROM owners
-			  ORDER BY name asc";
-$result_owner = mysqli_query($connection, $sql_owner) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_owner_id\">";
-while ($row_owner = mysqli_fetch_object($result_owner)) {
+$query = "SELECT id, `name`
+          FROM owners
+          ORDER BY `name` ASC";
+$q = $conn->stmt_init();
 
-	if ($row_owner->id == $_SESSION['default_owner_domains']) {
+if ($q->prepare($query)) {
 
-		echo "<option value=\"" . $row_owner->id . "\" selected>" . $row_owner->name . "</option>";
-	
-	} else {
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($id, $name);
 
-		echo "<option value=\"" . $row_owner->id . "\">" . $row_owner->name . "</option>";
-	
-	}
-}
-echo "</select>";
+    echo "<select name=\"new_owner_id\">";
+
+    while ($q->fetch()) {
+
+        if ($id == $_SESSION['default_owner_domains']) {
+
+            echo "<option value=\"" . $id . "\" selected>" . $name . "</option>";
+
+        } else {
+
+            echo "<option value=\"" . $id . "\">" . $name . "</option>";
+
+        }
+
+    }
+
+    echo "</select>";
+
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <BR><BR>
 <strong>Registrar</strong><BR><BR>
 <?php
-$sql_registrar = "SELECT id, name
-				  FROM registrars
-				  ORDER BY name asc";
-$result_registrar = mysqli_query($connection, $sql_registrar) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_registrar_id\">";
-while ($row_registrar = mysqli_fetch_object($result_registrar)) {
+$query = "SELECT id, name
+          FROM registrars
+          ORDER BY `name` ASC";
+$q = $conn->stmt_init();
 
-	if ($row_registrar->id == $_SESSION['default_registrar']) {
+if ($q->prepare($query)) {
 
-		echo "<option value=\"" . $row_registrar->id . "\" selected>" . $row_registrar->name . "</option>";
-	
-	} else {
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($id, $name);
 
-		echo "<option value=\"" . $row_registrar->id . "\">" . $row_registrar->name . "</option>";
-	
-	}
-}
-echo "</select>";
+    echo "<select name=\"new_registrar_id\">";
+
+    while ($q->fetch()) {
+
+        if ($id == $_SESSION['default_registrar']) {
+
+            echo "<option value=\"" . $id . "\" selected>" . $name . "</option>";
+
+        } else {
+
+            echo "<option value=\"" . $id . "\">" . $name . "</option>";
+
+        }
+
+    }
+
+    echo "</select>";
+
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <BR><BR>
 <strong>Username (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>

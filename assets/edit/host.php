@@ -50,18 +50,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_host != "" && $new_url != "") {
 
-		$sql = "UPDATE hosting
-				SET name = '" . mysqli_real_escape_string($connection, $new_host) . "',
-					url = '" . mysqli_real_escape_string($connection, $new_url) . "',
-					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-					update_time = '" . $time->time() . "'
-				WHERE id = '" . $new_whid . "'";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
-		$new_host = $new_host;
-		$new_notes = $new_notes;
+        $query = "UPDATE hosting
+                  SET `name` = ?,
+                      url = ?,
+                      notes = ?,
+                      update_time = ?
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-		$whid = $new_whid;
+        if ($q->prepare($query)) {
+
+            $q->bind_param('ssssi', $new_host, $new_url, $new_notes, $time->time(), $new_whid);
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $whid = $new_whid;
 		
 		$_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Updated<BR>";
 
@@ -77,50 +82,70 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT name, url, notes
-			FROM hosting
-			WHERE id = '" . $whid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) { 
-	
-		$new_host = $row->name;
-		$new_url = $row->url;
-		$new_notes = $row->notes;
+    $query = "SELECT `name`, url, notes
+              FROM hosting
+              WHERE id = ?";
+    $q = $conn->stmt_init();
 
-	}
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $whid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($new_host, $new_url, $new_notes);
+        $q->fetch();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
+
 if ($del == "1") {
 
-	$sql = "SELECT hosting_id
-			FROM domains
-			WHERE hosting_id = '" . $whid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) {
-		$existing_domains = 1;
-	}
-	
-	if ($existing_domains > 0) {
+    $query = "SELECT hosting_id
+              FROM domains
+              WHERE hosting_id = ?
+              LIMIT 1";
+    $q = $conn->stmt_init();
 
-		$_SESSION['result_message'] = "This Web Host has domains associated with it and cannot be deleted<BR>";
+    if ($q->prepare($query)) {
 
-	} else {
+        $q->bind_param('i', $whid);
+        $q->execute();
+        $q->store_result();
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Web Host?<BR><BR><a href=\"host.php?whid=$whid&really_del=1\">YES, REALLY DELETE THIS WEB HOST</a><BR>";
+        if ($q->num_rows() > 0) {
 
-	}
+            $_SESSION['result_message'] = "This Web Host has domains associated with it and cannot be deleted<BR>";
+
+        } else {
+
+            $_SESSION['result_message'] = "Are you sure you want to delete this Web Host?<BR><BR><a
+                href=\"host.php?whid=$whid&really_del=1\">YES, REALLY DELETE THIS WEB HOST</a><BR>";
+
+        }
+
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 
 if ($really_del == "1") {
 
-	$sql = "DELETE FROM hosting 
-			WHERE id = '" . $whid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	$_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Deleted<BR>";
+    $query = "DELETE FROM hosting
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $whid);
+        $q->execute();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Deleted<BR>";
 	
 	header("Location: ../hosting.php");
 	exit;
@@ -136,11 +161,13 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_host_form" method="post">
-<strong>Web Host Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Web Host Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
 <input name="new_host" type="text" value="<?php if ($new_host != "") echo htmlentities($new_host); ?>
 " size="50" maxlength="100">
 <BR><BR>
-<strong>Registrar's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Registrar's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
 <input name="new_url" type="text" value="<?php echo htmlentities($new_url); ?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>

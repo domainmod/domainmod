@@ -50,24 +50,26 @@ $new_active = $_POST['new_active'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != ""
     && $new_email_address != "") {
 
-    $stmt = mysqli_stmt_init($connection);
-	$query = "SELECT username FROM users WHERE username = ?";
+    $query = "SELECT username
+              FROM users
+              WHERE username = ?";
+    $q = $conn->stmt_init();
 
-	if (mysqli_stmt_prepare($stmt, $query)) {
+    if ($q->prepare($query)) {
 
-	    mysqli_stmt_bind_param($stmt, "s", $new_username);
-	    mysqli_stmt_execute($stmt);
-	    mysqli_stmt_store_result($stmt);
+        $q->bind_param('s', $new_username);
+        $q->execute();
+        $q->store_result();
 
-        if (mysqli_stmt_num_rows($stmt) == 1) {
+        if ($q->num_rows() === 1) {
 
             $existing_username = 1;
 
         }
 
-        mysqli_stmt_close($stmt);
+        $q->close();
 
-	} else { $error->outputSqlError($connection, "ERROR"); }
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     if ($existing_username == 1) {
 
@@ -77,46 +79,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 		$new_password = substr(md5(time()), 0, 8);
 
-        $stmt = mysqli_stmt_init($connection);
-		$query = "INSERT INTO users
+        $query = "INSERT INTO users
                   (first_name, last_name, username, email_address, `password`, admin, active, insert_time)
                   VALUES
                   (?, ?, ?, ?, password(?), ?, ?, ?)";
+        $q = $conn->stmt_init();
 
-		if (mysqli_stmt_prepare($stmt, $query)) {
+        if ($q->prepare($query)) {
 
-		    mysqli_stmt_bind_param($stmt, "ssssssis", $new_first_name, $new_last_name, $new_username,
-                $new_email_address, $new_password, $new_admin, $new_active, $timestamp);
-		    mysqli_stmt_execute($stmt);
-            mysqli_stmt_close($stmt);
+            $q->bind_param('ssssssis', $new_first_name, $new_last_name, $new_username, $new_email_address,
+                $new_password, $new_admin, $new_active, $timestamp);
+            $q->execute();
+            $q->close();
 
-		} else { $error->outputSqlError($connection, "ERROR"); }
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
-        $stmt = mysqli_stmt_init($connection);
         $query = "SELECT id
                   FROM users
                   WHERE first_name = ?
                     AND last_name = ?
                     AND insert_time = ?";
+        $q = $conn->stmt_init();
 
-        if (mysqli_stmt_prepare($stmt, $query)) {
+        if ($q->prepare($query)) {
 
-            mysqli_stmt_bind_param($stmt, "sss", $new_first_name, $new_last_name, $timestamp);
-            mysqli_stmt_execute($stmt);
-            mysqli_stmt_store_result($stmt);
-            mysqli_stmt_bind_result($stmt, $id);
+            $q->bind_param('sss', $new_first_name, $new_last_name, $timestamp);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_user_id);
+            $q->fetch();
+            $q->close();
 
-            while (mysqli_stmt_fetch($stmt)) {
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
-                $temp_user_id = $id;
-
-            }
-
-            mysqli_stmt_close($stmt);
-
-        } else { $error->outputSqlError($connection, "ERROR"); }
-
-        $stmt = mysqli_stmt_init($connection);
         $query = "INSERT INTO user_settings
                   (user_id,
                    default_currency,
@@ -135,15 +130,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                    default_ssl_type,
                    insert_time)
                    VALUES
-                   (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                   (?, 'CAD', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $q = $conn->stmt_init();
 
-        if (mysqli_stmt_prepare($stmt, $query)) {
+        if ($q->prepare($query)) {
 
-            $temp_currency = 'CAD';
-
-            mysqli_stmt_bind_param($stmt, "isiiiiiiiiiiiiii",
+            $q->bind_param('iiiiiiiiiiiiiii',
                 $temp_user_id,
-                $temp_currency,
                 $_SESSION['system_default_category_domains'],
                 $_SESSION['system_default_category_ssl'],
                 $_SESSION['system_default_dns'],
@@ -158,10 +151,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                 $_SESSION['system_default_ssl_provider_account'],
                 $_SESSION['system_default_ssl_type'],
                 $timestamp);
-            mysqli_stmt_execute($stmt);
-            mysqli_stmt_close($stmt);
+            $q->execute();
+            $q->close();
 
-        } else { $error->outputSqlError($connection, "ERROR"); }
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $_SESSION['result_message'] .= "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " ("
             . $new_username . " / " . $new_password . ")</font> Added<BR><BR>You can either manually email the above
@@ -199,10 +192,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_user_form" method="post">
-<strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php echo $new_first_name; ?>"><BR><BR>
-<strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php echo $new_last_name; ?>"><BR><BR>
-<strong>Username (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_username" type="text" size="20" maxlength="30" value="<?php echo $new_username; ?>"><BR><BR>
-<strong>Email Address (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_email_address" type="text" size="50" maxlength="100" value="<?php echo $new_email_address; ?>"><BR><BR>
+<strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
+        name="new_first_name" type="text" size="50" maxlength="50" value="<?php echo $new_first_name; ?>"><BR><BR>
+<strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
+        name="new_last_name" type="text" size="50" maxlength="50" value="<?php echo $new_last_name; ?>"><BR><BR>
+<strong>Username (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
+        name="new_username" type="text" size="20" maxlength="30" value="<?php echo $new_username; ?>"><BR><BR>
+<strong>Email Address (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
+        name="new_email_address" type="text" size="50" maxlength="100" value="<?php echo $new_email_address; ?>"><BR>
+    <BR>
 <strong>Admin Privileges?</strong>&nbsp;
 <select name="new_admin">
 <option value="0"<?php if ($new_admin == 0) echo " selected"; ?>>No</option>

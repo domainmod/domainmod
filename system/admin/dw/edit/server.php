@@ -53,23 +53,34 @@ $new_dwsid = $_POST['new_dwsid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" && $new_hash != "") {
+    if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" &&
+        $new_hash != "") {
 
-        $sql = "UPDATE dw_servers
-                SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
-                    host = '" . mysqli_real_escape_string($connection, $new_host) . "',
-                    protocol = '" . mysqli_real_escape_string($connection, $new_protocol) . "',
-                    port = '" . mysqli_real_escape_string($connection, $new_port) . "',
-                    username = '" . mysqli_real_escape_string($connection, $new_username) . "',
-                    hash = '" . mysqli_real_escape_string($connection, $new_hash) . "',
-                    notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-                    update_time = '" . $time->time() . "'
-                WHERE id = '" . $new_dwsid . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $query = "UPDATE dw_servers
+                  SET `name` = ?,
+                      `host` = ?,
+                      protocol = ?,
+                      `port` = ?,
+                      username = ?,
+                      `hash` = ?,
+                      notes = ?,
+                      update_time = ?
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('sssissssi', $new_name, $new_host, $new_protocol, $new_port, $new_username, $new_hash,
+                $new_notes, $time->time(), $new_dwsid);
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $dwsid = $new_dwsid;
 
-        $_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font> Updated<BR>";
+        $_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font>
+        Updated<BR>";
 
         header("Location: ../servers.php");
         exit;
@@ -99,63 +110,100 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $sql = "SELECT id, name, host, protocol, port, username, hash, notes
-            FROM dw_servers
-            WHERE id = '" . $dwsid . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $query = "SELECT `name`, `host`, protocol, `port`, username, `hash`, notes
+              FROM dw_servers
+              WHERE id = ?";
+    $q = $conn->stmt_init();
 
-    while ($row = mysqli_fetch_object($result)) {
+    if ($q->prepare($query)) {
 
-        $new_name = $row->name;
-        $new_host = $row->host;
-        $new_protocol = $row->protocol;
-        $new_port = $row->port;
-        $new_username = $row->username;
-        $new_hash = $row->hash;
-        $new_notes = $row->notes;
+        $q->bind_param('i', $dwsid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($new_name, $new_host, $new_protocol, $new_port, $new_username, $new_hash, $new_notes);
+        $q->fetch();
+        $q->close();
 
-    }
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 if ($del == "1") {
 
-    $_SESSION['result_message'] = "Are you sure you want to delete this Server?<BR><BR><a href=\"server.php?dwsid=$dwsid&really_del=1\">YES, REALLY DELETE THIS SERVER</a><BR>";
+    $_SESSION['result_message'] = "Are you sure you want to delete this Server?<BR><BR><a
+    href=\"server.php?dwsid=$dwsid&really_del=1\">YES, REALLY DELETE THIS SERVER</a><BR>";
 
 }
 
 if ($really_del == "1") {
 
-    $sql = "SELECT name, host
-            FROM dw_servers
-            WHERE id = '" . $dwsid . "'";
-    $result = mysqli_query($connection, $sql);
+    $query = "SELECT name, host
+              FROM dw_servers
+              WHERE id = ?";
+    $q = $conn->stmt_init();
 
-    while ($row = mysqli_fetch_object($result)) {
+    if ($q->prepare($query)) {
 
-        $new_name = $row->name;
-        $new_host = $row->host;
+        $q->bind_param('i', $dwsid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($new_name, $new_host);
+        $q->fetch();
+        $q->close();
 
-    }
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
-    $sql = "DELETE FROM dw_accounts
-            WHERE server_id = '" . $dwsid . "'";
-    $result = mysqli_query($connection, $sql);
+    $query = "DELETE FROM dw_accounts
+              WHERE server_id = ?";
+    $q = $conn->stmt_init();
 
-    $sql = "DELETE FROM dw_dns_records
-            WHERE server_id = '" . $dwsid . "'";
-    $result = mysqli_query($connection, $sql);
+    if ($q->prepare($query)) {
 
-    $sql = "DELETE FROM dw_dns_zones
-            WHERE server_id = '" . $dwsid . "'";
-    $result = mysqli_query($connection, $sql);
+        $q->bind_param('i', $dwsid);
+        $q->execute();
+        $q->close();
 
-    $sql = "DELETE FROM dw_servers
-            WHERE id = '" . $dwsid . "'";
-    $result = mysqli_query($connection, $sql);
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $query = "DELETE FROM dw_dns_records
+              WHERE server_id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $dwsid);
+        $q->execute();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $query = "DELETE FROM dw_dns_zones
+              WHERE server_id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $dwsid);
+        $q->execute();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $query = "DELETE FROM dw_servers
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $dwsid);
+        $q->execute();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     include("../../../../cron/_includes/dw-update-totals.inc.php");
 
-    $_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font> Deleted<BR>";
+    $_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font>
+    Deleted<BR>";
 
     header("Location: ../servers.php");
     exit;
@@ -171,14 +219,16 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="dw_edit_server_form" method="post">
-<strong>Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR>
+    <BR>
 Enter the display name for this server.<BR><BR>
 <input name="new_name" type="text" size="50" maxlength="100" value="<?php
 if ($new_name != "") {
     echo htmlentities($new_name);
 } ?>">
 <BR><BR>
-<strong>Host Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Host Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>
+    <BR><BR>
 Enter the host name of your WHM installation (ie. server1.example.com).<BR><BR>
 <input name="new_host" type="text" size="50" maxlength="100" value="<?php
 if ($new_host != "") {
@@ -198,22 +248,27 @@ if ($new_protocol == "http") {
 } ?>>Unsecured (http)</option>
 </select>
 <BR><BR>
-<strong>Port (5):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Port (5):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR>
+    <BR>
 Enter the port that you connect to (usually 2086 or 2087).<BR><BR>
 <input name="new_port" type="text" size="5" maxlength="5" value="<?php
 if ($new_port != "") {
     echo $new_port;
 } ?>">
 <BR><BR>
-<strong>Username (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Username (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>
+    <BR><BR>
 Enter the username for your WHM installation.<BR><BR>
 <input name="new_username" type="text" size="50" maxlength="100" value="<?php
 if ($new_username != "") {
     echo $new_username;
 } ?>">
 <BR><BR>
-<strong>Hash/Remote Access Key:</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-Enter the hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the right-hand side of the screen.<BR><BR>
+<strong>Hash/Remote Access Key:</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
+Enter the hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote
+    Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the
+    right-hand side of the screen.<BR><BR>
 <textarea name="new_hash" cols="60" rows="5"><?php
 if ($new_hash != "") {
     echo $new_hash;

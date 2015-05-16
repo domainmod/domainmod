@@ -45,10 +45,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_owner != "") {
 
-        $sql = "INSERT INTO owners
-				(name, notes2, insert_time) VALUES
-				('" . mysqli_real_escape_string($connection, $new_owner) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $time->time() . "')";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $query = "INSERT INTO owners
+                  (`name`, notes, insert_time)
+                  VALUES
+                  (?, ?, ?)";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('sss', $new_owner, $new_notes, $time->time());
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $_SESSION['result_message'] = "Owner <font class=\"highlight\">" . $new_owner . "</font> Added<BR>";
 
@@ -72,7 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_owner_form" method="post">
-<strong>Owner Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Owner Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
 <input name="new_owner" type="text" value="<?php echo $new_owner; ?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>

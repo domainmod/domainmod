@@ -41,41 +41,59 @@ $software_section = "system-change-password";
 $new_password = $_POST['new_password'];
 $new_password_confirmation = $_POST['new_password_confirmation'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password_confirmation != "" && $new_password == $new_password_confirmation) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password_confirmation != "" &&
+    $new_password == $new_password_confirmation) {
 
-	$sql = "SELECT id 
-			FROM users 
-			WHERE id = '" . $_SESSION['user_id'] . "' 
-			  AND email_address = '" . $_SESSION['email_address'] . "'";
-	$result = mysqli_query($connection, $sql);
+    $query = "SELECT id
+              FROM users
+              WHERE id = ?
+                AND email_address = ?";
+    $q = $conn->stmt_init();
 
-   if (mysqli_num_rows($result) == 1) {
+    if ($q->prepare($query)) {
 
-		$sql_update = "UPDATE users 
-					   SET password = password('$new_password'), 
-					   	   new_password = '0', 
-						   update_time = '" . $time->time() . "'
-					   WHERE id = '" . $_SESSION['user_id'] . "' 
-					     AND email_address = '" . $_SESSION['email_address'] . "'";
-		$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
+        $q->bind_param('is', $_SESSION['user_id'], $_SESSION['email_address']);
+        $q->execute();
+        $q->store_result();
 
-		$_SESSION['result_message'] .= "Your password has been changed<BR>";
+        if ($q->num_rows() === 1) {
 
-		header("Location: index.php");
-		exit;
+            $query_update = "UPDATE users
+                             SET password = password(?),
+                                 new_password = '0',
+                                 update_time = ?
+                             WHERE id = ?
+                               AND email_address = ?";
+            $q_update = $conn->stmt_init();
 
-   } else {
+            if ($q_update->prepare($query_update)) {
 
-		$_SESSION['result_message'] .= "Your password could not be updated<BR>";
-		$_SESSION['result_message'] .= "If the problem persists please contact your administrator<BR>";
+                $q_update->bind_param('ssis', $new_password, $time->time(), $_SESSION['user_id'],
+                    $_SESSION['email_address']);
+                $q_update->execute();
+                $q_update->close();
 
-   }
+            } else { $error->outputSqlError($conn, "ERROR"); }
 
+            $_SESSION['result_message'] .= "Your password has been changed<BR>";
+
+            header("Location: index.php");
+            exit;
+
+        } else {
+
+            $_SESSION['result_message'] .= "Your password could not be updated<BR>";
+            $_SESSION['result_message'] .= "If the problem persists please contact your administrator<BR>";
+
+        }
+
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 } else {
 
-
-	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		if ($new_password == "" && $new_password_confirmation == "") {
 		
@@ -101,7 +119,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 <form name="change_password_form" method="post">
 <strong>New Password (255)</strong><BR><BR><input type="password" name="new_password" size="20" maxlength="255">
 <BR><BR>
-<strong>Confirm New Password</strong><BR><BR><input type="password" name="new_password_confirmation" size="20" maxlength="255">
+<strong>Confirm New Password</strong><BR><BR><input type="password" name="new_password_confirmation" size="20"
+                                                    maxlength="255">
 <BR><BR>
 <input type="submit" name="button" value="Change Password &raquo;">
 </form>

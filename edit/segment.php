@@ -66,7 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while (list($key, $new_domain) = each($lines)) {
 	
 			if (!$domain->checkDomainFormat($new_domain)) {
-				if ($invalid_domain_count < $invalid_domains_to_display) $temp_result_message .= "Line " . number_format($key + 1) . " contains an invalid domain<BR>";
+				if ($invalid_domain_count < $invalid_domains_to_display) $temp_result_message .= "Line " .
+                    number_format($key + 1) . " contains an invalid domain<BR>";
 				$invalid_domains = 1;
 				$invalid_domain_count++;
 			}
@@ -79,19 +80,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 				if ($invalid_domain_count == 1) {
 
-					$_SESSION['result_message'] = "There is " . number_format($invalid_domain_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
+					$_SESSION['result_message'] = "There is " . number_format($invalid_domain_count) . " invalid domain
+					    on your list<BR><BR>" . $temp_result_message;
 
 				} else {
 
-					$_SESSION['result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
+					$_SESSION['result_message'] = "There are " . number_format($invalid_domain_count) . " invalid
+					    domains on your list<BR><BR>" . $temp_result_message;
 					
 					if (($invalid_domain_count-$invalid_domains_to_display) == 1) { 
 
-						$_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " other<BR>";
+						$_SESSION['result_message'] .= "<BR>Plus " .
+                            number_format($invalid_domain_count-$invalid_domains_to_display) . " other<BR>";
 
 					} elseif (($invalid_domain_count-$invalid_domains_to_display) > 1) { 
 
-						$_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
+						$_SESSION['result_message'] .= "<BR>Plus " .
+                            number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
 					}
 
 				}
@@ -119,7 +124,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$new_segment_formatted = str_replace (" ", "", $new_segment_formatted);
 			$new_segment_formatted = trim($new_segment_formatted);
 
-            $stmt = mysqli_stmt_init($connection);
             $query = "UPDATE segments
                       SET `name` = ?,
                           description = ?,
@@ -128,39 +132,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                           notes = ?,
                           update_time = ?
                       WHERE id = ?";
+            $q = $conn->stmt_init();
 
-            if (mysqli_stmt_prepare($stmt, $query)) {
+            if ($q->prepare($query)) {
 
-                mysqli_stmt_bind_param($stmt, "sssissi", $new_name, $new_description, $new_segment_formatted, $number_of_domains, $new_notes, $timestamp, $segid);
-                mysqli_stmt_execute($stmt);
-                mysqli_stmt_close($stmt);
+                $q->bind_param('sssissi', $new_name, $new_description, $new_segment_formatted, $number_of_domains,
+                    $new_notes, $timestamp, $segid);
+                $q->execute();
+                $q->close();
 
-            } else { $error->outputSqlError($connection, "ERROR"); }
+            } else { $error->outputSqlError($conn, "ERROR"); }
 
-            $stmt = mysqli_stmt_init($connection);
             $query = "DELETE FROM segment_data
                       WHERE segment_id = ?";
+            $q = $conn->stmt_init();
 
-            if (mysqli_stmt_prepare($stmt, $query)) {
+            if ($q->prepare($query)) {
 
-                mysqli_stmt_bind_param($stmt, "i", $new_segid);
-                mysqli_stmt_execute($stmt);
-                mysqli_stmt_close($stmt);
+                $q->bind_param('i', $new_segid);
+                $q->execute();
+                $q->close();
 
-            } else { $error->outputSqlError($connection, "ERROR"); }
+            } else { $error->outputSqlError($conn, "ERROR"); }
 
             foreach ($lines as $domain) {
 
-                $stmt = mysqli_stmt_init($connection);
-                $query = "INSERT INTO segment_data (segment_id, domain, update_time) VALUES (?, ?, ?);";
+                $query = "INSERT INTO segment_data
+                          (segment_id, domain, update_time)
+                          VALUES
+                          (?, ?, ?)";
+                $q = $conn->stmt_init();
 
-                if (mysqli_stmt_prepare($stmt, $query)) {
+                if ($q->prepare($query)) {
 
-                    mysqli_stmt_bind_param($stmt, "iss", $new_segid, $domain, $timestamp);
-                    mysqli_stmt_execute($stmt);
-                    mysqli_stmt_close($stmt);
+                    $q->bind_param('iss', $new_segid, $domain, $timestamp);
+                    $q->execute();
+                    $q->close();
 
-                } else { $error->outputSqlError($connection, "ERROR"); }
+                } else { $error->outputSqlError($conn, "ERROR"); }
 
             }
 
@@ -184,29 +193,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $stmt = mysqli_stmt_init($connection);
-    $query = "SELECT id, `name`, description, segment, notes FROM segments WHERE id = ?";
+    $query = "SELECT id, `name`, description, segment, notes
+              FROM segments
+              WHERE id = ?";
+    $q = $conn->stmt_init();
 
-    if (mysqli_stmt_prepare($stmt, $query)) {
+    if ($q->prepare($query)) {
 
-        mysqli_stmt_bind_param($stmt, "i", $segid);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_store_result($stmt);
-        mysqli_stmt_bind_result($stmt, $id, $name, $description, $segment, $notes);
+        $q->bind_param('i', $segid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($new_id, $new_name, $new_description, $new_segment, $new_notes);
+        $q->fetch();
+        $q->close();
 
-        while (mysqli_stmt_fetch($stmt)) {
-
-            $new_id = $id;
-            $new_name = $name;
-            $new_description = $description;
-            $new_segment = $segment;
-            $new_notes = $notes;
-
-        }
-
-        mysqli_stmt_close($stmt);
-
-    } else { $error->outputSqlError($connection, "ERROR"); }
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     $new_segment = preg_replace("/', '/", "\r\n", $new_segment);
     $new_segment = preg_replace("/','/", "\r\n", $new_segment);
@@ -216,57 +217,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del == "1") {
 
-	$_SESSION['result_message'] = "Are you sure you want to delete this Segment?<BR><BR><a href=\"segment.php?segid=$segid&really_del=1\">YES, REALLY DELETE THIS SEGMENT</a><BR>";
+	$_SESSION['result_message'] = "Are you sure you want to delete this Segment?<BR><BR><a
+        href=\"segment.php?segid=$segid&really_del=1\">YES, REALLY DELETE THIS SEGMENT</a><BR>";
 
 }
 
 if ($really_del == "1") {
 
-    $stmt = mysqli_stmt_init($connection);
     $query = "SELECT `name`
               FROM segments
               WHERE id = ?";
+    $q = $conn->stmt_init();
 
-    if (mysqli_stmt_prepare($stmt, $query)) {
+    if ($q->prepare($query)) {
 
-        mysqli_stmt_bind_param($stmt, "i", $segid);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_store_result($stmt);
-        mysqli_stmt_bind_result($stmt, $name);
+        $q->bind_param('i', $segid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($temp_segment_name);
+        $q->fetch();
+        $q->close();
 
-        while (mysqli_stmt_fetch($stmt)) {
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
-            $temp_segment_name = $name;
-
-        }
-
-        mysqli_stmt_close($stmt);
-
-    } else { $error->outputSqlError($connection, "ERROR"); }
-
-    $stmt = mysqli_stmt_init($connection);
     $query = "DELETE FROM segments
               WHERE id = ?";
+    $q = $conn->stmt_init();
 
-    if (mysqli_stmt_prepare($stmt, $query)) {
+    if ($q->prepare($query)) {
 
-        mysqli_stmt_bind_param($stmt, "i", $segid);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
+        $q->bind_param('i', $segid);
+        $q->execute();
+        $q->close();
 
-    } else { $error->outputSqlError($connection, "ERROR"); }
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
-    $stmt = mysqli_stmt_init($connection);
     $query = "DELETE FROM segment_data
               WHERE segment_id = ?";
+    $q = $conn->stmt_init();
 
-    if (mysqli_stmt_prepare($stmt, $query)) {
+    if ($q->prepare($query)) {
 
-        mysqli_stmt_bind_param($stmt, "i", $segid);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
+        $q->bind_param('i', $segid);
+        $q->execute();
+        $q->close();
 
-    } else { $error->outputSqlError($connection, "ERROR"); }
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     $_SESSION['result_message'] = "Segment <font class=\"highlight\">$temp_segment_name</font> Deleted<BR>";
 
@@ -284,14 +280,18 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_segment_form" method="post">
-<strong>Segment Name (35)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
-<input name="new_name" type="text" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>" size="25" maxlength="35">
+<strong>Segment Name (35)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
+<input name="new_name" type="text" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>" size="25"
+       maxlength="35">
 <BR><BR>
-<strong>Segment Domains (one per line)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Segment Domains (one per line)</strong><a title="Required Field"><font class="default_highlight"><strong>*
+            </strong></font></a><BR><BR>
 <textarea name="new_segment" cols="60" rows="5"><?php if ($new_segment != "") echo $new_segment; ?></textarea>
 <BR><BR>
 <strong>Description</strong><BR><BR>
-<textarea name="new_description" cols="60" rows="5"><?php if ($new_description != "") echo $new_description; ?></textarea>
+<textarea name="new_description" cols="60" rows="5"><?php if ($new_description != "") echo $new_description; ?>
+    </textarea>
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>

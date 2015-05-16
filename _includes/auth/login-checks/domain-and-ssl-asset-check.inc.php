@@ -20,67 +20,140 @@
  */
 ?>
 <?php
-$sql_asset_check = "SELECT id
-					FROM registrars
-					LIMIT 1";
-$result_asset_check = mysqli_query($connection, $sql_asset_check) or $error->outputOldSqlError($connection);
-if (mysqli_num_rows($result_asset_check) == 0) { 
-	$_SESSION['need_registrar'] = "1";
-} else {
-	$_SESSION['need_registrar'] = "0";
-}
+$query = "SELECT id
+          FROM registrars
+          LIMIT 1";
+$q = $conn->stmt_init();
 
-$sql_asset_check = "SELECT id
-					FROM registrar_accounts
-					LIMIT 1";
-$result_asset_check = mysqli_query($connection, $sql_asset_check) or $error->outputOldSqlError($connection);
-if (mysqli_num_rows($result_asset_check) == 0) { 
-	$_SESSION['need_registrar_account'] = "1";
-} else {
-	$_SESSION['need_registrar_account'] = "0";
-}
+if ($q->prepare($query)) {
+    $q->execute();
+    $q->store_result();
 
-$sql_asset_check = "SELECT id
-					FROM domains
-					LIMIT 1";
-$result_asset_check = mysqli_query($connection, $sql_asset_check) or $error->outputOldSqlError($connection);
-if (mysqli_num_rows($result_asset_check) == 0) { 
-	$_SESSION['need_domain'] = "1";
-} else {
-	$_SESSION['need_domain'] = "0";
-}
+    if ($q->num_rows() === 0) {
 
-$sql_asset_check = "SELECT id
-					FROM ssl_providers
-					LIMIT 1";
-$result_asset_check = mysqli_query($connection, $sql_asset_check) or $error->outputOldSqlError($connection);
-if (mysqli_num_rows($result_asset_check) == 0) { 
-	$_SESSION['need_ssl_provider'] = "1";
-} else {
-	$_SESSION['need_ssl_provider'] = "0";
-}
+        $_SESSION['need_registrar'] = "1";
 
-$sql_asset_check = "SELECT id
-					FROM ssl_accounts
-					LIMIT 1";
-$result_asset_check = mysqli_query($connection, $sql_asset_check) or $error->outputOldSqlError($connection);
-if (mysqli_num_rows($result_asset_check) == 0) { 
-	$_SESSION['need_ssl_account'] = "1";
-} else {
-	$_SESSION['need_ssl_account'] = "0";
-}
+    } else {
 
-$sql_asset_check = "SELECT id
-					FROM ssl_certs
-					LIMIT 1";
-$result_asset_check = mysqli_query($connection, $sql_asset_check) or $error->outputOldSqlError($connection);
+        $_SESSION['need_registrar'] = "0";
 
-if (mysqli_num_rows($result_asset_check) == 0) { 
+    }
 
-	$_SESSION['need_ssl_cert'] = "1";
+    $q->close();
 
-} else {
+} else { $error->outputSqlError($conn, "ERROR"); }
 
-	$_SESSION['need_ssl_cert'] = "0";
+$query = "SELECT id
+          FROM registrar_accounts
+          LIMIT 1";
+$q = $conn->stmt_init();
 
-}
+if ($q->prepare($query)) {
+    $q->execute();
+    $q->store_result();
+
+    if ($q->num_rows() === 0) {
+
+        $_SESSION['need_registrar_account'] = "1";
+
+    } else {
+
+        $_SESSION['need_registrar_account'] = "0";
+
+    }
+
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
+
+$query = "SELECT id
+          FROM domains
+          LIMIT 1";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+    $q->execute();
+    $q->store_result();
+
+    if ($q->num_rows() === 0) {
+
+        $_SESSION['need_domain'] = "1";
+
+    } else {
+
+        $_SESSION['need_domain'] = "0";
+
+    }
+
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
+
+$query = "SELECT id
+          FROM ssl_providers
+          LIMIT 1";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+    $q->execute();
+    $q->store_result();
+
+    if ($q->num_rows() === 0) {
+
+        $_SESSION['need_ssl_provider'] = "1";
+
+    } else {
+
+        $_SESSION['need_ssl_provider'] = "0";
+
+    }
+
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
+
+$query = "SELECT id
+          FROM ssl_accounts
+          LIMIT 1";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+    $q->execute();
+    $q->store_result();
+
+    if ($q->num_rows() === 0) {
+
+        $_SESSION['need_ssl_account'] = "1";
+
+    } else {
+
+        $_SESSION['need_ssl_account'] = "0";
+
+    }
+
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
+
+$query = "SELECT id
+          FROM ssl_certs
+          LIMIT 1";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+    $q->execute();
+    $q->store_result();
+
+    if ($q->num_rows() === 0) {
+
+        $_SESSION['need_ssl_cert'] = "1";
+
+    } else {
+
+        $_SESSION['need_ssl_cert'] = "0";
+
+    }
+
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }

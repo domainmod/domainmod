@@ -46,12 +46,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_ssl_provider != "" && $new_url != "") {
 
-		$sql = "INSERT INTO ssl_providers
-				(name, url, notes, insert_time) VALUES 
-				('" . mysqli_real_escape_string($connection, $new_ssl_provider) . "', '" . mysqli_real_escape_string($connection, $new_url) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $time->time() . "')";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $query = "INSERT INTO ssl_providers
+                  (`name`, url, notes, insert_time)
+                  VALUES
+                  (?, ?, ?, ?)";
+        $q = $conn->stmt_init();
 
-		$_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Added<BR>";
+        if ($q->prepare($query)) {
+
+            $q->bind_param('ssss', $new_ssl_provider, $new_url, $new_notes, $time->time());
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Added<BR>";
 		
 		if ($_SESSION['need_ssl_provider'] == "1") {
 			
@@ -83,10 +92,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_ssl_provider_form" method="post">
-<strong>SSL Provider Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>SSL Provider Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
 <input name="new_ssl_provider" type="text" value="<?php echo $new_ssl_provider; ?>" size="50" maxlength="100">
 <BR><BR>
-<strong>SSL Provider's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>SSL Provider's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
 <input name="new_url" type="text" value="<?php echo $new_url; ?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>

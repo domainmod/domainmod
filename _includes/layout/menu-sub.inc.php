@@ -41,7 +41,8 @@ if ($software_section == "domains") { ?>
 } elseif ($software_section == "ssl-certs") { ?>
 	
 	&raquo;&nbsp;<strong>SSL Certificates</strong>&nbsp;<?php
-	if ($_SESSION['need_ssl_provider'] != "1" && $_SESSION['need_ssl_account'] != "1" && $_SESSION['need_domain'] != "1") { ?>
+	if ($_SESSION['need_ssl_provider'] != "1" && $_SESSION['need_ssl_account'] != "1" &&
+            $_SESSION['need_domain'] != "1") { ?>
 		&raquo;&nbsp;<a href="<?php echo $web_root; ?>/add/ssl-cert.php">Add A New SSL Certificate</a>&nbsp;<?php
 	}
 
@@ -116,27 +117,31 @@ if ($software_section == "domains") { ?>
 			&raquo;&nbsp;<strong>Change Registrar Account</strong>&nbsp;<?php
 		} elseif ($action == "CWH") { ?>
 			&raquo;&nbsp;<strong>Change Web Hosting Provider</strong>&nbsp;<?php
-
-
-		} elseif ($action == "UCF") { ?>
+        } elseif ($action == "UCF") { ?>
 			&raquo;&nbsp;<strong>Update Custom Domain Field</strong>&nbsp;<?php
 		} elseif ($action == "UCF1" || $action == "UCF2" || $action == "UCF3") { ?>
         	<?php
-			$sql = "SELECT df.name, cft.name AS type
-					FROM domain_fields AS df, custom_field_types AS cft
-					WHERE df.type_id = cft.id
-					AND df.id = '" . $field_id . "'";
-			$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-			while ($row = mysqli_fetch_object($result)) {
-				
-				$temp_field_name = $row->name;
-				$temp_field_type = $row->type;
-				
-			} ?>
-			&raquo;&nbsp;<a href="<?php echo $web_root; ?>/bulk-updater.php?action=UCF">Update Custom Domain Field</a></strong>&nbsp;&raquo;&nbsp;<strong><?php echo $temp_field_name; ?> (<?php echo $temp_field_type; ?>)</strong>&nbsp;<?php
+            $query = "SELECT df.name, cft.name AS type
+                      FROM domain_fields AS df, custom_field_types AS cft
+                      WHERE df.type_id = cft.id
+                        AND df.id = ?";
+            $q = $conn->stmt_init();
 
+            if ($q->prepare($query)) {
 
-		} elseif ($action == "AN") { ?>
+                $q->bind_param('i', $field_id);
+                $q->execute();
+                $q->store_result();
+                $q->bind_result($temp_field_name, $temp_field_type);
+                $q->fetch();
+                $q->close();
+
+            } else { $error->outputSqlError($conn, "ERROR"); }
+            ?>
+            &raquo;&nbsp;<a href="<?php echo $web_root; ?>/bulk-updater.php?action=UCF">Update Custom Domain Field</a>
+                </strong>&nbsp;&raquo;&nbsp;<strong><?php echo $temp_field_name; ?> (<?php echo $temp_field_type; ?>)
+                </strong>&nbsp;<?php
+        } elseif ($action == "AN") { ?>
 			&raquo;&nbsp;<strong>Add A Note</strong>&nbsp;<?php
 		}
 
@@ -278,7 +283,8 @@ if ($software_section == "domains") { ?>
 					  WHERE id = '" . $rid . "'";
 	$result_registrar = mysqli_query($connection, $sql_registrar);
 	while ($row_registrar = mysqli_fetch_object($result_registrar)) { $temp_registrar_name = $row_registrar->name; } ?>
-	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/edit/registrar.php?rid=<?php echo $rid; ?>"><?php echo $temp_registrar_name; ?></a>&nbsp;
+	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/edit/registrar.php?rid=<?php echo $rid; ?>"><?php
+        echo $temp_registrar_name; ?></a>&nbsp;
 	&raquo;&nbsp;<strong>Registrar Fees</strong>&nbsp;<?php 
 
 } elseif ($software_section == "registrar-fees-missing") { ?>
@@ -292,7 +298,8 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<strong>Domain Registrar Accounts</strong>&nbsp;<?php
 	if ($_SESSION['need_registrar'] != "1") { ?>
-		&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/add/registrar-account.php">Add A New Registrar Account</a>&nbsp;<?php
+		&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/add/registrar-account.php">Add A New Registrar Account</a>
+            &nbsp;<?php
 	}
 
 } elseif ($software_section == "registrar-accounts-add") { ?>
@@ -388,8 +395,10 @@ if ($software_section == "domains") { ?>
 						 FROM ssl_providers
 						 WHERE id = '" . $sslpid . "'";
 	$result_ssl_provider = mysqli_query($connection, $sql_ssl_provider);
-	while ($row_ssl_provider = mysqli_fetch_object($result_ssl_provider)) { $temp_ssl_provider_name = $row_ssl_provider->name; } ?>
-	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/edit/ssl-provider.php?sslpid=<?php echo $sslpid; ?>"><?php echo $temp_ssl_provider_name; ?></a>&nbsp;
+	while ($row_ssl_provider = mysqli_fetch_object($result_ssl_provider)) { $temp_ssl_provider_name =
+        $row_ssl_provider->name; } ?>
+	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/edit/ssl-provider.php?sslpid=<?php echo $sslpid; ?>"><?php
+        echo $temp_ssl_provider_name; ?></a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Provider Fees</strong>&nbsp;<?php 
 
 } elseif ($software_section == "ssl-provider-fees-missing") { ?>
@@ -403,7 +412,8 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Provider Accounts</strong>&nbsp;<?php
 	if ($_SESSION['need_ssl_provider'] != "1") { ?>
-		&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/add/ssl-provider-account.php">Add A New SSL Provider Account</a>&nbsp;<?php
+		&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/add/ssl-provider-account.php">Add A New SSL Provider
+            Account</a>&nbsp;<?php
 	}
 
 } elseif ($software_section == "ssl-provider-accounts-add") { ?>
@@ -582,7 +592,8 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/users.php">Users</a>&nbsp;
 	&raquo;&nbsp;Editing A User&nbsp;<?php
 
-} elseif ($software_section == "admin-dw-main" || $software_section == "admin-dw-intro" || $software_section == "admin-dw-rebuild") { ?>
+} elseif ($software_section == "admin-dw-main" || $software_section == "admin-dw-intro" || $software_section ==
+    "admin-dw-rebuild") { ?>
 
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
     &raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;

@@ -45,10 +45,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_type != "") {
 
-        $sql = "INSERT INTO ssl_cert_types
-				(type, notes, insert_time) VALUES 
-				('" . mysqli_real_escape_string($connection, $new_type) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $time->time() . "')";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $query = "INSERT INTO ssl_cert_types
+                  (type, notes, insert_time)
+                  VALUES
+                  (?, ?, ?)";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('sss', $new_type, $new_notes, $time->time());
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Added<BR>";
 
@@ -72,7 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_type_form" method="post">
-<strong>Type (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Type (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR>
+    <BR>
 <input name="new_type" type="text" value="<?php echo $new_type; ?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
