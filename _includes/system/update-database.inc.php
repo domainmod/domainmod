@@ -39,7 +39,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.2', 
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.2;
@@ -61,7 +61,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.3', 
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.3;
@@ -77,7 +77,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.4', 
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.4;
@@ -93,7 +93,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.5', 
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.5;
@@ -109,7 +109,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE `domains` 
 				SET ip_id = '1',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "TRUNCATE `ip_addresses`";
@@ -117,12 +117,12 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `ip_addresses` 
 				(`id`, `name`, `ip`, `insert_time`) VALUES 
-				('1', '[no ip address]', '-', '" . mysqli_real_escape_string($connection, $time->time()) . "')";
+				('1', '[no ip address]', '-', '" . $time->time() . "')";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.6', 
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.6;
@@ -138,7 +138,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.7', 
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.7;
@@ -154,7 +154,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.8', 
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.8;
@@ -171,7 +171,7 @@ if ($current_db_version < $most_recent_db_version) {
 		$sql = "UPDATE settings
 				SET db_version = '1.9', 
 					email_address = 'greg@chetcuti.com',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.9;
@@ -187,7 +187,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.91',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.91;
@@ -203,12 +203,12 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings 
 				SET type =  'system',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$sql = "UPDATE settings
 				SET db_version = '1.92',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
+					update_time = '" . $time->time() . "'
 				WHERE type = 'system'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
@@ -225,7 +225,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '1.93',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.93;
@@ -245,7 +245,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '1.94',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.94;
@@ -265,7 +265,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '1.95',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.95;
@@ -281,7 +281,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '1.96',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.96;
@@ -326,7 +326,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '1.97',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.97;
@@ -338,7 +338,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `categories` 
 					(`name`, `owner`, `insert_time`) VALUES 
-					('[no category]', '[no stakeholder]', '" . mysqli_real_escape_string($connection, $time->time()) . "');";
+					('[no category]', '[no stakeholder]', '" . $time->time() . "');";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$sql = "SELECT id
@@ -349,7 +349,7 @@ if ($current_db_version < $most_recent_db_version) {
 		if (mysqli_num_rows($result) == 0) {
 			$sql_update = "UPDATE categories
 						   SET default_category = '1',
-						   	   update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
+						   	   update_time = '" . $time->time() . "'
 						   WHERE name = '[no category]'";
 			$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 		}
@@ -360,7 +360,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `dns` 
 					(`name`, `dns1`, `dns2`, `number_of_servers`, `insert_time`) VALUES 
-					('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '" . mysqli_real_escape_string($connection, $time->time()) . "');";
+					('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '" . $time->time() . "');";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "SELECT id
@@ -371,7 +371,7 @@ if ($current_db_version < $most_recent_db_version) {
 		if (mysqli_num_rows($result) == 0) {
 			$sql_update = "UPDATE dns
 						   SET default_dns = '1',
-						   	   update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
+						   	   update_time = '" . $time->time() . "'
 						   WHERE name = '[no dns]'";
 			$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 		}
@@ -382,7 +382,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `owners` 
 					(`name`, `insert_time`) VALUES 
-					('[no owner]', '" . mysqli_real_escape_string($connection, $time->time()) . "');";
+					('[no owner]', '" . $time->time() . "');";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "SELECT id
@@ -393,7 +393,7 @@ if ($current_db_version < $most_recent_db_version) {
 		if (mysqli_num_rows($result) == 0) {
 			$sql_update = "UPDATE owners
 						   SET default_owner = '1',
-						   	   update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
+						   	   update_time = '" . $time->time() . "'
 						   WHERE name = '[no owner]'";
 			$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 		}
@@ -410,14 +410,14 @@ if ($current_db_version < $most_recent_db_version) {
 		if (mysqli_num_rows($result) == 0) {
 			$sql_update = "UPDATE ip_addresses
 						   SET default_ip_address = '1',
-						   	   update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
+						   	   update_time = '" . $time->time() . "'
 						   WHERE name = '[no ip address]'";
 			$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 		}
 
 		$sql = "UPDATE settings
 				SET db_version = '1.98',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.98;
@@ -433,13 +433,13 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE `categories`
 					SET `stakeholder` = '[no stakeholder]',
-						`update_time` = '" . mysqli_real_escape_string($connection, $time->time()) . "'
+						`update_time` = '" . $time->time() . "'
 				WHERE `stakeholder` = '[no category owner]';";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "UPDATE settings
 				SET db_version = '1.99',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 1.99;
@@ -463,13 +463,13 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE currencies
 				SET default_currency = '0',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "UPDATE currencies
 				SET default_currency = '1',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
-				WHERE currency = '" . mysqli_real_escape_string($connection, $default_currency) . "'";
+					update_time = '" . $time->time() . "'
+				WHERE currency = '" . $default_currency . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "ALTER TABLE `settings` 
@@ -478,7 +478,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0001',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0001;
@@ -498,19 +498,19 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE ssl_cert_functions
 				SET default_function = '1',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
+					update_time = '" . $time->time() . "'
 				WHERE function = 'Web Server SSL/TLS Certificate'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "UPDATE ssl_cert_types
 				SET default_type = '1',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
+					update_time = '" . $time->time() . "'
 				WHERE type = 'Wildcard'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0002',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0002;
@@ -533,7 +533,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0003',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0003;
@@ -573,7 +573,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0004',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0004;
@@ -589,7 +589,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0005',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0005;
@@ -609,7 +609,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0006',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0006;
@@ -637,7 +637,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0007',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0007;
@@ -661,7 +661,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0008',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0008;
@@ -677,7 +677,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0009',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0009;
@@ -719,13 +719,13 @@ if ($current_db_version < $most_recent_db_version) {
 		while ($row = mysqli_fetch_object($result)) {
 			$sql_temp = "INSERT INTO user_settings
 						 (user_id, insert_time) VALUES 
-						 ('" . mysqli_real_escape_string($connection, $row->id) . "', '" . mysqli_real_escape_string($connection, $time->time()) . "');";
+						 ('" . $row->id . "', '" . $time->time() . "');";
 			$result_temp = mysqli_query($connection, $sql_temp) or $error->outputOldSqlError($connection);
 		}
 
 		$sql = "UPDATE settings
 				SET db_version = '2.001',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.001;
@@ -742,7 +742,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0011',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0011;
@@ -758,7 +758,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0012',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0012;
@@ -830,7 +830,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0013',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0013;
@@ -852,7 +852,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0014',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0014;
@@ -872,7 +872,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0015',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0015;
@@ -896,7 +896,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0016',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0016;
@@ -912,7 +912,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0017',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0017;
@@ -928,7 +928,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0018',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0018;
@@ -944,7 +944,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0019',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0019;
@@ -960,7 +960,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0020',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0020;
@@ -982,7 +982,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0021',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0021;
@@ -998,7 +998,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0022',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0022;
@@ -1018,12 +1018,12 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `timezones` 
 				(`timezone`, `insert_time`) VALUES 
-				('Africa/Abidjan', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Accra', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Addis_Ababa', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Algiers', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Asmara', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Asmera', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Bamako', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Bangui', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Banjul', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Bissau', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Blantyre', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Brazzaville', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Bujumbura', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Cairo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Casablanca', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Ceuta', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Conakry', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Dakar', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Dar_es_Salaam', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Djibouti', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Douala', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/El_Aaiun', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Freetown', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Gaborone', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Harare', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Johannesburg', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Juba', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Kampala', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Khartoum', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Kigali', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Kinshasa', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Lagos', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Libreville', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Lome', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Luanda', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Lubumbashi', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Lusaka', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Malabo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Maputo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Maseru', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Mbabane', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Mogadishu', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Monrovia', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Nairobi', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Ndjamena', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Niamey', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Nouakchott', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Ouagadougou', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Porto-Novo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Sao_Tome', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Timbuktu', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Tripoli', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Tunis', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Africa/Windhoek', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Adak', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Anchorage', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Anguilla', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Antigua', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Araguaina', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Argentina/Buenos_Aires', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Argentina/Catamarca', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Argentina/ComodRivadavia', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Argentina/Cordoba', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Argentina/Jujuy', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Argentina/La_Rioja', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Argentina/Mendoza', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Argentina/Rio_Gallegos', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Argentina/Salta', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Argentina/San_Juan', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Argentina/San_Luis', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Argentina/Tucuman', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Argentina/Ushuaia', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Aruba', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Asuncion', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Atikokan', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Atka', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Bahia', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Bahia_Banderas', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Barbados', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Belem', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Belize', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Blanc-Sablon', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Boa_Vista', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Bogota', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Boise', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Buenos_Aires', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Cambridge_Bay', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Campo_Grande', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Cancun', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Caracas', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Catamarca', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Cayenne', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Cayman', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Chicago', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Chihuahua', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Coral_Harbour', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Cordoba', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Costa_Rica', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Creston', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Cuiaba', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Curacao', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Danmarkshavn', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Dawson', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Dawson_Creek', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Denver', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Detroit', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Dominica', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Edmonton', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Eirunepe', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/El_Salvador', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Ensenada', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Fort_Wayne', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Fortaleza', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Glace_Bay', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Godthab', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Goose_Bay', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Grand_Turk', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Grenada', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Guadeloupe', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Guatemala', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Guayaquil', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Guyana', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Halifax', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Havana', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Hermosillo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Indiana/Indianapolis', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Indiana/Knox', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Indiana/Marengo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Indiana/Petersburg', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Indiana/Tell_City', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Indiana/Vevay', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Indiana/Vincennes', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Indiana/Winamac', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Indianapolis', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Inuvik', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Iqaluit', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Jamaica', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Jujuy', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Juneau', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Kentucky/Louisville', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Kentucky/Monticello', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Knox_IN', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Kralendijk', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/La_Paz', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Lima', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Los_Angeles', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Louisville', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Lower_Princes', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Maceio', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Managua', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Manaus', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Marigot', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Martinique', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Matamoros', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Mazatlan', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Mendoza', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Menominee', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Merida', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Metlakatla', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Mexico_City', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Miquelon', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Moncton', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Monterrey', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Montevideo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Montreal', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Montserrat', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Nassau', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/New_York', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Nipigon', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Nome', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Noronha', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/North_Dakota/Beulah', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/North_Dakota/Center', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/North_Dakota/New_Salem', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Ojinaga', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Panama', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Pangnirtung', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Paramaribo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Phoenix', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Port-au-Prince', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Port_of_Spain', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Porto_Acre', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Porto_Velho', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Puerto_Rico', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Rainy_River', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Rankin_Inlet', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Recife', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Regina', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Resolute', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Rio_Branco', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Rosario', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Santa_Isabel', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Santarem', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Santiago', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Santo_Domingo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Sao_Paulo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Scoresbysund', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Shiprock', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Sitka', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/St_Barthelemy', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/St_Johns', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/St_Kitts', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/St_Lucia', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/St_Thomas', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/St_Vincent', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Swift_Current', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Tegucigalpa', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Thule', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Thunder_Bay', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Tijuana', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Toronto', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Tortola', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Vancouver', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Virgin', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Whitehorse', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Winnipeg', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Yakutat', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('America/Yellowknife', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Antarctica/Casey', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Antarctica/Davis', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Antarctica/DumontDUrville', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Antarctica/Macquarie', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Antarctica/Mawson', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Antarctica/McMurdo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Antarctica/Palmer', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Antarctica/Rothera', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Antarctica/South_Pole', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Antarctica/Syowa', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Antarctica/Vostok', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Arctic/Longyearbyen', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Aden', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Almaty', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Amman', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Anadyr', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Aqtau', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Aqtobe', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Ashgabat', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Ashkhabad', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Baghdad', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Bahrain', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Baku', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Bangkok', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Beirut', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Bishkek', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Brunei', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Calcutta', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Choibalsan', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Chongqing', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Chungking', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Colombo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Dacca', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Damascus', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Dhaka', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Dili', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Dubai', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Dushanbe', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Gaza', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Harbin', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Hebron', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Ho_Chi_Minh', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Hong_Kong', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Hovd', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Irkutsk', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Istanbul', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Jakarta', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Jayapura', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Jerusalem', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Kabul', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Kamchatka', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Karachi', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Kashgar', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Kathmandu', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Katmandu', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Khandyga', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Kolkata', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Krasnoyarsk', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Kuala_Lumpur', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Kuching', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Kuwait', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Macao', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Macau', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Magadan', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Makassar', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Manila', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Muscat', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Nicosia', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Novokuznetsk', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Novosibirsk', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Omsk', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Oral', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Phnom_Penh', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Pontianak', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Pyongyang', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Qatar', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Qyzylorda', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Rangoon', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Riyadh', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Saigon', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Sakhalin', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Samarkand', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Seoul', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Shanghai', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Singapore', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Taipei', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Tashkent', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Tbilisi', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Tehran', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Tel_Aviv', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Thimbu', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Thimphu', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Tokyo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Ujung_Pandang', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Ulaanbaatar', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Ulan_Bator', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Urumqi', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Ust-Nera', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Vientiane', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Vladivostok', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Yakutsk', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Yekaterinburg', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Asia/Yerevan', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Atlantic/Azores', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Atlantic/Bermuda', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Atlantic/Canary', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Atlantic/Cape_Verde', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Atlantic/Faeroe', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Atlantic/Faroe', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Atlantic/Jan_Mayen', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Atlantic/Madeira', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Atlantic/Reykjavik', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Atlantic/South_Georgia', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Atlantic/St_Helena', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Atlantic/Stanley', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/ACT', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Adelaide', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Brisbane', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Broken_Hill', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Canberra', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Currie', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Darwin', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Eucla', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Hobart', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/LHI', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Lindeman', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Lord_Howe', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Melbourne', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/North', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/NSW', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Perth', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Queensland', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/South', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Sydney', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Tasmania', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Victoria', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/West', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Australia/Yancowinna', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Brazil/Acre', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Brazil/DeNoronha', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Brazil/East', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Brazil/West', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Canada/Atlantic', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Canada/Central', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Canada/East-Saskatchewan', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Canada/Eastern', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Canada/Mountain', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Canada/Newfoundland', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Canada/Pacific', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Canada/Saskatchewan', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Canada/Yukon', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Chile/Continental', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Chile/EasterIsland', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Cuba', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Egypt', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Eire', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Amsterdam', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Andorra', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Athens', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Belfast', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Belgrade', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Berlin', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Bratislava', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Brussels', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Bucharest', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Budapest', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Busingen', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Chisinau', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Copenhagen', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Dublin', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Gibraltar', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Guernsey', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Helsinki', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Isle_of_Man', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Istanbul', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Jersey', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Kaliningrad', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Kiev', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Lisbon', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Ljubljana', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/London', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Luxembourg', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Madrid', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Malta', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Mariehamn', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Minsk', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Monaco', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Moscow', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Nicosia', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Oslo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Paris', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Podgorica', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Prague', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Riga', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Rome', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Samara', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/San_Marino', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Sarajevo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Simferopol', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Skopje', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Sofia', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Stockholm', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Tallinn', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Tirane', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Tiraspol', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Uzhgorod', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Vaduz', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Vatican', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Vienna', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Vilnius', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Volgograd', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Warsaw', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Zagreb', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Zaporozhye', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Europe/Zurich', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Greenwich', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Hongkong', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Iceland', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Indian/Antananarivo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Indian/Chagos', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Indian/Christmas', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Indian/Cocos', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Indian/Comoro', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Indian/Kerguelen', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Indian/Mahe', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Indian/Maldives', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Indian/Mauritius', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Indian/Mayotte', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Indian/Reunion', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Iran', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Israel', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Jamaica', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Japan', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Kwajalein', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Libya', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Mexico/BajaNorte', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Mexico/BajaSur', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Mexico/General', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Apia', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Auckland', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Chatham', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Chuuk', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Easter', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Efate', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Enderbury', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Fakaofo', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Fiji', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Funafuti', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Galapagos', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Gambier', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Guadalcanal', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Guam', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Honolulu', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Johnston', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Kiritimati', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Kosrae', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Kwajalein', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Majuro', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Marquesas', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Midway', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Nauru', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Niue', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Norfolk', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Noumea', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Pago_Pago', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Palau', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Pitcairn', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Pohnpei', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Ponape', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Port_Moresby', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Rarotonga', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Saipan', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Samoa', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Tahiti', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Tarawa', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Tongatapu', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Truk', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Wake', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Wallis', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Pacific/Yap', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Poland', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Portugal', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Singapore', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Turkey', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('US/Alaska', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('US/Aleutian', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('US/Arizona', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('US/Central', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('US/East-Indiana', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('US/Eastern', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('US/Hawaii', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('US/Indiana-Starke', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('US/Michigan', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('US/Mountain', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('US/Pacific', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('US/Pacific-New', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('US/Samoa', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ('Zulu', '" . mysqli_real_escape_string($connection, $time->time()) . "');";
+				('Africa/Abidjan', '" . $time->time() . "'), ('Africa/Accra', '" . $time->time() . "'), ('Africa/Addis_Ababa', '" . $time->time() . "'), ('Africa/Algiers', '" . $time->time() . "'), ('Africa/Asmara', '" . $time->time() . "'), ('Africa/Asmera', '" . $time->time() . "'), ('Africa/Bamako', '" . $time->time() . "'), ('Africa/Bangui', '" . $time->time() . "'), ('Africa/Banjul', '" . $time->time() . "'), ('Africa/Bissau', '" . $time->time() . "'), ('Africa/Blantyre', '" . $time->time() . "'), ('Africa/Brazzaville', '" . $time->time() . "'), ('Africa/Bujumbura', '" . $time->time() . "'), ('Africa/Cairo', '" . $time->time() . "'), ('Africa/Casablanca', '" . $time->time() . "'), ('Africa/Ceuta', '" . $time->time() . "'), ('Africa/Conakry', '" . $time->time() . "'), ('Africa/Dakar', '" . $time->time() . "'), ('Africa/Dar_es_Salaam', '" . $time->time() . "'), ('Africa/Djibouti', '" . $time->time() . "'), ('Africa/Douala', '" . $time->time() . "'), ('Africa/El_Aaiun', '" . $time->time() . "'), ('Africa/Freetown', '" . $time->time() . "'), ('Africa/Gaborone', '" . $time->time() . "'), ('Africa/Harare', '" . $time->time() . "'), ('Africa/Johannesburg', '" . $time->time() . "'), ('Africa/Juba', '" . $time->time() . "'), ('Africa/Kampala', '" . $time->time() . "'), ('Africa/Khartoum', '" . $time->time() . "'), ('Africa/Kigali', '" . $time->time() . "'), ('Africa/Kinshasa', '" . $time->time() . "'), ('Africa/Lagos', '" . $time->time() . "'), ('Africa/Libreville', '" . $time->time() . "'), ('Africa/Lome', '" . $time->time() . "'), ('Africa/Luanda', '" . $time->time() . "'), ('Africa/Lubumbashi', '" . $time->time() . "'), ('Africa/Lusaka', '" . $time->time() . "'), ('Africa/Malabo', '" . $time->time() . "'), ('Africa/Maputo', '" . $time->time() . "'), ('Africa/Maseru', '" . $time->time() . "'), ('Africa/Mbabane', '" . $time->time() . "'), ('Africa/Mogadishu', '" . $time->time() . "'), ('Africa/Monrovia', '" . $time->time() . "'), ('Africa/Nairobi', '" . $time->time() . "'), ('Africa/Ndjamena', '" . $time->time() . "'), ('Africa/Niamey', '" . $time->time() . "'), ('Africa/Nouakchott', '" . $time->time() . "'), ('Africa/Ouagadougou', '" . $time->time() . "'), ('Africa/Porto-Novo', '" . $time->time() . "'), ('Africa/Sao_Tome', '" . $time->time() . "'), ('Africa/Timbuktu', '" . $time->time() . "'), ('Africa/Tripoli', '" . $time->time() . "'), ('Africa/Tunis', '" . $time->time() . "'), ('Africa/Windhoek', '" . $time->time() . "'), ('America/Adak', '" . $time->time() . "'), ('America/Anchorage', '" . $time->time() . "'), ('America/Anguilla', '" . $time->time() . "'), ('America/Antigua', '" . $time->time() . "'), ('America/Araguaina', '" . $time->time() . "'), ('America/Argentina/Buenos_Aires', '" . $time->time() . "'), ('America/Argentina/Catamarca', '" . $time->time() . "'), ('America/Argentina/ComodRivadavia', '" . $time->time() . "'), ('America/Argentina/Cordoba', '" . $time->time() . "'), ('America/Argentina/Jujuy', '" . $time->time() . "'), ('America/Argentina/La_Rioja', '" . $time->time() . "'), ('America/Argentina/Mendoza', '" . $time->time() . "'), ('America/Argentina/Rio_Gallegos', '" . $time->time() . "'), ('America/Argentina/Salta', '" . $time->time() . "'), ('America/Argentina/San_Juan', '" . $time->time() . "'), ('America/Argentina/San_Luis', '" . $time->time() . "'), ('America/Argentina/Tucuman', '" . $time->time() . "'), ('America/Argentina/Ushuaia', '" . $time->time() . "'), ('America/Aruba', '" . $time->time() . "'), ('America/Asuncion', '" . $time->time() . "'), ('America/Atikokan', '" . $time->time() . "'), ('America/Atka', '" . $time->time() . "'), ('America/Bahia', '" . $time->time() . "'), ('America/Bahia_Banderas', '" . $time->time() . "'), ('America/Barbados', '" . $time->time() . "'), ('America/Belem', '" . $time->time() . "'), ('America/Belize', '" . $time->time() . "'), ('America/Blanc-Sablon', '" . $time->time() . "'), ('America/Boa_Vista', '" . $time->time() . "'), ('America/Bogota', '" . $time->time() . "'), ('America/Boise', '" . $time->time() . "'), ('America/Buenos_Aires', '" . $time->time() . "'), ('America/Cambridge_Bay', '" . $time->time() . "'), ('America/Campo_Grande', '" . $time->time() . "'), ('America/Cancun', '" . $time->time() . "'), ('America/Caracas', '" . $time->time() . "'), ('America/Catamarca', '" . $time->time() . "'), ('America/Cayenne', '" . $time->time() . "'), ('America/Cayman', '" . $time->time() . "'), ('America/Chicago', '" . $time->time() . "'), ('America/Chihuahua', '" . $time->time() . "'), ('America/Coral_Harbour', '" . $time->time() . "'), ('America/Cordoba', '" . $time->time() . "'), ('America/Costa_Rica', '" . $time->time() . "'), ('America/Creston', '" . $time->time() . "'), ('America/Cuiaba', '" . $time->time() . "'), ('America/Curacao', '" . $time->time() . "'), ('America/Danmarkshavn', '" . $time->time() . "'), ('America/Dawson', '" . $time->time() . "'), ('America/Dawson_Creek', '" . $time->time() . "'), ('America/Denver', '" . $time->time() . "'), ('America/Detroit', '" . $time->time() . "'), ('America/Dominica', '" . $time->time() . "'), ('America/Edmonton', '" . $time->time() . "'), ('America/Eirunepe', '" . $time->time() . "'), ('America/El_Salvador', '" . $time->time() . "'), ('America/Ensenada', '" . $time->time() . "'), ('America/Fort_Wayne', '" . $time->time() . "'), ('America/Fortaleza', '" . $time->time() . "'), ('America/Glace_Bay', '" . $time->time() . "'), ('America/Godthab', '" . $time->time() . "'), ('America/Goose_Bay', '" . $time->time() . "'), ('America/Grand_Turk', '" . $time->time() . "'), ('America/Grenada', '" . $time->time() . "'), ('America/Guadeloupe', '" . $time->time() . "'), ('America/Guatemala', '" . $time->time() . "'), ('America/Guayaquil', '" . $time->time() . "'), ('America/Guyana', '" . $time->time() . "'), ('America/Halifax', '" . $time->time() . "'), ('America/Havana', '" . $time->time() . "'), ('America/Hermosillo', '" . $time->time() . "'), ('America/Indiana/Indianapolis', '" . $time->time() . "'), ('America/Indiana/Knox', '" . $time->time() . "'), ('America/Indiana/Marengo', '" . $time->time() . "'), ('America/Indiana/Petersburg', '" . $time->time() . "'), ('America/Indiana/Tell_City', '" . $time->time() . "'), ('America/Indiana/Vevay', '" . $time->time() . "'), ('America/Indiana/Vincennes', '" . $time->time() . "'), ('America/Indiana/Winamac', '" . $time->time() . "'), ('America/Indianapolis', '" . $time->time() . "'), ('America/Inuvik', '" . $time->time() . "'), ('America/Iqaluit', '" . $time->time() . "'), ('America/Jamaica', '" . $time->time() . "'), ('America/Jujuy', '" . $time->time() . "'), ('America/Juneau', '" . $time->time() . "'), ('America/Kentucky/Louisville', '" . $time->time() . "'), ('America/Kentucky/Monticello', '" . $time->time() . "'), ('America/Knox_IN', '" . $time->time() . "'), ('America/Kralendijk', '" . $time->time() . "'), ('America/La_Paz', '" . $time->time() . "'), ('America/Lima', '" . $time->time() . "'), ('America/Los_Angeles', '" . $time->time() . "'), ('America/Louisville', '" . $time->time() . "'), ('America/Lower_Princes', '" . $time->time() . "'), ('America/Maceio', '" . $time->time() . "'), ('America/Managua', '" . $time->time() . "'), ('America/Manaus', '" . $time->time() . "'), ('America/Marigot', '" . $time->time() . "'), ('America/Martinique', '" . $time->time() . "'), ('America/Matamoros', '" . $time->time() . "'), ('America/Mazatlan', '" . $time->time() . "'), ('America/Mendoza', '" . $time->time() . "'), ('America/Menominee', '" . $time->time() . "'), ('America/Merida', '" . $time->time() . "'), ('America/Metlakatla', '" . $time->time() . "'), ('America/Mexico_City', '" . $time->time() . "'), ('America/Miquelon', '" . $time->time() . "'), ('America/Moncton', '" . $time->time() . "'), ('America/Monterrey', '" . $time->time() . "'), ('America/Montevideo', '" . $time->time() . "'), ('America/Montreal', '" . $time->time() . "'), ('America/Montserrat', '" . $time->time() . "'), ('America/Nassau', '" . $time->time() . "'), ('America/New_York', '" . $time->time() . "'), ('America/Nipigon', '" . $time->time() . "'), ('America/Nome', '" . $time->time() . "'), ('America/Noronha', '" . $time->time() . "'), ('America/North_Dakota/Beulah', '" . $time->time() . "'), ('America/North_Dakota/Center', '" . $time->time() . "'), ('America/North_Dakota/New_Salem', '" . $time->time() . "'), ('America/Ojinaga', '" . $time->time() . "'), ('America/Panama', '" . $time->time() . "'), ('America/Pangnirtung', '" . $time->time() . "'), ('America/Paramaribo', '" . $time->time() . "'), ('America/Phoenix', '" . $time->time() . "'), ('America/Port-au-Prince', '" . $time->time() . "'), ('America/Port_of_Spain', '" . $time->time() . "'), ('America/Porto_Acre', '" . $time->time() . "'), ('America/Porto_Velho', '" . $time->time() . "'), ('America/Puerto_Rico', '" . $time->time() . "'), ('America/Rainy_River', '" . $time->time() . "'), ('America/Rankin_Inlet', '" . $time->time() . "'), ('America/Recife', '" . $time->time() . "'), ('America/Regina', '" . $time->time() . "'), ('America/Resolute', '" . $time->time() . "'), ('America/Rio_Branco', '" . $time->time() . "'), ('America/Rosario', '" . $time->time() . "'), ('America/Santa_Isabel', '" . $time->time() . "'), ('America/Santarem', '" . $time->time() . "'), ('America/Santiago', '" . $time->time() . "'), ('America/Santo_Domingo', '" . $time->time() . "'), ('America/Sao_Paulo', '" . $time->time() . "'), ('America/Scoresbysund', '" . $time->time() . "'), ('America/Shiprock', '" . $time->time() . "'), ('America/Sitka', '" . $time->time() . "'), ('America/St_Barthelemy', '" . $time->time() . "'), ('America/St_Johns', '" . $time->time() . "'), ('America/St_Kitts', '" . $time->time() . "'), ('America/St_Lucia', '" . $time->time() . "'), ('America/St_Thomas', '" . $time->time() . "'), ('America/St_Vincent', '" . $time->time() . "'), ('America/Swift_Current', '" . $time->time() . "'), ('America/Tegucigalpa', '" . $time->time() . "'), ('America/Thule', '" . $time->time() . "'), ('America/Thunder_Bay', '" . $time->time() . "'), ('America/Tijuana', '" . $time->time() . "'), ('America/Toronto', '" . $time->time() . "'), ('America/Tortola', '" . $time->time() . "'), ('America/Vancouver', '" . $time->time() . "'), ('America/Virgin', '" . $time->time() . "'), ('America/Whitehorse', '" . $time->time() . "'), ('America/Winnipeg', '" . $time->time() . "'), ('America/Yakutat', '" . $time->time() . "'), ('America/Yellowknife', '" . $time->time() . "'), ('Antarctica/Casey', '" . $time->time() . "'), ('Antarctica/Davis', '" . $time->time() . "'), ('Antarctica/DumontDUrville', '" . $time->time() . "'), ('Antarctica/Macquarie', '" . $time->time() . "'), ('Antarctica/Mawson', '" . $time->time() . "'), ('Antarctica/McMurdo', '" . $time->time() . "'), ('Antarctica/Palmer', '" . $time->time() . "'), ('Antarctica/Rothera', '" . $time->time() . "'), ('Antarctica/South_Pole', '" . $time->time() . "'), ('Antarctica/Syowa', '" . $time->time() . "'), ('Antarctica/Vostok', '" . $time->time() . "'), ('Arctic/Longyearbyen', '" . $time->time() . "'), ('Asia/Aden', '" . $time->time() . "'), ('Asia/Almaty', '" . $time->time() . "'), ('Asia/Amman', '" . $time->time() . "'), ('Asia/Anadyr', '" . $time->time() . "'), ('Asia/Aqtau', '" . $time->time() . "'), ('Asia/Aqtobe', '" . $time->time() . "'), ('Asia/Ashgabat', '" . $time->time() . "'), ('Asia/Ashkhabad', '" . $time->time() . "'), ('Asia/Baghdad', '" . $time->time() . "'), ('Asia/Bahrain', '" . $time->time() . "'), ('Asia/Baku', '" . $time->time() . "'), ('Asia/Bangkok', '" . $time->time() . "'), ('Asia/Beirut', '" . $time->time() . "'), ('Asia/Bishkek', '" . $time->time() . "'), ('Asia/Brunei', '" . $time->time() . "'), ('Asia/Calcutta', '" . $time->time() . "'), ('Asia/Choibalsan', '" . $time->time() . "'), ('Asia/Chongqing', '" . $time->time() . "'), ('Asia/Chungking', '" . $time->time() . "'), ('Asia/Colombo', '" . $time->time() . "'), ('Asia/Dacca', '" . $time->time() . "'), ('Asia/Damascus', '" . $time->time() . "'), ('Asia/Dhaka', '" . $time->time() . "'), ('Asia/Dili', '" . $time->time() . "'), ('Asia/Dubai', '" . $time->time() . "'), ('Asia/Dushanbe', '" . $time->time() . "'), ('Asia/Gaza', '" . $time->time() . "'), ('Asia/Harbin', '" . $time->time() . "'), ('Asia/Hebron', '" . $time->time() . "'), ('Asia/Ho_Chi_Minh', '" . $time->time() . "'), ('Asia/Hong_Kong', '" . $time->time() . "'), ('Asia/Hovd', '" . $time->time() . "'), ('Asia/Irkutsk', '" . $time->time() . "'), ('Asia/Istanbul', '" . $time->time() . "'), ('Asia/Jakarta', '" . $time->time() . "'), ('Asia/Jayapura', '" . $time->time() . "'), ('Asia/Jerusalem', '" . $time->time() . "'), ('Asia/Kabul', '" . $time->time() . "'), ('Asia/Kamchatka', '" . $time->time() . "'), ('Asia/Karachi', '" . $time->time() . "'), ('Asia/Kashgar', '" . $time->time() . "'), ('Asia/Kathmandu', '" . $time->time() . "'), ('Asia/Katmandu', '" . $time->time() . "'), ('Asia/Khandyga', '" . $time->time() . "'), ('Asia/Kolkata', '" . $time->time() . "'), ('Asia/Krasnoyarsk', '" . $time->time() . "'), ('Asia/Kuala_Lumpur', '" . $time->time() . "'), ('Asia/Kuching', '" . $time->time() . "'), ('Asia/Kuwait', '" . $time->time() . "'), ('Asia/Macao', '" . $time->time() . "'), ('Asia/Macau', '" . $time->time() . "'), ('Asia/Magadan', '" . $time->time() . "'), ('Asia/Makassar', '" . $time->time() . "'), ('Asia/Manila', '" . $time->time() . "'), ('Asia/Muscat', '" . $time->time() . "'), ('Asia/Nicosia', '" . $time->time() . "'), ('Asia/Novokuznetsk', '" . $time->time() . "'), ('Asia/Novosibirsk', '" . $time->time() . "'), ('Asia/Omsk', '" . $time->time() . "'), ('Asia/Oral', '" . $time->time() . "'), ('Asia/Phnom_Penh', '" . $time->time() . "'), ('Asia/Pontianak', '" . $time->time() . "'), ('Asia/Pyongyang', '" . $time->time() . "'), ('Asia/Qatar', '" . $time->time() . "'), ('Asia/Qyzylorda', '" . $time->time() . "'), ('Asia/Rangoon', '" . $time->time() . "'), ('Asia/Riyadh', '" . $time->time() . "'), ('Asia/Saigon', '" . $time->time() . "'), ('Asia/Sakhalin', '" . $time->time() . "'), ('Asia/Samarkand', '" . $time->time() . "'), ('Asia/Seoul', '" . $time->time() . "'), ('Asia/Shanghai', '" . $time->time() . "'), ('Asia/Singapore', '" . $time->time() . "'), ('Asia/Taipei', '" . $time->time() . "'), ('Asia/Tashkent', '" . $time->time() . "'), ('Asia/Tbilisi', '" . $time->time() . "'), ('Asia/Tehran', '" . $time->time() . "'), ('Asia/Tel_Aviv', '" . $time->time() . "'), ('Asia/Thimbu', '" . $time->time() . "'), ('Asia/Thimphu', '" . $time->time() . "'), ('Asia/Tokyo', '" . $time->time() . "'), ('Asia/Ujung_Pandang', '" . $time->time() . "'), ('Asia/Ulaanbaatar', '" . $time->time() . "'), ('Asia/Ulan_Bator', '" . $time->time() . "'), ('Asia/Urumqi', '" . $time->time() . "'), ('Asia/Ust-Nera', '" . $time->time() . "'), ('Asia/Vientiane', '" . $time->time() . "'), ('Asia/Vladivostok', '" . $time->time() . "'), ('Asia/Yakutsk', '" . $time->time() . "'), ('Asia/Yekaterinburg', '" . $time->time() . "'), ('Asia/Yerevan', '" . $time->time() . "'), ('Atlantic/Azores', '" . $time->time() . "'), ('Atlantic/Bermuda', '" . $time->time() . "'), ('Atlantic/Canary', '" . $time->time() . "'), ('Atlantic/Cape_Verde', '" . $time->time() . "'), ('Atlantic/Faeroe', '" . $time->time() . "'), ('Atlantic/Faroe', '" . $time->time() . "'), ('Atlantic/Jan_Mayen', '" . $time->time() . "'), ('Atlantic/Madeira', '" . $time->time() . "'), ('Atlantic/Reykjavik', '" . $time->time() . "'), ('Atlantic/South_Georgia', '" . $time->time() . "'), ('Atlantic/St_Helena', '" . $time->time() . "'), ('Atlantic/Stanley', '" . $time->time() . "'), ('Australia/ACT', '" . $time->time() . "'), ('Australia/Adelaide', '" . $time->time() . "'), ('Australia/Brisbane', '" . $time->time() . "'), ('Australia/Broken_Hill', '" . $time->time() . "'), ('Australia/Canberra', '" . $time->time() . "'), ('Australia/Currie', '" . $time->time() . "'), ('Australia/Darwin', '" . $time->time() . "'), ('Australia/Eucla', '" . $time->time() . "'), ('Australia/Hobart', '" . $time->time() . "'), ('Australia/LHI', '" . $time->time() . "'), ('Australia/Lindeman', '" . $time->time() . "'), ('Australia/Lord_Howe', '" . $time->time() . "'), ('Australia/Melbourne', '" . $time->time() . "'), ('Australia/North', '" . $time->time() . "'), ('Australia/NSW', '" . $time->time() . "'), ('Australia/Perth', '" . $time->time() . "'), ('Australia/Queensland', '" . $time->time() . "'), ('Australia/South', '" . $time->time() . "'), ('Australia/Sydney', '" . $time->time() . "'), ('Australia/Tasmania', '" . $time->time() . "'), ('Australia/Victoria', '" . $time->time() . "'), ('Australia/West', '" . $time->time() . "'), ('Australia/Yancowinna', '" . $time->time() . "'), ('Brazil/Acre', '" . $time->time() . "'), ('Brazil/DeNoronha', '" . $time->time() . "'), ('Brazil/East', '" . $time->time() . "'), ('Brazil/West', '" . $time->time() . "'), ('Canada/Atlantic', '" . $time->time() . "'), ('Canada/Central', '" . $time->time() . "'), ('Canada/East-Saskatchewan', '" . $time->time() . "'), ('Canada/Eastern', '" . $time->time() . "'), ('Canada/Mountain', '" . $time->time() . "'), ('Canada/Newfoundland', '" . $time->time() . "'), ('Canada/Pacific', '" . $time->time() . "'), ('Canada/Saskatchewan', '" . $time->time() . "'), ('Canada/Yukon', '" . $time->time() . "'), ('Chile/Continental', '" . $time->time() . "'), ('Chile/EasterIsland', '" . $time->time() . "'), ('Cuba', '" . $time->time() . "'), ('Egypt', '" . $time->time() . "'), ('Eire', '" . $time->time() . "'), ('Europe/Amsterdam', '" . $time->time() . "'), ('Europe/Andorra', '" . $time->time() . "'), ('Europe/Athens', '" . $time->time() . "'), ('Europe/Belfast', '" . $time->time() . "'), ('Europe/Belgrade', '" . $time->time() . "'), ('Europe/Berlin', '" . $time->time() . "'), ('Europe/Bratislava', '" . $time->time() . "'), ('Europe/Brussels', '" . $time->time() . "'), ('Europe/Bucharest', '" . $time->time() . "'), ('Europe/Budapest', '" . $time->time() . "'), ('Europe/Busingen', '" . $time->time() . "'), ('Europe/Chisinau', '" . $time->time() . "'), ('Europe/Copenhagen', '" . $time->time() . "'), ('Europe/Dublin', '" . $time->time() . "'), ('Europe/Gibraltar', '" . $time->time() . "'), ('Europe/Guernsey', '" . $time->time() . "'), ('Europe/Helsinki', '" . $time->time() . "'), ('Europe/Isle_of_Man', '" . $time->time() . "'), ('Europe/Istanbul', '" . $time->time() . "'), ('Europe/Jersey', '" . $time->time() . "'), ('Europe/Kaliningrad', '" . $time->time() . "'), ('Europe/Kiev', '" . $time->time() . "'), ('Europe/Lisbon', '" . $time->time() . "'), ('Europe/Ljubljana', '" . $time->time() . "'), ('Europe/London', '" . $time->time() . "'), ('Europe/Luxembourg', '" . $time->time() . "'), ('Europe/Madrid', '" . $time->time() . "'), ('Europe/Malta', '" . $time->time() . "'), ('Europe/Mariehamn', '" . $time->time() . "'), ('Europe/Minsk', '" . $time->time() . "'), ('Europe/Monaco', '" . $time->time() . "'), ('Europe/Moscow', '" . $time->time() . "'), ('Europe/Nicosia', '" . $time->time() . "'), ('Europe/Oslo', '" . $time->time() . "'), ('Europe/Paris', '" . $time->time() . "'), ('Europe/Podgorica', '" . $time->time() . "'), ('Europe/Prague', '" . $time->time() . "'), ('Europe/Riga', '" . $time->time() . "'), ('Europe/Rome', '" . $time->time() . "'), ('Europe/Samara', '" . $time->time() . "'), ('Europe/San_Marino', '" . $time->time() . "'), ('Europe/Sarajevo', '" . $time->time() . "'), ('Europe/Simferopol', '" . $time->time() . "'), ('Europe/Skopje', '" . $time->time() . "'), ('Europe/Sofia', '" . $time->time() . "'), ('Europe/Stockholm', '" . $time->time() . "'), ('Europe/Tallinn', '" . $time->time() . "'), ('Europe/Tirane', '" . $time->time() . "'), ('Europe/Tiraspol', '" . $time->time() . "'), ('Europe/Uzhgorod', '" . $time->time() . "'), ('Europe/Vaduz', '" . $time->time() . "'), ('Europe/Vatican', '" . $time->time() . "'), ('Europe/Vienna', '" . $time->time() . "'), ('Europe/Vilnius', '" . $time->time() . "'), ('Europe/Volgograd', '" . $time->time() . "'), ('Europe/Warsaw', '" . $time->time() . "'), ('Europe/Zagreb', '" . $time->time() . "'), ('Europe/Zaporozhye', '" . $time->time() . "'), ('Europe/Zurich', '" . $time->time() . "'), ('Greenwich', '" . $time->time() . "'), ('Hongkong', '" . $time->time() . "'), ('Iceland', '" . $time->time() . "'), ('Indian/Antananarivo', '" . $time->time() . "'), ('Indian/Chagos', '" . $time->time() . "'), ('Indian/Christmas', '" . $time->time() . "'), ('Indian/Cocos', '" . $time->time() . "'), ('Indian/Comoro', '" . $time->time() . "'), ('Indian/Kerguelen', '" . $time->time() . "'), ('Indian/Mahe', '" . $time->time() . "'), ('Indian/Maldives', '" . $time->time() . "'), ('Indian/Mauritius', '" . $time->time() . "'), ('Indian/Mayotte', '" . $time->time() . "'), ('Indian/Reunion', '" . $time->time() . "'), ('Iran', '" . $time->time() . "'), ('Israel', '" . $time->time() . "'), ('Jamaica', '" . $time->time() . "'), ('Japan', '" . $time->time() . "'), ('Kwajalein', '" . $time->time() . "'), ('Libya', '" . $time->time() . "'), ('Mexico/BajaNorte', '" . $time->time() . "'), ('Mexico/BajaSur', '" . $time->time() . "'), ('Mexico/General', '" . $time->time() . "'), ('Pacific/Apia', '" . $time->time() . "'), ('Pacific/Auckland', '" . $time->time() . "'), ('Pacific/Chatham', '" . $time->time() . "'), ('Pacific/Chuuk', '" . $time->time() . "'), ('Pacific/Easter', '" . $time->time() . "'), ('Pacific/Efate', '" . $time->time() . "'), ('Pacific/Enderbury', '" . $time->time() . "'), ('Pacific/Fakaofo', '" . $time->time() . "'), ('Pacific/Fiji', '" . $time->time() . "'), ('Pacific/Funafuti', '" . $time->time() . "'), ('Pacific/Galapagos', '" . $time->time() . "'), ('Pacific/Gambier', '" . $time->time() . "'), ('Pacific/Guadalcanal', '" . $time->time() . "'), ('Pacific/Guam', '" . $time->time() . "'), ('Pacific/Honolulu', '" . $time->time() . "'), ('Pacific/Johnston', '" . $time->time() . "'), ('Pacific/Kiritimati', '" . $time->time() . "'), ('Pacific/Kosrae', '" . $time->time() . "'), ('Pacific/Kwajalein', '" . $time->time() . "'), ('Pacific/Majuro', '" . $time->time() . "'), ('Pacific/Marquesas', '" . $time->time() . "'), ('Pacific/Midway', '" . $time->time() . "'), ('Pacific/Nauru', '" . $time->time() . "'), ('Pacific/Niue', '" . $time->time() . "'), ('Pacific/Norfolk', '" . $time->time() . "'), ('Pacific/Noumea', '" . $time->time() . "'), ('Pacific/Pago_Pago', '" . $time->time() . "'), ('Pacific/Palau', '" . $time->time() . "'), ('Pacific/Pitcairn', '" . $time->time() . "'), ('Pacific/Pohnpei', '" . $time->time() . "'), ('Pacific/Ponape', '" . $time->time() . "'), ('Pacific/Port_Moresby', '" . $time->time() . "'), ('Pacific/Rarotonga', '" . $time->time() . "'), ('Pacific/Saipan', '" . $time->time() . "'), ('Pacific/Samoa', '" . $time->time() . "'), ('Pacific/Tahiti', '" . $time->time() . "'), ('Pacific/Tarawa', '" . $time->time() . "'), ('Pacific/Tongatapu', '" . $time->time() . "'), ('Pacific/Truk', '" . $time->time() . "'), ('Pacific/Wake', '" . $time->time() . "'), ('Pacific/Wallis', '" . $time->time() . "'), ('Pacific/Yap', '" . $time->time() . "'), ('Poland', '" . $time->time() . "'), ('Portugal', '" . $time->time() . "'), ('Singapore', '" . $time->time() . "'), ('Turkey', '" . $time->time() . "'), ('US/Alaska', '" . $time->time() . "'), ('US/Aleutian', '" . $time->time() . "'), ('US/Arizona', '" . $time->time() . "'), ('US/Central', '" . $time->time() . "'), ('US/East-Indiana', '" . $time->time() . "'), ('US/Eastern', '" . $time->time() . "'), ('US/Hawaii', '" . $time->time() . "'), ('US/Indiana-Starke', '" . $time->time() . "'), ('US/Michigan', '" . $time->time() . "'), ('US/Mountain', '" . $time->time() . "'), ('US/Pacific', '" . $time->time() . "'), ('US/Pacific-New', '" . $time->time() . "'), ('US/Samoa', '" . $time->time() . "'), ('Zulu', '" . $time->time() . "');";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0023',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0023;
@@ -1039,7 +1039,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0024',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0024;
@@ -1063,7 +1063,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "INSERT INTO `hosting` 
 					(`name`, `default_host`, `insert_time`) VALUES 
-					('[no hosting]', 1, '" . mysqli_real_escape_string($connection, $time->time()) . "');";
+					('[no hosting]', 1, '" . $time->time() . "');";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "ALTER TABLE `domains`  
@@ -1080,8 +1080,8 @@ if ($current_db_version < $most_recent_db_version) {
 		}
 		
 		$sql = "UPDATE domains
-				SET hosting_id = '" . mysqli_real_escape_string($connection, $temp_hosting_id) . "',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+				SET hosting_id = '" . $temp_hosting_id . "',
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "ALTER TABLE `domains` 
@@ -1102,7 +1102,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0025',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0025;
@@ -1118,7 +1118,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0026',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0026;
@@ -1134,7 +1134,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0027',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0027;
@@ -1150,7 +1150,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0028',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0028;
@@ -1179,7 +1179,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0029',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0029;
@@ -1207,7 +1207,7 @@ if ($current_db_version < $most_recent_db_version) {
 				if ($row->status != "") {
 		
 					$full_status .= "--------------------\r\n";
-					$full_status .= "OLD STATUS - INSERTED " . mysqli_real_escape_string($connection, $time->time()) . "\r\n";
+					$full_status .= "OLD STATUS - INSERTED " . $time->time() . "\r\n";
 					$full_status .= "The Status field was removed because it was redundant.\r\n";
 					$full_status .= "--------------------\r\n";
 					$full_status .= $row->status . "\r\n";
@@ -1222,7 +1222,7 @@ if ($current_db_version < $most_recent_db_version) {
 				if ($row->status_notes != "") {
 		
 					$full_status_notes .= "--------------------\r\n";
-					$full_status_notes .= "OLD STATUS NOTES - INSERTED " . mysqli_real_escape_string($connection, $time->time()) . "\r\n";
+					$full_status_notes .= "OLD STATUS NOTES - INSERTED " . $time->time() . "\r\n";
 					$full_status_notes .= "The Status Notes field was removed because it was redundant.\r\n";
 					$full_status_notes .= "--------------------\r\n";
 					$full_status_notes .= $row->status_notes . "\r\n";
@@ -1275,16 +1275,16 @@ if ($current_db_version < $most_recent_db_version) {
 				$sql_update = "UPDATE domains
 							   SET notes = '" . trim(mysqli_real_escape_string($connection, $new_notes)) . "',
 							   	   notes_fixed_temp = '1',
-								   update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
-							   WHERE id = '" . mysqli_real_escape_string($connection, $row->id) . "'";
+								   update_time = '" . $time->time() . "'
+							   WHERE id = '" . $row->id . "'";
 				$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 
 			} else {
 
 				$sql_update = "UPDATE domains
 							   SET notes_fixed_temp = '1',
-								   update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
-							   WHERE id = '" . mysqli_real_escape_string($connection, $row->id) . "'";
+								   update_time = '" . $time->time() . "'
+							   WHERE id = '" . $row->id . "'";
 				$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 			}
 
@@ -1312,7 +1312,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '2.003',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.003;
@@ -1376,7 +1376,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0031',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0031;
@@ -1392,7 +1392,7 @@ if ($current_db_version < $most_recent_db_version) {
 
         $sql = "UPDATE fees
 				SET transfer_fee = initial_fee,
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
         $result = mysqli_query($connection, $sql);
 
         // This section was made redundant by DB update v2.0033
@@ -1404,7 +1404,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0032',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0032;
@@ -1420,7 +1420,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0033',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0033;
@@ -1480,7 +1480,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0034',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0034;
@@ -1622,7 +1622,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0035',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0035;
@@ -1651,7 +1651,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE currencies
 				SET newly_inserted = '0',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql);
 
 		$sql = "ALTER TABLE `settings`  
@@ -1664,182 +1664,182 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET default_currency = '" . $_SESSION['default_currency'] . "',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql);
 
 		$sql = "UPDATE user_settings
 				SET default_currency = '" . $_SESSION['default_currency'] . "',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql);
 
 		$sql = "INSERT INTO currencies
 				(name, currency, symbol, insert_time) VALUES 
-				('Albania Lek', 'ALL', 'Lek', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Afghanistan Afghani', 'AFN', '؋', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Argentina Peso', 'ARS', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Aruba Guilder', 'AWG', 'ƒ', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Australia Dollar', 'AUD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Azerbaijan New Manat', 'AZN', '" . 'ман' . "', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Bahamas Dollar', 'BSD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Barbados Dollar', 'BBD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Belarus Ruble', 'BYR', 'p.', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Belize Dollar', 'BZD', 'BZ$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Bermuda Dollar', 'BMD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Bolivia Boliviano', 'BOB', '\$b', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Bosnia and Herzegovina Convertible Marka', 'BAM', 'KM', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Botswana Pula', 'BWP', 'P', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Bulgaria Lev', 'BGN', 'лв', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Brazil Real', 'BRL', 'R$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Brunei Darussalam Dollar', 'BND', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Cambodia Riel', 'KHR', '៛', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Canada Dollar', 'CAD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Cayman Islands Dollar', 'KYD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Chile Peso', 'CLP', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('China Yuan Renminbi', 'CNY', '¥', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Colombia Peso', 'COP', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Costa Rica Colon', 'CRC', '₡', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Croatia Kuna', 'HRK', 'kn', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Cuba Peso', 'CUP', '₱', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Czech Republic Koruna', 'CZK', 'Kč', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Denmark Krone', 'DKK', 'kr', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Dominican Republic Peso', 'DOP', 'RD$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('East Caribbean Dollar', 'XCD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Egypt Pound', 'EGP', '£', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('El Salvador Colon', 'SVC', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Estonia Kroon', 'EEK', 'kr', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Euro Member Countries', 'EUR', '€', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Falkland Islands (Malvinas) Pound', 'FKP', '£', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Fiji Dollar', 'FJD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Ghana Cedis', 'GHC', '¢', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Gibraltar Pound', 'GIP', '£', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Guatemala Quetzal', 'GTQ', 'Q', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Guernsey Pound', 'GGP', '£', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Guyana Dollar', 'GYD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Honduras Lempira', 'HNL', 'L', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Hong Kong Dollar', 'HKD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Hungary Forint', 'HUF', 'Ft', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Iceland Krona', 'ISK', 'kr', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('India Rupee', 'INR', 'Rs', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Indonesia Rupiah', 'IDR', 'Rp', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Iran Rial', 'IRR', '﷼', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Isle of Man Pound', 'IMP', '£', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Israel Shekel', 'ILS', '₪', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Jamaica Dollar', 'JMD', 'J$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Japan Yen', 'JPY', '¥', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Jersey Pound', 'JEP', '£', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Kazakhstan Tenge', 'KZT', 'лв', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Korea (North) Won', 'KPW', '₩', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Korea (South) Won', 'KRW', '₩', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Kyrgyzstan Som', 'KGS', 'лв', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Laos Kip', 'LAK', '₭', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Latvia Lat', 'LVL', 'Ls', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Lebanon Pound', 'LBP', '£', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Liberia Dollar', 'LRD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Lithuania Litas', 'LTL', 'Lt', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Macedonia Denar', 'MKD', 'ден', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Malaysia Ringgit', 'RM', 'RM', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Mauritius Rupee', 'MUR', '₨', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Mexico Peso', 'MXN', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Mongolia Tughrik', 'MNT', '₮', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Mozambique Metical', 'MZN', 'MT', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Namibia Dollar', 'NAD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Nepal Rupee', 'NPR', '₨', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Netherlands Antilles Guilder', 'ANG', 'ƒ', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('New Zealand Dollar', 'NZD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Nicaragua Cordoba', 'NIO', 'C$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Nigeria Naira', 'NGN', '₦', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Norway Krone', 'NOK', 'kr', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Oman Rial', 'OMR', '﷼', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Pakistan Rupee', 'PKR', '₨', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Panama Balboa', 'PAB', 'B/.', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Paraguay Guarani', 'PYG', 'Gs', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Peru Nuevo Sol', 'PEN', 'S/.', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Philippines Peso', 'PHP', '₱', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Poland Zloty', 'PLN', 'zł', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Qatar Riyal', 'QAR', '﷼', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Romania New Leu', 'RON', 'lei', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Russia Ruble', 'RUB', 'руб', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Saint Helena Pound', 'SHP', '£', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Saudi Arabia Riyal', 'SAR', '﷼', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Serbia Dinar', 'RSD', 'Дин.', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Seychelles Rupee', 'SCR', '₨', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Singapore Dollar', 'SGD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Solomon Islands Dollar', 'SBD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Somalia Shilling', 'SOS', 'S', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('South Africa Rand', 'ZAR', 'R', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Sri Lanka Rupee', 'LKR', '₨', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Sweden Krona', 'SEK', 'kr', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Switzerland Franc', 'CHF', 'CHF', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Suriname Dollar', 'SRD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Syria Pound', 'SYP', '£', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Taiwan New Dollar', 'TWD', 'NT$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Thailand Baht', 'THB', '฿', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Trinidad and Tobago Dollar', 'TTD', 'TT$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Turkey Lira', 'TRY', '₤', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Tuvalu Dollar', 'TVD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Ukraine Hryvna', 'UAH', '₴', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('United Kingdom Pound', 'GBP', '£', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('United States Dollar', 'USD', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Uruguay Peso', 'UYU', '\$U', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Uzbekistan Som', 'UZS', 'лв', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Venezuela Bolivar', 'VEF', 'Bs', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Viet Nam Dong', 'VND', '₫', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Yemen Rial', 'YER', '﷼', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Zimbabwe Dollar', 'ZWD', 'Z$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Emirati Dirham', 'AED', 'د.إ', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Malaysian Ringgit', 'MYR', 'RM', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Kuwaiti Dinar', 'KWD', 'ك', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Moroccan Dirham', 'MAD', 'م.', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Iraqi Dinar', 'IQD', 'د.ع', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Bangladeshi Taka', 'BDT', 'Tk', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Bahraini Dinar', 'BHD', 'BD', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Kenyan Shilling', 'KES', 'KSh', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('CFA Franc', 'XOF', 'CFA', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Jordanian Dinar', 'JOD', 'JD', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Tunisian Dinar', 'TND', 'د.ت', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Ghanaian Cedi', 'GHS', 'GH¢', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Central African CFA Franc BEAC', 'XAF', 'FCFA', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Algerian Dinar', 'DZD', 'دج', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('CFP Franc', 'XPF', 'F', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Ugandan Shilling', 'UGX', 'USh', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Tanzanian Shilling', 'TZS', 'TZS', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Ethiopian Birr', 'ETB', 'Br', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Georgian Lari', 'GEL', 'GEL', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Cuban Convertible Peso', 'CUC', 'CUC$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Burmese Kyat', 'MMK', 'K', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Libyan Dinar', 'LYD', 'LD', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Zambian Kwacha', 'ZMK', 'ZK', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Zambian Kwacha', 'ZMW', 'ZK', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Macau Pataca', 'MOP', 'MOP$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Armenian Dram', 'AMD', 'AMD', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Angolan Kwanza', 'AOA', 'Kz', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Papua New Guinean Kina', 'PGK', 'K', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Malagasy Ariary', 'MGA', 'Ar', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Ni-Vanuatu Vatu', 'VUV', 'VT', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Sudanese Pound', 'SDG', 'SDG', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Malawian Kwacha', 'MWK', 'MK', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Rwandan Franc', 'RWF', 'FRw', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Gambian Dalasi', 'GMD', 'D', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Maldivian Rufiyaa', 'MVR', 'Rf', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Congolese Franc', 'CDF', 'FC', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Djiboutian Franc', 'DJF', 'Fdj', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Haitian Gourde', 'HTG', 'G', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Samoan Tala', 'WST', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Guinean Franc', 'GNF', 'FG', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Cape Verdean Escudo', 'CVE', '$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Tongan Pa\'anga', 'TOP', 'T$', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Moldovan Leu', 'MDL', 'MDL', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Sierra Leonean Leone', 'SLL', 'Le', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Burundian Franc', 'BIF', 'FBu', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Mauritanian Ouguiya', 'MRO', 'UM', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Bhutanese Ngultrum', 'BTN', 'Nu.', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Swazi Lilangeni', 'SZL', 'SZL', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Tajikistani Somoni', 'TJS', 'TJS', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Turkmenistani Manat', 'TMT', 'm', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Basotho Loti', 'LSL', 'LSL', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Comoran Franc', 'KMF', 'CF', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Sao Tomean Dobra', 'STD', 'STD', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				('Seborgan Luigino', 'SPL', 'SPL', '" . mysqli_real_escape_string($connection, $time->time()) . "')";
+				('Albania Lek', 'ALL', 'Lek', '" . $time->time() . "'),
+				('Afghanistan Afghani', 'AFN', '؋', '" . $time->time() . "'),
+				('Argentina Peso', 'ARS', '$', '" . $time->time() . "'),
+				('Aruba Guilder', 'AWG', 'ƒ', '" . $time->time() . "'),
+				('Australia Dollar', 'AUD', '$', '" . $time->time() . "'),
+				('Azerbaijan New Manat', 'AZN', '" . 'ман' . "', '" . $time->time() . "'),
+				('Bahamas Dollar', 'BSD', '$', '" . $time->time() . "'),
+				('Barbados Dollar', 'BBD', '$', '" . $time->time() . "'),
+				('Belarus Ruble', 'BYR', 'p.', '" . $time->time() . "'),
+				('Belize Dollar', 'BZD', 'BZ$', '" . $time->time() . "'),
+				('Bermuda Dollar', 'BMD', '$', '" . $time->time() . "'),
+				('Bolivia Boliviano', 'BOB', '\$b', '" . $time->time() . "'),
+				('Bosnia and Herzegovina Convertible Marka', 'BAM', 'KM', '" . $time->time() . "'),
+				('Botswana Pula', 'BWP', 'P', '" . $time->time() . "'),
+				('Bulgaria Lev', 'BGN', 'лв', '" . $time->time() . "'),
+				('Brazil Real', 'BRL', 'R$', '" . $time->time() . "'),
+				('Brunei Darussalam Dollar', 'BND', '$', '" . $time->time() . "'),
+				('Cambodia Riel', 'KHR', '៛', '" . $time->time() . "'),
+				('Canada Dollar', 'CAD', '$', '" . $time->time() . "'),
+				('Cayman Islands Dollar', 'KYD', '$', '" . $time->time() . "'),
+				('Chile Peso', 'CLP', '$', '" . $time->time() . "'),
+				('China Yuan Renminbi', 'CNY', '¥', '" . $time->time() . "'),
+				('Colombia Peso', 'COP', '$', '" . $time->time() . "'),
+				('Costa Rica Colon', 'CRC', '₡', '" . $time->time() . "'),
+				('Croatia Kuna', 'HRK', 'kn', '" . $time->time() . "'),
+				('Cuba Peso', 'CUP', '₱', '" . $time->time() . "'),
+				('Czech Republic Koruna', 'CZK', 'Kč', '" . $time->time() . "'),
+				('Denmark Krone', 'DKK', 'kr', '" . $time->time() . "'),
+				('Dominican Republic Peso', 'DOP', 'RD$', '" . $time->time() . "'),
+				('East Caribbean Dollar', 'XCD', '$', '" . $time->time() . "'),
+				('Egypt Pound', 'EGP', '£', '" . $time->time() . "'),
+				('El Salvador Colon', 'SVC', '$', '" . $time->time() . "'),
+				('Estonia Kroon', 'EEK', 'kr', '" . $time->time() . "'),
+				('Euro Member Countries', 'EUR', '€', '" . $time->time() . "'),
+				('Falkland Islands (Malvinas) Pound', 'FKP', '£', '" . $time->time() . "'),
+				('Fiji Dollar', 'FJD', '$', '" . $time->time() . "'),
+				('Ghana Cedis', 'GHC', '¢', '" . $time->time() . "'),
+				('Gibraltar Pound', 'GIP', '£', '" . $time->time() . "'),
+				('Guatemala Quetzal', 'GTQ', 'Q', '" . $time->time() . "'),
+				('Guernsey Pound', 'GGP', '£', '" . $time->time() . "'),
+				('Guyana Dollar', 'GYD', '$', '" . $time->time() . "'),
+				('Honduras Lempira', 'HNL', 'L', '" . $time->time() . "'),
+				('Hong Kong Dollar', 'HKD', '$', '" . $time->time() . "'),
+				('Hungary Forint', 'HUF', 'Ft', '" . $time->time() . "'),
+				('Iceland Krona', 'ISK', 'kr', '" . $time->time() . "'),
+				('India Rupee', 'INR', 'Rs', '" . $time->time() . "'),
+				('Indonesia Rupiah', 'IDR', 'Rp', '" . $time->time() . "'),
+				('Iran Rial', 'IRR', '﷼', '" . $time->time() . "'),
+				('Isle of Man Pound', 'IMP', '£', '" . $time->time() . "'),
+				('Israel Shekel', 'ILS', '₪', '" . $time->time() . "'),
+				('Jamaica Dollar', 'JMD', 'J$', '" . $time->time() . "'),
+				('Japan Yen', 'JPY', '¥', '" . $time->time() . "'),
+				('Jersey Pound', 'JEP', '£', '" . $time->time() . "'),
+				('Kazakhstan Tenge', 'KZT', 'лв', '" . $time->time() . "'),
+				('Korea (North) Won', 'KPW', '₩', '" . $time->time() . "'),
+				('Korea (South) Won', 'KRW', '₩', '" . $time->time() . "'),
+				('Kyrgyzstan Som', 'KGS', 'лв', '" . $time->time() . "'),
+				('Laos Kip', 'LAK', '₭', '" . $time->time() . "'),
+				('Latvia Lat', 'LVL', 'Ls', '" . $time->time() . "'),
+				('Lebanon Pound', 'LBP', '£', '" . $time->time() . "'),
+				('Liberia Dollar', 'LRD', '$', '" . $time->time() . "'),
+				('Lithuania Litas', 'LTL', 'Lt', '" . $time->time() . "'),
+				('Macedonia Denar', 'MKD', 'ден', '" . $time->time() . "'),
+				('Malaysia Ringgit', 'RM', 'RM', '" . $time->time() . "'),
+				('Mauritius Rupee', 'MUR', '₨', '" . $time->time() . "'),
+				('Mexico Peso', 'MXN', '$', '" . $time->time() . "'),
+				('Mongolia Tughrik', 'MNT', '₮', '" . $time->time() . "'),
+				('Mozambique Metical', 'MZN', 'MT', '" . $time->time() . "'),
+				('Namibia Dollar', 'NAD', '$', '" . $time->time() . "'),
+				('Nepal Rupee', 'NPR', '₨', '" . $time->time() . "'),
+				('Netherlands Antilles Guilder', 'ANG', 'ƒ', '" . $time->time() . "'),
+				('New Zealand Dollar', 'NZD', '$', '" . $time->time() . "'),
+				('Nicaragua Cordoba', 'NIO', 'C$', '" . $time->time() . "'),
+				('Nigeria Naira', 'NGN', '₦', '" . $time->time() . "'),
+				('Norway Krone', 'NOK', 'kr', '" . $time->time() . "'),
+				('Oman Rial', 'OMR', '﷼', '" . $time->time() . "'),
+				('Pakistan Rupee', 'PKR', '₨', '" . $time->time() . "'),
+				('Panama Balboa', 'PAB', 'B/.', '" . $time->time() . "'),
+				('Paraguay Guarani', 'PYG', 'Gs', '" . $time->time() . "'),
+				('Peru Nuevo Sol', 'PEN', 'S/.', '" . $time->time() . "'),
+				('Philippines Peso', 'PHP', '₱', '" . $time->time() . "'),
+				('Poland Zloty', 'PLN', 'zł', '" . $time->time() . "'),
+				('Qatar Riyal', 'QAR', '﷼', '" . $time->time() . "'),
+				('Romania New Leu', 'RON', 'lei', '" . $time->time() . "'),
+				('Russia Ruble', 'RUB', 'руб', '" . $time->time() . "'),
+				('Saint Helena Pound', 'SHP', '£', '" . $time->time() . "'),
+				('Saudi Arabia Riyal', 'SAR', '﷼', '" . $time->time() . "'),
+				('Serbia Dinar', 'RSD', 'Дин.', '" . $time->time() . "'),
+				('Seychelles Rupee', 'SCR', '₨', '" . $time->time() . "'),
+				('Singapore Dollar', 'SGD', '$', '" . $time->time() . "'),
+				('Solomon Islands Dollar', 'SBD', '$', '" . $time->time() . "'),
+				('Somalia Shilling', 'SOS', 'S', '" . $time->time() . "'),
+				('South Africa Rand', 'ZAR', 'R', '" . $time->time() . "'),
+				('Sri Lanka Rupee', 'LKR', '₨', '" . $time->time() . "'),
+				('Sweden Krona', 'SEK', 'kr', '" . $time->time() . "'),
+				('Switzerland Franc', 'CHF', 'CHF', '" . $time->time() . "'),
+				('Suriname Dollar', 'SRD', '$', '" . $time->time() . "'),
+				('Syria Pound', 'SYP', '£', '" . $time->time() . "'),
+				('Taiwan New Dollar', 'TWD', 'NT$', '" . $time->time() . "'),
+				('Thailand Baht', 'THB', '฿', '" . $time->time() . "'),
+				('Trinidad and Tobago Dollar', 'TTD', 'TT$', '" . $time->time() . "'),
+				('Turkey Lira', 'TRY', '₤', '" . $time->time() . "'),
+				('Tuvalu Dollar', 'TVD', '$', '" . $time->time() . "'),
+				('Ukraine Hryvna', 'UAH', '₴', '" . $time->time() . "'),
+				('United Kingdom Pound', 'GBP', '£', '" . $time->time() . "'),
+				('United States Dollar', 'USD', '$', '" . $time->time() . "'),
+				('Uruguay Peso', 'UYU', '\$U', '" . $time->time() . "'),
+				('Uzbekistan Som', 'UZS', 'лв', '" . $time->time() . "'),
+				('Venezuela Bolivar', 'VEF', 'Bs', '" . $time->time() . "'),
+				('Viet Nam Dong', 'VND', '₫', '" . $time->time() . "'),
+				('Yemen Rial', 'YER', '﷼', '" . $time->time() . "'),
+				('Zimbabwe Dollar', 'ZWD', 'Z$', '" . $time->time() . "'),
+				('Emirati Dirham', 'AED', 'د.إ', '" . $time->time() . "'),
+				('Malaysian Ringgit', 'MYR', 'RM', '" . $time->time() . "'),
+				('Kuwaiti Dinar', 'KWD', 'ك', '" . $time->time() . "'),
+				('Moroccan Dirham', 'MAD', 'م.', '" . $time->time() . "'),
+				('Iraqi Dinar', 'IQD', 'د.ع', '" . $time->time() . "'),
+				('Bangladeshi Taka', 'BDT', 'Tk', '" . $time->time() . "'),
+				('Bahraini Dinar', 'BHD', 'BD', '" . $time->time() . "'),
+				('Kenyan Shilling', 'KES', 'KSh', '" . $time->time() . "'),
+				('CFA Franc', 'XOF', 'CFA', '" . $time->time() . "'),
+				('Jordanian Dinar', 'JOD', 'JD', '" . $time->time() . "'),
+				('Tunisian Dinar', 'TND', 'د.ت', '" . $time->time() . "'),
+				('Ghanaian Cedi', 'GHS', 'GH¢', '" . $time->time() . "'),
+				('Central African CFA Franc BEAC', 'XAF', 'FCFA', '" . $time->time() . "'),
+				('Algerian Dinar', 'DZD', 'دج', '" . $time->time() . "'),
+				('CFP Franc', 'XPF', 'F', '" . $time->time() . "'),
+				('Ugandan Shilling', 'UGX', 'USh', '" . $time->time() . "'),
+				('Tanzanian Shilling', 'TZS', 'TZS', '" . $time->time() . "'),
+				('Ethiopian Birr', 'ETB', 'Br', '" . $time->time() . "'),
+				('Georgian Lari', 'GEL', 'GEL', '" . $time->time() . "'),
+				('Cuban Convertible Peso', 'CUC', 'CUC$', '" . $time->time() . "'),
+				('Burmese Kyat', 'MMK', 'K', '" . $time->time() . "'),
+				('Libyan Dinar', 'LYD', 'LD', '" . $time->time() . "'),
+				('Zambian Kwacha', 'ZMK', 'ZK', '" . $time->time() . "'),
+				('Zambian Kwacha', 'ZMW', 'ZK', '" . $time->time() . "'),
+				('Macau Pataca', 'MOP', 'MOP$', '" . $time->time() . "'),
+				('Armenian Dram', 'AMD', 'AMD', '" . $time->time() . "'),
+				('Angolan Kwanza', 'AOA', 'Kz', '" . $time->time() . "'),
+				('Papua New Guinean Kina', 'PGK', 'K', '" . $time->time() . "'),
+				('Malagasy Ariary', 'MGA', 'Ar', '" . $time->time() . "'),
+				('Ni-Vanuatu Vatu', 'VUV', 'VT', '" . $time->time() . "'),
+				('Sudanese Pound', 'SDG', 'SDG', '" . $time->time() . "'),
+				('Malawian Kwacha', 'MWK', 'MK', '" . $time->time() . "'),
+				('Rwandan Franc', 'RWF', 'FRw', '" . $time->time() . "'),
+				('Gambian Dalasi', 'GMD', 'D', '" . $time->time() . "'),
+				('Maldivian Rufiyaa', 'MVR', 'Rf', '" . $time->time() . "'),
+				('Congolese Franc', 'CDF', 'FC', '" . $time->time() . "'),
+				('Djiboutian Franc', 'DJF', 'Fdj', '" . $time->time() . "'),
+				('Haitian Gourde', 'HTG', 'G', '" . $time->time() . "'),
+				('Samoan Tala', 'WST', '$', '" . $time->time() . "'),
+				('Guinean Franc', 'GNF', 'FG', '" . $time->time() . "'),
+				('Cape Verdean Escudo', 'CVE', '$', '" . $time->time() . "'),
+				('Tongan Pa\'anga', 'TOP', 'T$', '" . $time->time() . "'),
+				('Moldovan Leu', 'MDL', 'MDL', '" . $time->time() . "'),
+				('Sierra Leonean Leone', 'SLL', 'Le', '" . $time->time() . "'),
+				('Burundian Franc', 'BIF', 'FBu', '" . $time->time() . "'),
+				('Mauritanian Ouguiya', 'MRO', 'UM', '" . $time->time() . "'),
+				('Bhutanese Ngultrum', 'BTN', 'Nu.', '" . $time->time() . "'),
+				('Swazi Lilangeni', 'SZL', 'SZL', '" . $time->time() . "'),
+				('Tajikistani Somoni', 'TJS', 'TJS', '" . $time->time() . "'),
+				('Turkmenistani Manat', 'TMT', 'm', '" . $time->time() . "'),
+				('Basotho Loti', 'LSL', 'LSL', '" . $time->time() . "'),
+				('Comoran Franc', 'KMF', 'CF', '" . $time->time() . "'),
+				('Sao Tomean Dobra', 'STD', 'STD', '" . $time->time() . "'),
+				('Seborgan Luigino', 'SPL', 'SPL', '" . $time->time() . "')";
 		$result = mysqli_query($connection, $sql);
 		
 		$sql = "SELECT id, currency
@@ -1880,7 +1880,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0036',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0036;
@@ -1924,7 +1924,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "UPDATE settings
 				SET db_version = '2.0037',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0037;
@@ -1990,7 +1990,7 @@ if ($current_db_version < $most_recent_db_version) {
 				
 				$sql_insert = "INSERT INTO currency_conversions
 							   (currency_id, user_id, conversion, insert_time, update_time) VALUES 
-							   ('" . $row_conversion->id . "', '" . $row->id . "', '" . $row_conversion->conversion . "', '" . mysqli_real_escape_string($connection, $time->time()) . "', '" . mysqli_real_escape_string($connection, $time->time()) . "')";
+							   ('" . $row_conversion->id . "', '" . $row->id . "', '" . $row_conversion->conversion . "', '" . $time->time() . "', '" . $time->time() . "')";
 				$result_insert = mysqli_query($connection, $sql_insert);
 				
 			}
@@ -2003,7 +2003,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0038',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0038;
@@ -2031,7 +2031,7 @@ if ($current_db_version < $most_recent_db_version) {
 			$sql_update = "UPDATE ssl_certs
 						   SET cat_id = '" . $row->cat_id . "',
 						   	   ip_id = '" . $row->ip_id . "',
-							   update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'
+							   update_time = '" . $time->time() . "'
 						   WHERE domain_id = '" . $row->id . "'";
 			$result_update = mysqli_query($connection, $sql_update);
 			
@@ -2047,7 +2047,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0039',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0039;
@@ -2417,7 +2417,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.004',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.004;
@@ -2593,7 +2593,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0041',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0041;
@@ -2662,7 +2662,7 @@ if ($current_db_version < $most_recent_db_version) {
 				$sql_insert = "INSERT INTO 
 							   update_data
 							   (user_id, update_id, insert_time) VALUES 
-							   ('" . $row->id . "', '" . $row_updates->id . "', '" . mysqli_real_escape_string($connection, $time->time()) . "')";
+							   ('" . $row->id . "', '" . $row_updates->id . "', '" . $time->time() . "')";
 				$result_insert = mysqli_query($connection, $sql_insert);
 
 			}
@@ -2673,7 +2673,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0042',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		*/
 
@@ -2690,7 +2690,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0043',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0043;
@@ -2782,7 +2782,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0044',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0044;
@@ -2798,7 +2798,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0045',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0045;
@@ -2832,7 +2832,7 @@ if ($current_db_version < $most_recent_db_version) {
 				$sql_insert = "INSERT INTO 
 							   update_data
 							   (user_id, update_id, insert_time) VALUES 
-							   ('" . $row->id . "', '" . $row_updates->id . "', '" . mysqli_real_escape_string($connection, $time->time()) . "')";
+							   ('" . $row->id . "', '" . $row_updates->id . "', '" . $time->time() . "')";
 				$result_insert = mysqli_query($connection, $sql_insert);
 
 			}
@@ -2843,7 +2843,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0046',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		*/
 		
@@ -2860,7 +2860,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0047',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		
 		$current_db_version = 2.0047;
@@ -2881,9 +2881,9 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		$sql = "INSERT INTO custom_field_types
 				(id, name, insert_time) VALUES 
-				(1, 'Check Box', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				(2, 'Text', '" . mysqli_real_escape_string($connection, $time->time()) . "'),
-				(3, 'Text Area', '" . mysqli_real_escape_string($connection, $time->time()) . "')";
+				(1, 'Check Box', '" . $time->time() . "'),
+				(2, 'Text', '" . $time->time() . "'),
+				(3, 'Text Area', '" . $time->time() . "')";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$sql = "CREATE TABLE IF NOT EXISTS `domain_fields` (
@@ -2914,7 +2914,7 @@ if ($current_db_version < $most_recent_db_version) {
 		
 		while ($row = mysqli_fetch_object($result)) {
 			
-			$full_id_string .= "('" . $row->id . "', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ";
+			$full_id_string .= "('" . $row->id . "', '" . $time->time() . "'), ";
 			
 		}
 
@@ -2958,7 +2958,7 @@ if ($current_db_version < $most_recent_db_version) {
 
             while ($row = mysqli_fetch_object($result)) {
 
-                $full_id_string .= "('" . $row->id . "', '" . mysqli_real_escape_string($connection, $time->time()) . "'), ";
+                $full_id_string .= "('" . $row->id . "', '" . $time->time() . "'), ";
 
             }
 
@@ -2994,7 +2994,7 @@ if ($current_db_version < $most_recent_db_version) {
 			$sql_insert = "INSERT INTO 
 						   update_data
 						   (user_id, update_id, insert_time) VALUES 
-						   ('" . $row->id . "', '" . $temp_update_id . "', '" . mysqli_real_escape_string($connection, $time->time()) . "')";
+						   ('" . $row->id . "', '" . $temp_update_id . "', '" . $time->time() . "')";
 			$result_insert = mysqli_query($connection, $sql_insert);
 
 		}
@@ -3003,7 +3003,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0048',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		*/
 
@@ -3065,7 +3065,7 @@ if ($current_db_version < $most_recent_db_version) {
 			$sql_insert = "INSERT INTO 
 						   update_data
 						   (user_id, update_id, insert_time) VALUES 
-						   ('" . $row->id . "', '" . $temp_update_id . "', '" . mysqli_real_escape_string($connection, $time->time()) . "')";
+						   ('" . $row->id . "', '" . $temp_update_id . "', '" . $time->time() . "')";
 			$result_insert = mysqli_query($connection, $sql_insert);
 		
 		}
@@ -3075,7 +3075,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.0049',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		$current_db_version = 2.0049;
@@ -3164,7 +3164,7 @@ if ($current_db_version < $most_recent_db_version) {
 
 		$sql = "UPDATE settings
 				SET db_version = '2.005',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         */
@@ -3184,7 +3184,7 @@ if ($current_db_version < $most_recent_db_version) {
 
         $sql = "UPDATE settings
 				SET db_version = '2.0051',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $current_db_version = 2.0051;
@@ -3200,7 +3200,7 @@ if ($current_db_version < $most_recent_db_version) {
 
         $sql = "UPDATE settings
 				SET db_version = '2.0052',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $current_db_version = 2.0052;
@@ -3220,7 +3220,7 @@ if ($current_db_version < $most_recent_db_version) {
 
         $sql = "UPDATE settings
 				SET db_version = '2.0053',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $current_db_version = 2.0053;
@@ -3272,7 +3272,7 @@ if ($current_db_version < $most_recent_db_version) {
 
         $sql = "UPDATE settings
 				SET db_version = '2.0054',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $current_db_version = 2.0054;
@@ -3290,7 +3290,7 @@ if ($current_db_version < $most_recent_db_version) {
 
         $sql = "UPDATE settings
 				SET db_version = '2.0055',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $current_db_version = 2.0055;
@@ -3308,7 +3308,7 @@ if ($current_db_version < $most_recent_db_version) {
 
         $sql = "UPDATE settings
 				SET db_version = '2.0056',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $current_db_version = 2.0056;
@@ -3326,7 +3326,7 @@ if ($current_db_version < $most_recent_db_version) {
 
         $sql = "UPDATE settings
 				SET db_version = '2.0057',
-					update_time = '" . mysqli_real_escape_string($connection, $time->time()) . "'";
+					update_time = '" . $time->time() . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $current_db_version = 2.0057;
