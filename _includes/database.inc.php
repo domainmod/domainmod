@@ -30,3 +30,14 @@ if(mysqli_connect_errno()) {
 mysqli_query($connection, "SET NAMES UTF8") or $error->outputOldSqlError($connection);
 mysqli_query($connection, "SET CHARACTER SET utf8") or $error->outputOldSqlError($connection);
 mysqli_query($connection, "SET COLLATION_CONNECTION = utf8_unicode_ci") or $error->outputOldSqlError($connection);
+
+$conn = new mysqli($dbhostname, $dbusername, $dbpassword, $dbname);
+
+if(mysqli_connect_errno()) {
+    echo "Database Connection Error: " . mysqli_connect_errno();
+    exit();
+}
+
+mysqli_query($conn, "SET NAMES UTF8") or $error->outputOldSqlError($conn);
+mysqli_query($conn, "SET CHARACTER SET utf8") or $error->outputOldSqlError($conn);
+mysqli_query($conn, "SET COLLATION_CONNECTION = utf8_unicode_ci") or $error->outputOldSqlError($conn);
