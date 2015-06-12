@@ -1,6 +1,6 @@
 <?php
 /**
- * /system/admin/perform-maintenance.php
+ * /_includes/classes/DomainMOD/Segment.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,22 +20,33 @@
  */
 ?>
 <?php
-include("../../_includes/start-session.inc.php");
-include("../../_includes/init.inc.php");
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "database.inc.php");
-include(DIR_INC . "auth/auth-check.inc.php");
-include(DIR_INC . "auth/admin-user-check.inc.php");
-require_once(DIR_INC . "classes/Autoloader.php");
+namespace DomainMOD;
 
-spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
+class Segment
+{
 
-// Perform System Maintenance
-$maintenance = new DomainMOD\System();
-$_SESSION['result_message'] .= $maintenance->performMaintenance($connection);
+    public function trimLength($input_segment, $max_length)
+    {
 
-// Redirect to Control Panel after performing maintenance
-header("Location: ../index.php");
-exit;
+        if (strlen($input_segment) > $max_length) {
+
+            $output_segment = substr($input_segment, 0, $max_length);
+            $pos = strrpos($output_segment, ", ");
+
+            if ($pos === false) {
+
+                return substr($output_segment, 0, $max_length) . "...";
+
+            }
+
+            return substr($output_segment, 0, $pos) . "...";
+
+        } else {
+
+            return $input_segment;
+
+        }
+
+    }
+
+}

@@ -28,7 +28,7 @@ include(DIR_INC . "database.inc.php");
 
 include(DIR_INC . "config-demo.inc.php");
 
-require_once(DIR_INC . "classes/Autoloader.class.php");
+require_once(DIR_INC . "classes/Autoloader.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 

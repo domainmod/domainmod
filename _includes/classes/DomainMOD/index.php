@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/classes/Date.class.php
+ * /_includes/classes/DomainMOD/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,23 +20,5 @@
  */
 ?>
 <?php
-namespace DomainMOD;
-
-class Date
-{
-
-    public function checkDateFormat($input_date) {
-
-        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $input_date, $output_date)) {
-
-            return checkdate($output_date[2], $output_date[3], $output_date[1]);
-
-        } else {
-
-            return false;
-
-        }
-
-    }
-
-}
+header("Location: ../../../invalid.php");
+exit;

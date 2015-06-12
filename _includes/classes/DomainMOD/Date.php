@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/classes/Domain.class.php
+ * /_includes/classes/DomainMOD/Date.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -22,22 +22,20 @@
 <?php
 namespace DomainMOD;
 
-class Domain
+class Date
 {
 
-    public function checkDomainFormat($input_domain) {
+    public function checkDateFormat($input_date) {
 
-        /*
+        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $input_date, $output_date)) {
 
-           if (preg_match('/^[A-Z0-9.-]+\.[A-Z0-9-]{2,50}$/i', $input_domain, $output_domain)) {
-              return $output_domain;
-           } else {
-              return false;
-           }
+            return checkdate($output_date[2], $output_date[3], $output_date[1]);
 
-        */
+        } else {
 
-        return $input_domain;
+            return false;
+
+        }
 
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/classes/Format.class.php
+ * /_includes/classes/DomainMOD/CustomField.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -22,14 +22,21 @@
 <?php
 namespace DomainMOD;
 
-class Format
+class CustomField
 {
 
-    public function stripSpacing($input) {
+    public function checkFieldFormat($input_field)
+    {
 
-        $output = trim(preg_replace("/^\n+|^[\t\s]*\n+/m", "", $input));
+        if (preg_match('/^[a-zA-Z_]+$/i', $input_field, $output_field)) {
 
-        return $output;
+            return $output_field;
+
+        } else {
+
+            return false;
+
+        }
 
     }
 

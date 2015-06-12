@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/classes/Segment.class.php
+ * /_includes/classes/DomainMOD/Domain.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -22,30 +22,22 @@
 <?php
 namespace DomainMOD;
 
-class Segment
+class Domain
 {
 
-    public function trimLength($input_segment, $max_length)
-    {
+    public function checkDomainFormat($input_domain) {
 
-        if (strlen($input_segment) > $max_length) {
+        /*
 
-            $output_segment = substr($input_segment, 0, $max_length);
-            $pos = strrpos($output_segment, ", ");
+           if (preg_match('/^[A-Z0-9.-]+\.[A-Z0-9-]{2,50}$/i', $input_domain, $output_domain)) {
+              return $output_domain;
+           } else {
+              return false;
+           }
 
-            if ($pos === false) {
+        */
 
-                return substr($output_segment, 0, $max_length) . "...";
-
-            }
-
-            return substr($output_segment, 0, $pos) . "...";
-
-        } else {
-
-            return $input_segment;
-
-        }
+        return $input_domain;
 
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/classes/CustomField.class.php
+ * /_includes/classes/DomainMOD/Note.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -22,21 +22,17 @@
 <?php
 namespace DomainMOD;
 
-class CustomField
+class Note
 {
 
-    public function checkFieldFormat($input_field)
+    public function formatHtml($input_notes)
     {
 
-        if (preg_match('/^[a-zA-Z_]+$/i', $input_field, $output_field)) {
+        $output_notes = trim($input_notes);
+        $output_notes = str_replace("\n\n", "<BR><BR>", $output_notes);
+        $output_notes = str_replace("\n", "<BR>", $output_notes);
 
-            return $output_field;
-
-        } else {
-
-            return false;
-
-        }
+        return $output_notes;
 
     }
 

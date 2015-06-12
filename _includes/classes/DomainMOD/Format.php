@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/classes/Note.class.php
+ * /_includes/classes/DomainMOD/Format.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -22,17 +22,14 @@
 <?php
 namespace DomainMOD;
 
-class Note
+class Format
 {
 
-    public function formatHtml($input_notes)
-    {
+    public function stripSpacing($input) {
 
-        $output_notes = trim($input_notes);
-        $output_notes = str_replace("\n\n", "<BR><BR>", $output_notes);
-        $output_notes = str_replace("\n", "<BR>", $output_notes);
+        $output = trim(preg_replace("/^\n+|^[\t\s]*\n+/m", "", $input));
 
-        return $output_notes;
+        return $output;
 
     }
 
