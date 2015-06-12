@@ -43,43 +43,61 @@ $new_email_address = $_POST['new_email_address'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_first_name != "" && $new_last_name != "") {
 
-	$sql = "SELECT id 
-			FROM users 
-			WHERE id = '" . $_SESSION['user_id'] . "' 
-			  AND email_address = '" . $_SESSION['email_address'] . "'";
-	$result = mysqli_query($connection, $sql);
+    $query = "SELECT id
+              FROM users
+              WHERE id = ?
+                AND email_address = ?";
+    $q = $conn->stmt_init();
 
-   if (mysqli_num_rows($result) == 1) {
+    if ($q->prepare($query)) {
 
-		$sql_update = "UPDATE users 
-					   SET first_name = '" . mysqli_real_escape_string($connection, $new_first_name) . "',
-					   	   last_name = '" . mysqli_real_escape_string($connection, $new_last_name) . "',
-						   email_address = '$new_email_address', 
-						   update_time = '" . $time->time() . "'
-					   WHERE id = '" . $_SESSION['user_id'] . "' 
-					     AND email_address = '" . $_SESSION['email_address'] . "'";
-		$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
-		
-		$_SESSION['email_address'] = $new_email_address;
-		$_SESSION['first_name'] = $new_first_name;
-		$_SESSION['last_name'] = $new_last_name;
+        $q->bind_param('is', $_SESSION['user_id'], $_SESSION['email_address']);
+        $q->execute();
+        $q->store_result();
 
-		$_SESSION['result_message'] .= "Your profile was updated<BR>";
+        if ($q->num_rows() === 1) {
 
-		header("Location: index.php");
-		exit;
+            $query_u = "UPDATE users
+                        SET first_name = ?,
+                            last_name = ?,
+                            email_address = ?,
+                            update_time = ?
+                        WHERE id = ?
+                          AND email_address = ?";
+            $q_u = $conn->stmt_init();
+            
+            if ($q_u->prepare($query_u)) {
 
-   } else {
-	   
-		$_SESSION['result_message'] .= "Your profile could not be updated<BR>";
-		$_SESSION['result_message'] .= "If the problem persists please contact your administrator<BR>";
+                $q_u->bind_param('ssssis', $new_first_name, $new_last_name, $new_email_address, $time->time(),
+                    $_SESSION['user_id'], $_SESSION['email_address']);
+                $q_u->execute();
+                $q_u->close();
 
-   }
+            } else { $error->outputSqlError($conn, "ERROR"); }
+
+            $_SESSION['email_address'] = $new_email_address;
+            $_SESSION['first_name'] = $new_first_name;
+            $_SESSION['last_name'] = $new_last_name;
+
+            $_SESSION['result_message'] .= "Your profile was updated<BR>";
+
+            header("Location: index.php");
+            exit;
+
+        } else {
+
+            $_SESSION['result_message'] .= "Your profile could not be updated<BR>";
+            $_SESSION['result_message'] .= "If the problem persists please contact your administrator<BR>";
+
+        }
+
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 } else {
 
-
-	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 	   if ($new_email_address == "") $_SESSION['result_message'] .= "Your email address could not be updated<BR>";
 	   if ($new_first_name == "") $_SESSION['result_message'] .= "Your first name could not be updated<BR>";
@@ -99,13 +117,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="change_email_address_form" method="post">
 <strong>First Name (50):</strong><BR><BR>
-<input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") { echo $new_first_name; } else { echo $_SESSION['first_name']; }?>">
+<input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") {
+    echo $new_first_name; } else { echo $_SESSION['first_name']; }?>">
 <BR><BR>
 <strong>Last Name (50):</strong><BR><BR>
-<input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") { echo $new_last_name; } else { echo $_SESSION['last_name']; }?>">
+<input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") {
+    echo $new_last_name; } else { echo $_SESSION['last_name']; }?>">
 <BR><BR>
 <strong>Email Address (100):</strong><BR><BR>
-<input name="new_email_address" type="text" size="50" maxlength="100" value="<?php if ($new_email_address != "") { echo $new_email_address; } else { echo $_SESSION['email_address']; }?>">
+<input name="new_email_address" type="text" size="50" maxlength="100" value="<?php if ($new_email_address != "") {
+    echo $new_email_address; } else { echo $_SESSION['email_address']; }?>">
 <BR><BR>
 <input type="submit" name="button" value="Update Profile &raquo;">
 </form>

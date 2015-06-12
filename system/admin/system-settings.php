@@ -43,16 +43,25 @@ $new_email_address = $_POST['new_email_address'];
 $new_full_url = $_POST['new_full_url'];
 $new_expiration_email_days = $_POST['new_expiration_email_days'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "" && $new_expiration_email_days != "") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "" &&
+    $new_expiration_email_days != "") {
 
-	$sql = "UPDATE settings
-			SET full_url = '$new_full_url',
-				email_address = '$new_email_address',
-				expiration_email_days = '$new_expiration_email_days',
-				update_time = '" . $time->time() . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $query = "UPDATE settings
+              SET full_url = ?,
+                  email_address = ?,
+                  expiration_email_days = ?,
+                  update_time = ?";
+    $q = $conn->stmt_init();
 
-	$_SESSION['system_full_url'] = $new_full_url;
+    if ($q->prepare($query)) {
+
+        $q->bind_param('ssis', $new_full_url, $new_email_address, $new_expiration_email_days, $time->time());
+        $q->execute();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $_SESSION['system_full_url'] = $new_full_url;
 	$_SESSION['system_email_address'] = $new_email_address;
 	$_SESSION['system_expiration_email_days'] = $new_expiration_email_days;
 
@@ -63,28 +72,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
 } else {
 
-
-	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
 		if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the system email address<BR>";
-		if ($new_full_url == "") $_SESSION['result_message'] .= "Enter the full URL of your " . $software_title . " installation<BR>";
-		if ($new_expiration_email_days == "") $_SESSION['result_message'] .= "Enter the number of days to display in expiration emails<BR>";
+		if ($new_full_url == "") $_SESSION['result_message'] .= "Enter the full URL of your " . $software_title .
+            " installation<BR>";
+		if ($new_expiration_email_days == "") $_SESSION['result_message'] .= "Enter the number of days to display in
+            expiration emails<BR>";
 		
 	} else {
-		
-		$sql = "SELECT full_url, email_address, expiration_email_days
-				FROM settings";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
-		while ($row = mysqli_fetch_object($result)) {
-			
-			$new_full_url = $row->full_url;
-			$new_email_address = $row->email_address;
-			$new_expiration_email_days = $row->expiration_email_days;
 
-		}
+        $query = "SELECT full_url, email_address, expiration_email_days
+                  FROM settings";
+        $q = $conn->stmt_init();
 
-	}
+        if ($q->prepare($query)) {
+
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($new_full_url, $new_email_address, $new_expiration_email_days);
+            $q->fetch();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+    }
 }
 ?>
 <?php include(DIR_INC . "doctype.inc.php"); ?>
@@ -97,16 +109,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="system_settings_form" method="post">
 <strong>Full <?php echo $software_title; ?> URL (100):</strong><BR><BR>
-Enter the full URL of your <?php echo $software_title; ?> installation, excluding the trailing slash (Example: http://example.com/domainmod).<BR><BR>
-<input name="new_full_url" type="text" size="50" maxlength="100" value="<?php if ($new_full_url != "") echo $new_full_url; ?>">
+Enter the full URL of your <?php echo $software_title; ?> installation, excluding the trailing slash (Example:
+    http://example.com/domainmod).<BR><BR>
+<input name="new_full_url" type="text" size="50" maxlength="100" value="<?php if ($new_full_url != "")
+    echo $new_full_url; ?>">
 <BR><BR>
 <strong>System Email Address (100):</strong><BR><BR>
-This should be a valid email address that is able to receive mail. It will be used in various system locations, such as the FROM address for emails sent by <?php echo $software_title; ?>.<BR><BR>
-<input name="new_email_address" type="text" size="50" maxlength="100" value="<?php if ($new_email_address != "") echo $new_email_address; ?>">
+This should be a valid email address that is able to receive mail. It will be used in various system locations, such as
+    the FROM address for emails sent by <?php echo $software_title; ?>.<BR><BR>
+<input name="new_email_address" type="text" size="50" maxlength="100" value="<?php if ($new_email_address != "")
+    echo $new_email_address; ?>">
 <BR><BR>
 <strong>Days to Display in Expiration Emails:</strong><BR><BR>
 This is the number of days in the future to display in the expiration emails.<BR><BR>
-<input name="new_expiration_email_days" type="text" size="4" maxlength="3" value="<?php if ($new_expiration_email_days != "") echo $new_expiration_email_days; ?>">
+<input name="new_expiration_email_days" type="text" size="4" maxlength="3" value="<?php if ($new_expiration_email_days
+    != "") echo $new_expiration_email_days; ?>">
 <BR><BR>
 <input type="submit" name="button" value="Update System Settings&raquo;">
 </form>

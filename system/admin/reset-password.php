@@ -43,50 +43,70 @@ $display = $_GET['display'];
 
 if ($new_username != "") {
 
-   $sql = "SELECT id, username, email_address
-           FROM users
-		   WHERE username = '$new_username'
-		     AND active = '1'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $query = "SELECT id, username, email_address
+              FROM users
+              WHERE username = ?
+                AND active = '1'";
+    $q = $conn->stmt_init();
 
-	if (mysqli_num_rows($result) == 1) {
-   
-		while($row = mysqli_fetch_object($result)) {
-	
-			$new_password = substr(md5(time()), 0, 8);
-			
-			$sql_update = "UPDATE users 
-						   SET password = password('$new_password'), 
-						   	   new_password = '1',
-							   update_time = '" . $time->time() . "'
-						   WHERE username = '$row->username'
-						     AND email_address = '$row->email_address'";
-			$result_update = mysqli_query($connection, $sql_update);
+    if ($q->prepare($query)) {
 
-            if ($display == "1") {
+        $q->bind_param('s', $new_username);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($id, $username, $email_address);
 
-                $_SESSION['result_message'] .= "The new password for " . $row->username . " is " . $new_password . "<BR>";
+        if ($q->num_rows() === 1) {
 
-            } else {
+            while ($q->fetch()) {
 
-                include(DIR_INC . "email/send-new-password.inc.php");
-                $_SESSION['result_message'] .= "The password has been reset and emailed to the account holder<BR>";
+                $new_password = substr(md5(time()), 0, 8);
+
+                $query = "UPDATE users
+                          SET password = password(?),
+                              new_password = '1',
+                              update_time = ?
+                          WHERE username = ?
+                            AND email_address = ?";
+                $q = $conn->stmt_init();
+
+                if ($q->prepare($query)) {
+
+                    $q->bind_param('ssss', $new_password, $time->time(), $username, $email_address);
+                    $q->execute();
+                    $q->close();
+
+                } else { $error->outputSqlError($conn, "ERROR"); }
+
+                if ($display == "1") {
+
+                    $_SESSION['result_message'] .= "The new password for " . $username . " is " . $new_password .
+                        "<BR>";
+
+                } else {
+
+                    include(DIR_INC . "email/send-new-password.inc.php");
+                    $_SESSION['result_message'] .= "The password has been reset and emailed to the account holder<BR>";
+
+                }
+
+                header("Location: edit/user.php?uid=$id");
+                exit;
 
             }
 
-            header("Location: edit/user.php?uid=$row->id");
-			exit;
-			
-		}
+        } else {
 
-	} else {
+            $_SESSION['result_message'] .= "You have entered an invalid username<BR>";
 
-		$_SESSION['result_message'] .= "You have entered an invalid username<BR>";
+            header("Location: users.php");
+            exit;
 
-		header("Location: users.php");
-		exit;
-		
-	}
+        }
+
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 } else {
 

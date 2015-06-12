@@ -51,39 +51,78 @@ $new_raid = $_POST['new_raid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" && $new_registrar_id != "0") {
+	if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" &&
+        $new_registrar_id != "0") {
 
-		$sql = "UPDATE registrar_accounts
-				SET owner_id = '" . $new_owner_id . "',
-					registrar_id = '" . $new_registrar_id . "',
-					username = '" . mysqli_real_escape_string($connection, $new_username) . "',
-					password = '" . mysqli_real_escape_string($connection, $new_password) . "',
-					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-					reseller = '" . $new_reseller . "',
-					update_time = '" . $time->time() . "'
-				WHERE id = '" . $new_raid . "'";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
-		$sql = "UPDATE domains
-				SET owner_id = '" . $new_owner_id . "'
-				WHERE account_id = '" . $new_raid . "'";
-		$result = mysqli_query($connection, $sql);
-		
-		$raid = $new_raid; 
+        $query = "UPDATE registrar_accounts
+                  SET owner_id = ?,
+                      registrar_id = ?,
+                      username = ?,
+                      `password` = ?,
+                      notes = ?,
+                      reseller = ?,
+                      update_time = ?
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-		$sql = "SELECT name
-				FROM registrars
-				WHERE id = '" . $new_registrar_id . "'";
-		$result = mysqli_query($connection, $sql);
-		while ($row = mysqli_fetch_object($result)) { $temp_registrar = $row->name; }
+        if ($q->prepare($query)) {
 
-		$sql = "SELECT name
-				FROM owners
-				WHERE id = '" . $new_owner_id . "'";
-		$result = mysqli_query($connection, $sql);
-		while ($row = mysqli_fetch_object($result)) { $temp_owner = $row->name; }
-		
-		$_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar, $temp_owner)</font> Updated<BR>";
+            $q->bind_param('iisssisi', $new_owner_id, $new_registrar_id, $new_username, $new_password, $new_notes,
+                $new_reseller, $time->time(), $new_raid);
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $query = "UPDATE domains
+                  SET owner_id = ?
+                  WHERE account_id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('ii', $new_owner_id, $new_raid);
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $raid = $new_raid;
+
+        $query = "SELECT `name`
+                  FROM registrars
+                  WHERE id = '" . $new_registrar_id . "'";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $new_registrar_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_registrar);
+            $q->fetch();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $query = "SELECT `name`
+                  FROM owners
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $new_owner_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_owner);
+            $q->fetch();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar,
+            $temp_owner)</font> Updated<BR>";
 
 		header("Location: ../registrar-accounts.php");
 		exit;
@@ -96,66 +135,96 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT owner_id, registrar_id, username, password, notes, reseller
-			FROM registrar_accounts
-			WHERE id = '" . $raid . "'"; 
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) { 
-	
-		$new_owner_id = $row->owner_id;
-		$new_registrar_id = $row->registrar_id;
-		$new_username = $row->username;
-		$new_password = $row->password;
-		$new_notes = $row->notes;
-		$new_reseller = $row->reseller;
+    $query = "SELECT owner_id, registrar_id, username, `password`, notes, reseller
+              FROM registrar_accounts
+              WHERE id = ?";
+    $q = $conn->stmt_init();
 
-	}
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $raid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($new_owner_id, $new_registrar_id, $new_username, $new_password, $new_notes, $new_reseller);
+        $q->fetch();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
+
 if ($del == "1") {
 
-	$sql = "SELECT account_id
-			FROM domains
-			WHERE account_id = '" . $raid . "'";
-	$result = mysqli_query($connection, $sql);
-	
-	while ($row = mysqli_fetch_object($result)) {
-		$existing_domains = 1;
-	}
-	
-	if ($existing_domains > 0) {
+    $query = "SELECT account_id
+              FROM domains
+              WHERE account_id = ?";
+    $q = $conn->stmt_init();
 
-		$_SESSION['result_message'] = "This Registrar Account has domains associated with it and cannot be deleted<BR>";
+    if ($q->prepare($query)) {
 
-	} else {
+        $q->bind_param('i', $raid);
+        $q->execute();
+        $q->store_result();
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Registrar Account?<BR><BR><a href=\"registrar-account.php?raid=$raid&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR ACCOUNT</a><BR>";
+        if ($q->num_rows() > 0) {
 
-	}
+            $existing_domains = 1;
+
+        }
+
+        if ($existing_domains > 0) {
+
+            $_SESSION['result_message'] = "This Registrar Account has domains associated with it and cannot be deleted
+                <BR>";
+
+        } else {
+
+            $_SESSION['result_message'] = "Are you sure you want to delete this Registrar Account?<BR><BR><a
+                href=\"registrar-account.php?raid=$raid&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR
+                ACCOUNT</a><BR>";
+
+        }
+
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 
 if ($really_del == "1") {
 
-	$sql = "SELECT ra.username as username, o.name as owner_name, r.name as registrar_name
-			FROM registrar_accounts as ra, owners as o, registrars as r
-			WHERE ra.owner_id = o.id
-			  AND ra.registrar_id = r.id
-			  AND ra.id = '" . $raid . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $query = "SELECT ra.username as username, o.name as owner_name, r.name as registrar_name
+              FROM registrar_accounts as ra, owners as o, registrars as r
+              WHERE ra.owner_id = o.id
+                AND ra.registrar_id = r.id
+                AND ra.id = ?";
+    $q = $conn->stmt_init();
 
-	while ($row = mysqli_fetch_object($result)) { 
-		$temp_username = $row->username; 
-		$temp_owner_name = $row->owner_name; 
-		$temp_registrar_name = $row->registrar_name;
-	}
+    if ($q->prepare($query)) {
 
-	$sql = "DELETE FROM registrar_accounts 
-			WHERE id = '$raid'";
-	$result = mysqli_query($connection, $sql);
-	
-	$_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$temp_username ($temp_registrar_name, $temp_owner_name)</font> Deleted<BR>";
+        $q->bind_param('i', $raid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($temp_username, $temp_owner_name, $temp_registrar_name);
+        $q->fetch();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $query = "DELETE FROM registrar_accounts
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $raid);
+        $q->execute();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$temp_username ($temp_registrar_name,
+        $temp_owner_name)</font> Deleted<BR>";
 
 	include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
@@ -175,46 +244,72 @@ if ($really_del == "1") {
 <form name="edit_account_form" method="post">
 <strong>Owner</strong><BR><BR>
 <?php
-$sql_owner = "SELECT id, name
-			  FROM owners
-			  ORDER BY name asc";
-$result_owner = mysqli_query($connection, $sql_owner) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_owner_id\">";
-while ($row_owner = mysqli_fetch_object($result_owner)) {
+$query = "SELECT id, `name`
+          FROM owners
+          ORDER BY `name` ASC";
+$q = $conn->stmt_init();
 
-	if ($row_owner->id == $new_owner_id) {
+if ($q->prepare($query)) {
 
-		echo "<option value=\"$row_owner->id\" selected>$row_owner->name</option>";
-	
-	} else {
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($id, $name);
 
-		echo "<option value=\"$row_owner->id\">$row_owner->name</option>";
-	
-	}
-}
-echo "</select>";
+    echo "<select name=\"new_owner_id\">";
+
+    while ($q->fetch()) {
+
+        if ($id == $new_owner_id) {
+
+            echo "<option value=\"$id\" selected>$name</option>";
+
+        } else {
+
+            echo "<option value=\"$id\">$name</option>";
+
+        }
+
+    }
+
+    echo "</select>";
+
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <BR><BR>
 <strong>Registrar</strong><BR><BR>
 <?php
-$sql_registrar = "SELECT id, name
-				  FROM registrars
-				  ORDER BY name asc";
-$result_registrar = mysqli_query($connection, $sql_registrar) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_registrar_id\">";
-while ($row_registrar = mysqli_fetch_object($result_registrar)) {
+$query = "SELECT id, `name`
+          FROM registrars
+          ORDER BY `name` ASC";
+$q = $conn->stmt_init();
 
-	if ($row_registrar->id == $new_registrar_id) {
+if ($q->prepare($query)) {
 
-		echo "<option value=\"$row_registrar->id\" selected>$row_registrar->name</option>";
-	
-	} else {
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($id, $name);
 
-		echo "<option value=\"$row_registrar->id\">$row_registrar->name</option>";
-	
-	}
-}
-echo "</select>";
+    echo "<select name=\"new_registrar_id\">";
+
+    while ($q->fetch()) {
+
+        if ($id == $new_registrar_id) {
+
+            echo "<option value=\"$id\" selected>$name</option>";
+
+        } else {
+
+            echo "<option value=\"$id\">$name</option>";
+
+        }
+    }
+    echo "</select>";
+
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <BR><BR>
 <strong>Username (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>

@@ -46,12 +46,19 @@ $software_section = "admin-system-info";
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
-$sql = "SELECT db_version
-		FROM settings";
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-while ($row = mysqli_fetch_object($result)) {
-    $db_version = $row->db_version;
-}
+$query = "SELECT db_version
+          FROM settings";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($db_version);
+    $q->fetch();
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <strong>Operating System:</strong> <?php echo php_uname(); ?><BR>
 <strong>Web Server:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>

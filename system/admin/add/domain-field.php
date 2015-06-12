@@ -46,59 +46,101 @@ $new_notes = $_POST['new_notes'];
 
 $custom_field = new DomainMOD\CustomField();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name != "" && $custom_field->checkFieldFormat($new_field_name)) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name != "" &&
+    $custom_field->checkFieldFormat($new_field_name)) {
 
-    $sql = "SELECT field_name
-            FROM domain_fields
-            WHERE field_name = '" . $new_field_name . "'";
-    $result = mysqli_query($connection, $sql);
+    $query = "SELECT field_name
+              FROM domain_fields
+              WHERE field_name = ?
+              LIMIT 1";
+    $q = $conn->stmt_init();
 
-    if (mysqli_num_rows($result) > 0) { $existing_field_name = 1; }
+    if ($q->prepare($query)) {
 
-    if ($existing_field_name == 1) {
+        $q->bind_param('s', $new_field_name);
+        $q->execute();
+        $q->store_result();
 
-        $_SESSION['result_message'] .= "The Database Field Name you entered already exists<BR>";
+        if ($q->num_rows() > 0) {
 
-    } else {
+            $_SESSION['result_message'] .= "The Database Field Name you entered already exists<BR>";
 
-        $sql = "INSERT INTO domain_fields
-                (name, field_name, description, type_id, notes, insert_time) VALUES
-                ('" . mysqli_real_escape_string($connection, $new_name) . "', '" . $new_field_name . "', '" . mysqli_real_escape_string($connection, $new_description) . "', '" . $new_field_type_id . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $time->time() . "')";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        } else {
 
-        if ($new_field_type_id == '1') { // Check Box
+            $query_i = "INSERT INTO domain_fields
+                        (`name`, field_name, description, type_id, notes, insert_time)
+                        VALUES
+                        (?, ?, ?, ?, ?, ?)";
+            $q_i = $conn->stmt_init();
 
-            $sql = "ALTER TABLE `domain_field_data`
-                    ADD `" . $new_field_name . "` INT(1) NOT NULL DEFAULT '0'";
-            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            if ($q_i->prepare($query_i)) {
 
-        } elseif ($new_field_type_id == '2') { // Text
+                $q_i->bind_param('sssiss', $new_name, $new_field_name, $new_description, $new_field_type_id, $new_notes,
+                    $time->time());
+                $q_i->execute();
+                $q_i->close();
 
-            $sql = "ALTER TABLE `domain_field_data`
-                    ADD `" . $new_field_name . "` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            } else { $error->outputSqlError($conn, "ERROR"); }
 
-        } elseif ($new_field_type_id == '3') { // Text Area
+            if ($new_field_type_id == '1') { // Check Box
 
-            $sql = "ALTER TABLE `domain_field_data`
-                    ADD `" . $new_field_name . "` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                $query = "ALTER TABLE `domain_field_data`
+                          ADD `" . $new_field_name . "` INT(1) NOT NULL DEFAULT '0'";
+                $q = $conn->stmt_init();
+
+                if ($q->prepare($query)) {
+                    $q->execute();
+                    $q->close();
+
+                } else { $error->outputSqlError($conn, "ERROR"); }
+
+            } elseif ($new_field_type_id == '2') { // Text
+
+                $query = "ALTER TABLE `domain_field_data`
+                          ADD `" . $new_field_name . "` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT
+                          NULL";
+                $q = $conn->stmt_init();
+
+                if ($q->prepare($query)) {
+                    $q->execute();
+                    $q->close();
+
+                } else { $error->outputSqlError($conn, "ERROR"); }
+
+            } elseif ($new_field_type_id == '3') { // Text Area
+
+                $query = "ALTER TABLE `domain_field_data`
+                          ADD `" . $new_field_name . "` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
+                $q = $conn->stmt_init();
+
+                if ($q->prepare($query)) {
+
+                    $q->execute();
+                    $q->close();
+
+                } else { $error->outputSqlError($conn, "ERROR"); }
+
+            }
+
+            $_SESSION['result_message'] .= "Custom Domain Field <font class=\"highlight\">" . $new_name . " (" .
+                $new_field_name . ")</font> Added<BR>";
+
+            header("Location: ../domain-fields.php");
+            exit;
 
         }
 
-        $_SESSION['result_message'] .= "Custom Domain Field <font class=\"highlight\">" . $new_name . " (" . $new_field_name . ")</font> Added<BR>";
+        $q->close();
 
-        header("Location: ../domain-fields.php");
-        exit;
-
-    }
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 } else {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_name == "") $_SESSION['result_message'] .= "Enter the Display Name<BR>";
-        if (!$custom_field->checkFieldFormat($new_field_name)) $_SESSION['result_message'] .= "The Database Field Name format is incorrect<BR>";
+        if (!$custom_field->checkFieldFormat($new_field_name)) $_SESSION['result_message'] .=
+            "The Database Field Name format is incorrect<BR>";
 
     }
 
@@ -113,27 +155,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_domain_field_form" method="post">
-<strong>Display Name (75)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_name" type="text" size="30" maxlength="75" value="<?php echo $new_name; ?>"><BR><BR>
+<strong>Display Name (75)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <input name="new_name" type="text" size="30" maxlength="75" value="<?php echo $new_name; ?>"><BR><BR>
 <strong>Database Field Name (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
 The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField).<BR><BR>
-<font class="default_highlight">WARNING:</font> The Database Field Name cannot be renamed.<BR><BR><input name="new_field_name" type="text" size="20" maxlength="30" value="<?php echo $new_field_name; ?>"><BR><BR>
+<font class="default_highlight">WARNING:</font> The Database Field Name cannot be renamed.<BR><BR><input
+        name="new_field_name" type="text" size="20" maxlength="30" value="<?php echo $new_field_name; ?>"><BR><BR>
 <strong>Data Type</strong><BR><BR>
 <font class="default_highlight">WARNING:</font> The Data Type cannot be changed.<BR><BR>
 <?php
-$sql = "SELECT id, name
-		FROM custom_field_types
-		ORDER BY name";
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_field_type_id\">";
-while ($row = mysqli_fetch_object($result)) { ?>
+$query = "SELECT id, `name`
+          FROM custom_field_types
+          ORDER BY `name` ASC";
+$q = $conn->stmt_init();
 
-	<option value="<?php echo $row->id; ?>"><?php echo $row->name; ?></option><?php
+if ($q->prepare($query)) {
 
-}
-echo "</select>";
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($id, $name);
+
+    echo "<select name=\"new_field_type_id\">";
+
+    while ($q->fetch()) { ?>
+
+        <option value="<?php echo $id; ?>"><?php echo $name; ?></option><?php
+
+    }
+
+    echo "</select>";
+
+    $q->close();
+
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <BR><BR>
-<strong>Description (255)</strong><BR><BR><input name="new_description" type="text" size="50" maxlength="255" value="<?php echo $new_description; ?>">
+<strong>Description (255)</strong><BR><BR><input name="new_description" type="text" size="50" maxlength="255"
+    value="<?php echo $new_description; ?>">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>

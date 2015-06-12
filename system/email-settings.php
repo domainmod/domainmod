@@ -41,13 +41,21 @@ $new_expiration_email = $_POST['new_expiration_email'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	$sql = "UPDATE user_settings
-			SET expiration_emails = '$new_expiration_email',
-				update_time = '" . $time->time() . "'
-			WHERE user_id = '" . $_SESSION['user_id'] . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $query = "UPDATE user_settings
+              SET expiration_emails = ?,
+                  update_time = ?
+              WHERE user_id = ?";
+    $q = $conn->stmt_init();
 
-	$_SESSION['expiration_email'] = $new_expiration_email;
+    if ($q->prepare($query)) {
+
+        $q->bind_param('ssi', $new_expiration_email, $time->time(), $_SESSION['user_id']);
+        $q->execute();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $_SESSION['expiration_email'] = $new_expiration_email;
 
 	$_SESSION['result_message'] .= "Your Email Settings were updated<BR>";
 
@@ -56,16 +64,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT expiration_emails
-			FROM user_settings
-			WHERE user_id = '" . $_SESSION['user_id'] . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
-	while ($row = mysqli_fetch_object($result)) {
-		
-		$new_expiration_email = $row->expiration_emails;
+    $query = "SELECT expiration_emails
+              FROM user_settings
+              WHERE user_id = ?";
+    $q = $conn->stmt_init();
 
-	}
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $_SESSION['user_id']);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($new_expiration_email);
+        $q->fetch();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 ?>

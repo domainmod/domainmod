@@ -50,15 +50,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($new_registrar != "" && $new_url != "") {
 
-		$sql = "UPDATE registrars
-				SET name = '" . mysqli_real_escape_string($connection, $new_registrar) . "',
-					url = '" . mysqli_real_escape_string($connection, $new_url) . "',
-					notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-					update_time = '" . $time->time() . "'
-				WHERE id = '" . $new_rid . "'";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
-		$rid = $new_rid;
+        $query = "UPDATE registrars
+                  SET `name` = ?,
+                      url = ?,
+                      notes = ?,
+                      update_time = ?
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('ssssi', $new_registrar, $new_url, $new_notes, $time->time(), $new_rid);
+            $q->execute();
+            $q->close();
+
+        } else { $error->outputSqlError($conn, "ERROR"); }
+
+        $rid = $new_rid;
 
 		$_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Updated<BR>";
 
@@ -74,48 +82,81 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-	$sql = "SELECT name, url, notes
-			FROM registrars
-			WHERE id = '" . $rid . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
-	while ($row = mysqli_fetch_object($result)) { 
-	
-		$new_registrar = $row->name;
-		$new_url = $row->url;
-		$new_notes = $row->notes;
-	
-	}
+    $query = "SELECT `name`, url, notes
+              FROM registrars
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $rid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($new_registrar, $new_url, $new_notes);
+        $q->fetch();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
+
 if ($del == "1") {
 
-	$sql = "SELECT registrar_id
-			FROM registrar_accounts
-			WHERE registrar_id = '" . $rid . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
-	while ($row = mysqli_fetch_object($result)) {
-		$existing_registrar_accounts = 1;
-	}
+    $query = "SELECT registrar_id
+              FROM registrar_accounts
+              WHERE registrar_id = ?
+              LIMIT 1";
+    $q = $conn->stmt_init();
 
-	$sql = "SELECT registrar_id
-			FROM domains
-			WHERE registrar_id = '" . $rid . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
-	while ($row = mysqli_fetch_object($result)) {
-		$existing_domains = 1;
-	}
+    if ($q->prepare($query)) {
 
-	if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
+        $q->bind_param('i', $rid);
+        $q->execute();
+        $q->store_result();
+
+        if ($q->num_rows() > 0) {
+
+            $existing_registrar_accounts = 1;
+
+        }
+
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $query = "SELECT registrar_id
+              FROM domains
+              WHERE registrar_id = '" . $rid . "'
+              LIMIT 1";
+	$q = $conn->stmt_init();
+
+	if ($q->prepare($query)) {
+
+	    $q->bind_param('i', $rid);
+	    $q->execute();
+        $q->store_result();
+
+        if ($q->num_rows() > 0) {
+
+            $existing_domains = 1;
+
+        }
+
+        $q->close();
+
+	} else { $error->outputSqlError($conn, "ERROR"); }
+
+    if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
 		
-		if ($existing_registrar_accounts > 0) $_SESSION['result_message'] .= "This Registrar has Registrar Accounts associated with it and cannot be deleted<BR>";
-		if ($existing_domains > 0) $_SESSION['result_message'] .= "This Registrar has domains associated with it and cannot be deleted<BR>";
+		if ($existing_registrar_accounts > 0) $_SESSION['result_message'] .= "This Registrar has Registrar Accounts
+            associated with it and cannot be deleted<BR>";
+		if ($existing_domains > 0) $_SESSION['result_message'] .= "This Registrar has domains associated with it and
+            cannot be deleted<BR>";
 
 	} else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Registrar?<BR><BR><a href=\"registrar.php?rid=$rid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
+		$_SESSION['result_message'] = "Are you sure you want to delete this Registrar?<BR><BR><a
+            href=\"registrar.php?rid=$rid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
 
 	}
 
@@ -123,19 +164,43 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-	$sql = "DELETE FROM fees
-			WHERE registrar_id = '" . $rid . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $query = "DELETE FROM fees
+              WHERE registrar_id = ?";
+    $q = $conn->stmt_init();
 
-	$sql = "DELETE FROM registrar_accounts
-			WHERE registrar_id = '" . $rid . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    if ($q->prepare($query)) {
 
-	$sql = "DELETE FROM registrars 
-			WHERE id = '" . $rid . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $q->bind_param('i', $rid);
+        $q->execute();
+        $q->close();
 
-	$_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Deleted<BR>";
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $query = "DELETE FROM registrar_accounts
+              WHERE registrar_id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $rid);
+        $q->execute();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $query = "DELETE FROM registrars
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $rid);
+        $q->execute();
+        $q->close();
+
+    } else { $error->outputSqlError($conn, "ERROR"); }
+
+    $_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Deleted<BR>";
 
 	include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
 	
@@ -153,10 +218,12 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_registrar_form" method="post">
-<strong>Registrar Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Registrar Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    </font></a><BR><BR>
 <input name="new_registrar" type="text" value="<?php echo htmlentities($new_registrar); ?>" size="50" maxlength="100">
 <BR><BR>
-<strong>Registrar's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR><BR>
+<strong>Registrar's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    </font></a><BR><BR>
 <input name="new_url" type="text" value="<?php echo htmlentities($new_url); ?>" size="50" maxlength="100">
 <BR><BR>
 <strong>Notes</strong><BR><BR>
