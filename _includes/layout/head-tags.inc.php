@@ -694,3 +694,4 @@ a.subtlelink:active {
 <style type="text/css">
 html { overflow-y: scroll; }
 </style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
