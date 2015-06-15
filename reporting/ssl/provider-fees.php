@@ -131,29 +131,14 @@ if ($total_rows > 0) {
 				$new_ssl_provider = $row->ssl_provider;
 				$new_type = $row->type;
 
-				$temp_input_amount = $row->initial_fee;
-				$temp_input_conversion = "";
-				$temp_input_currency_symbol = $row->symbol;
-				$temp_input_currency_symbol_order = $row->symbol_order;
-				$temp_input_currency_symbol_space = $row->symbol_space;
-				include(DIR_INC . "system/convert-and-format-currency.inc.php");
-				$row->initial_fee = $temp_output_amount;
+                $row->initial_fee = $currency->convertAndFormat($row->initial_fee, '', $row->symbol, $row->symbol_order,
+                    $row->symbol_space);
 
-                $temp_input_amount = $row->renewal_fee;
-                $temp_input_conversion = "";
-                $temp_input_currency_symbol = $row->symbol;
-                $temp_input_currency_symbol_order = $row->symbol_order;
-                $temp_input_currency_symbol_space = $row->symbol_space;
-                include(DIR_INC . "system/convert-and-format-currency.inc.php");
-                $row->renewal_fee = $temp_output_amount;
+                $row->renewal_fee = $currency->convertAndFormat($row->renewal_fee, '', $row->symbol, $row->symbol_order,
+                    $row->symbol_space);
 
-                $temp_input_amount = $row->misc_fee;
-                $temp_input_conversion = "";
-                $temp_input_currency_symbol = $row->symbol;
-                $temp_input_currency_symbol_order = $row->symbol_order;
-                $temp_input_currency_symbol_space = $row->symbol_space;
-                include(DIR_INC . "system/convert-and-format-currency.inc.php");
-                $row->misc_fee = $temp_output_amount;
+                $row->misc_fee = $currency->convertAndFormat($row->misc_fee, '', $row->symbol, $row->symbol_order,
+                    $row->symbol_space);
 
                 unset($row_contents);
                 $count = 0;
@@ -272,39 +257,24 @@ if ($total_rows > 0) { ?>
                 <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/ssl-provider-fees.php?sslpid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a></td>
                 <td class="main_table_cell_active">
                     <?php
-                    $temp_input_amount = $row->initial_fee;
-                    $temp_input_conversion = "";
-                    $temp_input_currency_symbol = $row->symbol;
-                    $temp_input_currency_symbol_order = $row->symbol_order;
-                    $temp_input_currency_symbol_space = $row->symbol_space;
-                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
-                    $row->initial_fee = $temp_output_amount;
+                    $row->initial_fee = $currency->convertAndFormat($row->initial_fee, '', $row->symbol,
+                        $row->symbol_order, $row->symbol_space);
+                    echo $row->initial_fee;
                     ?>
-                    <?php echo $row->initial_fee; ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $temp_input_amount = $row->renewal_fee;
-                    $temp_input_conversion = "";
-                    $temp_input_currency_symbol = $row->symbol;
-                    $temp_input_currency_symbol_order = $row->symbol_order;
-                    $temp_input_currency_symbol_space = $row->symbol_space;
-                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
-                    $row->renewal_fee = $temp_output_amount;
+                    $row->renewal_fee = $currency->convertAndFormat($row->renewal_fee, '', $row->symbol,
+                        $row->symbol_order, $row->symbol_space);
+                    echo $row->renewal_fee;
                     ?>
-                    <?php echo $row->renewal_fee; ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $temp_input_amount = $row->misc_fee;
-                    $temp_input_conversion = "";
-                    $temp_input_currency_symbol = $row->symbol;
-                    $temp_input_currency_symbol_order = $row->symbol_order;
-                    $temp_input_currency_symbol_space = $row->symbol_space;
-                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
-                    $row->misc_fee = $temp_output_amount;
+                    $row->misc_fee = $currency->convertAndFormat($row->misc_fee, '', $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
+                    echo $row->misc_fee;
                     ?>
-                    <?php echo $row->misc_fee; ?>
                 </td>
                 <td class="main_table_cell_active"><?php echo $row->currency; ?></td>
                 <td class="main_table_cell_active">
@@ -343,39 +313,24 @@ if ($total_rows > 0) { ?>
                 <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/ssl-provider-fees.php?sslpid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a></td>
                 <td class="main_table_cell_active">
                     <?php
-                    $temp_input_amount = $row->initial_fee;
-                    $temp_input_conversion = "";
-                    $temp_input_currency_symbol = $row->symbol;
-                    $temp_input_currency_symbol_order = $row->symbol_order;
-                    $temp_input_currency_symbol_space = $row->symbol_space;
-                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
-                    $row->initial_fee = $temp_output_amount;
+                    $row->initial_fee = $currency->convertAndFormat($row->initial_fee, '', $row->symbol,
+                        $row->symbol_order, $row->symbol_space);
+                    echo $row->initial_fee;
                     ?>
-                    <?php echo $row->initial_fee; ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $temp_input_amount = $row->renewal_fee;
-                    $temp_input_conversion = "";
-                    $temp_input_currency_symbol = $row->symbol;
-                    $temp_input_currency_symbol_order = $row->symbol_order;
-                    $temp_input_currency_symbol_space = $row->symbol_space;
-                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
-                    $row->renewal_fee = $temp_output_amount;
+                    $row->renewal_fee = $currency->convertAndFormat($row->renewal_fee, '', $row->symbol,
+                        $row->symbol_order, $row->symbol_space);
+                    echo $row->renewal_fee;
                     ?>
-                    <?php echo $row->renewal_fee; ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $temp_input_amount = $row->misc_fee;
-                    $temp_input_conversion = "";
-                    $temp_input_currency_symbol = $row->symbol;
-                    $temp_input_currency_symbol_order = $row->symbol_order;
-                    $temp_input_currency_symbol_space = $row->symbol_space;
-                    include(DIR_INC . "system/convert-and-format-currency.inc.php");
-                    $row->misc_fee = $temp_output_amount;
+                    $row->misc_fee = $currency->convertAndFormat($row->misc_fee, '', $row->symbol,
+                        $row->symbol_order, $row->symbol_space);
+                    echo $row->misc_fee;
                     ?>
-                    <?php echo $row->misc_fee; ?>
                 </td>
                 <td class="main_table_cell_active"><?php echo $row->currency; ?></td>
                 <td class="main_table_cell_active">

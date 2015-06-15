@@ -97,13 +97,8 @@ while ($row_cost = mysqli_fetch_object($result_cost)) {
 	$temp_total_cost = $temp_total_cost + $row_cost->converted_renewal_fee;
 }
 
-$temp_input_amount = $temp_total_cost;
-$temp_input_conversion = "";
-$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-include(DIR_INC . "system/convert-and-format-currency.inc.php");
-$total_cost = $temp_output_amount;
+$total_cost = $currency->convertAndFormat($temp_total_cost, '', $_SESSION['default_currency_symbol'],
+    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
 if ($export_data == "1") {
 
@@ -198,15 +193,11 @@ if ($export_data == "1") {
 		elseif ($row->active == "3") { $ssl_status = "PENDING (RENEWAL)"; } 
 		elseif ($row->active == "4") { $ssl_status = "PENDING (OTHER)"; } 
 		elseif ($row->active == "5") { $ssl_status = "PENDING (REGISTRATION)"; } 
-		else { $ssl_status = "ERROR -- PROBLEM WITH CODE IN SSL-CERT-RENEWALS.PHP"; } 
-		
-		$temp_input_amount = $row->converted_renewal_fee;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include(DIR_INC . "system/convert-and-format-currency.inc.php");
-		$export_renewal_fee = $temp_output_amount;
+		else { $ssl_status = "ERROR -- PROBLEM WITH CODE IN SSL-CERT-RENEWALS.PHP"; }
+
+        $export_renewal_fee = $currency->convertAndFormat($row->converted_renewal_fee, '',
+            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+            $_SESSION['default_currency_symbol_space']);
 
         unset($row_contents);
         $count = 0;
@@ -368,13 +359,10 @@ $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 <?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?php
-		$temp_input_amount = $row->converted_renewal_fee;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include(DIR_INC . "system/convert-and-format-currency.inc.php");
-		echo $temp_output_amount;
+		$temp_amount = $currency->convertAndFormat($row->converted_renewal_fee, '',
+            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+            $_SESSION['default_currency_symbol_space']);
+        echo $temp_amount;
 		?>
 	</td>
 <?php } ?>

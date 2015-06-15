@@ -31,6 +31,7 @@ require_once(DIR_INC . "classes/Autoloader.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
+$currency = new DomainMOD\Currency();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Timestamp();
 
@@ -195,21 +196,13 @@ if ($export_data == "1") {
 
             }
 
-            $temp_input_amount = $temp_initial_fee;
-            $temp_input_conversion = "";
-            $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-            $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-            $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-            include(DIR_INC . "system/convert-and-format-currency.inc.php");
-            $export_initial_fee = $temp_output_amount;
+            $export_initial_fee = $currency->convertAndFormat($temp_initial_fee, '',
+                $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                $_SESSION['default_currency_symbol_space']);
 
-            $temp_input_amount = $temp_renewal_fee;
-            $temp_input_conversion = "";
-            $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-            $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-            $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-            include(DIR_INC . "system/convert-and-format-currency.inc.php");
-            $export_renewal_fee = $temp_output_amount;
+            $export_renewal_fee = $currency->convertAndFormat($temp_renewal_fee, '',
+                            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                            $_SESSION['default_currency_symbol_space']);
 
             $row_contents = array(
                 $domain_status,

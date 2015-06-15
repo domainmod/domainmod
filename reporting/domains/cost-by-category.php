@@ -102,13 +102,8 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$number_of_domains_total = $row_grand_total->number_of_domains_total;
 }
 
-$temp_input_amount = $grand_total;
-$temp_input_conversion = "";
-$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-include(DIR_INC . "system/convert-and-format-currency.inc.php");
-$grand_total = $temp_output_amount;
+$grand_total = $currency->convertAndFormat($grand_total, '', $_SESSION['default_currency_symbol'],
+    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
 if ($submission_failed != "1" && $total_rows > 0) {
 
@@ -173,22 +168,12 @@ if ($submission_failed != "1" && $total_rows > 0) {
         while ($row = mysqli_fetch_object($result)) {
 
 			$per_domain = $row->total_cost / $row->number_of_domains;
-	
-			$temp_input_amount = $per_domain;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include(DIR_INC . "system/convert-and-format-currency.inc.php");
-			$per_domain = $temp_output_amount;
 
-			$temp_input_amount = $row->total_cost;
-			$temp_input_conversion = "";
-			$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-			$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-			$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-			include(DIR_INC . "system/convert-and-format-currency.inc.php");
-			$row->total_cost = $temp_output_amount;
+            $per_domain = $currency->convertAndFormat($per_domain, '', $_SESSION['default_currency_symbol'],
+                $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+
+            $row->total_cost = $currency->convertAndFormat($row->total_cost, '', $_SESSION['default_currency_symbol'],
+                $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
             $row_contents = array(
                 $row->name,
@@ -256,22 +241,12 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 	while ($row = mysqli_fetch_object($result)) {
 		
 		$per_domain = $row->total_cost / $row->number_of_domains;
-		
-		$temp_input_amount = $per_domain;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include(DIR_INC . "system/convert-and-format-currency.inc.php");
-		$per_domain = $temp_output_amount;
 
-		$temp_input_amount = $row->total_cost;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include(DIR_INC . "system/convert-and-format-currency.inc.php");
-		$row->total_cost = $temp_output_amount; ?>
+        $per_domain = $currency->convertAndFormat($per_domain, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+
+        $row->total_cost = $currency->convertAndFormat($row->total_cost, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']); ?>
 	
 		<tr class="main_table_row_active">
 			<td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?pcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a></td>

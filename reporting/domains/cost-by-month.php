@@ -99,13 +99,8 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $number_of_domains_total = $row_grand_total->number_of_domains_total;
 }
 
-$temp_input_amount = $grand_total;
-$temp_input_conversion = "";
-$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-include(DIR_INC . "system/convert-and-format-currency.inc.php");
-$grand_total = $temp_output_amount;
+$grand_total = $currency->convertAndFormat($grand_total, '', $_SESSION['default_currency_symbol'],
+    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
 if ($submission_failed != "1" && $total_rows > 0) {
 
@@ -193,13 +188,8 @@ if ($submission_failed != "1" && $total_rows > 0) {
                 $monthly_cost = $row_monthly_cost->monthly_cost;
             }
 
-            $temp_input_amount = $monthly_cost;
-            $temp_input_conversion = "";
-            $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-            $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-            $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-            include(DIR_INC . "system/convert-and-format-currency.inc.php");
-            $monthly_cost = $temp_output_amount;
+            $monthly_cost = $currency->convertAndFormat($monthly_cost, '', $_SESSION['default_currency_symbol'],
+                $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
             if ($row->month == "1") { $display_month = "January"; }
             elseif ($row->month == "2") { $display_month = "February"; }
@@ -229,13 +219,8 @@ if ($submission_failed != "1" && $total_rows > 0) {
                 $yearly_cost = $row_yearly_cost->yearly_cost;
             }
 
-            $temp_input_amount = $yearly_cost;
-            $temp_input_conversion = "";
-            $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-            $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-            $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-            include(DIR_INC . "system/convert-and-format-currency.inc.php");
-            $yearly_cost = $temp_output_amount;
+            $yearly_cost = $currency->convertAndFormat($yearly_cost, '', $_SESSION['default_currency_symbol'],
+                $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
             $row_contents = array(
                 $row->year,
@@ -329,13 +314,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
             $monthly_cost = $row_monthly_cost->monthly_cost;
         }
 
-        $temp_input_amount = $monthly_cost;
-        $temp_input_conversion = "";
-        $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-        $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-        $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-        include(DIR_INC . "system/convert-and-format-currency.inc.php");
-        $monthly_cost = $temp_output_amount;
+        $monthly_cost = $currency->convertAndFormat($monthly_cost, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
         if ($row->month == "1") { $display_month = "January"; }
         elseif ($row->month == "2") { $display_month = "February"; }
@@ -367,13 +347,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                 $yearly_cost = $row_yearly_cost->yearly_cost;
             }
 
-            $temp_input_amount = $yearly_cost;
-            $temp_input_conversion = "";
-            $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-            $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-            $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-            include(DIR_INC . "system/convert-and-format-currency.inc.php");
-            $yearly_cost = $temp_output_amount;
+            $yearly_cost = $currency->convertAndFormat($yearly_cost, '', $_SESSION['default_currency_symbol'],
+                $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
             ?>
 
 			<tr class="main_table_row_active">

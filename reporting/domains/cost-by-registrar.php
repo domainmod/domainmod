@@ -106,13 +106,8 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$number_of_domains_total = $row_grand_total->number_of_domains_total;
 }
 
-$temp_input_amount = $grand_total;
-$temp_input_conversion = "";
-$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-include(DIR_INC . "system/convert-and-format-currency.inc.php");
-$grand_total = $temp_output_amount;
+$grand_total = $currency->convertAndFormat($grand_total, '', $_SESSION['default_currency_symbol'],
+    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
 if ($submission_failed != "1" && $total_rows > 0) {
 
@@ -206,40 +201,24 @@ if ($submission_failed != "1" && $total_rows > 0) {
 				}
 	
 				$per_domain_account = $row->total_cost / $row->number_of_domains;
-	
-				$temp_input_amount = $row->total_cost;
-				$temp_input_conversion = "";
-				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-				include(DIR_INC . "system/convert-and-format-currency.inc.php");
-				$row->total_cost = $temp_output_amount;
-	
-				$temp_input_amount = $per_domain_account;
-				$temp_input_conversion = "";
-				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-				include(DIR_INC . "system/convert-and-format-currency.inc.php");
-				$per_domain_account = $temp_output_amount;
-	
-				$per_domain_registrar = $temp_registrar_total / $number_of_domains_registrar;
-	
-				$temp_input_amount = $temp_registrar_total;
-				$temp_input_conversion = "";
-				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-				include(DIR_INC . "system/convert-and-format-currency.inc.php");
-				$temp_registrar_total = $temp_output_amount;
-	
-				$temp_input_amount = $per_domain_registrar;
-				$temp_input_conversion = "";
-				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-				include(DIR_INC . "system/convert-and-format-currency.inc.php");
-				$per_domain_registrar = $temp_output_amount;
+
+                $row->total_cost = $currency->convertAndFormat($row->total_cost, '',
+                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                    $_SESSION['default_currency_symbol_space']);
+
+                $per_domain_account = $currency->convertAndFormat($per_domain_account, '',
+                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                    $_SESSION['default_currency_symbol_space']);
+
+                $per_domain_registrar = $temp_registrar_total / $number_of_domains_registrar;
+
+                $temp_registrar_total = $currency->convertAndFormat($temp_registrar_total, '',
+                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                    $_SESSION['default_currency_symbol_space']);
+
+                $per_domain_registrar = $currency->convertAndFormat($per_domain_registrar, '',
+                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                    $_SESSION['default_currency_symbol_space']);
 
                 $row_contents = array(
                     $row->registrar_name,
@@ -347,41 +326,23 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 		$per_domain_account = $row->total_cost / $row->number_of_domains;
 
-		$temp_input_amount = $row->total_cost;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include(DIR_INC . "system/convert-and-format-currency.inc.php");
-		$row->total_cost = $temp_output_amount;
+        $row->total_cost = $currency->convertAndFormat($row->total_cost, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-		$temp_input_amount = $per_domain_account;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include(DIR_INC . "system/convert-and-format-currency.inc.php");
-		$per_domain_account = $temp_output_amount;
+        $per_domain_account = $currency->convertAndFormat($per_domain_account, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-		$per_domain_registrar = $temp_registrar_total / $number_of_domains_registrar;
+        $per_domain_registrar = $temp_registrar_total / $number_of_domains_registrar;
 
-		$temp_input_amount = $temp_registrar_total;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include(DIR_INC . "system/convert-and-format-currency.inc.php");
-		$temp_registrar_total = $temp_output_amount;
+        $temp_registrar_total = $currency->convertAndFormat($temp_registrar_total, '',
+            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+            $_SESSION['default_currency_symbol_space']);
 
-		$temp_input_amount = $per_domain_registrar;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include(DIR_INC . "system/convert-and-format-currency.inc.php");
-		$per_domain_registrar = $temp_output_amount;
+        $per_domain_registrar = $currency->convertAndFormat($per_domain_registrar, '',
+            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+            $_SESSION['default_currency_symbol_space']);
 
-		if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
+        if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
 	
             <tr class="main_table_row_active">
                 <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?rid=<?php echo $row->id; ?>"><?php echo $row->registrar_name; ?></a></td>

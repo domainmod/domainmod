@@ -105,13 +105,8 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$number_of_certs_total = $row_grand_total->number_of_certs_total;
 }
 
-$temp_input_amount = $grand_total;
-$temp_input_conversion = "";
-$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-include(DIR_INC . "system/convert-and-format-currency.inc.php");
-$grand_total = $temp_output_amount;
+$grand_total = $currency->convertAndFormat($grand_total, '', $_SESSION['default_currency_symbol'],
+    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
 if ($submission_failed != "1" && $total_rows > 0) {
 
@@ -205,40 +200,24 @@ if ($submission_failed != "1" && $total_rows > 0) {
 				}
 	
 				$per_cert_account = $row->total_cost / $row->number_of_certs;
-	
-				$temp_input_amount = $row->total_cost;
-				$temp_input_conversion = "";
-				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-				include(DIR_INC . "system/convert-and-format-currency.inc.php");
-				$row->total_cost = $temp_output_amount;
-	
-				$temp_input_amount = $per_cert_account;
-				$temp_input_conversion = "";
-				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-				include(DIR_INC . "system/convert-and-format-currency.inc.php");
-				$per_cert_account = $temp_output_amount;
-	
-				$per_cert_provider = $temp_provider_total / $number_of_certs_provider;
-	
-				$temp_input_amount = $temp_provider_total;
-				$temp_input_conversion = "";
-				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-				include(DIR_INC . "system/convert-and-format-currency.inc.php");
-				$temp_provider_total = $temp_output_amount;
-	
-				$temp_input_amount = $per_cert_provider;
-				$temp_input_conversion = "";
-				$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-				$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-				$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-				include(DIR_INC . "system/convert-and-format-currency.inc.php");
-				$per_cert_provider = $temp_output_amount;
+
+                $row->total_cost = $currency->convertAndFormat($row->total_cost, '',
+                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                    $_SESSION['default_currency_symbol_space']);
+
+                $per_cert_account = $currency->convertAndFormat($per_cert_account, '',
+                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                    $_SESSION['default_currency_symbol_space']);
+
+                $per_cert_provider = $temp_provider_total / $number_of_certs_provider;
+
+                $temp_provider_total = $currency->convertAndFormat($temp_provider_total, '',
+                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                    $_SESSION['default_currency_symbol_space']);
+
+                $per_cert_provider = $currency->convertAndFormat($per_cert_provider, '',
+                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                    $_SESSION['default_currency_symbol_space']);
 
                 $row_contents = array(
                     $row->provider_name,
@@ -345,41 +324,22 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 		$per_cert_account = $row->total_cost / $row->number_of_certs;
 
-		$temp_input_amount = $row->total_cost;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include(DIR_INC . "system/convert-and-format-currency.inc.php");
-		$row->total_cost = $temp_output_amount;
+        $row->total_cost = $currency->convertAndFormat($row->total_cost, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-		$temp_input_amount = $per_cert_account;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include(DIR_INC . "system/convert-and-format-currency.inc.php");
-		$per_cert_account = $temp_output_amount;
+        $per_cert_account = $currency->convertAndFormat($per_cert_account, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-		$per_cert_provider = $temp_provider_total / $number_of_certs_provider;
+        $per_cert_provider = $temp_provider_total / $number_of_certs_provider;
 
-		$temp_input_amount = $temp_provider_total;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include(DIR_INC . "system/convert-and-format-currency.inc.php");
-		$temp_provider_total = $temp_output_amount;
+        $temp_provider_total = $currency->convertAndFormat($temp_provider_total, '',
+            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+            $_SESSION['default_currency_symbol_space']);
 
-		$temp_input_amount = $per_cert_provider;
-		$temp_input_conversion = "";
-		$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-		$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-		$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-		include(DIR_INC . "system/convert-and-format-currency.inc.php");
-		$per_cert_provider = $temp_output_amount;
+        $per_cert_provider = $currency->convertAndFormat($per_cert_provider, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-		if ($new_provider != $last_provider || $new_provider == "") { ?>
+        if ($new_provider != $last_provider || $new_provider == "") { ?>
 	
             <tr class="main_table_row_active">
                 <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo $row->provider_name; ?></a></td>

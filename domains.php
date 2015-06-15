@@ -31,6 +31,7 @@ require_once(DIR_INC . "classes/Autoloader.php");
 
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
+$currency = new DomainMOD\Currency();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Timestamp();
 
@@ -261,13 +262,8 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $grand_total = $row_grand_total->grand_total;
 }
 
-$temp_input_amount = $grand_total;
-$temp_input_conversion = "";
-$temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-$temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-$temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-include(DIR_INC . "system/convert-and-format-currency.inc.php");
-$grand_total = $temp_output_amount;
+$grand_total = $currency->convertAndFormat($grand_total, '', $_SESSION['default_currency_symbol'],
+    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
 if ($segid != "") {
 
@@ -733,53 +729,23 @@ if ($export_data == "1") {
             $privacy_status = "Public";
         }
 
-        $temp_input_amount = $temp_initial_fee;
-        $temp_input_conversion = "";
-        $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-        $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-        $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-        include(DIR_INC . "system/convert-and-format-currency.inc.php");
-        $export_initial_fee = $temp_output_amount;
+        $export_initial_fee = $currency->convertAndFormat($temp_initial_fee, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-        $temp_input_amount = $temp_renewal_fee;
-        $temp_input_conversion = "";
-        $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-        $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-        $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-        include(DIR_INC . "system/convert-and-format-currency.inc.php");
-        $export_renewal_fee = $temp_output_amount;
+        $export_renewal_fee = $currency->convertAndFormat($temp_renewal_fee, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-        $temp_input_amount = $temp_transfer_fee;
-        $temp_input_conversion = "";
-        $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-        $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-        $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-        include(DIR_INC . "system/convert-and-format-currency.inc.php");
-        $export_transfer_fee = $temp_output_amount;
+        $export_transfer_fee = $currency->convertAndFormat($temp_transfer_fee, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-        $temp_input_amount = $temp_privacy_fee;
-        $temp_input_conversion = "";
-        $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-        $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-        $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-        include(DIR_INC . "system/convert-and-format-currency.inc.php");
-        $export_privacy_fee = $temp_output_amount;
+        $export_privacy_fee = $currency->convertAndFormat($temp_privacy_fee, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-        $temp_input_amount = $temp_misc_fee;
-        $temp_input_conversion = "";
-        $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-        $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-        $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-        include(DIR_INC . "system/convert-and-format-currency.inc.php");
-        $export_misc_fee = $temp_output_amount;
+        $export_misc_fee = $currency->convertAndFormat($temp_misc_fee, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-        $temp_input_amount = $temp_total_cost;
-        $temp_input_conversion = "";
-        $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-        $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-        $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-        include(DIR_INC . "system/convert-and-format-currency.inc.php");
-        $export_total_cost = $temp_output_amount;
+        $export_total_cost = $currency->convertAndFormat($temp_total_cost, '', $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
         unset($row_contents);
         $count = 0;
@@ -1579,12 +1545,9 @@ if ($segid != "") {
                         <td class="main_table_cell_active">
                             <a class="invisiblelink" href="assets/edit/registrar-fees.php?rid=<?php echo $row->r_id; ?>">
                                 <?php
-                                $temp_input_amount = $row->total_cost;
-                                $temp_input_conversion = $row->conversion;
-                                $temp_input_currency_symbol = $_SESSION['default_currency_symbol'];
-                                $temp_input_currency_symbol_order = $_SESSION['default_currency_symbol_order'];
-                                $temp_input_currency_symbol_space = $_SESSION['default_currency_symbol_space'];
-                                include(DIR_INC . "system/convert-and-format-currency.inc.php");
+                                $temp_output_amount = $currency->convertAndFormat($row->total_cost, $row->conversion,
+                                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                                    $_SESSION['default_currency_symbol_space']);
                                 echo $temp_output_amount;
                                 ?>
                             </a>
