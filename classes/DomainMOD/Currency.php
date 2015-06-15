@@ -58,16 +58,16 @@ class Currency
 
         } else {
 
+            $temp_converted_fee = $amount * $conversion;
+
             if ($order == "0") {
 
                 if ($space == "0") {
 
-                    $temp_converted_fee = $amount * $conversion;
                     $output = $symbol . number_format($temp_converted_fee, 2, '.', ',');
 
                 } else {
 
-                    $temp_converted_fee = $amount * $conversion;
                     $output = $symbol . " " . number_format($temp_converted_fee, 2, '.', ',');
 
                 }
@@ -76,12 +76,10 @@ class Currency
 
                 if ($space == "0") {
 
-                    $temp_converted_fee = $amount * $conversion;
                     $output = number_format($temp_converted_fee, 2, '.', ',') . $symbol;
 
                 } else {
 
-                    $temp_converted_fee = $amount * $conversion;
                     $output = number_format($temp_converted_fee, 2, '.', ',') . " " . $symbol;
 
                 }
