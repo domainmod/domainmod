@@ -27,7 +27,7 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 
-spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
+spl_autoload_register('Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
 
