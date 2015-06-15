@@ -193,6 +193,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 		}
 
         $export->closeFile($export_file);
+        exit;
 
     }
 

@@ -221,6 +221,7 @@ if ($export_data == "1") {
 	}
 
     $export->closeFile($export_file);
+    exit;
 
 }
 ?>
