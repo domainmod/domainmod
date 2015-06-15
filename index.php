@@ -32,8 +32,8 @@ require_once(DIR_INC . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
-$time = new DomainMOD\Timestamp();
 $system = new DomainMOD\System();
+$time = new DomainMOD\Timestamp();
 
 list($installation_mode, $result_message) = $system->installCheck($connection, $web_root);
 $_SESSION['installation_mode'] = $installation_mode;
@@ -185,12 +185,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
            if (($_SESSION['run_update_includes'] == "1" || $last_login_date < $current_date) && $_SESSION['need_domain'] == "0") {
 
                include(DIR_INC . "system/update-segments.inc.php");
-               $system = new DomainMOD\System();
                $_SESSION['result_message'] .= $system->updateTlds($connection);
 
            }
 
-           include(DIR_INC . "system/check-domain-fees.inc.php");
+           $_SESSION['missing_domain_fees'] = $system->checkMissingDomainFees($connection);
            include(DIR_INC . "system/check-ssl-fees.inc.php");
 
            if ($_SESSION['is_new_password'] == 1) {

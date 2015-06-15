@@ -32,6 +32,7 @@ require_once(DIR_INC . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 $timestamp_basic = $time->timeBasic();
@@ -303,9 +304,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					$_SESSION['result_message'] = "Domains Added<BR>";
 
-                    include(DIR_INC . "system/check-domain-fees.inc.php");
+                    $_SESSION['missing_domain_fees'] = $system->checkMissingDomainFees($connection);
+
                     include(DIR_INC . "system/update-segments.inc.php");
-                    $system = new DomainMOD\System();
+
                     $_SESSION['result_message'] .= $system->updateTlds($connection);
 
                 }
@@ -557,9 +559,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $_SESSION['result_message'] = "Registrar Account Changed<BR>";
 
-                    include(DIR_INC . "system/check-domain-fees.inc.php");
+                    $_SESSION['missing_domain_fees'] = $system->checkMissingDomainFees($connection);
 
-				}
+                }
 
             } elseif ($action == "CWH") {
 

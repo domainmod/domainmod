@@ -32,6 +32,7 @@ require_once(DIR_INC . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 
@@ -225,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $temp_input_user_id = $_SESSION['user_id'];
                 $temp_input_default_currency = $_SESSION['default_currency'];
-                include(DIR_INC . "system/check-domain-fees.inc.php");
+                $_SESSION['missing_domain_fees'] = $system->checkMissingDomainFees($connection);
                 include(DIR_INC . "system/update-conversion-rates.inc.php");
 
             }
@@ -276,8 +277,8 @@ if ($really_del == "1") {
 
 		$temp_input_user_id = $_SESSION['user_id'];
 		$temp_input_default_currency = $_SESSION['default_currency'];
-        include(DIR_INC . "system/check-domain-fees.inc.php");
-		include(DIR_INC . "system/update-conversion-rates.inc.php");
+        $_SESSION['missing_domain_fees'] = $system->checkMissingDomainFees($connection);
+        include(DIR_INC . "system/update-conversion-rates.inc.php");
 
         header("Location: registrar-fees.php?rid=$rid");
 		exit;

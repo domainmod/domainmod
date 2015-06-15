@@ -32,6 +32,7 @@ require_once(DIR_INC . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 
@@ -189,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Updated<BR>";
 
         include(DIR_INC . "system/update-segments.inc.php");
-        include(DIR_INC . "system/check-domain-fees.inc.php");
+        $_SESSION['missing_domain_fees'] = $system->checkMissingDomainFees($connection);
 
 		header("Location: domain.php?did=$did");
 		exit;
