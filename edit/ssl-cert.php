@@ -33,7 +33,7 @@ spl_autoload_register('Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Timestamp();
-$system new DomainMOD\System();
+$system = new DomainMOD\System();
 $timestamp = $time->time();
 
 $page_title = "Editing An SSL Certificate";
