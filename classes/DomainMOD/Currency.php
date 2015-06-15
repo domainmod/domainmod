@@ -25,7 +25,8 @@ namespace DomainMOD;
 class Currency
 {
 
-    public function convertAndFormat($amount, $conversion, $symbol, $order, $space) {
+    public function convertAndFormat($amount, $conversion, $symbol, $order, $space)
+    {
 
         if ($conversion == "") {
 

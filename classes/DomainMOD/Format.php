@@ -25,7 +25,8 @@ namespace DomainMOD;
 class Format
 {
 
-    public function stripSpacing($input) {
+    public function stripSpacing($input)
+    {
 
         $output = trim(preg_replace("/^\n+|^[\t\s]*\n+/m", "", $input));
 

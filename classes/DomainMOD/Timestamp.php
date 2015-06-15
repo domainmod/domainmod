@@ -25,7 +25,8 @@ namespace DomainMOD;
 class Timestamp
 {
 
-    public function time() {
+    public function time()
+    {
 
         $timestamp = date("Y-m-d H:i:s", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));
 
@@ -33,7 +34,8 @@ class Timestamp
 
     }
 
-    public function timeLong() {
+    public function timeLong()
+    {
 
         $timestamp = date("l, F jS", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));
 
@@ -41,7 +43,8 @@ class Timestamp
 
     }
 
-    public function timeBasic() {
+    public function timeBasic()
+    {
 
         $timestamp = date("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));
 
@@ -49,7 +52,8 @@ class Timestamp
 
     }
 
-    public function timeBasicPlusDays($days) {
+    public function timeBasicPlusDays($days)
+    {
 
         $timestamp = date("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d") + $days, date("Y")));
 
@@ -57,7 +61,8 @@ class Timestamp
 
     }
 
-    public function timeBasicPlusYears($years) {
+    public function timeBasicPlusYears($years)
+    {
 
         $timestamp = date("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y") + $years));
 

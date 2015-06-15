@@ -25,14 +25,16 @@ namespace DomainMOD;
 class Error
 {
 
-    public function outputSqlError($db_connection, $msg_to_display) {
+    public function outputSqlError($db_connection, $msg_to_display)
+    {
 
         return trigger_error(htmlentities($msg_to_display . ": " . mysqli_error($db_connection)), E_USER_ERROR);
 
     }
 
     // This function is temporary. After I convert all database queries to prepared statements this won't be needed.
-    public function outputOldSqlError($db_connection) {
+    public function outputOldSqlError($db_connection)
+    {
 
         return trigger_error(htmlentities(mysqli_error($db_connection)), E_USER_ERROR);
 
