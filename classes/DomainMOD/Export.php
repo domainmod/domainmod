@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/classes/DomainMOD/Export.php
+ * /classes/DomainMOD/Export.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
