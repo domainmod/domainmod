@@ -31,6 +31,7 @@ class System
         $full_install_path = DIR_ROOT . "install/";
 
         if (is_dir($full_install_path) &&
+
             !mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_servers` . "'"))) {
 
             $installation_mode = 1;
@@ -115,7 +116,6 @@ class System
     {
 
         if ($type == "S") {
-
             $sql = "SELECT id
                     FROM ssl_certs
                     WHERE fee_id = '0'
