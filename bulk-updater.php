@@ -559,7 +559,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $_SESSION['result_message'] = "Registrar Account Changed<BR>";
 
-                    $_SESSION['missing_domain_fees'] = $system->checkMissingFees('D', '$connection);
+                    $_SESSION['missing_domain_fees'] = $system->checkMissingFees('D', $connection);
 
                 }
 
