@@ -243,7 +243,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
 
                     $_SESSION['result_message'] .= $system->updateSegments($connection);
-                    $_SESSION['missing_domain_fees'] = $system->checkMissingDomainFees($connection);
+                    $_SESSION['missing_domain_fees'] = $system->checkMissingFees('D', $connection);
                     include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
                 } else { $error->outputSqlError($conn, "ERROR"); }
