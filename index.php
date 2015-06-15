@@ -190,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
            }
 
            $_SESSION['missing_domain_fees'] = $system->checkMissingDomainFees($connection);
-           include(DIR_INC . "system/check-ssl-fees.inc.php");
+           $_SESSION['missing_ssl_fees'] = $system->checkMissingSslFees($connection);
 
            if ($_SESSION['is_new_password'] == 1) {
 				

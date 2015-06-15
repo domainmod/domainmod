@@ -33,6 +33,7 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Timestamp();
+$system new DomainMOD\System();
 $timestamp = $time->time();
 
 $page_title = "Editing An SSL Certificate";
@@ -172,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Updated<BR>";
 
-        include(DIR_INC . "system/check-ssl-fees.inc.php");
+        $_SESSION['missing_ssl_fees'] = $system->checkMissingSslFees($connection);
 
 		header("Location: ssl-cert.php?sslcid=$sslcid");
 		exit;

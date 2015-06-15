@@ -32,6 +32,7 @@ require_once(DIR_INC . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$system new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 $timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
@@ -213,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
 
-        include(DIR_INC . "system/check-ssl-fees.inc.php");
+        $_SESSION['missing_ssl_fees'] = $system->checkMissingSslFees($connection);
 		include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
     } else {
