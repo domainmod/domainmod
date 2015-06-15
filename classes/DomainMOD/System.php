@@ -47,7 +47,8 @@ class System
 
     }
 
-    public function performMaintenance($connection) {
+    public function performMaintenance($connection)
+    {
 
         // Delete all unused domain fees
         $sql = "DELETE FROM fees
@@ -63,7 +64,8 @@ class System
 
     }
 
-    public function updateTlds($connection) {
+    public function updateTlds($connection)
+    {
 
         $sql = "SELECT id, domain
                 FROM domains
@@ -85,7 +87,32 @@ class System
 
     }
 
-    public function checkMissingDomainFees($connection) {
+    public function updateSegments($connection)
+    {
+
+        $sql = "UPDATE segment_data
+                SET active = '1'
+                WHERE domain IN (SELECT domain FROM domains WHERE active NOT IN ('0', '10'))";
+        mysqli_query($connection, $sql);
+
+        $sql = "UPDATE segment_data
+                SET inactive = '1'
+                WHERE domain IN (SELECT domain FROM domains WHERE active IN ('0', '10'))";
+        mysqli_query($connection, $sql);
+
+        $sql  = "UPDATE segment_data
+                 SET missing = '1'
+                 WHERE domain NOT IN (SELECT domain FROM domains)";
+        mysqli_query($connection, $sql);
+
+        $message = "Segments Updated<BR>";
+
+        return $message;
+
+    }
+
+    public function checkMissingDomainFees($connection)
+    {
 
         $sql = "SELECT id
                 FROM domains
@@ -105,7 +132,8 @@ class System
 
     }
 
-    public function checkMissingSslFees($connection) {
+    public function checkMissingSslFees($connection)
+    {
 
         $sql = "SELECT id
                 FROM ssl_certs
