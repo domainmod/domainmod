@@ -114,17 +114,17 @@ class System
     public function checkMissingFees($type, $connection)
     {
 
-        if ($type == "D") {
-
-            $sql = "SELECT id
-                    FROM domains
-                    WHERE fee_id = '0'
-                      AND active NOT IN ('0', '10')";
-
-        } elseif ($type == "S") {
+        if ($type == "S") {
 
             $sql = "SELECT id
                     FROM ssl_certs
+                    WHERE fee_id = '0'
+                      AND active NOT IN ('0', '10')";
+
+        } else {
+
+            $sql = "SELECT id
+                    FROM domains
                     WHERE fee_id = '0'
                       AND active NOT IN ('0', '10')";
 
