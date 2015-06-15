@@ -20,5 +20,5 @@
  */
 ?>
 <?php
-header("Location: ../../../invalid.php");
+header("Location: ../../invalid.php");
 exit;

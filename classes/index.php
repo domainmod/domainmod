@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/classes/Autoloader.php
+ * /_includes/classes/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,18 +20,5 @@
  */
 ?>
 <?php
-namespace DomainMOD;
-
-class Autoloader
-{
-
-    public static function classAutoloader($class_full)
-    {
-
-        $class_path = DIR_INC . "classes/";
-        $class_base = preg_replace("/\\\\/", "/", $class_full);
-        require_once($class_path . $class_base . '.php');
-
-    }
-
-}
+header("Location: ../invalid.php");
+exit;
