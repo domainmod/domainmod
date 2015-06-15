@@ -85,4 +85,24 @@ class System
 
     }
 
+    public function checkMissingDomainFees($connection) {
+
+        $sql = "SELECT id
+                FROM domains
+                WHERE fee_id = '0'
+                  AND active NOT IN ('0', '10')";
+        $result = mysqli_query($connection, $sql);
+
+        if (mysqli_num_rows($result) >= 1) {
+
+            return 1;
+
+        } else {
+
+            return 0;
+
+        }
+
+    }
+
 }
