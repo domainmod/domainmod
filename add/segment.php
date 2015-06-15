@@ -32,6 +32,7 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 
@@ -185,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $_SESSION['result_message'] = "Segment <font class=\"highlight\">$new_name</font> Added<BR>";
 
-            include(DIR_INC . "system/update-segments.inc.php");
+            $_SESSION['result_message'] .= $system->updateSegments($connection);
 
             header("Location: ../segments.php");
 			exit;

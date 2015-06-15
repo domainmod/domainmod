@@ -187,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 				$_SESSION['result_message'] = "Domains Renewed<BR>";
 
-				include(DIR_INC . "system/update-segments.inc.php");
+                $_SESSION['result_message'] .= $system->updateSegments($connection);
 	
 			} elseif ($action == "AD") {
 
@@ -306,7 +306,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $_SESSION['missing_domain_fees'] = $system->checkMissingDomainFees($connection);
 
-                    include(DIR_INC . "system/update-segments.inc.php");
+                    $_SESSION['result_message'] .= $system->updateSegments($connection);
 
                     $_SESSION['result_message'] .= $system->updateTlds($connection);
 
@@ -358,7 +358,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				}
 
-				include(DIR_INC . "system/update-segments.inc.php");
+				$_SESSION['result_message'] .= $system->updateSegments($connection);
 
 				$_SESSION['result_message'] = "Domains Fully Renewed<BR>";
 				
@@ -648,7 +648,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "Domains (and associated SSL Certificates) Deleted<BR>";
 
-                include(DIR_INC . "system/update-segments.inc.php");
+                $_SESSION['result_message'] .= $system->updateSegments($connection);
 
             } elseif ($action == "E") {
 
@@ -672,7 +672,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as expired<BR>";
 
-				include(DIR_INC . "system/update-segments.inc.php");
+				$_SESSION['result_message'] .= $system->updateSegments($connection);
 	
 			} elseif ($action == "S") { 
 
@@ -696,7 +696,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as sold<BR>";
 
-				include(DIR_INC . "system/update-segments.inc.php");
+				$_SESSION['result_message'] .= $system->updateSegments($connection);
 	
 			} elseif ($action == "A") { 
 
@@ -720,7 +720,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as active<BR>";
 
-				include(DIR_INC . "system/update-segments.inc.php");
+				$_SESSION['result_message'] .= $system->updateSegments($connection);
 	
 			} elseif ($action == "T") { 
 
@@ -744,7 +744,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as 'In Transfer'<BR>";
 
-				include(DIR_INC . "system/update-segments.inc.php");
+				$_SESSION['result_message'] .= $system->updateSegments($connection);
 	
 			} elseif ($action == "PRg") { 
 
@@ -768,7 +768,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as 'Pending (Registration)'<BR>";
 
-				include(DIR_INC . "system/update-segments.inc.php");
+				$_SESSION['result_message'] .= $system->updateSegments($connection);
 	
 			} elseif ($action == "PRn") { 
 
@@ -792,7 +792,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as 'Pending (Renewal)'<BR>";
 
-				include(DIR_INC . "system/update-segments.inc.php");
+				$_SESSION['result_message'] .= $system->updateSegments($connection);
 	
 			} elseif ($action == "PO") { 
 
@@ -816,7 +816,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as 'Pending (Other)'<BR>";
 
-				include(DIR_INC . "system/update-segments.inc.php");
+				$_SESSION['result_message'] .= $system->updateSegments($connection);
 	
 			} elseif ($action == "PRVE") { 
 
@@ -855,7 +855,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "Domains marked as 'Private WHOIS'<BR>";
 
-				include(DIR_INC . "system/update-segments.inc.php");
+				$_SESSION['result_message'] .= $system->updateSegments($connection);
 	
 			} elseif ($action == "PRVD") { 
 

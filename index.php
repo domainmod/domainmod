@@ -184,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
            if (($_SESSION['run_update_includes'] == "1" || $last_login_date < $current_date) && $_SESSION['need_domain'] == "0") {
 
-               include(DIR_INC . "system/update-segments.inc.php");
+               $_SESSION['result_message'] .= $system->updateSegments($connection);
                $_SESSION['result_message'] .= $system->updateTlds($connection);
 
            }

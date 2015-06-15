@@ -242,7 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
 
-                    include(DIR_INC . "system/update-segments.inc.php");
+                    $_SESSION['result_message'] .= $system->updateSegments($connection);
                     $_SESSION['missing_domain_fees'] = $system->checkMissingDomainFees($connection);
                     include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
