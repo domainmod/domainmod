@@ -20,6 +20,8 @@
  */
 ?>
 <?php
+namespace DomainMOD;
+
 class Autoloader
 {
 
