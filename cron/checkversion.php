@@ -37,7 +37,7 @@ if ($demo_install != "1") {
 
     $live_version = file_get_contents('https://raw.githubusercontent.com/domainmod/domainmod/master/version-db.txt');
 
-    if ($most_recent_db_version != $live_version) {
+    if ($most_recent_db_version != $live_version && $live_version != "") {
 
         $sql = "UPDATE settings
                 SET upgrade_available = '1'";
