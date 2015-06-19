@@ -31,6 +31,7 @@ include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
+$date = new DomainMOD\Date();
 $error = new DomainMOD\Error();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
