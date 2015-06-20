@@ -36,7 +36,11 @@ $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 
-include("update-ssl-fees.inc.php");
+$update = $system->updateFees($connection, 'SSL', $timestamp);
+
+$_SESSION['missing_ssl_fees'] = $system->checkMissingFees('S', $connection);
+
+$_SESSION['result_message'] .= "SSL Fees Updated<BR>";
 
 header("Location: " . $_SERVER['HTTP_REFERER']);
 exit;

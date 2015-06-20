@@ -36,7 +36,11 @@ $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 
-include("update-domain-fees.inc.php");
+$update = $system->updateFees($connection, 'DOMAINS', $timestamp);
+
+$_SESSION['missing_domain_fees'] = $system->checkMissingFees('D', $connection);
+
+$_SESSION['result_message'] .= "Domain Fees Updated<BR>";
 
 header("Location: " . $_SERVER['HTTP_REFERER']);
 exit;
