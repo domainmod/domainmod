@@ -108,8 +108,10 @@ $q = $conn->stmt_init();
 
 if ($q->prepare($query)) {
 
+    $timestamp = $time->time();
+
     $q->bind_param('iiiis', $temp_total_dw_servers, $temp_total_dw_accounts, $temp_total_dw_dns_zones,
-        $temp_total_dw_dns_records, $time->time());
+        $temp_total_dw_dns_records, $timestamp);
     $q->execute();
     $q->close();
 

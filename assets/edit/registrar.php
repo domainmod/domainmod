@@ -60,7 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
-            $q->bind_param('ssssi', $new_registrar, $new_url, $new_notes, $time->time(), $new_rid);
+            $timestamp = $time->time();
+
+            $q->bind_param('ssssi', $new_registrar, $new_url, $new_notes, $timestamp, $new_rid);
             $q->execute();
             $q->close();
 

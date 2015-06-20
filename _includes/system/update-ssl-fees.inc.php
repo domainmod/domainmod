@@ -40,7 +40,9 @@ $q = $conn->stmt_init();
 
 if ($q->prepare($query)) {
 
-    $q->bind_param('s', $time->time());
+    $timestamp = $time->time();
+
+    $q->bind_param('s', $timestamp);
     $q->execute();
     $q->close();
 
@@ -101,7 +103,9 @@ if ($q->prepare($query)) {
 
         if ($q_u->prepare($query_u)) {
 
-            $q_u->bind_param('sii', $time->time(), $ssl_provider_id, $type_id);
+            $timestamp = $time->time();
+
+            $q_u->bind_param('sii', $timestamp, $ssl_provider_id, $type_id);
             $q_u->execute();
             $q_u->close();
 

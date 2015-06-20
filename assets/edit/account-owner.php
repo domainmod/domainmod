@@ -61,7 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
-            $q->bind_param('sssi', $new_owner, $new_notes, $time->time(), $new_oid);
+            $timestamp = $time->time();
+
+            $q->bind_param('sssi', $new_owner, $new_notes, $timestamp, $new_oid);
             $q->execute();
             $q->close();
 

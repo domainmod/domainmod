@@ -67,8 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
+            $timestamp = $time->time();
+
             $q->bind_param('iisssisi', $new_owner_id, $new_ssl_provider_id, $new_username, $new_password, $new_notes,
-                $new_reseller, $time->time(), $new_sslpaid);
+                $new_reseller, $timestamp, $new_sslpaid);
             $q->execute();
             $q->close();
 

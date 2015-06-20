@@ -60,7 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
-            $q->bind_param('ssssi', $new_ssl_provider, $new_url, $new_notes, $time->time(), $new_sslpid);
+            $timestamp = $time->time();
+
+            $q->bind_param('ssssi', $new_ssl_provider, $new_url, $new_notes, $timestamp, $new_sslpid);
             $q->execute();
             $q->close();
 

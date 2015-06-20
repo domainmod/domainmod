@@ -53,7 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
-            $q->bind_param('sss', $new_type, $new_notes, $time->time());
+            $timestamp = $time->time();
+
+            $q->bind_param('sss', $new_type, $new_notes, $timestamp);
             $q->execute();
             $q->close();
 

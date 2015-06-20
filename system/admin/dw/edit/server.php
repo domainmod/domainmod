@@ -70,8 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
+            $timestamp = $time->time();
+
             $q->bind_param('sssissssi', $new_name, $new_host, $new_protocol, $new_port, $new_username, $new_hash,
-                $new_notes, $time->time(), $new_dwsid);
+                $new_notes, $timestamp, $new_dwsid);
             $q->execute();
             $q->close();
 

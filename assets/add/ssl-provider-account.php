@@ -58,8 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
+            $timestamp = $time->time();
+
             $q->bind_param('iisssis', $new_owner_id, $new_ssl_provider_id, $new_username, $new_password, $new_notes,
-                $new_reseller, $time->time());
+                $new_reseller, $timestamp);
             $q->execute();
             $q->close();
 

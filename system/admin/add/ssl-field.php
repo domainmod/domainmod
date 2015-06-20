@@ -75,8 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 
             if ($q_i->prepare($query_i)) {
 
+                $timestamp = $time->time();
+
                 $q_i->bind_param('sssiss', $new_name, $new_field_name, $new_description, $new_field_type_id,
-                    $new_notes, $time->time());
+                    $new_notes, $timestamp);
                 $q_i->execute();
                 $q_i->close();
 

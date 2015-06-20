@@ -59,7 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
-            $q->bind_param('sssi', $new_type, $new_notes, $time->time(), $new_ssltid);
+            $timestamp = $time->time();
+
+            $q->bind_param('sssi', $new_type, $new_notes, $timestamp, $new_ssltid);
             $q->execute();
             $q->close();
 

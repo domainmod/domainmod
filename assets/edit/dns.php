@@ -115,10 +115,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
+            $timestamp = $time->time();
+
             $q->bind_param('ssssssssssssssssssssssisi', $new_name, $new_dns1, $new_dns2, $new_dns3, $new_dns4,
                 $new_dns5, $new_dns6, $new_dns7, $new_dns8, $new_dns9, $new_dns10, $new_ip1, $new_ip2, $new_ip3,
                 $new_ip4, $new_ip5, $new_ip6, $new_ip7, $new_ip8, $new_ip9, $new_ip10, $new_notes,
-                $new_number_of_servers, $time->time(), $new_dnsid);
+                $new_number_of_servers, $timestamp, $new_dnsid);
             $q->execute();
             $q->close();
 

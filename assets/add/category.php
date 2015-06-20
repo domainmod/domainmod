@@ -54,7 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
-            $q->bind_param('ssss', $new_category, $new_stakeholder, $new_notes, $time->time());
+            $timestamp = $time->time();
+
+            $q->bind_param('ssss', $new_category, $new_stakeholder, $new_notes, $timestamp);
             $q->execute();
             $q->close();
 
