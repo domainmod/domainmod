@@ -62,11 +62,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') $from_dropdown = 0;
 
 if ($export_data != "1") {
 
-	if ($from_dropdown != "1") {
+    if ($from_dropdown != "1") {
 
-		if ($search_for != "") { $_SESSION['search_for_ssl'] = $search_for; } else { $_SESSION['search_for_ssl'] = ""; }
+        if ($search_for != "") {
 
-	}
+            $_SESSION['search_for_ssl'] = $search_for;
+
+        } elseif ($numBegin != "") {
+
+            // $_SESSION['search_for_ssl'] = $_SESSION['search_for_ssl'];
+
+        } else  {
+
+            $_SESSION['search_for_ssl'] = "";
+
+        }
+
+    }
 
 }
 

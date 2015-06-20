@@ -67,8 +67,33 @@ if ($export_data != "1") {
 
     if ($from_dropdown != "1") {
 
-        if ($search_for != "") { $_SESSION['search_for'] = $search_for; } else { $_SESSION['search_for'] = ""; }
-        if ($quick_search != "") { $_SESSION['quick_search'] = $quick_search; } else { $_SESSION['quick_search'] = ""; }
+        if ($search_for != "") {
+
+            $_SESSION['search_for'] = $search_for;
+
+        } elseif ($numBegin != "") {
+
+            // $_SESSION['search_for'] = $_SESSION['search_for'];
+
+        } else {
+
+            $_SESSION['search_for'] = "";
+
+        }
+
+        if ($quick_search != "") {
+
+            $_SESSION['quick_search'] = $quick_search;
+
+        } elseif ($numBegin != "") {
+
+            // $_SESSION['quick_search'] = $_SESSION['quick_search'];
+
+        } else {
+
+            $_SESSION['quick_search'] = "";
+
+        }
 
     }
 
