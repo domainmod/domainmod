@@ -43,7 +43,7 @@ $software_section = "system";
 &raquo; <a href="display-settings.php">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="email-settings.php">Email Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="defaults.php">User Defaults</a><BR><BR>
 &raquo; <a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="change-password.php">Change Password</a><BR>
 <BR><BR><font class="subheadline">Maintenance Menu</font><BR><BR>
-&raquo; <a href="../_includes/system/update-conversion-rates.direct.php">Update Conversion Rates</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/update-domain-fees.direct.php">Update Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="../_includes/system/update-ssl-fees.direct.php">Update SSL Fees</a><BR>
+&raquo; <a href="../_includes/system/update-conversion-rates.direct.php">Update Conversion Rates</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="update-domain-fees.php">Update Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="update-ssl-fees.php">Update SSL Fees</a><BR>
 <?php
 if ($_SESSION['is_admin'] === 1) { ?>
     <BR><BR><font class="subheadline">Admin Menu</font><BR><BR>
