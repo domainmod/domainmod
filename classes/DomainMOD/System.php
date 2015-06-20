@@ -32,7 +32,8 @@ class System
 
         if (is_dir($full_install_path) &&
 
-            !mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_servers` . "'"))) {
+            !mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_servers` . "'"))
+        ) {
 
             $installation_mode = 1;
             $result_message = "<a href=\"" . $web_root . "/install/\">Click here to install</a><BR>";
@@ -70,7 +71,7 @@ class System
 
         $sql = "SELECT id, domain
                 FROM domains
-                ORDER BY domain asc";
+                ORDER BY domain ASC";
         $result = mysqli_query($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
@@ -101,7 +102,7 @@ class System
                 WHERE domain IN (SELECT domain FROM domains WHERE active IN ('0', '10'))";
         mysqli_query($connection, $sql);
 
-        $sql  = "UPDATE segment_data
+        $sql = "UPDATE segment_data
                  SET missing = '1'
                  WHERE domain NOT IN (SELECT domain FROM domains)";
         mysqli_query($connection, $sql);
@@ -112,10 +113,121 @@ class System
 
     }
 
+    public function updateFees($connection, $type, $timestamp)
+    {
+
+        if ($type == "DOMAINS") {
+
+            $sql = "UPDATE domains
+                    SET fee_fixed = '0',
+                        fee_id = '0'
+                    WHERE active NOT IN ('0', '10')";
+            mysqli_query($connection, $sql);
+
+            $sql = "UPDATE fees
+                    SET fee_fixed = '0',
+                        update_time = '" . $timestamp . "'";
+            mysqli_query($connection, $sql);
+
+            $sql = "SELECT id, registrar_id, tld
+                    FROM fees
+                    WHERE fee_fixed = '0'";
+            $result = mysqli_query($connection, $sql);
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $sql2 = "UPDATE domains
+                         SET fee_id = '" . $row->id . "'
+                         WHERE registrar_id = '" . $row->registrar_id . "'
+                           AND tld = '" . $row->tld . "'
+                           AND fee_fixed = '0'
+                           AND active NOT IN ('0', '10')";
+                mysqli_query($connection, $sql2);
+
+                $sql2 = "UPDATE domains d
+                         JOIN fees f ON d.fee_id = f.id
+                         SET d.fee_fixed = '1',
+                             d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
+                         WHERE d.registrar_id = '" . $row->registrar_id . "'
+                           AND d.tld = '" . $row->tld . "'
+                           AND d.privacy = '1'
+                           AND d.active NOT IN ('0', '10')";
+                mysqli_query($connection, $sql2);
+
+                $sql2 = "UPDATE domains d
+                         JOIN fees f ON d.fee_id = f.id
+                         SET d.fee_fixed = '1',
+                             d.total_cost = f.renewal_fee + f.misc_fee
+                         WHERE d.registrar_id = '" . $row->registrar_id . "'
+                           AND d.tld = '" . $row->tld . "'
+                           AND d.privacy = '0'
+                           AND d.active NOT IN ('0', '10')";
+                mysqli_query($connection, $sql2);
+
+                $sql2 = "UPDATE fees
+                         SET fee_fixed = '1',
+                             update_time = '" . $timestamp . "'
+                         WHERE registrar_id = '" . $row->registrar_id . "'
+                           AND tld = '" . $row->tld . "'";
+                mysqli_query($connection, $sql2);
+
+            }
+
+        } elseif ($type == "SSL") {
+
+            $sql = "UPDATE ssl_certs
+                    SET fee_fixed = '0',
+                        fee_id = '0'";
+            mysqli_query($connection, $sql);
+
+            $sql = "UPDATE ssl_fees
+                    SET fee_fixed = '0',
+                        update_time = '" . $timestamp . "'";
+            mysqli_query($connection, $sql);
+
+            $sql = "SELECT id, ssl_provider_id, type_id
+                    FROM ssl_fees
+                    WHERE fee_fixed = '0'";
+            $result = mysqli_query($connection, $sql);
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $sql2 = "UPDATE ssl_certs
+                         SET fee_id = '$row->id'
+                         WHERE ssl_provider_id = '$row->ssl_provider_id'
+                           AND type_id = '$row->type_id'
+                           AND fee_fixed = '0'";
+                mysqli_query($connection, $sql2);
+
+                $sql2 = "UPDATE ssl_certs sslc
+                         JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
+                         SET sslc.fee_fixed = '1',
+                             sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
+                         WHERE sslc.ssl_provider_id = '" . $row->ssl_provider_id . "'
+                           AND sslc.type_id = '" . $row->type_id . "'
+                           AND sslc.active NOT IN ('0', '10')";
+                mysqli_query($connection, $sql2);
+
+                $sql2 = "UPDATE ssl_fees
+                         SET fee_fixed = '1',
+                             update_time = '" . mysqli_real_escape_string($connection, $timestamp) . "'
+                         WHERE ssl_provider_id = '$row->ssl_provider_id'
+                           AND type_id = '$row->type_id'";
+                mysqli_query($connection, $sql2);
+
+            }
+
+        }
+
+        return 1;
+
+    }
+
     public function checkMissingFees($type, $connection)
     {
 
         if ($type == "S") {
+
             $sql = "SELECT id
                     FROM ssl_certs
                     WHERE fee_id = '0'
