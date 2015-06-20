@@ -32,7 +32,9 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
+$timestamp = $time->time();
 
 include("update-ssl-fees.inc.php");
 
