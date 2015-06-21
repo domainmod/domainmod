@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
 
-        $_SESSION['missing_ssl_fees'] = $system->checkMissingSslFees($connection);
+        $_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'SSL');
 		include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
 
     } else {

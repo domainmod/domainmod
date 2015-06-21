@@ -224,32 +224,21 @@ class System
 
     }
 
-    public function checkMissingDomainFees($connection)
+    public function checkMissingFees($connection, $type)
     {
 
-        $sql = "SELECT id
-                FROM domains
-                WHERE fee_id = '0'
-                  AND active NOT IN ('0', '10')";
-        $result = mysqli_query($connection, $sql);
+        if ($type == "DOMAINS") {
 
-        if (mysqli_num_rows($result) >= 1) {
-
-            return 1;
+            $table = "domains";
 
         } else {
 
-            return 0;
+            $table = "ssl_certs";
 
         }
 
-    }
-
-    public function checkMissingSslFees($connection)
-    {
-
         $sql = "SELECT id
-                FROM ssl_certs
+                FROM " . $table . "
                 WHERE fee_id = '0'
                   AND active NOT IN ('0', '10')";
         $result = mysqli_query($connection, $sql);
