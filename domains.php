@@ -32,7 +32,6 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $currency = new DomainMOD\Currency();
-$domainDisplay = new DomainMOD\DomainDisplay();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Timestamp();
 
@@ -107,7 +106,21 @@ if ($is_active == "") $is_active = "LIVE";
 
 if ($tld == "0") $tld = "";
 
-$is_active_string = $domainDisplay->getActiveString($is_active);
+if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
+elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
+elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
+elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
+elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
+elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
+elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
+elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
+elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
+elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
+elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
+elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
+elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+
 
 if ($segid != "") {
 
@@ -194,7 +207,29 @@ if ($_SESSION['search_for'] != "") { $search_string = " AND d.domain LIKE '%" . 
 
 if ($sort_by == "") $sort_by = "ed_a";
 
-$sort_by_string = $domainDisplay->getOrder($sort_by);
+if ($sort_by == "ed_a") { $sort_by_string = " ORDER BY d.expiry_date asc, d.domain asc "; }
+elseif ($sort_by == "ed_d") { $sort_by_string = " ORDER BY d.expiry_date desc, d.domain asc "; }
+elseif ($sort_by == "pc_a") { $sort_by_string = " ORDER BY cat.name asc "; }
+elseif ($sort_by == "pc_d") { $sort_by_string = " ORDER BY cat.name desc "; }
+elseif ($sort_by == "dn_a") { $sort_by_string = " ORDER BY d.domain asc "; }
+elseif ($sort_by == "dn_d") { $sort_by_string = " ORDER BY d.domain desc "; }
+elseif ($sort_by == "df_a") { $sort_by_string = " ORDER BY d.total_cost asc "; }
+elseif ($sort_by == "df_d") { $sort_by_string = " ORDER BY d.total_cost desc "; }
+elseif ($sort_by == "dns_a") { $sort_by_string = " ORDER BY dns.name asc "; }
+elseif ($sort_by == "dns_d") { $sort_by_string = " ORDER BY dns.name desc "; }
+elseif ($sort_by == "tld_a") { $sort_by_string = " ORDER BY d.tld asc "; }
+elseif ($sort_by == "tld_d") { $sort_by_string = " ORDER BY d.tld desc "; }
+elseif ($sort_by == "ip_a") { $sort_by_string = " ORDER BY ip.name asc, ip.ip asc"; }
+elseif ($sort_by == "ip_d") { $sort_by_string = " ORDER BY ip.name desc, ip.ip desc"; }
+elseif ($sort_by == "wh_a") { $sort_by_string = " ORDER BY h.name asc"; }
+elseif ($sort_by == "wh_d") { $sort_by_string = " ORDER BY h.name desc"; }
+elseif ($sort_by == "o_a") { $sort_by_string = " ORDER BY o.name asc, d.domain asc "; }
+elseif ($sort_by == "o_d") { $sort_by_string = " ORDER BY o.name desc, d.domain asc "; }
+elseif ($sort_by == "r_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc "; }
+elseif ($sort_by == "r_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
+elseif ($sort_by == "ra_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc "; }
+elseif ($sort_by == "ra_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
+else { $sort_by_string = " ORDER BY d.expiry_date asc, d.domain asc "; }
 
 $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name
 		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
@@ -879,7 +914,20 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // REGISTRAR
-                $is_active_string = $domainDisplay->getActiveString($is_active);
+                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
+                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
+                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
+                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
+                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
+                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
+                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
+                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
+                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
+                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
+                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
+                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
+                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
 
                 if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
@@ -921,7 +969,20 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // REGISTRAR ACCOUNT
-                $is_active_string = $domainDisplay->getActiveString($is_active);
+                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
+                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
+                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
+                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
+                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
+                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
+                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
+                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
+                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
+                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
+                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
+                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
+                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
 
                 if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
@@ -965,7 +1026,20 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // DNS
-                $is_active_string = $domainDisplay->getActiveString($is_active);
+                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
+                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
+                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
+                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
+                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
+                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
+                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
+                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
+                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
+                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
+                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
+                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
+                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
 
                 if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
@@ -1007,7 +1081,20 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // IP ADDRESS
-                $is_active_string = $domainDisplay->getActiveString($is_active);
+                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
+                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
+                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
+                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
+                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
+                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
+                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
+                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
+                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
+                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
+                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
+                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
+                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
 
                 if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
@@ -1049,7 +1136,20 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // WEB HOSTING PROVIDER
-                $is_active_string = $domainDisplay->getActiveString($is_active);
+                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
+                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
+                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
+                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
+                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
+                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
+                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
+                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
+                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
+                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
+                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
+                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
+                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
 
                 if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
@@ -1091,7 +1191,20 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // CATEGORY
-                $is_active_string = $domainDisplay->getActiveString($is_active);
+                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
+                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
+                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
+                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
+                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
+                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
+                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
+                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
+                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
+                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
+                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
+                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
+                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
 
                 if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
                 if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
@@ -1133,7 +1246,20 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // OWNER
-                $is_active_string = $domainDisplay->getActiveString($is_active);
+                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
+                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
+                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
+                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
+                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
+                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
+                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
+                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
+                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
+                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
+                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
+                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
+                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
 
                 if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
@@ -1175,8 +1301,21 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // TLD
-                $is_active_string = $domainDisplay->getActiveStringTld($is_active);
-                
+                if ($is_active == "0") { $is_active_string = " WHERE active = '0' "; }
+                elseif ($is_active == "1") { $is_active_string = " WHERE active = '1' "; }
+                elseif ($is_active == "2") { $is_active_string = " WHERE active = '2' "; }
+                elseif ($is_active == "3") { $is_active_string = " WHERE active = '3' "; }
+                elseif ($is_active == "4") { $is_active_string = " WHERE active = '4' "; }
+                elseif ($is_active == "5") { $is_active_string = " WHERE active = '5' "; }
+                elseif ($is_active == "6") { $is_active_string = " WHERE active = '6' "; }
+                elseif ($is_active == "7") { $is_active_string = " WHERE active = '7' "; }
+                elseif ($is_active == "8") { $is_active_string = " WHERE active = '8' "; }
+                elseif ($is_active == "9") { $is_active_string = " WHERE active = '9' "; }
+                elseif ($is_active == "10") { $is_active_string = " WHERE active = '10' "; }
+                elseif ($is_active == "LIVE") { $is_active_string = " WHERE active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
+                elseif ($is_active == "ALL") { $is_active_string = " WHERE active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                else { $is_active_string = " WHERE active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+
                 if ($pcid != "") { $pcid_string = " AND cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($oid != "") { $oid_string = " AND owner_id = '$oid' "; } else { $oid_string = ""; }
                 if ($dnsid != "") { $dnsid_string = " AND dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
