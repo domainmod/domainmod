@@ -943,17 +943,17 @@ if ($segid != "") {
                 $sql_registrar = "SELECT r.id, r.name
                                   FROM registrars AS r, domains AS d
                                   WHERE r.id = d.registrar_id
-                                  $is_active_string
-                                  $pcid_string
-                                  $oid_string
-                                  $dnsid_string
-                                  $ipid_string
-                                  $whid_string
-                                  $raid_string
-                                  $tld_string
-                                  $search_string
-                                  $quick_search_string
-                                  $segment_string
+                                    $is_active_string
+                                    $pcid_string
+                                    $oid_string
+                                    $dnsid_string
+                                    $ipid_string
+                                    $whid_string
+                                    $raid_string
+                                    $tld_string
+                                    $search_string
+                                    $quick_search_string
+                                    $segment_string
                                   GROUP BY r.name
                                   ORDER BY r.name asc";
                 $result_registrar = mysqli_query($connection, $sql_registrar);
@@ -1330,16 +1330,16 @@ if ($segid != "") {
                 $sql_tld = "SELECT tld, count(*) AS total_tld_count
                             FROM domains
                             $is_active_string
-                            $pcid_string
-                            $oid_string
-                            $dnsid_string
-                            $ipid_string
-                            $whid_string
-                            $rid_string
-                            $raid_string
-                            $search_string
-                            $quick_search_string
-                            $segment_string
+                              $pcid_string
+                              $oid_string
+                              $dnsid_string
+                              $ipid_string
+                              $whid_string
+                              $rid_string
+                              $raid_string
+                              $search_string
+                              $quick_search_string
+                              $segment_string
                             GROUP BY tld
                             ORDER BY tld asc";
                 $result_tld = mysqli_query($connection, $sql_tld);
@@ -1369,17 +1369,17 @@ if ($segid != "") {
                 $sql_active = "SELECT active, count(*) AS total_count
                                FROM domains
                                WHERE id != '0'
-                               $pcid_string
-                               $oid_string
-                               $dnsid_string
-                               $ipid_string
-                               $whid_string
-                               $rid_string
-                               $raid_string
-                               $tld_string
-                               $search_string
-                               $quick_search_string
-                               $segment_string
+                                 $pcid_string
+                                 $oid_string
+                                 $dnsid_string
+                                 $ipid_string
+                                 $whid_string
+                                 $rid_string
+                                 $raid_string
+                                 $tld_string
+                                 $search_string
+                                 $quick_search_string
+                                 $segment_string
                                GROUP BY active
                                ORDER BY active asc";
                 $result_active = mysqli_query($connection, $sql_active);
