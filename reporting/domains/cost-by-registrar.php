@@ -107,7 +107,7 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$number_of_domains_total = $row_grand_total->number_of_domains_total;
 }
 
-$grand_total = $currency->convertAndFormat($grand_total, '', $_SESSION['default_currency_symbol'],
+$grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbol'],
     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
 if ($submission_failed != "1" && $total_rows > 0) {
@@ -203,23 +203,19 @@ if ($submission_failed != "1" && $total_rows > 0) {
 	
 				$per_domain_account = $row->total_cost / $row->number_of_domains;
 
-                $row->total_cost = $currency->convertAndFormat($row->total_cost, '',
-                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                    $_SESSION['default_currency_symbol_space']);
+                $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
+                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-                $per_domain_account = $currency->convertAndFormat($per_domain_account, '',
-                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                    $_SESSION['default_currency_symbol_space']);
+                $per_domain_account = $currency->format($per_domain_account, $_SESSION['default_currency_symbol'],
+                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
                 $per_domain_registrar = $temp_registrar_total / $number_of_domains_registrar;
 
-                $temp_registrar_total = $currency->convertAndFormat($temp_registrar_total, '',
-                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                    $_SESSION['default_currency_symbol_space']);
+                $temp_registrar_total = $currency->format($temp_registrar_total, $_SESSION['default_currency_symbol'],
+                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-                $per_domain_registrar = $currency->convertAndFormat($per_domain_registrar, '',
-                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                    $_SESSION['default_currency_symbol_space']);
+                $per_domain_registrar = $currency->format($per_domain_registrar, $_SESSION['default_currency_symbol'],
+                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
                 $row_contents = array(
                     $row->registrar_name,
@@ -328,21 +324,19 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 		$per_domain_account = $row->total_cost / $row->number_of_domains;
 
-        $row->total_cost = $currency->convertAndFormat($row->total_cost, '', $_SESSION['default_currency_symbol'],
+        $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-        $per_domain_account = $currency->convertAndFormat($per_domain_account, '', $_SESSION['default_currency_symbol'],
+        $per_domain_account = $currency->format($per_domain_account, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
         $per_domain_registrar = $temp_registrar_total / $number_of_domains_registrar;
 
-        $temp_registrar_total = $currency->convertAndFormat($temp_registrar_total, '',
-            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-            $_SESSION['default_currency_symbol_space']);
+        $temp_registrar_total = $currency->format($temp_registrar_total, $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-        $per_domain_registrar = $currency->convertAndFormat($per_domain_registrar, '',
-            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-            $_SESSION['default_currency_symbol_space']);
+        $per_domain_registrar = $currency->format($per_domain_registrar, $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
         if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
 	

@@ -25,69 +25,27 @@ namespace DomainMOD;
 class Currency
 {
 
-    public function convertAndFormat($amount, $conversion, $symbol, $order, $space)
+    public function format($amount, $symbol, $order, $space)
     {
 
-        if ($conversion == "") {
+        if ($order == "1" && $space == "1") {
 
-            if ($order == "0") {
+            $output = number_format($amount, 2, '.', ',') . " " . $symbol;
 
-                if ($space == "0") {
+        } elseif ($order == "1" && $space == "0") {
 
-                    $output = $symbol . number_format($amount, 2, '.', ',');
+            $output = number_format($amount, 2, '.', ',') . $symbol;
 
-                } else {
+        } elseif ($order == "0" && $space == "1") {
 
-                    $output = $symbol . " " . number_format($amount, 2, '.', ',');
-
-                }
-
-            } else {
-
-                if ($space == "0") {
-
-                    $output = number_format($amount, 2, '.', ',') . $symbol;
-
-                } else {
-
-                    $output = number_format($amount, 2, '.', ',') . " " . $symbol;
-
-                }
-
-            }
+            $output = $symbol . " " . number_format($amount, 2, '.', ',');
 
         } else {
 
-            $temp_converted_fee = $amount * $conversion;
-
-            if ($order == "0") {
-
-                if ($space == "0") {
-
-                    $output = $symbol . number_format($temp_converted_fee, 2, '.', ',');
-
-                } else {
-
-                    $output = $symbol . " " . number_format($temp_converted_fee, 2, '.', ',');
-
-                }
-
-            } else {
-
-                if ($space == "0") {
-
-                    $output = number_format($temp_converted_fee, 2, '.', ',') . $symbol;
-
-                } else {
-
-                    $output = number_format($temp_converted_fee, 2, '.', ',') . " " . $symbol;
-
-                }
-
-            }
+            $output = $symbol . number_format($amount, 2, '.', ',');
 
         }
-        
+
         return $output;
 
     }

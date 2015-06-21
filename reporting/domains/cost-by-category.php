@@ -103,7 +103,7 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$number_of_domains_total = $row_grand_total->number_of_domains_total;
 }
 
-$grand_total = $currency->convertAndFormat($grand_total, '', $_SESSION['default_currency_symbol'],
+$grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbol'],
     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
 if ($submission_failed != "1" && $total_rows > 0) {
@@ -170,10 +170,10 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 			$per_domain = $row->total_cost / $row->number_of_domains;
 
-            $per_domain = $currency->convertAndFormat($per_domain, '', $_SESSION['default_currency_symbol'],
+            $per_domain = $currency->format($per_domain, $_SESSION['default_currency_symbol'],
                 $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-            $row->total_cost = $currency->convertAndFormat($row->total_cost, '', $_SESSION['default_currency_symbol'],
+            $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
                 $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
             $row_contents = array(
@@ -244,10 +244,10 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		
 		$per_domain = $row->total_cost / $row->number_of_domains;
 
-        $per_domain = $currency->convertAndFormat($per_domain, '', $_SESSION['default_currency_symbol'],
+        $per_domain = $currency->format($per_domain, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-        $row->total_cost = $currency->convertAndFormat($row->total_cost, '', $_SESSION['default_currency_symbol'],
+        $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']); ?>
 	
 		<tr class="main_table_row_active">

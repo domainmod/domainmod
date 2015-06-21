@@ -196,13 +196,13 @@ if ($export_data == "1") {
 
             }
 
-            $export_initial_fee = $currency->convertAndFormat($temp_initial_fee, '',
+            $export_initial_fee = $currency->format($temp_initial_fee,
                 $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
                 $_SESSION['default_currency_symbol_space']);
 
-            $export_renewal_fee = $currency->convertAndFormat($temp_renewal_fee, '',
-                            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                            $_SESSION['default_currency_symbol_space']);
+            $export_renewal_fee = $currency->format($temp_renewal_fee,
+                $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                $_SESSION['default_currency_symbol_space']);
 
             $row_contents = array(
                 $domain_status,

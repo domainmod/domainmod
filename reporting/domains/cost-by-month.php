@@ -100,7 +100,7 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $number_of_domains_total = $row_grand_total->number_of_domains_total;
 }
 
-$grand_total = $currency->convertAndFormat($grand_total, '', $_SESSION['default_currency_symbol'],
+$grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbol'],
     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
 if ($submission_failed != "1" && $total_rows > 0) {
@@ -189,7 +189,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
                 $monthly_cost = $row_monthly_cost->monthly_cost;
             }
 
-            $monthly_cost = $currency->convertAndFormat($monthly_cost, '', $_SESSION['default_currency_symbol'],
+            $monthly_cost = $currency->format($monthly_cost, $_SESSION['default_currency_symbol'],
                 $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
             if ($row->month == "1") { $display_month = "January"; }
@@ -220,7 +220,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
                 $yearly_cost = $row_yearly_cost->yearly_cost;
             }
 
-            $yearly_cost = $currency->convertAndFormat($yearly_cost, '', $_SESSION['default_currency_symbol'],
+            $yearly_cost = $currency->format($yearly_cost, $_SESSION['default_currency_symbol'],
                 $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
             $row_contents = array(
@@ -316,7 +316,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
             $monthly_cost = $row_monthly_cost->monthly_cost;
         }
 
-        $monthly_cost = $currency->convertAndFormat($monthly_cost, '', $_SESSION['default_currency_symbol'],
+        $monthly_cost = $currency->format($monthly_cost, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
         if ($row->month == "1") { $display_month = "January"; }
@@ -349,7 +349,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                 $yearly_cost = $row_yearly_cost->yearly_cost;
             }
 
-            $yearly_cost = $currency->convertAndFormat($yearly_cost, '', $_SESSION['default_currency_symbol'],
+            $yearly_cost = $currency->format($yearly_cost, $_SESSION['default_currency_symbol'],
                 $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
             ?>
 

@@ -184,7 +184,7 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$grand_total = $row_grand_total->grand_total;
 }
 
-$grand_total = $currency->convertAndFormat($grand_total, '', $_SESSION['default_currency_symbol'],
+$grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbol'],
     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
 if ($export_data == "1") {
@@ -455,18 +455,18 @@ if ($export_data == "1") {
 		elseif ($row->active == "5") { $ssl_status = "PENDING (REGISTRATION)"; } 
 		else { $ssl_status = "ERROR -- PROBLEM WITH CODE IN SSL-CERTS.PHP"; }
 
-        $export_initial_fee = $currency->convertAndFormat($temp_initial_fee, '',
-                        $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                        $_SESSION['default_currency_symbol_space']);
+        $export_initial_fee = $currency->format($temp_initial_fee,
+            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+            $_SESSION['default_currency_symbol_space']);
 
-        $export_renewal_fee = $currency->convertAndFormat($temp_renewal_fee, '', $_SESSION['default_currency_symbol'],
+        $export_renewal_fee = $currency->format($temp_renewal_fee, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-        $export_misc_fee = $currency->convertAndFormat($temp_misc_fee, '',
-                        $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                        $_SESSION['default_currency_symbol_space']);
+        $export_misc_fee = $currency->format($temp_misc_fee,
+            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+            $_SESSION['default_currency_symbol_space']);
 
-        $export_total_cost = $currency->convertAndFormat($temp_total_cost, '', $_SESSION['default_currency_symbol'],
+        $export_total_cost = $currency->format($temp_total_cost, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
         unset($row_contents);
@@ -1076,9 +1076,8 @@ echo "</select>";
 	<td class="main_table_cell_active">
 		<a class="invisiblelink" href="assets/edit/ssl-provider-fees.php?sslpid=<?php echo $row->sslp_id; ?>">
 		<?php
-		$temp_amount = $currency->convertAndFormat($row->total_cost, '',
-                        $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                        $_SESSION['default_currency_symbol_space']);
+		$temp_amount = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
         echo $temp_amount;
         ?>
         </a>

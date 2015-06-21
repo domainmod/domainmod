@@ -132,13 +132,13 @@ if ($total_rows > 0) {
 				$new_ssl_provider = $row->ssl_provider;
 				$new_type = $row->type;
 
-                $row->initial_fee = $currency->convertAndFormat($row->initial_fee, '', $row->symbol, $row->symbol_order,
+                $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
                     $row->symbol_space);
 
-                $row->renewal_fee = $currency->convertAndFormat($row->renewal_fee, '', $row->symbol, $row->symbol_order,
+                $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order,
                     $row->symbol_space);
 
-                $row->misc_fee = $currency->convertAndFormat($row->misc_fee, '', $row->symbol, $row->symbol_order,
+                $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order,
                     $row->symbol_space);
 
                 unset($row_contents);
@@ -259,21 +259,21 @@ if ($total_rows > 0) { ?>
                 <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/ssl-provider-fees.php?sslpid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a></td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->initial_fee = $currency->convertAndFormat($row->initial_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
                     echo $row->initial_fee;
                     ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->renewal_fee = $currency->convertAndFormat($row->renewal_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
                     echo $row->renewal_fee;
                     ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->misc_fee = $currency->convertAndFormat($row->misc_fee, '', $row->symbol, $row->symbol_order,
+                    $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order,
                         $row->symbol_space);
                     echo $row->misc_fee;
                     ?>
@@ -315,22 +315,22 @@ if ($total_rows > 0) { ?>
                 <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/ssl-provider-fees.php?sslpid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a></td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->initial_fee = $currency->convertAndFormat($row->initial_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
                     echo $row->initial_fee;
                     ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->renewal_fee = $currency->convertAndFormat($row->renewal_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
                     echo $row->renewal_fee;
                     ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->misc_fee = $currency->convertAndFormat($row->misc_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
                     echo $row->misc_fee;
                     ?>
                 </td>

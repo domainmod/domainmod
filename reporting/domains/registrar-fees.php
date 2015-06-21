@@ -132,19 +132,19 @@ if ($total_rows > 0) {
 				$new_registrar = $row->registrar;
 				$new_tld = $row->tld;
 
-                $row->initial_fee = $currency->convertAndFormat($row->initial_fee, '', $row->symbol, $row->symbol_order,
+                $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
                     $row->symbol_space);
 
-                $row->renewal_fee = $currency->convertAndFormat($row->renewal_fee, '', $row->symbol, $row->symbol_order,
+                $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order,
                     $row->symbol_space);
 
-                $row->transfer_fee = $currency->convertAndFormat($row->transfer_fee, '', $row->symbol,
+                $row->transfer_fee = $currency->format($row->transfer_fee, $row->symbol,
                     $row->symbol_order, $row->symbol_space);
 
-                $row->privacy_fee = $currency->convertAndFormat($row->privacy_fee, '', $row->symbol, $row->symbol_order,
+                $row->privacy_fee = $currency->format($row->privacy_fee, $row->symbol, $row->symbol_order,
                     $row->symbol_space);
 
-                $row->misc_fee = $currency->convertAndFormat($row->misc_fee, '', $row->symbol, $row->symbol_order,
+                $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order,
                     $row->symbol_space);
 
                 unset($row_contents);
@@ -273,36 +273,36 @@ if ($total_rows > 0) { ?>
                 <td class="main_table_cell_active">
                     <?php
 
-                    $row->initial_fee = $currency->convertAndFormat($row->initial_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
 
                     $row->initial_fee;
                     ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->renewal_fee = $currency->convertAndFormat($row->renewal_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
                     echo $row->renewal_fee;
                     ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->transfer_fee = $currency->convertAndFormat($row->transfer_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->transfer_fee = $currency->format($row->transfer_fee, $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
                     echo $row->transfer_fee;
                     ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->privacy_fee = $currency->convertAndFormat($row->privacy_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->privacy_fee = $currency->format($row->privacy_fee, $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
                     echo $row->privacy_fee;
                     ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->misc_fee = $currency->convertAndFormat($row->misc_fee, '', $row->symbol, $row->symbol_order,
+                    $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order,
                         $row->symbol_space);
                     echo $row->misc_fee;
                     ?>
@@ -344,36 +344,36 @@ if ($total_rows > 0) { ?>
                 <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id; ?>">.<?php echo $row->tld; ?></a></td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->initial_fee = $currency->convertAndFormat($row->initial_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
                     echo $row->initial_fee;
                     ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->renewal_fee = $currency->convertAndFormat($row->renewal_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
                     echo $row->renewal_fee;
                     ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->transfer_fee = $currency->convertAndFormat($row->transfer_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->transfer_fee = $currency->format($row->transfer_fee, $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
                     echo $row->transfer_fee;
                     ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->privacy_fee = $currency->convertAndFormat($row->privacy_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->privacy_fee = $currency->format($row->privacy_fee, $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
                     echo $row->privacy_fee;
                     ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->misc_fee = $currency->convertAndFormat($row->misc_fee, '', $row->symbol,
-                        $row->symbol_order, $row->symbol_space);
+                    $row->misc_fee = $currency->format($row->misc_fee, '', $row->symbol, $row->symbol_order,
+                        $row->symbol_space);
                     echo $row->misc_fee;
                     ?>
                 </td>

@@ -106,7 +106,7 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 	$number_of_certs_total = $row_grand_total->number_of_certs_total;
 }
 
-$grand_total = $currency->convertAndFormat($grand_total, '', $_SESSION['default_currency_symbol'],
+$grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbol'],
     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
 if ($submission_failed != "1" && $total_rows > 0) {
@@ -202,23 +202,19 @@ if ($submission_failed != "1" && $total_rows > 0) {
 	
 				$per_cert_account = $row->total_cost / $row->number_of_certs;
 
-                $row->total_cost = $currency->convertAndFormat($row->total_cost, '',
-                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                    $_SESSION['default_currency_symbol_space']);
+                $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
+                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-                $per_cert_account = $currency->convertAndFormat($per_cert_account, '',
-                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                    $_SESSION['default_currency_symbol_space']);
+                $per_cert_account = $currency->format($per_cert_account, $_SESSION['default_currency_symbol'],
+                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
                 $per_cert_provider = $temp_provider_total / $number_of_certs_provider;
 
-                $temp_provider_total = $currency->convertAndFormat($temp_provider_total, '',
-                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                    $_SESSION['default_currency_symbol_space']);
+                $temp_provider_total = $currency->format($temp_provider_total, $_SESSION['default_currency_symbol'],
+                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-                $per_cert_provider = $currency->convertAndFormat($per_cert_provider, '',
-                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                    $_SESSION['default_currency_symbol_space']);
+                $per_cert_provider = $currency->format($per_cert_provider, $_SESSION['default_currency_symbol'],
+                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
                 $row_contents = array(
                     $row->provider_name,
@@ -326,19 +322,18 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 		$per_cert_account = $row->total_cost / $row->number_of_certs;
 
-        $row->total_cost = $currency->convertAndFormat($row->total_cost, '', $_SESSION['default_currency_symbol'],
+        $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-        $per_cert_account = $currency->convertAndFormat($per_cert_account, '', $_SESSION['default_currency_symbol'],
+        $per_cert_account = $currency->format($per_cert_account, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
         $per_cert_provider = $temp_provider_total / $number_of_certs_provider;
 
-        $temp_provider_total = $currency->convertAndFormat($temp_provider_total, '',
-            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-            $_SESSION['default_currency_symbol_space']);
+        $temp_provider_total = $currency->format($temp_provider_total, $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-        $per_cert_provider = $currency->convertAndFormat($per_cert_provider, '', $_SESSION['default_currency_symbol'],
+        $per_cert_provider = $currency->format($per_cert_provider, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
         if ($new_provider != $last_provider || $new_provider == "") { ?>

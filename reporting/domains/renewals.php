@@ -98,7 +98,7 @@ while ($row_cost = mysqli_fetch_object($result_cost)) {
 	$temp_total_cost = $temp_total_cost + $row_cost->converted_renewal_fee;
 }
 
-$total_cost = $currency->convertAndFormat($temp_total_cost, '', $_SESSION['default_currency_symbol'],
+$total_cost = $currency->format($temp_total_cost, $_SESSION['default_currency_symbol'],
     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
 if ($export_data == "1") {
@@ -208,9 +208,8 @@ if ($export_data == "1") {
 			$privacy_status = "Public";
 		}
 
-        $export_renewal_fee = $currency->convertAndFormat($row->converted_renewal_fee, '',
-            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-            $_SESSION['default_currency_symbol_space']);
+        $export_renewal_fee = $currency->format($row->converted_renewal_fee, $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
         unset($row_contents);
         $count = 0;
@@ -378,9 +377,8 @@ if ($export_data == "1") {
 <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
 	<td class="main_table_cell_active">
 		<?php
-        $temp_amount = $currency->convertAndFormat($row->converted_renewal_fee, '',
-            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-            $_SESSION['default_currency_symbol_space']);
+        $temp_amount = $currency->format($row->converted_renewal_fee, $_SESSION['default_currency_symbol'],
+            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
         echo $temp_amount;
 		?>
 	</td>
