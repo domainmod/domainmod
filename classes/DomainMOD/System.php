@@ -113,38 +113,36 @@ class System
 
     }
 
-    public function updateFees($connection, $timestamp, $type)
+    public function updateDomainFees($connection, $timestamp)
     {
 
-        if ($type == "DOMAINS") {
-
-            $sql = "UPDATE domains
+        $sql = "UPDATE domains
                     SET fee_fixed = '0',
                         fee_id = '0'
                     WHERE active NOT IN ('0', '10')";
-            mysqli_query($connection, $sql);
+        mysqli_query($connection, $sql);
 
-            $sql = "UPDATE fees
+        $sql = "UPDATE fees
                     SET fee_fixed = '0',
                         update_time = '" . $timestamp . "'";
-            mysqli_query($connection, $sql);
+        mysqli_query($connection, $sql);
 
-            $sql = "SELECT id, registrar_id, tld
+        $sql = "SELECT id, registrar_id, tld
                     FROM fees
                     WHERE fee_fixed = '0'";
-            $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($connection, $sql);
 
-            while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-                $sql2 = "UPDATE domains
+            $sql2 = "UPDATE domains
                          SET fee_id = '" . $row->id . "'
                          WHERE registrar_id = '" . $row->registrar_id . "'
                            AND tld = '" . $row->tld . "'
                            AND fee_fixed = '0'
                            AND active NOT IN ('0', '10')";
-                mysqli_query($connection, $sql2);
+            mysqli_query($connection, $sql2);
 
-                $sql2 = "UPDATE domains d
+            $sql2 = "UPDATE domains d
                          JOIN fees f ON d.fee_id = f.id
                          SET d.fee_fixed = '1',
                              d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
@@ -152,9 +150,9 @@ class System
                            AND d.tld = '" . $row->tld . "'
                            AND d.privacy = '1'
                            AND d.active NOT IN ('0', '10')";
-                mysqli_query($connection, $sql2);
+            mysqli_query($connection, $sql2);
 
-                $sql2 = "UPDATE domains d
+            $sql2 = "UPDATE domains d
                          JOIN fees f ON d.fee_id = f.id
                          SET d.fee_fixed = '1',
                              d.total_cost = f.renewal_fee + f.misc_fee
@@ -162,60 +160,63 @@ class System
                            AND d.tld = '" . $row->tld . "'
                            AND d.privacy = '0'
                            AND d.active NOT IN ('0', '10')";
-                mysqli_query($connection, $sql2);
+            mysqli_query($connection, $sql2);
 
-                $sql2 = "UPDATE fees
+            $sql2 = "UPDATE fees
                          SET fee_fixed = '1',
                              update_time = '" . $timestamp . "'
                          WHERE registrar_id = '" . $row->registrar_id . "'
                            AND tld = '" . $row->tld . "'";
-                mysqli_query($connection, $sql2);
+            mysqli_query($connection, $sql2);
 
-            }
+        }
 
-        } else {
+        return 1;
 
-            $sql = "UPDATE ssl_certs
+    }
+
+    public function updateSslFees($connection, $timestamp)
+    {
+
+        $sql = "UPDATE ssl_certs
                     SET fee_fixed = '0',
                         fee_id = '0'";
-            mysqli_query($connection, $sql);
+        mysqli_query($connection, $sql);
 
-            $sql = "UPDATE ssl_fees
+        $sql = "UPDATE ssl_fees
                     SET fee_fixed = '0',
                         update_time = '" . $timestamp . "'";
-            mysqli_query($connection, $sql);
+        mysqli_query($connection, $sql);
 
-            $sql = "SELECT id, ssl_provider_id, type_id
+        $sql = "SELECT id, ssl_provider_id, type_id
                     FROM ssl_fees
                     WHERE fee_fixed = '0'";
-            $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($connection, $sql);
 
-            while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-                $sql2 = "UPDATE ssl_certs
+            $sql2 = "UPDATE ssl_certs
                          SET fee_id = '$row->id'
                          WHERE ssl_provider_id = '$row->ssl_provider_id'
                            AND type_id = '$row->type_id'
                            AND fee_fixed = '0'";
-                mysqli_query($connection, $sql2);
+            mysqli_query($connection, $sql2);
 
-                $sql2 = "UPDATE ssl_certs sslc
+            $sql2 = "UPDATE ssl_certs sslc
                          JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
                          SET sslc.fee_fixed = '1',
                              sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
                          WHERE sslc.ssl_provider_id = '" . $row->ssl_provider_id . "'
                            AND sslc.type_id = '" . $row->type_id . "'
                            AND sslc.active NOT IN ('0', '10')";
-                mysqli_query($connection, $sql2);
+            mysqli_query($connection, $sql2);
 
-                $sql2 = "UPDATE ssl_fees
+            $sql2 = "UPDATE ssl_fees
                          SET fee_fixed = '1',
                              update_time = '" . mysqli_real_escape_string($connection, $timestamp) . "'
                          WHERE ssl_provider_id = '$row->ssl_provider_id'
                            AND type_id = '$row->type_id'";
-                mysqli_query($connection, $sql2);
-
-            }
+            mysqli_query($connection, $sql2);
 
         }
 

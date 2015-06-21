@@ -36,7 +36,7 @@ $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 
-$update = $system->updateFees($connection, $timestamp, 'SSL');
+$update = $system->updateSslFees($connection, $timestamp);
 
 $_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'SSL');
 
