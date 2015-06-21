@@ -173,7 +173,7 @@ class System
 
             }
 
-        } elseif ($type == "SSL") {
+        } else {
 
             $sql = "UPDATE ssl_certs
                     SET fee_fixed = '0',
@@ -233,7 +233,7 @@ class System
                     WHERE fee_id = '0'
                       AND active NOT IN ('0', '10')";
 
-        } elseif ($type == "SSL") {
+        } else {
 
             $sql = "SELECT id
                     FROM ssl_certs
