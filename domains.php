@@ -32,6 +32,7 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $currency = new DomainMOD\Currency();
+$domainDisplay = new DomainMOD\DomainDisplay();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Timestamp();
 
@@ -106,19 +107,7 @@ if ($is_active == "") $is_active = "LIVE";
 
 if ($tld == "0") $tld = "";
 
-if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
-elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
-elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
-elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
-elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
-elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
-elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
-elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
-elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
-elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
-elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
-elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; }
-elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; }
+$is_active_string = $domainDisplay->getActiveString($is_active);
 
 if ($segid != "") {
 
@@ -205,28 +194,7 @@ if ($_SESSION['search_for'] != "") { $search_string = " AND d.domain LIKE '%" . 
 
 if ($sort_by == "") $sort_by = "ed_a";
 
-if ($sort_by == "ed_a") { $sort_by_string = " ORDER BY d.expiry_date asc, d.domain asc "; }
-elseif ($sort_by == "ed_d") { $sort_by_string = " ORDER BY d.expiry_date desc, d.domain asc "; }
-elseif ($sort_by == "pc_a") { $sort_by_string = " ORDER BY cat.name asc "; }
-elseif ($sort_by == "pc_d") { $sort_by_string = " ORDER BY cat.name desc "; }
-elseif ($sort_by == "dn_a") { $sort_by_string = " ORDER BY d.domain asc "; }
-elseif ($sort_by == "dn_d") { $sort_by_string = " ORDER BY d.domain desc "; }
-elseif ($sort_by == "df_a") { $sort_by_string = " ORDER BY d.total_cost asc "; }
-elseif ($sort_by == "df_d") { $sort_by_string = " ORDER BY d.total_cost desc "; }
-elseif ($sort_by == "dns_a") { $sort_by_string = " ORDER BY dns.name asc "; }
-elseif ($sort_by == "dns_d") { $sort_by_string = " ORDER BY dns.name desc "; }
-elseif ($sort_by == "tld_a") { $sort_by_string = " ORDER BY d.tld asc "; }
-elseif ($sort_by == "tld_d") { $sort_by_string = " ORDER BY d.tld desc "; }
-elseif ($sort_by == "ip_a") { $sort_by_string = " ORDER BY ip.name asc, ip.ip asc"; }
-elseif ($sort_by == "ip_d") { $sort_by_string = " ORDER BY ip.name desc, ip.ip desc"; }
-elseif ($sort_by == "wh_a") { $sort_by_string = " ORDER BY h.name asc"; }
-elseif ($sort_by == "wh_d") { $sort_by_string = " ORDER BY h.name desc"; }
-elseif ($sort_by == "o_a") { $sort_by_string = " ORDER BY o.name asc, d.domain asc "; }
-elseif ($sort_by == "o_d") { $sort_by_string = " ORDER BY o.name desc, d.domain asc "; }
-elseif ($sort_by == "r_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc "; }
-elseif ($sort_by == "r_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
-elseif ($sort_by == "ra_a") { $sort_by_string = " ORDER BY r.name asc, d.domain asc "; }
-elseif ($sort_by == "ra_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
+$sort_by_string = $domainDisplay->getOrder($sort_by);
 
 $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name
 		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
@@ -420,7 +388,7 @@ if ($export_data == "1") {
         $row_contents = array('[Segment Results]');
         $export->writeRow($export_file, $row_contents);
 
-        $sql_filter = "SELECT name
+        $sql_filter = "SELECT `name`
 					   FROM segments
 					   WHERE id = '" . $segid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
@@ -507,7 +475,7 @@ if ($export_data == "1") {
 
     if ($rid > 0) {
 
-        $sql_filter = "SELECT name
+        $sql_filter = "SELECT `name`
 					   FROM registrars
 					   WHERE id = '" . $rid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
@@ -547,7 +515,7 @@ if ($export_data == "1") {
 
     if ($dnsid > 0) {
 
-        $sql_filter = "SELECT name
+        $sql_filter = "SELECT `name`
 					   FROM dns
 					   WHERE id = '" . $dnsid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
@@ -566,7 +534,7 @@ if ($export_data == "1") {
 
     if ($ipid > 0) {
 
-        $sql_filter = "SELECT name, ip
+        $sql_filter = "SELECT `name`, ip
 					   FROM ip_addresses
 					   WHERE id = '" . $ipid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
@@ -585,7 +553,7 @@ if ($export_data == "1") {
 
     if ($whid > 0) {
 
-        $sql_filter = "SELECT name
+        $sql_filter = "SELECT `name`
 					   FROM hosting
 					   WHERE id = '" . $whid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
@@ -604,7 +572,7 @@ if ($export_data == "1") {
 
     if ($pcid > 0) {
 
-        $sql_filter = "SELECT name
+        $sql_filter = "SELECT `name`
 					   FROM categories
 					   WHERE id = '" . $pcid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
@@ -623,7 +591,7 @@ if ($export_data == "1") {
 
     if ($oid > 0) {
 
-        $sql_filter = "SELECT name
+        $sql_filter = "SELECT `name`
 					   FROM owners
 					   WHERE id = '" . $oid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
@@ -686,9 +654,9 @@ if ($export_data == "1") {
 
     $export->writeBlankRow($export_file);
 
-    $sql_field = "SELECT name
+    $sql_field = "SELECT `name`
 				  FROM domain_fields
-				  ORDER BY name";
+				  ORDER BY `name`";
     $result_field = mysqli_query($connection, $sql_field);
 
     unset($row_contents);
@@ -802,7 +770,7 @@ if ($export_data == "1") {
 
         $sql_field = "SELECT field_name
 					  FROM domain_fields
-					  ORDER BY name";
+					  ORDER BY `name`";
         $result_field = mysqli_query($connection, $sql_field);
 
         if (mysqli_num_rows($result_field) > 0) {
@@ -894,18 +862,9 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // SEGMENT
-                if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
-                if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
-                if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
-                if ($ipid != "") { $ipid_string = " AND d.ip_id = '$ipid' "; } else { $ipid_string = ""; }
-                if ($whid != "") { $whid_string = " AND d.hosting_id = '$whid' "; } else { $whid_string = ""; }
-                if ($rid != "") { $rid_string = " AND d.registrar_id = '$rid' "; } else { $rid_string = ""; }
-                if ($raid != "") { $raid_string = " AND d.account_id = '$raid' "; } else { $raid_string = ""; }
-                if ($tld != "") { $tld_string = " AND d.tld = '$tld' "; } else { $tld_string = ""; }
-
-                $sql_segment = "SELECT id, name
-				FROM segments
-				ORDER BY name asc";
+                $sql_segment = "SELECT id, `name`
+                                FROM segments
+                                ORDER BY `name` asc";
                 $result_segment = mysqli_query($connection, $sql_segment);
 
                 echo "<select name=\"segid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
@@ -920,19 +879,7 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // REGISTRAR
-                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
-                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
-                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
-                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
-                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
-                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
-                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
-                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
-                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
-                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
-                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
-                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
-                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                $is_active_string = $domainDisplay->getActiveString($is_active);
 
                 if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
@@ -946,21 +893,21 @@ if ($segid != "") {
                 if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
                 $sql_registrar = "SELECT r.id, r.name
-				  FROM registrars AS r, domains AS d
-				  WHERE r.id = d.registrar_id
-				    $is_active_string
-				    $pcid_string
-				    $oid_string
-				    $dnsid_string
-				    $ipid_string
-				    $whid_string
-				    $raid_string
-				    $tld_string
-				    $search_string
-					$quick_search_string
-					$segment_string
-				  GROUP BY r.name
-				  ORDER BY r.name asc";
+                                  FROM registrars AS r, domains AS d
+                                  WHERE r.id = d.registrar_id
+                                  $is_active_string
+                                  $pcid_string
+                                  $oid_string
+                                  $dnsid_string
+                                  $ipid_string
+                                  $whid_string
+                                  $raid_string
+                                  $tld_string
+                                  $search_string
+                                  $quick_search_string
+                                  $segment_string
+                                  GROUP BY r.name
+                                  ORDER BY r.name asc";
                 $result_registrar = mysqli_query($connection, $sql_registrar);
                 echo "<select name=\"rid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
                 echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Registrar - ALL</option>";
@@ -974,19 +921,7 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // REGISTRAR ACCOUNT
-                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
-                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
-                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
-                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
-                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
-                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
-                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
-                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
-                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
-                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
-                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
-                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
-                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                $is_active_string = $domainDisplay->getActiveString($is_active);
 
                 if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
@@ -1000,23 +935,23 @@ if ($segid != "") {
                 if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
                 $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS o_name
-				FROM registrar_accounts AS ra, registrars AS r, owners AS o, domains AS d
-				WHERE ra.registrar_id = r.id
-				  AND ra.owner_id = o.id
-				  AND ra.id = d.account_id
-				  $is_active_string
-				  $pcid_string
-				  $oid_string
-				  $dnsid_string
-				  $ipid_string
-				  $whid_string
-				  $rid_string
-				  $tld_string
-				  $search_string
-				  $quick_search_string
-				  $segment_string
-				GROUP BY r.name, o.name, ra.username
-				ORDER BY r.name asc, o.name asc, ra.username asc";
+                                FROM registrar_accounts AS ra, registrars AS r, owners AS o, domains AS d
+                                WHERE ra.registrar_id = r.id
+                                  AND ra.owner_id = o.id
+                                  AND ra.id = d.account_id
+                                  $is_active_string
+                                  $pcid_string
+                                  $oid_string
+                                  $dnsid_string
+                                  $ipid_string
+                                  $whid_string
+                                  $rid_string
+                                  $tld_string
+                                  $search_string
+                                  $quick_search_string
+                                  $segment_string
+                                GROUP BY r.name, o.name, ra.username
+                                ORDER BY r.name asc, o.name asc, ra.username asc";
                 $result_account = mysqli_query($connection, $sql_account);
                 echo "<select name=\"raid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
                 echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Registrar Account - ALL</option>";
@@ -1030,19 +965,7 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // DNS
-                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
-                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
-                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
-                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
-                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
-                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
-                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
-                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
-                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
-                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
-                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
-                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
-                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                $is_active_string = $domainDisplay->getActiveString($is_active);
 
                 if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
@@ -1056,21 +979,21 @@ if ($segid != "") {
                 if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
                 $sql_dns = "SELECT dns.id, dns.name
-			FROM dns AS dns, domains AS d
-			WHERE dns.id = d.dns_id
-			  $is_active_string
-			  $pcid_string
-			  $oid_string
-			  $ipid_string
-			  $whid_string
-			  $rid_string
-			  $raid_string
-			  $tld_string
-			  $search_string
-			  $quick_search_string
-			  $segment_string
-			GROUP BY dns.name
-			ORDER BY dns.name asc";
+                            FROM dns AS dns, domains AS d
+                            WHERE dns.id = d.dns_id
+                              $is_active_string
+                              $pcid_string
+                              $oid_string
+                              $ipid_string
+                              $whid_string
+                              $rid_string
+                              $raid_string
+                              $tld_string
+                              $search_string
+                              $quick_search_string
+                              $segment_string
+                            GROUP BY dns.name
+                            ORDER BY dns.name asc";
                 $result_dns = mysqli_query($connection, $sql_dns);
                 echo "<select name=\"dnsid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
                 echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">DNS Profile - ALL</option>";
@@ -1084,19 +1007,7 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // IP ADDRESS
-                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
-                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
-                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
-                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
-                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
-                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
-                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
-                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
-                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
-                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
-                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
-                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
-                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                $is_active_string = $domainDisplay->getActiveString($is_active);
 
                 if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
@@ -1110,21 +1021,21 @@ if ($segid != "") {
                 if ($segid != "") { $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
                 $sql_ip = "SELECT ip.id, ip.name, ip.ip
-			   FROM ip_addresses AS ip, domains AS d
-			   WHERE ip.id = d.ip_id
-				 $is_active_string
-				 $pcid_string
-				 $oid_string
-				 $dnsid_string
-				 $whid_string
-				 $rid_string
-				 $raid_string
-				 $tld_string
-				 $search_string
-				 $quick_search_string
-				 $segment_string
-			   GROUP BY ip.name
-			   ORDER BY ip.name asc";
+                           FROM ip_addresses AS ip, domains AS d
+                           WHERE ip.id = d.ip_id
+                             $is_active_string
+                             $pcid_string
+                             $oid_string
+                             $dnsid_string
+                             $whid_string
+                             $rid_string
+                             $raid_string
+                             $tld_string
+                             $search_string
+                             $quick_search_string
+                             $segment_string
+                           GROUP BY ip.name
+                           ORDER BY ip.name asc";
                 $result_ip = mysqli_query($connection, $sql_ip);
                 echo "<select name=\"ipid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
                 echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">IP Address - ALL</option>";
@@ -1138,19 +1049,7 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // WEB HOSTING PROVIDER
-                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
-                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
-                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
-                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
-                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
-                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
-                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
-                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
-                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
-                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
-                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
-                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
-                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                $is_active_string = $domainDisplay->getActiveString($is_active);
 
                 if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
@@ -1164,21 +1063,21 @@ if ($segid != "") {
                 if ($segid != "") { $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
                 $sql_hosting = "SELECT h.id, h.name
-					FROM hosting AS h, domains AS d
-					WHERE h.id = d.hosting_id
-					  $is_active_string
-					  $pcid_string
-					  $oid_string
-					  $dnsid_string
-					  $ipid_string
-					  $rid_string
-					  $raid_string
-					  $tld_string
-					  $search_string
-					  $quick_search_string
-					  $segment_string
-					GROUP BY h.name
-					ORDER BY h.name asc";
+                                FROM hosting AS h, domains AS d
+                                WHERE h.id = d.hosting_id
+                                  $is_active_string
+                                  $pcid_string
+                                  $oid_string
+                                  $dnsid_string
+                                  $ipid_string
+                                  $rid_string
+                                  $raid_string
+                                  $tld_string
+                                  $search_string
+                                  $quick_search_string
+                                  $segment_string
+                                GROUP BY h.name
+                                ORDER BY h.name asc";
                 $result_hosting = mysqli_query($connection, $sql_hosting);
                 echo "<select name=\"whid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
                 echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Web Hosting Provider - ALL</option>";
@@ -1192,19 +1091,7 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // CATEGORY
-                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
-                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
-                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
-                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
-                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
-                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
-                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
-                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
-                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
-                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
-                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
-                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
-                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                $is_active_string = $domainDisplay->getActiveString($is_active);
 
                 if ($oid != "") { $oid_string = " AND d.owner_id = '$oid' "; } else { $oid_string = ""; }
                 if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
@@ -1218,21 +1105,21 @@ if ($segid != "") {
                 if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
                 $sql_category = "SELECT c.id, c.name
-				 FROM categories AS c, domains AS d
-				 WHERE c.id = d.cat_id
-				   $is_active_string
-				   $oid_string
-				   $dnsid_string
-				   $ipid_string
-				   $whid_string
-				   $rid_string
-				   $raid_string
-				   $tld_string
-				   $search_string
-				   $quick_search_string
-				   $segment_string
-				 GROUP BY c.name
-				 ORDER BY c.name asc";
+                                 FROM categories AS c, domains AS d
+                                 WHERE c.id = d.cat_id
+                                   $is_active_string
+                                   $oid_string
+                                   $dnsid_string
+                                   $ipid_string
+                                   $whid_string
+                                   $rid_string
+                                   $raid_string
+                                   $tld_string
+                                   $search_string
+                                   $quick_search_string
+                                   $segment_string
+                                 GROUP BY c.name
+                                 ORDER BY c.name asc";
                 $result_category = mysqli_query($connection, $sql_category);
                 echo "<select name=\"pcid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
                 echo "<option value=\"domains.php?pcid=&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Category - ALL</option>";
@@ -1246,19 +1133,7 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // OWNER
-                if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
-                elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
-                elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
-                elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
-                elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
-                elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
-                elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
-                elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
-                elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
-                elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
-                elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
-                elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
-                elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+                $is_active_string = $domainDisplay->getActiveString($is_active);
 
                 if ($pcid != "") { $pcid_string = " AND d.cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($dnsid != "") { $dnsid_string = " AND d.dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
@@ -1272,21 +1147,21 @@ if ($segid != "") {
                 if ($segid != "") { $segment_string = " AND d.domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
                 $sql_owner = "SELECT o.id, o.name
-			  FROM owners AS o, domains AS d
-			  WHERE o.id = d.owner_id
-				$is_active_string
-				$pcid_string
-				$dnsid_string
-				$ipid_string
-				$whid_string
-				$rid_string
-				$raid_string
-				$tld_string
-				$search_string
-				$quick_search_string
-				$segment_string
-			  GROUP BY o.name
-			  ORDER BY o.name asc";
+                              FROM owners AS o, domains AS d
+                              WHERE o.id = d.owner_id
+                                $is_active_string
+                                $pcid_string
+                                $dnsid_string
+                                $ipid_string
+                                $whid_string
+                                $rid_string
+                                $raid_string
+                                $tld_string
+                                $search_string
+                                $quick_search_string
+                                $segment_string
+                              GROUP BY o.name
+                              ORDER BY o.name asc";
                 $result_owner = mysqli_query($connection, $sql_owner);
                 echo "<select name=\"oid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
                 echo "<option value=\"domains.php?pcid=$pcid&oid=&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Owner - ALL</option>";
@@ -1300,20 +1175,8 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // TLD
-                if ($is_active == "0") { $is_active_string = " WHERE active = '0' "; }
-                elseif ($is_active == "1") { $is_active_string = " WHERE active = '1' "; }
-                elseif ($is_active == "2") { $is_active_string = " WHERE active = '2' "; }
-                elseif ($is_active == "3") { $is_active_string = " WHERE active = '3' "; }
-                elseif ($is_active == "4") { $is_active_string = " WHERE active = '4' "; }
-                elseif ($is_active == "5") { $is_active_string = " WHERE active = '5' "; }
-                elseif ($is_active == "6") { $is_active_string = " WHERE active = '6' "; }
-                elseif ($is_active == "7") { $is_active_string = " WHERE active = '7' "; }
-                elseif ($is_active == "8") { $is_active_string = " WHERE active = '8' "; }
-                elseif ($is_active == "9") { $is_active_string = " WHERE active = '9' "; }
-                elseif ($is_active == "10") { $is_active_string = " WHERE active = '10' "; }
-                elseif ($is_active == "LIVE") { $is_active_string = " WHERE active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
-                elseif ($is_active == "ALL") { $is_active_string = " WHERE active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
-
+                $is_active_string = $domainDisplay->getActiveStringTld($is_active);
+                
                 if ($pcid != "") { $pcid_string = " AND cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($oid != "") { $oid_string = " AND owner_id = '$oid' "; } else { $oid_string = ""; }
                 if ($dnsid != "") { $dnsid_string = " AND dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
@@ -1326,20 +1189,20 @@ if ($segid != "") {
                 if ($segid != "") { $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
                 $sql_tld = "SELECT tld, count(*) AS total_tld_count
-			FROM domains
-			$is_active_string
-			$pcid_string
-			$oid_string
-			$dnsid_string
-			$ipid_string
-			$whid_string
-			$rid_string
-			$raid_string
-			$search_string
-			$quick_search_string
-			$segment_string
-			GROUP BY tld
-			ORDER BY tld asc";
+                            FROM domains
+                            $is_active_string
+                            $pcid_string
+                            $oid_string
+                            $dnsid_string
+                            $ipid_string
+                            $whid_string
+                            $rid_string
+                            $raid_string
+                            $search_string
+                            $quick_search_string
+                            $segment_string
+                            GROUP BY tld
+                            ORDER BY tld asc";
                 $result_tld = mysqli_query($connection, $sql_tld);
                 echo "<select name=\"tld\" onChange=\"MM_jumpMenu('parent',this,0)\">";
                 echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">TLD - ALL</option>";
@@ -1352,20 +1215,6 @@ if ($segid != "") {
                 &nbsp;&nbsp;
                 <?php
                 // STATUS
-                if ($is_active == "0") { $is_active_string = " AND active = '0' "; }
-                elseif ($is_active == "1") { $is_active_string = " AND active = '1' "; }
-                elseif ($is_active == "2") { $is_active_string = " AND active = '2' "; }
-                elseif ($is_active == "3") { $is_active_string = " AND active = '3' "; }
-                elseif ($is_active == "4") { $is_active_string = " AND active = '4' "; }
-                elseif ($is_active == "5") { $is_active_string = " AND active = '5' "; }
-                elseif ($is_active == "6") { $is_active_string = " AND active = '6' "; }
-                elseif ($is_active == "7") { $is_active_string = " AND active = '7' "; }
-                elseif ($is_active == "8") { $is_active_string = " AND active = '8' "; }
-                elseif ($is_active == "9") { $is_active_string = " AND active = '9' "; }
-                elseif ($is_active == "10") { $is_active_string = " AND active = '10' "; }
-                elseif ($is_active == "LIVE") { $is_active_string = " AND active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
-                elseif ($is_active == "ALL") { $is_active_string = " AND active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
-
                 if ($pcid != "") { $pcid_string = " AND cat_id = '$pcid' "; } else { $pcid_string = ""; }
                 if ($oid != "") { $oid_string = " AND owner_id = '$oid' "; } else { $oid_string = ""; }
                 if ($dnsid != "") { $dnsid_string = " AND dns_id = '$dnsid' "; } else { $dnsid_string = ""; }
@@ -1379,21 +1228,21 @@ if ($segid != "") {
                 if ($segid != "") { $segment_string = " AND domain IN (SELECT domain FROM segment_data WHERE segment_id = '$segid') "; } else { $segment_string = ""; }
 
                 $sql_active = "SELECT active, count(*) AS total_count
-			   FROM domains
-			   WHERE id != '0'
-			   	 $pcid_string
-			     $oid_string
-			     $dnsid_string
-			     $ipid_string
-			     $whid_string
-			     $rid_string
-			     $raid_string
-			     $tld_string
-				 $search_string
-				 $quick_search_string
-				 $segment_string
-			   GROUP BY active
-			   ORDER BY active asc";
+                               FROM domains
+                               WHERE id != '0'
+                               $pcid_string
+                               $oid_string
+                               $dnsid_string
+                               $ipid_string
+                               $whid_string
+                               $rid_string
+                               $raid_string
+                               $tld_string
+                               $search_string
+                               $quick_search_string
+                               $segment_string
+                               GROUP BY active
+                               ORDER BY active asc";
                 $result_active = mysqli_query($connection, $sql_active);
                 echo "<select name=\"is_active\" onChange=\"MM_jumpMenu('parent',this,0)\">";
                 echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Transfers / Pending)</option>";
@@ -1459,26 +1308,26 @@ if ($segid != "") {
 <?php if ($segid != "") {
 
     $sql_segment = "SELECT domain
-						FROM segment_data
-						WHERE segment_id = '$segid'
-						  AND inactive = '1'
-						ORDER BY domain";
+                    FROM segment_data
+                    WHERE segment_id = '$segid'
+                      AND inactive = '1'
+                    ORDER BY domain";
     $result_segment = mysqli_query($connection, $sql_segment);
     $totalrows_inactive = mysqli_num_rows($result_segment);
 
     $sql_segment = "SELECT domain
-						FROM segment_data
-						WHERE segment_id = '$segid'
-						  AND missing = '1'
-						ORDER BY domain";
+                    FROM segment_data
+                    WHERE segment_id = '$segid'
+                      AND missing = '1'
+                    ORDER BY domain";
     $result_segment = mysqli_query($connection, $sql_segment);
     $totalrows_missing = mysqli_num_rows($result_segment);
 
     $sql_segment = "SELECT domain
-						FROM segment_data
-						WHERE segment_id = '$segid'
-						  AND filtered = '1'
-						ORDER BY domain";
+                    FROM segment_data
+                    WHERE segment_id = '$segid'
+                      AND filtered = '1'
+                    ORDER BY domain";
     $result_segment = mysqli_query($connection, $sql_segment);
     $totalrows_filtered = mysqli_num_rows($result_segment);
     ?>
