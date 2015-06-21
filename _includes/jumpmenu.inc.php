@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/system/index.php
+ * /_includes/jumpmenu.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -19,6 +19,11 @@
  *
  */
 ?>
-<?php
-header("Location: ../../invalid.php");
-exit;
+<script type="text/javascript">
+<!--
+function MM_jumpMenu(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
+//-->
+</script>
