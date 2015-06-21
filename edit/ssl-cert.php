@@ -173,9 +173,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		$_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Updated<BR>";
 
-        $_SESSION['missing_ssl_fees'] = $system->checkMissingFees('S', $connection);
+        $_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'SSL');
 
-		header("Location: ssl-cert.php?sslcid=$sslcid");
+        header("Location: ssl-cert.php?sslcid=$sslcid");
 		exit;
 
 	} else {

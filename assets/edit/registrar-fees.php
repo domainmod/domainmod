@@ -226,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $temp_input_user_id = $_SESSION['user_id'];
                 $temp_input_default_currency = $_SESSION['default_currency'];
-                $_SESSION['missing_domain_fees'] = $system->checkMissingFees('D', $connection);
+                $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'DOMAINS');
                 include(DIR_INC . "system/update-conversion-rates.inc.php");
 
             }
@@ -277,7 +277,7 @@ if ($really_del == "1") {
 
 		$temp_input_user_id = $_SESSION['user_id'];
 		$temp_input_default_currency = $_SESSION['default_currency'];
-        $_SESSION['missing_domain_fees'] = $system->checkMissingFees('D', $connection);
+        $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'DOMAINS');
         include(DIR_INC . "system/update-conversion-rates.inc.php");
 
         header("Location: registrar-fees.php?rid=$rid");

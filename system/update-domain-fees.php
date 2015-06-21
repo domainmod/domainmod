@@ -36,9 +36,9 @@ $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 
-$update = $system->updateFees($connection, 'DOMAINS', $timestamp);
+$update = $system->updateFees($connection, $timestamp, 'DOMAINS');
 
-$_SESSION['missing_domain_fees'] = $system->checkMissingFees('D', $connection);
+$_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'DOMAINS');
 
 $_SESSION['result_message'] .= "Domain Fees Updated<BR>";
 

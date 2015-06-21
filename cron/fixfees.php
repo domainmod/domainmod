@@ -38,8 +38,8 @@ include(DIR_INC . "config-demo.inc.php");
 
 if ($demo_install != "1") {
 
-    $domains = $system->updateFees($connection, 'DOMAINS', $timestamp);
+    $domains = $system->updateFees($connection, $timestamp, 'DOMAINS');
 
-    $ssl = $system->updateFees($connection, 'SSL', $timestamp);
+    $ssl = $system->updateFees($connection, $timestamp, 'SSL');
 
 }

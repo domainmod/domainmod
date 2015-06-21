@@ -113,7 +113,7 @@ class System
 
     }
 
-    public function updateFees($connection, $type, $timestamp)
+    public function updateFees($connection, $timestamp, $type)
     {
 
         if ($type == "DOMAINS") {
@@ -223,20 +223,20 @@ class System
 
     }
 
-    public function checkMissingFees($type, $connection)
+    public function checkMissingFees($connection, $type)
     {
 
-        if ($type == "S") {
-
-            $sql = "SELECT id
-                    FROM ssl_certs
-                    WHERE fee_id = '0'
-                      AND active NOT IN ('0', '10')";
-
-        } else {
+        if ($type == "DOMAINS") {
 
             $sql = "SELECT id
                     FROM domains
+                    WHERE fee_id = '0'
+                      AND active NOT IN ('0', '10')";
+
+        } elseif ($type == "SSL") {
+
+            $sql = "SELECT id
+                    FROM ssl_certs
                     WHERE fee_id = '0'
                       AND active NOT IN ('0', '10')";
 
