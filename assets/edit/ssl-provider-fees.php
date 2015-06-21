@@ -208,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $temp_input_user_id = $_SESSION['user_id'];
                 $temp_input_default_currency = $_SESSION['default_currency'];
-                $_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'SSL');
+                $_SESSION['missing_ssl_fees'] = $system->checkMissingSslFees($connection);
                 include(DIR_INC . "system/update-conversion-rates.inc.php");
 
             }
@@ -264,7 +264,7 @@ if ($really_del == "1") {
 
 		$temp_input_user_id = $_SESSION['user_id'];
 		$temp_input_default_currency = $_SESSION['default_currency'];
-        $_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'SSL');
+        $_SESSION['missing_ssl_fees'] = $system->checkMissingSslFees($connection);
 		include(DIR_INC . "system/update-conversion-rates.inc.php");
 
 		header("Location: ssl-provider-fees.php?sslpid=$sslpid");

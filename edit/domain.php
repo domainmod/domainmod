@@ -190,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Updated<BR>";
 
         $_SESSION['result_message'] .= $system->updateSegments($connection);
-        $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'DOMAINS');
+        $_SESSION['missing_domain_fees'] = $system->checkMissingDomainFees($connection);
 
         header("Location: domain.php?did=$did");
 		exit;
