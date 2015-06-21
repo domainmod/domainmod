@@ -372,7 +372,7 @@ if ($total_rows > 0) { ?>
                 </td>
                 <td class="main_table_cell_active">
                     <?php
-                    $row->misc_fee = $currency->format($row->misc_fee, '', $row->symbol, $row->symbol_order,
+                    $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order,
                         $row->symbol_space);
                     echo $row->misc_fee;
                     ?>
