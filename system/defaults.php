@@ -106,7 +106,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		}
 
-        $_SESSION['result_message'] .= $system->updateConversionRates($connection, $timestamp, $_SESSION['user_id'], $new_default_currency);
+        $temp_input_user_id = $_SESSION['user_id'];
+        $temp_input_default_currency = $new_default_currency;
+        include(DIR_INC . "update-conversion-rates.inc.php");
 
     }
 

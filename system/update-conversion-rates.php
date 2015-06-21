@@ -36,7 +36,9 @@ $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 
-$_SESSION['result_message'] .= $system->updateConversionRates($connection, $timestamp, $_SESSION['user_id'], $_SESSION['default_currency']);
+$temp_input_user_id = $_SESSION['user_id'];
+$temp_input_default_currency = $_SESSION['default_currency'];
+include(DIR_INC . "update-conversion-rates.inc.php");
 
 header("Location: " . $_SERVER['HTTP_REFERER']);
 exit;
