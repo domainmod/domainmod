@@ -28,20 +28,49 @@ class DomainDisplay
     public function getActiveString($is_active)
     {
 
-        if ($is_active == "0") { $is_active_string = " AND d.active = '0' "; }
-        elseif ($is_active == "1") { $is_active_string = " AND d.active = '1' "; }
-        elseif ($is_active == "2") { $is_active_string = " AND d.active = '2' "; }
-        elseif ($is_active == "3") { $is_active_string = " AND d.active = '3' "; }
-        elseif ($is_active == "4") { $is_active_string = " AND d.active = '4' "; }
-        elseif ($is_active == "5") { $is_active_string = " AND d.active = '5' "; }
-        elseif ($is_active == "6") { $is_active_string = " AND d.active = '6' "; }
-        elseif ($is_active == "7") { $is_active_string = " AND d.active = '7' "; }
-        elseif ($is_active == "8") { $is_active_string = " AND d.active = '8' "; }
-        elseif ($is_active == "9") { $is_active_string = " AND d.active = '9' "; }
-        elseif ($is_active == "10") { $is_active_string = " AND d.active = '10' "; }
-        elseif ($is_active == "LIVE") { $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') "; }
-        elseif ($is_active == "ALL") { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
-        else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') "; }
+        switch ($is_active) {
+
+            case "0":
+                $is_active_string = " AND d.active = '0' ";
+                break;
+            case "1":
+                $is_active_string = " AND d.active = '1' ";
+                break;
+            case "2":
+                $is_active_string = " AND d.active = '2' ";
+                break;
+            case "3":
+                $is_active_string = " AND d.active = '3' ";
+                break;
+            case "4":
+                $is_active_string = " AND d.active = '4' ";
+                break;
+            case "5":
+                $is_active_string = " AND d.active = '5' ";
+                break;
+            case "6":
+                $is_active_string = " AND d.active = '6' ";
+                break;
+            case "7":
+                $is_active_string = " AND d.active = '7' ";
+                break;
+            case "8":
+                $is_active_string = " AND d.active = '8' ";
+                break;
+            case "9":
+                $is_active_string = " AND d.active = '9' ";
+                break;
+            case "10":
+                $is_active_string = " AND d.active = '10' ";
+                break;
+            case "LIVE":
+                $is_active_string = " AND d.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9') ";
+                break;
+            case "ALL":
+                $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') ";
+                break;
+
+        }
 
         return $is_active_string;
 
