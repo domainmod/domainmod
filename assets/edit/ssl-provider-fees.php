@@ -89,7 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         $_SESSION['result_message'] = "The SSL Provider Fees have been updated<BR>";
-        include(DIR_INC . "system/update-conversion-rates.inc.php");
+
+        $_SESSION['result_message'] .= $system->updateConversionRates($connection, $timestamp, $_SESSION['user_id'], $_SESSION['default_currency']);
 
     } elseif ($which_form == "add") {
 
@@ -158,9 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been updated<BR>";
 
-                $temp_input_user_id = $_SESSION['user_id'];
-                $temp_input_default_currency = $_SESSION['default_currency'];
-                include(DIR_INC . "system/update-conversion-rates.inc.php");
+                $_SESSION['result_message'] .= $system->updateConversionRates($connection, $timestamp, $_SESSION['user_id'], $_SESSION['default_currency']);
 
             } else {
 
@@ -206,10 +205,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been added<BR>";
 
-                $temp_input_user_id = $_SESSION['user_id'];
-                $temp_input_default_currency = $_SESSION['default_currency'];
                 $_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'SSL');
-                include(DIR_INC . "system/update-conversion-rates.inc.php");
+
+                $_SESSION['result_message'] .= $system->updateConversionRates($connection, $timestamp, $_SESSION['user_id'], $_SESSION['default_currency']);
 
             }
 
@@ -262,12 +260,11 @@ if ($really_del == "1") {
 		
 		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been deleted<BR>";
 
-		$temp_input_user_id = $_SESSION['user_id'];
-		$temp_input_default_currency = $_SESSION['default_currency'];
         $_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'SSL');
-		include(DIR_INC . "system/update-conversion-rates.inc.php");
 
-		header("Location: ssl-provider-fees.php?sslpid=$sslpid");
+        $_SESSION['result_message'] .= $system->updateConversionRates($connection, $timestamp, $_SESSION['user_id'], $_SESSION['default_currency']);
+
+        header("Location: ssl-provider-fees.php?sslpid=$sslpid");
 		exit;
 
 	}

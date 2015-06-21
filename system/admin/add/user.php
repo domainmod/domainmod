@@ -33,6 +33,7 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 
@@ -161,9 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             credentials to the user, or you can <a href=\"reset-password.php?new_username=" . $new_username . "\">click
             here</a> to have " . $software_title . " email them for you<BR><BR>";
 
-		$temp_input_user_id = $temp_user_id;
-		$temp_input_default_currency = 'CAD';
-		include(DIR_INC . "system/update-conversion-rates.inc.php");
+        $_SESSION['result_message'] .= $system->updateConversionRates($connection, $timestamp, $temp_user_id, 'CAD');
 
         header("Location: ../users.php");
         exit;

@@ -102,8 +102,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         }
 
-        $_SESSION['result_message'] = "The Registrar Fees have been updated<BR>";
-        include(DIR_INC . "system/update-conversion-rates.inc.php");
+        $_SESSION['result_message'] .= "The Registrar Fees have been updated<BR>";
+
+        $_SESSION['result_message'] .= $system->updateConversionRates($connection, $timestamp, $_SESSION['user_id'], $_SESSION['default_currency']);
 
     } elseif ($which_form == "add") {
 
@@ -177,9 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been updated<BR>";
 
-                $temp_input_user_id = $_SESSION['user_id'];
-                $temp_input_default_currency = $_SESSION['default_currency'];
-                include(DIR_INC . "system/update-conversion-rates.inc.php");
+                $_SESSION['result_message'] .= $system->updateConversionRates($connection, $timestamp, $_SESSION['user_id'], $_SESSION['default_currency']);
 
             } else {
 
@@ -224,10 +223,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
 
-                $temp_input_user_id = $_SESSION['user_id'];
-                $temp_input_default_currency = $_SESSION['default_currency'];
                 $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'DOMAINS');
-                include(DIR_INC . "system/update-conversion-rates.inc.php");
+
+                $_SESSION['result_message'] .= $system->updateConversionRates($connection, $timestamp, $_SESSION['user_id'], $_SESSION['default_currency']);
 
             }
 
@@ -275,10 +273,9 @@ if ($really_del == "1") {
 		
 		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
 
-		$temp_input_user_id = $_SESSION['user_id'];
-		$temp_input_default_currency = $_SESSION['default_currency'];
         $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'DOMAINS');
-        include(DIR_INC . "system/update-conversion-rates.inc.php");
+
+        $_SESSION['result_message'] .= $system->updateConversionRates($connection, $timestamp, $_SESSION['user_id'], $_SESSION['default_currency']);
 
         header("Location: registrar-fees.php?rid=$rid");
 		exit;
