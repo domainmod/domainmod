@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/system/update-conversion-rates.direct.php
+ * /system/update-conversion-rates.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-include("../start-session.inc.php");
-include("../init.inc.php");
+include("../_includes/start-session.inc.php");
+include("../_includes/init.inc.php");
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "config.inc.php");
