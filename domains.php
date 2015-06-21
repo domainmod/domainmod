@@ -851,7 +851,7 @@ if ($export_data == "1") {
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
 <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
-<?php include(DIR_INC . "system/jumpmenu.inc.php"); ?>
+<?php include(DIR_INC . "jumpmenu.inc.php"); ?>
 </head>
 <body onLoad="document.forms[0].elements[12].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>

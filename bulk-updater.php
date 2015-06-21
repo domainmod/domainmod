@@ -989,7 +989,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
 <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
-<?php include(DIR_INC . "system/jumpmenu.inc.php"); ?>
+<?php include(DIR_INC . "jumpmenu.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
