@@ -92,11 +92,7 @@ class System
     public function updateSegments($connection)
     {
 
-        $sql = "UPDATE segment_data
-                SET active = '0',
-                    inactive = '0',
-                    missing = '0',
-                    filtered = '0'";
+        $sql = "UPDATE segment_data SET active = '0', inactive = '0', missing = '0', filtered = '0'";
         mysqli_query($connection, $sql);
 
         $sql = "UPDATE segment_data
