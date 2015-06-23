@@ -93,6 +93,13 @@ class System
     {
 
         $sql = "UPDATE segment_data
+                SET active = '0',
+                    inactive = '0',
+                    missing = '0',
+                    filtered = '0'";
+        mysqli_query($connection, $sql);
+
+        $sql = "UPDATE segment_data
                 SET active = '1'
                 WHERE domain IN (SELECT domain FROM domains WHERE active NOT IN ('0', '10'))";
         mysqli_query($connection, $sql);
