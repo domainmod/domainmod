@@ -32,6 +32,7 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $currency = new DomainMOD\Currency();
+$customField = new DomainMOD\CustomField();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Timestamp();
 
@@ -72,8 +73,10 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, (d.total_cost * cc.conversion) AS converted_renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
-		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
+$dfd_columns = $customField->getDomainFieldsSql($connection);
+
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, (d.total_cost * cc.conversion) AS converted_renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name" . $dfd_columns . "
+		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
 		WHERE d.account_id = ra.id
 		  AND ra.registrar_id = r.id
 		  AND ra.owner_id = o.id
@@ -85,6 +88,7 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
 		  AND d.dns_id = dns.id
 		  AND d.ip_id = ip.id
 		  AND d.hosting_id = h.id
+		  AND d.id = dfd.domain_id
 		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 		  AND d.active NOT IN ('0', '10')
 		  " . $range_string . "
@@ -174,20 +178,24 @@ if ($export_data == "1") {
     $row_contents[$count++] = 'Category Stakeholder';
     $row_contents[$count++] = 'Owner';
     $row_contents[$count++] = 'Notes';
+    $row_contents[$count++] = "Inserted";
+    $row_contents[$count++] = "Updated";
+    $row_contents[$count++] = "CUSTOM FIELDS";
 
-    $sql_field = "SELECT name
+    $sql_field = "SELECT `name`
 				  FROM domain_fields
-				  ORDER BY name";
-	$result_field = mysqli_query($connection, $sql_field);
+				  ORDER BY `name` ASC";
+    $result_field = mysqli_query($connection, $sql_field);
 
-	while ($row_field = mysqli_fetch_object($result_field)) {
-		
-		$row_contents[$count++] = $row_field->name;
-	
-	}
+    if (mysqli_num_rows($result_field) > 0) {
 
-	$row_contents[$count++] = 'Inserted';
-	$row_contents[$count++] = 'Updated';
+        while ($row_field = mysqli_fetch_object($result_field)) {
+
+            $row_contents[$count++] = $row_field->name;
+
+        }
+
+    }
 
     $export->writeRow($export_file, $row_contents);
 
@@ -234,43 +242,21 @@ if ($export_data == "1") {
 		$row_contents[$count++] = $row->category_stakeholder;
 		$row_contents[$count++] = $row->owner_name;
 		$row_contents[$count++] = $row->notes;
+        $row_contents[$count++] = $row->insert_time;
+        $row_contents[$count++] = $row->update_time;
+        $row_contents[$count++] = '';
 
-		$sql_field = "SELECT field_name
-					  FROM domain_fields
-					  ORDER BY name";
-		$result_field = mysqli_query($connection, $sql_field);
+        $dfd_columns_array = $customField->getDomainFieldsArray($connection);
 
-        if (mysqli_num_rows($result_field) > 0) {
+        if ($dfd_columns_array != "") {
 
-            $array_count = 0;
-            $field_data = "";
+            foreach ($dfd_columns_array as $column) {
 
-            while ($row_field = mysqli_fetch_object($result_field)) {
-
-                $field_array[$array_count] = $row_field->field_name;
-                $array_count++;
-
-            }
-
-            foreach($field_array as $field) {
-
-                $sql_data = "SELECT " . $field . "
-						 FROM domain_field_data
-						 WHERE domain_id = '" . $row->id . "'";
-                $result_data = mysqli_query($connection, $sql_data);
-
-                while ($row_data = mysqli_fetch_object($result_data)) {
-
-                    $row_contents[$count++] = $row_data->{$field};
-
-                }
+                $row_contents[$count++] = $row->{$column};
 
             }
 
         }
-
-        $row_contents[$count++] = $row->insert_time;
-		$row_contents[$count++] = $row->update_time;
 
         $export->writeRow($export_file, $row_contents);
 
@@ -454,9 +440,9 @@ Notes<BR>
 Insert Time<BR>
 Last Update Time<BR>
 <?php
-$sql = "SELECT name
+$sql = "SELECT `name`
 		FROM domain_fields
-		ORDER BY name";
+		ORDER BY `name` ASC";
 $result = mysqli_query($connection, $sql);
 
 if (mysqli_num_rows($result) > 0) {

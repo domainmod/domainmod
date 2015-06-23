@@ -32,6 +32,7 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $currency = new DomainMOD\Currency();
+$customField = new DomainMOD\CustomField();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Timestamp();
 
@@ -72,8 +73,10 @@ if ($all == "1") {
 	
 }
 
-$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslc.insert_time, sslc.update_time, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, (sslc.total_cost * cc.conversion) AS converted_renewal_fee, cc.conversion, d.domain, ip.name AS ip_name, ip.ip, ip.rdns, cat.name AS cat_name
-		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat
+$sslfd_columns = $customField->getSslFieldsSql($connection);
+
+$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslc.insert_time, sslc.update_time, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, (sslc.total_cost * cc.conversion) AS converted_renewal_fee, cc.conversion, d.domain, ip.name AS ip_name, ip.ip, ip.rdns, cat.name AS cat_name" . $sslfd_columns . "
+		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat, ssl_cert_field_data AS sslfd
 		WHERE sslc.account_id = sslpa.id
 		  AND sslc.type_id = sslcf.id
 		  AND sslpa.ssl_provider_id = sslp.id
@@ -85,6 +88,7 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date,
 		  AND sslc.domain_id = d.id
 		  AND sslc.ip_id = ip.id
 		  AND sslc.cat_id = cat.id
+		  AND sslc.id = sslfd.ssl_id
 		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 		  AND sslc.active NOT IN ('0')
 		  " . $range_string . "
@@ -170,20 +174,24 @@ if ($export_data == "1") {
     $row_contents[$count++] = 'Category';
     $row_contents[$count++] = 'Owner';
     $row_contents[$count++] = 'Notes';
+    $row_contents[$count++] = "Inserted";
+    $row_contents[$count++] = "Updated";
+    $row_contents[$count++] = "CUSTOM FIELDS";
 
-	$sql_field = "SELECT name
+    $sql_field = "SELECT `name`
 				  FROM ssl_cert_fields
-				  ORDER BY name";
-	$result_field = mysqli_query($connection, $sql_field);
-	
-	while ($row_field = mysqli_fetch_object($result_field)) {
-		
-		$row_contents[$count++] = $row_field->name;
-	
-	}
+				  ORDER BY `name` ASC";
+    $result_field = mysqli_query($connection, $sql_field);
 
-	$row_contents[$count++] = 'Inserted';
-	$row_contents[$count++] = 'Updated';
+    if (mysqli_num_rows($result_field) > 0) {
+
+        while ($row_field = mysqli_fetch_object($result_field)) {
+
+            $row_contents[$count++] = $row_field->name;
+
+        }
+
+    }
 
     $export->writeRow($export_file, $row_contents);
 
@@ -218,43 +226,21 @@ if ($export_data == "1") {
 		$row_contents[$count++] = $row->cat_name;
 		$row_contents[$count++] = $row->owner_name;
 		$row_contents[$count++] = $row->notes;
+        $row_contents[$count++] = $row->insert_time;
+        $row_contents[$count++] = $row->update_time;
+        $row_contents[$count++] = '';
 
-		$sql_field = "SELECT field_name
-					  FROM ssl_cert_fields
-					  ORDER BY name";
-		$result_field = mysqli_query($connection, $sql_field);
+        $sslfd_columns_array = $customField->getSslFieldsArray($connection);
 
-        if (mysqli_num_rows($result_field) > 0) {
+        if ($sslfd_columns_array != "") {
 
-            $array_count = 0;
-            $field_data = "";
+            foreach ($sslfd_columns_array as $column) {
 
-            while ($row_field = mysqli_fetch_object($result_field)) {
-
-                $field_array[$array_count] = $row_field->field_name;
-                $array_count++;
-
-            }
-
-            foreach($field_array as $field) {
-
-                $sql_data = "SELECT " . $field . "
-						 FROM ssl_cert_field_data
-						 WHERE ssl_id = '" . $row->id . "'";
-                $result_data = mysqli_query($connection, $sql_data);
-
-                while ($row_data = mysqli_fetch_object($result_data)) {
-
-                    $row_contents[$count++] = $row_data->{$field};
-
-                }
+                $row_contents[$count++] = $row->{$column};
 
             }
 
         }
-
-        $row_contents[$count++] = $row->insert_time;
-		$row_contents[$count++] = $row->update_time;
 
         $export->writeRow($export_file, $row_contents);
 
@@ -428,9 +414,9 @@ Notes<BR>
 Insert Time<BR>
 Last Update Time<BR>
 <?php
-$sql = "SELECT name
+$sql = "SELECT `name`
 		FROM ssl_cert_fields
-		ORDER BY name";
+		ORDER BY `name` ASC";
 $result = mysqli_query($connection, $sql);
 
 if (mysqli_num_rows($result) > 0) {
