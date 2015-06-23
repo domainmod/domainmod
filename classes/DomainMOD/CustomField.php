@@ -40,13 +40,32 @@ class CustomField
 
     }
 
+    public function getCustomDomainFields($connection)
+    {
+
+        $sql = "SELECT field_name FROM domain_fields ORDER BY `name` ASC";
+        $result = mysqli_query($connection, $sql);
+
+        return $result;
+
+    }
+
+    public function getCustomSslFields($connection)
+    {
+
+        $sql = "SELECT field_name FROM ssl_cert_fields ORDER BY `name` ASC";
+        $result = mysqli_query($connection, $sql);
+
+        return $result;
+
+    }
+
     public function getDomainFieldsSql($connection)
     {
 
-        $sql = "SELECT field_name
-                FROM domain_fields
-                ORDER BY `name` ASC";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->getCustomDomainFields($connection);
+
+        $dfd_columns = '';
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -65,10 +84,9 @@ class CustomField
     public function getDomainFieldsArray($connection)
     {
 
-        $sql = "SELECT field_name
-                FROM domain_fields
-                ORDER BY `name` ASC";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->getCustomDomainFields($connection);
+
+        $dfd_columns_array = array();
 
         $count = 0;
 
@@ -89,10 +107,9 @@ class CustomField
     public function getSslFieldsSql($connection)
     {
 
-        $sql = "SELECT field_name
-                FROM ssl_cert_fields
-                ORDER BY `name` ASC";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->getCustomSslFields($connection);
+
+        $sslfd_columns = '';
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -111,10 +128,9 @@ class CustomField
     public function getSslFieldsArray($connection)
     {
 
-        $sql = "SELECT field_name
-                FROM ssl_cert_fields
-                ORDER BY `name` ASC";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->getCustomSslFields($connection);
+
+        $sslfd_columns_array = array();
 
         $count = 0;
 
