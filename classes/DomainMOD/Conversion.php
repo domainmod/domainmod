@@ -28,91 +28,40 @@ class Conversion
     public function updateRates($connection, $timestamp, $default_currency, $user_id)
     {
 
-        $result = $this->getActiveDomainCurrencies($connection);
-        $exclude_string = $this->cycleDomainCurrencies($connection, $timestamp, $default_currency, $result, $user_id);
-        $result = $this->getActiveSslCurrencies($connection, $exclude_string);
-        $result_message = $this->cycleSslCurrencies($connection, $timestamp, $default_currency, $result, $user_id);
+        $result = $this->getActiveCurrencies($connection);
+        $result_message = $this->cycleCurrencies($connection, $timestamp, $default_currency, $result, $user_id);
 
         return $result_message;
 
     }
 
-    public function getActiveDomainCurrencies($connection)
+    public function getActiveCurrencies($connection)
     {
 
-        $sql = "SELECT c.id, c.currency
-                FROM currencies AS c, fees AS f, domains AS d
-                WHERE c.id = f.currency_id
-                  AND f.id = d.fee_id
-                  AND d.active NOT IN ('0', '10')
-                GROUP BY c.currency";
+        $sql = "SELECT id, currency
+                FROM
+                (   SELECT c.id, c.currency
+                    FROM currencies AS c, fees AS f, domains AS d
+                    WHERE c.id = f.currency_id
+                      AND f.id = d.fee_id
+                      AND d.active NOT IN ('0', '10')
+                    GROUP BY c.currency
+                    UNION
+                    SELECT c.id, c.currency
+                    FROM currencies AS c, ssl_fees AS f, ssl_certs AS sslc
+                    WHERE c.id = f.currency_id
+                      AND f.id = sslc.fee_id
+                      AND sslc.active NOT IN ('0')
+                    GROUP BY c.currency
+                ) AS temp
+                GROUP BY currency";
         $result = mysqli_query($connection, $sql);
 
         return $result;
 
     }
 
-    public function getActiveSslCurrencies($connection, $exclude_string)
-    {
-
-        $sql = "SELECT c.id, c.currency
-                FROM currencies AS c, ssl_fees AS f, ssl_certs AS sslc
-                WHERE c.id = f.currency_id
-                  AND f.id = sslc.fee_id
-                  AND sslc.active NOT IN ('0')
-                  AND c.currency NOT IN (" . $exclude_string . ")
-                GROUP BY c.currency";
-        $result = mysqli_query($connection, $sql);
-
-        return $result;
-
-    }
-
-    public function cycleDomainCurrencies($connection, $timestamp, $default_currency, $result, $user_id)
-    {
-
-        $exclude_string = '';
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $existing_currency = $this->checkExisting($connection, $row->id, $user_id);
-            $exclude_string = $this->buildExcludeString($exclude_string, $row->currency);
-
-            if ($existing_currency == "1") {
-
-                if ($row->currency == $default_currency) {
-
-                    $this->updateConversionRate($connection, $timestamp, '1', $row->id, $user_id);
-
-                } else {
-
-                    $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
-                    $this->updateConversionRate($connection, $timestamp, $conversion_rate, $row->id, $user_id);
-
-                }
-
-            } else {
-
-                if ($row->currency == $default_currency) {
-
-                    $this->insertConversionRate($connection, $timestamp, '1', $row->id, $user_id);
-
-                } else {
-
-                    $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
-                    $this->insertConversionRate($connection, $timestamp, $conversion_rate, $row->id, $user_id);
-
-                }
-
-            }
-
-        }
-
-        return $exclude_string;
-
-    }
-
-    public function cycleSslCurrencies($connection, $timestamp, $default_currency, $result, $user_id)
+    public function cycleCurrencies($connection, $timestamp, $default_currency, $result, $user_id)
     {
 
         while ($row = mysqli_fetch_object($result)) {
@@ -164,7 +113,7 @@ class Conversion
 
         if (mysqli_num_rows($result) == 0) {
 
-            $existing_currency = "";
+            $existing_currency = "0";
 
         } else {
 
@@ -173,15 +122,6 @@ class Conversion
         }
 
         return $existing_currency;
-
-    }
-
-    public function buildExcludeString($exclude_string, $currency)
-    {
-
-        $exclude_string .= "'" . $currency . "', ";
-
-        return $exclude_string;
 
     }
 
