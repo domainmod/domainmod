@@ -32,9 +32,9 @@ class Conversion
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $existing_currency = $this->checkExisting($connection, $row->id, $user_id);
             $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
             $conversion_rate = $this->updateForDefault($row->currency, $default_currency, $conversion_rate);
+            $existing_currency = $this->checkExisting($connection, $row->id, $user_id);
             $this->updateConversionRate($connection, $timestamp, $conversion_rate, $row->id, $user_id,
                 $existing_currency);
 
@@ -67,29 +67,6 @@ class Conversion
         $result = mysqli_query($connection, $sql);
 
         return $result;
-
-    }
-
-    public function checkExisting($connection, $currency_id, $user_id)
-    {
-
-        $sql = "SELECT id
-                FROM currency_conversions
-                WHERE currency_id = '" . $currency_id . "'
-                  AND user_id = '" . $user_id . "'";
-        $result = mysqli_query($connection, $sql);
-
-        if (mysqli_num_rows($result) == 0) {
-
-            $existing_currency = "0";
-
-        } else {
-
-            $existing_currency = "1";
-
-        }
-
-        return $existing_currency;
 
     }
 
@@ -127,6 +104,29 @@ class Conversion
 
     }
 
+    public function checkExisting($connection, $currency_id, $user_id)
+    {
+
+        $sql = "SELECT id
+                FROM currency_conversions
+                WHERE currency_id = '" . $currency_id . "'
+                  AND user_id = '" . $user_id . "'";
+        $result = mysqli_query($connection, $sql);
+
+        if (mysqli_num_rows($result) >= 1) {
+
+            $existing_currency = "1";
+
+        } else {
+
+            $existing_currency = "0";
+
+        }
+
+        return $existing_currency;
+
+    }
+
     public function updateConversionRate($connection, $timestamp, $conversion_rate, $currency_id, $user_id,
                                          $existing_currency)
     {
@@ -134,20 +134,20 @@ class Conversion
         if ($existing_currency == "1") {
 
             $sql = "UPDATE currency_conversions
-                SET conversion = '" . $conversion_rate . "',
-                    update_time = '" . $timestamp . "'
-                WHERE currency_id = '" . $currency_id . "'
-                  AND user_id = '" . $user_id . "'";
-            $result = mysqli_query($connection, $sql);
+                    SET conversion = '" . $conversion_rate . "',
+                        update_time = '" . $timestamp . "'
+                    WHERE currency_id = '" . $currency_id . "'
+                      AND user_id = '" . $user_id . "'";
 
         } else {
 
             $sql = "INSERT INTO currency_conversions
-                (currency_id, user_id, conversion, insert_time) VALUES
-                ('" . $currency_id . "', '" . $user_id . "', '" . $conversion_rate . "', '" . $timestamp . "')";
-            $result = mysqli_query($connection, $sql);
+                    (currency_id, user_id, conversion, insert_time) VALUES
+                    ('" . $currency_id . "', '" . $user_id . "', '" . $conversion_rate . "', '" . $timestamp . "')";
 
         }
+
+        $result = mysqli_query($connection, $sql);
 
         return $result;
 
