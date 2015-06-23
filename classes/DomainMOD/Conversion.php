@@ -35,7 +35,8 @@ class Conversion
             $existing_currency = $this->checkExisting($connection, $row->id, $user_id);
             $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
             $conversion_rate = $this->updateForDefault($row->currency, $default_currency, $conversion_rate);
-            $this->updateConversionRate($connection, $timestamp, $conversion_rate, $row->id, $user_id, $existing_currency);
+            $this->updateConversionRate($connection, $timestamp, $conversion_rate, $row->id, $user_id,
+                $existing_currency);
 
         }
 
@@ -119,10 +120,6 @@ class Conversion
         if ($current_currency == $default_currency) {
 
             $conversion_rate = '1';
-
-        } else {
-
-            $conversion_rate = $conversion_rate;
 
         }
 
