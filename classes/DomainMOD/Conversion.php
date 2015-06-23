@@ -32,10 +32,9 @@ class Conversion
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $is_default = $this->isDefault($row->currency, $default_currency);
-            $conversion_rate = $this->getConversionRate($row->currency, $default_currency, $is_default);
+            $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
             $is_existing = $this->checkExisting($connection, $row->id, $user_id);
-            $this->updateConversionRate($connection, $timestamp, $conversion_rate, $row->id, $user_id, $is_existing);
+            $this->updateConversionRate($connection, $timestamp, $conversion_rate, $is_existing, $row->id, $user_id);
 
         }
 
@@ -69,47 +68,22 @@ class Conversion
 
     }
 
-    public function isDefault($current_currency, $default_currency)
+    public function getConversionRate($from_currency, $to_currency)
     {
 
-        if ($current_currency == $default_currency) {
+        $full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from_currency . $to_currency . "=X";
+        $api_call = @fopen($full_url, "r");
+        $api_call_result = '';
 
-            $is_default = '1';
+        if ($api_call) {
 
-        } else {
-
-            $is_default = '0';
+            $api_call_result = fgets($api_call, 4096);
+            fclose($api_call);
 
         }
 
-        return $is_default;
-
-    }
-
-    public function getConversionRate($from_currency, $to_currency, $is_default)
-    {
-
-        if ($is_default != '1') {
-
-            $full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from_currency . $to_currency ."=X";
-            $api_call = @fopen($full_url, "r");
-            $api_call_result = '';
-
-            if ($api_call) {
-
-                $api_call_result = fgets($api_call, 4096);
-                fclose($api_call);
-
-            }
-
-            $api_call_split = explode(",", $api_call_result);
-            $conversion_rate = $api_call_split[1];
-
-        } else {
-
-            $conversion_rate = '1';
-
-        }
+        $api_call_split = explode(",", $api_call_result);
+        $conversion_rate = $api_call_split[1];
 
         return $conversion_rate;
 
@@ -138,8 +112,8 @@ class Conversion
 
     }
 
-    public function updateConversionRate($connection, $timestamp, $conversion_rate, $currency_id, $user_id,
-                                         $is_existing)
+    public function updateConversionRate($connection, $timestamp, $conversion_rate, $is_existing, $currency_id,
+                                         $user_id)
     {
 
         if ($is_existing == '1') {
