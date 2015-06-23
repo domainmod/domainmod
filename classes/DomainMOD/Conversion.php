@@ -32,15 +32,14 @@ class Conversion
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
-            $conversion_rate = $this->updateForDefault($row->currency, $default_currency, $conversion_rate);
-            $existing_currency = $this->checkExisting($connection, $row->id, $user_id);
-            $this->updateConversionRate($connection, $timestamp, $conversion_rate, $row->id, $user_id,
-                $existing_currency);
+            $is_default = $this->isDefault($row->currency, $default_currency);
+            $conversion_rate = $this->getConversionRate($row->currency, $default_currency, $is_default);
+            $is_existing = $this->checkExisting($connection, $row->id, $user_id);
+            $this->updateConversionRate($connection, $timestamp, $conversion_rate, $row->id, $user_id, $is_existing);
 
         }
 
-        return "Conversion Rates Updated<BR>";
+        return 'Conversion Rates Updated<BR>';
 
     }
 
@@ -70,31 +69,43 @@ class Conversion
 
     }
 
-    public function getConversionRate($from_currency, $to_currency)
-    {
-
-        $full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from_currency . $to_currency ."=X";
-        $api_call = @fopen($full_url, "r");
-        $api_call_result = '';
-
-        if ($api_call) {
-
-            $api_call_result = fgets($api_call, 4096);
-            fclose($api_call);
-
-        }
-
-        $api_call_split = explode(",", $api_call_result);
-        $conversion_rate = $api_call_split[1];
-
-        return $conversion_rate;
-
-    }
-
-    public function updateForDefault($current_currency, $default_currency, $conversion_rate)
+    public function isDefault($current_currency, $default_currency)
     {
 
         if ($current_currency == $default_currency) {
+
+            $is_default = '1';
+
+        } else {
+
+            $is_default = '0';
+
+        }
+
+        return $is_default;
+
+    }
+
+    public function getConversionRate($from_currency, $to_currency, $is_default)
+    {
+
+        if ($is_default != '1') {
+
+            $full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from_currency . $to_currency ."=X";
+            $api_call = @fopen($full_url, "r");
+            $api_call_result = '';
+
+            if ($api_call) {
+
+                $api_call_result = fgets($api_call, 4096);
+                fclose($api_call);
+
+            }
+
+            $api_call_split = explode(",", $api_call_result);
+            $conversion_rate = $api_call_split[1];
+
+        } else {
 
             $conversion_rate = '1';
 
@@ -115,23 +126,23 @@ class Conversion
 
         if (mysqli_num_rows($result) >= 1) {
 
-            $existing_currency = "1";
+            $is_existing = '1';
 
         } else {
 
-            $existing_currency = "0";
+            $is_existing = '0';
 
         }
 
-        return $existing_currency;
+        return $is_existing;
 
     }
 
     public function updateConversionRate($connection, $timestamp, $conversion_rate, $currency_id, $user_id,
-                                         $existing_currency)
+                                         $is_existing)
     {
 
-        if ($existing_currency == "1") {
+        if ($is_existing == '1') {
 
             $sql = "UPDATE currency_conversions
                     SET conversion = '" . $conversion_rate . "',
