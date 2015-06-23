@@ -227,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
 
-                $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'DOMAINS');
+                $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'domains');
 
                 $temp_input_user_id = $_SESSION['user_id'];
                 $temp_input_default_currency = $_SESSION['default_currency'];
@@ -279,7 +279,7 @@ if ($really_del == "1") {
 		
 		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
 
-        $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'DOMAINS');
+        $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'domains');
 
         $temp_input_user_id = $_SESSION['user_id'];
         $temp_input_default_currency = $_SESSION['default_currency'];

@@ -228,18 +228,8 @@ class System
 
     }
 
-    public function checkMissingFees($connection, $type)
+    public function checkMissingFees($connection, $table)
     {
-
-        if ($type == "DOMAINS") {
-
-            $table = "domains";
-
-        } else {
-
-            $table = "ssl_certs";
-
-        }
 
         $sql = "SELECT id
                 FROM " . $table . "

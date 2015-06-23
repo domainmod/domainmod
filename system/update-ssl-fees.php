@@ -38,7 +38,7 @@ $timestamp = $time->time();
 
 $update = $system->updateSslFees($connection, $timestamp);
 
-$_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'SSL');
+$_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'ssl_certs');
 
 $_SESSION['result_message'] .= "SSL Fees Updated<BR>";
 
