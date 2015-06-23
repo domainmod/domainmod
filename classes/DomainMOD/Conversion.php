@@ -82,7 +82,7 @@ class Conversion
 
                 if ($row->currency == $default_currency) {
 
-                    $this->updateDefaultConversionRate($connection, $row->id, $timestamp, $user_id);
+                    $this->updateConversionRate($connection, $timestamp, '1', $row->id, $user_id);
 
                 } else {
 
@@ -95,7 +95,7 @@ class Conversion
 
                 if ($row->currency == $default_currency) {
 
-                    $this->insertDefaultConversionRate($connection, $timestamp, $row->id, $user_id);
+                    $this->insertConversionRate($connection, $timestamp, '1', $row->id, $user_id);
 
                 } else {
 
@@ -123,7 +123,7 @@ class Conversion
 
                 if ($row->currency == $default_currency) {
 
-                    $this->updateDefaultConversionRate($connection, $row->id, $timestamp, $user_id);
+                    $this->updateConversionRate($connection, $timestamp, '1', $row->id, $user_id);
 
                 } else {
 
@@ -136,7 +136,7 @@ class Conversion
 
                 if ($row->currency == $default_currency) {
 
-                    $this->insertDefaultConversionRate($connection, $timestamp, $row->id, $user_id);
+                    $this->insertConversionRate($connection, $timestamp, '1', $row->id, $user_id);
 
                 } else {
 
@@ -185,25 +185,12 @@ class Conversion
 
     }
 
-    public function updateDefaultConversionRate($connection, $currency_id, $timestamp, $user_id)
-    {
-
-        $sql = "UPDATE currency_conversions
-                SET conversion = '1',
-                    update_time = '" . $timestamp . "'
-                WHERE currency_id = '" . $currency_id . "'
-                  AND user_id = '" . $user_id . "'";
-        $result = mysqli_query($connection, $sql);
-
-        return $result;
-
-    }
-
     public function getConversionRate($from_currency, $to_currency)
     {
 
         $full_url = "http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=" . $from_currency . $to_currency ."=X";
         $api_call = @fopen($full_url, "r");
+        $api_call_result = '';
 
         if ($api_call) {
 
@@ -227,18 +214,6 @@ class Conversion
                     update_time = '" . $timestamp . "'
                 WHERE currency_id = '" . $current_currency_id . "'
                   AND user_id = '" . $current_user_id . "'";
-        $result = mysqli_query($connection, $sql);
-
-        return $result;
-
-    }
-
-    public function insertDefaultConversionRate($connection, $timestamp, $currency_id, $user_id)
-    {
-
-        $sql = "INSERT INTO currency_conversions
-                (currency_id, user_id, conversion, insert_time) VALUES
-                ('" . $currency_id . "', '" . $user_id . "', '1', '" . $timestamp . "')";
         $result = mysqli_query($connection, $sql);
 
         return $result;
