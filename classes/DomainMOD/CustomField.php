@@ -40,4 +40,96 @@ class CustomField
 
     }
 
+    public function getDomainFieldsSql($connection)
+    {
+
+        $sql = "SELECT field_name
+                FROM domain_fields
+                ORDER BY `name` ASC";
+        $result = mysqli_query($connection, $sql);
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $dfd_columns .= ", dfd." . $row->field_name;
+
+            }
+
+        }
+
+        return $dfd_columns;
+
+    }
+
+    public function getDomainFieldsArray($connection)
+    {
+
+        $sql = "SELECT field_name
+                FROM domain_fields
+                ORDER BY `name` ASC";
+        $result = mysqli_query($connection, $sql);
+
+        $count = 0;
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $dfd_columns_array[$count++] = $row->field_name;
+
+            }
+
+        }
+
+        return $dfd_columns_array;
+
+    }
+
+    public function getSslFieldsSql($connection)
+    {
+
+        $sql = "SELECT field_name
+                FROM ssl_cert_fields
+                ORDER BY `name` ASC";
+        $result = mysqli_query($connection, $sql);
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $sslfd_columns .= ", sslfd." . $row->field_name;
+
+            }
+
+        }
+
+        return $sslfd_columns;
+
+    }
+
+    public function getSslFieldsArray($connection)
+    {
+
+        $sql = "SELECT field_name
+                FROM ssl_cert_fields
+                ORDER BY `name` ASC";
+        $result = mysqli_query($connection, $sql);
+
+        $count = 0;
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $sslfd_columns_array[$count++] = $row->field_name;
+
+            }
+
+        }
+
+        return $sslfd_columns_array;
+
+    }
+
 }
