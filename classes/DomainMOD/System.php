@@ -49,18 +49,19 @@ class System
 
     }
 
+    public function deleteUnusedFees($connection, $fee_table, $compare_table)
+    {
+
+        $sql = "DELETE FROM " . $fee_table . " WHERE id NOT IN (SELECT fee_id FROM " . $compare_table . ")";
+        mysqli_query($connection, $sql);
+
+    }
+
     public function performMaintenance($connection)
     {
 
-        // Delete all unused domain fees
-        $sql = "DELETE FROM fees
-                WHERE id NOT IN (SELECT fee_id FROM domains)";
-        mysqli_query($connection, $sql);
-
-        // Delete all unused SSL certificate fees
-        $sql = "DELETE FROM ssl_fees
-                WHERE id NOT IN (SELECT fee_id FROM ssl_certs)";
-        mysqli_query($connection, $sql);
+        $this->deleteUnusedFees($connection, 'fees', 'domains');
+        $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
 
         return "Maintenance Completed<BR>";
 
