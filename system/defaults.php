@@ -31,6 +31,7 @@ include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
+$conversion = new DomainMOD\Conversion();
 $error = new DomainMOD\Error();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
@@ -106,9 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		}
 
-        $temp_input_user_id = $_SESSION['user_id'];
-        $temp_input_default_currency = $new_default_currency;
-        include(DIR_INC . "update-conversion-rates.inc.php");
+        $_SESSION['result_message'] .= $conversion->updateRates($connection, $timestamp, $new_default_currency, $_SESSION['user_id']);
 
     }
 

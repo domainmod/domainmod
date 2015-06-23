@@ -31,6 +31,7 @@ include(DIR_INC . "auth/auth-check.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
+$conversion = new DomainMOD\Conversion();
 $error = new DomainMOD\Error();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
@@ -90,9 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['result_message'] = "The SSL Provider Fees have been updated<BR>";
 
-        $temp_input_user_id = $_SESSION['user_id'];
-        $temp_input_default_currency = $_SESSION['default_currency'];
-        include(DIR_INC . "update-conversion-rates.inc.php");
+        $_SESSION['result_message'] .= $conversion->updateRates($connection, $timestamp, $_SESSION['default_currency'], $_SESSION['user_id']);
 
     } elseif ($which_form == "add") {
 
@@ -161,9 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been updated<BR>";
 
-                $temp_input_user_id = $_SESSION['user_id'];
-                $temp_input_default_currency = $_SESSION['default_currency'];
-                include(DIR_INC . "update-conversion-rates.inc.php");
+                $_SESSION['result_message'] .= $conversion->updateRates($connection, $timestamp, $_SESSION['default_currency'], $_SESSION['user_id']);
 
             } else {
 
@@ -211,9 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'ssl_certs');
 
-                $temp_input_user_id = $_SESSION['user_id'];
-                $temp_input_default_currency = $_SESSION['default_currency'];
-                include(DIR_INC . "update-conversion-rates.inc.php");
+                $_SESSION['result_message'] .= $conversion->updateRates($connection, $timestamp, $_SESSION['default_currency'], $_SESSION['user_id']);
 
             }
 
@@ -268,9 +263,7 @@ if ($really_del == "1") {
 
         $_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'ssl_certs');
 
-        $temp_input_user_id = $_SESSION['user_id'];
-        $temp_input_default_currency = $_SESSION['default_currency'];
-        include(DIR_INC . "update-conversion-rates.inc.php");
+        $_SESSION['result_message'] .= $conversion->updateRates($connection, $timestamp, $_SESSION['default_currency'], $_SESSION['user_id']);
 
         header("Location: ssl-provider-fees.php?sslpid=$sslpid");
 		exit;
