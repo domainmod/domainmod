@@ -29,9 +29,17 @@ class Conversion
     {
 
         $result = $this->getActiveCurrencies($connection);
-        $result_message = $this->cycleCurrencies($connection, $timestamp, $default_currency, $result, $user_id);
 
-        return $result_message;
+        while ($row = mysqli_fetch_object($result)) {
+
+            $existing_currency = $this->checkExisting($connection, $row->id, $user_id);
+            $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
+            $conversion_rate = $this->updateForDefault($row->currency, $default_currency, $conversion_rate);
+            $this->updateConversionRate($connection, $timestamp, $conversion_rate, $row->id, $user_id, $existing_currency);
+
+        }
+
+        return "Conversion Rates Updated<BR>";
 
     }
 
@@ -58,47 +66,6 @@ class Conversion
         $result = mysqli_query($connection, $sql);
 
         return $result;
-
-    }
-
-    public function cycleCurrencies($connection, $timestamp, $default_currency, $result, $user_id)
-    {
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $existing_currency = $this->checkExisting($connection, $row->id, $user_id);
-
-            if ($existing_currency == "1") {
-
-                if ($row->currency == $default_currency) {
-
-                    $this->updateConversionRate($connection, $timestamp, '1', $row->id, $user_id);
-
-                } else {
-
-                    $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
-                    $this->updateConversionRate($connection, $timestamp, $conversion_rate, $row->id, $user_id);
-
-                }
-
-            } else {
-
-                if ($row->currency == $default_currency) {
-
-                    $this->insertConversionRate($connection, $timestamp, '1', $row->id, $user_id);
-
-                } else {
-
-                    $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
-                    $this->insertConversionRate($connection, $timestamp, $conversion_rate, $row->id, $user_id);
-
-                }
-
-            }
-
-        }
-
-        return "Conversion Rates Updated<BR>";
 
     }
 
@@ -146,27 +113,44 @@ class Conversion
 
     }
 
-    public function updateConversionRate($connection, $timestamp, $conversion_rate, $current_currency_id, $current_user_id)
+    public function updateForDefault($current_currency, $default_currency, $conversion_rate)
     {
 
-        $sql = "UPDATE currency_conversions
-                SET conversion = '" . $conversion_rate . "',
-                    update_time = '" . $timestamp . "'
-                WHERE currency_id = '" . $current_currency_id . "'
-                  AND user_id = '" . $current_user_id . "'";
-        $result = mysqli_query($connection, $sql);
+        if ($current_currency == $default_currency) {
 
-        return $result;
+            $conversion_rate = '1';
+
+        } else {
+
+            $conversion_rate = $conversion_rate;
+
+        }
+
+        return $conversion_rate;
 
     }
 
-    public function insertConversionRate($connection, $timestamp, $conversion_rate, $currency_id, $user_id)
+    public function updateConversionRate($connection, $timestamp, $conversion_rate, $currency_id, $user_id,
+                                         $existing_currency)
     {
 
-        $sql = "INSERT INTO currency_conversions
+        if ($existing_currency == "1") {
+
+            $sql = "UPDATE currency_conversions
+                SET conversion = '" . $conversion_rate . "',
+                    update_time = '" . $timestamp . "'
+                WHERE currency_id = '" . $currency_id . "'
+                  AND user_id = '" . $user_id . "'";
+            $result = mysqli_query($connection, $sql);
+
+        } else {
+
+            $sql = "INSERT INTO currency_conversions
                 (currency_id, user_id, conversion, insert_time) VALUES
                 ('" . $currency_id . "', '" . $user_id . "', '" . $conversion_rate . "', '" . $timestamp . "')";
-        $result = mysqli_query($connection, $sql);
+            $result = mysqli_query($connection, $sql);
+
+        }
 
         return $result;
 
