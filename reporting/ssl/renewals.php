@@ -73,7 +73,7 @@ if ($all == "1") {
 	
 }
 
-$sslfd_columns = $customField->getSslFieldsSql($connection);
+$sslfd_columns = $customField->getCustomFieldsSql($connection, 'ssl_cert_fields', 'sslfd');
 
 $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslc.insert_time, sslc.update_time, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, (sslc.total_cost * cc.conversion) AS converted_renewal_fee, cc.conversion, d.domain, ip.name AS ip_name, ip.ip, ip.rdns, cat.name AS cat_name" . $sslfd_columns . "
 		FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat, ssl_cert_field_data AS sslfd
@@ -230,7 +230,7 @@ if ($export_data == "1") {
         $row_contents[$count++] = $row->update_time;
         $row_contents[$count++] = '';
 
-        $sslfd_columns_array = $customField->getSslFieldsArray($connection);
+        $sslfd_columns_array = $customField->getCustomFields($connection, 'ssl_cert_fields');
 
         if ($sslfd_columns_array != "") {
 

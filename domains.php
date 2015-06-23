@@ -230,7 +230,7 @@ elseif ($sort_by == "ra_a") { $sort_by_string = " ORDER BY r.name asc, d.domain 
 elseif ($sort_by == "ra_d") { $sort_by_string = " ORDER BY r.name desc, d.domain asc "; }
 else { $sort_by_string = " ORDER BY d.expiry_date asc, d.domain asc "; }
 
-$dfd_columns = $customField->getDomainFieldsSql($connection);
+$dfd_columns = $customField->getCustomFieldsSql($connection, 'domain_fields', 'dfd');
 
 $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name" . $dfd_columns . "
 		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
@@ -812,7 +812,7 @@ if ($export_data == "1") {
         $row_contents[$count++] = $row->update_time;
         $row_contents[$count++] = '';
 
-        $dfd_columns_array = $customField->getDomainFieldsArray($connection);
+        $dfd_columns_array = $customField->getCustomFields($connection, 'domain_fields');
 
         if ($dfd_columns_array != "") {
 

@@ -40,53 +40,22 @@ class CustomField
 
     }
 
-    public function getCustomDomainFields($connection)
+    public function queryCustomFields($connection, $table_name)
     {
 
-        $sql = "SELECT field_name FROM domain_fields ORDER BY `name` ASC";
+        $sql = "SELECT field_name FROM " . $table_name . " ORDER BY `name` ASC";
         $result = mysqli_query($connection, $sql);
 
         return $result;
 
     }
 
-    public function getCustomSslFields($connection)
+    public function getCustomFields($connection, $table_name)
     {
 
-        $sql = "SELECT field_name FROM ssl_cert_fields ORDER BY `name` ASC";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->queryCustomFields($connection, $table_name);
 
-        return $result;
-
-    }
-
-    public function getDomainFieldsSql($connection)
-    {
-
-        $result = $this->getCustomDomainFields($connection);
-
-        $dfd_columns = '';
-
-        if (mysqli_num_rows($result) > 0) {
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                $dfd_columns .= ", dfd." . $row->field_name;
-
-            }
-
-        }
-
-        return $dfd_columns;
-
-    }
-
-    public function getDomainFieldsArray($connection)
-    {
-
-        $result = $this->getCustomDomainFields($connection);
-
-        $dfd_columns_array = array();
+        $columns_array = array();
 
         $count = 0;
 
@@ -94,57 +63,34 @@ class CustomField
 
             while ($row = mysqli_fetch_object($result)) {
 
-                $dfd_columns_array[$count++] = $row->field_name;
+                $columns_array[$count++] = $row->field_name;
 
             }
 
         }
 
-        return $dfd_columns_array;
+        return $columns_array;
 
     }
 
-    public function getSslFieldsSql($connection)
+    public function getCustomFieldsSql($connection, $table_name, $column_prefix)
     {
 
-        $result = $this->getCustomSslFields($connection);
+        $result = $this->queryCustomFields($connection, $table_name);
 
-        $sslfd_columns = '';
+        $columns = '';
 
         if (mysqli_num_rows($result) > 0) {
 
             while ($row = mysqli_fetch_object($result)) {
 
-                $sslfd_columns .= ", sslfd." . $row->field_name;
+                $columns .= ", " . $column_prefix . "." . $row->field_name;
 
             }
 
         }
 
-        return $sslfd_columns;
-
-    }
-
-    public function getSslFieldsArray($connection)
-    {
-
-        $result = $this->getCustomSslFields($connection);
-
-        $sslfd_columns_array = array();
-
-        $count = 0;
-
-        if (mysqli_num_rows($result) > 0) {
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                $sslfd_columns_array[$count++] = $row->field_name;
-
-            }
-
-        }
-
-        return $sslfd_columns_array;
+        return $columns;
 
     }
 

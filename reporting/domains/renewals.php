@@ -73,7 +73,7 @@ if ($all == "1") {
 	
 }
 
-$dfd_columns = $customField->getDomainFieldsSql($connection);
+$dfd_columns = $customField->getCustomFieldsSql($connection, 'domain_fields', 'dfd');
 
 $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, (d.total_cost * cc.conversion) AS converted_renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name" . $dfd_columns . "
 		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
@@ -246,7 +246,7 @@ if ($export_data == "1") {
         $row_contents[$count++] = $row->update_time;
         $row_contents[$count++] = '';
 
-        $dfd_columns_array = $customField->getDomainFieldsArray($connection);
+        $dfd_columns_array = $customField->getCustomFields($connection, 'domain_fields');
 
         if ($dfd_columns_array != "") {
 
