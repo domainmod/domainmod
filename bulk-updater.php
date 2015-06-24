@@ -22,11 +22,6 @@
 <?php
 include("_includes/start-session.inc.php");
 include("_includes/init.inc.php");
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "database.inc.php");
-include(DIR_INC . "auth/auth-check.inc.php");
 
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
@@ -38,6 +33,12 @@ $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 $timestamp_basic = $time->timeBasic();
 $timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
+
+include(DIR_INC . "head.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
 
 $page_title = "Bulk Domain Updater";
 $software_section = "bulk-updater";

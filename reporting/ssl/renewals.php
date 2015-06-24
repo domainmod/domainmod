@@ -22,11 +22,6 @@
 <?php
 include("../../_includes/start-session.inc.php");
 include("../../_includes/init.inc.php");
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "database.inc.php");
-include(DIR_INC . "auth/auth-check.inc.php");
 
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
@@ -35,6 +30,12 @@ $currency = new DomainMOD\Currency();
 $customField = new DomainMOD\CustomField();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Timestamp();
+
+include(DIR_INC . "head.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "auth/auth-check.inc.php");
 
 $page_title = $reporting_section_title;
 $page_subtitle = "SSL Certificate Renewal Report";

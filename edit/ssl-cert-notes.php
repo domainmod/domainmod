@@ -22,14 +22,15 @@
 <?php
 include("../_includes/start-session.inc.php");
 include("../_includes/init.inc.php");
+
+require_once(DIR_ROOT . "classes/Autoloader.php");
+spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
+
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
-
-require_once(DIR_ROOT . "classes/Autoloader.php");
-spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $page_title = "Viewing an SSL Certificate's Notes";
 $software_section = "ssl-certs";
