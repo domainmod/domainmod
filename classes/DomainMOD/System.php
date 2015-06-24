@@ -73,6 +73,7 @@ class System
 
     }
 
+    /*
     public function dbUpradeCheck($db_version, $software_version)
     {
 
@@ -87,6 +88,7 @@ class System
 
         }
     }
+    */
 
     public function deleteUnusedFees($connection, $fee_table, $compare_table)
     {
