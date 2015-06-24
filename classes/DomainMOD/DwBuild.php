@@ -32,7 +32,7 @@ class DwBuild
         if ($this->checkForHosts($result) == '0')
             return false;
         $this->dropDwTables($connection);
-        $build_start_time_overall = $this->startOverallBuild($connection);
+        $build_start_time_o = $this->startOverallBuild($connection);
         $this->createDwTables($connection);
         $this->processEachServer($connection, $result);
         $this->cleanupRecords($connection);
@@ -40,7 +40,7 @@ class DwBuild
         $result = $this->getServers($connection);
         $this->updateServerStats($connection, $result);
         $this->updateDwTotalsTable($connection);
-        $this->writeBuildStats($connection, $build_start_time_overall);
+        $this->writeBuildStats($connection, $build_start_time_o);
         list($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records) = $this->getServerTotals($connection);
         $this->endOverallBuild($connection, $temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records);
 
@@ -103,11 +103,11 @@ class DwBuild
     public function startOverallBuild($connection)
     {
 
-        $build_start_time_overall = $this->time();
+        $build_start_time_o = $this->time();
 
         $sql = "UPDATE dw_servers
                 SET build_status_overall = '0',
-                    build_start_time_overall = '" . $build_start_time_overall . "',
+                    build_start_time_overall = '" . $build_start_time_o . "',
                     build_end_time_overall = '0000-00-00 00:00:00',
                     build_time = '0',
                     build_status = '0',
@@ -119,7 +119,7 @@ class DwBuild
                     dw_dns_records = '0'";
         mysqli_query($connection, $sql);
 
-        return $build_start_time_overall;
+        return $build_start_time_o;
 
     }
 
@@ -258,6 +258,7 @@ class DwBuild
     {
 
         $query = $protocol . "://" . $host . ":" . $port . $api_type;
+        $header = '';
         $curl = curl_init(); # Create Curl Object
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0); # Allow certs that do not match the domain
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); # Allow self-signed certs
@@ -721,17 +722,17 @@ class DwBuild
 
     }
 
-    public function writeBuildStats($connection, $build_start_time_overall)
+    public function writeBuildStats($connection, $build_start_time_o)
     {
 
-        $build_end_time_overall = $this->time();
+        $build_end_time_o = $this->time();
 
-        $total_build_time_overall = (strtotime($build_end_time_overall) - strtotime($build_start_time_overall));
+        $total_build_time_o = (strtotime($build_end_time_o) - strtotime($build_start_time_o));
 
         $sql = "UPDATE dw_servers
                 SET build_status_overall = '1',
-                    build_end_time_overall = '" . $build_end_time_overall . "',
-                    build_time_overall = '" . $total_build_time_overall . "',
+                    build_end_time_overall = '" . $build_end_time_o . "',
+                    build_time_overall = '" . $total_build_time_o . "',
                     has_ever_been_built_overall = '1'";
         mysqli_query($connection, $sql);
 
