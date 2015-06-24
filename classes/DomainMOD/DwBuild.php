@@ -483,7 +483,7 @@ class DwBuild
             $sql_update = "UPDATE dw_dns_records
                            SET zonefile = '" . $row->zonefile . "'
                            WHERE domain = '" . $row->domain . "'";
-            $this->dbQuery($connection, $sql);
+            $this->dbQuery($connection, $sql_update);
 
         }
 
