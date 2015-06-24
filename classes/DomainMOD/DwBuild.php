@@ -40,7 +40,7 @@ class DwBuild
         $result = $this->getServers($connection);
         $this->updateServerStats($connection, $result);
         $this->updateDwTotalsTable($connection);
-        $this->writeBuildStats($connection, $build_start_time_o);
+        $this->buildTimestamp($connection, $build_start_time_o);
         list($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records) = $this->getServerTotals($connection);
         $this->endOverallBuild($connection, $temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records);
 
@@ -228,7 +228,7 @@ class DwBuild
             $result_zones = $this->getInsertedZones($connection, $row->id);
             $this->processEachZone($connection, $result_zones, $row->id, $row->protocol, $row->host, $row->port,
                 $row->username, $row->hash);
-            $this->endServerBuild($connection, $row->id, $build_start_time);
+            $this->serverTimestamp($connection, $row->id, $build_start_time);
 
         }
         
@@ -423,12 +423,10 @@ class DwBuild
 
     }
 
-    public function endServerBuild($connection, $server_id, $build_start_time)
+    public function serverTimestamp($connection, $server_id, $build_start_time)
     {
 
-        $build_end_time = $this->time();
-
-        $total_build_time = (strtotime($build_end_time) - strtotime($build_start_time));
+        list($build_end_time, $total_build_time) = $this->getBuildTime($build_start_time);
 
         $sql = "UPDATE dw_servers
                 SET build_status = '1',
@@ -441,7 +439,18 @@ class DwBuild
         return true;
 
     }
-    
+
+    public function getBuildTime($build_start_time)
+    {
+
+        $build_end_time = $this->time();
+
+        $total_build_time = (strtotime($build_end_time) - strtotime($build_start_time));
+
+        return array($build_end_time, $total_build_time);
+
+    }
+
     public function cleanupRecords($connection)
     {
         
@@ -606,11 +615,13 @@ class DwBuild
 
         $this->deleteTotalsTable($connection);
         $this->recreateDwTotalsTable($connection);
-        $total_dw_servers = $this->getTotalDwServers($connection);
-        $total_dw_accounts = $this->getTotalDwAccounts($connection);
-        $total_dw_zones = $this->getTotalDwZones($connection);
-        $total_dw_records = $this->getTotalDwRecords($connection);
+        $total_dw_servers = $this->getTotalDwAsset($connection, 'dw_servers');
+        $total_dw_accounts = $this->getTotalDwAsset($connection, 'dw_accounts');
+        $total_dw_zones = $this->getTotalDwAsset($connection, 'dw_dns_zones');
+        $total_dw_records = $this->getTotalDwAsset($connection, 'dw_dns_records');
         $this->updateTable($connection, $total_dw_servers, $total_dw_accounts, $total_dw_zones, $total_dw_records);
+
+        return true;
 
     }
 
@@ -642,79 +653,22 @@ class DwBuild
 
     }
 
-    public function getTotalDwServers($connection)
+    public function getTotalDwAsset($connection, $table)
     {
 
-        $total_dw_servers = 0;
+        $total = '';
 
-        $sql = "SELECT count(*) AS total_dw_servers
-                FROM dw_servers";
-        $this->dbQuery($connection, $sql);
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $total_dw_servers = $row->total_dw_servers;
-
-        }
-
-        return $total_dw_servers;
-
-    }
-
-    public function getTotalDwAccounts($connection)
-    {
-
-        $total_dw_accounts = 0;
-
-        $sql = "SELECT count(*) AS total_dw_accounts
-                FROM dw_accounts";
+        $sql = "SELECT count(*) AS total
+                FROM `" . $table . "`";
         $result = $this->dbQuery($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $total_dw_accounts = $row->total_dw_accounts;
+            $total = $row->total;
 
         }
 
-        return $total_dw_accounts;
-
-    }
-
-    public function getTotalDwZones($connection)
-    {
-
-        $total_dw_zones = 0;
-
-        $sql = "SELECT count(*) AS total_dw_zones
-                FROM dw_dns_zones";
-        $result = $this->dbQuery($connection, $sql);
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $total_dw_zones = $row->total_dw_zones;
-
-        }
-
-        return $total_dw_zones;
-
-    }
-
-    public function getTotalDwRecords($connection)
-    {
-
-        $total_dw_records = 0;
-
-        $sql = "SELECT count(*) AS total_dw_records
-                FROM dw_dns_records";
-        $result = $this->dbQuery($connection, $sql);
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $total_dw_records = $row->total_dw_records;
-
-        }
-
-        return $total_dw_records;
+        return $total;
 
     }
 
@@ -731,12 +685,10 @@ class DwBuild
 
     }
 
-    public function writeBuildStats($connection, $build_start_time_o)
+    public function buildTimestamp($connection, $build_start_time_o)
     {
 
-        $build_end_time_o = $this->time();
-
-        $total_build_time_o = (strtotime($build_end_time_o) - strtotime($build_start_time_o));
+        list($build_end_time_o, $total_build_time_o) = $this->getBuildTime($build_start_time_o);
 
         $sql = "UPDATE dw_servers
                 SET build_status_overall = '1',
