@@ -21,11 +21,6 @@
 ?>
 <?php
 include("../_includes/init.inc.php");
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "database.inc.php");
-include(DIR_INC . "config-demo.inc.php");
 
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
@@ -34,7 +29,13 @@ $time = new DomainMOD\Timestamp();
 $timestamp_basic = $time->timeBasic();
 $timestamp_long = $time->timeLong();
 
-if ($demo_install != "1") {
+include(DIR_INC . "head.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+include(DIR_INC . "config-demo.inc.php");
+
+if ($demo_install != '1') {
 
 	$sql = "SELECT expiration_email_days
 			FROM settings";
@@ -85,7 +86,7 @@ if ($demo_install != "1") {
 			$subject = "Upcoming Expirations - $timestamp_long";
 			$headline = "Upcoming Expirations - $timestamp_long";
 			
-			$headers = "";
+			$headers = '';
 			$headers .= "MIME-Version: 1.0" . "\r\n";
 			$headers .= "Content-type: text/html; charset=iso-8859-1" . "\r\n";
 			$headers .= "From: \"" . $software_title . "\" <" . $from_address . ">\n";

@@ -24,7 +24,7 @@ include("../_includes/init.inc.php");
 include("../_includes/software.inc.php");
 include(DIR_INC . "config-demo.inc.php");
 
-if ($demo_install != "1") {
+if ($demo_install != '1') {
 
     include("currencies.php");
     include("dw.php");

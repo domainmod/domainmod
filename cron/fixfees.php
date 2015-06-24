@@ -21,10 +21,6 @@
 ?>
 <?php
 include("../_includes/init.inc.php");
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "database.inc.php");
 
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
@@ -34,9 +30,14 @@ $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 
+include(DIR_INC . "head.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "database.inc.php");
+
 include(DIR_INC . "config-demo.inc.php");
 
-if ($demo_install != "1") {
+if ($demo_install != '1') {
 
     $domains = $system->updateDomainFees($connection, $timestamp);
 
