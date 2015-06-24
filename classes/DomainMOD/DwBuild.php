@@ -575,10 +575,10 @@ class DwBuild
 
         $this->deleteTotalsTable($connection);
         $this->recreateDwTotalsTable($connection);
-        $total_dw_servers = $this->getTotalDwAsset($connection, 'dw_servers');
-        $total_dw_accounts = $this->getTotalDwAsset($connection, 'dw_accounts');
-        $total_dw_zones = $this->getTotalDwAsset($connection, 'dw_dns_zones');
-        $total_dw_records = $this->getTotalDwAsset($connection, 'dw_dns_records');
+        $total_dw_servers = $this->getTotalDwServers($connection);
+        $total_dw_accounts = $this->getTotalDwAccounts($connection);
+        $total_dw_zones = $this->getTotalDwZones($connection);
+        $total_dw_records = $this->getTotalDwRecords($connection);
         $this->updateTable($connection, $total_dw_servers, $total_dw_accounts, $total_dw_zones, $total_dw_records);
 
         return true;
@@ -613,22 +613,79 @@ class DwBuild
 
     }
 
-    public function getTotalDwAsset($connection, $table)
+    public function getTotalDwServers($connection)
     {
 
-        $total = '';
+        $total_dw_servers = '';
 
-        $sql = "SELECT count(*) AS total
-                FROM `" . $table . "`";
-        $result = $this->dbQuery($connection, $sql);
+        $sql_servers = "SELECT count(*) AS total_dw_servers
+                        FROM `dw_servers`";
+        $result_servers = $this->dbQuery($connection, $sql_servers);
 
-        while ($row = mysqli_fetch_object($result)) {
+        while ($row_servers = mysqli_fetch_object($result_servers)) {
 
-            $total = $row->total;
+            $total_dw_servers = $row_servers->total_dw_servers;
 
         }
 
-        return $total;
+        return $total_dw_servers;
+
+    }
+
+    public function getTotalDwAccounts($connection)
+    {
+
+        $total_dw_accounts = '';
+
+        $sql_accounts = "SELECT count(*) AS total_dw_accounts
+                         FROM `dw_accounts`";
+        $result_accounts = $this->dbQuery($connection, $sql_accounts);
+
+        while ($row_accounts = mysqli_fetch_object($result_accounts)) {
+
+            $total_dw_accounts = $row_accounts->total_dw_accounts;
+
+        }
+
+        return $total_dw_accounts;
+
+    }
+
+    public function getTotalDwZones($connection)
+    {
+
+        $total_dw_zones = '';
+
+        $sql_zones = "SELECT count(*) AS total_dw_zones
+                      FROM `dw_dns_zones`";
+        $result_zones = $this->dbQuery($connection, $sql_zones);
+
+        while ($row_zones = mysqli_fetch_object($result_zones)) {
+
+            $total_dw_zones = $row_zones->total_dw_zones;
+
+        }
+
+        return $total_dw_zones;
+
+    }
+
+    public function getTotalDwRecords($connection)
+    {
+
+        $total_dw_records = '';
+
+        $sql_records = "SELECT count(*) AS total_dw_records
+                      FROM `dw_dns_records`";
+        $result_records = $this->dbQuery($connection, $sql_records);
+
+        while ($row_records = mysqli_fetch_object($result_records)) {
+
+            $total_dw_records = $row_records->total_dw_records;
+
+        }
+
+        return $total_dw_records;
 
     }
 
