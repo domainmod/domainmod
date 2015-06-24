@@ -22,18 +22,20 @@
 <?php
 include("../../../_includes/start-session.inc.php");
 include("../../../_includes/init.inc.php");
+
+require_once(DIR_ROOT . "classes/Autoloader.php");
+spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
+
+$dw = new DomainMOD\DwBuild();
+$error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
+
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 include(DIR_INC . "auth/admin-user-check.inc.php");
-
-require_once(DIR_ROOT . "classes/Autoloader.php");
-spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
-
-$error = new DomainMOD\Error();
-$time = new DomainMOD\Timestamp();
 
 $page_title = "Rebuilding Data Warehouse...";
 $software_section = "admin-dw-rebuild";
@@ -47,7 +49,9 @@ $software_section = "admin-dw-rebuild";
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <font class="subheadline"><?php echo $page_subtitle; ?></font>
-<?php include(DIR_ROOT . "cron/dw.inc.php"); ?>
+<?php
+$dw->build($connection);
+?>
 The Data Warehouse has been rebuilt.<BR>
 <BR>
 <a href="dw.php">Go to Data Warehouse</a>.
