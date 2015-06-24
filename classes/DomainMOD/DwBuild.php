@@ -525,9 +525,9 @@ class DwBuild
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $total_dw_accounts = $this->getTotalAccounts($connection, $row->id);
-            $total_dw_dns_zones = $this->getTotalZones($connection, $row->id);
-            $total_dw_dns_records = $this->getTotalRecords($connection, $row->id);
+            $total_dw_accounts = $this->getTotals($connection, $row->id, 'dw_accounts');
+            $total_dw_dns_zones = $this->getTotals($connection, $row->id, 'dw_dns_zones');
+            $total_dw_dns_records = $this->getTotals($connection, $row->id, 'dw_dns_records');
             $this->updateServerTotals($connection, $row->id, $total_dw_accounts, $total_dw_dns_zones,
                 $total_dw_dns_records);
 
@@ -535,63 +535,23 @@ class DwBuild
 
     }
 
-    public function getTotalAccounts($connection, $server_id)
+    public function getTotals($connection, $server_id, $table)
     {
 
-        $sql = "SELECT count(*) AS total_dw_accounts
-                FROM dw_accounts
+        $sql = "SELECT count(*) AS total
+                FROM `" . $table . "`
                 WHERE server_id = '" . $server_id . "'";
         $result = $this->dbQuery($connection, $sql);
 
-        $total_dw_accounts = 0;
+        $total = '';
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $total_dw_accounts = $row->total_dw_accounts;
+            $total = $row->total;
 
         }
 
-        return $total_dw_accounts;
-
-    }
-
-    public function getTotalZones($connection, $server_id)
-    {
-
-        $sql = "SELECT count(*) AS total_dw_dns_zones
-                FROM dw_dns_zones
-                WHERE server_id = '" . $server_id . "'";
-        $result = $this->dbQuery($connection, $sql);
-
-        $total_dw_dns_zones = 0;
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $total_dw_dns_zones = $row->total_dw_dns_zones;
-
-        }
-
-        return $total_dw_dns_zones;
-
-    }
-
-    public function getTotalRecords($connection, $server_id)
-    {
-
-        $sql = "SELECT count(*) AS total_dw_dns_records
-                FROM dw_dns_records
-                WHERE server_id = '" . $server_id . "'";
-        $result = $this->dbQuery($connection, $sql);
-
-        $total_dw_dns_records = 0;
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $total_dw_dns_records = $row->total_dw_dns_records;
-
-        }
-
-        return $total_dw_dns_records;
+        return $total;
 
     }
 
