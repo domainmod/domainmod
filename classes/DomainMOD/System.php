@@ -49,6 +49,45 @@ class System
 
     }
 
+    public function checkVersion($connection, $software_db_version)
+    {
+
+        $live_version = file_get_contents('https://raw.githubusercontent.com/domainmod/domainmod/master/version-db.txt');
+
+        if ($software_db_version != $live_version && $live_version != '') {
+
+            $sql = "UPDATE settings
+                    SET upgrade_available = '1'";
+
+
+        } else {
+
+            $sql = "UPDATE settings
+                    SET upgrade_available = '0'";
+
+        }
+
+        mysqli_query($connection, $sql);
+
+        return '1';
+
+    }
+
+    public function dbUpradeCheck($db_version, $software_version)
+    {
+
+        if ($_SESSION['system_db_version'] != $most_recent_db_version) {
+
+            include(DIR_INC . "update-database.inc.php");
+            $_SESSION['run_update_includes'] = "1";
+
+        } else {
+
+            $_SESSION['needs_database_upgrade'] = "0";
+
+        }
+    }
+
     public function deleteUnusedFees($connection, $fee_table, $compare_table)
     {
 
