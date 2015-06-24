@@ -33,7 +33,9 @@ class DwBuild
             return false;
         $this->dropDwTables($connection);
         $build_start_time_o = $this->startOverallBuild($connection);
-        $this->createDwTables($connection);
+        $this->createTableAccounts($connection);
+        $this->createTableZones($connection);
+        $this->createTableRecords($connection);
         $this->processEachServer($connection, $result);
         $this->cleanupRecords($connection);
         $this->reorderRecords($connection);
@@ -132,84 +134,98 @@ class DwBuild
 
     }
 
-    public function createDwTables($connection)
+    public function createTableAccounts($connection)
     {
 
-        $sql = "CREATE TABLE IF NOT EXISTS dw_accounts (
-                id int(10) NOT NULL auto_increment,
-                server_id int(10) NOT NULL,
-                domain varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                ip varchar(15) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `owner` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `user` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                email varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                plan varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                theme varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                shell varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `partition` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                disklimit varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                diskused varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                maxaddons varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                maxftp varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                maxlst varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                maxparked varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                maxpop varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                maxsql varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                maxsub varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                startdate varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                unix_startdate int(10) NOT NULL,
-                suspended int(1) NOT NULL,
-                suspendreason varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                suspendtime int(10) NOT NULL,
-                MAX_EMAIL_PER_HOUR int(10) NOT NULL,
-                MAX_DEFER_FAIL_PERCENTAGE int(10) NOT NULL,
-                MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION int(10) NOT NULL,
-                insert_time datetime NOT NULL,
-                PRIMARY KEY  (id)
-                ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        $this->dbQuery($connection, $sql);
+        $sql_accounts = "CREATE TABLE IF NOT EXISTS dw_accounts (
+                             id int(10) NOT NULL auto_increment,
+                             server_id int(10) NOT NULL,
+                             domain varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             ip varchar(15) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             `owner` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             `user` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             email varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             plan varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             theme varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             shell varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             `partition` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             disklimit varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             diskused varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxaddons varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxftp varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxlst varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxparked varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxpop varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxsql varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxsub varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             startdate varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             unix_startdate int(10) NOT NULL,
+                             suspended int(1) NOT NULL,
+                             suspendreason varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             suspendtime int(10) NOT NULL,
+                             MAX_EMAIL_PER_HOUR int(10) NOT NULL,
+                             MAX_DEFER_FAIL_PERCENTAGE int(10) NOT NULL,
+                             MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION int(10) NOT NULL,
+                             insert_time datetime NOT NULL,
+                             PRIMARY KEY  (id)
+                         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
+        $this->dbQuery($connection, $sql_accounts);
 
-        $sql = "CREATE TABLE IF NOT EXISTS dw_dns_zones (
-                id int(10) NOT NULL auto_increment,
-                server_id int(10) NOT NULL,
-                domain varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                zonefile varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                insert_time datetime NOT NULL,
-                PRIMARY KEY  (id)
-                ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        $this->dbQuery($connection, $sql);
+        return true;
 
-        $sql = "CREATE TABLE IF NOT EXISTS dw_dns_records (
-                id int(10) NOT NULL auto_increment,
-                server_id int(10) NOT NULL,
-                dns_zone_id int(10) NOT NULL,
-                domain varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                zonefile varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default '',
-                new_order int(10) NOT NULL,
-                mname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                rname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `serial` int(20) NOT NULL,
-                refresh int(10) NOT NULL,
-                retry int(10) NOT NULL,
-                expire varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                minimum int(10) NOT NULL,
-                nsdname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                ttl int(10) NOT NULL,
-                class varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                type varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                address varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                cname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `exchange` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                preference int(10) NOT NULL,
-                txtdata varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                line int(10) NOT NULL,
-                nlines int(10) NOT NULL,
-                raw longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                insert_time datetime NOT NULL,
-                PRIMARY KEY  (id)
-                ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        $this->dbQuery($connection, $sql);
+    }
+
+    public function createTableZones($connection)
+    {
+
+        $sql_zones = "CREATE TABLE IF NOT EXISTS dw_dns_zones (
+                          id int(10) NOT NULL auto_increment,
+                          server_id int(10) NOT NULL,
+                          domain varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                          zonefile varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                          insert_time datetime NOT NULL,
+                          PRIMARY KEY  (id)
+                          ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
+        $this->dbQuery($connection, $sql_zones);
+
+        return true;
+
+    }
+
+    public function createTableRecords($connection)
+    {
+
+        $sql_records = "CREATE TABLE IF NOT EXISTS dw_dns_records (
+                            id int(10) NOT NULL auto_increment,
+                            server_id int(10) NOT NULL,
+                            dns_zone_id int(10) NOT NULL,
+                            domain varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            zonefile varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default '',
+                            new_order int(10) NOT NULL,
+                            mname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            rname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            `serial` int(20) NOT NULL,
+                            refresh int(10) NOT NULL,
+                            retry int(10) NOT NULL,
+                            expire varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            minimum int(10) NOT NULL,
+                            nsdname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            ttl int(10) NOT NULL,
+                            class varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            type varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            address varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            cname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            `exchange` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            preference int(10) NOT NULL,
+                            txtdata varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            line int(10) NOT NULL,
+                            nlines int(10) NOT NULL,
+                            raw longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            insert_time datetime NOT NULL,
+                            PRIMARY KEY  (id)
+                        ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
+        $this->dbQuery($connection, $sql_records);
 
         return true;
 
@@ -559,12 +575,12 @@ class DwBuild
                                        $total_dw_dns_records)
     {
 
-        $sql = "UPDATE dw_servers
-                SET dw_accounts = '" . $total_dw_accounts . "',
-                    dw_dns_zones = '" . $total_dw_dns_zones . "',
-                    dw_dns_records = '" . $total_dw_dns_records . "'
-                WHERE id = '" . $server_id . "'";
-        $this->dbQuery($connection, $sql);
+        $sql_update = "UPDATE dw_servers
+                       SET dw_accounts = '" . $total_dw_accounts . "',
+                           dw_dns_zones = '" . $total_dw_dns_zones . "',
+                           dw_dns_records = '" . $total_dw_dns_records . "'
+                       WHERE id = '" . $server_id . "'";
+        $this->dbQuery($connection, $sql_update);
 
         return true;
 
@@ -692,11 +708,12 @@ class DwBuild
     public function updateTable($connection, $total_dw_servers, $total_dw_accounts, $total_dw_dns_zones, $total_dw_records)
     {
 
-        $sql = "INSERT INTO dw_server_totals
-                (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
-                VALUES
-                ('" . $total_dw_servers . "', '" . $total_dw_accounts . "', '" . $total_dw_dns_zones . "', '" . $total_dw_records . "', '" . $this->time() . "')";
-        $this->dbQuery($connection, $sql);
+        $sql_insert = "INSERT INTO dw_server_totals
+                       (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
+                       VALUES
+                       ('" . $total_dw_servers . "', '" . $total_dw_accounts . "', '" . $total_dw_dns_zones . "', '" .
+                        $total_dw_records . "', '" . $this->time() . "')";
+        $this->dbQuery($connection, $sql_insert);
 
         return true;
 
