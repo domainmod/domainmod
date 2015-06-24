@@ -65,15 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if ($all == "1") {
-
-	$range_string = "";
-	
-} else {
-
-	$range_string = " AND sslc.expiry_date between '" . $new_start_date . "' AND '" . $new_end_date . "' ";
-	
-}
+$range_string = $reporting->getRangeString($all, 'sslc.expiry_date', $new_start_date, $new_end_date);
 
 $sql = "SELECT o.id, o.name, SUM(sslc.total_cost * cc.conversion) as total_cost, count(*) AS number_of_certs
 		FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, owners AS o

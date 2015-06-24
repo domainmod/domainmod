@@ -64,15 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if ($all == "1") {
-
-	$range_string = "";
-	
-} else {
-
-	$range_string = " AND d.expiry_date between '$new_start_date' AND '$new_end_date' ";
-	
-}
+$range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_date, $new_end_date);
 
 $dfd_columns = $customField->getCustomFieldsSql($connection, 'domain_fields', 'dfd');
 

@@ -65,15 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if ($all == "1") {
-
-	$range_string = "";
-	
-} else {
-
-	$range_string = " AND sslc.expiry_date between '" . $new_start_date . "' AND '" . $new_end_date . "' ";
-	
-}
+$range_string = $reporting->getRangeString($all, 'sslc.expiry_date', $new_start_date, $new_end_date);
 
 $sql = "SELECT sslc.id, YEAR(sslc.expiry_date) AS year, MONTH(sslc.expiry_date) AS month
 		FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c

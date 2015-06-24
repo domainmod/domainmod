@@ -28,6 +28,7 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $currency = new DomainMOD\Currency();
 $error = new DomainMOD\Error();
+$reporting = new DomainMOD\Reporting();
 $time = new DomainMOD\Timestamp();
 
 include(DIR_INC . "head.inc.php");
@@ -65,15 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if ($all == "1") {
-
-	$range_string = "";
-	
-} else {
-
-	$range_string = " AND d.expiry_date between '" . $new_start_date . "' AND '" . $new_end_date . "' ";
-	
-}
+$range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_date, $new_end_date);
 
 $sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS registrar_account_id, ra.username, SUM(d.total_cost * cc.conversion) as total_cost, count(*) AS number_of_domains
 		FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o

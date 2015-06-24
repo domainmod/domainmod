@@ -65,15 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
-if ($all == "1") {
-
-    $range_string = "";
-
-} else {
-
-    $range_string = " AND d.expiry_date between '" . $new_start_date . "' AND '" . $new_end_date . "' ";
-
-}
+$range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_date, $new_end_date);
 
 $sql = "SELECT d.id, YEAR(d.expiry_date) AS year, MONTH(d.expiry_date) AS month
         FROM domains AS d, fees AS f, currencies AS c
