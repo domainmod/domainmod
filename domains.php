@@ -142,38 +142,28 @@ if ($_SESSION['quick_search'] != "") {
     $_SESSION['quick_search'] = $format->stripSpacing($_SESSION['quick_search']);
 
     $lines = explode("\r\n", $_SESSION['quick_search']);
-    $invalid_domain_count = 0;
-    $invalid_domains_to_display = 5;
 
     $domain = new DomainMOD\Domain();
 
-    while (list($key, $new_domain) = each($lines)) {
-
-        if (!$domain->checkDomainFormat($new_domain)) {
-            if ($invalid_domain_count < $invalid_domains_to_display) $temp_result_message .= "Line " . number_format($key + 1) . " contains an invalid domain<BR>";
-            $invalid_domains = 1;
-            $invalid_domain_count++;
-        }
-
-    }
+    list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($lines);
 
     if ($invalid_domains == 1) {
 
-        if ($invalid_domain_count == 1) {
+        if ($invalid_count == 1) {
 
-            $_SESSION['result_message'] = "There is " . number_format($invalid_domain_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
+            $_SESSION['result_message'] = "There is " . number_format($invalid_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
 
         } else {
 
-            $_SESSION['result_message'] = "There are " . number_format($invalid_domain_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
+            $_SESSION['result_message'] = "There are " . number_format($invalid_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
 
-            if (($invalid_domain_count-$invalid_domains_to_display) == 1) {
+            if (($invalid_count-$invalid_to_display) == 1) {
 
-                $_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " other<BR>";
+                $_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_count-$invalid_to_display) . " other<BR>";
 
-            } elseif (($invalid_domain_count-$invalid_domains_to_display) > 1) {
+            } elseif (($invalid_count-$invalid_to_display) > 1) {
 
-                $_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
+                $_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_count-$invalid_to_display) . " others<BR>";
             }
 
         }

@@ -54,46 +54,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($new_name != "" && $new_segment != "") {
 
 		$lines = explode("\r\n", $new_segment);
-		$invalid_domain_count = 0;
-		$invalid_domains_to_display = 5;
 
         $domain = new DomainMOD\Domain();
 
-        while (list($key, $new_domain) = each($lines)) {
-	
-			if (!$domain->checkDomainFormat($new_domain)) {
-				if ($invalid_domain_count < $invalid_domains_to_display) {
-					$temp_result_message .= "Line " . number_format($key + 1) . " contains an invalid domain<BR>";
-				}
-				$invalid_domains = 1;
-				$invalid_domain_count++;
-			}
-	
-		}
-		
-		if ($new_segment == "" || $invalid_domains == 1) {
+        list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($lines);
+
+        if ($new_segment == "" || $invalid_domains == 1) {
 		
 			if ($invalid_domains == 1) {
 	
-				if ($invalid_domain_count == 1) {
+				if ($invalid_count == 1) {
 	
-					$_SESSION['result_message'] = "There is " . number_format($invalid_domain_count) . " invalid domain
+					$_SESSION['result_message'] = "There is " . number_format($invalid_count) . " invalid domain
 					    on your list<BR><BR>" . $temp_result_message;
 	
 				} else {
 	
-					$_SESSION['result_message'] = "There are " . number_format($invalid_domain_count) . " invalid
+					$_SESSION['result_message'] = "There are " . number_format($invalid_count) . " invalid
 					    domains on your list<BR><BR>" . $temp_result_message;
 	
-					if (($invalid_domain_count-$invalid_domains_to_display) == 1) {
+					if (($invalid_count-$invalid_to_display) == 1) {
 	
 						$_SESSION['result_message'] .= "<BR>Plus " .
-                            number_format($invalid_domain_count-$invalid_domains_to_display) . " other<BR>";
+                            number_format($invalid_count-$invalid_to_display) . " other<BR>";
 	
-					} elseif (($invalid_domain_count-$invalid_domains_to_display) > 1) {
+					} elseif (($invalid_count-$invalid_to_display) > 1) {
 	
 						$_SESSION['result_message'] .= "<BR>Plus " .
-                            number_format($invalid_domain_count-$invalid_domains_to_display) . " others<BR>";
+                            number_format($invalid_count-$invalid_to_display) . " others<BR>";
 					}
 	
 				}
