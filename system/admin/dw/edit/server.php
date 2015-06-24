@@ -22,18 +22,20 @@
 <?php
 include("../../../../_includes/start-session.inc.php");
 include("../../../../_includes/init.inc.php");
+
+require_once(DIR_ROOT . "classes/Autoloader.php");
+spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
+
+$dw = new DomainMOD\DwBuild();
+$error = new DomainMOD\Error();
+$time = new DomainMOD\Timestamp();
+
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 include(DIR_INC . "auth/admin-user-check.inc.php");
-
-require_once(DIR_ROOT . "classes/Autoloader.php");
-spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
-
-$error = new DomainMOD\Error();
-$time = new DomainMOD\Timestamp();
 
 $page_title = "Editing A Server";
 $software_section = "admin-dw-manage-servers-edit";
@@ -202,7 +204,7 @@ if ($really_del == "1") {
 
     } else { $error->outputSqlError($conn, "ERROR"); }
 
-    include("../../../../cron/_includes/dw-update-totals.inc.php");
+    $dw->updateDwTotalsTable($connection);
 
     $_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font>
     Deleted<BR>";
