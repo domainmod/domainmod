@@ -45,7 +45,7 @@ class Login
 
         }
 
-        return array($login_succeeded);
+        return $login_succeeded;
 
     }
 
