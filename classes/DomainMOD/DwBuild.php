@@ -44,7 +44,8 @@ class DwBuild
         $this->updateDwTotalsTable($connection);
         $this->buildTimestamp($connection, $build_start_time_o);
         list($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records) = $this->getServerTotals($connection);
-        $this->endOverallBuild($connection, $temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records);
+        $has_empty = $this->checkDwAssets($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records);
+        $this->endOverallBuild($connection, $has_empty);
 
         return 'Data Warehouse Rebuilt.<BR>';
 
@@ -758,10 +759,25 @@ class DwBuild
 
     }
 
-    public function endOverallBuild($connection, $temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records)
+    public function checkDwAssets($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records)
     {
 
+        $empty_assets = '0';
+
         if ($temp_dw_accounts == "0" && $temp_dw_dns_zones == "0" && $temp_dw_dns_records == "0") {
+
+            $empty_assets = '1';
+
+        }
+
+        return $empty_assets;
+
+    }
+
+    public function endOverallBuild($connection, $empty_assets)
+    {
+
+        if ($empty_assets == '1') {
 
             $sql = "UPDATE dw_servers
                     SET build_status_overall = '0',
