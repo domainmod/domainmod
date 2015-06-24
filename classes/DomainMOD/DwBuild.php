@@ -222,7 +222,7 @@ class DwBuild
         return true;
 
     }
-    
+
     public function processEachServer($connection, $result)
     {
 
@@ -239,11 +239,11 @@ class DwBuild
             $this->serverTimestamp($connection, $row->id, $build_start_time);
 
         }
-        
+
         return true;
-    
+
     }
-    
+
     public function processEachZone($connection, $result_zones, $server_id, $protocol, $host, $port, $username, $hash)
     {
 
@@ -253,7 +253,7 @@ class DwBuild
             $this->insertRecords($connection, $api_results, $server_id, $row_zones->id, $row_zones->domain);
 
         }
-    
+
     }
 
     public function startServerBuild($connection, $server_id)
@@ -388,7 +388,7 @@ class DwBuild
         return $result;
 
     }
-    
+
     public function apiGetRecords($protocol, $host, $port, $username, $hash, $domain)
     {
 
@@ -415,12 +415,12 @@ class DwBuild
                          txtdata, line, nlines, raw, insert_time)
                         VALUES
                         ('" . $server_id . "', '" . $zone_id . "', '" . $domain . "', '" .
-                         $hit->mname . "', '" . $hit->rname . "', '" . $hit->serial . "', '" . $hit->refresh . "', '" .
-                         $hit->retry . "', '" . $hit->expire . "', '" . $hit->minimum . "', '" . $hit->nsdname . "', '"
-                         . $hit->name . "', '" . $hit->ttl . "', '" . $hit->class . "', '" . $hit->type . "', '" .
-                         $hit->address . "', '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference .
-                         "', '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw .
-                         "', '" . $this->time() . "')";
+                    $hit->mname . "', '" . $hit->rname . "', '" . $hit->serial . "', '" . $hit->refresh . "', '" .
+                    $hit->retry . "', '" . $hit->expire . "', '" . $hit->minimum . "', '" . $hit->nsdname . "', '"
+                    . $hit->name . "', '" . $hit->ttl . "', '" . $hit->class . "', '" . $hit->type . "', '" .
+                    $hit->address . "', '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference .
+                    "', '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw .
+                    "', '" . $this->time() . "')";
                 mysqli_query($connection, $sql);
 
             }
@@ -461,7 +461,7 @@ class DwBuild
 
     public function cleanupRecords($connection)
     {
-        
+
         $sql = "DELETE FROM dw_dns_records
                 WHERE type = ':RAW'
                   AND raw = ''";
@@ -491,7 +491,7 @@ class DwBuild
             $sql_update = "UPDATE dw_dns_records
                            SET zonefile = '" . $row->zonefile . "'
                            WHERE domain = '" . $row->domain . "'";
-            mysqli_query($connection, $sql);
+            mysqli_query($connection, $sql_update);
 
         }
 
@@ -704,7 +704,7 @@ class DwBuild
                        (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
                        VALUES
                        ('" . $total_dw_servers . "', '" . $total_dw_accounts . "', '" . $total_dw_dns_zones . "', '" .
-                        $total_dw_records . "', '" . $this->time() . "')";
+            $total_dw_records . "', '" . $this->time() . "')";
         mysqli_query($connection, $sql_insert);
 
         return true;
