@@ -245,7 +245,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $_SESSION['result_message'] .= $system->updateSegments($connection);
                     $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'domains');
-                    include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
+
+                    list ($_SESSION['need_registrar'], $_SESSION['need_registrar_account'], $_SESSION['need_domain'],
+                        $_SESSION['need_ssl_provider'], $_SESSION['need_ssl_account'], $_SESSION['need_ssl_cert'])
+                    = $system->checkExistingAssets($connection);
 
                 } else { $error->outputSqlError($conn, "ERROR"); }
 

@@ -105,8 +105,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		if ($_SESSION['need_ssl_account'] == "1") {
 			
-			include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
-			header("Location: ../../ssl-certs.php");
+			list ($_SESSION['need_registrar'], $_SESSION['need_registrar_account'], $_SESSION['need_domain'],
+                $_SESSION['need_ssl_provider'], $_SESSION['need_ssl_account'], $_SESSION['need_ssl_cert'])
+            = $system->checkExistingAssets($connection);
+
+            header("Location: ../../ssl-certs.php");
 
 		} else {
 

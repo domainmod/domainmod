@@ -27,8 +27,10 @@ $_SESSION['running_login_checks'] = 1;
 // Compare database and software versions (to see if a database upgrade is needed)
 include(DIR_INC . "auth/login-checks/compare-versions.inc.php");
 
-// Check if there are Domain and SSL assets
-include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
+// Check for existing Domain and SSL assets
+list ($_SESSION['need_registrar'], $_SESSION['need_registrar_account'], $_SESSION['need_domain'],
+    $_SESSION['need_ssl_provider'], $_SESSION['need_ssl_account'], $_SESSION['need_ssl_cert'])
+= $system->checkExistingAssets($connection);
 
 unset($_SESSION['running_login_checks']);
 

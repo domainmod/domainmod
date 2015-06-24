@@ -265,10 +265,13 @@ if ($really_del == "1") {
 	$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Deleted<BR>";
 
 	$_SESSION['result_message'] .= $system->updateSegments($connection);
-	include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
-	
-	header("Location: ../domains.php");
-	exit;
+
+    list ($_SESSION['need_registrar'], $_SESSION['need_registrar_account'], $_SESSION['need_domain'],
+        $_SESSION['need_ssl_provider'], $_SESSION['need_ssl_account'], $_SESSION['need_ssl_cert'])
+    = $system->checkExistingAssets($connection);
+
+    header("Location: ../domains.php");
+    exit;
 
 }
 ?>

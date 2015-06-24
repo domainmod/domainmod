@@ -237,9 +237,11 @@ if ($really_del == "1") {
 	
 	$_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name ($temp_type)</font> Deleted<BR>";
 
-	include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
-	
-	header("Location: ../ssl-certs.php");
+    list ($_SESSION['need_registrar'], $_SESSION['need_registrar_account'], $_SESSION['need_domain'],
+        $_SESSION['need_ssl_provider'], $_SESSION['need_ssl_account'], $_SESSION['need_ssl_cert'])
+    = $system->checkExistingAssets($connection);
+
+    header("Location: ../ssl-certs.php");
 	exit;
 
 }

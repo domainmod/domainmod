@@ -216,9 +216,11 @@ if ($really_del == "1") {
     $_SESSION['result_message'] = "SSL Account <font class=\"highlight\">$temp_username ($temp_ssl_provider_name,
         $temp_owner_name)</font> Deleted<BR>";
 
-	include(DIR_INC . "auth/login-checks/domain-and-ssl-asset-check.inc.php");
-	
-	header("Location: ../ssl-accounts.php");
+	list ($_SESSION['need_registrar'], $_SESSION['need_registrar_account'], $_SESSION['need_domain'],
+        $_SESSION['need_ssl_provider'], $_SESSION['need_ssl_account'], $_SESSION['need_ssl_cert'])
+    = $system->checkExistingAssets($connection);
+
+    header("Location: ../ssl-accounts.php");
 	exit;
 
 }
