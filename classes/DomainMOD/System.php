@@ -289,4 +289,40 @@ class System
 
     }
 
+    public function checkExistingAssets($connection)
+    {
+
+        $registrars = $this->checkExistingSingle($connection, 'registrars');
+        $registrar_accounts = $this->checkExistingSingle($connection, 'registrar_accounts');
+        $domains = $this->checkExistingSingle($connection, 'domains');
+        $ssl_providers = $this->checkExistingSingle($connection, 'ssl_providers');
+        $ssl_accounts = $this->checkExistingSingle($connection, 'ssl_accounts');
+        $ssl_certs = $this->checkExistingSingle($connection, 'ssl_certs');
+
+        return array($registrars, $registrar_accounts, $domains, $ssl_providers, $ssl_accounts, $ssl_certs);
+
+    }
+
+    public function checkExistingSingle($connection, $table)
+    {
+
+        $sql = "SELECT id
+                FROM " . $table . "
+                LIMIT 1";
+        $result = mysqli_query($connection, $sql);
+
+        if (mysqli_num_rows($result) == 1) {
+
+            $need_asset = '0';
+
+        } else {
+
+            $need_asset = '1';
+
+        }
+
+        return $need_asset;
+
+    }
+
 }
