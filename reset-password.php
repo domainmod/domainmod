@@ -27,6 +27,7 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$login = new DomainMOD\Login();
 $time = new DomainMOD\Timestamp();
 
 include(DIR_INC . "head.inc.php");
