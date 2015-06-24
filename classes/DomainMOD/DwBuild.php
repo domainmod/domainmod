@@ -55,13 +55,22 @@ class DwBuild
 
     }
 
+    public function dbQuery($connection, $sql)
+    {
+
+        $result = mysqli_query($connection, $sql);
+
+        return $result;
+
+    }
+
     public function getServers($connection)
     {
 
         $sql = "SELECT id, `host`, protocol, `port`, username, `hash`
                 FROM dw_servers
                 ORDER BY `name`";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->dbQuery($connection, $sql);
 
         return $result;
 
@@ -87,14 +96,14 @@ class DwBuild
     public function dropDwTables($connection)
     {
 
-        $sql = "DROP TABLE IF EXISTS dw_accounts";
-        mysqli_query($connection, $sql);
+        $sql_accounts = "DROP TABLE IF EXISTS dw_accounts";
+        $this->dbQuery($connection, $sql_accounts);
 
-        $sql = "DROP TABLE IF EXISTS dw_dns_zones";
-        mysqli_query($connection, $sql);
+        $sql_zones = "DROP TABLE IF EXISTS dw_dns_zones";
+        $this->dbQuery($connection, $sql_zones);
 
-        $sql = "DROP TABLE IF EXISTS dw_dns_records";
-        mysqli_query($connection, $sql);
+        $sql_records = "DROP TABLE IF EXISTS dw_dns_records";
+        $this->dbQuery($connection, $sql_records);
 
         return true;
 
@@ -117,7 +126,7 @@ class DwBuild
                     dw_accounts = '0',
                     dw_dns_zones = '0',
                     dw_dns_records = '0'";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         return $build_start_time_o;
 
@@ -158,7 +167,7 @@ class DwBuild
                 insert_time datetime NOT NULL,
                 PRIMARY KEY  (id)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         $sql = "CREATE TABLE IF NOT EXISTS dw_dns_zones (
                 id int(10) NOT NULL auto_increment,
@@ -168,7 +177,7 @@ class DwBuild
                 insert_time datetime NOT NULL,
                 PRIMARY KEY  (id)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         $sql = "CREATE TABLE IF NOT EXISTS dw_dns_records (
                 id int(10) NOT NULL auto_increment,
@@ -200,7 +209,7 @@ class DwBuild
                 insert_time datetime NOT NULL,
                 PRIMARY KEY  (id)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         return true;
 
@@ -248,7 +257,7 @@ class DwBuild
                 SET build_start_time = '" . $build_start_time . "',
                     build_status = '0'
                 WHERE id = '" . $server_id . "'";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         return $build_start_time;
 
@@ -314,7 +323,7 @@ class DwBuild
                     . "', '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime
                     . "', '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "', '"
                     . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . $this->time() . "')";
-                mysqli_query($connection, $sql);
+                $this->dbQuery($connection, $sql);
 
             }
 
@@ -349,7 +358,7 @@ class DwBuild
                         VALUES
                         ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->zonefile . "', '" . $this->time()
                     . "')";
-                mysqli_query($connection, $sql);
+                $this->dbQuery($connection, $sql);
 
             }
 
@@ -366,7 +375,7 @@ class DwBuild
                 FROM dw_dns_zones
                 WHERE server_id = '" . $server_id . "'
                 ORDER BY domain";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->dbQuery($connection, $sql);
 
         return $result;
 
@@ -404,7 +413,7 @@ class DwBuild
                          $hit->address . "', '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference .
                          "', '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw .
                          "', '" . $this->time() . "')";
-                mysqli_query($connection, $sql);
+                $this->dbQuery($connection, $sql);
 
             }
 
@@ -427,7 +436,7 @@ class DwBuild
                     build_time = '" . $total_build_time . "',
                     has_ever_been_built = '1'
                 WHERE id = '" . $server_id . "'";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         return true;
 
@@ -439,33 +448,33 @@ class DwBuild
         $sql = "DELETE FROM dw_dns_records
                 WHERE type = ':RAW'
                   AND raw = ''";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         $sql = "UPDATE dw_dns_records
                 SET type = 'COMMENT'
                 WHERE type = ':RAW'";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         $sql = "UPDATE dw_dns_records
                 SET type = 'ZONE TTL'
                 WHERE type = '\$TTL'";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         $sql = "UPDATE dw_dns_records
                 SET nlines = '1'
                 WHERE nlines = '0'";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         $sql = "SELECT domain, zonefile
                 FROM dw_dns_zones";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->dbQuery($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
 
             $sql_update = "UPDATE dw_dns_records
                            SET zonefile = '" . $row->zonefile . "'
                            WHERE domain = '" . $row->domain . "'";
-            mysqli_query($connection, $sql_update);
+            $this->dbQuery($connection, $sql);
 
         }
 
@@ -494,7 +503,7 @@ class DwBuild
             $sql = "UPDATE dw_dns_records
                     SET new_order = '" . $new_order++ . "'
                     WHERE type = '" . $key . "'";
-            mysqli_query($connection, $sql);
+            $this->dbQuery($connection, $sql);
 
         }
 
@@ -523,7 +532,7 @@ class DwBuild
         $sql = "SELECT count(*) AS total_dw_accounts
                 FROM dw_accounts
                 WHERE server_id = '" . $server_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->dbQuery($connection, $sql);
 
         $total_dw_accounts = 0;
 
@@ -543,7 +552,7 @@ class DwBuild
         $sql = "SELECT count(*) AS total_dw_dns_zones
                 FROM dw_dns_zones
                 WHERE server_id = '" . $server_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->dbQuery($connection, $sql);
 
         $total_dw_dns_zones = 0;
 
@@ -563,7 +572,7 @@ class DwBuild
         $sql = "SELECT count(*) AS total_dw_dns_records
                 FROM dw_dns_records
                 WHERE server_id = '" . $server_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->dbQuery($connection, $sql);
 
         $total_dw_dns_records = 0;
 
@@ -586,7 +595,7 @@ class DwBuild
                     dw_dns_zones = '" . $total_dw_dns_zones . "',
                     dw_dns_records = '" . $total_dw_dns_records . "'
                 WHERE id = '" . $server_id . "'";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         return true;
 
@@ -609,7 +618,7 @@ class DwBuild
     {
 
         $sql = "DROP TABLE IF EXISTS dw_server_totals";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         return true;
 
@@ -627,7 +636,7 @@ class DwBuild
                     `insert_time` datetime NOT NULL,
                     PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-        mysqli_query($connection,$sql);
+        $this->dbQuery($connection, $sql);
 
         return true;
 
@@ -640,7 +649,7 @@ class DwBuild
 
         $sql = "SELECT count(*) AS total_dw_servers
                 FROM dw_servers";
-        $result = mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
 
@@ -659,7 +668,7 @@ class DwBuild
 
         $sql = "SELECT count(*) AS total_dw_accounts
                 FROM dw_accounts";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->dbQuery($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
 
@@ -678,7 +687,7 @@ class DwBuild
 
         $sql = "SELECT count(*) AS total_dw_zones
                 FROM dw_dns_zones";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->dbQuery($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
 
@@ -697,7 +706,7 @@ class DwBuild
 
         $sql = "SELECT count(*) AS total_dw_records
                 FROM dw_dns_records";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->dbQuery($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
 
@@ -716,7 +725,7 @@ class DwBuild
                 (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
                 VALUES
                 ('" . $total_dw_servers . "', '" . $total_dw_accounts . "', '" . $total_dw_dns_zones . "', '" . $total_dw_records . "', '" . $this->time() . "')";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         return true;
 
@@ -734,7 +743,7 @@ class DwBuild
                     build_end_time_overall = '" . $build_end_time_o . "',
                     build_time_overall = '" . $total_build_time_o . "',
                     has_ever_been_built_overall = '1'";
-        mysqli_query($connection, $sql);
+        $this->dbQuery($connection, $sql);
 
         return true;
 
@@ -749,7 +758,7 @@ class DwBuild
 
         $sql = "SELECT dw_accounts, dw_dns_zones, dw_dns_records
                 FROM dw_server_totals";
-        $result = mysqli_query($connection, $sql);
+        $result = $this->dbQuery($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
 
@@ -781,7 +790,7 @@ class DwBuild
                         dw_accounts = '0',
                         dw_dns_zones = '0',
                         dw_dns_records = '0'";
-            mysqli_query($connection, $sql);
+            $this->dbQuery($connection, $sql);
 
         }
 
