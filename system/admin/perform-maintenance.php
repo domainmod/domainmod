@@ -27,13 +27,15 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $maint = new DomainMOD\Maintenance();
+$system = new DomainMOD\System();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
-include(DIR_INC . "auth/auth-check.inc.php");
-include(DIR_INC . "auth/admin-user-check.inc.php");
+
+$system->authCheck($web_root);
+$system->checkAdminUser($web_root);
 
 // Perform System Maintenance
 $_SESSION['result_message'] .= $maint->performMaintenance($connection);

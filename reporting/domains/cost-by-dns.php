@@ -28,13 +28,15 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $currency = new DomainMOD\Currency();
 $error = new DomainMOD\Error();
+$system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
-include(DIR_INC . "auth/auth-check.inc.php");
+
+$system->authCheck($web_root);
 
 $page_title = $reporting_section_title;
 $page_subtitle = "Domain Cost by DNS Profile Report";

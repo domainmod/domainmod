@@ -22,11 +22,18 @@
 <?php
 include("../../../_includes/start-session.inc.php");
 include("../../../_includes/init.inc.php");
+
+require_once(DIR_ROOT . "classes/Autoloader.php");
+spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
+
+$system = new DomainMOD\System();
+
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "config.inc.php");
-include(DIR_INC . "auth/auth-check.inc.php");
-include(DIR_INC . "auth/admin-user-check.inc.php");
+
+$system->authCheck($web_root);
+$system->checkAdminUser($web_root);
 ?>
 <?php
 if ($_SESSION['display_dw_intro_page'] == "1") {

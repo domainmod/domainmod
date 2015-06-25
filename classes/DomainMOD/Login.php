@@ -112,4 +112,20 @@ class Login
 
     }
 
+    public function setLastLogin($connection)
+    {
+
+        $time = new Timestamp();
+        $timestamp = $time->time();
+
+        $sql = "UPDATE users
+                SET last_login = '" . $timestamp . "',
+                    number_of_logins = number_of_logins + 1,
+                    update_time = '" . $timestamp . "'
+                WHERE id = '" . $_SESSION['user_id'] . "'
+                  AND email_address = '" . $_SESSION['email_address'] . "'";
+        mysqli_query($connection, $sql);
+
+    }
+
 }

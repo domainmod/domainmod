@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/auth/login-check.inc.php
+ * /_includes/login-checks.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,15 +20,20 @@
  */
 ?>
 <?php
-if ($_SESSION['is_logged_in'] == 1) {
+$system->authCheck($web_root);
 
-    if (isset($_SESSION['running_login_checks'])) {
+$_SESSION['running_login_checks'] = 1;
 
-        include(DIR_INC . "auth/login-checks/main.inc.php");
+// Compare database and software versions (to see if a database upgrade is needed)
+$system->dbUpgradeCheck($most_recent_db_version);
 
-    }
+// Check for existing Domain and SSL assets
+$system->checkExistingAssets($connection);
 
-    header("Location: " . $web_root . "/domains.php");
-    exit;
+unset($_SESSION['running_login_checks']);
 
-}
+unset($_SESSION['installation_mode']);
+
+$login->setLastLogin($connection);
+
+$_SESSION['last_login'] = $time->time();

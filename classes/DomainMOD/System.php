@@ -73,6 +73,24 @@ class System
 
     }
 
+    public function dbUpgradeCheck($most_recent_db_version)
+    {
+
+        if ($_SESSION['system_db_version'] != $most_recent_db_version) {
+
+            include(DIR_INC . "update-database.inc.php");
+            $_SESSION['run_update_includes'] = "1";
+
+        } else {
+
+            $_SESSION['needs_database_upgrade'] = "0";
+
+        }
+
+        return true;
+
+    }
+
     public function checkMissingFees($connection, $table)
     {
 
@@ -128,6 +146,52 @@ class System
         }
 
         return $need_asset;
+
+    }
+
+    public function authCheck($web_root)
+    {
+
+        if ($_SESSION['is_logged_in'] != 1) {
+
+            $_SESSION['user_redirect'] = $_SERVER["REQUEST_URI"];
+
+            $_SESSION['result_message'] = "You must be logged in to access this area<BR>";
+
+            header("Location: " . $web_root . "/");
+            exit;
+
+        }
+
+    }
+
+    public function loginCheck($web_root)
+    {
+
+        if ($_SESSION['is_logged_in'] == 1) {
+
+            if (isset($_SESSION['running_login_checks'])) {
+
+                include(DIR_INC . "login-checks.inc.php");
+
+            }
+
+            header("Location: " . $web_root . "/domains.php");
+            exit;
+
+        }
+
+    }
+
+    public function checkAdminUser($web_root)
+    {
+
+        if ($_SESSION['is_admin'] !== 1) {
+
+            header("Location: " . $web_root . "/invalid.php");
+            exit;
+
+        }
 
     }
 
