@@ -33,7 +33,7 @@ class Maintenance
 
         $result_message = 'Maintenance Completed<BR>';
 
-        return $result_message
+        return $result_message;
 
     }
 
