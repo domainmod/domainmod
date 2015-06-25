@@ -292,14 +292,14 @@ class System
     public function checkExistingAssets($connection)
     {
 
-        $registrars = $this->checkExistingSingle($connection, 'registrars');
-        $registrar_accounts = $this->checkExistingSingle($connection, 'registrar_accounts');
-        $domains = $this->checkExistingSingle($connection, 'domains');
-        $ssl_providers = $this->checkExistingSingle($connection, 'ssl_providers');
-        $ssl_accounts = $this->checkExistingSingle($connection, 'ssl_accounts');
-        $ssl_certs = $this->checkExistingSingle($connection, 'ssl_certs');
+        $_SESSION['need_registrar'] = $this->checkExistingSingle($connection, 'registrars');
+        $_SESSION['need_registrar_account'] = $this->checkExistingSingle($connection, 'registrar_accounts');
+        $_SESSION['need_domain'] = $this->checkExistingSingle($connection, 'domains');
+        $_SESSION['need_ssl_provider'] = $this->checkExistingSingle($connection, 'ssl_providers');
+        $_SESSION['need_ssl_account'] = $this->checkExistingSingle($connection, 'ssl_accounts');
+        $_SESSION['need_ssl_cert'] = $this->checkExistingSingle($connection, 'ssl_certs');
 
-        return array($registrars, $registrar_accounts, $domains, $ssl_providers, $ssl_accounts, $ssl_certs);
+        return true;
 
     }
 

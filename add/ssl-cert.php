@@ -217,9 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'ssl_certs');
 
-        list ($_SESSION['need_registrar'], $_SESSION['need_registrar_account'], $_SESSION['need_domain'],
-            $_SESSION['need_ssl_provider'], $_SESSION['need_ssl_account'], $_SESSION['need_ssl_cert'])
-        = $system->checkExistingAssets($connection);
+        $system->checkExistingAssets($connection);
 
     } else {
 	

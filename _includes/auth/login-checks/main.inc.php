@@ -28,9 +28,7 @@ $_SESSION['running_login_checks'] = 1;
 include(DIR_INC . "auth/login-checks/compare-versions.inc.php");
 
 // Check for existing Domain and SSL assets
-list ($_SESSION['need_registrar'], $_SESSION['need_registrar_account'], $_SESSION['need_domain'],
-    $_SESSION['need_ssl_provider'], $_SESSION['need_ssl_account'], $_SESSION['need_ssl_cert'])
-= $system->checkExistingAssets($connection);
+$system->checkExistingAssets($connection);
 
 unset($_SESSION['running_login_checks']);
 

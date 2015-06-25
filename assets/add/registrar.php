@@ -67,9 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		if ($_SESSION['need_registrar'] == "1") {
 			
-			list ($_SESSION['need_registrar'], $_SESSION['need_registrar_account'], $_SESSION['need_domain'],
-                $_SESSION['need_ssl_provider'], $_SESSION['need_ssl_account'], $_SESSION['need_ssl_cert'])
-            = $system->checkExistingAssets($connection);
+			$system->checkExistingAssets($connection);
 
             header("Location: ../../domains.php");
 
