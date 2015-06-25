@@ -28,7 +28,7 @@ while ($row = mysqli_fetch_object($result)) {
 	$current_db_version = $row->db_version;
 }
 
-if ($current_db_version < $most_recent_db_version) {
+if ($current_db_version < $software_db_version) {
 
 	// upgrade database from 1.1 to 1.2
 	if ($current_db_version == 1.1) {

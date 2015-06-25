@@ -49,12 +49,12 @@ class System
 
     }
 
-    public function checkVersion($connection, $software_db_version)
+    public function checkVersion($connection, $software_version)
     {
 
         $live_version = file_get_contents('https://raw.githubusercontent.com/domainmod/domainmod/master/version-db.txt');
 
-        if ($software_db_version != $live_version && $live_version != '') {
+        if ($software_version != $live_version && $live_version != '') {
 
             $sql = "UPDATE settings
                     SET upgrade_available = '1'";
@@ -73,10 +73,10 @@ class System
 
     }
 
-    public function dbUpgradeCheck($most_recent_db_version)
+    public function dbUpgradeCheck($software_db_version)
     {
 
-        if ($_SESSION['system_db_version'] != $most_recent_db_version) {
+        if ($_SESSION['system_db_version'] != $software_db_version) {
 
             include(DIR_INC . "update-database.inc.php");
             $_SESSION['run_update_includes'] = "1";

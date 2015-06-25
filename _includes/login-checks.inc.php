@@ -25,7 +25,7 @@ $system->authCheck($web_root);
 $_SESSION['running_login_checks'] = 1;
 
 // Compare database and software versions (to see if a database upgrade is needed)
-$system->dbUpgradeCheck($most_recent_db_version);
+$system->dbUpgradeCheck($software_db_version);
 
 // Check for existing Domain and SSL assets
 $system->checkExistingAssets($connection);

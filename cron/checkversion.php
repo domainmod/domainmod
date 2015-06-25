@@ -36,6 +36,6 @@ include(DIR_INC . "config-demo.inc.php");
 
 if ($demo_install != '1') {
 
-    $system->checkVersion($connection, $most_recent_db_version);
+    $system->checkVersion($connection, $software_db_version);
 
 }
