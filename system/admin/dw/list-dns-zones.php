@@ -286,7 +286,8 @@ if ($export_data == "1") {
 
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_dns_zone_temp));
 $layout = new DomainMOD\Layout();
-$navigate = $layout->pageBrowser($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
+$parameters = array($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
+$navigate = $layout->pageBrowser($parameters);
 $sql_dw_dns_zone_temp = $sql_dw_dns_zone_temp.$navigate[0];
 $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or $error->outputOldSqlError($connection);
 

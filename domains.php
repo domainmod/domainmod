@@ -852,7 +852,8 @@ if ($_SESSION['need_domain'] == "1" && $_SESSION['need_registrar'] != "1" && $_S
 }
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
 $layout = new DomainMOD\Layout();
-$navigate = $layout->pageBrowser($totalrows, 15, $result_limit, "&pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
+$parameters = array($totalrows, 15, $result_limit, "&pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
+$navigate = $layout->pageBrowser($parameters);
 $sql = $sql.$navigate[0];
 $result = mysqli_query($connection, $sql);
 $total_rows = number_format(mysqli_num_rows($result));

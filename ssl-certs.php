@@ -557,7 +557,8 @@ if ($_SESSION['need_domain'] == "1" && $_SESSION['need_ssl_provider'] == "0" && 
 }
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
 $layout = new DomainMOD\Layout();
-$navigate = $layout->pageBrowser($totalrows, 15, $result_limit, "&oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=" . $_SESSION['search_for_ssl'] . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
+$parameters = array($totalrows, 15, $result_limit, "&oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=" . $_SESSION['search_for_ssl'] . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
+$navigate = $layout->pageBrowser($parameters);
 $sql = $sql.$navigate[0];
 $result = mysqli_query($connection, $sql);
 $total_rows = number_format(mysqli_num_rows($result));
