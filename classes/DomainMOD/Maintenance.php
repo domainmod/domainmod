@@ -45,8 +45,11 @@ class Maintenance
 
     }
 
-    public function updateDomainFees($connection, $timestamp)
+    public function updateDomainFees($connection)
     {
+
+        $time = new Timestamp();
+        $timestamp = $time->time;
 
         $sql = "UPDATE domains
                 SET fee_fixed = '0',
@@ -107,8 +110,11 @@ class Maintenance
 
     }
 
-    public function updateSslFees($connection, $timestamp)
+    public function updateSslFees($connection)
     {
+
+        $time = new Timestamp();
+        $timestamp = $time->time;
 
         $sql = "UPDATE ssl_certs
                 SET fee_fixed = '0',

@@ -38,7 +38,7 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 
-$maint->updateDomainFees($connection, $timestamp);
+$maint->updateDomainFees($connection);
 
 $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'domains');
 

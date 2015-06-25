@@ -25,7 +25,7 @@ namespace DomainMOD;
 class Conversion
 {
 
-    public function updateRates($connection, $timestamp, $default_currency, $user_id)
+    public function updateRates($connection, $default_currency, $user_id)
     {
 
         $result = $this->getActiveCurrencies($connection);
@@ -34,7 +34,7 @@ class Conversion
 
             $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
             $is_existing = $this->checkExisting($connection, $row->id, $user_id);
-            $this->updateConversionRate($connection, $timestamp, $conversion_rate, $is_existing, $row->id, $user_id);
+            $this->updateConversionRate($connection, $conversion_rate, $is_existing, $row->id, $user_id);
 
         }
 
@@ -112,9 +112,11 @@ class Conversion
 
     }
 
-    public function updateConversionRate($connection, $timestamp, $conversion_rate, $is_existing, $currency_id,
-                                         $user_id)
+    public function updateConversionRate($connection, $conversion_rate, $is_existing, $currency_id, $user_id)
     {
+
+        $time = new Timestamp();
+        $timestamp = $time->time();
 
         if ($is_existing == '1') {
 

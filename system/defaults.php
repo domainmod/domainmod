@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		}
 
-        $_SESSION['result_message'] .= $conversion->updateRates($connection, $timestamp, $new_default_currency, $_SESSION['user_id']);
+        $_SESSION['result_message'] .= $conversion->updateRates($connection, $new_default_currency, $_SESSION['user_id']);
 
     }
 

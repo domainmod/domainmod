@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             credentials to the user, or you can <a href=\"reset-password.php?new_username=" . $new_username . "\">click
             here</a> to have " . $software_title . " email them for you<BR><BR>";
 
-        $_SESSION['result_message'] .= $conversion->updateRates($connection, $timestamp, 'CAD', $temp_user_id);
+        $_SESSION['result_message'] .= $conversion->updateRates($connection, 'CAD', $temp_user_id);
 
         header("Location: ../users.php");
         exit;

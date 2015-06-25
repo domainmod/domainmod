@@ -53,13 +53,6 @@ class DwBuild
 
     }
 
-    public function time()
-    {
-
-        return date("Y-m-d H:i:s", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));
-
-    }
-
     public function getServers($connection)
     {
 
@@ -106,7 +99,8 @@ class DwBuild
     public function startOverallBuild($connection)
     {
 
-        $build_start_time_o = $this->time();
+        $time = new Timestamp();
+        $build_start_time_o = $time->time();
 
         $sql = "UPDATE dw_servers
                 SET build_status_overall = '0',
@@ -259,7 +253,8 @@ class DwBuild
     public function startServerBuild($connection, $server_id)
     {
 
-        $build_start_time = $this->time();
+        $time = new Timestamp();
+        $build_start_time = $time->time();
 
         $sql = "UPDATE dw_servers
                 SET build_start_time = '" . $build_start_time . "',
@@ -307,6 +302,8 @@ class DwBuild
     public function insertAccounts($connection, $api_results, $server_id)
     {
 
+        $time = new Timestamp();
+
         if ($api_results != false) {
 
             $xml = simplexml_load_string($api_results);
@@ -330,7 +327,7 @@ class DwBuild
                     . "', '" . $hit->maxsub . "', '" . $hit->startdate . "', '" . $hit->unix_startdate
                     . "', '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime
                     . "', '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "', '"
-                    . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . $this->time() . "')";
+                    . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . $time->time() . "')";
                 mysqli_query($connection, $sql);
 
             }
@@ -355,6 +352,8 @@ class DwBuild
     public function insertZones($connection, $api_results, $server_id)
     {
 
+        $time = new Timestamp();
+
         if ($api_results != false) {
 
             $xml = simplexml_load_string($api_results);
@@ -364,7 +363,7 @@ class DwBuild
                 $sql = "INSERT INTO dw_dns_zones
                         (server_id, domain, zonefile, insert_time)
                         VALUES
-                        ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->zonefile . "', '" . $this->time()
+                        ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->zonefile . "', '" . $time->time()
                     . "')";
                 mysqli_query($connection, $sql);
 
@@ -403,6 +402,8 @@ class DwBuild
     public function insertRecords($connection, $api_results, $server_id, $zone_id, $domain)
     {
 
+        $time = new Timestamp();
+
         if ($api_results != false) {
 
             $xml = simplexml_load_string($api_results);
@@ -420,7 +421,7 @@ class DwBuild
                     . $hit->name . "', '" . $hit->ttl . "', '" . $hit->class . "', '" . $hit->type . "', '" .
                     $hit->address . "', '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference .
                     "', '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw .
-                    "', '" . $this->time() . "')";
+                    "', '" . $time->time() . "')";
                 mysqli_query($connection, $sql);
 
             }
@@ -451,7 +452,8 @@ class DwBuild
     public function getBuildTime($build_start_time)
     {
 
-        $build_end_time = $this->time();
+        $time = new Timestamp();
+        $build_end_time = $time->time();
 
         $total_build_time = (strtotime($build_end_time) - strtotime($build_start_time));
 
@@ -700,11 +702,13 @@ class DwBuild
     public function updateTable($connection, $total_dw_servers, $total_dw_accounts, $total_dw_dns_zones, $total_dw_records)
     {
 
+        $time = new Timestamp();
+
         $sql_insert = "INSERT INTO dw_server_totals
                        (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
                        VALUES
                        ('" . $total_dw_servers . "', '" . $total_dw_accounts . "', '" . $total_dw_dns_zones . "', '" .
-            $total_dw_records . "', '" . $this->time() . "')";
+            $total_dw_records . "', '" . $time->time() . "')";
         mysqli_query($connection, $sql_insert);
 
         return true;

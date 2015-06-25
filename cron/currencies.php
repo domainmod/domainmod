@@ -45,7 +45,7 @@ if ($demo_install != '1') {
 
     while ($row = mysqli_fetch_object($result)) {
 
-        $conversion->updateRates($connection, $timestamp, $row->default_currency, $row->user_id);
+        $conversion->updateRates($connection, $row->default_currency, $row->user_id);
 
     }
 

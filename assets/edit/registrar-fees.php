@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['result_message'] .= "The Registrar Fees have been updated<BR>";
 
-        $_SESSION['result_message'] .= $conversion->updateRates($connection, $timestamp, $_SESSION['default_currency'], $_SESSION['user_id']);
+        $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 
     } elseif ($which_form == "add") {
 
@@ -180,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been updated<BR>";
 
-                $_SESSION['result_message'] .= $conversion->updateRates($connection, $timestamp, $_SESSION['default_currency'], $_SESSION['user_id']);
+                $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 
             } else {
 
@@ -227,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'domains');
 
-                $_SESSION['result_message'] .= $conversion->updateRates($connection, $timestamp, $_SESSION['default_currency'], $_SESSION['user_id']);
+                $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 
             }
 
@@ -277,7 +277,7 @@ if ($really_del == "1") {
 
         $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'domains');
 
-        $_SESSION['result_message'] .= $conversion->updateRates($connection, $timestamp, $_SESSION['default_currency'], $_SESSION['user_id']);
+        $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 
         header("Location: registrar-fees.php?rid=$rid");
 		exit;
