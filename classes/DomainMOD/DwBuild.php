@@ -32,7 +32,23 @@ class DwBuild
         if ($this->checkForHosts($result) == '0')
             return false;
         $this->dropDwTables($connection);
-        $build_start_time_o = $this->startOverallBuild($connection);
+
+        $build_start_time_o = $this->time();
+
+        $sql = "UPDATE dw_servers
+                SET build_status_overall = '0',
+                    build_start_time_overall = '" . $build_start_time_o . "',
+                    build_end_time_overall = '0000-00-00 00:00:00',
+                    build_time = '0',
+                    build_status = '0',
+                    build_start_time = '0000-00-00 00:00:00',
+                    build_end_time = '0000-00-00 00:00:00',
+                    build_time_overall = '0',
+                    dw_accounts = '0',
+                    dw_dns_zones = '0',
+                    dw_dns_records = '0'";
+        mysqli_query($connection, $sql);
+
         $this->createTableAccounts($connection);
         $this->createTableZones($connection);
         $this->createTableRecords($connection);
@@ -50,6 +66,15 @@ class DwBuild
         $result_message = 'Data Warehouse Rebuilt.<BR>';
 
         return $result_message;
+
+    }
+
+    public function time()
+    {
+
+        $time = new Timestamp();
+
+        return $time->time();
 
     }
 
@@ -93,30 +118,6 @@ class DwBuild
         mysqli_query($connection, $sql_records);
 
         return true;
-
-    }
-
-    public function startOverallBuild($connection)
-    {
-
-        $time = new Timestamp();
-        $build_start_time_o = $time->time();
-
-        $sql = "UPDATE dw_servers
-                SET build_status_overall = '0',
-                    build_start_time_overall = '" . $build_start_time_o . "',
-                    build_end_time_overall = '0000-00-00 00:00:00',
-                    build_time = '0',
-                    build_status = '0',
-                    build_start_time = '0000-00-00 00:00:00',
-                    build_end_time = '0000-00-00 00:00:00',
-                    build_time_overall = '0',
-                    dw_accounts = '0',
-                    dw_dns_zones = '0',
-                    dw_dns_records = '0'";
-        mysqli_query($connection, $sql);
-
-        return $build_start_time_o;
 
     }
 
@@ -222,7 +223,14 @@ class DwBuild
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $build_start_time = $this->startServerBuild($connection, $row->id);
+            $build_start_time = $this->time();
+
+            $sql = "UPDATE dw_servers
+                    SET build_start_time = '" . $build_start_time . "',
+                        build_status = '0'
+                    WHERE id = '" . $row->id . "'";
+            mysqli_query($connection, $sql);
+
             $api_results = $this->apiGetAccounts($row->protocol, $row->host, $row->port, $row->username, $row->hash);
             $this->insertAccounts($connection, $api_results, $row->id);
             $api_results = $this->apiGetZones($row->protocol, $row->host, $row->port, $row->username, $row->hash);
@@ -247,22 +255,6 @@ class DwBuild
             $this->insertRecords($connection, $api_results, $server_id, $row_zones->id, $row_zones->domain);
 
         }
-
-    }
-
-    public function startServerBuild($connection, $server_id)
-    {
-
-        $time = new Timestamp();
-        $build_start_time = $time->time();
-
-        $sql = "UPDATE dw_servers
-                SET build_start_time = '" . $build_start_time . "',
-                    build_status = '0'
-                WHERE id = '" . $server_id . "'";
-        mysqli_query($connection, $sql);
-
-        return $build_start_time;
 
     }
 
@@ -302,8 +294,6 @@ class DwBuild
     public function insertAccounts($connection, $api_results, $server_id)
     {
 
-        $time = new Timestamp();
-
         if ($api_results != false) {
 
             $xml = simplexml_load_string($api_results);
@@ -327,7 +317,7 @@ class DwBuild
                     . "', '" . $hit->maxsub . "', '" . $hit->startdate . "', '" . $hit->unix_startdate
                     . "', '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime
                     . "', '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "', '"
-                    . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . $time->time() . "')";
+                    . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . $this->time() . "')";
                 mysqli_query($connection, $sql);
 
             }
@@ -352,8 +342,6 @@ class DwBuild
     public function insertZones($connection, $api_results, $server_id)
     {
 
-        $time = new Timestamp();
-
         if ($api_results != false) {
 
             $xml = simplexml_load_string($api_results);
@@ -363,7 +351,7 @@ class DwBuild
                 $sql = "INSERT INTO dw_dns_zones
                         (server_id, domain, zonefile, insert_time)
                         VALUES
-                        ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->zonefile . "', '" . $time->time()
+                        ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->zonefile . "', '" . $this->time()
                     . "')";
                 mysqli_query($connection, $sql);
 
@@ -402,8 +390,6 @@ class DwBuild
     public function insertRecords($connection, $api_results, $server_id, $zone_id, $domain)
     {
 
-        $time = new Timestamp();
-
         if ($api_results != false) {
 
             $xml = simplexml_load_string($api_results);
@@ -421,7 +407,7 @@ class DwBuild
                     . $hit->name . "', '" . $hit->ttl . "', '" . $hit->class . "', '" . $hit->type . "', '" .
                     $hit->address . "', '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference .
                     "', '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw .
-                    "', '" . $time->time() . "')";
+                    "', '" . $this->time() . "')";
                 mysqli_query($connection, $sql);
 
             }
@@ -452,8 +438,7 @@ class DwBuild
     public function getBuildTime($build_start_time)
     {
 
-        $time = new Timestamp();
-        $build_end_time = $time->time();
+        $build_end_time = $this->time();
 
         $total_build_time = (strtotime($build_end_time) - strtotime($build_start_time));
 
@@ -702,13 +687,11 @@ class DwBuild
     public function updateTable($connection, $total_dw_servers, $total_dw_accounts, $total_dw_dns_zones, $total_dw_records)
     {
 
-        $time = new Timestamp();
-
         $sql_insert = "INSERT INTO dw_server_totals
                        (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
                        VALUES
                        ('" . $total_dw_servers . "', '" . $total_dw_accounts . "', '" . $total_dw_dns_zones . "', '" .
-            $total_dw_records . "', '" . $time->time() . "')";
+            $total_dw_records . "', '" . $this->time() . "')";
         mysqli_query($connection, $sql_insert);
 
         return true;
