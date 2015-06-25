@@ -94,11 +94,11 @@ class System
     public function checkMissingFees($connection, $table)
     {
 
-        $sql = "SELECT id
-                FROM " . $table . "
-                WHERE fee_id = '0'
-                  AND active NOT IN ('0', '10')";
-        $result = mysqli_query($connection, $sql);
+        $sql_missing = "SELECT id
+                        FROM " . $table . "
+                        WHERE fee_id = '0'
+                          AND active NOT IN ('0', '10')";
+        $result = mysqli_query($connection, $sql_missing);
 
         if (mysqli_num_rows($result) >= 1) {
 
@@ -130,10 +130,10 @@ class System
     public function checkExistingSingle($connection, $table)
     {
 
-        $sql = "SELECT id
-                FROM " . $table . "
-                LIMIT 1";
-        $result = mysqli_query($connection, $sql);
+        $sql_single = "SELECT id
+                       FROM " . $table . "
+                       LIMIT 1";
+        $result = mysqli_query($connection, $sql_single);
 
         if (mysqli_num_rows($result) == 1) {
 

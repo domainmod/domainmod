@@ -28,12 +28,12 @@ class Login
     public function checkCredentials($connection, $username, $password)
     {
 
-        $sql = "SELECT id
-                FROM users
-                WHERE username = '" . $username . "'
-                  AND password = password('" . $password . "')
-                  AND active = '1'";
-        $result = mysqli_query($connection, $sql);
+        $sql_check = "SELECT id
+                      FROM users
+                      WHERE username = '" . $username . "'
+                        AND password = password('" . $password . "')
+                        AND active = '1'";
+        $result = mysqli_query($connection, $sql_check);
 
         if (mysqli_num_rows($result) == 1) {
 
