@@ -47,6 +47,8 @@ class Export
 
         fputcsv($open_file, $row_contents);
 
+        return true;
+
     }
 
     public function writeBlankRow($open_file)
@@ -55,12 +57,16 @@ class Export
         $blank_line = array('');
         fputcsv($open_file, $blank_line);
 
+        return true;
+
     }
 
     public function closeFile($open_file)
     {
 
         fclose($open_file);
+
+        return true;
 
     }
 

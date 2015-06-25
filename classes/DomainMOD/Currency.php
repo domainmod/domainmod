@@ -30,23 +30,23 @@ class Currency
 
         if ($order == "1" && $space == "1") {
 
-            $output = number_format($amount, 2, '.', ',') . " " . $symbol;
+            $formatted_output = number_format($amount, 2, '.', ',') . " " . $symbol;
 
         } elseif ($order == "1" && $space == "0") {
 
-            $output = number_format($amount, 2, '.', ',') . $symbol;
+            $formatted_output = number_format($amount, 2, '.', ',') . $symbol;
 
         } elseif ($order == "0" && $space == "1") {
 
-            $output = $symbol . " " . number_format($amount, 2, '.', ',');
+            $formatted_output = $symbol . " " . number_format($amount, 2, '.', ',');
 
         } else {
 
-            $output = $symbol . number_format($amount, 2, '.', ',');
+            $formatted_output = $symbol . number_format($amount, 2, '.', ',');
 
         }
 
-        return $output;
+        return $formatted_output;
 
     }
 

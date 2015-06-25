@@ -69,26 +69,9 @@ class System
 
         mysqli_query($connection, $sql);
 
-        return '1';
+        return true;
 
     }
-
-    /*
-    public function dbUpradeCheck($db_version, $software_version)
-    {
-
-        if ($_SESSION['system_db_version'] != $most_recent_db_version) {
-
-            include(DIR_INC . "update-database.inc.php");
-            $_SESSION['run_update_includes'] = "1";
-
-        } else {
-
-            $_SESSION['needs_database_upgrade'] = "0";
-
-        }
-    }
-    */
 
     public function deleteUnusedFees($connection, $fee_table, $compare_table)
     {
@@ -104,7 +87,9 @@ class System
         $this->deleteUnusedFees($connection, 'fees', 'domains');
         $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
 
-        return "Maintenance Completed<BR>";
+        $result_message = 'Maintenance Completed<BR>';
+
+        return $result_message
 
     }
 
@@ -127,7 +112,9 @@ class System
 
         }
 
-        return "TLDs Updated<BR>";
+        $result_message = 'TLDs Updated<BR>';
+
+        return $result_message;
 
     }
 
@@ -152,9 +139,9 @@ class System
                  WHERE domain NOT IN (SELECT domain FROM domains)";
         mysqli_query($connection, $sql);
 
-        $message = "Segments Updated<BR>";
+        $result_message = 'Segments Updated<BR>';
 
-        return $message;
+        return $result_message;
 
     }
 
@@ -216,7 +203,7 @@ class System
 
         }
 
-        return 1;
+        return true;
 
     }
 
@@ -265,7 +252,7 @@ class System
 
         }
 
-        return 1;
+        return true;
 
     }
 
@@ -280,12 +267,14 @@ class System
 
         if (mysqli_num_rows($result) >= 1) {
 
-            return 1;
+            $missing_fees = '1';
 
         } else {
 
-            return 0;
+            $missing_fees = '0';
         }
+
+        return $missing_fees;
 
     }
 

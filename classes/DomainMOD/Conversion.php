@@ -38,7 +38,9 @@ class Conversion
 
         }
 
-        return 'Conversion Rates Updated<BR>';
+        $result_message = 'Conversion Rates Updated<BR>';
+
+        return $result_message;
 
     }
 
@@ -100,15 +102,13 @@ class Conversion
 
         if (mysqli_num_rows($result) >= 1) {
 
-            $is_existing = '1';
+            return '1';
 
         } else {
 
-            $is_existing = '0';
+            return '0';
 
         }
-
-        return $is_existing;
 
     }
 

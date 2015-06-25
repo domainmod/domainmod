@@ -75,15 +75,13 @@ class DwBuild
 
         if (mysqli_num_rows($result) >= 1) {
 
-            $has_hosts = '1';
+            return '1';
 
         } else {
 
-            $has_hosts = '0';
+            return '0';
 
         }
-
-        return $has_hosts;
 
     }
 
@@ -442,7 +440,7 @@ class DwBuild
                     build_time = '" . $total_build_time . "',
                     has_ever_been_built = '1'
                 WHERE id = '" . $server_id . "'";
-        mysqli_query($connection, $sql);
+        mysqli_query($cornnection, $sql);
 
         return true;
 
