@@ -440,7 +440,7 @@ class DwBuild
                     build_time = '" . $total_build_time . "',
                     has_ever_been_built = '1'
                 WHERE id = '" . $server_id . "'";
-        mysqli_query($cornnection, $sql);
+        mysqli_query($connection, $sql);
 
         return true;
 
