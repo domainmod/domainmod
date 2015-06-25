@@ -28,6 +28,7 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $date = new DomainMOD\Date();
 $error = new DomainMOD\Error();
+$maint = new DomainMOD\Maintenance();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
@@ -179,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 				$_SESSION['result_message'] = "Domains Renewed<BR>";
 
-                $_SESSION['result_message'] .= $system->updateSegments($connection);
+                $_SESSION['result_message'] .= $maint->updateSegments($connection);
 	
 			} elseif ($action == "AD") {
 
@@ -298,9 +299,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'domains');
 
-                    $_SESSION['result_message'] .= $system->updateSegments($connection);
+                    $_SESSION['result_message'] .= $maint->updateSegments($connection);
 
-                    $_SESSION['result_message'] .= $system->updateTlds($connection);
+                    $_SESSION['result_message'] .= $maint->updateTlds($connection);
 
                 }
 	
@@ -350,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				}
 
-				$_SESSION['result_message'] .= $system->updateSegments($connection);
+				$_SESSION['result_message'] .= $maint->updateSegments($connection);
 
 				$_SESSION['result_message'] = "Domains Fully Renewed<BR>";
 				
@@ -640,7 +641,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "Domains (and associated SSL Certificates) Deleted<BR>";
 
-                $_SESSION['result_message'] .= $system->updateSegments($connection);
+                $_SESSION['result_message'] .= $maint->updateSegments($connection);
 
             } elseif ($action == "E") {
 
@@ -664,7 +665,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as expired<BR>";
 
-				$_SESSION['result_message'] .= $system->updateSegments($connection);
+				$_SESSION['result_message'] .= $maint->updateSegments($connection);
 	
 			} elseif ($action == "S") { 
 
@@ -688,7 +689,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as sold<BR>";
 
-				$_SESSION['result_message'] .= $system->updateSegments($connection);
+				$_SESSION['result_message'] .= $maint->updateSegments($connection);
 	
 			} elseif ($action == "A") { 
 
@@ -712,7 +713,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as active<BR>";
 
-				$_SESSION['result_message'] .= $system->updateSegments($connection);
+				$_SESSION['result_message'] .= $maint->updateSegments($connection);
 	
 			} elseif ($action == "T") { 
 
@@ -736,7 +737,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as 'In Transfer'<BR>";
 
-				$_SESSION['result_message'] .= $system->updateSegments($connection);
+				$_SESSION['result_message'] .= $maint->updateSegments($connection);
 	
 			} elseif ($action == "PRg") { 
 
@@ -760,7 +761,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as 'Pending (Registration)'<BR>";
 
-				$_SESSION['result_message'] .= $system->updateSegments($connection);
+				$_SESSION['result_message'] .= $maint->updateSegments($connection);
 	
 			} elseif ($action == "PRn") { 
 
@@ -784,7 +785,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as 'Pending (Renewal)'<BR>";
 
-				$_SESSION['result_message'] .= $system->updateSegments($connection);
+				$_SESSION['result_message'] .= $maint->updateSegments($connection);
 	
 			} elseif ($action == "PO") { 
 
@@ -808,7 +809,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
 				$_SESSION['result_message'] = "Domains marked as 'Pending (Other)'<BR>";
 
-				$_SESSION['result_message'] .= $system->updateSegments($connection);
+				$_SESSION['result_message'] .= $maint->updateSegments($connection);
 	
 			} elseif ($action == "PRVE") { 
 
@@ -847,7 +848,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "Domains marked as 'Private WHOIS'<BR>";
 
-				$_SESSION['result_message'] .= $system->updateSegments($connection);
+				$_SESSION['result_message'] .= $maint->updateSegments($connection);
 	
 			} elseif ($action == "PRVD") { 
 

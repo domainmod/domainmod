@@ -27,6 +27,7 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$maint = new DomainMOD\Maintenance();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
@@ -37,7 +38,7 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "auth/auth-check.inc.php");
 
-$update = $system->updateDomainFees($connection, $timestamp);
+$maint->updateDomainFees($connection, $timestamp);
 
 $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'domains');
 

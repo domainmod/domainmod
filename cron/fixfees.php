@@ -25,8 +25,7 @@ include("../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
-$system = new DomainMOD\System();
+$maint = new DomainMOD\Maintenance();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
 
@@ -39,8 +38,8 @@ include(DIR_INC . "config-demo.inc.php");
 
 if ($demo_install != '1') {
 
-    $domains = $system->updateDomainFees($connection, $timestamp);
+    $maint->updateDomainFees($connection, $timestamp);
 
-    $ssl = $system->updateSslFees($connection, $timestamp);
+    $maint->updateSslFees($connection, $timestamp);
 
 }

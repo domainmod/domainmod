@@ -26,6 +26,8 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
+$maint = new DomainMOD\Maintenance();
+
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "config.inc.php");
@@ -34,8 +36,7 @@ include(DIR_INC . "auth/auth-check.inc.php");
 include(DIR_INC . "auth/admin-user-check.inc.php");
 
 // Perform System Maintenance
-$maintenance = new DomainMOD\System();
-$_SESSION['result_message'] .= $maintenance->performMaintenance($connection);
+$_SESSION['result_message'] .= $maint->performMaintenance($connection);
 
 // Redirect to Control Panel after performing maintenance
 header("Location: ../index.php");

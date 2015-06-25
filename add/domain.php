@@ -27,6 +27,7 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$maint = new DomainMOD\Maintenance();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
@@ -243,7 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
 
-                    $_SESSION['result_message'] .= $system->updateSegments($connection);
+                    $_SESSION['result_message'] .= $maint->updateSegments($connection);
                     $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'domains');
 
                     $system->checkExistingAssets($connection);
