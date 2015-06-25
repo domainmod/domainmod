@@ -37,7 +37,7 @@ if ($action != "") {
 	
 	if ($action == "dw_accounts") {
 		
-		if ($view_all == "1") {
+		if ($view_all == '1') {
 			
 			$_SESSION['dw_view_all'] = 1;
 
@@ -64,7 +64,7 @@ if ($action != "") {
 
 	} elseif ($action == "dw_dns_zones") {
 		
-		if ($view_all == "1") {
+		if ($view_all == '1') {
 			
 			$_SESSION['dw_view_all'] = 1;
 
