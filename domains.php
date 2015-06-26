@@ -252,6 +252,8 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d
 		  $search_string
 		  $quick_search_string
 		  $sort_by_string";
+$_SESSION['raw_list_type'] = 'domains';
+$_SESSION['raw_list_query'] = $sql;
 
 $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total
 					FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h

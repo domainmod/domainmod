@@ -160,7 +160,9 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.total_
 		  $sslipid_string
 		  $sslpcid_string
 		  $search_string
-		  $sort_by_string";	
+		  $sort_by_string";
+$_SESSION['raw_list_type'] = 'ssl-certs';
+$_SESSION['raw_list_query'] = $sql;
 
 $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total
 					FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat
