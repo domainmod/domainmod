@@ -35,6 +35,7 @@
             ?>
             <?php 
             if ($_SESSION['result_message'] != "") {
-                include(DIR_INC . "layout/table-result-message.inc.php");
-                unset($_SESSION['result_message']);
+
+                echo $system->showResultMessage();
+
             }
