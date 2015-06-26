@@ -61,7 +61,12 @@ include(DIR_INC . "config-demo.inc.php");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
 
-    $sql = $system->buildSqlUserLogin($new_username, $new_password);
+    $sql = "SELECT id
+            FROM users
+            WHERE username = '" . $new_username. "'
+              AND password = password('" . $new_password . "')
+              AND active = '1'";
+
     $login_succeeded = $system->checkForRow($connection, $sql);
 
     if ($login_succeeded == '1') {
@@ -186,10 +191,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         }
 
-        $sql = $system->buildSqlMissingFees('domains');
+        $queryB = new DomainMOD\QueryBuild();
+
+        $sql = $queryB->missingFees('domains');
         $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
-        $sql = $system->buildSqlMissingFees('ssl_certs');
+        $queryB = new DomainMOD\QueryBuild();
+
+        $sql = $queryB->missingFees('ssl_certs');
         $_SESSION['missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
         if ($_SESSION['is_new_password'] == 1) {

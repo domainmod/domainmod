@@ -107,65 +107,27 @@ class System
 
     }
 
-    public function buildSqlUserLogin($username, $password)
-    {
-
-        return "SELECT id
-                FROM users
-                WHERE username = '" . $username . "'
-                  AND password = password('" . $password . "')
-                  AND active = '1'";
-
-    }
-
-    public function buildSqlMissingFees($table)
-    {
-
-        return "SELECT id
-                FROM " . $table . "
-                WHERE fee_id = '0'
-                  AND active NOT IN ('0', '10')";
-
-    }
-
-    public function buildSqlSingleAsset($table)
-    {
-
-        return "SELECT id
-                FROM " . $table . "
-                LIMIT 1";
-
-    }
-
-    public function buildSqlCurrencyExist($currency_id, $user_id)
-    {
-
-        return "SELECT id
-                FROM currency_conversions
-                WHERE currency_id = '" . $currency_id . "'
-                  AND user_id = '" . $user_id . "'";
-
-    }
-
     public function checkExistingAssets($connection)
     {
 
-        $sql = $this->buildSqlSingleAsset('registrars');
+        $queryB = new QueryBuild();
+
+        $sql = $queryB->singleAsset('registrars');
         $_SESSION['has_registrar'] = $this->checkForRows($connection, $sql);
 
-        $sql = $this->buildSqlSingleAsset('registrar_accounts');
+        $sql = $queryB->singleAsset('registrar_accounts');
         $_SESSION['has_registrar_account'] = $this->checkForRows($connection, $sql);
 
-        $sql = $this->buildSqlSingleAsset('domains');
+        $sql = $queryB->singleAsset('domains');
         $_SESSION['has_domain'] = $this->checkForRows($connection, $sql);
 
-        $sql = $this->buildSqlSingleAsset('ssl_providers');
+        $sql = $queryB->singleAsset('ssl_providers');
         $_SESSION['has_ssl_provider'] = $this->checkForRows($connection, $sql);
 
-        $sql = $this->buildSqlSingleAsset('ssl_accounts');
+        $sql = $queryB->singleAsset('ssl_accounts');
         $_SESSION['has_ssl_account'] = $this->checkForRows($connection, $sql);
 
-        $sql = $this->buildSqlSingleAsset('ssl_certs');
+        $sql = $queryB->singleAsset('ssl_certs');
         $_SESSION['has_ssl_cert'] = $this->checkForRows($connection, $sql);
 
         return true;

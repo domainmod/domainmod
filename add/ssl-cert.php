@@ -216,7 +216,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
 
-        $sql = $system->buildSqlMissingFees('ssl_certs');
+        $queryB = new DomainMOD\QueryBuild();
+
+        $sql = $queryB->missingFees('ssl_certs');
         $_SESSION['missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
         $system->checkExistingAssets($connection);

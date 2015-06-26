@@ -247,7 +247,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $_SESSION['result_message'] .= $maint->updateSegments($connection);
 
-                    $sql = $system->buildSqlMissingFees('domains');
+                    $queryB = new DomainMOD\QueryBuild();
+
+                    $sql = $queryB->missingFees('domains');
                     $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
                     $system->checkExistingAssets($connection);

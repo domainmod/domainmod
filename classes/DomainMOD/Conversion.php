@@ -34,9 +34,13 @@ class Conversion
 
             $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
 
+            $sql = "SELECT id
+                    FROM currency_conversions
+                    WHERE currency_id = '" . $row->id . "'
+                      AND user_id = '" . $user_id . "'";
+
             $system = new System();
 
-            $sql = $system->buildSqlCurrencyExist($row->id, $user_id);
             $is_existing = $system->checkForRows($connection, $sql);
 
             $this->updateConversionRate($connection, $conversion_rate, $is_existing, $row->id, $user_id);

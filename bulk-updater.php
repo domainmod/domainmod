@@ -298,7 +298,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					$_SESSION['result_message'] = "Domains Added<BR>";
 
-                    $sql = $system->buildSqlMissingFees('domains');
+                    $queryB = new DomainMOD\QueryBuild();
+
+                    $sql = $queryB->missingFees('domains');
                     $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
                     $_SESSION['result_message'] .= $maint->updateSegments($connection);
@@ -554,7 +556,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $_SESSION['result_message'] = "Registrar Account Changed<BR>";
 
-                    $sql = $system->buildSqlMissingFees('domains');
+                    $queryB = new DomainMOD\QueryBuild();
+
+                    $sql = $queryB->missingFees('domains');
                     $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
                 }

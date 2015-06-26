@@ -41,7 +41,9 @@ $system->authCheck($web_root);
 
 $maint->updateDomainFees($connection);
 
-$sql = $system->buildSqlMissingFees('domains');
+$queryB = new DomainMOD\QueryBuild();
+
+$sql = $queryB->missingFees('domains');
 $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
 $_SESSION['result_message'] .= "Domain Fees Updated<BR>";
