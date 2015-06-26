@@ -37,7 +37,7 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck($web_root);
+$system->authCheck();
 
 $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 

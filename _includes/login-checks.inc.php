@@ -20,7 +20,7 @@
  */
 ?>
 <?php
-$system->authCheck($web_root);
+$system->authCheck();
 
 $_SESSION['running_login_checks'] = 1;
 

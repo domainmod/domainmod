@@ -36,9 +36,9 @@ include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
-$system->loginCheck($web_root);
+$system->loginCheck();
 
-list($installation_mode, $result_message) = $system->installCheck($connection, $web_root);
+list($installation_mode, $result_message) = $system->installCheck($connection);
 $_SESSION['installation_mode'] = $installation_mode;
 $_SESSION['result_message'] .= $result_message;
 

@@ -32,8 +32,8 @@ include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
 
-$system->authCheck($web_root);
-$system->checkAdminUser($web_root);
+$system->authCheck();
+$system->checkAdminUser();
 ?>
 <?php
 if ($_SESSION['display_dw_intro_page'] == "1") {

@@ -33,7 +33,7 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->installCheck($connection, $web_root);
+$system->installCheck($connection);
 
 $error = new DomainMOD\Error();
 

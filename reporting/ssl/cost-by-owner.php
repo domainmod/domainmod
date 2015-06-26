@@ -36,7 +36,7 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck($web_root);
+$system->authCheck();
 
 $page_title = $reporting_section_title;
 $page_subtitle = "SSL Certificate Cost by Owner Report";
