@@ -83,7 +83,21 @@ class System
 
     }
 
-    public function jumpMenu()
+    public function pageTitle($software_title, $page_title)
+    {
+
+        return $software_title . " :: " . $page_title;
+
+    }
+
+    public function pageTitleSub($software_title, $page_title, $page_subtitle)
+    {
+
+        return $software_title . " :: " . $page_title . " :: " . $page_subtitle;
+
+    }
+
+public function jumpMenu()
     {
 
         ob_start(); ?>
