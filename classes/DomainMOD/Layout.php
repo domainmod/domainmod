@@ -123,7 +123,7 @@ class Layout
 
     }
 
-    public function AssetBlock()
+    public function assetBlock()
     {
 
         ob_start(); ?>

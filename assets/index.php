@@ -47,7 +47,7 @@ $software_section = "assets";
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<?php echo $layout->AssetBlock(); ?>
+<?php echo $layout->assetBlock(); ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

@@ -271,7 +271,7 @@ class DwBuild
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header); # Set curl header
         curl_setopt($curl, CURLOPT_URL, $query); # Set your URL
         $api_results = curl_exec($curl); # Execute Query, assign to $api_results
-        if ($api_results == false) {
+        if ($api_results === false) {
             error_log("curl_exec error \"" . curl_error($curl) . "\" for " . $query . "");
         }
         curl_close($curl);
@@ -294,7 +294,7 @@ class DwBuild
     public function insertAccounts($connection, $api_results, $server_id)
     {
 
-        if ($api_results != false) {
+        if ($api_results !== false) {
 
             $xml = simplexml_load_string($api_results);
 
@@ -342,7 +342,7 @@ class DwBuild
     public function insertZones($connection, $api_results, $server_id)
     {
 
-        if ($api_results != false) {
+        if ($api_results !== false) {
 
             $xml = simplexml_load_string($api_results);
 
@@ -390,7 +390,7 @@ class DwBuild
     public function insertRecords($connection, $api_results, $server_id, $zone_id, $domain)
     {
 
-        if ($api_results != false) {
+        if ($api_results !== false) {
 
             $xml = simplexml_load_string($api_results);
 

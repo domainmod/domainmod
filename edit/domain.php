@@ -502,7 +502,7 @@ $sql_accounts = "SELECT id
 				 WHERE domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'";
 $result_accounts = mysqli_query($connection, $sql_accounts);
 
-if ($result_accounts === FALSE || mysqli_num_rows($result_accounts) <= 0) {
+if ($result_accounts === false || mysqli_num_rows($result_accounts) <= 0) {
 
     $no_results_accounts = 1;
 
@@ -513,7 +513,7 @@ $sql_dns_zones = "SELECT id
 				  WHERE domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'";
 $result_dns_zones = mysqli_query($connection, $sql_dns_zones);
 
-if ($result_dns_zones === FALSE || mysqli_num_rows($result_dns_zones) <= 0) {
+if ($result_dns_zones === false || mysqli_num_rows($result_dns_zones) <= 0) {
 
     $no_results_dns_zones = 1;
 

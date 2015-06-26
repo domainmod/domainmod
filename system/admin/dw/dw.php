@@ -119,7 +119,7 @@ $sql = "SELECT id
 		LIMIT 1";
 $result = mysqli_query($connection, $sql);
 
-if ($result === FALSE || mysqli_num_rows($result) <= 0) {
+if ($result === false || mysqli_num_rows($result) <= 0) {
 
     // Query error or no results
     $no_results_servers = 1;
@@ -145,7 +145,7 @@ $sql_accounts = "SELECT id
 				 FROM dw_accounts";
 $result_accounts = mysqli_query($connection, $sql_accounts);
 
-if ($result_accounts === FALSE || mysqli_num_rows($result_accounts) <= 0) {
+if ($result_accounts === false || mysqli_num_rows($result_accounts) <= 0) {
 
     // Query error or not results
     $no_results_accounts = 1;
@@ -160,7 +160,7 @@ $sql_dns_zones = "SELECT id
 				  FROM dw_dns_records";
 $result_dns_zones = mysqli_query($connection, $sql_dns_zones);
 
-if ($result_dns_zones === FALSE || mysqli_num_rows($result_dns_zones) <= 0) {
+if ($result_dns_zones === false || mysqli_num_rows($result_dns_zones) <= 0) {
 
     // Query error or no results
     $no_results_dns_zones = 1;
@@ -176,7 +176,7 @@ $sql_build_finished = "SELECT build_status_overall
 					   LIMIT 1";
 $result_build_finished = mysqli_query($connection, $sql_build_finished);
 
-if ($result_build_finished === FALSE || mysqli_num_rows($result_build_finished) <= 0) {
+if ($result_build_finished === false || mysqli_num_rows($result_build_finished) <= 0) {
 
     // Query error or no results
     $no_results_build_finished = 1;
@@ -258,7 +258,7 @@ $sql_build_info = "SELECT build_status_overall, build_start_time_overall, build_
 				   LIMIT 1";
 $result_build_info = mysqli_query($connection, $sql_build_info);
 
-if ($result_build_info === FALSE || mysqli_num_rows($result_build_info) <= 0) {
+if ($result_build_info === false || mysqli_num_rows($result_build_info) <= 0) {
 
     $no_results_build_info = 1;
 
@@ -300,7 +300,7 @@ if ($no_results_build_info !== 1) { ?>
                                          WHERE build_status = '0'";
                     $result_check_builds = mysqli_query($connection, $sql_check_builds);
 
-                    if ($result_check_builds === FALSE || mysqli_num_rows($result_check_builds) <= 0) {
+                    if ($result_check_builds === false || mysqli_num_rows($result_check_builds) <= 0) {
 
                         $no_results_check_builds = 1;
 
@@ -503,7 +503,7 @@ $sql_data_check = "SELECT dw_accounts, dw_dns_zones, dw_dns_records
 				   FROM dw_server_totals";
 $result_data_check = mysqli_query($connection, $sql_data_check);
 
-if ($result_data_check === FALSE || mysqli_num_rows($result_data_check) <= 0) {
+if ($result_data_check === false || mysqli_num_rows($result_data_check) <= 0) {
 
     // Query error or no results
 
@@ -619,7 +619,7 @@ $sql_accounts_without_a_dns_zone = "SELECT domain
 									ORDER BY domain";
 $result_accounts_without_a_dns_zone = mysqli_query($connection, $sql_accounts_without_a_dns_zone);
 
-if ($result_accounts_without_a_dns_zone === FALSE || mysqli_num_rows($result_accounts_without_a_dns_zone) <= 0) {
+if ($result_accounts_without_a_dns_zone === false || mysqli_num_rows($result_accounts_without_a_dns_zone) <= 0) {
 
     // Query error or no results
 
@@ -636,7 +636,7 @@ $sql_dns_zones_without_an_account = "SELECT domain
 									ORDER BY domain";
 $result_dns_zones_without_an_account = mysqli_query($connection, $sql_dns_zones_without_an_account);
 
-if ($result_dns_zones_without_an_account === FALSE || mysqli_num_rows($result_dns_zones_without_an_account) <= 0) {
+if ($result_dns_zones_without_an_account === false || mysqli_num_rows($result_dns_zones_without_an_account) <= 0) {
 
     // Query error or no results
 
@@ -652,7 +652,7 @@ $sql_suspended_accounts = "SELECT domain
 						   ORDER BY domain";
 $result_suspended_accounts = mysqli_query($connection, $sql_suspended_accounts);
 
-if ($result_suspended_accounts === FALSE || mysqli_num_rows($result_suspended_accounts) <= 0) {
+if ($result_suspended_accounts === false || mysqli_num_rows($result_suspended_accounts) <= 0) {
 
     // Query error or no results
 
