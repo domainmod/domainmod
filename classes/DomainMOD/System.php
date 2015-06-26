@@ -73,6 +73,34 @@ class System
 
     }
 
+    public function doctype()
+    {
+
+        ob_start(); ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<?php
+
+        return ob_get_clean();
+
+    }
+
+    public function jumpMenu()
+    {
+
+        ob_start(); ?>
+
+        <script type="text/javascript">
+            <!--
+            function MM_jumpMenu(targ,selObj,restore){ //v3.0
+                eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+                if (restore) selObj.selectedIndex=0;
+            }
+            //-->
+        </script><?php
+
+        return ob_get_clean();
+
+    }
+
     public function checkForRows($connection, $sql)
     {
 
@@ -179,24 +207,6 @@ class System
         unset($_SESSION['result_message']);
 
         return $result;
-
-    }
-
-    public function jumpMenu()
-    {
-
-        ob_start(); ?>
-
-        <script type="text/javascript">
-        <!--
-        function MM_jumpMenu(targ,selObj,restore){ //v3.0
-            eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
-            if (restore) selObj.selectedIndex=0;
-        }
-        //-->
-        </script><?php
-
-        return ob_get_clean();
 
     }
 
