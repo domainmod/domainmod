@@ -42,4 +42,29 @@ class Reporting
 
     }
 
+    public function showTableTop()
+    {
+
+        ob_start(); ?>1
+
+        <div class="export-outer">
+        <div class="export-inner"><?php
+
+        return ob_get_clean();
+
+    }
+
+    public function showTableBottom()
+    {
+
+        ob_start(); ?>2
+
+        </div>
+        </div>
+        <div style="clear: both;"></div><?php
+
+        return ob_get_clean();
+
+    }
+
 }
