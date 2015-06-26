@@ -533,7 +533,7 @@ if ($export_data == "1") {
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
 <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
-<?php include(DIR_INC . "jumpmenu.inc.php"); ?>
+<?php echo $system->jumpMenu(); ?>
 </head>
 <body onLoad="document.forms[0].elements[10].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
