@@ -73,24 +73,6 @@ class System
 
     }
 
-    public function dbUpgradeCheck($software_db_version)
-    {
-
-        if ($_SESSION['system_db_version'] != $software_db_version) {
-
-            include(DIR_INC . "update-database.inc.php");
-            $_SESSION['run_update_includes'] = "1";
-
-        } else {
-
-            $_SESSION['needs_database_upgrade'] = "0";
-
-        }
-
-        return true;
-
-    }
-
     public function checkMissingFees($connection, $table)
     {
 

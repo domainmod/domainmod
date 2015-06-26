@@ -25,7 +25,16 @@ $system->authCheck($web_root);
 $_SESSION['running_login_checks'] = 1;
 
 // Compare database and software versions (to see if a database upgrade is needed)
-$system->dbUpgradeCheck($software_db_version);
+if ($_SESSION['system_db_version'] != $software_db_version) {
+
+    include(DIR_INC . "update-database.inc.php");
+    $_SESSION['run_update_includes'] = "1";
+
+} else {
+
+    $_SESSION['needs_database_upgrade'] = "0";
+
+}
 
 // Check for existing Domain and SSL assets
 $system->checkExistingAssets($connection);
