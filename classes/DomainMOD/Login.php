@@ -25,30 +25,6 @@ namespace DomainMOD;
 class Login
 {
 
-    public function checkCredentials($connection, $username, $password)
-    {
-
-        $sql_check = "SELECT id
-                      FROM users
-                      WHERE username = '" . $username . "'
-                        AND password = password('" . $password . "')
-                        AND active = '1'";
-        $result = mysqli_query($connection, $sql_check);
-
-        if (mysqli_num_rows($result) == 1) {
-
-            $login_succeeded = '1';
-
-        } else {
-
-            $login_succeeded = '0';
-
-        }
-
-        return $login_succeeded;
-
-    }
-
     public function getUserInfo($connection, $username, $password)
     {
 

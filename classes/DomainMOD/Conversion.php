@@ -33,7 +33,12 @@ class Conversion
         while ($row = mysqli_fetch_object($result)) {
 
             $conversion_rate = $this->getConversionRate($row->currency, $default_currency);
-            $is_existing = $this->checkExisting($connection, $row->id, $user_id);
+
+            $system = new System();
+
+            $sql = $system->buildSqlCurrencyExist($row->id, $user_id);
+            $is_existing = $system->checkForRows($connection, $sql);
+
             $this->updateConversionRate($connection, $conversion_rate, $is_existing, $row->id, $user_id);
 
         }
@@ -88,27 +93,6 @@ class Conversion
         $conversion_rate = $api_call_split[1];
 
         return $conversion_rate;
-
-    }
-
-    public function checkExisting($connection, $currency_id, $user_id)
-    {
-
-        $sql = "SELECT id
-                FROM currency_conversions
-                WHERE currency_id = '" . $currency_id . "'
-                  AND user_id = '" . $user_id . "'";
-        $result = mysqli_query($connection, $sql);
-
-        if (mysqli_num_rows($result) >= 1) {
-
-            return '1';
-
-        } else {
-
-            return '0';
-
-        }
 
     }
 

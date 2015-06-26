@@ -61,7 +61,8 @@ include(DIR_INC . "config-demo.inc.php");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
 
-    $login_succeeded = $login->checkCredentials($connection, $new_username, $new_password);
+    $sql = $system->buildSqlUserLogin($new_username, $new_password);
+    $login_succeeded = $system->checkForRow($connection, $sql);
 
     if ($login_succeeded == '1') {
 

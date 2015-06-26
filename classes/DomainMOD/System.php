@@ -90,6 +90,34 @@ class System
 
     }
 
+    public function checkForRow($connection, $sql)
+    {
+
+        $result = mysqli_query($connection, $sql);
+
+        if (mysqli_num_rows($result) == 1) {
+
+            return '1';
+
+        } else {
+
+            return '0';
+
+        }
+
+    }
+
+    public function buildSqlUserLogin($username, $password)
+    {
+
+        return "SELECT id
+                FROM users
+                WHERE username = '" . $username . "'
+                  AND password = password('" . $password . "')
+                  AND active = '1'";
+
+    }
+
     public function buildSqlMissingFees($table)
     {
 
@@ -106,6 +134,16 @@ class System
         return "SELECT id
                 FROM " . $table . "
                 LIMIT 1";
+
+    }
+
+    public function buildSqlCurrencyExist($currency_id, $user_id)
+    {
+
+        return "SELECT id
+                FROM currency_conversions
+                WHERE currency_id = '" . $currency_id . "'
+                  AND user_id = '" . $user_id . "'";
 
     }
 
