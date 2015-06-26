@@ -42,7 +42,7 @@ $software_section = "reporting";
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $software_title . " :: " . $page_title . " :: " . $page_subtitle; ?></title>
+<title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
 <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>

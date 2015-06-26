@@ -50,7 +50,7 @@ if ($_SESSION['raw_list_type'] == 'domains') {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $software_title . " :: " . $page_title; ?></title>
+<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
 <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>

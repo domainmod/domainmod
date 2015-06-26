@@ -267,7 +267,7 @@ $new_password = "";
 <head>
 <?php 
 if ($page_title != "") { ?>
-	<title><?php echo $software_title . " :: " . $page_title; ?></title><?php
+	<title><?php echo $system->pageTitle($software_title, $page_title); ?></title><?php
 } else { ?>
 	<title><?php echo $software_title; ?></title><?php
 } ?>
