@@ -66,8 +66,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
             WHERE username = '" . $new_username. "'
               AND password = password('" . $new_password . "')
               AND active = '1'";
+    $result = mysqli_query($connection, $sql);
 
-    $login_succeeded = $system->checkForRow($connection, $sql);
+    if (mysqli_num_rows($result) == 1) {
+
+        $login_succeeded = '1';
+
+    } else {
+
+        $login_succeeded = '0';
+
+    }
 
     if ($login_succeeded == '1') {
 

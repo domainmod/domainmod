@@ -90,23 +90,6 @@ class System
 
     }
 
-    public function checkForRow($connection, $sql)
-    {
-
-        $result = mysqli_query($connection, $sql);
-
-        if (mysqli_num_rows($result) == 1) {
-
-            return '1';
-
-        } else {
-
-            return '0';
-
-        }
-
-    }
-
     public function checkExistingAssets($connection)
     {
 
