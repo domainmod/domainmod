@@ -67,8 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['result_message'] = "Registrar <font class=\"highlight\">" . $new_registrar . "</font> Added<BR>";
 
-		if ($_SESSION['need_registrar'] == "1") {
-			
+		if ($_SESSION['has_registrar'] != '1') {
+
 			$system->checkExistingAssets($connection);
 
             header("Location: ../../domains.php");

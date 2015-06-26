@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['result_message'] = "SSL Account <font class=\"highlight\">$new_username (" . $temp_ssl_provider .
             ", " . $temp_owner . ")</font> Added<BR>";
 
-		if ($_SESSION['need_ssl_account'] == "1") {
+		if ($_SESSION['has_ssl_account'] != '1') {
 			
 			$system->checkExistingAssets($connection);
 

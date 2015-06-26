@@ -538,22 +538,22 @@ if ($export_data == "1") {
 <body onLoad="document.forms[0].elements[10].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
-if ($_SESSION['need_ssl_provider'] == "1") {
+if ($_SESSION['has_ssl_provider'] != '1') {
 	echo "<strong><font class=\"highlight\">0</font></strong> SSL Providers found. Please <a href=\"assets/add/ssl-provider.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
 
-if ($_SESSION['need_ssl_account'] == "1" && $_SESSION['need_ssl_provider'] != "1") {
+if ($_SESSION['has_ssl_account'] != '1' && $_SESSION['has_ssl_provider'] == '1') {
 	echo "<strong><font class=\"highlight\">0</font></strong> SSL Provider Accounts found. Please <a href=\"assets/add/ssl-provider-account.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
 
-if ($_SESSION['need_ssl_cert'] == "1" && $_SESSION['need_ssl_provider'] != "1" && $_SESSION['need_ssl_account'] != "1" && $_SESSION['need_domain'] == "0") {
+if ($_SESSION['has_ssl_cert'] != '1' && $_SESSION['has_ssl_provider'] == '1' && $_SESSION['has_ssl_account'] == '1' && $_SESSION['has_domain'] == '1') {
 	echo "<strong><font class=\"highlight\">0</font></strong> SSL Certificates. Please <a href=\"add/ssl-cert.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }
 
-if ($_SESSION['need_domain'] == "1" && $_SESSION['need_ssl_provider'] == "0" && $_SESSION['need_ssl_account'] == "0") {
+if ($_SESSION['has_domain'] != '1' && $_SESSION['has_ssl_provider'] == '1' && $_SESSION['has_ssl_account'] == '1') {
 	echo "Before you can add an SSL Certificate you must have at least one domain stored in your $software_title. Please <a href=\"domains.php\">click here</a> to add one.<BR><BR>";
 	exit;
 }

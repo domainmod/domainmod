@@ -41,7 +41,8 @@ $system->authCheck($web_root);
 
 $maint->updateSslFees($connection);
 
-$_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'ssl_certs');
+$sql = $system->buildSqlMissingFees('ssl_certs');
+$_SESSION['missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
 $_SESSION['result_message'] .= "SSL Fees Updated<BR>";
 

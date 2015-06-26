@@ -838,17 +838,17 @@ if ($export_data == "1") {
 <body onLoad="document.forms[0].elements[12].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
-if ($_SESSION['need_registrar'] == "1") {
+if ($_SESSION['has_registrar'] != '1') {
     echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrars found. Please <a href=\"assets/add/registrar.php\">click here</a> to add one.<BR><BR>";
     exit;
 }
 
-if ($_SESSION['need_registrar_account'] == "1" && $_SESSION['need_registrar'] != "1") {
+if ($_SESSION['has_registrar_account'] != '1' && $_SESSION['has_registrar'] == '1') {
     echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrar Accounts found. Please <a href=\"assets/add/registrar-account.php\">click here</a> to add one.<BR><BR>";
     exit;
 }
 
-if ($_SESSION['need_domain'] == "1" && $_SESSION['need_registrar'] != "1" && $_SESSION['need_registrar_account'] != "1") {
+if ($_SESSION['has_domain'] != '1' && $_SESSION['has_registrar'] == '1' && $_SESSION['has_registrar_account'] == '1') {
     echo "<strong><font class=\"highlight\">0</font></strong> Domains found. Please <a href=\"add/domain.php\">click here</a> to add one.<BR><BR>";
     exit;
 }

@@ -178,15 +178,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         }
 
-        if (($_SESSION['run_update_includes'] == "1" || $last_login_date < $current_date) && $_SESSION['need_domain'] == "0") {
+        if (($_SESSION['run_update_includes'] == "1" || $last_login_date < $current_date) && $_SESSION['has_domain'] == '1') {
 
             $_SESSION['result_message'] .= $maint->updateSegments($connection);
             $_SESSION['result_message'] .= $maint->updateTlds($connection);
 
         }
 
-        $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'domains');
-        $_SESSION['missing_ssl_fees'] = $system->checkMissingFees($connection, 'ssl_certs');
+        $sql = $system->buildSqlMissingFees('domains');
+        $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
+
+        $sql = $system->buildSqlMissingFees('ssl_certs');
+        $_SESSION['missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
         if ($_SESSION['is_new_password'] == 1) {
 

@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Added<BR>";
 		
-		if ($_SESSION['need_ssl_provider'] == "1") {
+		if ($_SESSION['has_ssl_provider'] != '1') {
 			
  			$system->checkExistingAssets($connection);
 

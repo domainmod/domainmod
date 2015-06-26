@@ -24,7 +24,7 @@
 if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<strong>Domains</strong>&nbsp; <?php
-	if ($_SESSION['need_registrar'] != "1" && $_SESSION['need_registrar_account'] != "1") { ?>
+	if ($_SESSION['has_registrar'] == '1' && $_SESSION['has_registrar_account'] == '1') { ?>
     	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/add/domain.php">Add A New Domain</a>&nbsp;<?php
 	} 
 
@@ -41,8 +41,8 @@ if ($software_section == "domains") { ?>
 } elseif ($software_section == "ssl-certs") { ?>
 	
 	&raquo;&nbsp;<strong>SSL Certificates</strong>&nbsp;<?php
-	if ($_SESSION['need_ssl_provider'] != "1" && $_SESSION['need_ssl_account'] != "1" &&
-            $_SESSION['need_domain'] != "1") { ?>
+	if ($_SESSION['has_ssl_provider'] == '1' && $_SESSION['has_ssl_account'] == '1' &&
+            $_SESSION['has_domain'] == '1') { ?>
 		&raquo;&nbsp;<a href="<?php echo $web_root; ?>/add/ssl-cert.php">Add A New SSL Certificate</a>&nbsp;<?php
 	}
 
@@ -297,7 +297,7 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<strong>Domain Registrar Accounts</strong>&nbsp;<?php
-	if ($_SESSION['need_registrar'] != "1") { ?>
+	if ($_SESSION['has_registrar'] == '1') { ?>
 		&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/add/registrar-account.php">Add A New Registrar Account</a>
             &nbsp;<?php
 	}
@@ -411,7 +411,7 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<strong>SSL Provider Accounts</strong>&nbsp;<?php
-	if ($_SESSION['need_ssl_provider'] != "1") { ?>
+	if ($_SESSION['has_ssl_provider'] == '1') { ?>
 		&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/add/ssl-provider-account.php">Add A New SSL Provider
             Account</a>&nbsp;<?php
 	}

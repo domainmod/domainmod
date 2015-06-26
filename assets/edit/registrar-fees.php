@@ -226,7 +226,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
 
-                $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'domains');
+                $sql = $system->buildSqlMissingFees('domains');
+                $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
                 $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 
@@ -276,7 +277,8 @@ if ($really_del == "1") {
 		
 		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
 
-        $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'domains');
+        $sql = $system->buildSqlMissingFees('domains');
+        $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
         $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 

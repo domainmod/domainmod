@@ -246,7 +246,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Added<BR>";
 
                     $_SESSION['result_message'] .= $maint->updateSegments($connection);
-                    $_SESSION['missing_domain_fees'] = $system->checkMissingFees($connection, 'domains');
+
+                    $sql = $system->buildSqlMissingFees('domains');
+                    $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
                     $system->checkExistingAssets($connection);
 

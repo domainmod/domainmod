@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">" . $new_username . " (" .
             $temp_registrar . ", " . $temp_owner . ")</font> Added<BR>";
 
-		if ($_SESSION['need_registrar_account'] == "1") {
+		if ($_SESSION['has_registrar_account'] != '1') {
 			
 			$system->checkExistingAssets($connection);
 
