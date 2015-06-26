@@ -26,6 +26,7 @@ include("../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
+$layout = new DomainMOD\Layout();
 $system = new DomainMOD\System();
 
 include(DIR_INC . "head.inc.php");
@@ -46,7 +47,7 @@ $software_section = "assets";
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<?php include(DIR_INC . "layout/asset-management-block.inc.php"); ?>
+<?php echo $layout->AssetBlock(); ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>
