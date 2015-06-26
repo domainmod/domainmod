@@ -127,6 +127,7 @@ class System
             $_SESSION['result_message'] = "You must be logged in to access this area<BR>";
 
             header("Location: " . $web_root . "/");
+            exit;
 
         }
 
@@ -144,6 +145,7 @@ class System
             }
 
             header("Location: " . $web_root . "/domains.php");
+            exit;
 
         }
 
@@ -155,6 +157,7 @@ class System
         if ($_SESSION['is_admin'] !== 1) {
 
             header("Location: " . $web_root . "/invalid.php");
+            exit;
 
         }
 
