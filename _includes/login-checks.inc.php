@@ -43,6 +43,6 @@ unset($_SESSION['running_login_checks']);
 
 unset($_SESSION['installation_mode']);
 
-$login->setLastLogin($connection);
+$login->setLastLogin($connection, $_SESSION['user_id'], $_SESSION['email_address']);
 
 $_SESSION['last_login'] = $time->time();

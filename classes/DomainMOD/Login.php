@@ -88,7 +88,7 @@ class Login
 
     }
 
-    public function setLastLogin($connection)
+    public function setLastLogin($connection, $user_id, $email_address)
     {
 
         $time = new Timestamp();
@@ -98,8 +98,8 @@ class Login
                 SET last_login = '" . $timestamp . "',
                     number_of_logins = number_of_logins + 1,
                     update_time = '" . $timestamp . "'
-                WHERE id = '" . $_SESSION['user_id'] . "'
-                  AND email_address = '" . $_SESSION['email_address'] . "'";
+                WHERE id = '" . $user_id . "'
+                  AND email_address = '" . $email_address . "'";
         mysqli_query($connection, $sql);
 
     }

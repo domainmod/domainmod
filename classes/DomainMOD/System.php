@@ -151,10 +151,10 @@ class System
 
     }
 
-    public function checkAdminUser($web_root)
+    public function checkAdminUser($web_root, $is_admin)
     {
 
-        if ($_SESSION['is_admin'] !== 1) {
+        if ($is_admin !== 1) {
 
             header("Location: " . $web_root . "/invalid.php");
             exit;
