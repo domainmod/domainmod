@@ -103,7 +103,7 @@ if ($action != "") {
 $page_title = "Data Warehouse";
 $software_section = "admin-dw-main";
 ?>
-<?php include(DIR_INC . "doctype.inc.php"); ?>
+<?php echo $system->doctype(); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>

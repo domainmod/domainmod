@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 
 }
 ?>
-<?php include(DIR_INC . "doctype.inc.php"); ?>
+<?php echo $system->doctype(); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>

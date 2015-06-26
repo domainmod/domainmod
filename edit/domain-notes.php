@@ -52,7 +52,7 @@ while ($row = mysqli_fetch_object($result)) {
 
 }
 ?>
-<?php include(DIR_INC . "doctype.inc.php"); ?>
+<?php echo $system->doctype(); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>

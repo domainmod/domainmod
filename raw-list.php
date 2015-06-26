@@ -47,7 +47,7 @@ if ($_SESSION['raw_list_type'] == 'domains') {
 
 }
 ?>
-<?php include(DIR_INC . "doctype.inc.php"); ?>
+<?php echo $system->doctype(); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>

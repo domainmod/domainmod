@@ -40,7 +40,7 @@ $system->checkAdminUser();
 $page_title = "System Information";
 $software_section = "admin-system-info";
 ?>
-<?php include(DIR_INC . "doctype.inc.php"); ?>
+<?php echo $system->doctype(); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>

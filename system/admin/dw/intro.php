@@ -39,7 +39,7 @@ $system->checkAdminUser();
 $page_title = "Data Warehouse";
 $software_section = "admin-dw-intro";
 ?>
-<?php include(DIR_INC . "doctype.inc.php"); ?>
+<?php echo $system->doctype(); ?>
 <html>
 <head>
 <title><?php echo $software_title . " :: " . $page_title; ?></title>
