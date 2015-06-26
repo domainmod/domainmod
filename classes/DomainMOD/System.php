@@ -73,61 +73,64 @@ class System
 
     }
 
-    public function checkMissingFees($connection, $table)
+    public function checkForRows($connection, $sql)
     {
 
-        $sql_missing = "SELECT id
-                        FROM " . $table . "
-                        WHERE fee_id = '0'
-                          AND active NOT IN ('0', '10')";
-        $result = mysqli_query($connection, $sql_missing);
+        $result = mysqli_query($connection, $sql);
 
         if (mysqli_num_rows($result) >= 1) {
 
-            $missing_fees = '1';
+            return '1';
 
         } else {
 
-            $missing_fees = '0';
+            return '0';
+
         }
 
-        return $missing_fees;
+    }
+
+    public function buildSqlMissingFees($table)
+    {
+
+        return "SELECT id
+                FROM " . $table . "
+                WHERE fee_id = '0'
+                  AND active NOT IN ('0', '10')";
+
+    }
+
+    public function buildSqlSingleAsset($table)
+    {
+
+        return "SELECT id
+                FROM " . $table . "
+                LIMIT 1";
 
     }
 
     public function checkExistingAssets($connection)
     {
 
-        $_SESSION['need_registrar'] = $this->checkExistingSingle($connection, 'registrars');
-        $_SESSION['need_registrar_account'] = $this->checkExistingSingle($connection, 'registrar_accounts');
-        $_SESSION['need_domain'] = $this->checkExistingSingle($connection, 'domains');
-        $_SESSION['need_ssl_provider'] = $this->checkExistingSingle($connection, 'ssl_providers');
-        $_SESSION['need_ssl_account'] = $this->checkExistingSingle($connection, 'ssl_accounts');
-        $_SESSION['need_ssl_cert'] = $this->checkExistingSingle($connection, 'ssl_certs');
+        $sql = $this->buildSqlSingleAsset('registrars');
+        $_SESSION['has_registrar'] = $this->checkForRows($connection, $sql);
+
+        $sql = $this->buildSqlSingleAsset('registrar_accounts');
+        $_SESSION['has_registrar_account'] = $this->checkForRows($connection, $sql);
+
+        $sql = $this->buildSqlSingleAsset('domains');
+        $_SESSION['has_domain'] = $this->checkForRows($connection, $sql);
+
+        $sql = $this->buildSqlSingleAsset('ssl_providers');
+        $_SESSION['has_ssl_provider'] = $this->checkForRows($connection, $sql);
+
+        $sql = $this->buildSqlSingleAsset('ssl_accounts');
+        $_SESSION['has_ssl_account'] = $this->checkForRows($connection, $sql);
+
+        $sql = $this->buildSqlSingleAsset('ssl_certs');
+        $_SESSION['has_ssl_cert'] = $this->checkForRows($connection, $sql);
 
         return true;
-
-    }
-
-    public function checkExistingSingle($connection, $table)
-    {
-
-        $sql_single = "SELECT id
-                       FROM " . $table . "
-                       LIMIT 1";
-        $result = mysqli_query($connection, $sql_single);
-
-        if (mysqli_num_rows($result) == 1) {
-
-            $need_asset = '0';
-
-        } else {
-
-            $need_asset = '1';
-
-        }
-
-        return $need_asset;
 
     }
 
