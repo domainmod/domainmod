@@ -36,8 +36,8 @@ $timestamp_basic = $time->timeBasic();
 $timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
 
 include(DIR_INC . "head.inc.php");
-include(DIR_INC . "software.inc.php");
 include(DIR_INC . "config.inc.php");
+include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck($web_root);

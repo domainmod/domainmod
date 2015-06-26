@@ -30,8 +30,8 @@ $timestamp_basic = $time->timeBasic();
 $timestamp_long = $time->timeLong();
 
 include(DIR_INC . "head.inc.php");
-include(DIR_INC . "software.inc.php");
 include(DIR_INC . "config.inc.php");
+include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 include(DIR_INC . "config-demo.inc.php");
 
