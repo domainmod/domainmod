@@ -36,7 +36,7 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck($web_root);
-$system->checkAdminUser($web_root, $_SESSION['is_admin']);
+$system->checkAdminUser($web_root);
 
 $page_title = "Editing A User";
 $software_section = "admin-user-edit";
