@@ -163,4 +163,23 @@ class System
 
     }
 
+    public function showResultMessage()
+    {
+
+        ob_start(); ?>
+
+        <div class="result_message_outer">
+            <div class="result_message_inner">
+                <?php echo $_SESSION['result_message']; ?>
+            </div>
+        </div><?php
+
+        $result = ob_get_clean();
+
+        unset($_SESSION['result_message']);
+
+        return $result;
+
+    }
+
 }
