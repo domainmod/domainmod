@@ -66,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
+$reporting = new DomainMOD\Reporting();
 $range_string = $reporting->getRangeString($all, 'sslc.expiry_date', $new_start_date, $new_end_date);
 
 $sslfd_columns = $customField->getCustomFieldsSql($connection, 'ssl_cert_fields', 'sslfd');
@@ -255,7 +256,7 @@ if ($export_data == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
-<?php include(DIR_INC . "layout/table-export-top.inc.php"); ?>
+<?php echo $reporting->showTableTop(); ?>
     <form name="export_ssl_certs_form" method="post">
         <a href="renewals.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
@@ -266,7 +267,7 @@ if ($export_data == "1") {
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="renewals.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
     </form>
-<?php include(DIR_INC . "layout/table-export-bottom.inc.php"); ?>
+<?php echo $reporting->showTableBottom(); ?>
 <?php if ($total_results > 0) { ?>
 <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR>
 <?php if ($all != "1") { ?>

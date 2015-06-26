@@ -28,6 +28,7 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $currency = new DomainMOD\Currency();
 $error = new DomainMOD\Error();
+$reporting = new DomainMOD\Reporting();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 
@@ -201,12 +202,12 @@ if ($total_rows > 0) {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
-<?php include(DIR_INC . "layout/table-export-top.inc.php"); ?>
+<?php echo $reporting->showTableTop(); ?>
     <a href="registrar-fees.php?all=1">View All</a> or <a href="registrar-fees.php?all=0">Active Only</a>
     <?php if ($total_rows > 0) { ?>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="registrar-fees.php?export_data=1&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
     <?php } ?>
-<?php include(DIR_INC . "layout/table-export-bottom.inc.php"); ?>
+<?php echo $reporting->showTableBottom(); ?>
 
 <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
 <BR>

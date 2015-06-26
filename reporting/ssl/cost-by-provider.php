@@ -66,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
+$reporting = new DomainMOD\Reporting();
 $range_string = $reporting->getRangeString($all, 'sslc.expiry_date', $new_start_date, $new_end_date);
 
 $sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.id AS ssl_account_id, sslpa.username, SUM(sslc.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_certs
@@ -245,7 +246,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
-<?php include(DIR_INC . "layout/table-export-top.inc.php"); ?>
+<?php echo $reporting->showTableTop(); ?>
     <form name="export_ssl_form" method="post">
         <a href="cost-by-provider.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
@@ -256,7 +257,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-provider.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
     </form>
-<?php include(DIR_INC . "layout/table-export-bottom.inc.php"); ?>
+<?php echo $reporting->showTableBottom(); ?>
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
 

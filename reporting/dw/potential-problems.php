@@ -27,6 +27,7 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
+$reporting = new DomainMOD\Reporting();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 
@@ -147,14 +148,14 @@ if ($export_data == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
-<?php include(DIR_INC . "layout/table-export-top.inc.php"); ?>
+<?php echo $reporting->showTableTop(); ?>
     <form name="export_dw_form" method="post">
         <a href="potential-problems.php?generate=1">Generate</a>
         <?php if ($generate == 1) { ?>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="potential-problems.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
     </form>
-<?php include(DIR_INC . "layout/table-export-bottom.inc.php"); ?>
+<?php echo $reporting->showTableBottom(); ?>
 <?php if ($generate == 1) { ?>
 <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
 <BR>
