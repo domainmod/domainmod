@@ -28,3 +28,4 @@ $site_width = '96%';
 $site_width_login = '550';
 $code_home_url = 'http://domainmod.org';
 $software_db_version = '2.0057';
+$_SESSION['web_root'] = $web_root;
