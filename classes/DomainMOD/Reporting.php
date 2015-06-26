@@ -45,7 +45,7 @@ class Reporting
     public function showTableTop()
     {
 
-        ob_start(); ?>1
+        ob_start(); ?>
 
         <div class="export-outer">
         <div class="export-inner"><?php
@@ -57,7 +57,7 @@ class Reporting
     public function showTableBottom()
     {
 
-        ob_start(); ?>2
+        ob_start(); ?>
 
         </div>
         </div>
