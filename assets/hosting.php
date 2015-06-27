@@ -242,7 +242,7 @@ $has_active = "1"; ?>
             } else { ?>
 
                 <a class="nobold" href="../domains.php?whid=<?php echo $row->id; ?>"><?php
-                    echo number_format($active_domains); ?></a><?php
+                echo number_format($active_domains); ?></a><?php
 
             } ?>
         </td>
