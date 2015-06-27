@@ -284,10 +284,14 @@ $has_active = 1; ?>
                href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->rname; ?></a>
         </td>
         <td class="main_table_cell_active" valign="top">
+            <?php //@formatter:off ?>
             <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo
-                $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a
-                title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller
-                == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                $row->username; ?></a><?php
+            if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font
+                class=\"default_highlight\">*</font></a>"; ?><?php
+            if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font
+                class=\"reseller_highlight\">*</font></a>"; ?>
+            <?php //@formatter:on ?>
         </td>
         <td class="main_table_cell_active">
             <a class="invisiblelink"
@@ -367,11 +371,14 @@ $has_active = 1; ?>
                        href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->rname; ?></a>
                 </td>
                 <td class="main_table_cell_inactive" valign="top">
+                    <?php //@formatter:off ?>
                     <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php
-                            echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] ==
-                        $row->raid) echo "<a title=\"Default Account\"><font
-                        class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a
-                        title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                        echo $row->username; ?></a><?php
+                    if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default
+                        Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php
+                    if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font
+                        class=\"reseller_highlight\">*</font></a>"; ?>
+                    <?php //@formatter:on ?>
                 </td>
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink"

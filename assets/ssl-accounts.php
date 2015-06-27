@@ -286,14 +286,17 @@ $has_active = 1; ?>
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
             <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php
-                    echo $row->sslpname; ?></a>
+                echo $row->sslpname; ?></a>
         </td>
         <td class="main_table_cell_active">
+            <?php //@formatter:off ?>
             <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php
-                    echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid)
-                echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if
-            ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font
-            class=\"reseller_highlight\">*</font></a>"; ?>
+                echo $row->username; ?></a><?php
+            if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font
+                class=\"default_highlight\">*</font></a>"; ?><?php
+            if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font
+                class=\"reseller_highlight\">*</font></a>"; ?>
+            <?php //@formatter:on ?>
         </td>
         <td class="main_table_cell_active">
             <a class="invisiblelink"
@@ -376,11 +379,14 @@ $has_active = 1; ?>
                     ?>"><?php echo $row->sslpname; ?></a>
                 </td>
                 <td class="main_table_cell_inactive">
+                    <?php //@formatter:off ?>
                     <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid;
-                    ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] ==
-                        $row->sslpaid) echo "<a title=\"Default Account\"><font
-                        class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a
-                        title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                        ?>"><?php echo $row->username; ?></a><?php
+                    if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default
+                        Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php
+                    if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font
+                        class=\"reseller_highlight\">*</font></a>"; ?>
+                    <?php //@formatter:on ?>
                 </td>
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid;

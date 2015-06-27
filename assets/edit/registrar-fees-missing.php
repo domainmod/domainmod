@@ -95,9 +95,8 @@ update these fees.<BR>
             <a class="nobold" href="registrar-fees.php?rid=<?php echo $row->registrar_id . "\">" .
                 $full_tld_list_formatted; ?></a>
         </td>
-    </tr><?php
-
-    } ?>
+    </tr><?php //@formatter:off
+    } //@formatter:on ?>
 </table>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
