@@ -49,7 +49,7 @@ $sql = "SELECT id, name, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, 
                      WHERE dns_id != '0'
                        AND active NOT IN ('0','10')
                        GROUP BY dns_id)
-        ORDER BY name, number_of_servers desc";
+        ORDER BY name, number_of_servers DESC";
 
 if ($export_data == "1") {
 
@@ -170,14 +170,14 @@ if ($export_data == "1") {
 
         $sql = "SELECT id, name, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, insert_time, update_time
                 FROM dns
-                ORDER BY name, number_of_servers desc";
+                ORDER BY name, number_of_servers DESC";
 
     } else {
 
         $sql = "SELECT id, name, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, insert_time, update_time
                 FROM dns
                 WHERE id NOT IN (" . $exclude_dns_string . ")
-                ORDER BY name, number_of_servers desc";
+                ORDER BY name, number_of_servers DESC";
 
     }
 
@@ -242,8 +242,8 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
@@ -254,8 +254,8 @@ $result = mysqli_query($connection, $sql);
 
 if (mysqli_num_rows($result) > 0) {
 
-    $has_active = "1"; ?>
-    <table class="main_table" cellpadding="0" cellspacing="0">
+$has_active = "1"; ?>
+<table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Active Profiles (<?php echo mysqli_num_rows($result); ?>)</font>
@@ -277,99 +277,104 @@ if (mysqli_num_rows($result) > 0) {
         } ?>
 
         <tr class="main_table_row_active">
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_dns'] == $row->id) echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\">*</font></a>"; ?>
-            </td>
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->number_of_servers; ?></a>
-            </td>
-            <td class="main_table_cell_active"><?php
-                $sql_total_count = "SELECT count(*) AS total_count
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_dns'] == $row->id) echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\">*</font></a>"; ?>
+        </td>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->number_of_servers; ?></a>
+        </td>
+        <td class="main_table_cell_active"><?php
+            $sql_total_count = "SELECT count(*) AS total_count
                                     FROM domains
                                     WHERE dns_id = '" . $row->id . "'
                                       AND active NOT IN ('0', '10')";
-                $result_total_count = mysqli_query($connection, $sql_total_count);
-                while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-                    $total_dns_count = $row_total_count->total_count;
-                } ?>
-                <a class="nobold" href="../domains.php?dnsid=<?php echo $row->id; ?>"><?php echo number_format($total_dns_count); ?></a>
-            </td>
+            $result_total_count = mysqli_query($connection, $sql_total_count);
+            while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+                $total_dns_count = $row_total_count->total_count;
+            } ?>
+            <a class="nobold"
+               href="../domains.php?dnsid=<?php echo $row->id; ?>"><?php echo number_format($total_dns_count); ?></a>
+        </td>
         </tr><?php
 
         $current_dnsid = $row->id;
 
     }
 
-}
+    }
 
-if ($_SESSION['display_inactive_assets'] == "1") {
+    if ($_SESSION['display_inactive_assets'] == "1") {
 
-    $exclude_dns_string = substr($exclude_dns_string_raw, 0, -2);
+        $exclude_dns_string = substr($exclude_dns_string_raw, 0, -2);
 
-    if ($exclude_dns_string == "") {
+        if ($exclude_dns_string == "") {
 
-        $sql = "SELECT id, name, number_of_servers
+            $sql = "SELECT id, name, number_of_servers
                 FROM dns
                 ORDER BY name, number_of_servers DESC";
 
-    } else {
+        } else {
 
-        $sql = "SELECT id, name, number_of_servers
+            $sql = "SELECT id, name, number_of_servers
                 FROM dns
                 WHERE id NOT IN (" . $exclude_dns_string . ")
                 ORDER BY name, number_of_servers DESC";
 
-    }
+        }
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    if (mysqli_num_rows($result) > 0) {
+        if (mysqli_num_rows($result) > 0) {
 
-        $has_inactive = "1";
-        if ($has_active == "1") echo "<BR>";
-        if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+            $has_inactive = "1";
+            if ($has_active == "1") echo "<BR>";
+            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
 
-        <tr class="main_table_row_heading_inactive">
-        <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive Profiles (<?php echo mysqli_num_rows($result); ?>)</font>
-        </td>
-        <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Servers</font>
-        </td>
-        </tr><?php
-
-        while ($row = mysqli_fetch_object($result)) { ?>
-
-            <tr class="main_table_row_inactive">
-            <td class="main_table_cell_inactive">
-                <a class="invisiblelink"
-                   href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_dns'] == $row->id) echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\">*</font></a>"; ?>
+            <tr class="main_table_row_heading_inactive">
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Inactive Profiles (<?php echo mysqli_num_rows($result); ?>)</font>
             </td>
-            <td class="main_table_cell_inactive">
-                <a class="invisiblelink"
-                   href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->number_of_servers; ?></a>
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Servers</font>
             </td>
             </tr><?php
+
+            while ($row = mysqli_fetch_object($result)) { ?>
+
+                <tr class="main_table_row_inactive">
+                <td class="main_table_cell_inactive">
+                    <a class="invisiblelink"
+                       href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_dns'] == $row->id) echo "<a title=\"Default DNS Profile\"><font class=\"default_highlight\">*</font></a>"; ?>
+                </td>
+                <td class="main_table_cell_inactive">
+                    <a class="invisiblelink"
+                       href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->number_of_servers; ?></a>
+                </td>
+                </tr><?php
+
+            }
 
         }
 
     }
 
-}
+    if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
-if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+    if ($_SESSION['display_inactive_assets'] != "1") { ?>
+        <BR><em>Inactive Profiles are currently not displayed. <a class="invisiblelink"
+                                                                  href="../system/display-settings.php">Click here to
+                display them</a>.</em><BR><?php
+    }
 
-if ($_SESSION['display_inactive_assets'] != "1") { ?>
-    <BR><em>Inactive Profiles are currently not displayed. <a class="invisiblelink" href="../system/display-settings.php">Click here to display them</a>.</em><BR><?php
-}
-
-if ($has_active || $has_inactive) { ?>
+    if ($has_active || $has_inactive) { ?>
         <BR><font class="default_highlight">*</font> = Default DNS Profile<?php
-}
+    }
 
-if (!$has_active && !$has_inactive) { ?>
+    if (!$has_active && !$has_inactive) { ?>
         <BR>You don't currently have any DNS Profiles. <a href="add/dns.php">Click here to add one</a>.<?php
-} ?>
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+    } ?>
+    <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

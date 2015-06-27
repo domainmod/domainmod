@@ -51,7 +51,8 @@ $new_notes = $_POST['new_notes'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" &&
-        $new_registrar_id != "0") {
+        $new_registrar_id != "0"
+    ) {
 
         $query = "INSERT INTO registrar_accounts
                   (owner_id, registrar_id, username, `password`, notes, reseller, insert_time)
@@ -68,7 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $query = "SELECT `name`
                   FROM registrars
@@ -84,7 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->fetch();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $query = "SELECT `name`
                   FROM owners
@@ -100,7 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->fetch();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">" . $new_username . " (" .
             $temp_registrar . ", " . $temp_owner . ")</font> Added<BR>";
@@ -120,7 +127,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($username == "") { $_SESSION['result_message'] .= "Please enter a username<BR>"; }
+        if ($username == "") {
+            $_SESSION['result_message'] .= "Please enter a username<BR>";
+        }
 
     }
 
@@ -129,101 +138,105 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[2].focus()";>
+<body onLoad="document.forms[0].elements[2].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_account_form" method="post">
-<strong>Owner</strong><BR><BR>
-<?php
-$query = "SELECT id, `name`
+    <strong>Owner</strong><BR><BR>
+    <?php
+    $query = "SELECT id, `name`
           FROM owners
           ORDER BY `name` ASC";
-$q = $conn->stmt_init();
+    $q = $conn->stmt_init();
 
-if ($q->prepare($query)) {
+    if ($q->prepare($query)) {
 
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($id, $name);
 
-    echo "<select name=\"new_owner_id\">";
+        echo "<select name=\"new_owner_id\">";
 
-    while ($q->fetch()) {
+        while ($q->fetch()) {
 
-        if ($id == $_SESSION['default_owner_domains']) {
+            if ($id == $_SESSION['default_owner_domains']) {
 
-            echo "<option value=\"" . $id . "\" selected>" . $name . "</option>";
+                echo "<option value=\"" . $id . "\" selected>" . $name . "</option>";
 
-        } else {
+            } else {
 
-            echo "<option value=\"" . $id . "\">" . $name . "</option>";
+                echo "<option value=\"" . $id . "\">" . $name . "</option>";
+
+            }
 
         }
 
+        echo "</select>";
+
+        $q->close();
+
+    } else {
+        $error->outputSqlError($conn, "ERROR");
     }
-
-    echo "</select>";
-
-    $q->close();
-
-} else { $error->outputSqlError($conn, "ERROR"); }
-?>
-<BR><BR>
-<strong>Registrar</strong><BR><BR>
-<?php
-$query = "SELECT id, name
+    ?>
+    <BR><BR>
+    <strong>Registrar</strong><BR><BR>
+    <?php
+    $query = "SELECT id, name
           FROM registrars
           ORDER BY `name` ASC";
-$q = $conn->stmt_init();
+    $q = $conn->stmt_init();
 
-if ($q->prepare($query)) {
+    if ($q->prepare($query)) {
 
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($id, $name);
 
-    echo "<select name=\"new_registrar_id\">";
+        echo "<select name=\"new_registrar_id\">";
 
-    while ($q->fetch()) {
+        while ($q->fetch()) {
 
-        if ($id == $_SESSION['default_registrar']) {
+            if ($id == $_SESSION['default_registrar']) {
 
-            echo "<option value=\"" . $id . "\" selected>" . $name . "</option>";
+                echo "<option value=\"" . $id . "\" selected>" . $name . "</option>";
 
-        } else {
+            } else {
 
-            echo "<option value=\"" . $id . "\">" . $name . "</option>";
+                echo "<option value=\"" . $id . "\">" . $name . "</option>";
+
+            }
 
         }
 
+        echo "</select>";
+
+        $q->close();
+
+    } else {
+        $error->outputSqlError($conn, "ERROR");
     }
-
-    echo "</select>";
-
-    $q->close();
-
-} else { $error->outputSqlError($conn, "ERROR"); }
-?>
-<BR><BR>
-<strong>Username (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-<input name="new_username" type="text" size="50" maxlength="100" value="<?php echo $new_username; ?>">
-<BR><BR>
-<strong>Password (255)</strong><BR><BR>
-<input name="new_password" type="text" size="50" maxlength="255" value="<?php echo $new_password; ?>">
-<BR><BR>
-<strong>Reseller Account?</strong><BR><BR>
-<select name="new_reseller">";
-<option value="0"<?php if ($new_reseller != "1") echo " selected"; ?>>No</option>
-<option value="1"<?php if ($new_reseller == "1") echo " selected"; ?>>Yes</option>
-</select>
-<BR><BR>
-<strong>Notes</strong><BR><BR>
+    ?>
+    <BR><BR>
+    <strong>Username (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <input name="new_username" type="text" size="50" maxlength="100" value="<?php echo $new_username; ?>">
+    <BR><BR>
+    <strong>Password (255)</strong><BR><BR>
+    <input name="new_password" type="text" size="50" maxlength="255" value="<?php echo $new_password; ?>">
+    <BR><BR>
+    <strong>Reseller Account?</strong><BR><BR>
+    <select name="new_reseller">";
+        <option value="0"<?php if ($new_reseller != "1") echo " selected"; ?>>No</option>
+        <option value="1"<?php if ($new_reseller == "1") echo " selected"; ?>>Yes</option>
+    </select>
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
 <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?>
 </textarea>
-<BR><BR>
-<input type="submit" name="button" value="Add This Account &raquo;">
+    <BR><BR>
+    <input type="submit" name="button" value="Add This Account &raquo;">
 </form>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

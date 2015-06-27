@@ -69,15 +69,6 @@ class DwBuild
 
     }
 
-    public function time()
-    {
-
-        $time = new Timestamp();
-
-        return $time->time();
-
-    }
-
     public function getServers($connection)
     {
 
@@ -121,39 +112,48 @@ class DwBuild
 
     }
 
+    public function time()
+    {
+
+        $time = new Timestamp();
+
+        return $time->time();
+
+    }
+
     public function createTableAccounts($connection)
     {
 
         $sql_accounts = "CREATE TABLE IF NOT EXISTS dw_accounts (
-                             id int(10) NOT NULL auto_increment,
-                             server_id int(10) NOT NULL,
-                             domain varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             ip varchar(15) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             `owner` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             `user` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             email varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             plan varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             theme varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             shell varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             `partition` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             disklimit varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             diskused varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxaddons varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxftp varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxlst varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxparked varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxpop varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxsql varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxsub varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             startdate varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             unix_startdate int(10) NOT NULL,
-                             suspended int(1) NOT NULL,
-                             suspendreason varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             suspendtime int(10) NOT NULL,
-                             MAX_EMAIL_PER_HOUR int(10) NOT NULL,
-                             MAX_DEFER_FAIL_PERCENTAGE int(10) NOT NULL,
-                             MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION int(10) NOT NULL,
-                             insert_time datetime NOT NULL,
+                             id INT(10) NOT NULL AUTO_INCREMENT,
+                             server_id INT(10) NOT NULL,
+                             domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             ip VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             `owner` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             `user` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             email VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             plan VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             theme VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             shell VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             `partition` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             disklimit VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             diskused VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxaddons VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxftp VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxlst VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxparked VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxpop VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxsql VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             maxsub VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             startdate VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             unix_startdate INT(10) NOT NULL,
+                             suspended INT(1) NOT NULL,
+                             suspendreason VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                             suspendtime INT(10) NOT NULL,
+                             MAX_EMAIL_PER_HOUR INT(10) NOT NULL,
+                             MAX_DEFER_FAIL_PERCENTAGE INT(10) NOT NULL,
+                             MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION INT(10) NOT NULL,
+                             insert_time DATETIME NOT NULL,
                              PRIMARY KEY  (id)
                          ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
         mysqli_query($connection, $sql_accounts);
@@ -166,11 +166,11 @@ class DwBuild
     {
 
         $sql_zones = "CREATE TABLE IF NOT EXISTS dw_dns_zones (
-                          id int(10) NOT NULL auto_increment,
-                          server_id int(10) NOT NULL,
-                          domain varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                          zonefile varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                          insert_time datetime NOT NULL,
+                          id INT(10) NOT NULL AUTO_INCREMENT,
+                          server_id INT(10) NOT NULL,
+                          domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                          zonefile VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                          insert_time DATETIME NOT NULL,
                           PRIMARY KEY  (id)
                           ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
         mysqli_query($connection, $sql_zones);
@@ -183,33 +183,33 @@ class DwBuild
     {
 
         $sql_records = "CREATE TABLE IF NOT EXISTS dw_dns_records (
-                            id int(10) NOT NULL auto_increment,
-                            server_id int(10) NOT NULL,
-                            dns_zone_id int(10) NOT NULL,
-                            domain varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            zonefile varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default '',
-                            new_order int(10) NOT NULL,
-                            mname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            rname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            `serial` int(20) NOT NULL,
-                            refresh int(10) NOT NULL,
-                            retry int(10) NOT NULL,
-                            expire varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            minimum int(10) NOT NULL,
-                            nsdname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            ttl int(10) NOT NULL,
-                            class varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            type varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            address varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            cname varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            `exchange` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            preference int(10) NOT NULL,
-                            txtdata varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            line int(10) NOT NULL,
-                            nlines int(10) NOT NULL,
-                            raw longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            insert_time datetime NOT NULL,
+                            id INT(10) NOT NULL AUTO_INCREMENT,
+                            server_id INT(10) NOT NULL,
+                            dns_zone_id INT(10) NOT NULL,
+                            domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            zonefile VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+                            new_order INT(10) NOT NULL,
+                            mname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            rname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            `serial` INT(20) NOT NULL,
+                            refresh INT(10) NOT NULL,
+                            retry INT(10) NOT NULL,
+                            expire VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            minimum INT(10) NOT NULL,
+                            nsdname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            ttl INT(10) NOT NULL,
+                            class VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            type VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            address VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            cname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            `exchange` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            preference INT(10) NOT NULL,
+                            txtdata VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            line INT(10) NOT NULL,
+                            nlines INT(10) NOT NULL,
+                            raw LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                            insert_time DATETIME NOT NULL,
                             PRIMARY KEY  (id)
                         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
         mysqli_query($connection, $sql_records);
@@ -246,15 +246,14 @@ class DwBuild
 
     }
 
-    public function processEachZone($connection, $result_zones, $server_id, $protocol, $host, $port, $username, $hash)
+    public function apiGetAccounts($protocol, $host, $port, $username, $hash)
     {
 
-        while ($row_zones = mysqli_fetch_object($result_zones)) {
+        $api_type = "/xml-api/listaccts?searchtype=domain&search=";
 
-            $api_results = $this->apiGetRecords($protocol, $host, $port, $username, $hash, $row_zones->domain);
-            $this->insertRecords($connection, $api_results, $server_id, $row_zones->id, $row_zones->domain);
+        $api_results = $this->apiCall($api_type, $protocol, $host, $port, $username, $hash);
 
-        }
+        return $api_results;
 
     }
 
@@ -275,17 +274,6 @@ class DwBuild
             error_log("curl_exec error \"" . curl_error($curl) . "\" for " . $query . "");
         }
         curl_close($curl);
-
-        return $api_results;
-
-    }
-
-    public function apiGetAccounts($protocol, $host, $port, $username, $hash)
-    {
-
-        $api_type = "/xml-api/listaccts?searchtype=domain&search=";
-
-        $api_results = $this->apiCall($api_type, $protocol, $host, $port, $username, $hash);
 
         return $api_results;
 
@@ -313,7 +301,7 @@ class DwBuild
                     . "', '" . $hit->user . "', '" . $hit->email . "', '" . $hit->plan . "', '" . $hit->theme
                     . "', '" . $hit->shell . "', '" . $hit->partition . "', '" . $disklimit_formatted
                     . "', '" . $diskused_formatted . "', '" . $hit->maxaddons . "', '" . $hit->maxftp . "', '"
-                    . $hit->maxlst . "', '" . $hit->maxparked. "', '" . $hit->maxpop . "', '" . $hit->maxsql
+                    . $hit->maxlst . "', '" . $hit->maxparked . "', '" . $hit->maxpop . "', '" . $hit->maxsql
                     . "', '" . $hit->maxsub . "', '" . $hit->startdate . "', '" . $hit->unix_startdate
                     . "', '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime
                     . "', '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "', '"
@@ -373,6 +361,18 @@ class DwBuild
         $result = mysqli_query($connection, $sql);
 
         return $result;
+
+    }
+
+    public function processEachZone($connection, $result_zones, $server_id, $protocol, $host, $port, $username, $hash)
+    {
+
+        while ($row_zones = mysqli_fetch_object($result_zones)) {
+
+            $api_results = $this->apiGetRecords($protocol, $host, $port, $username, $hash, $row_zones->domain);
+            $this->insertRecords($connection, $api_results, $server_id, $row_zones->id, $row_zones->domain);
+
+        }
 
     }
 
@@ -594,12 +594,12 @@ class DwBuild
     {
 
         $sql = "CREATE TABLE IF NOT EXISTS `dw_server_totals` (
-                    `id` int(10) NOT NULL auto_increment,
-                    `dw_servers` int(10) NOT NULL,
-                    `dw_accounts` int(10) NOT NULL,
-                    `dw_dns_zones` int(10) NOT NULL,
-                    `dw_dns_records` int(10) NOT NULL,
-                    `insert_time` datetime NOT NULL,
+                    `id` INT(10) NOT NULL AUTO_INCREMENT,
+                    `dw_servers` INT(10) NOT NULL,
+                    `dw_accounts` INT(10) NOT NULL,
+                    `dw_dns_zones` INT(10) NOT NULL,
+                    `dw_dns_records` INT(10) NOT NULL,
+                    `insert_time` DATETIME NOT NULL,
                     PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
         mysqli_query($connection, $sql);

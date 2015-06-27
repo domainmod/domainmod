@@ -197,17 +197,19 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 ?>
-Segments are lists of domains that can be used to help filter and manage your <a href="domains.php">domain results</a>.<BR>
+Segments are lists of domains that can be used to help filter and manage your <a href="domains.php">domain
+    results</a>.<BR>
 <BR>
-Segment filters will tell you which domains match with domains that are saved in <?php echo $software_title; ?>, as well as which domains don't match, and you can easily view and export the results.<BR>
+Segment filters will tell you which domains match with domains that are saved in <?php echo $software_title; ?>, as well
+as which domains don't match, and you can easily view and export the results.<BR>
 <BR>
 [<a href="segments.php?export_data=1">EXPORT</a>]
 <?php
@@ -242,10 +244,12 @@ if (mysqli_num_rows($result) > 0) { ?>
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active" valign="top">
-                <a class="invisiblelink" href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
+                <a class="invisiblelink"
+                   href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
             </td>
             <td class="main_table_cell_active" valign="top">
-                <a class="invisiblelink" href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $row->number_of_domains; ?></a>
+                <a class="invisiblelink"
+                   href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $row->number_of_domains; ?></a>
             </td>
             <td class="main_table_cell_active" valign="top">
                 <?php
@@ -254,7 +258,8 @@ if (mysqli_num_rows($result) > 0) { ?>
                 $segment = new DomainMOD\Segment();
                 $trimmed_segment = $segment->trimLength($temp_segment, 100);
                 ?>
-                <a class="invisiblelink" href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $trimmed_segment; ?></a>
+                <a class="invisiblelink"
+                   href="edit/segment.php?segid=<?php echo $row->id; ?>"><?php echo $trimmed_segment; ?></a>
             </td>
             <td class="main_table_cell_active" valign="top">
                 <a class="invisiblelink" href="segments.php?export_data=1&segid=<?php echo $row->id; ?>">EXPORT</a>

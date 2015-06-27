@@ -50,11 +50,11 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 1.2) {
 
         $sql = "CREATE TABLE IF NOT EXISTS `ip_addresses` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(255) NOT NULL,
-                `ip` varchar(255) NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(255) NOT NULL,
+                `ip` VARCHAR(255) NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -72,7 +72,7 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 1.3) {
 
         $sql = "ALTER TABLE `ip_addresses`
-                ADD `notes` longtext NOT NULL AFTER `ip`";
+                ADD `notes` LONGTEXT NOT NULL AFTER `ip`";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "UPDATE settings
@@ -88,7 +88,7 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 1.4) {
 
         $sql = "ALTER TABLE `domains`
-                ADD `ip_id` int(10) NOT NULL default '0' AFTER `dns_id`";
+                ADD `ip_id` INT(10) NOT NULL DEFAULT '0' AFTER `dns_id`";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "UPDATE settings
@@ -149,7 +149,7 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 1.7) {
 
         $sql = "ALTER TABLE `ip_addresses`
-                ADD `test_data` int(1) NOT NULL default '0' AFTER `notes`";
+                ADD `test_data` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "UPDATE settings
@@ -292,13 +292,13 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 1.96) {
 
         $sql = "CREATE TABLE IF NOT EXISTS `owners` (
-                    `id` int(5) NOT NULL auto_increment,
-                    `name` varchar(255) NOT NULL,
-                    `notes` longtext NOT NULL,
-                    `active` int(1) NOT NULL default '1',
-                    `test_data` int(1) NOT NULL default '0',
-                    `insert_time` datetime NOT NULL,
-                    `update_time` datetime NOT NULL,
+                    `id` INT(5) NOT NULL AUTO_INCREMENT,
+                    `name` VARCHAR(255) NOT NULL,
+                    `notes` LONGTEXT NOT NULL,
+                    `active` INT(1) NOT NULL DEFAULT '1',
+                    `test_data` INT(1) NOT NULL DEFAULT '0',
+                    `insert_time` DATETIME NOT NULL,
+                    `update_time` DATETIME NOT NULL,
                     PRIMARY KEY  (`id`),
                     KEY `name` (`name`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
@@ -544,13 +544,13 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 2.0003) {
 
         $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_types` (
-                    `id` int(10) NOT NULL auto_increment,
-                    `type` varchar(255) NOT NULL,
-                    `notes` longtext NOT NULL,
-                    `default_type` int(1) NOT NULL default '0',
-                    `active` int(1) NOT NULL default '1',
-                    `insert_time` datetime NOT NULL,
-                    `update_time` datetime NOT NULL,
+                    `id` INT(10) NOT NULL AUTO_INCREMENT,
+                    `type` VARCHAR(255) NOT NULL,
+                    `notes` LONGTEXT NOT NULL,
+                    `default_type` INT(1) NOT NULL DEFAULT '0',
+                    `active` INT(1) NOT NULL DEFAULT '1',
+                    `insert_time` DATETIME NOT NULL,
+                    `update_time` DATETIME NOT NULL,
                     PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -584,7 +584,7 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 2.0004) {
 
         $sql = "ALTER TABLE `ssl_cert_types`
-                    ADD `test_data` int(1) NOT NULL default '0' AFTER `active`";
+                    ADD `test_data` INT(1) NOT NULL DEFAULT '0' AFTER `active`";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "UPDATE settings
@@ -672,7 +672,7 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 2.0008) {
 
         $sql = "ALTER TABLE `currencies`
-                ADD `test_data` int(1) NOT NULL default '0' AFTER `active`";
+                ADD `test_data` INT(1) NOT NULL DEFAULT '0' AFTER `active`";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "UPDATE settings
@@ -688,26 +688,26 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 2.0009) {
 
         $sql = "CREATE TABLE IF NOT EXISTS `user_settings` (
-                    `id` int(10) NOT NULL auto_increment,
-                    `user_id` int(10) NOT NULL,
-                    `number_of_domains` int(5) NOT NULL default '50',
-                    `number_of_ssl_certs` int(5) NOT NULL default '50',
-                    `display_domain_owner` int(1) NOT NULL default '0',
-                    `display_domain_registrar` int(1) NOT NULL default '0',
-                    `display_domain_account` int(1) NOT NULL default '1',
-                    `display_domain_expiry_date` int(1) NOT NULL default '1',
-                    `display_domain_category` int(1) NOT NULL default '1',
-                    `display_domain_dns` int(1) NOT NULL default '0',
-                    `display_domain_ip` int(1) NOT NULL default '0',
-                    `display_domain_tld` int(1) NOT NULL default '0',
-                    `display_ssl_owner` int(1) NOT NULL default '0',
-                    `display_ssl_provider` int(1) NOT NULL default '0',
-                    `display_ssl_account` int(1) NOT NULL default '0',
-                    `display_ssl_domain` int(1) NOT NULL default '0',
-                    `display_ssl_type` int(1) NOT NULL default '0',
-                    `display_ssl_expiry_date` int(1) NOT NULL default '0',
-                    `insert_time` datetime NOT NULL,
-                    `update_time` datetime NOT NULL,
+                    `id` INT(10) NOT NULL AUTO_INCREMENT,
+                    `user_id` INT(10) NOT NULL,
+                    `number_of_domains` INT(5) NOT NULL DEFAULT '50',
+                    `number_of_ssl_certs` INT(5) NOT NULL DEFAULT '50',
+                    `display_domain_owner` INT(1) NOT NULL DEFAULT '0',
+                    `display_domain_registrar` INT(1) NOT NULL DEFAULT '0',
+                    `display_domain_account` INT(1) NOT NULL DEFAULT '1',
+                    `display_domain_expiry_date` INT(1) NOT NULL DEFAULT '1',
+                    `display_domain_category` INT(1) NOT NULL DEFAULT '1',
+                    `display_domain_dns` INT(1) NOT NULL DEFAULT '0',
+                    `display_domain_ip` INT(1) NOT NULL DEFAULT '0',
+                    `display_domain_tld` INT(1) NOT NULL DEFAULT '0',
+                    `display_ssl_owner` INT(1) NOT NULL DEFAULT '0',
+                    `display_ssl_provider` INT(1) NOT NULL DEFAULT '0',
+                    `display_ssl_account` INT(1) NOT NULL DEFAULT '0',
+                    `display_ssl_domain` INT(1) NOT NULL DEFAULT '0',
+                    `display_ssl_type` INT(1) NOT NULL DEFAULT '0',
+                    `display_ssl_expiry_date` INT(1) NOT NULL DEFAULT '0',
+                    `insert_time` DATETIME NOT NULL,
+                    `update_time` DATETIME NOT NULL,
                     PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -841,11 +841,11 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 2.0013) {
 
         $sql = "CREATE TABLE IF NOT EXISTS `segment_data` (
-                `id` int(10) NOT NULL auto_increment,
-                `segment_id` int(10) NOT NULL,
-                `domain` varchar(255) NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `segment_id` INT(10) NOT NULL,
+                `domain` VARCHAR(255) NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -1009,9 +1009,9 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 2.0022) {
 
         $sql = "CREATE TABLE IF NOT EXISTS `timezones` (
-                `id` int(5) NOT NULL auto_increment,
-                `timezone` varchar(50) NOT NULL,
-                `insert_time` datetime NOT NULL,
+                `id` INT(5) NOT NULL AUTO_INCREMENT,
+                `timezone` VARCHAR(50) NOT NULL,
+                `insert_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -1050,13 +1050,13 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 2.0024) {
 
         $sql = "CREATE TABLE IF NOT EXISTS `hosting` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(255) NOT NULL,
-                `notes` longtext NOT NULL,
-                `default_host` int(1) NOT NULL default '0',
-                `active` int(1) NOT NULL default '1',
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(255) NOT NULL,
+                `notes` LONGTEXT NOT NULL,
+                `default_host` INT(1) NOT NULL DEFAULT '0',
+                `active` INT(1) NOT NULL DEFAULT '1',
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -1067,7 +1067,7 @@ if ($current_db_version < $software_db_version) {
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "ALTER TABLE `domains`
-                    ADD `hosting_id` int(10) NOT NULL default '1' AFTER `ip_id`";
+                    ADD `hosting_id` INT(10) NOT NULL DEFAULT '1' AFTER `ip_id`";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "SELECT id
@@ -1894,7 +1894,9 @@ if ($current_db_version < $software_db_version) {
                 FROM currencies
                 WHERE default_currency = '1'";
         $result = mysqli_query($connection, $sql);
-        while ($row = mysqli_fetch_object($result)) { $temp_currency = $row->currency; }
+        while ($row = mysqli_fetch_object($result)) {
+            $temp_currency = $row->currency;
+        }
 
         $sql = "UPDATE settings
                 SET default_currency = '" . $temp_currency . "'";
@@ -1935,7 +1937,7 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 2.0037) {
 
         $sql = "ALTER TABLE `user_settings`
-                ADD `default_currency` varchar(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL after user_id";
+                ADD `default_currency` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER user_id";
         $result = mysqli_query($connection, $sql);
 
         $sql = "SELECT default_currency
@@ -1965,12 +1967,12 @@ if ($current_db_version < $software_db_version) {
         $result = mysqli_query($connection, $sql);
 
         $sql = "CREATE TABLE IF NOT EXISTS `currency_conversions` (
-                `id` int(10) NOT NULL auto_increment,
-                `currency_id` int(10) NOT NULL,
-                `user_id` int(10) NOT NULL,
-                `conversion` float NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `currency_id` INT(10) NOT NULL,
+                `user_id` INT(10) NOT NULL,
+                `conversion` FLOAT NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
         $result = mysqli_query($connection, $sql);
@@ -2015,11 +2017,11 @@ if ($current_db_version < $software_db_version) {
 
 
         $sql = "ALTER TABLE `ssl_certs`
-                ADD `ip_id` int(10) NOT NULL AFTER `type_id`";
+                ADD `ip_id` INT(10) NOT NULL AFTER `type_id`";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "ALTER TABLE `ssl_certs`
-                ADD `cat_id` int(10) NOT NULL AFTER `ip_id`";
+                ADD `cat_id` INT(10) NOT NULL AFTER `ip_id`";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "SELECT id, cat_id, ip_id
@@ -2038,11 +2040,11 @@ if ($current_db_version < $software_db_version) {
         }
 
         $sql = "ALTER TABLE `user_settings`
-                ADD `display_ssl_ip` int(1) NOT NULL default '0' AFTER `display_ssl_expiry_date`";
+                ADD `display_ssl_ip` INT(1) NOT NULL DEFAULT '0' AFTER `display_ssl_expiry_date`";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "ALTER TABLE `user_settings`
-                ADD `display_ssl_category` int(1) NOT NULL default '0' AFTER `display_ssl_ip`";
+                ADD `display_ssl_category` INT(1) NOT NULL DEFAULT '0' AFTER `display_ssl_ip`";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "UPDATE settings
@@ -2058,11 +2060,11 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 2.0039) {
 
         $sql = "ALTER TABLE `user_settings`
-                ADD `default_category` INT(10) NOT NULL default '1' AFTER `default_currency`";
+                ADD `default_category` INT(10) NOT NULL DEFAULT '1' AFTER `default_currency`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "ALTER TABLE `settings`
-                ADD `default_category` INT(10) NOT NULL default '1' AFTER `default_currency`";
+                ADD `default_category` INT(10) NOT NULL DEFAULT '1' AFTER `default_currency`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "SELECT id
@@ -2090,11 +2092,11 @@ if ($current_db_version < $software_db_version) {
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "ALTER TABLE `user_settings`
-                ADD `default_dns` INT(10) NOT NULL default '1' AFTER `default_category`";
+                ADD `default_dns` INT(10) NOT NULL DEFAULT '1' AFTER `default_category`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "ALTER TABLE `settings`
-                ADD `default_dns` INT(10) NOT NULL default '1' AFTER `default_category`";
+                ADD `default_dns` INT(10) NOT NULL DEFAULT '1' AFTER `default_category`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "SELECT id
@@ -2122,11 +2124,11 @@ if ($current_db_version < $software_db_version) {
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "ALTER TABLE `user_settings`
-                ADD `default_host` INT(10) NOT NULL default '1' AFTER `default_dns`";
+                ADD `default_host` INT(10) NOT NULL DEFAULT '1' AFTER `default_dns`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "ALTER TABLE `settings`
-                ADD `default_host` INT(10) NOT NULL default '1' AFTER `default_dns`";
+                ADD `default_host` INT(10) NOT NULL DEFAULT '1' AFTER `default_dns`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "SELECT id
@@ -2154,11 +2156,11 @@ if ($current_db_version < $software_db_version) {
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "ALTER TABLE `user_settings`
-                ADD `default_ip_address` INT(10) NOT NULL default '1' AFTER `default_host`";
+                ADD `default_ip_address` INT(10) NOT NULL DEFAULT '1' AFTER `default_host`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "ALTER TABLE `settings`
-                ADD `default_ip_address` INT(10) NOT NULL default '1' AFTER `default_host`";
+                ADD `default_ip_address` INT(10) NOT NULL DEFAULT '1' AFTER `default_host`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "SELECT id
@@ -2186,11 +2188,11 @@ if ($current_db_version < $software_db_version) {
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "ALTER TABLE `user_settings`
-                ADD `default_owner` INT(10) NOT NULL default '1' AFTER `default_ip_address`";
+                ADD `default_owner` INT(10) NOT NULL DEFAULT '1' AFTER `default_ip_address`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "ALTER TABLE `settings`
-                ADD `default_owner` INT(10) NOT NULL default '1' AFTER `default_ip_address`";
+                ADD `default_owner` INT(10) NOT NULL DEFAULT '1' AFTER `default_ip_address`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "SELECT id
@@ -2218,11 +2220,11 @@ if ($current_db_version < $software_db_version) {
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "ALTER TABLE `user_settings`
-                ADD `default_registrar` INT(10) NOT NULL default '1' AFTER `default_owner`";
+                ADD `default_registrar` INT(10) NOT NULL DEFAULT '1' AFTER `default_owner`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "ALTER TABLE `settings`
-                ADD `default_registrar` INT(10) NOT NULL default '1' AFTER `default_owner`";
+                ADD `default_registrar` INT(10) NOT NULL DEFAULT '1' AFTER `default_owner`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "SELECT id
@@ -2250,11 +2252,11 @@ if ($current_db_version < $software_db_version) {
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "ALTER TABLE `user_settings`
-                ADD `default_registrar_account` INT(10) NOT NULL default '1' AFTER `default_registrar`";
+                ADD `default_registrar_account` INT(10) NOT NULL DEFAULT '1' AFTER `default_registrar`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "ALTER TABLE `settings`
-                ADD `default_registrar_account` INT(10) NOT NULL default '1' AFTER `default_registrar`";
+                ADD `default_registrar_account` INT(10) NOT NULL DEFAULT '1' AFTER `default_registrar`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "SELECT id
@@ -2282,11 +2284,11 @@ if ($current_db_version < $software_db_version) {
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "ALTER TABLE `user_settings`
-                ADD `default_ssl_provider_account` INT(10) NOT NULL default '1' AFTER `default_registrar_account`";
+                ADD `default_ssl_provider_account` INT(10) NOT NULL DEFAULT '1' AFTER `default_registrar_account`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "ALTER TABLE `settings`
-                ADD `default_ssl_provider_account` INT(10) NOT NULL default '1' AFTER `default_registrar_account`";
+                ADD `default_ssl_provider_account` INT(10) NOT NULL DEFAULT '1' AFTER `default_registrar_account`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "SELECT id
@@ -2314,11 +2316,11 @@ if ($current_db_version < $software_db_version) {
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "ALTER TABLE `user_settings`
-                ADD `default_ssl_type` INT(10) NOT NULL default '1' AFTER `default_ssl_provider_account`";
+                ADD `default_ssl_type` INT(10) NOT NULL DEFAULT '1' AFTER `default_ssl_provider_account`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "ALTER TABLE `settings`
-                ADD `default_ssl_type` INT(10) NOT NULL default '1' AFTER `default_ssl_provider_account`";
+                ADD `default_ssl_type` INT(10) NOT NULL DEFAULT '1' AFTER `default_ssl_provider_account`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "SELECT id
@@ -2346,11 +2348,11 @@ if ($current_db_version < $software_db_version) {
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "ALTER TABLE `user_settings`
-                ADD `default_ssl_provider` INT(10) NOT NULL default '1' AFTER `default_ssl_type`";
+                ADD `default_ssl_provider` INT(10) NOT NULL DEFAULT '1' AFTER `default_ssl_type`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "ALTER TABLE `settings`
-                ADD `default_ssl_provider` INT(10) NOT NULL default '1' AFTER `default_ssl_type`";
+                ADD `default_ssl_provider` INT(10) NOT NULL DEFAULT '1' AFTER `default_ssl_type`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "SELECT id
@@ -2395,10 +2397,12 @@ if ($current_db_version < $software_db_version) {
 
         $sql = "SELECT default_timezone
                 FROM settings
-                ORDER BY id desc
+                ORDER BY id DESC
                 LIMIT 1";
         $result = mysqli_query($connection, $sql);
-        while ($row = mysqli_fetch_object($result)) { $temp_default_system_timezone = $row->default_timezone; }
+        while ($row = mysqli_fetch_object($result)) {
+            $temp_default_system_timezone = $row->default_timezone;
+        }
 
         $sql = "UPDATE user_settings
                 SET default_timezone = '" . $temp_default_system_timezone . "'";
@@ -2855,7 +2859,7 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 2.0046) {
 
         $sql = "ALTER TABLE `hosting`
-                ADD `url` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL after name";
+                ADD `url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER name";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "UPDATE settings
@@ -2871,10 +2875,10 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 2.0047) {
 
         $sql = "CREATE TABLE IF NOT EXISTS `custom_field_types` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -2887,23 +2891,23 @@ if ($current_db_version < $software_db_version) {
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "CREATE TABLE IF NOT EXISTS `domain_fields` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `field_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `type_id` int(10) NOT NULL,
-                `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `field_name` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `type_id` INT(10) NOT NULL,
+                `description` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "CREATE TABLE IF NOT EXISTS `domain_field_data` (
-                `id` int(10) NOT NULL auto_increment,
-                `domain_id` int(10) NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `domain_id` INT(10) NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -2929,23 +2933,23 @@ if ($current_db_version < $software_db_version) {
         $full_id_string_formatted = "";
 
         $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_fields` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `field_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `type_id` int(10) NOT NULL,
-                `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `field_name` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `type_id` INT(10) NOT NULL,
+                `description` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_field_data` (
-                `id` int(10) NOT NULL auto_increment,
-                `ssl_id` int(10) NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `ssl_id` INT(10) NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -3015,29 +3019,29 @@ if ($current_db_version < $software_db_version) {
     if ($current_db_version == 2.0048) {
 
         $sql = "CREATE TABLE IF NOT EXISTS `dw_servers` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `host` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `protocol` varchar(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `port` int(5) NOT NULL,
-                `username` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `hash` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `dw_accounts` int(10) NOT NULL,
-                `dw_dns_zones` int(10) NOT NULL,
-                `dw_dns_records` int(10) NOT NULL,
-                `build_status` int(1) NOT NULL default '0',
-                `build_start_time` datetime NOT NULL,
-                `build_end_time` datetime NOT NULL,
-                `build_time` int(10) NOT NULL default '0',
-                `has_ever_been_built` int(1) NOT NULL default '0',
-                `build_status_overall` int(1) NOT NULL default '0',
-                `build_start_time_overall` datetime NOT NULL,
-                `build_end_time_overall` datetime NOT NULL,
-                `build_time_overall` int(10) NOT NULL default '0',
-                `has_ever_been_built_overall` int(1) NOT NULL default '0',
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `host` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `protocol` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `port` INT(5) NOT NULL,
+                `username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `hash` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `dw_accounts` INT(10) NOT NULL,
+                `dw_dns_zones` INT(10) NOT NULL,
+                `dw_dns_records` INT(10) NOT NULL,
+                `build_status` INT(1) NOT NULL DEFAULT '0',
+                `build_start_time` DATETIME NOT NULL,
+                `build_end_time` DATETIME NOT NULL,
+                `build_time` INT(10) NOT NULL DEFAULT '0',
+                `has_ever_been_built` INT(1) NOT NULL DEFAULT '0',
+                `build_status_overall` INT(1) NOT NULL DEFAULT '0',
+                `build_start_time_overall` DATETIME NOT NULL,
+                `build_end_time_overall` DATETIME NOT NULL,
+                `build_time_overall` INT(10) NOT NULL DEFAULT '0',
+                `has_ever_been_built_overall` INT(1) NOT NULL DEFAULT '0',
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);

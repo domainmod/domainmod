@@ -41,14 +41,16 @@ $software_section = "help";
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-There is a LOT of work that needs to be done in this help section, but the focus right now is the software itself. I sincerely apologize for the lack of documentation, I really do.<BR>
+There is a LOT of work that needs to be done in this help section, but the focus right now is the software itself. I
+sincerely apologize for the lack of documentation, I really do.<BR>
 <BR>
-For now, please check out the (minimal) <a target="_blank" href="http://domainmod.org/documentation/">Documentation</a> section on DomainMOD.org.<BR>
+For now, please check out the (minimal) <a target="_blank" href="http://domainmod.org/documentation/">Documentation</a>
+section on DomainMOD.org.<BR>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

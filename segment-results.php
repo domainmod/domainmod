@@ -180,14 +180,23 @@ if ($export_data == "1") {
             $temp_renewal_fee = $row->renewal_fee * $row->conversion;
             $total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
-            if ($row->active == "0") { $domain_status = "EXPIRED"; }
-            elseif ($row->active == "1") { $domain_status = "ACTIVE"; }
-            elseif ($row->active == "2") { $domain_status = "IN TRANSFER"; }
-            elseif ($row->active == "3") { $domain_status = "PENDING (RENEWAL)"; }
-            elseif ($row->active == "4") { $domain_status = "PENDING (OTHER)"; }
-            elseif ($row->active == "5") { $domain_status = "PENDING (REGISTRATION)"; }
-            elseif ($row->active == "10") { $domain_status = "SOLD"; }
-            else { $domain_status = "ERROR -- PROBLEM WITH CODE IN SEGMENT-RESULTS.PHP"; }
+            if ($row->active == "0") {
+                $domain_status = "EXPIRED";
+            } elseif ($row->active == "1") {
+                $domain_status = "ACTIVE";
+            } elseif ($row->active == "2") {
+                $domain_status = "IN TRANSFER";
+            } elseif ($row->active == "3") {
+                $domain_status = "PENDING (RENEWAL)";
+            } elseif ($row->active == "4") {
+                $domain_status = "PENDING (OTHER)";
+            } elseif ($row->active == "5") {
+                $domain_status = "PENDING (REGISTRATION)";
+            } elseif ($row->active == "10") {
+                $domain_status = "SOLD";
+            } else {
+                $domain_status = "ERROR -- PROBLEM WITH CODE IN SEGMENT-RESULTS.PHP";
+            }
 
             if ($row->privacy == "1") {
 
@@ -252,8 +261,8 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags-bare.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags-bare.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header-bare.inc.php"); ?>
@@ -262,7 +271,9 @@ $sql_name = "SELECT name
              FROM segments
              WHERE id = '$segid'";
 $result_name = mysqli_query($connection, $sql_name);
-while ($row_name = mysqli_fetch_object($result_name)) { $segment_name = $row_name->name; }
+while ($row_name = mysqli_fetch_object($result_name)) {
+    $segment_name = $row_name->name;
+}
 ?>
 
 <?php

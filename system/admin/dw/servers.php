@@ -108,8 +108,8 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
@@ -121,53 +121,57 @@ if (mysqli_num_rows($result) > 0) { ?>
     [<a href="servers.php?export_data=1">EXPORT</a>]
 
     <table class="main_table" cellpadding="0" cellspacing="0">
-        <tr class="main_table_row_heading_active">
-            <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Name</font>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Host</font>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Port</font>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Username</font>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Inserted</font>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Updated</font>
-            </td>
+    <tr class="main_table_row_heading_active">
+        <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">Name</font>
+        </td>
+        <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">Host</font>
+        </td>
+        <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">Port</font>
+        </td>
+        <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">Username</font>
+        </td>
+        <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">Inserted</font>
+        </td>
+        <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">Updated</font>
+        </td>
+    </tr><?php
+
+    while ($row = mysqli_fetch_object($result)) { ?>
+
+        <tr class="main_table_row_active">
+        <td class="main_table_cell_active">
+            <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
+        </td>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->protocol; ?>
+                ://<?php echo $row->host; ?></a>
+        </td>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->port; ?></a>
+        </td>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
+        </td>
+        <td class="main_table_cell_active">
+            <?php if ($row->insert_time == "0000-00-00 00:00:00") $row->insert_time = "-"; ?>
+            <a class="invisiblelink"
+               href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->insert_time; ?></a>
+        </td>
+        <td class="main_table_cell_active">
+            <?php if ($row->update_time == "0000-00-00 00:00:00") $row->update_time = "-"; ?>
+            <a class="invisiblelink"
+               href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->update_time; ?></a>
+        </td>
         </tr><?php
 
-        while ($row = mysqli_fetch_object($result)) { ?>
-
-            <tr class="main_table_row_active">
-                <td class="main_table_cell_active">
-                    <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
-                </td>
-                <td class="main_table_cell_active">
-                    <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->protocol; ?>://<?php echo $row->host; ?></a>
-                </td>
-                <td class="main_table_cell_active">
-                    <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->port; ?></a>
-                </td>
-                <td class="main_table_cell_active">
-                    <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
-                </td>
-                <td class="main_table_cell_active">
-                    <?php if ($row->insert_time == "0000-00-00 00:00:00") $row->insert_time = "-"; ?>
-                    <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->insert_time; ?></a>
-                </td>
-                <td class="main_table_cell_active">
-                    <?php if ($row->update_time == "0000-00-00 00:00:00") $row->update_time = "-"; ?>
-                    <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->update_time; ?></a>
-                </td>
-            </tr><?php
-
-        } ?>
+    } ?>
 
     </table><?php
 

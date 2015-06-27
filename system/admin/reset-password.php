@@ -81,7 +81,9 @@ if ($new_username != "") {
                     $q->execute();
                     $q->close();
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else {
+                    $error->outputSqlError($conn, "ERROR");
+                }
 
                 if ($display == "1") {
 
@@ -111,7 +113,9 @@ if ($new_username != "") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 } else {
 

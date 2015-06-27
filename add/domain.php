@@ -90,7 +90,9 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else { $error->outputSqlError($conn, "ERROR"); }
+} else {
+    $error->outputSqlError($conn, "ERROR");
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -99,7 +101,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($date->checkDateFormat($new_expiry_date) && $domain->checkDomainFormat($new_domain) && $new_cat_id != "" &&
         $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" &&
-        $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0") {
+        $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0"
+    ) {
 
         $query = "SELECT domain
                   FROM domains
@@ -130,7 +133,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q_ra->fetch();
                     $q_ra->close();
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else {
+                    $error->outputSqlError($conn, "ERROR");
+                }
 
                 if ($new_privacy == "1") {
 
@@ -162,7 +167,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if ($new_fee_id == "") $new_fee_id = 0;
                     if ($new_total_cost == "") $new_total_cost = 0;
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else {
+                    $error->outputSqlError($conn, "ERROR");
+                }
 
                 $query_d = "INSERT INTO domains
                             (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
@@ -182,7 +189,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q_d->close();
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else {
+                    $error->outputSqlError($conn, "ERROR");
+                }
 
                 $query_df = "INSERT INTO domain_field_data
                              (domain_id, insert_time)
@@ -196,7 +205,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q_df->execute();
                     $q_df->close();
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else {
+                    $error->outputSqlError($conn, "ERROR");
+                }
 
                 $query_df = "SELECT field_name
                              FROM domain_fields
@@ -235,7 +246,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $q_dfd->execute();
                                 $q_dfd->close();
 
-                            } else { $error->outputSqlError($conn, "ERROR"); }
+                            } else {
+                                $error->outputSqlError($conn, "ERROR");
+                            }
 
                         }
 
@@ -254,7 +267,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $system->checkExistingAssets($connection);
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else {
+                    $error->outputSqlError($conn, "ERROR");
+                }
 
             } else {
 
@@ -264,14 +279,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
     } else {
 
-        if (!$domain->checkDomainFormat($new_domain)) { $_SESSION['result_message'] .= "The domain format is
-            incorrect<BR>"; }
-        if (!$date->checkDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is
-            invalid<BR>"; }
+        if (!$domain->checkDomainFormat($new_domain)) {
+            $_SESSION['result_message'] .= "The domain format is
+            incorrect<BR>";
+        }
+        if (!$date->checkDateFormat($new_expiry_date)) {
+            $_SESSION['result_message'] .= "The expiry date you entered is
+            invalid<BR>";
+        }
 
     }
 
@@ -280,10 +301,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_domain_form" method="post">
     <strong>Domain (255)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
@@ -295,7 +316,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR>
     <BR>
     <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") {
-        echo $new_expiry_date; } else { echo $timestamp_basic_plus_one_year; } ?>">
+        echo $new_expiry_date;
+    } else {
+        echo $timestamp_basic_plus_one_year;
+    } ?>">
     <BR><BR>
     <strong>Registrar Account</strong><BR><BR>
     <?php
@@ -336,7 +360,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
     ?>
     <BR><BR>
     <strong>DNS Profile</strong><BR><BR>
@@ -366,7 +392,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         while ($q->fetch()) { ?>
 
-            <option value="<?php echo $dns_id; ?>"<?php if ($dns_id == $to_compare) echo " selected";?>><?php
+            <option value="<?php echo $dns_id; ?>"<?php if ($dns_id == $to_compare) echo " selected"; ?>><?php
             echo $dns_name; ?></option><?php
 
         }
@@ -375,7 +401,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
     ?>
     <BR><BR>
     <strong>IP Address</strong><BR><BR>
@@ -404,7 +432,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         while ($q->fetch()) { ?>
 
-            <option value="<?php echo $ip_id; ?>"<?php if ($ip_id == $to_compare) echo " selected";?>><?php
+            <option value="<?php echo $ip_id; ?>"<?php if ($ip_id == $to_compare) echo " selected"; ?>><?php
             echo $ip_name; ?> (<?php echo $ip; ?>)</option><?php
 
         }
@@ -413,7 +441,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
     ?>
     <BR><BR>
     <strong>Web Hosting Provider</strong><BR><BR>
@@ -451,7 +481,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
     ?>
     <BR><BR>
     <strong>Category</strong><BR><BR>
@@ -481,7 +513,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         while ($q->fetch()) { ?>
 
-            <option value="<?php echo $cat_id; ?>"<?php if ($cat_id == $to_compare) echo " selected";?>><?php
+            <option value="<?php echo $cat_id; ?>"<?php if ($cat_id == $to_compare) echo " selected"; ?>><?php
             echo $cat_name; ?></option><?php
 
         }
@@ -490,7 +522,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
     ?>
     <BR><BR>
     <strong>Domain Status</strong><BR><BR>
@@ -506,8 +540,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <BR><BR>
     <strong>Privacy Enabled?</strong><BR><BR>
     <select name="new_privacy">
-        <option value="0""<?php if ($new_privacy == "0") echo " selected"; ?>>No</option>
-        <option value="1""<?php if ($new_privacy == "1") echo " selected"; ?>>Yes</option>
+        <option value="0"
+        "<?php if ($new_privacy == "0") echo " selected"; ?>>No</option>
+        <option value="1"
+        "<?php if ($new_privacy == "1") echo " selected"; ?>>Yes</option>
     </select>
     <BR><BR>
     <strong>Notes</strong><BR><BR>
@@ -608,7 +644,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q_df->close();
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else {
+                    $error->outputSqlError($conn, "ERROR");
+                }
 
             }
 
@@ -618,7 +656,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
     ?>
     <input type="submit" name="button" value="Add This Domain &raquo;">
 </form>

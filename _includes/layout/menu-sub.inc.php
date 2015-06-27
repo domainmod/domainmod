@@ -42,7 +42,8 @@ if ($software_section == "domains") { ?>
 
     &raquo;&nbsp;<strong>SSL Certificates</strong>&nbsp;<?php
     if ($_SESSION['has_ssl_provider'] == '1' && $_SESSION['has_ssl_account'] == '1' &&
-            $_SESSION['has_domain'] == '1') { ?>
+        $_SESSION['has_domain'] == '1'
+    ) { ?>
         &raquo;&nbsp;<a href="<?php echo $web_root; ?>/add/ssl-cert.php">Add A New SSL Certificate</a>&nbsp;<?php
     }
 
@@ -136,7 +137,9 @@ if ($software_section == "domains") { ?>
                 $q->fetch();
                 $q->close();
 
-            } else { $error->outputSqlError($conn, "ERROR"); }
+            } else {
+                $error->outputSqlError($conn, "ERROR");
+            }
             ?>
             &raquo;&nbsp;<a href="<?php echo $web_root; ?>/bulk-updater.php?action=UCF">Update Custom Domain Field</a>
                 </strong>&nbsp;&raquo;&nbsp;<strong><?php echo $temp_field_name; ?> (<?php echo $temp_field_type; ?>)
@@ -282,7 +285,9 @@ if ($software_section == "domains") { ?>
                       FROM registrars
                       WHERE id = '" . $rid . "'";
     $result_registrar = mysqli_query($connection, $sql_registrar);
-    while ($row_registrar = mysqli_fetch_object($result_registrar)) { $temp_registrar_name = $row_registrar->name; } ?>
+    while ($row_registrar = mysqli_fetch_object($result_registrar)) {
+        $temp_registrar_name = $row_registrar->name;
+    } ?>
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/edit/registrar.php?rid=<?php echo $rid; ?>"><?php
         echo $temp_registrar_name; ?></a>&nbsp;
     &raquo;&nbsp;<strong>Registrar Fees</strong>&nbsp;<?php
@@ -299,7 +304,7 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;<strong>Domain Registrar Accounts</strong>&nbsp;<?php
     if ($_SESSION['has_registrar'] == '1') { ?>
         &raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/add/registrar-account.php">Add A New Registrar Account</a>
-            &nbsp;<?php
+        &nbsp;<?php
     }
 
 } elseif ($software_section == "registrar-accounts-add") { ?>
@@ -395,8 +400,10 @@ if ($software_section == "domains") { ?>
                          FROM ssl_providers
                          WHERE id = '" . $sslpid . "'";
     $result_ssl_provider = mysqli_query($connection, $sql_ssl_provider);
-    while ($row_ssl_provider = mysqli_fetch_object($result_ssl_provider)) { $temp_ssl_provider_name =
-        $row_ssl_provider->name; } ?>
+    while ($row_ssl_provider = mysqli_fetch_object($result_ssl_provider)) {
+        $temp_ssl_provider_name =
+            $row_ssl_provider->name;
+    } ?>
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/edit/ssl-provider.php?sslpid=<?php echo $sslpid; ?>"><?php
         echo $temp_ssl_provider_name; ?></a>&nbsp;
     &raquo;&nbsp;<strong>SSL Provider Fees</strong>&nbsp;<?php
@@ -593,7 +600,8 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;Editing A User&nbsp;<?php
 
 } elseif ($software_section == "admin-dw-main" || $software_section == "admin-dw-intro" || $software_section ==
-    "admin-dw-rebuild") { ?>
+    "admin-dw-rebuild"
+) { ?>
 
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
     &raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
@@ -605,8 +613,8 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
     <?php if ($domain == "" && $search_for == "") { ?>
-        &raquo;&nbsp;<strong>Accounts</strong>&nbsp;
-    <?php } else { ?>
+    &raquo;&nbsp;<strong>Accounts</strong>&nbsp;
+<?php } else { ?>
         &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/list-accounts.php">Accounts</a></strong>&nbsp;
         &raquo;&nbsp;<strong>Search Results</strong>&nbsp;
     <?php }
@@ -617,8 +625,8 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
     <?php if ($domain == "" && $search_for == "") { ?>
-        &raquo;&nbsp;<strong>DNS Zones & Records</strong>&nbsp;
-    <?php } else { ?>
+    &raquo;&nbsp;<strong>DNS Zones & Records</strong>&nbsp;
+<?php } else { ?>
         &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/list-dns-zones.php">DNS Zones</a></strong>&nbsp;
         &raquo;&nbsp;<strong>Search Results</strong>&nbsp;
     <?php }

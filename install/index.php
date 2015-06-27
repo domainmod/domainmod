@@ -39,7 +39,7 @@ $error = new DomainMOD\Error();
 
 $time = new DomainMOD\Timestamp();
 
-if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings . "'"))) {
+if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . "'"))) {
 
     $_SESSION['result_message'] = "$software_title is already installed<BR><BR>You should delete the /install/ folder<BR>";
 
@@ -58,19 +58,19 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
     $result = mysqli_query($connection, $sql);
 
     $sql = "CREATE TABLE IF NOT EXISTS `users` (
-                `id` int(10) NOT NULL auto_increment,
-                `first_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `last_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `username` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `email_address` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `new_password` int(1) NOT NULL default '1',
-                `admin` int(1) NOT NULL default '0',
-                `active` int(1) NOT NULL default '1',
-                `number_of_logins` int(10) NOT NULL default '0',
-                `last_login` datetime NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `first_name` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `last_name` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `username` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `new_password` INT(1) NOT NULL DEFAULT '1',
+                `admin` INT(1) NOT NULL DEFAULT '0',
+                `active` INT(1) NOT NULL DEFAULT '1',
+                `number_of_logins` INT(10) NOT NULL DEFAULT '0',
+                `last_login` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -81,49 +81,49 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `user_settings` (
-                `id` int(10) NOT NULL auto_increment,
-                `user_id` int(10) NOT NULL,
-                `default_currency` varchar(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `default_timezone` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default 'Canada/Pacific',
-                `default_category_domains` int(10) NOT NULL default '0',
-                `default_category_ssl` int(10) NOT NULL default '0',
-                `default_dns` int(10) NOT NULL default '0',
-                `default_host` int(10) NOT NULL default '0',
-                `default_ip_address_domains` int(10) NOT NULL default '0',
-                `default_ip_address_ssl` int(10) NOT NULL default '0',
-                `default_owner_domains` int(10) NOT NULL default '0',
-                `default_owner_ssl` int(10) NOT NULL default '0',
-                `default_registrar` int(10) NOT NULL default '0',
-                `default_registrar_account` int(10) NOT NULL default '0',
-                `default_ssl_provider_account` int(10) NOT NULL default '0',
-                `default_ssl_type` int(10) NOT NULL default '0',
-                `default_ssl_provider` int(10) NOT NULL default '0',
-                `expiration_emails` int(1) NOT NULL default '1',
-                `number_of_domains` int(5) NOT NULL default '50',
-                `number_of_ssl_certs` int(5) NOT NULL default '50',
-                `display_domain_owner` int(1) NOT NULL default '0',
-                `display_domain_registrar` int(1) NOT NULL default '0',
-                `display_domain_account` int(1) NOT NULL default '1',
-                `display_domain_expiry_date` int(1) NOT NULL default '1',
-                `display_domain_category` int(1) NOT NULL default '1',
-                `display_domain_dns` int(1) NOT NULL default '1',
-                `display_domain_host` int(1) NOT NULL default '0',
-                `display_domain_ip` int(1) NOT NULL default '0',
-                `display_domain_tld` int(1) NOT NULL default '0',
-                `display_domain_fee` int(1) NOT NULL default '0',
-                `display_ssl_owner` int(1) NOT NULL default '1',
-                `display_ssl_provider` int(1) NOT NULL default '0',
-                `display_ssl_account` int(1) NOT NULL default '1',
-                `display_ssl_domain` int(1) NOT NULL default '1',
-                `display_ssl_type` int(1) NOT NULL default '1',
-                `display_ssl_expiry_date` int(1) NOT NULL default '1',
-                `display_ssl_ip` int(1) NOT NULL default '0',
-                `display_ssl_category` int(1) NOT NULL default '0',
-                `display_ssl_fee` int(1) NOT NULL default '0',
-                `display_inactive_assets` int(1) NOT NULL default '1',
-                `display_dw_intro_page` int(1) NOT NULL default '1',
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `user_id` INT(10) NOT NULL,
+                `default_currency` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `default_timezone` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Canada/Pacific',
+                `default_category_domains` INT(10) NOT NULL DEFAULT '0',
+                `default_category_ssl` INT(10) NOT NULL DEFAULT '0',
+                `default_dns` INT(10) NOT NULL DEFAULT '0',
+                `default_host` INT(10) NOT NULL DEFAULT '0',
+                `default_ip_address_domains` INT(10) NOT NULL DEFAULT '0',
+                `default_ip_address_ssl` INT(10) NOT NULL DEFAULT '0',
+                `default_owner_domains` INT(10) NOT NULL DEFAULT '0',
+                `default_owner_ssl` INT(10) NOT NULL DEFAULT '0',
+                `default_registrar` INT(10) NOT NULL DEFAULT '0',
+                `default_registrar_account` INT(10) NOT NULL DEFAULT '0',
+                `default_ssl_provider_account` INT(10) NOT NULL DEFAULT '0',
+                `default_ssl_type` INT(10) NOT NULL DEFAULT '0',
+                `default_ssl_provider` INT(10) NOT NULL DEFAULT '0',
+                `expiration_emails` INT(1) NOT NULL DEFAULT '1',
+                `number_of_domains` INT(5) NOT NULL DEFAULT '50',
+                `number_of_ssl_certs` INT(5) NOT NULL DEFAULT '50',
+                `display_domain_owner` INT(1) NOT NULL DEFAULT '0',
+                `display_domain_registrar` INT(1) NOT NULL DEFAULT '0',
+                `display_domain_account` INT(1) NOT NULL DEFAULT '1',
+                `display_domain_expiry_date` INT(1) NOT NULL DEFAULT '1',
+                `display_domain_category` INT(1) NOT NULL DEFAULT '1',
+                `display_domain_dns` INT(1) NOT NULL DEFAULT '1',
+                `display_domain_host` INT(1) NOT NULL DEFAULT '0',
+                `display_domain_ip` INT(1) NOT NULL DEFAULT '0',
+                `display_domain_tld` INT(1) NOT NULL DEFAULT '0',
+                `display_domain_fee` INT(1) NOT NULL DEFAULT '0',
+                `display_ssl_owner` INT(1) NOT NULL DEFAULT '1',
+                `display_ssl_provider` INT(1) NOT NULL DEFAULT '0',
+                `display_ssl_account` INT(1) NOT NULL DEFAULT '1',
+                `display_ssl_domain` INT(1) NOT NULL DEFAULT '1',
+                `display_ssl_type` INT(1) NOT NULL DEFAULT '1',
+                `display_ssl_expiry_date` INT(1) NOT NULL DEFAULT '1',
+                `display_ssl_ip` INT(1) NOT NULL DEFAULT '0',
+                `display_ssl_category` INT(1) NOT NULL DEFAULT '0',
+                `display_ssl_fee` INT(1) NOT NULL DEFAULT '0',
+                `display_inactive_assets` INT(1) NOT NULL DEFAULT '1',
+                `display_dw_intro_page` INT(1) NOT NULL DEFAULT '1',
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -140,12 +140,12 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
     }
 
     $sql = "CREATE TABLE IF NOT EXISTS `categories` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `stakeholder` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `stakeholder` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -156,12 +156,12 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `hosting` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `url` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -172,11 +172,11 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `owners` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`),
                 KEY `name` (`name`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
@@ -188,15 +188,15 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `currencies` (
-                `id` int(10) NOT NULL auto_increment,
-                `currency` varchar(4) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `name` varchar(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `symbol` varchar(4) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `symbol_order` int(1) NOT NULL default '0',
-                `symbol_space` int(1) NOT NULL default '0',
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `currency` VARCHAR(4) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `name` VARCHAR(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `symbol` VARCHAR(4) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `symbol_order` INT(1) NOT NULL DEFAULT '0',
+                `symbol_space` INT(1) NOT NULL DEFAULT '0',
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -372,79 +372,79 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
     $result = mysqli_query($connection, $sql);
 
     $sql = "CREATE TABLE IF NOT EXISTS `currency_conversions` (
-            `id` int(10) NOT NULL auto_increment,
-            `currency_id` int(10) NOT NULL,
-            `user_id` int(10) NOT NULL,
-            `conversion` float NOT NULL,
-            `insert_time` datetime NOT NULL,
-            `update_time` datetime NOT NULL,
+            `id` INT(10) NOT NULL AUTO_INCREMENT,
+            `currency_id` INT(10) NOT NULL,
+            `user_id` INT(10) NOT NULL,
+            `conversion` FLOAT NOT NULL,
+            `insert_time` DATETIME NOT NULL,
+            `update_time` DATETIME NOT NULL,
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql);
 
     $sql = "CREATE TABLE IF NOT EXISTS `fees` (
-                `id` int(10) NOT NULL auto_increment,
-                `registrar_id` int(10) NOT NULL,
-                `tld` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `initial_fee` float NOT NULL,
-                `renewal_fee` float NOT NULL,
-                `transfer_fee` float NOT NULL,
-                `privacy_fee` float NOT NULL,
-                `misc_fee` float NOT NULL,
-                `currency_id` int(10) NOT NULL,
-                `fee_fixed` int(1) NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `registrar_id` INT(10) NOT NULL,
+                `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `initial_fee` FLOAT NOT NULL,
+                `renewal_fee` FLOAT NOT NULL,
+                `transfer_fee` FLOAT NOT NULL,
+                `privacy_fee` FLOAT NOT NULL,
+                `misc_fee` FLOAT NOT NULL,
+                `currency_id` INT(10) NOT NULL,
+                `fee_fixed` INT(1) NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_fees` (
-                `id` int(10) NOT NULL auto_increment,
-                `ssl_provider_id` int(10) NOT NULL,
-                `type_id` int(10) NOT NULL,
-                `initial_fee` float NOT NULL,
-                `renewal_fee` float NOT NULL,
-                `misc_fee` float NOT NULL,
-                `currency_id` int(10) NOT NULL,
-                `fee_fixed` int(1) NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `ssl_provider_id` INT(10) NOT NULL,
+                `type_id` INT(10) NOT NULL,
+                `initial_fee` FLOAT NOT NULL,
+                `renewal_fee` FLOAT NOT NULL,
+                `misc_fee` FLOAT NOT NULL,
+                `currency_id` INT(10) NOT NULL,
+                `fee_fixed` INT(1) NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `domains` (
-                `id` int(10) NOT NULL auto_increment,
-                `owner_id` int(10) NOT NULL default '1',
-                `registrar_id` int(10) NOT NULL default '1',
-                `account_id` int(10) NOT NULL default '1',
-                `domain` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `tld` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `expiry_date` date NOT NULL,
-                `cat_id` int(10) NOT NULL default '1',
-                `fee_id` int(10) NOT NULL default '0',
-                `total_cost` float NOT NULL,
-                `dns_id` int(10) NOT NULL default '1',
-                `ip_id` int(10) NOT NULL default '1',
-                `hosting_id` int(10) NOT NULL default '1',
-                `function` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `privacy` int(1) NOT NULL default '0',
-                `active` int(2) NOT NULL default '1',
-                `fee_fixed` int(1) NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `owner_id` INT(10) NOT NULL DEFAULT '1',
+                `registrar_id` INT(10) NOT NULL DEFAULT '1',
+                `account_id` INT(10) NOT NULL DEFAULT '1',
+                `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `expiry_date` DATE NOT NULL,
+                `cat_id` INT(10) NOT NULL DEFAULT '1',
+                `fee_id` INT(10) NOT NULL DEFAULT '0',
+                `total_cost` FLOAT NOT NULL,
+                `dns_id` INT(10) NOT NULL DEFAULT '1',
+                `ip_id` INT(10) NOT NULL DEFAULT '1',
+                `hosting_id` INT(10) NOT NULL DEFAULT '1',
+                `function` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `privacy` INT(1) NOT NULL DEFAULT '0',
+                `active` INT(2) NOT NULL DEFAULT '1',
+                `fee_fixed` INT(1) NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`),
                 KEY `domain` (`domain`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `custom_field_types` (
-            `id` int(10) NOT NULL auto_increment,
-            `name` varchar(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `insert_time` datetime NOT NULL,
-            `update_time` datetime NOT NULL,
+            `id` INT(10) NOT NULL AUTO_INCREMENT,
+            `name` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `insert_time` DATETIME NOT NULL,
+            `update_time` DATETIME NOT NULL,
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -457,55 +457,55 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_fields` (
-            `id` int(10) NOT NULL auto_increment,
-            `name` varchar(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `field_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `type_id` int(10) NOT NULL,
-            `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `insert_time` datetime NOT NULL,
-            `update_time` datetime NOT NULL,
+            `id` INT(10) NOT NULL AUTO_INCREMENT,
+            `name` VARCHAR(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `field_name` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `type_id` INT(10) NOT NULL,
+            `description` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `insert_time` DATETIME NOT NULL,
+            `update_time` DATETIME NOT NULL,
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_field_data` (
-            `id` int(10) NOT NULL auto_increment,
-            `domain_id` int(10) NOT NULL,
-            `insert_time` datetime NOT NULL,
-            `update_time` datetime NOT NULL,
+            `id` INT(10) NOT NULL AUTO_INCREMENT,
+            `domain_id` INT(10) NOT NULL,
+            `insert_time` DATETIME NOT NULL,
+            `update_time` DATETIME NOT NULL,
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_certs` (
-                `id` int(10) NOT NULL auto_increment,
-                `owner_id` int(10) NOT NULL,
-                `ssl_provider_id` int(10) NOT NULL,
-                `account_id` int(10) NOT NULL,
-                `domain_id` int(10) NOT NULL,
-                `type_id` int(10) NOT NULL,
-                `ip_id` int(10) NOT NULL,
-                `cat_id` int(10) NOT NULL,
-                `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `expiry_date` date NOT NULL,
-                `fee_id` int(10) NOT NULL,
-                `total_cost` float NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `active` int(1) NOT NULL default '1',
-                `fee_fixed` int(1) NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `owner_id` INT(10) NOT NULL,
+                `ssl_provider_id` INT(10) NOT NULL,
+                `account_id` INT(10) NOT NULL,
+                `domain_id` INT(10) NOT NULL,
+                `type_id` INT(10) NOT NULL,
+                `ip_id` INT(10) NOT NULL,
+                `cat_id` INT(10) NOT NULL,
+                `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `expiry_date` DATE NOT NULL,
+                `fee_id` INT(10) NOT NULL,
+                `total_cost` FLOAT NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `active` INT(1) NOT NULL DEFAULT '1',
+                `fee_fixed` INT(1) NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_types` (
-                `id` int(10) NOT NULL auto_increment,
-                `type` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `type` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -519,54 +519,54 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_fields` (
-            `id` int(10) NOT NULL auto_increment,
-            `name` varchar(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `field_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `type_id` int(10) NOT NULL,
-            `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `insert_time` datetime NOT NULL,
-            `update_time` datetime NOT NULL,
+            `id` INT(10) NOT NULL AUTO_INCREMENT,
+            `name` VARCHAR(75) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `field_name` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `type_id` INT(10) NOT NULL,
+            `description` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `insert_time` DATETIME NOT NULL,
+            `update_time` DATETIME NOT NULL,
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_field_data` (
-            `id` int(10) NOT NULL auto_increment,
-            `ssl_id` int(10) NOT NULL,
-            `insert_time` datetime NOT NULL,
-            `update_time` datetime NOT NULL,
+            `id` INT(10) NOT NULL AUTO_INCREMENT,
+            `ssl_id` INT(10) NOT NULL,
+            `insert_time` DATETIME NOT NULL,
+            `update_time` DATETIME NOT NULL,
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `dns` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `dns1` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `dns2` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `dns3` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `dns4` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `dns5` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `dns6` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `dns7` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `dns8` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `dns9` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `dns10` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `ip1` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `ip2` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `ip3` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `ip4` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `ip5` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `ip6` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `ip7` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `ip8` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `ip9` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `ip10` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `number_of_servers` int(2) NOT NULL default '0',
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `dns1` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `dns2` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `dns3` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `dns4` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `dns5` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `dns6` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `dns7` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `dns8` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `dns9` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `dns10` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `ip1` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `ip2` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `ip3` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `ip4` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `ip5` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `ip6` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `ip7` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `ip8` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `ip9` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `ip10` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `number_of_servers` INT(2) NOT NULL DEFAULT '0',
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -577,93 +577,93 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `registrars` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `url` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`),
                 KEY `name` (`name`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_providers` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `url` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `registrar_accounts` (
-                `id` int(10) NOT NULL auto_increment,
-                `owner_id` int(10) NOT NULL,
-                `registrar_id` int(10) NOT NULL,
-                `username` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `reseller` int(1) NOT NULL default '0',
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `owner_id` INT(10) NOT NULL,
+                `registrar_id` INT(10) NOT NULL,
+                `username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `reseller` INT(1) NOT NULL DEFAULT '0',
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`),
                 KEY `registrar_id` (`registrar_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_accounts` (
-                `id` int(10) NOT NULL auto_increment,
-                `owner_id` int(10) NOT NULL,
-                `ssl_provider_id` int(10) NOT NULL,
-                `username` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `reseller` int(1) NOT NULL default '0',
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `owner_id` INT(10) NOT NULL,
+                `ssl_provider_id` INT(10) NOT NULL,
+                `username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `reseller` INT(1) NOT NULL DEFAULT '0',
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`),
                 KEY `ssl_provider_id` (`ssl_provider_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `segments` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(35) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `description` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `segment` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `number_of_domains` int(6) NOT NULL,
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(35) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `description` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `segment` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `number_of_domains` INT(6) NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `segment_data` (
-            `id` int(10) NOT NULL auto_increment,
-            `segment_id` int(10) NOT NULL,
-            `domain` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `active` int(1) NOT NULL default '0',
-            `inactive` int(1) NOT NULL default '0',
-            `missing` int(1) NOT NULL default '0',
-            `filtered` int(1) NOT NULL default '0',
-            `insert_time` datetime NOT NULL,
-            `update_time` datetime NOT NULL,
+            `id` INT(10) NOT NULL AUTO_INCREMENT,
+            `segment_id` INT(10) NOT NULL,
+            `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `active` INT(1) NOT NULL DEFAULT '0',
+            `inactive` INT(1) NOT NULL DEFAULT '0',
+            `missing` INT(1) NOT NULL DEFAULT '0',
+            `filtered` INT(1) NOT NULL DEFAULT '0',
+            `insert_time` DATETIME NOT NULL,
+            `update_time` DATETIME NOT NULL,
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `ip_addresses` (
-                `id` int(10) NOT NULL auto_increment,
-                `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `ip` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `rdns` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default '-',
-                `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `ip` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `rdns` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '-',
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -674,27 +674,27 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `settings` (
-                `id` int(10) NOT NULL auto_increment,
-                `full_url` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL default 'http://',
-                `db_version` float NOT NULL,
-                `upgrade_available` int(1) NOT NULL default '0',
-                `email_address` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `default_category_domains` int(10) NOT NULL default '0',
-                `default_category_ssl` int(10) NOT NULL default '0',
-                `default_dns` int(10) NOT NULL default '0',
-                `default_host` int(10) NOT NULL default '0',
-                `default_ip_address_domains` int(10) NOT NULL default '0',
-                `default_ip_address_ssl` int(10) NOT NULL default '0',
-                `default_owner_domains` int(10) NOT NULL default '0',
-                `default_owner_ssl` int(10) NOT NULL default '0',
-                `default_registrar` int(10) NOT NULL default '0',
-                `default_registrar_account` int(10) NOT NULL default '0',
-                `default_ssl_provider_account` int(10) NOT NULL default '0',
-                `default_ssl_type` int(10) NOT NULL default '0',
-                `default_ssl_provider` int(10) NOT NULL default '0',
-                `expiration_email_days` int(3) NOT NULL default '60',
-                `insert_time` datetime NOT NULL,
-                `update_time` datetime NOT NULL,
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `full_url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'http://',
+                `db_version` FLOAT NOT NULL,
+                `upgrade_available` INT(1) NOT NULL DEFAULT '0',
+                `email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `default_category_domains` INT(10) NOT NULL DEFAULT '0',
+                `default_category_ssl` INT(10) NOT NULL DEFAULT '0',
+                `default_dns` INT(10) NOT NULL DEFAULT '0',
+                `default_host` INT(10) NOT NULL DEFAULT '0',
+                `default_ip_address_domains` INT(10) NOT NULL DEFAULT '0',
+                `default_ip_address_ssl` INT(10) NOT NULL DEFAULT '0',
+                `default_owner_domains` INT(10) NOT NULL DEFAULT '0',
+                `default_owner_ssl` INT(10) NOT NULL DEFAULT '0',
+                `default_registrar` INT(10) NOT NULL DEFAULT '0',
+                `default_registrar_account` INT(10) NOT NULL DEFAULT '0',
+                `default_ssl_provider_account` INT(10) NOT NULL DEFAULT '0',
+                `default_ssl_type` INT(10) NOT NULL DEFAULT '0',
+                `default_ssl_provider` INT(10) NOT NULL DEFAULT '0',
+                `expiration_email_days` INT(3) NOT NULL DEFAULT '60',
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -709,9 +709,9 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `timezones` (
-                `id` int(5) NOT NULL auto_increment,
-                `timezone` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` datetime NOT NULL,
+                `id` INT(5) NOT NULL AUTO_INCREMENT,
+                `timezone` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -722,29 +722,29 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `dw_servers` (
-            `id` int(10) NOT NULL auto_increment,
-            `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `host` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `protocol` varchar(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `port` int(5) NOT NULL,
-            `username` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `hash` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `notes` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-            `dw_accounts` int(10) NOT NULL,
-            `dw_dns_zones` int(10) NOT NULL,
-            `dw_dns_records` int(10) NOT NULL,
-            `build_status` int(1) NOT NULL default '0',
-            `build_start_time` datetime NOT NULL,
-            `build_end_time` datetime NOT NULL,
-            `build_time` int(10) NOT NULL default '0',
-            `has_ever_been_built` int(1) NOT NULL default '0',
-            `build_status_overall` int(1) NOT NULL default '0',
-            `build_start_time_overall` datetime NOT NULL,
-            `build_end_time_overall` datetime NOT NULL,
-            `build_time_overall` int(10) NOT NULL default '0',
-            `has_ever_been_built_overall` int(1) NOT NULL default '0',
-            `insert_time` datetime NOT NULL,
-            `update_time` datetime NOT NULL,
+            `id` INT(10) NOT NULL AUTO_INCREMENT,
+            `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `host` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `protocol` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `port` INT(5) NOT NULL,
+            `username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `hash` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+            `dw_accounts` INT(10) NOT NULL,
+            `dw_dns_zones` INT(10) NOT NULL,
+            `dw_dns_records` INT(10) NOT NULL,
+            `build_status` INT(1) NOT NULL DEFAULT '0',
+            `build_start_time` DATETIME NOT NULL,
+            `build_end_time` DATETIME NOT NULL,
+            `build_time` INT(10) NOT NULL DEFAULT '0',
+            `has_ever_been_built` INT(1) NOT NULL DEFAULT '0',
+            `build_status_overall` INT(1) NOT NULL DEFAULT '0',
+            `build_start_time_overall` DATETIME NOT NULL,
+            `build_end_time_overall` DATETIME NOT NULL,
+            `build_time_overall` INT(10) NOT NULL DEFAULT '0',
+            `has_ever_been_built_overall` INT(1) NOT NULL DEFAULT '0',
+            `insert_time` DATETIME NOT NULL,
+            `update_time` DATETIME NOT NULL,
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -777,7 +777,7 @@ if (mysqli_num_rows( mysqli_query($connection, "SHOW TABLES LIKE '" . settings .
 
     $sql_user_settings = "SELECT *
                           FROM user_settings
-                          ORDER BY id desc
+                          ORDER BY id DESC
                           LIMIT 1";
     $result_user_settings = mysqli_query($connection, $sql_user_settings);
 

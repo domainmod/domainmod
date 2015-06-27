@@ -85,7 +85,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             AND id != '" . $new_uid . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
     $is_username_taken = mysqli_num_rows($result);
-    if ($is_username_taken > 0) { $invalid_username = 1; $new_username = ""; }
+    if ($is_username_taken > 0) {
+        $invalid_username = 1;
+        $new_username = "";
+    }
 
     // Make sure they aren't trying to assign a reserved username
     if ($new_username == "admin" || $new_username == "administrator") {
@@ -111,8 +114,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != "" && $new_email_address != "" && $invalid_username != 1) {
 
     $sql = "UPDATE users
-            SET first_name = '" . mysqli_real_escape_string($connection, $new_first_name). "',
-                last_name = '" . mysqli_real_escape_string($connection, $new_last_name). "',
+            SET first_name = '" . mysqli_real_escape_string($connection, $new_first_name) . "',
+                last_name = '" . mysqli_real_escape_string($connection, $new_last_name) . "',
                 username = '" . mysqli_real_escape_string($connection, $new_username) . "',
                 email_address = '" . mysqli_real_escape_string($connection, $new_email_address) . "',
                 admin = '" . $new_is_admin . "',
@@ -206,62 +209,73 @@ if ($really_del == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_user_form" method="post">
-<strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") echo htmlentities($new_first_name); ?>"><BR><BR>
-<strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") echo htmlentities($new_last_name); ?>"><BR><BR>
-<?php if ($new_username == "admin" || $new_username == "administrator") { ?>
-    <strong>Username</strong><BR><BR><?php echo $new_username; ?><BR><BR>
-<?php } else { ?>
-    <strong>Username (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_username" type="text" size="20" maxlength="30" value="<?php if ($new_username != "") echo htmlentities($new_username); ?>"><BR><BR>
-<?php } ?>
-<strong>Email Address (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_email_address" type="text" size="50" maxlength="100" value="<?php if ($new_email_address != "") echo htmlentities($new_email_address); ?>"><BR><BR>
-<?php if ($new_username == "admin" || $new_username == "administrator") { ?>
+    <strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
+        name="new_first_name" type="text" size="50" maxlength="50"
+        value="<?php if ($new_first_name != "") echo htmlentities($new_first_name); ?>"><BR><BR>
+    <strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
+        name="new_last_name" type="text" size="50" maxlength="50"
+        value="<?php if ($new_last_name != "") echo htmlentities($new_last_name); ?>"><BR><BR>
+    <?php if ($new_username == "admin" || $new_username == "administrator") { ?>
+        <strong>Username</strong><BR><BR><?php echo $new_username; ?><BR><BR>
+    <?php } else { ?>
+        <strong>Username (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+        <input name="new_username" type="text" size="20" maxlength="30"
+               value="<?php if ($new_username != "") echo htmlentities($new_username); ?>"><BR><BR>
+    <?php } ?>
+    <strong>Email Address (100)</strong><a title="Required Field"><font
+            class="default_highlight">*</font></a><BR><BR><input name="new_email_address" type="text" size="50"
+                                                                 maxlength="100"
+                                                                 value="<?php if ($new_email_address != "") echo htmlentities($new_email_address); ?>"><BR><BR>
+    <?php if ($new_username == "admin" || $new_username == "administrator") { ?>
 
-    <strong>Admin Privileges?</strong>&nbsp;&nbsp;Yes
+        <strong>Admin Privileges?</strong>&nbsp;&nbsp;Yes
+        <BR><BR>
+
+    <?php } else { ?>
+
+        <strong>Admin Privileges?</strong>&nbsp;
+        <select name="new_is_admin">
+            <option value="0">No</option>
+            <option value="1"<?php if ($new_is_admin == "1") echo " selected"; ?>>Yes</option>
+        </select>
+        <BR><BR>
+
+    <?php } ?>
+
+    <?php if ($new_username == "admin" || $new_username == "administrator") { ?>
+
+        <strong>Active Account?</strong>&nbsp;&nbsp;Yes
+
+    <?php } else { ?>
+
+        <strong>Active Account?</strong>&nbsp;
+        <select name="new_is_active">
+            <option value="0">No</option>
+            <option value="1"<?php if ($new_is_active == "1") echo " selected"; ?>>Yes</option>
+        </select>
+
+    <?php } ?>
+
+    <?php if ($new_username == "admin" || $new_username == "administrator") { ?>
+        <input type="hidden" name="new_username" value="admin">
+        <input type="hidden" name="new_is_admin" value="1">
+        <input type="hidden" name="new_is_active" value="1">
+    <?php } ?>
+
+    <input type="hidden" name="new_uid" value="<?php echo $uid; ?>">
     <BR><BR>
-
-<?php } else { ?>
-
-    <strong>Admin Privileges?</strong>&nbsp;
-    <select name="new_is_admin">
-        <option value="0">No</option>
-        <option value="1"<?php if ($new_is_admin == "1") echo " selected"; ?>>Yes</option>
-    </select>
-    <BR><BR>
-
-<?php } ?>
-
-<?php if ($new_username == "admin" || $new_username == "administrator") { ?>
-
-    <strong>Active Account?</strong>&nbsp;&nbsp;Yes
-
-<?php } else { ?>
-
-    <strong>Active Account?</strong>&nbsp;
-    <select name="new_is_active">
-        <option value="0">No</option>
-        <option value="1"<?php if ($new_is_active == "1") echo " selected"; ?>>Yes</option>
-    </select>
-
-<?php } ?>
-
-<?php if ($new_username == "admin" || $new_username == "administrator") { ?>
-    <input type="hidden" name="new_username" value="admin">
-    <input type="hidden" name="new_is_admin" value="1">
-    <input type="hidden" name="new_is_active" value="1">
-<?php } ?>
-
-<input type="hidden" name="new_uid" value="<?php echo $uid; ?>">
-<BR><BR>
-<input type="submit" name="button" value="Update User &raquo;">
+    <input type="submit" name="button" value="Update User &raquo;">
 </form>
-<BR><BR><a href="../reset-password.php?new_username=<?php echo $new_username; ?>&display=1">RESET AND DISPLAY PASSWORD</a><BR>
-<BR><a href="../reset-password.php?new_username=<?php echo $new_username; ?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
+<BR><BR><a href="../reset-password.php?new_username=<?php echo $new_username; ?>&display=1">RESET AND DISPLAY
+    PASSWORD</a><BR>
+<BR><a href="../reset-password.php?new_username=<?php echo $new_username; ?>">RESET AND EMAIL NEW PASSWORD TO
+    USER</a><BR>
 <BR><a href="user.php?uid=<?php echo $uid; ?>&del=1">DELETE THIS USER</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

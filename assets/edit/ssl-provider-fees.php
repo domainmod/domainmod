@@ -262,7 +262,9 @@ if ($really_del == "1") {
                 FROM ssl_cert_types
                 WHERE id = '" . $ssltid . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-        while ($row = mysqli_fetch_object($result)) { $temp_type = $row->type; }
+        while ($row = mysqli_fetch_object($result)) {
+            $temp_type = $row->type;
+        }
 
         $_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been deleted<BR>";
 
@@ -283,8 +285,8 @@ if ($really_del == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
@@ -293,8 +295,11 @@ $sql = "SELECT name
         FROM ssl_providers
         WHERE id = '" . $sslpid . "'";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-while ($row = mysqli_fetch_object($result)) { $temp_ssl_provider_name = $row->name; } ?>
-The below fees are for the SSL provider <a href="ssl-provider.php?sslpid=<?php echo $sslpid; ?>"><?php echo $temp_ssl_provider_name; ?></a>.<BR><BR>
+while ($row = mysqli_fetch_object($result)) {
+    $temp_ssl_provider_name = $row->name;
+} ?>
+The below fees are for the SSL provider <a
+    href="ssl-provider.php?sslpid=<?php echo $sslpid; ?>"><?php echo $temp_ssl_provider_name; ?></a>.<BR><BR>
 <?php
 $sql = "SELECT t.type
         FROM ssl_certs AS c, ssl_cert_types AS t
@@ -302,10 +307,10 @@ $sql = "SELECT t.type
           AND c.ssl_provider_id = '" . $sslpid . "'
           AND c.fee_id = '0'
         GROUP BY t.type
-        ORDER BY t.type asc";
+        ORDER BY t.type ASC";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 if (mysqli_num_rows($result) > 0) {
-?>
+    ?>
     <BR><a name="missingfees"></a><font class="subheadline">Missing SSL Type Fees</font><BR><BR>
     <?php
     $count = 0;
@@ -330,13 +335,13 @@ $sql = "SELECT t.id, t.type
         FROM ssl_certs AS c, ssl_cert_types AS t
         WHERE c.type_id = t.id
           AND c.ssl_provider_id = '" . $sslpid . "'
-          AND c.active not in ('0')
+          AND c.active NOT IN ('0')
         GROUP BY t.type
         ORDER BY t.type";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 if (mysqli_num_rows($result) != 0) {
-?>
+    ?>
 
     <BR><font class="subheadline">SSL Types Linked to Active SSL Certificates</font><BR><BR>
 
@@ -348,7 +353,9 @@ if (mysqli_num_rows($result) != 0) {
                      WHERE ssl_provider_id = '" . $sslpid . "'
                        AND type_id = '" . $row->id . "'";
         $result_temp = mysqli_query($connection, $sql_temp) or $error->outputOldSqlError($connection);
-        while ($row_temp = mysqli_fetch_object($result_temp)) { $temp_fee_id = $row_temp->fee_id; }
+        while ($row_temp = mysqli_fetch_object($result_temp)) {
+            $temp_fee_id = $row_temp->fee_id;
+        }
 
         if ($temp_fee_id == "0") {
             $temp_all_types = $temp_all_types .= "<font class=\"highlight\">$row->type</font>, ";
@@ -365,137 +372,147 @@ if (mysqli_num_rows($result) != 0) {
 }
 ?>
 <font class="subheadline">Add SSL Type Fee</font><BR>
+
 <form name="add_ssl_provider_fee_form" method="post">
-<table class="main_table" cellpadding="0" cellspacing="0">
-    <tr class="main_table_row_heading_active">
-        <td class="main_table_cell_heading_active">
-            <strong>SSL Type</strong><BR>
-              <select name="new_type_id">
-                <?php
-                $sql = "SELECT id, type
+    <table class="main_table" cellpadding="0" cellspacing="0">
+        <tr class="main_table_row_heading_active">
+            <td class="main_table_cell_heading_active">
+                <strong>SSL Type</strong><BR>
+                <select name="new_type_id">
+                    <?php
+                    $sql = "SELECT id, type
                         FROM ssl_cert_types
                         ORDER BY type";
-                $result = mysqli_query($connection, $sql);
-                while ($row = mysqli_fetch_object($result)) {
+                    $result = mysqli_query($connection, $sql);
+                    while ($row = mysqli_fetch_object($result)) {
 
-                    if ($row->id == $new_type_id) {
-                    ?>
-                        <option value="<?php echo $row->id; ?>" selected><?php echo "$row->type"; ?></option>
-                    <?php
-                    } else {
-                    ?>
-                        <option value="<?php echo $row->id; ?>"><?php echo "$row->type"; ?></option>
+                        if ($row->id == $new_type_id) {
+                            ?>
+                            <option value="<?php echo $row->id; ?>" selected><?php echo "$row->type"; ?></option>
+                        <?php
+                        } else {
+                            ?>
+                            <option value="<?php echo $row->id; ?>"><?php echo "$row->type"; ?></option>
+                        <?php
+                        }
+                        ?>
                     <?php
                     }
                     ?>
-                <?php
-                }
-                ?>
-              </select>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <strong>Initial Fee</strong><BR>
-            <input name="new_initial_fee" type="text" value="<?php echo $new_initial_fee; ?>" size="4">
-        </td>
-        <td class="main_table_cell_heading_active">
-            <strong>Renewal Fee</strong><BR>
-            <input name="new_renewal_fee" type="text" value="<?php echo $new_renewal_fee; ?>" size="4">
-        </td>
-        <td class="main_table_cell_heading_active">
-            <strong>Misc Fee</strong><BR>
-            <input name="new_misc_fee" type="text" value="<?php echo $new_misc_fee; ?>" size="4">
-        </td>
-          <td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
-          <select name="new_currency_id" id="new_currency">
-              <?php
-            $sql = "SELECT id, currency, name, symbol
+                </select>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <strong>Initial Fee</strong><BR>
+                <input name="new_initial_fee" type="text" value="<?php echo $new_initial_fee; ?>" size="4">
+            </td>
+            <td class="main_table_cell_heading_active">
+                <strong>Renewal Fee</strong><BR>
+                <input name="new_renewal_fee" type="text" value="<?php echo $new_renewal_fee; ?>" size="4">
+            </td>
+            <td class="main_table_cell_heading_active">
+                <strong>Misc Fee</strong><BR>
+                <input name="new_misc_fee" type="text" value="<?php echo $new_misc_fee; ?>" size="4">
+            </td>
+            <td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
+                <select name="new_currency_id" id="new_currency">
+                    <?php
+                    $sql = "SELECT id, currency, name, symbol
                     FROM currencies
                     ORDER BY currency";
-            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-            while ($row = mysqli_fetch_object($result)) {
+                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                    while ($row = mysqli_fetch_object($result)) {
 
-            if ($row->currency == $_SESSION['default_currency']) {
-            ?>
-                <option value="<?php echo $row->id; ?>" selected><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
-            <?php
-            } else {
-            ?>
-                <option value="<?php echo $row->id; ?>"><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
-            <?php
-            }
-            }
-            ?>
-          </select>
-        </td>
-    </tr>
-</table>
-<input type="hidden" name="new_sslpid" value="<?php echo $sslpid; ?>"><BR>
+                        if ($row->currency == $_SESSION['default_currency']) {
+                            ?>
+                            <option value="<?php echo $row->id; ?>"
+                                    selected><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
+                        <?php
+                        } else {
+                            ?>
+                            <option
+                                value="<?php echo $row->id; ?>"><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
+                        <?php
+                        }
+                    }
+                    ?>
+                </select>
+            </td>
+        </tr>
+    </table>
+    <input type="hidden" name="new_sslpid" value="<?php echo $sslpid; ?>"><BR>
     <input type="hidden" name="which_form" value="add"><BR>
     <input type="submit" name="button" value="Add This SSL Fee &raquo;">
 </form>
 <BR><BR>
 <font class="subheadline">SSL Type Fees</font><BR>
+
 <form name="edit_ssl_provider_fee_form" method="post">
-<table class="main_table" cellpadding="0" cellspacing="0">
-    <tr class="main_table_row_heading_active">
-        <td class="main_table_cell_heading_active"><strong>SSL Type</strong></td>
-        <td class="main_table_cell_heading_active"><strong>Initial Fee</strong></td>
-        <td class="main_table_cell_heading_active"><strong>Renewal Fee</strong></td>
-        <td class="main_table_cell_heading_active"><strong>Misc Fee</strong></td>
-        <td class="main_table_cell_heading_active"><strong>Currency</strong></td>
-    </tr>
-<?php
-$sql = "SELECT f.id as sslfeeid, f.initial_fee, f.renewal_fee, f.misc_fee, c.currency, c.symbol, c.symbol_order, c.symbol_space, t.id as ssltid, t.type
+    <table class="main_table" cellpadding="0" cellspacing="0">
+        <tr class="main_table_row_heading_active">
+            <td class="main_table_cell_heading_active"><strong>SSL Type</strong></td>
+            <td class="main_table_cell_heading_active"><strong>Initial Fee</strong></td>
+            <td class="main_table_cell_heading_active"><strong>Renewal Fee</strong></td>
+            <td class="main_table_cell_heading_active"><strong>Misc Fee</strong></td>
+            <td class="main_table_cell_heading_active"><strong>Currency</strong></td>
+        </tr>
+        <?php
+        $sql = "SELECT f.id AS sslfeeid, f.initial_fee, f.renewal_fee, f.misc_fee, c.currency, c.symbol, c.symbol_order, c.symbol_space, t.id AS ssltid, t.type
         FROM ssl_fees AS f, currencies AS c, ssl_cert_types AS t
         WHERE f.currency_id = c.id
           AND f.type_id = t.id
           AND f.ssl_provider_id = '" . $sslpid . "'
-        ORDER BY t.type asc";
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-$count = 0;
-while ($row = mysqli_fetch_object($result)) {
-?>
-    <tr class="main_table_row_active">
-        <td class="main_table_cell_active"><?php echo $row->type; ?></td>
-        <td class="main_table_cell_active">
-            <input type="hidden" name="fee_id[<?php echo $count; ?>]" value="<?php echo $row->sslfeeid; ?>">
-            <input name="initial_fee[<?php echo $count; ?>]" type="text" value="<?php echo $row->initial_fee; ?>" size="4">
-        </td>
-        <td class="main_table_cell_active">
-            <input name="renewal_fee[<?php echo $count; ?>]" type="text" value="<?php echo $row->renewal_fee; ?>" size="4">
-        </td>
-        <td class="main_table_cell_active">
-            <input name="misc_fee[<?php echo $count; ?>]" type="text" value="<?php echo $row->misc_fee; ?>" size="4">
-        </td>
-        <td class="main_table_cell_active">
-            <select name="currency[<?php echo $count; ?>]" id="new_currency">
-                <?php
-                $sql_currency = "SELECT id, currency, name, symbol
+        ORDER BY t.type ASC";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $count = 0;
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <tr class="main_table_row_active">
+                <td class="main_table_cell_active"><?php echo $row->type; ?></td>
+                <td class="main_table_cell_active">
+                    <input type="hidden" name="fee_id[<?php echo $count; ?>]" value="<?php echo $row->sslfeeid; ?>">
+                    <input name="initial_fee[<?php echo $count; ?>]" type="text"
+                           value="<?php echo $row->initial_fee; ?>" size="4">
+                </td>
+                <td class="main_table_cell_active">
+                    <input name="renewal_fee[<?php echo $count; ?>]" type="text"
+                           value="<?php echo $row->renewal_fee; ?>" size="4">
+                </td>
+                <td class="main_table_cell_active">
+                    <input name="misc_fee[<?php echo $count; ?>]" type="text" value="<?php echo $row->misc_fee; ?>"
+                           size="4">
+                </td>
+                <td class="main_table_cell_active">
+                    <select name="currency[<?php echo $count; ?>]" id="new_currency">
+                        <?php
+                        $sql_currency = "SELECT id, currency, name, symbol
                                  FROM currencies
                                  ORDER BY currency";
-                $result_currency = mysqli_query($connection, $sql_currency) or $error->outputOldSqlError($connection);
-                while ($row_currency = mysqli_fetch_object($result_currency)) {
+                        $result_currency = mysqli_query($connection, $sql_currency) or $error->outputOldSqlError($connection);
+                        while ($row_currency = mysqli_fetch_object($result_currency)) {
 
-                    if ($row_currency->currency == $row->currency) {
+                            if ($row_currency->currency == $row->currency) {
+                                ?>
+                                <option value="<?php echo $row_currency->id; ?>"
+                                        selected><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
+                            <?php
+                            } else {
+                                ?>
+                                <option
+                                    value="<?php echo $row_currency->id; ?>"><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
+                            <?php
+                            }
+                        }
                         ?>
-                        <option value="<?php echo $row_currency->id; ?>" selected><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
-                    <?php
-                    } else {
-                        ?>
-                        <option value="<?php echo $row_currency->id; ?>"><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
-                    <?php
-                    }
-                }
-                ?>
-            </select>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="ssl-provider-fees.php?sslpid=<?php echo $sslpid; ?>&ssltid=<?php echo $row->ssltid; ?>&sslfeeid=<?php echo $row->sslfeeid; ?>&del=1">delete</a>]
-        </td>
-    </tr>
-<?php
-$count++;
-}
-?>
-</table>
+                    </select>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink"
+                                                            href="ssl-provider-fees.php?sslpid=<?php echo $sslpid; ?>&ssltid=<?php echo $row->ssltid; ?>&sslfeeid=<?php echo $row->sslfeeid; ?>&del=1">delete</a>]
+                </td>
+            </tr>
+            <?php
+            $count++;
+        }
+        ?>
+    </table>
     <input type="hidden" name="which_form" value="edit"><BR>
     <BR><input type="submit" name="button" value="Update SSL Provider Fees &raquo;">
 </form>

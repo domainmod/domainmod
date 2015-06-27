@@ -32,7 +32,9 @@ if ($q_settings->prepare($query_settings)) {
     $q_settings->fetch();
     $q_settings->close();
 
-} else { $error->outputSqlError($conn, "ERROR"); }
+} else {
+    $error->outputSqlError($conn, "ERROR");
+}
 
 $to = $row->email_address;
 $from_name = $software_title;
@@ -60,27 +62,27 @@ $message .= "
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
                     <td width=\"92%\"><font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica,
                         sans-serif\">";
-                        $message .= "<BR>";
-                        $message .= "<a title=\"" . $software_title . "\" href=\"" . $full_url . "/\"><img alt=\"" .
-                            $software_title . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
-                        $message .= "Your password has been reset and you can find it below. The next ";
-                        $message .= "time you login you should change your password to something that ";
-                        $message .= "will be easier for you to remember, but still hard for someone ";
-                        $message .= "else to guess.<BR>";
-                        $message .= "<BR>";
-                        $message .= "URL: <a title=\"DomainMOD\" target=\"_blank\" href=\"" . $full_url . "/\">" .
-                            $full_url . "/</a><BR>";
-                        $message .= "<BR>";
-                        $message .= "Your Username: $row->username<BR>";
-                        $message .= "Your New Password: $new_password<BR>";
-                        $message .= "<BR>";
-                        $message .= "Best Regards,<BR>";
-                        $message .= "<BR>";
-                        $message .= "Greg Chetcuti<BR>";
-                        $message .= "<a target=\"_blank\"
+$message .= "<BR>";
+$message .= "<a title=\"" . $software_title . "\" href=\"" . $full_url . "/\"><img alt=\"" .
+    $software_title . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
+$message .= "Your password has been reset and you can find it below. The next ";
+$message .= "time you login you should change your password to something that ";
+$message .= "will be easier for you to remember, but still hard for someone ";
+$message .= "else to guess.<BR>";
+$message .= "<BR>";
+$message .= "URL: <a title=\"DomainMOD\" target=\"_blank\" href=\"" . $full_url . "/\">" .
+    $full_url . "/</a><BR>";
+$message .= "<BR>";
+$message .= "Your Username: $row->username<BR>";
+$message .= "Your New Password: $new_password<BR>";
+$message .= "<BR>";
+$message .= "Best Regards,<BR>";
+$message .= "<BR>";
+$message .= "Greg Chetcuti<BR>";
+$message .= "<a target=\"_blank\"
                             href=\"mailto:greg@domainmod.org\">greg@domainmod.org</a><BR>";
-                        $message .= "<BR>";
-                        $message .= "</font>
+$message .= "<BR>";
+$message .= "</font>
                     </td>
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
                 </tr>
@@ -92,18 +94,18 @@ $message .= "
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
                     <td width=\"92%\"><font color=\"#000000\" size=\"1\" face=\"Verdana, Arial, Helvetica,
                         sans-serif\">";
-                        $message .= "<hr width=\"100%\" size=\"1\" noshade>";
-                        $message .= "You've received this notification because someone requested a password reset for
+$message .= "<hr width=\"100%\" size=\"1\" noshade>";
+$message .= "You've received this notification because someone requested a password reset for
                             your ";
-                        $message .= $software_title . " account.<BR>";
-                        $message .= "<BR>";
-                        $message .= "If you did not request this yourself, it sounds like somebody might be trying to
+$message .= $software_title . " account.<BR>";
+$message .= "<BR>";
+$message .= "If you did not request this yourself, it sounds like somebody might be trying to
                             gain access ";
-                        $message .= "to your account. This might be a good time to reset your password again just to be
+$message .= "to your account. This might be a good time to reset your password again just to be
                             safe. <BR>";
-                        $message .= "<a target=\"_blank\" href=\"" . $full_url . "/reset-password.php\">" . $full_url .
-                            "/reset-password.php</a>";
-                        $message .= "<BR></font>
+$message .= "<a target=\"_blank\" href=\"" . $full_url . "/reset-password.php\">" . $full_url .
+    "/reset-password.php</a>";
+$message .= "<BR></font>
                     </td>
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;
                     </td>

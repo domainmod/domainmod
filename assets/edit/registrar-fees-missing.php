@@ -41,8 +41,8 @@ $software_section = "registrar-fees-missing";
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
@@ -52,10 +52,11 @@ $sql = "SELECT r.id AS registrar_id, r.name AS registrar_name
         WHERE r.id = d.registrar_id
           AND d.fee_id = '0'
         GROUP BY r.name
-        ORDER BY r.name asc";
+        ORDER BY r.name ASC";
 $result = mysqli_query($connection, $sql);
 ?>
-The following Registrars/TLDs are missing Domain fees. In order to ensure your domain reporting is accurate please update these fees.<BR>
+The following Registrars/TLDs are missing Domain fees. In order to ensure your domain reporting is accurate please
+update these fees.<BR>
 <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
@@ -69,34 +70,35 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
     <?php
     while ($row = mysqli_fetch_object($result)) { ?>
 
-        <tr class="main_table_row_active">
-            <td class="main_table_cell_active">
-                <?php echo $row->registrar_name; ?>
-            </td>
-            <td class="main_table_cell_active">
-                <?php
-                $sql_missing_tlds = "SELECT tld
+    <tr class="main_table_row_active">
+        <td class="main_table_cell_active">
+            <?php echo $row->registrar_name; ?>
+        </td>
+        <td class="main_table_cell_active">
+            <?php
+            $sql_missing_tlds = "SELECT tld
                                      FROM domains
                                      WHERE registrar_id = '" . $row->registrar_id . "'
                                        AND fee_id = '0'
                                      GROUP BY tld
-                                     ORDER BY tld asc";
-                $result_missing_tlds = mysqli_query($connection, $sql_missing_tlds);
-                $full_tld_list = "";
+                                     ORDER BY tld ASC";
+            $result_missing_tlds = mysqli_query($connection, $sql_missing_tlds);
+            $full_tld_list = "";
 
-                while ($row_missing_tlds = mysqli_fetch_object($result_missing_tlds)) {
+            while ($row_missing_tlds = mysqli_fetch_object($result_missing_tlds)) {
 
-                    $full_tld_list .= $row_missing_tlds->tld . ", ";
+                $full_tld_list .= $row_missing_tlds->tld . ", ";
 
-                }
-                $full_tld_list_formatted = substr($full_tld_list, 0, -2);
-                ?>
-                <a class="nobold" href="registrar-fees.php?rid=<?php echo $row->registrar_id . "\">" . $full_tld_list_formatted; ?></a>
+            }
+            $full_tld_list_formatted = substr($full_tld_list, 0, -2);
+            ?>
+            <a class="nobold"
+               href="registrar-fees.php?rid=<?php echo $row->registrar_id . "\">" . $full_tld_list_formatted; ?></a>
             </td>
         </tr>
 
     <?php
-    } ?>
+               } ?>
 
 </table>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

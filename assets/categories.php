@@ -157,14 +157,14 @@ if ($export_data == "1") {
 
         $sql = "SELECT id, name, stakeholer, notes, insert_time, update_time
                 FROM categories
-                ORDER BY name asc";
+                ORDER BY name ASC";
 
     } else {
 
         $sql = "SELECT id, name, stakeholder, notes, insert_time, update_time
                 FROM categories
                 WHERE id NOT IN (" . $exclude_category_string . ")
-                ORDER BY name asc";
+                ORDER BY name ASC";
 
     }
 
@@ -207,7 +207,7 @@ if ($export_data == "1") {
                 $row->notes,
                 $row->insert_time,
                 $row->update_time
-                );
+            );
             $export->writeRow($export_file, $row_contents);
 
         }
@@ -221,8 +221,8 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
@@ -233,8 +233,8 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 
 if (mysqli_num_rows($result) > 0) {
 
-    $has_active = "1"; ?>
-    <table class="main_table" cellpadding="0" cellspacing="0">
+$has_active = "1"; ?>
+<table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Active Categories (<?php echo mysqli_num_rows($result); ?>)</font>
@@ -259,128 +259,135 @@ if (mysqli_num_rows($result) > 0) {
         } ?>
 
         <tr class="main_table_row_active">
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a title=\"Default Domain Category\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
-            </td>
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->stakeholder; ?></a>
-            </td>
-            <td class="main_table_cell_active"><?php
-                $sql_total_count = "SELECT count(*) AS total_count
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a title=\"Default Domain Category\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
+        </td>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->stakeholder; ?></a>
+        </td>
+        <td class="main_table_cell_active"><?php
+            $sql_total_count = "SELECT count(*) AS total_count
                                     FROM domains
                                     WHERE active NOT IN ('0', '10')
                                       AND cat_id = '" . $row->id . "'";
-                $result_total_count = mysqli_query($connection, $sql_total_count);
-                while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-                    $total_domains = $row_total_count->total_count;
-                }
+            $result_total_count = mysqli_query($connection, $sql_total_count);
+            while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+                $total_domains = $row_total_count->total_count;
+            }
 
-                if ($total_domains >= 1) { ?>
+            if ($total_domains >= 1) { ?>
 
-                    <a class="nobold" href="../domains.php?pcid=<?php echo $row->id; ?>"><?php echo number_format($total_domains); ?></a><?php
+                <a class="nobold"
+                   href="../domains.php?pcid=<?php echo $row->id; ?>"><?php echo number_format($total_domains); ?></a><?php
 
-                } else {
+            } else {
 
-                    echo "-";
+                echo "-";
 
-                } ?>
-            </td>
-            <td class="main_table_cell_active"><?php
-                $sql_total_count = "SELECT count(*) AS total_count
+            } ?>
+        </td>
+        <td class="main_table_cell_active"><?php
+            $sql_total_count = "SELECT count(*) AS total_count
                                     FROM ssl_certs
                                     WHERE active NOT IN ('0')
                                       AND cat_id = '" . $row->id . "'";
-                $result_total_count = mysqli_query($connection, $sql_total_count);
-                while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-                    $total_certs = $row_total_count->total_count;
-                }
+            $result_total_count = mysqli_query($connection, $sql_total_count);
+            while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+                $total_certs = $row_total_count->total_count;
+            }
 
-                if ($total_certs >= 1) { ?>
+            if ($total_certs >= 1) { ?>
 
-                    <a class="nobold" href="../ssl-certs.php?sslpcid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
+                <a class="nobold"
+                   href="../ssl-certs.php?sslpcid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
 
-                } else {
+            } else {
 
-                    echo "-";
+                echo "-";
 
-                } ?>
-            </td>
+            } ?>
+        </td>
         </tr><?php
 
         $current_pcid = $row->id;
 
     }
 
-}
+    }
 
-if ($_SESSION['display_inactive_assets'] == "1") {
+    if ($_SESSION['display_inactive_assets'] == "1") {
 
-    $exclude_category_string = substr($exclude_category_string_raw, 0, -2);
+        $exclude_category_string = substr($exclude_category_string_raw, 0, -2);
 
-    if ($exclude_category_string == "") {
+        if ($exclude_category_string == "") {
 
-        $sql = "SELECT id, name, stakeholder
+            $sql = "SELECT id, name, stakeholder
                 FROM categories
                 ORDER BY name ASC";
 
-    } else {
+        } else {
 
-        $sql = "SELECT id, name, stakeholder
+            $sql = "SELECT id, name, stakeholder
                 FROM categories
                 WHERE id NOT IN (" . $exclude_category_string . ")
                 ORDER BY name ASC";
 
-    }
+        }
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    if (mysqli_num_rows($result) > 0) {
+        if (mysqli_num_rows($result) > 0) {
 
-        $has_inactive = "1";
-        if ($has_active == "1") echo "<BR>";
-        if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+            $has_inactive = "1";
+            if ($has_active == "1") echo "<BR>";
+            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
 
-        <tr class="main_table_row_heading_inactive">
-        <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive Categories (<?php echo mysqli_num_rows($result); ?>)</font>
-        </td>
-        <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Stakeholder</font>
-        </td>
-        </tr><?php
-
-        while ($row = mysqli_fetch_object($result)) { ?>
-
-            <tr class="main_table_row_inactive">
-            <td class="main_table_cell_inactive">
-                <a class="invisiblelink"
-                   href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a title=\"Default Domain Category\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
+            <tr class="main_table_row_heading_inactive">
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Inactive Categories (<?php echo mysqli_num_rows($result); ?>)</font>
             </td>
-            <td class="main_table_cell_inactive">
-                <a class="invisiblelink"
-                   href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->stakeholder; ?></a>
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Stakeholder</font>
             </td>
             </tr><?php
+
+            while ($row = mysqli_fetch_object($result)) { ?>
+
+                <tr class="main_table_row_inactive">
+                <td class="main_table_cell_inactive">
+                    <a class="invisiblelink"
+                       href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a title=\"Default Domain Category\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
+                </td>
+                <td class="main_table_cell_inactive">
+                    <a class="invisiblelink"
+                       href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->stakeholder; ?></a>
+                </td>
+                </tr><?php
+
+            }
 
         }
 
     }
 
-}
+    if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
-if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+    if ($_SESSION['display_inactive_assets'] != "1") { ?>
+        <BR><em>Inactive Categories are currently not displayed. <a class="invisiblelink"
+                                                                    href="../system/display-settings.php">Click here to
+                display them</a>.</em><BR><?php
+    }
 
-if ($_SESSION['display_inactive_assets'] != "1") { ?>
-    <BR><em>Inactive Categories are currently not displayed. <a class="invisiblelink" href="../system/display-settings.php">Click here to display them</a>.</em><BR><?php
-}
+    if ($has_active || $has_inactive) { ?>
+        <BR><font class="default_highlight">*</font> = Default Domain Category&nbsp;&nbsp;<font
+            class="default_highlight_secondary">*</font> = Default SSL Category<?php
+    }
 
-if ($has_active || $has_inactive) { ?>
-    <BR><font class="default_highlight">*</font> = Default Domain Category&nbsp;&nbsp;<font class="default_highlight_secondary">*</font> = Default SSL Category<?php
-}
-
-if (!$has_active && !$has_inactive) { ?>
-    <BR><BR>You don't currently have any Categories. <a href="add/category.php">Click here to add one</a>.<?php
-} ?>
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+    if (!$has_active && !$has_inactive) { ?>
+        <BR><BR>You don't currently have any Categories. <a href="add/category.php">Click here to add one</a>.<?php
+    } ?>
+    <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

@@ -55,8 +55,8 @@ while ($row = mysqli_fetch_object($result)) {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags-bare.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags-bare.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header-bare.inc.php"); ?>

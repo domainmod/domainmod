@@ -72,7 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $pcid = $new_pcid;
 
@@ -103,7 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 }
 
@@ -134,7 +138,9 @@ if ($del == "1") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 }
 
@@ -150,7 +156,9 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Deleted<BR>";
 
@@ -162,26 +170,26 @@ if ($really_del == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_category_form" method="post">
-<strong>Category Name (150)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    <strong>Category Name (150)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
         </font></a><BR><BR>
-<input name="new_category" type="text" value="<?php if ($new_category != "") echo htmlentities($new_category); ?>
+    <input name="new_category" type="text" value="<?php if ($new_category != "") echo htmlentities($new_category); ?>
 " size="50" maxlength="150">
-<BR><BR>
-<strong>Stakeholder (100)</strong><BR><BR>
-<input name="new_stakeholder" type="text" value="<?php if ($new_stakeholder != "")
-    echo htmlentities($new_stakeholder); ?>" size="50" maxlength="100">
-<BR><BR>
-<strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<BR><BR>
-<input type="hidden" name="new_pcid" value="<?php echo $pcid; ?>">
-<input type="submit" name="button" value="Update This Category &raquo;">
+    <BR><BR>
+    <strong>Stakeholder (100)</strong><BR><BR>
+    <input name="new_stakeholder" type="text" value="<?php if ($new_stakeholder != "")
+        echo htmlentities($new_stakeholder); ?>" size="50" maxlength="100">
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <BR><BR>
+    <input type="hidden" name="new_pcid" value="<?php echo $pcid; ?>">
+    <input type="submit" name="button" value="Update This Category &raquo;">
 </form>
 <BR><BR><a href="category.php?pcid=<?php echo $pcid; ?>&del=1">DELETE THIS CATEGORY</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

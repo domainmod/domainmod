@@ -43,8 +43,8 @@ $software_section = "admin-system-info";
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
@@ -61,7 +61,9 @@ if ($q->prepare($query)) {
     $q->fetch();
     $q->close();
 
-} else { $error->outputSqlError($conn, "ERROR"); }
+} else {
+    $error->outputSqlError($conn, "ERROR");
+}
 ?>
 <strong>Operating System:</strong> <?php echo php_uname(); ?><BR>
 <strong>Web Server:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>

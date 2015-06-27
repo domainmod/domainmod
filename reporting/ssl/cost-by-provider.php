@@ -178,7 +178,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
                 $new_provider = $row->provider_name;
 
-                $sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) as provider_total, count(*) AS number_of_certs_provider
+                $sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS provider_total, count(*) AS number_of_certs_provider
                                        FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
                                        WHERE sslc.fee_id = f.id
                                          AND f.currency_id = c.id
@@ -239,23 +239,33 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
 <?php echo $reporting->showTableTop(); ?>
-    <form name="export_ssl_form" method="post">
-        <a href="cost-by-provider.php?all=1">View All</a> or Expiring Between
-        <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and
-        <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-        <?php if ($total_rows > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-provider.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
-        <?php } ?>
-    </form>
+<form name="export_ssl_form" method="post">
+    <a href="cost-by-provider.php?all=1">View All</a> or Expiring Between
+    <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") {
+        echo "value=\"" . $time->timeBasic() . "\"";
+    } else {
+        echo "value=\"$new_start_date\"";
+    } ?>>
+    and
+    <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") {
+        echo "value=\"" . $time->timeBasic() . "\"";
+    } else {
+        echo "value=\"$new_end_date\"";
+    } ?>>
+    &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
+    <?php if ($total_rows > 0) { ?>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
+                href="cost-by-provider.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
+                REPORT</a>]</strong>
+    <?php } ?>
+</form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
@@ -272,21 +282,21 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Provider</font></td>
+            <font class="main_table_heading">Provider</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Certs</font></td>
+            <font class="main_table_heading">Certs</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Cost</font></td>
+            <font class="main_table_heading">Cost</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Per Cert</font></td>
+            <font class="main_table_heading">Per Cert</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Provider Account</font></td>
+            <font class="main_table_heading">Provider Account</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Certs</font></td>
+            <font class="main_table_heading">Certs</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Cost</font></td>
+            <font class="main_table_heading">Cost</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Per Cert</font></td>
+            <font class="main_table_heading">Per Cert</font></td>
     </tr>
 
     <?php
@@ -297,7 +307,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
         $new_provider = $row->provider_name;
 
-        $sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) as provider_total, count(*) AS number_of_certs_provider
+        $sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS provider_total, count(*) AS number_of_certs_provider
                                FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
                                WHERE sslc.fee_id = f.id
                                  AND f.currency_id = c.id
@@ -334,14 +344,22 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         if ($new_provider != $last_provider || $new_provider == "") { ?>
 
             <tr class="main_table_row_active">
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo $row->provider_name; ?></a></td>
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo $number_of_certs_provider; ?></a></td>
-                <td class="main_table_cell_active"><?php echo $temp_provider_total; ?></td>
-                <td class="main_table_cell_active"><?php echo $per_cert_provider; ?></td>
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php echo $row->owner_name; ?> (<?php echo $row->username; ?>)</a></td>
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php echo $row->number_of_certs; ?></a></td>
-                <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
-                <td class="main_table_cell_active"><?php echo $per_cert_account; ?></td>
+            <td class="main_table_cell_active"><a class="invisiblelink"
+                                                  href="../../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo $row->provider_name; ?></a>
+            </td>
+            <td class="main_table_cell_active"><a class="invisiblelink"
+                                                  href="../../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo $number_of_certs_provider; ?></a>
+            </td>
+            <td class="main_table_cell_active"><?php echo $temp_provider_total; ?></td>
+            <td class="main_table_cell_active"><?php echo $per_cert_provider; ?></td>
+            <td class="main_table_cell_active"><a class="invisiblelink"
+                                                  href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php echo $row->owner_name; ?>
+                    (<?php echo $row->username; ?>)</a></td>
+            <td class="main_table_cell_active"><a class="invisiblelink"
+                                                  href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php echo $row->number_of_certs; ?></a>
+            </td>
+            <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
+            <td class="main_table_cell_active"><?php echo $per_cert_account; ?></td>
             </tr><?php
 
             $last_provider = $row->provider_name;
@@ -349,14 +367,18 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         } else { ?>
 
             <tr class="main_table_row_active">
-                <td class="main_table_cell_active"></td>
-                <td class="main_table_cell_active"></td>
-                <td class="main_table_cell_active"></td>
-                <td class="main_table_cell_active"></td>
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php echo $row->owner_name; ?> (<?php echo $row->username; ?>)</a></td>
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php echo $row->number_of_certs; ?></a></td>
-                <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
-                <td class="main_table_cell_active"><?php echo $per_cert_account; ?></td>
+            <td class="main_table_cell_active"></td>
+            <td class="main_table_cell_active"></td>
+            <td class="main_table_cell_active"></td>
+            <td class="main_table_cell_active"></td>
+            <td class="main_table_cell_active"><a class="invisiblelink"
+                                                  href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php echo $row->owner_name; ?>
+                    (<?php echo $row->username; ?>)</a></td>
+            <td class="main_table_cell_active"><a class="invisiblelink"
+                                                  href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php echo $row->number_of_certs; ?></a>
+            </td>
+            <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
+            <td class="main_table_cell_active"><?php echo $per_cert_account; ?></td>
             </tr><?php
 
             $last_provider = $row->provider_name;
@@ -364,7 +386,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         }
 
     }
-        ?>
+    ?>
     </table><?php
 
 }

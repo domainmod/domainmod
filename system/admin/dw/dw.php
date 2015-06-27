@@ -106,9 +106,9 @@ $software_section = "admin-dw-main";
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
-<?php echo $system->jumpMenu(); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <?php echo $system->jumpMenu(); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
@@ -138,7 +138,8 @@ if ($result === false || mysqli_num_rows($result) <= 0) {
 
 }
 ?>
-&raquo; <a href="servers.php">Manage Servers</a><?php if ($has_servers == 1) { ?>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="rebuild.php">Rebuild DW</a><?php } ?><BR>
+&raquo; <a href="servers.php">Manage Servers</a><?php if ($has_servers == 1) { ?>&nbsp;&nbsp;/&nbsp;&nbsp;<a
+    href="rebuild.php">Rebuild DW</a><?php } ?><BR>
 
 <?php
 $sql_accounts = "SELECT id
@@ -204,19 +205,21 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
     } else { ?>
 
         <select name="dw_accounts" onChange="MM_jumpMenu('parent',this,0)">
-        <option value="dw.php">Server Accounts</option><?php
-        $sql_dw_account = "SELECT id, name, dw_accounts
+            <option value="dw.php">Server Accounts</option><?php
+            $sql_dw_account = "SELECT id, name, dw_accounts
                            FROM dw_servers
                            ORDER BY name, host";
-        $result_dw_account = mysqli_query($connection, $sql_dw_account); ?>
+            $result_dw_account = mysqli_query($connection, $sql_dw_account); ?>
 
-        <option value="dw.php?action=dw_accounts&view_all=1">VIEW ALL</option><?php
+            <option value="dw.php?action=dw_accounts&view_all=1">VIEW ALL</option><?php
 
-        while ($row_dw_account = mysqli_fetch_object($result_dw_account)) { ?>
+            while ($row_dw_account = mysqli_fetch_object($result_dw_account)) { ?>
 
-            <option value="dw.php?action=dw_accounts&id=<?php echo $row_dw_account->id; ?>"><?php echo $row_dw_account->name; ?> (<?php echo number_format($row_dw_account->dw_accounts); ?> Accounts)</option><?php
+                <option
+                value="dw.php?action=dw_accounts&id=<?php echo $row_dw_account->id; ?>"><?php echo $row_dw_account->name; ?>
+                (<?php echo number_format($row_dw_account->dw_accounts); ?> Accounts)</option><?php
 
-        } ?>
+            } ?>
         </select>
         <BR><BR><?php
 
@@ -229,19 +232,22 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
     } else { ?>
 
         <select name="dw_dns_zones" onChange="MM_jumpMenu('parent',this,0)">
-        <option value="dw.php">DNS Zones & Records</option><?php
-        $sql_dw_dns_records = "SELECT id, name, dw_dns_zones, dw_dns_records
+            <option value="dw.php">DNS Zones & Records</option><?php
+            $sql_dw_dns_records = "SELECT id, name, dw_dns_zones, dw_dns_records
                                FROM dw_servers
                                ORDER BY name, host";
-        $result_dw_dns_records = mysqli_query($connection, $sql_dw_dns_records); ?>
+            $result_dw_dns_records = mysqli_query($connection, $sql_dw_dns_records); ?>
 
-        <option value="dw.php?action=dw_dns_zones&view_all=1">VIEW ALL</option><?php
+            <option value="dw.php?action=dw_dns_zones&view_all=1">VIEW ALL</option><?php
 
-        while ($row_dw_dns_records = mysqli_fetch_object($result_dw_dns_records)) { ?>
+            while ($row_dw_dns_records = mysqli_fetch_object($result_dw_dns_records)) { ?>
 
-            <option value="dw.php?action=dw_dns_zones&id=<?php echo $row_dw_dns_records->id; ?>"><?php echo $row_dw_dns_records->name; ?> (<?php echo number_format($row_dw_dns_records->dw_dns_zones); ?> Zones, <?php echo number_format($row_dw_dns_records->dw_dns_records); ?> Records)</option><?php
+                <option
+                value="dw.php?action=dw_dns_zones&id=<?php echo $row_dw_dns_records->id; ?>"><?php echo $row_dw_dns_records->name; ?>
+                (<?php echo number_format($row_dw_dns_records->dw_dns_zones); ?>
+                Zones, <?php echo number_format($row_dw_dns_records->dw_dns_records); ?> Records)</option><?php
 
-        } ?>
+            } ?>
         </select>
         <BR><?php
 
@@ -254,7 +260,7 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
 
 $sql_build_info = "SELECT build_status_overall, build_start_time_overall, build_end_time_overall, build_time_overall, has_ever_been_built_overall, build_end_time_overall, build_start_time_overall
                    FROM dw_servers
-                   ORDER BY build_end_time_overall desc
+                   ORDER BY build_end_time_overall DESC
                    LIMIT 1";
 $result_build_info = mysqli_query($connection, $sql_build_info);
 
@@ -273,228 +279,228 @@ if ($no_results_build_info !== 1) { ?>
     <BR><font class="subheadline">Build Information</font><BR>
     <table class="main_table" cellpadding="0" cellspacing="0"><?php
 
-        if ($temp_build_info == 0) {
+    if ($temp_build_info == 0) {
 
-            echo "<BR>You don't currently have any servers setup in your Data Warehouse. <a href=\"add/server.php\">Click here to add one</a>.";
+        echo "<BR>You don't currently have any servers setup in your Data Warehouse. <a href=\"add/server.php\">Click here to add one</a>.";
 
-        } else {
+    } else {
 
-            while ($row_build_info = mysqli_fetch_object($result_build_info)) {
+        while ($row_build_info = mysqli_fetch_object($result_build_info)) {
 
-                if ($row_build_info->build_start_time_overall != "0000-00-00 00:00:00" && $row_build_info->build_end_time_overall != "0000-00-00 00:00:00") {
+            if ($row_build_info->build_start_time_overall != "0000-00-00 00:00:00" && $row_build_info->build_end_time_overall != "0000-00-00 00:00:00") {
 
-                        $temp_build_status_overall = "<font color=\"green\"><strong>Successful</strong></font>";
+                $temp_build_status_overall = "<font color=\"green\"><strong>Successful</strong></font>";
 
-                }
+            }
 
-                if ($row_build_info->build_start_time_overall != "0000-00-00 00:00:00" && $row_build_info->has_ever_been_built_overall == 0) {
+            if ($row_build_info->build_start_time_overall != "0000-00-00 00:00:00" && $row_build_info->has_ever_been_built_overall == 0) {
 
-                        $temp_build_status_overall = "<font class=\"default_highlight\">Building...</font>";
+                $temp_build_status_overall = "<font class=\"default_highlight\">Building...</font>";
 
-                }
+            }
 
-                if ($row_build_info->build_start_time_overall != "0000-00-00 00:00:00" && $row_build_info->build_end_time_overall == "0000-00-00 00:00:00" && $row_build_info->build_status_overall == 0) {
+            if ($row_build_info->build_start_time_overall != "0000-00-00 00:00:00" && $row_build_info->build_end_time_overall == "0000-00-00 00:00:00" && $row_build_info->build_status_overall == 0) {
 
-                    $sql_check_builds = "SELECT id
+                $sql_check_builds = "SELECT id
                                          FROM dw_servers
                                          WHERE build_status = '0'";
-                    $result_check_builds = mysqli_query($connection, $sql_check_builds);
+                $result_check_builds = mysqli_query($connection, $sql_check_builds);
 
-                    if ($result_check_builds === false || mysqli_num_rows($result_check_builds) <= 0) {
+                if ($result_check_builds === false || mysqli_num_rows($result_check_builds) <= 0) {
 
-                        $no_results_check_builds = 1;
+                    $no_results_check_builds = 1;
+
+                } else {
+
+                    if (mysqli_num_rows($result_check_builds) == 0) {
+
+                        $temp_build_status_overall = "<font class=\"default_highlight\"><strong>Cleanup...</strong></font>";
 
                     } else {
 
-                        if (mysqli_num_rows($result_check_builds) == 0) {
-
-                            $temp_build_status_overall = "<font class=\"default_highlight\"><strong>Cleanup...</strong></font>";
-
-                        } else {
-
-                            $temp_build_status_overall = "<font class=\"default_highlight\"><strong>Building...</strong></font>";
-
-                        }
+                        $temp_build_status_overall = "<font class=\"default_highlight\"><strong>Building...</strong></font>";
 
                     }
 
-                    $is_building = 1;
-
                 }
 
-                if ($row_build_info->build_start_time_overall == "0000-00-00 00:00:00" && $row_build_info->has_ever_been_built_overall == 0) {
-
-                        $temp_build_status_overall = "<font class=\"default_highlight\">Never Built</font>";
-
-                }
-
-                if ($row_build_info->build_start_time_overall == "0000-00-00 00:00:00") {
-
-                    $temp_build_start_time_overall = "-";
-
-                } else {
-
-                    $temp_build_start_time_overall = date("M jS @ g:i:sa", strtotime($row_build_info->build_start_time_overall));
-
-                }
-
-                if ($row_build_info->build_end_time_overall == "0000-00-00 00:00:00") {
-
-                    $temp_build_end_time_overall = "-";
-
-                } else {
-
-                    $temp_build_end_time_overall = date("M jS @ g:i:sa", strtotime($row_build_info->build_end_time_overall));
-
-                }
-
-                if ($row_build_info->build_time_overall <= 0) {
-
-                    $temp_build_time_overall = "-";
-
-                } elseif ($row_build_info->build_time_overall > 0 && $row_build_info->build_time_overall <= 60) {
-
-                    $temp_build_time_overall = number_format($row_build_info->build_time_overall) . "s";
-
-                } else {
-
-                    $number_of_minutes = intval($row_build_info->build_time_overall / 60);
-                    $number_of_seconds = $row_build_info->build_time_overall - ($number_of_minutes * 60);
-
-                    $temp_build_time_overall = $number_of_minutes . "m " . $number_of_seconds . "s";
-
-                } ?>
-
-                <tr class="main_table_row_heading_active">
-                    <td class="main_table_cell_heading_active">
-                        <font class="main_table_heading">Server</font>
-                    </td>
-                    <td class="main_table_cell_heading_active">
-                        <font class="main_table_heading">Build Start</font>
-                    </td>
-                    <td class="main_table_cell_heading_active">
-                        <font class="main_table_heading">Build End</font>
-                    </td>
-                    <td class="main_table_cell_heading_active">
-                        <font class="main_table_heading">Build Time</font>
-                    </td>
-                    <td class="main_table_cell_heading_active">
-                        <font class="main_table_heading">Build Status</font>
-                    </td>
-                </tr>
-
-                <tr class="main_table_row_active">
-                    <td class="main_table_cell_active"><em>Full Build</em></td>
-                    <td class="main_table_cell_active"><?php echo $temp_build_start_time_overall; ?></td>
-                    <td class="main_table_cell_active"><?php echo $temp_build_end_time_overall; ?></td>
-                    <td class="main_table_cell_active"><?php echo $temp_build_time_overall; ?></td>
-                    <td class="main_table_cell_active"><?php echo $temp_build_status_overall; ?></td>
-                </tr><?php
+                $is_building = 1;
 
             }
 
-        } ?>
+            if ($row_build_info->build_start_time_overall == "0000-00-00 00:00:00" && $row_build_info->has_ever_been_built_overall == 0) {
 
-        <?php
-        $sql = "SELECT name, host, build_status, build_start_time, build_end_time, build_time, has_ever_been_built
+                $temp_build_status_overall = "<font class=\"default_highlight\">Never Built</font>";
+
+            }
+
+            if ($row_build_info->build_start_time_overall == "0000-00-00 00:00:00") {
+
+                $temp_build_start_time_overall = "-";
+
+            } else {
+
+                $temp_build_start_time_overall = date("M jS @ g:i:sa", strtotime($row_build_info->build_start_time_overall));
+
+            }
+
+            if ($row_build_info->build_end_time_overall == "0000-00-00 00:00:00") {
+
+                $temp_build_end_time_overall = "-";
+
+            } else {
+
+                $temp_build_end_time_overall = date("M jS @ g:i:sa", strtotime($row_build_info->build_end_time_overall));
+
+            }
+
+            if ($row_build_info->build_time_overall <= 0) {
+
+                $temp_build_time_overall = "-";
+
+            } elseif ($row_build_info->build_time_overall > 0 && $row_build_info->build_time_overall <= 60) {
+
+                $temp_build_time_overall = number_format($row_build_info->build_time_overall) . "s";
+
+            } else {
+
+                $number_of_minutes = intval($row_build_info->build_time_overall / 60);
+                $number_of_seconds = $row_build_info->build_time_overall - ($number_of_minutes * 60);
+
+                $temp_build_time_overall = $number_of_minutes . "m " . $number_of_seconds . "s";
+
+            } ?>
+
+            <tr class="main_table_row_heading_active">
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Server</font>
+                </td>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Build Start</font>
+                </td>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Build End</font>
+                </td>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Build Time</font>
+                </td>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Build Status</font>
+                </td>
+            </tr>
+
+            <tr class="main_table_row_active">
+            <td class="main_table_cell_active"><em>Full Build</em></td>
+            <td class="main_table_cell_active"><?php echo $temp_build_start_time_overall; ?></td>
+            <td class="main_table_cell_active"><?php echo $temp_build_end_time_overall; ?></td>
+            <td class="main_table_cell_active"><?php echo $temp_build_time_overall; ?></td>
+            <td class="main_table_cell_active"><?php echo $temp_build_status_overall; ?></td>
+            </tr><?php
+
+        }
+
+    } ?>
+
+    <?php
+    $sql = "SELECT name, host, build_status, build_start_time, build_end_time, build_time, has_ever_been_built
                 FROM dw_servers
                 ORDER BY name, host";
-        $result = mysqli_query($connection, $sql);
+    $result = mysqli_query($connection, $sql);
 
-        if (mysqli_num_rows($result) == 0) {
+    if (mysqli_num_rows($result) == 0) {
 
-            echo "";
+        echo "";
 
-        } else {
+    } else {
 
-            while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-                if ($row->build_start_time != "0000-00-00 00:00:00" && $row->build_end_time != "0000-00-00 00:00:00") {
+            if ($row->build_start_time != "0000-00-00 00:00:00" && $row->build_end_time != "0000-00-00 00:00:00") {
 
-                        $temp_build_status = "<font color=\"green\"><strong>Successful</strong></font>";
-
-                }
-
-                if ($row->build_start_time != "0000-00-00 00:00:00" && $row->build_end_time == "0000-00-00 00:00:00" && $row->build_status == 0) {
-
-                        $temp_build_status = "<font class=\"default_highlight\"><strong>Building...</strong></font>";
-
-                }
-
-                if ($row->build_start_time == "0000-00-00 00:00:00" && $row->has_ever_been_built == 0) {
-
-                        if ($is_building == 1) {
-
-                            $temp_build_status = "<font class=\"default_highlight\">Pending</font>";
-
-                        } else {
-
-                            $temp_build_status = "<font class=\"default_highlight\">Never Built</font>";
-
-                        }
-
-                }
-
-                if ($row->build_start_time == "0000-00-00 00:00:00" && $row->has_ever_been_built == 1) {
-
-                        $temp_build_status = "<font class=\"default_highlight\">Pending</font>";
-
-                }
-
-                if ($row->build_start_time != "0000-00-00 00:00:00" && $row->has_ever_been_built == 0) {
-
-                        $temp_build_status = "<font class=\"default_highlight\">Building...</font>";
-
-                }
-
-                if ($row->build_start_time  == "0000-00-00 00:00:00") {
-
-                    $temp_build_start_time = "-";
-
-                } else {
-
-                    $temp_build_start_time = date("M jS @ g:i:sa", strtotime($row->build_start_time));
-
-                }
-
-                if ($row->build_end_time  == "0000-00-00 00:00:00") {
-
-                    $temp_build_end_time = "-";
-
-                } else {
-
-                    $temp_build_end_time = date("M jS @ g:i:sa", strtotime($row->build_end_time));
-
-                }
-
-                if ($row->build_time <= 0) {
-
-                    $temp_build_time = "-";
-
-                } elseif ($row->build_time > 0 && $row->build_time <= 60) {
-
-                    $temp_build_time = number_format($row->build_time) . "s";
-
-                } else {
-
-                    $number_of_minutes = intval($row->build_time / 60);
-                    $number_of_seconds = $row->build_time - ($number_of_minutes * 60);
-
-                    $temp_build_time = $number_of_minutes . "m " . $number_of_seconds . "s";
-
-                } ?>
-
-                <tr class="main_table_row_active">
-                    <td class="main_table_cell_active"><?php echo $row->name; ?></td>
-                    <td class="main_table_cell_active"><?php echo $temp_build_start_time; ?></td>
-                    <td class="main_table_cell_active"><?php echo $temp_build_end_time; ?></td>
-                    <td class="main_table_cell_active"><?php echo $temp_build_time; ?></td>
-                    <td class="main_table_cell_active"><?php echo $temp_build_status; ?></td>
-                </tr><?php
+                $temp_build_status = "<font color=\"green\"><strong>Successful</strong></font>";
 
             }
 
-        } ?>
+            if ($row->build_start_time != "0000-00-00 00:00:00" && $row->build_end_time == "0000-00-00 00:00:00" && $row->build_status == 0) {
+
+                $temp_build_status = "<font class=\"default_highlight\"><strong>Building...</strong></font>";
+
+            }
+
+            if ($row->build_start_time == "0000-00-00 00:00:00" && $row->has_ever_been_built == 0) {
+
+                if ($is_building == 1) {
+
+                    $temp_build_status = "<font class=\"default_highlight\">Pending</font>";
+
+                } else {
+
+                    $temp_build_status = "<font class=\"default_highlight\">Never Built</font>";
+
+                }
+
+            }
+
+            if ($row->build_start_time == "0000-00-00 00:00:00" && $row->has_ever_been_built == 1) {
+
+                $temp_build_status = "<font class=\"default_highlight\">Pending</font>";
+
+            }
+
+            if ($row->build_start_time != "0000-00-00 00:00:00" && $row->has_ever_been_built == 0) {
+
+                $temp_build_status = "<font class=\"default_highlight\">Building...</font>";
+
+            }
+
+            if ($row->build_start_time == "0000-00-00 00:00:00") {
+
+                $temp_build_start_time = "-";
+
+            } else {
+
+                $temp_build_start_time = date("M jS @ g:i:sa", strtotime($row->build_start_time));
+
+            }
+
+            if ($row->build_end_time == "0000-00-00 00:00:00") {
+
+                $temp_build_end_time = "-";
+
+            } else {
+
+                $temp_build_end_time = date("M jS @ g:i:sa", strtotime($row->build_end_time));
+
+            }
+
+            if ($row->build_time <= 0) {
+
+                $temp_build_time = "-";
+
+            } elseif ($row->build_time > 0 && $row->build_time <= 60) {
+
+                $temp_build_time = number_format($row->build_time) . "s";
+
+            } else {
+
+                $number_of_minutes = intval($row->build_time / 60);
+                $number_of_seconds = $row->build_time - ($number_of_minutes * 60);
+
+                $temp_build_time = $number_of_minutes . "m " . $number_of_seconds . "s";
+
+            } ?>
+
+            <tr class="main_table_row_active">
+            <td class="main_table_cell_active"><?php echo $row->name; ?></td>
+            <td class="main_table_cell_active"><?php echo $temp_build_start_time; ?></td>
+            <td class="main_table_cell_active"><?php echo $temp_build_end_time; ?></td>
+            <td class="main_table_cell_active"><?php echo $temp_build_time; ?></td>
+            <td class="main_table_cell_active"><?php echo $temp_build_status; ?></td>
+            </tr><?php
+
+        }
+
+    } ?>
     </table><?php
 
 }
@@ -539,72 +545,72 @@ if (mysqli_num_rows($result) == 0) {
 
         <BR><font class="subheadline">Data Warehouse Totals</font><BR>
         <table class="main_table" cellpadding="0" cellspacing="0">
-            <tr class="main_table_row_heading_active">
-                <td class="main_table_cell_heading_active">
-                    <font class="main_table_heading">Server</font>
-                </td>
-                <td class="main_table_cell_heading_active">
-                    <font class="main_table_heading">Accounts</font>
-                </td>
-                <td class="main_table_cell_heading_active">
-                    <font class="main_table_heading">DNS Zones</font>
-                </td>
-                <td class="main_table_cell_heading_active">
-                    <font class="main_table_heading">DNS Records</font>
-                </td>
-            </tr><?php
+        <tr class="main_table_row_heading_active">
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Server</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Accounts</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">DNS Zones</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">DNS Records</font>
+            </td>
+        </tr><?php
 
-            $sql = "SELECT dw_servers, dw_accounts, dw_dns_zones, dw_dns_records
+        $sql = "SELECT dw_servers, dw_accounts, dw_dns_zones, dw_dns_records
                     FROM dw_server_totals";
-            $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($connection, $sql);
 
-            while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-                if ($row->dw_servers > 1) { ?>
+            if ($row->dw_servers > 1) { ?>
 
-                    <tr class="main_table_row_active">
-                        <td class="main_table_cell_active">
-                            <em>All Servers</em>
-                        </td>
-                        <td class="main_table_cell_active">
-                            <?php echo number_format($row->dw_accounts); ?>
-                        </td>
-                        <td class="main_table_cell_active">
-                            <?php echo number_format($row->dw_dns_zones); ?>
-                        </td>
-                        <td class="main_table_cell_active">
-                            <?php echo number_format($row->dw_dns_records); ?>
-                        </td>
-                    </tr><?php
-
-                }
+                <tr class="main_table_row_active">
+                <td class="main_table_cell_active">
+                    <em>All Servers</em>
+                </td>
+                <td class="main_table_cell_active">
+                    <?php echo number_format($row->dw_accounts); ?>
+                </td>
+                <td class="main_table_cell_active">
+                    <?php echo number_format($row->dw_dns_zones); ?>
+                </td>
+                <td class="main_table_cell_active">
+                    <?php echo number_format($row->dw_dns_records); ?>
+                </td>
+                </tr><?php
 
             }
 
-            $sql = "SELECT name, dw_accounts, dw_dns_zones, dw_dns_records
+        }
+
+        $sql = "SELECT name, dw_accounts, dw_dns_zones, dw_dns_records
                     FROM dw_servers
                     WHERE has_ever_been_built = '1'
                     ORDER BY name";
-            $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($connection, $sql);
 
-            while ($row = mysqli_fetch_object($result)) { ?>
+        while ($row = mysqli_fetch_object($result)) { ?>
 
-                <tr class="main_table_row_active">
-                    <td class="main_table_cell_active">
-                        <?php echo $row->name; ?>
-                    </td>
-                    <td class="main_table_cell_active">
-                        <?php echo number_format($row->dw_accounts); ?>
-                    </td>
-                    <td class="main_table_cell_active">
-                        <?php echo number_format($row->dw_dns_zones); ?>
-                    </td>
-                    <td class="main_table_cell_active">
-                        <?php echo number_format($row->dw_dns_records); ?>
-                    </td>
-                </tr><?php
+            <tr class="main_table_row_active">
+            <td class="main_table_cell_active">
+                <?php echo $row->name; ?>
+            </td>
+            <td class="main_table_cell_active">
+                <?php echo number_format($row->dw_accounts); ?>
+            </td>
+            <td class="main_table_cell_active">
+                <?php echo number_format($row->dw_dns_zones); ?>
+            </td>
+            <td class="main_table_cell_active">
+                <?php echo number_format($row->dw_dns_records); ?>
+            </td>
+            </tr><?php
 
-            } ?>
+        } ?>
 
         </table><?php
 

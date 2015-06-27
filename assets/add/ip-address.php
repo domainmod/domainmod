@@ -64,7 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $_SESSION['result_message'] = "IP Address <font class=\"highlight\">" . $new_name . " (" . $new_ip . ")</font>
             Added<BR>";
@@ -74,8 +76,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_name == '') { $_SESSION['result_message'] .= "Please enter a name for the IP address<BR>"; }
-        if ($new_ip == '') { $_SESSION['result_message'] .= "Please enter the IP address<BR>"; }
+        if ($new_name == '') {
+            $_SESSION['result_message'] .= "Please enter a name for the IP address<BR>";
+        }
+        if ($new_ip == '') {
+            $_SESSION['result_message'] .= "Please enter the IP address<BR>";
+        }
 
     }
 
@@ -84,27 +90,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_ip_address_form" method="post">
-<strong>IP Address Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    <strong>IP Address Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
         </font></a><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="100" value="<?php echo $new_name; ?>">
-<BR><BR>
-<strong>IP Address (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    <input name="new_name" type="text" size="50" maxlength="100" value="<?php echo $new_name; ?>">
+    <BR><BR>
+    <strong>IP Address (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
         </font></a><BR><BR>
-<input name="new_ip" type="text" size="50" maxlength="100" value="<?php echo $new_ip; ?>">
-<BR><BR>
-<strong>rDNS (100)</strong><BR><BR>
-<input name="new_rdns" type="text" size="50" maxlength="100" value="<?php echo $new_rdns; ?>">
-<BR><BR>
-<strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<BR><BR>
-<input type="submit" name="button" value="Add This IP Address &raquo;">
+    <input name="new_ip" type="text" size="50" maxlength="100" value="<?php echo $new_ip; ?>">
+    <BR><BR>
+    <strong>rDNS (100)</strong><BR><BR>
+    <input name="new_rdns" type="text" size="50" maxlength="100" value="<?php echo $new_rdns; ?>">
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <BR><BR>
+    <input type="submit" name="button" value="Add This IP Address &raquo;">
 </form>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

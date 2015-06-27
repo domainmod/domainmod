@@ -45,7 +45,8 @@ $new_password = $_POST['new_password'];
 $new_password_confirmation = $_POST['new_password_confirmation'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password_confirmation != "" &&
-    $new_password == $new_password_confirmation) {
+    $new_password == $new_password_confirmation
+) {
 
     $query = "SELECT id
               FROM users
@@ -78,7 +79,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
                 $q_update->execute();
                 $q_update->close();
 
-            } else { $error->outputSqlError($conn, "ERROR"); }
+            } else {
+                $error->outputSqlError($conn, "ERROR");
+            }
 
             $_SESSION['result_message'] .= "Your password has been changed<BR>";
 
@@ -94,7 +97,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 } else {
 
@@ -116,18 +121,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="change_password_form" method="post">
-<strong>New Password (255)</strong><BR><BR><input type="password" name="new_password" size="20" maxlength="255">
-<BR><BR>
-<strong>Confirm New Password</strong><BR><BR><input type="password" name="new_password_confirmation" size="20"
-                                                    maxlength="255">
-<BR><BR>
-<input type="submit" name="button" value="Change Password &raquo;">
+    <strong>New Password (255)</strong><BR><BR><input type="password" name="new_password" size="20" maxlength="255">
+    <BR><BR>
+    <strong>Confirm New Password</strong><BR><BR><input type="password" name="new_password_confirmation" size="20"
+                                                        maxlength="255">
+    <BR><BR>
+    <input type="submit" name="button" value="Change Password &raquo;">
 </form>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

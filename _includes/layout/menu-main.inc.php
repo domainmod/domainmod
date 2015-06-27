@@ -19,16 +19,16 @@
  *
  */
 ?>
-[ <a href="<?php echo $web_root; ?>/domains.php">Domains</a> ]&nbsp;
-[ <a href="<?php echo $web_root; ?>/ssl-certs.php">SSL Certificates</a> ]&nbsp;
-[ <a href="<?php echo $web_root; ?>/segments.php">Segments</a> ]&nbsp;
-[ <a href="<?php echo $web_root; ?>/bulk-updater.php">Bulk Updater</a> ]&nbsp;
-<BR><BR>
-[ <a href="<?php echo $web_root; ?>/assets/">Asset Management</a> ]&nbsp;
-[ <a href="<?php echo $web_root; ?>/reporting/">Reporting</a> ]&nbsp;
+    [ <a href="<?php echo $web_root; ?>/domains.php">Domains</a> ]&nbsp;
+    [ <a href="<?php echo $web_root; ?>/ssl-certs.php">SSL Certificates</a> ]&nbsp;
+    [ <a href="<?php echo $web_root; ?>/segments.php">Segments</a> ]&nbsp;
+    [ <a href="<?php echo $web_root; ?>/bulk-updater.php">Bulk Updater</a> ]&nbsp;
+    <BR><BR>
+    [ <a href="<?php echo $web_root; ?>/assets/">Asset Management</a> ]&nbsp;
+    [ <a href="<?php echo $web_root; ?>/reporting/">Reporting</a> ]&nbsp;
 <?php if ($_SESSION['is_admin'] === 1) { ?>
     [ <a href="<?php echo $web_root; ?>/system/admin/dw/">DW</a> ]&nbsp;&nbsp;
 <?php } ?>
-[ <a href="<?php echo $web_root; ?>/system/">Control Panel</a> ]&nbsp;
+    [ <a href="<?php echo $web_root; ?>/system/">Control Panel</a> ]&nbsp;
 <?php
 include(DIR_INC . "layout/menu-sub.inc.php");

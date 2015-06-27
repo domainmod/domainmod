@@ -70,7 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $oid = $new_oid;
 
@@ -101,7 +103,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 }
 
@@ -127,7 +131,9 @@ if ($del == "1") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $query = "SELECT owner_id
               FROM ssl_accounts
@@ -148,7 +154,9 @@ if ($del == "1") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $query = "SELECT owner_id
               FROM domains
@@ -169,7 +177,9 @@ if ($del == "1") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $query = "SELECT owner_id
               FROM ssl_certs
@@ -190,10 +200,13 @@ if ($del == "1") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     if ($existing_registrar_accounts > 0 || $existing_ssl_accounts > 0 || $existing_domains > 0 ||
-        $existing_ssl_certs > 0) {
+        $existing_ssl_certs > 0
+    ) {
 
         if ($existing_registrar_accounts > 0) {
             $_SESSION['result_message'] .= "This Owner has registrar accounts associated with it and cannot be
@@ -234,7 +247,9 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Deleted<BR>";
 
@@ -246,22 +261,22 @@ if ($really_del == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_owner_form" method="post">
-<strong>Owner Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    <strong>Owner Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
         </font></a><BR><BR>
-<input name="new_owner" type="text" value="<?php if ($new_owner != "") echo htmlentities($new_owner); ?>
+    <input name="new_owner" type="text" value="<?php if ($new_owner != "") echo htmlentities($new_owner); ?>
 " size="50" maxlength="100">
-<BR><BR>
-<strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<input type="hidden" name="new_oid" value="<?php echo $oid; ?>">
-<BR><BR>
-<input type="submit" name="button" value="Update This Account Owner &raquo;">
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <input type="hidden" name="new_oid" value="<?php echo $oid; ?>">
+    <BR><BR>
+    <input type="submit" name="button" value="Update This Account Owner &raquo;">
 </form>
 <BR><BR><a href="account-owner.php?oid=<?php echo $oid; ?>&del=1">DELETE THIS OWNER</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

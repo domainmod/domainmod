@@ -23,8 +23,8 @@
     <div class="pagination_menu_block_inner">
         <?php echo $navigate[2]; ?>&nbsp;
         <?php if ($totalrows != '0') {
-                  echo "(Listing $navigate[1] of " . number_format($totalrows) . ")";
-              } ?>
+            echo "(Listing $navigate[1] of " . number_format($totalrows) . ")";
+        } ?>
         <?php
         if ($software_section == "domains" || $software_section == "ssl-certs") {
 
@@ -39,8 +39,9 @@
             } ?>
             [<a href="<?php echo $export_filename . "?" . $_SERVER['QUERY_STRING']; ?>&export_data=1">export
                 results</a>]&nbsp;
-            [<a target="_blank" href="<?php echo $web_root; ?>/raw-list.php">raw list</a>]&nbsp;
-            [<a href="system/display-settings.php">display settings</a>]<?php
+                           [<a target="_blank" href="<?php echo $web_root; ?>/raw-list.php">raw list</a>]&nbsp;
+                                                                                                        [<a
+                href="system/display-settings.php">display settings</a>]<?php
 
         } ?>
     </div>

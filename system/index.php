@@ -41,21 +41,28 @@ $software_section = "system";
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <font class="subheadline">User Menu</font><BR><BR>
-&raquo; <a href="display-settings.php">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="email-settings.php">Email Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="defaults.php">User Defaults</a><BR><BR>
-&raquo; <a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="change-password.php">Change Password</a><BR>
+&raquo; <a href="display-settings.php">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="email-settings.php">Email
+    Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="defaults.php">User Defaults</a><BR><BR>
+&raquo; <a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="change-password.php">Change
+    Password</a><BR>
 <BR><BR><font class="subheadline">Maintenance Menu</font><BR><BR>
-&raquo; <a href="update-conversion-rates.php">Update Conversion Rates</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="update-domain-fees.php">Update Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="update-ssl-fees.php">Update SSL Fees</a><BR>
+&raquo; <a href="update-conversion-rates.php">Update Conversion Rates</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a
+    href="update-domain-fees.php">Update Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="update-ssl-fees.php">Update
+    SSL Fees</a><BR>
 <?php
 if ($_SESSION['is_admin'] === 1) { ?>
     <BR><BR><font class="subheadline">Admin Menu</font><BR><BR>
-    &raquo; <a href="admin/system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/defaults.php">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/users.php">Users</a><BR><BR>
-    &raquo; <a href="admin/domain-fields.php">Custom Domain Fields</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/ssl-fields.php">Custom SSL Fields</a><BR><BR>
+    &raquo; <a href="admin/system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a
+        href="admin/defaults.php">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="admin/users.php">Users</a><BR>
+    <BR>
+    &raquo; <a href="admin/domain-fields.php">Custom Domain Fields</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a
+        href="admin/ssl-fields.php">Custom SSL Fields</a><BR><BR>
     &raquo; <a href="admin/perform-maintenance.php">Perform System Maintenance</a><BR><BR>
     &raquo; <a href="admin/dw/">Data Warehouse</a><BR><BR>
     &raquo; <a href="admin/system-info.php">System Information</a><BR><?php

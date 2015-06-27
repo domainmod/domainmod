@@ -76,7 +76,7 @@ if ($_SESSION['dw_view_all'] == "1") {
 
 if ($domain != "") {
 
-        $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+    $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
                                  FROM dw_dns_zones AS z, dw_servers AS s
                                  WHERE z.server_id = s.id
                                    AND z.domain = '" . $domain . "'
@@ -123,7 +123,7 @@ if ($export_data == "1") {
 
     if ($domain != "") {
 
-            $sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
+        $sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
                                            FROM dw_dns_records
                                            WHERE domain = '" . $domain . "'
                                              " . $where_clause_no_join . "";
@@ -276,21 +276,21 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-    <font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR><?php
+<font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR><?php
 
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_dns_zone_temp));
 $layout = new DomainMOD\Layout();
 $parameters = array($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
 $navigate = $layout->pageBrowser($parameters);
-$sql_dw_dns_zone_temp = $sql_dw_dns_zone_temp.$navigate[0];
+$sql_dw_dns_zone_temp = $sql_dw_dns_zone_temp . $navigate[0];
 $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or $error->outputOldSqlError($connection);
 
-if(mysqli_num_rows($result_dw_dns_zone_temp) == 0) {
+if (mysqli_num_rows($result_dw_dns_zone_temp) == 0) {
 
     echo "Your search returned 0 results.";
 
@@ -304,11 +304,13 @@ if(mysqli_num_rows($result_dw_dns_zone_temp) == 0) {
         <input type="hidden" name="numBegin" value="1">
     </form><BR>
 
-    <strong>[<a href="list-dns-zones.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong><BR><BR><?php
+    <strong>[<a
+            href="list-dns-zones.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong>
+    <BR><BR><?php
 
     if ($domain != "") {
 
-            $sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
+        $sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
                                            FROM dw_dns_records
                                            WHERE domain = '" . $domain . "'
                                              " . $where_clause_no_join . "";

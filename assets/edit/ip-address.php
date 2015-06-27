@@ -71,7 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $ipid = $new_ipid;
 
@@ -103,7 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 }
 
@@ -134,7 +138,9 @@ if ($del == "1") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 }
 
@@ -150,7 +156,9 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Deleted<BR>";
 
@@ -162,29 +170,29 @@ if ($really_del == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_ip_address_form" method="post">
-<strong>IP Address Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    <strong>IP Address Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
         </font></a><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "")
-    echo htmlentities($new_name); ?>">
-<BR><BR>
-<strong>IP Address (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    <input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "")
+        echo htmlentities($new_name); ?>">
+    <BR><BR>
+    <strong>IP Address (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
         </font></a><BR><BR>
-<input name="new_ip" type="text" size="50" maxlength="100" value="<?php if ($new_ip != "") echo $new_ip; ?>">
-<BR><BR>
-<strong>rDNS (100)</strong><BR><BR>
-<input name="new_rdns" type="text" size="50" maxlength="100" value="<?php if ($new_rdns != "") echo $new_rdns; ?>">
-<BR><BR>
-<strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<input type="hidden" name="new_ipid" value="<?php echo $ipid; ?>">
-<BR><BR>
-<input type="submit" name="button" value="Update This IP Address &raquo;">
+    <input name="new_ip" type="text" size="50" maxlength="100" value="<?php if ($new_ip != "") echo $new_ip; ?>">
+    <BR><BR>
+    <strong>rDNS (100)</strong><BR><BR>
+    <input name="new_rdns" type="text" size="50" maxlength="100" value="<?php if ($new_rdns != "") echo $new_rdns; ?>">
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <input type="hidden" name="new_ipid" value="<?php echo $ipid; ?>">
+    <BR><BR>
+    <input type="submit" name="button" value="Update This IP Address &raquo;">
 </form>
 <BR><BR><a href="ip-address.php?ipid=<?php echo $ipid; ?>&del=1">DELETE THIS IP ADDRESS</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

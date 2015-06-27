@@ -62,7 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $_SESSION['result_message'] = "Owner <font class=\"highlight\">" . $new_owner . "</font> Added<BR>";
 
@@ -80,20 +82,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_owner_form" method="post">
-<strong>Owner Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    <strong>Owner Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
         </font></a><BR><BR>
-<input name="new_owner" type="text" value="<?php echo $new_owner; ?>" size="50" maxlength="100">
-<BR><BR>
-<strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<BR><BR>
-<input type="submit" name="button" value="Add This Account Owner &raquo;">
+    <input name="new_owner" type="text" value="<?php echo $new_owner; ?>" size="50" maxlength="100">
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <BR><BR>
+    <input type="submit" name="button" value="Add This Account Owner &raquo;">
 </form>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

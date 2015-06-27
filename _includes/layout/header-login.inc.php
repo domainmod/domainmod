@@ -19,8 +19,8 @@
  *
  */
 ?>
-<a name="top"></a>
-<div class="main-container-login">
+    <a name="top"></a>
+    <div class="main-container-login">
 
     <div class="header-container">
         <div class="header-center">
@@ -29,13 +29,13 @@
     </div>
 
     <div class="main-outer-login">
-        <div class="main-inner">
-            <BR><?php
-                include(DIR_INC . "layout/table-maintenance.inc.php");
-            ?>
-            <?php
-            if ($_SESSION['result_message'] != "") {
+    <div class="main-inner">
+    <BR><?php
+include(DIR_INC . "layout/table-maintenance.inc.php");
+?>
+<?php
+if ($_SESSION['result_message'] != "") {
 
-                echo $system->showResultMessage();
+    echo $system->showResultMessage();
 
-            }
+}

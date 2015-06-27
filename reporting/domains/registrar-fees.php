@@ -46,7 +46,7 @@ $report_name = "domain-registrar-fee-report";
 
 // Form Variables
 $export_data = $_GET['export_data'];
-$all = (integer) urlencode($_GET['all']);
+$all = (integer)urlencode($_GET['all']);
 
 if ($all == "1") {
 
@@ -195,17 +195,18 @@ if ($total_rows > 0) {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
 <?php echo $reporting->showTableTop(); ?>
-    <a href="registrar-fees.php?all=1">View All</a> or <a href="registrar-fees.php?all=0">Active Only</a>
-    <?php if ($total_rows > 0) { ?>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="registrar-fees.php?export_data=1&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
-    <?php } ?>
+<a href="registrar-fees.php?all=1">View All</a> or <a href="registrar-fees.php?all=0">Active Only</a>
+<?php if ($total_rows > 0) { ?>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="registrar-fees.php?export_data=1&all=<?php echo $all; ?>">EXPORT
+            REPORT</a>]</strong>
+<?php } ?>
 <?php echo $reporting->showTableBottom(); ?>
 
 <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
@@ -219,204 +220,210 @@ if ($total_rows > 0) {
 if ($total_rows > 0) { ?>
 
     <table class="main_table" cellpadding="0" cellspacing="0">
-    <tr class="main_table_row_heading_active">
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Registrar</font>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">TLD</font>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Initial Fee</font>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Renewal Fee</font>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Transfer Fee</font>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Privacy Fee</font>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Misc Fee</font>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Currency</font>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Domains</font>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Last Updated</font>
-        </td>
-    </tr>
-    <?php
+        <tr class="main_table_row_heading_active">
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Registrar</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">TLD</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Initial Fee</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Renewal Fee</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Transfer Fee</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Privacy Fee</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Misc Fee</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Currency</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Domains</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Last Updated</font>
+            </td>
+        </tr>
+        <?php
 
-    $new_registrar = "";
-    $last_registrar = "";
-    $new_tld = "";
-    $last_tld = "";
+        $new_registrar = "";
+        $last_registrar = "";
+        $new_tld = "";
+        $last_tld = "";
 
-    while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-        $new_registrar = $row->registrar;
-        $new_tld = $row->tld;
+            $new_registrar = $row->registrar;
+            $new_tld = $row->tld;
 
-        if ($row->update_time == "0000-00-00 00:00:00") {
-            $row->update_time = $row->insert_time;
-        }
-        $last_updated = date('Y-m-d', strtotime($row->update_time));
+            if ($row->update_time == "0000-00-00 00:00:00") {
+                $row->update_time = $row->insert_time;
+            }
+            $last_updated = date('Y-m-d', strtotime($row->update_time));
 
-        if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
+            if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
 
-            <tr class="main_table_row_active">
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id; ?>"><?php echo $row->registrar; ?></a></td>
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id; ?>">.<?php echo $row->tld; ?></a></td>
-                <td class="main_table_cell_active">
-                    <?php
+                <tr class="main_table_row_active">
+                    <td class="main_table_cell_active"><a class="invisiblelink"
+                                                          href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id; ?>"><?php echo $row->registrar; ?></a>
+                    </td>
+                    <td class="main_table_cell_active"><a class="invisiblelink"
+                                                          href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id; ?>">.<?php echo $row->tld; ?></a>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
 
-                    $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
-                        $row->symbol_space);
+                        $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
+                            $row->symbol_space);
 
-                    $row->initial_fee;
-                    ?>
-                </td>
-                <td class="main_table_cell_active">
-                    <?php
-                    $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order,
-                        $row->symbol_space);
-                    echo $row->renewal_fee;
-                    ?>
-                </td>
-                <td class="main_table_cell_active">
-                    <?php
-                    $row->transfer_fee = $currency->format($row->transfer_fee, $row->symbol, $row->symbol_order,
-                        $row->symbol_space);
-                    echo $row->transfer_fee;
-                    ?>
-                </td>
-                <td class="main_table_cell_active">
-                    <?php
-                    $row->privacy_fee = $currency->format($row->privacy_fee, $row->symbol, $row->symbol_order,
-                        $row->symbol_space);
-                    echo $row->privacy_fee;
-                    ?>
-                </td>
-                <td class="main_table_cell_active">
-                    <?php
-                    $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order,
-                        $row->symbol_space);
-                    echo $row->misc_fee;
-                    ?>
-                </td>
-                <td class="main_table_cell_active"><?php echo $row->currency; ?></td>
-                <td class="main_table_cell_active">
-                    <?php
-                    $sql_domain_count = "SELECT count(*) AS total_domain_count
+                        $row->initial_fee;
+                        ?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order,
+                            $row->symbol_space);
+                        echo $row->renewal_fee;
+                        ?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $row->transfer_fee = $currency->format($row->transfer_fee, $row->symbol, $row->symbol_order,
+                            $row->symbol_space);
+                        echo $row->transfer_fee;
+                        ?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $row->privacy_fee = $currency->format($row->privacy_fee, $row->symbol, $row->symbol_order,
+                            $row->symbol_space);
+                        echo $row->privacy_fee;
+                        ?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order,
+                            $row->symbol_space);
+                        echo $row->misc_fee;
+                        ?>
+                    </td>
+                    <td class="main_table_cell_active"><?php echo $row->currency; ?></td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $sql_domain_count = "SELECT count(*) AS total_domain_count
                                          FROM domains
                                          WHERE registrar_id = '" . $row->id . "'
                                            AND fee_id = '" . $row->fee_id . "'
                                            AND active NOT IN ('0', '10')";
-                    $result_domain_count = mysqli_query($connection, $sql_domain_count);
-                    while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
+                        $result_domain_count = mysqli_query($connection, $sql_domain_count);
+                        while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
 
-                        if ($row_domain_count->total_domain_count == 0) {
+                            if ($row_domain_count->total_domain_count == 0) {
 
-                            echo "-";
+                                echo "-";
 
-                        } else {
+                            } else {
 
-                            echo "<a class=\"invisiblelink\" href=\"../../domains.php?rid=" . $row->id . "&tld=" . $row->tld . "\">" . $row_domain_count->total_domain_count . "</a>";
+                                echo "<a class=\"invisiblelink\" href=\"../../domains.php?rid=" . $row->id . "&tld=" . $row->tld . "\">" . $row_domain_count->total_domain_count . "</a>";
 
-                        }
+                            }
 
-                    } ?>
-                </td>
-                <td class="main_table_cell_active"><?php echo $last_updated; ?></td>
-            </tr>
+                        } ?>
+                    </td>
+                    <td class="main_table_cell_active"><?php echo $last_updated; ?></td>
+                </tr>
 
-            <?php
-            $last_registrar = $row->registrar;
-            $last_tld = $row->tld;
+                <?php
+                $last_registrar = $row->registrar;
+                $last_tld = $row->tld;
 
-        } else { ?>
+            } else { ?>
 
-            <tr class="main_table_row_active">
-                <td class="main_table_cell_active">&nbsp;</td>
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id; ?>">.<?php echo $row->tld; ?></a></td>
-                <td class="main_table_cell_active">
-                    <?php
-                    $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
-                        $row->symbol_space);
-                    echo $row->initial_fee;
-                    ?>
-                </td>
-                <td class="main_table_cell_active">
-                    <?php
-                    $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order,
-                        $row->symbol_space);
-                    echo $row->renewal_fee;
-                    ?>
-                </td>
-                <td class="main_table_cell_active">
-                    <?php
-                    $row->transfer_fee = $currency->format($row->transfer_fee, $row->symbol, $row->symbol_order,
-                        $row->symbol_space);
-                    echo $row->transfer_fee;
-                    ?>
-                </td>
-                <td class="main_table_cell_active">
-                    <?php
-                    $row->privacy_fee = $currency->format($row->privacy_fee, $row->symbol, $row->symbol_order,
-                        $row->symbol_space);
-                    echo $row->privacy_fee;
-                    ?>
-                </td>
-                <td class="main_table_cell_active">
-                    <?php
-                    $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order,
-                        $row->symbol_space);
-                    echo $row->misc_fee;
-                    ?>
-                </td>
-                <td class="main_table_cell_active"><?php echo $row->currency; ?></td>
-                <td class="main_table_cell_active">
-                    <?php
-                    $sql_domain_count = "SELECT count(*) AS total_domain_count
+                <tr class="main_table_row_active">
+                    <td class="main_table_cell_active">&nbsp;</td>
+                    <td class="main_table_cell_active"><a class="invisiblelink"
+                                                          href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id; ?>">.<?php echo $row->tld; ?></a>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
+                            $row->symbol_space);
+                        echo $row->initial_fee;
+                        ?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order,
+                            $row->symbol_space);
+                        echo $row->renewal_fee;
+                        ?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $row->transfer_fee = $currency->format($row->transfer_fee, $row->symbol, $row->symbol_order,
+                            $row->symbol_space);
+                        echo $row->transfer_fee;
+                        ?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $row->privacy_fee = $currency->format($row->privacy_fee, $row->symbol, $row->symbol_order,
+                            $row->symbol_space);
+                        echo $row->privacy_fee;
+                        ?>
+                    </td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order,
+                            $row->symbol_space);
+                        echo $row->misc_fee;
+                        ?>
+                    </td>
+                    <td class="main_table_cell_active"><?php echo $row->currency; ?></td>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $sql_domain_count = "SELECT count(*) AS total_domain_count
                                          FROM domains
                                          WHERE registrar_id = '" . $row->id . "'
                                            AND fee_id = '" . $row->fee_id . "'
                                            AND active NOT IN ('0', '10')";
-                    $result_domain_count = mysqli_query($connection, $sql_domain_count);
-                    while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
+                        $result_domain_count = mysqli_query($connection, $sql_domain_count);
+                        while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
 
-                        if ($row_domain_count->total_domain_count == 0) {
+                            if ($row_domain_count->total_domain_count == 0) {
 
-                            echo "-";
+                                echo "-";
 
-                        } else {
+                            } else {
 
-                            echo "<a class=\"invisiblelink\" href=\"../../domains.php?rid=" . $row->id . "&tld=" . $row->tld . "\">" . $row_domain_count->total_domain_count . "</a>";
+                                echo "<a class=\"invisiblelink\" href=\"../../domains.php?rid=" . $row->id . "&tld=" . $row->tld . "\">" . $row_domain_count->total_domain_count . "</a>";
 
-                        }
+                            }
 
-                    } ?>
-                </td>
-                <td class="main_table_cell_active"><?php echo $last_updated; ?></td>
-            </tr>
+                        } ?>
+                    </td>
+                    <td class="main_table_cell_active"><?php echo $last_updated; ?></td>
+                </tr>
 
-            <?php
-            $last_registrar = $row->registrar;
-            $last_tld = $row->tld;
+                <?php
+                $last_registrar = $row->registrar;
+                $last_tld = $row->tld;
+
+            }
 
         }
-
-    }
-    ?>
+        ?>
     </table>
 
-    <?php
+<?php
 }
 ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

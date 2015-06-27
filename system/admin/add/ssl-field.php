@@ -50,7 +50,8 @@ $new_notes = $_POST['new_notes'];
 $custom_field = new DomainMOD\CustomField();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name != "" &&
-    $custom_field->checkFieldFormat($new_field_name)) {
+    $custom_field->checkFieldFormat($new_field_name)
+) {
 
     $query = "SELECT field_name
               FROM ssl_cert_fields
@@ -85,7 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
                 $q_i->execute();
                 $q_i->close();
 
-            } else { $error->outputSqlError($conn, "ERROR"); }
+            } else {
+                $error->outputSqlError($conn, "ERROR");
+            }
 
             if ($new_field_type_id == '1') { // Check Box
 
@@ -98,12 +101,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
                     $q->execute();
                     $q->close();
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else {
+                    $error->outputSqlError($conn, "ERROR");
+                }
 
             } elseif ($new_field_type_id == '2') { // Text
 
                 $query = "ALTER TABLE `ssl_cert_field_data`
-                          ADD `" . $new_field_name . "` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT
+                          ADD `" . $new_field_name . "` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT
                           NULL";
                 $q = $conn->stmt_init();
 
@@ -112,12 +117,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
                     $q->execute();
                     $q->close();
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else {
+                    $error->outputSqlError($conn, "ERROR");
+                }
 
             } elseif ($new_field_type_id == '3') { // Text Area
 
                 $query = "ALTER TABLE `ssl_cert_field_data`
-                          ADD `" . $new_field_name . "` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
+                          ADD `" . $new_field_name . "` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
                 $q = $conn->stmt_init();
 
                 if ($q->prepare($query)) {
@@ -125,7 +132,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
                     $q->execute();
                     $q->close();
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else {
+                    $error->outputSqlError($conn, "ERROR");
+                }
 
             }
 
@@ -139,7 +148,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 } else {
 
@@ -156,54 +167,58 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_ssl_field_form" method="post">
-<strong>Display Name (75)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
+    <strong>Display Name (75)</strong><a title="Required Field"><font
+            class="default_highlight">*</font></a><BR><BR><input
         name="new_name" type="text" size="30" maxlength="75" value="<?php echo $new_name; ?>"><BR><BR>
-<strong>Database Field Name (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField).<BR><BR>
-<font class="default_highlight">WARNING:</font> The Database Field Name cannot be renamed.<BR><BR><input
+    <strong>Database Field Name (30)</strong><a title="Required Field"><font
+            class="default_highlight">*</font></a><BR><BR>
+    The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField).<BR><BR>
+    <font class="default_highlight">WARNING:</font> The Database Field Name cannot be renamed.<BR><BR><input
         name="new_field_name" type="text" size="20" maxlength="30" value="<?php echo $new_field_name; ?>"><BR><BR>
-<strong>Data Type</strong><BR><BR>
-<font class="default_highlight">WARNING:</font> The Data Type cannot be changed.<BR><BR>
-<?php
-$query = "SELECT id, `name`
+    <strong>Data Type</strong><BR><BR>
+    <font class="default_highlight">WARNING:</font> The Data Type cannot be changed.<BR><BR>
+    <?php
+    $query = "SELECT id, `name`
           FROM custom_field_types
           ORDER BY `name` ASC";
-$q = $conn->stmt_init();
+    $q = $conn->stmt_init();
 
-if ($q->prepare($query)) {
+    if ($q->prepare($query)) {
 
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($id, $name);
 
-    echo "<select name=\"new_field_type_id\">";
+        echo "<select name=\"new_field_type_id\">";
 
-    while ($q->fetch()) { ?>
+        while ($q->fetch()) { ?>
 
-        <option value="<?php echo $id; ?>"><?php echo $name; ?></option><?php
+            <option value="<?php echo $id; ?>"><?php echo $name; ?></option><?php
 
+        }
+
+        echo "</select>";
+
+        $q->close();
+
+    } else {
+        $error->outputSqlError($conn, "ERROR");
     }
-
-    echo "</select>";
-
-    $q->close();
-
-} else { $error->outputSqlError($conn, "ERROR"); }
-?>
-<BR><BR>
-<strong>Description (255)</strong><BR><BR><input name="new_description" type="text" size="50" maxlength="255"
-    value="<?php echo $new_description; ?>">
-<BR><BR>
-<strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<BR><BR>
-<input type="submit" name="button" value="Add Custom Field &raquo;">
+    ?>
+    <BR><BR>
+    <strong>Description (255)</strong><BR><BR><input name="new_description" type="text" size="50" maxlength="255"
+                                                     value="<?php echo $new_description; ?>">
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <BR><BR>
+    <input type="submit" name="button" value="Add Custom Field &raquo;">
 </form>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

@@ -141,23 +141,25 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
 <?php echo $reporting->showTableTop(); ?>
-    <form name="export_dw_form" method="post">
-        <a href="potential-problems.php?generate=1">Generate</a>
-        <?php if ($generate == 1) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="potential-problems.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
-        <?php } ?>
-    </form>
+<form name="export_dw_form" method="post">
+    <a href="potential-problems.php?generate=1">Generate</a>
+    <?php if ($generate == 1) { ?>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
+                href="potential-problems.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
+                REPORT</a>]</strong>
+    <?php } ?>
+</form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php if ($generate == 1) { ?>
-<BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
-<BR>
+    <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
+    <BR>
 <?php } ?>
 <?php
 if ($generate == 1) {

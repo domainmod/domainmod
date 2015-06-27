@@ -69,7 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $whid = $new_whid;
 
@@ -101,7 +103,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 }
 
@@ -132,7 +136,9 @@ if ($del == "1") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 }
 
@@ -148,7 +154,9 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Deleted<BR>";
 
@@ -160,26 +168,26 @@ if ($really_del == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_host_form" method="post">
-<strong>Web Host Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    <strong>Web Host Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
         </font></a><BR><BR>
-<input name="new_host" type="text" value="<?php if ($new_host != "") echo htmlentities($new_host); ?>
+    <input name="new_host" type="text" value="<?php if ($new_host != "") echo htmlentities($new_host); ?>
 " size="50" maxlength="100">
-<BR><BR>
-<strong>Registrar's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    <BR><BR>
+    <strong>Registrar's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
         </font></a><BR><BR>
-<input name="new_url" type="text" value="<?php echo htmlentities($new_url); ?>" size="50" maxlength="100">
-<BR><BR>
-<strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<input type="hidden" name="new_whid" value="<?php echo $whid; ?>">
-<BR><BR>
-<input type="submit" name="button" value="Update This Web Host &raquo;">
+    <input name="new_url" type="text" value="<?php echo htmlentities($new_url); ?>" size="50" maxlength="100">
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <input type="hidden" name="new_whid" value="<?php echo $whid; ?>">
+    <BR><BR>
+    <input type="submit" name="button" value="Update This Web Host &raquo;">
 </form>
 <BR><BR><a href="host.php?whid=<?php echo $whid; ?>&del=1">DELETE THIS WEB HOST</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

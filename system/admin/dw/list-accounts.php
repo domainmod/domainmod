@@ -73,7 +73,7 @@ if ($_SESSION['dw_view_all'] == "1") {
 
 if ($domain != "") {
 
-        $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+    $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
                                 FROM dw_accounts AS a, dw_servers AS s
                                 WHERE a.server_id = s.id
                                   AND a.domain = '" . $domain . "'
@@ -231,21 +231,21 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-    <font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR><?php
+<font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR><?php
 
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_account_temp));
 $layout = new DomainMOD\Layout();
 $parameters = array($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
 $navigate = $layout->pageBrowser($parameters);
-$sql_dw_account_temp = $sql_dw_account_temp.$navigate[0];
+$sql_dw_account_temp = $sql_dw_account_temp . $navigate[0];
 $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or $error->outputOldSqlError($connection);
 
-if(mysqli_num_rows($result_dw_account_temp) == 0) {
+if (mysqli_num_rows($result_dw_account_temp) == 0) {
 
     echo "Your search returned 0 results.";
 
@@ -259,7 +259,9 @@ if(mysqli_num_rows($result_dw_account_temp) == 0) {
         <input type="hidden" name="numBegin" value="1">
     </form><BR>
 
-    <strong>[<a href="list-accounts.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong><BR><BR>
+    <strong>[<a
+            href="list-accounts.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong>
+    <BR><BR>
 
     <strong>Number of Accounts:</strong> <?php echo $totalrows; ?><BR><BR>
     <?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?><BR>

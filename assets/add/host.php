@@ -63,7 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $_SESSION['result_message'] = "Web Host <font class=\"highlight\">" . $new_host . "</font> Added<BR>";
 
@@ -82,24 +84,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_host_form" method="post">
-<strong>Web Host Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    <strong>Web Host Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
         </font></a><BR><BR>
-<input name="new_host" type="text" value="<?php echo $new_host; ?>" size="50" maxlength="100">
-<BR><BR>
-<strong>Web Host's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    <input name="new_host" type="text" value="<?php echo $new_host; ?>" size="50" maxlength="100">
+    <BR><BR>
+    <strong>Web Host's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
         </font></a><BR><BR>
-<input name="new_url" type="text" value="<?php echo $new_url; ?>" size="50" maxlength="100">
-<BR><BR>
-<strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<BR><BR>
-<input type="submit" name="button" value="Add This Web Host &raquo;">
+    <input name="new_url" type="text" value="<?php echo $new_url; ?>" size="50" maxlength="100">
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <BR><BR>
+    <input type="submit" name="button" value="Add This Web Host &raquo;">
 </form>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

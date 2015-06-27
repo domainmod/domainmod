@@ -171,8 +171,8 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
@@ -183,7 +183,7 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 
 if (mysqli_num_rows($result) > 0) { ?>
 
-    <table class="main_table" cellpadding="0" cellspacing="0">
+<table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Active Users (<?php echo mysqli_num_rows($result); ?>)</font>
@@ -199,29 +199,31 @@ if (mysqli_num_rows($result) > 0) { ?>
     while ($row = mysqli_fetch_object($result)) { ?>
 
         <tr class="main_table_row_active">
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?> <?php echo $row->last_name; ?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\">*</font></a>"; ?>
-            </td>
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
-            </td>
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->email_address; ?></a>
-            </td>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?> <?php echo $row->last_name; ?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\">*</font></a>"; ?>
+        </td>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
+        </td>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->email_address; ?></a>
+        </td>
         </tr><?php
     }
 
-}
+    }
 
-$sql = "SELECT id, first_name, last_name, username, email_address, admin
+    $sql = "SELECT id, first_name, last_name, username, email_address, admin
         FROM users
         WHERE active = '0'
         ORDER BY first_name, last_name, username, email_address";
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-if (mysqli_num_rows($result) > 0) { ?>
+    if (mysqli_num_rows($result) > 0) { ?>
 
-    <tr class="main_table_row_heading_inactive">
+        <tr class="main_table_row_heading_inactive">
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Inactive Users (<?php echo mysqli_num_rows($result); ?>)</font>
         </td>
@@ -231,25 +233,28 @@ if (mysqli_num_rows($result) > 0) { ?>
         <td class="main_table_cell_heading_inactive">
             <font class="main_table_heading">Email Address</font>
         </td>
-    </tr><?php
-
-    while ($row = mysqli_fetch_object($result)) { ?>
-
-        <tr class="main_table_row_inactive">
-            <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?> <?php echo $row->last_name; ?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\">*</font></a>"; ?></a>
-            </td>
-            <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
-            </td>
-            <td class="main_table_cell_inactive">
-                <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->email_address; ?></a>
-            </td>
         </tr><?php
 
-    }
+        while ($row = mysqli_fetch_object($result)) { ?>
 
-} ?>
+            <tr class="main_table_row_inactive">
+            <td class="main_table_cell_inactive">
+                <a class="invisiblelink"
+                   href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?> <?php echo $row->last_name; ?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+            </td>
+            <td class="main_table_cell_inactive">
+                <a class="invisiblelink"
+                   href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
+            </td>
+            <td class="main_table_cell_inactive">
+                <a class="invisiblelink"
+                   href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->email_address; ?></a>
+            </td>
+            </tr><?php
+
+        }
+
+    } ?>
 </table>
 <BR><font class="default_highlight">*</font> = Admin Account
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

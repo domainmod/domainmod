@@ -98,13 +98,17 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 Below is a list of all the Custom SSL Fields that have been added to <?php echo $software_title; ?>.<BR><BR>
-Custom SSL Fields help extend the functionality of <?php echo $software_title; ?> by allowing the user to create their own data fields. For example, if you were working in a corporate environment and wanted to keep a record of who purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information for every one of your SSL certificates. And when you export your SSL data, the information contained in your custom fields will automatically be included in the exported data.
+Custom SSL Fields help extend the functionality of <?php echo $software_title; ?> by allowing the user to create their
+own data fields. For example, if you were working in a corporate environment and wanted to keep a record of who
+purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information
+for every one of your SSL certificates. And when you export your SSL data, the information contained in your custom
+fields will automatically be included in the exported data.
 <BR><BR><?php
 
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -113,7 +117,7 @@ if (mysqli_num_rows($result) > 0) { ?>
 
     [<a href="ssl-fields.php?export_data=1">EXPORT</a>]
 
-    <table class="main_table" cellpadding="0" cellspacing="0">
+<table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Display Name (<?php echo mysqli_num_rows($result); ?>)</font>
@@ -135,40 +139,46 @@ if (mysqli_num_rows($result) > 0) { ?>
     while ($row = mysqli_fetch_object($result)) { ?>
 
         <tr class="main_table_row_active">
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/ssl-field.php?csfid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
-            </td>
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/ssl-field.php?csfid=<?php echo $row->id; ?>"><?php echo $row->field_name; ?></a>
-            </td>
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/ssl-field.php?csfid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a>
-            </td>
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/ssl-field.php?csfid=<?php echo $row->id; ?>"><?php echo $row->insert_time; ?></a>
-            </td>
-            <td class="main_table_cell_active">
-                <?php
-                if ($row->update_time == "0000-00-00 00:00:00") {
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/ssl-field.php?csfid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
+        </td>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/ssl-field.php?csfid=<?php echo $row->id; ?>"><?php echo $row->field_name; ?></a>
+        </td>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/ssl-field.php?csfid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a>
+        </td>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/ssl-field.php?csfid=<?php echo $row->id; ?>"><?php echo $row->insert_time; ?></a>
+        </td>
+        <td class="main_table_cell_active">
+            <?php
+            if ($row->update_time == "0000-00-00 00:00:00") {
 
-                    $temp_update_time = "n/a";
+                $temp_update_time = "n/a";
 
-                } else {
+            } else {
 
-                    $temp_update_time = $row->update_time;
+                $temp_update_time = $row->update_time;
 
-                }
-                ?>
-                <a class="invisiblelink" href="edit/ssl-field.php?csfid=<?php echo $row->id; ?>"><?php echo $temp_update_time; ?></a>
-            </td>
+            }
+            ?>
+            <a class="invisiblelink"
+               href="edit/ssl-field.php?csfid=<?php echo $row->id; ?>"><?php echo $temp_update_time; ?></a>
+        </td>
         </tr><?php
     }
 
-} else { ?>
+    } else { ?>
 
-    It appears as though you haven't created any Custom SSL Fields yet. <a href="add/ssl-field.php">Click here</a> to add one.<?php
+        It appears as though you haven't created any Custom SSL Fields yet. <a href="add/ssl-field.php">Click
+            here</a> to add one.<?php
 
-} ?>
+    } ?>
 </table>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

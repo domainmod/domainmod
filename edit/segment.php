@@ -82,15 +82,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['result_message'] = "There are " . number_format($invalid_count) . " invalid
                         domains on your list<BR><BR>" . $temp_result_message;
 
-                    if (($invalid_count-$invalid_to_display) == 1) {
+                    if (($invalid_count - $invalid_to_display) == 1) {
 
                         $_SESSION['result_message'] .= "<BR>Plus " .
-                            number_format($invalid_count-$invalid_to_display) . " other<BR>";
+                            number_format($invalid_count - $invalid_to_display) . " other<BR>";
 
-                    } elseif (($invalid_count-$invalid_to_display) > 1) {
+                    } elseif (($invalid_count - $invalid_to_display) > 1) {
 
                         $_SESSION['result_message'] .= "<BR>Plus " .
-                            number_format($invalid_count-$invalid_to_display) . " others<BR>";
+                            number_format($invalid_count - $invalid_to_display) . " others<BR>";
                     }
 
                 }
@@ -107,7 +107,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             while (list($key, $new_domain) = each($lines)) {
 
                 if (!$domain->checkDomainFormat($new_domain)) {
-                    echo "invalid domain $key"; exit;
+                    echo "invalid domain $key";
+                    exit;
                 }
 
             }
@@ -115,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $new_segment_formatted = "'" . $new_segment;
             $new_segment_formatted = $new_segment_formatted . "'";
             $new_segment_formatted = preg_replace("/\r\n/", "','", $new_segment_formatted);
-            $new_segment_formatted = str_replace (" ", "", $new_segment_formatted);
+            $new_segment_formatted = str_replace(" ", "", $new_segment_formatted);
             $new_segment_formatted = trim($new_segment_formatted);
 
             $query = "UPDATE segments
@@ -135,7 +136,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->execute();
                 $q->close();
 
-            } else { $error->outputSqlError($conn, "ERROR"); }
+            } else {
+                $error->outputSqlError($conn, "ERROR");
+            }
 
             $query = "DELETE FROM segment_data
                       WHERE segment_id = ?";
@@ -147,7 +150,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->execute();
                 $q->close();
 
-            } else { $error->outputSqlError($conn, "ERROR"); }
+            } else {
+                $error->outputSqlError($conn, "ERROR");
+            }
 
             foreach ($lines as $domain) {
 
@@ -163,7 +168,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q->execute();
                     $q->close();
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else {
+                    $error->outputSqlError($conn, "ERROR");
+                }
 
             }
 
@@ -201,7 +208,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $new_segment = preg_replace("/', '/", "\r\n", $new_segment);
     $new_segment = preg_replace("/','/", "\r\n", $new_segment);
@@ -232,7 +241,9 @@ if ($really_del == "1") {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $query = "DELETE FROM segments
               WHERE id = ?";
@@ -244,7 +255,9 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $query = "DELETE FROM segment_data
               WHERE segment_id = ?";
@@ -256,7 +269,9 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $_SESSION['result_message'] = "Segment <font class=\"highlight\">$temp_segment_name</font> Deleted<BR>";
 
@@ -268,30 +283,30 @@ if ($really_del == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_segment_form" method="post">
-<strong>Segment Name (35)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    <strong>Segment Name (35)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
         </font></a><BR><BR>
-<input name="new_name" type="text" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>" size="25"
-       maxlength="35">
-<BR><BR>
-<strong>Segment Domains (one per line)</strong><a title="Required Field"><font class="default_highlight"><strong>*
+    <input name="new_name" type="text" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>" size="25"
+           maxlength="35">
+    <BR><BR>
+    <strong>Segment Domains (one per line)</strong><a title="Required Field"><font class="default_highlight"><strong>*
             </strong></font></a><BR><BR>
-<textarea name="new_segment" cols="60" rows="5"><?php if ($new_segment != "") echo $new_segment; ?></textarea>
-<BR><BR>
-<strong>Description</strong><BR><BR>
+    <textarea name="new_segment" cols="60" rows="5"><?php if ($new_segment != "") echo $new_segment; ?></textarea>
+    <BR><BR>
+    <strong>Description</strong><BR><BR>
 <textarea name="new_description" cols="60" rows="5"><?php if ($new_description != "") echo $new_description; ?>
     </textarea>
-<BR><BR>
-<strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<input type="hidden" name="new_segid" value="<?php echo $segid; ?>">
-<BR><BR>
-<input type="submit" name="button" value="Update This Segment &raquo;">
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <input type="hidden" name="new_segid" value="<?php echo $segid; ?>">
+    <BR><BR>
+    <input type="submit" name="button" value="Update This Segment &raquo;">
 </form>
 <BR><BR><a href="segment.php?segid=<?php echo $segid; ?>&del=1">DELETE THIS SEGMENT</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

@@ -44,16 +44,16 @@ $new_username = $_REQUEST['new_username'];
 
 if ($new_username != "") {
 
-   $sql = "SELECT username, email_address
+    $sql = "SELECT username, email_address
            FROM users
            WHERE username = '$new_username'
              AND active = '1'";
 
-   $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     if (mysqli_num_rows($result) == 1) {
 
-        while($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
             $new_password = substr(md5(time()), 0, 8);
 
@@ -94,17 +94,19 @@ if ($new_username != "") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header-login.inc.php"); ?>
 <div class="reset-password">
     <font class="headline">Reset Your Password</font>
     <BR><BR><BR>
+
     <form name="reset_password_form" method="post">
-    <strong>Username:</strong>&nbsp;<input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
-    <input type="submit" name="button" value="Reset Password &raquo;">
+        <strong>Username:</strong>&nbsp;<input name="new_username" type="text" value="<?php echo $new_username; ?>"
+                                               size="20" maxlength="20"><BR><BR>
+        <input type="submit" name="button" value="Reset Password &raquo;">
     </form>
     <BR><BR>[<a class="invisiblelink" href="index.php">Cancel Password Reset</a>]
 </div>

@@ -94,7 +94,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 WHERE id = '" . $new_account_id . "'";
         $result = mysqli_query($connection, $sql);
 
-        while ($row = mysqli_fetch_object($result)) { $new_ssl_provider_id = $row->ssl_provider_id; $new_owner_id = $row->owner_id; }
+        while ($row = mysqli_fetch_object($result)) {
+            $new_ssl_provider_id = $row->ssl_provider_id;
+            $new_owner_id = $row->owner_id;
+        }
 
         $sql_fee_id = "SELECT id
                        FROM ssl_fees
@@ -124,7 +127,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   AND type_id = '" . $new_type_id . "'";
         $result = mysqli_query($connection, $sql);
 
-        while ($row = mysqli_fetch_object($result)) { $new_total_cost = $row->total_cost; }
+        while ($row = mysqli_fetch_object($result)) {
+            $new_total_cost = $row->total_cost;
+        }
 
         $sql_update = "UPDATE ssl_certs
                        SET owner_id = '" . $new_owner_id . "',
@@ -185,8 +190,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_name == "") { $_SESSION['result_message'] .= "Enter the SSL certificate name<BR>"; }
-        if (!$date->checkDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }
+        if ($new_name == "") {
+            $_SESSION['result_message'] .= "Enter the SSL certificate name<BR>";
+        }
+        if (!$date->checkDateFormat($new_expiry_date)) {
+            $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>";
+        }
 
     }
 
@@ -237,7 +246,9 @@ if ($really_del == "1") {
             FROM ssl_cert_types
             WHERE id = '" . $new_type_id . "'";
     $result = mysqli_query($connection, $sql);
-    while ($row = mysqli_fetch_object($result)) { $temp_type = $row->type; }
+    while ($row = mysqli_fetch_object($result)) {
+        $temp_type = $row->type;
+    }
 
     $_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name ($temp_type)</font> Deleted<BR>";
 
@@ -251,205 +262,225 @@ if ($really_del == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_ssl_cert_form" method="post">
-<strong>Host / Label (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-<input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
-<BR><BR>
-<strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-<input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
-<BR><BR>
-<strong>Domain</strong><BR><BR>
-<?php
-$sql_domain = "SELECT id, domain
+    <strong>Host / Label (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <input name="new_name" type="text" size="50" maxlength="100"
+           value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
+    <BR><BR>
+    <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font
+            class="default_highlight">*</font></a><BR><BR>
+    <input name="new_expiry_date" type="text" size="10" maxlength="10"
+           value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
+    <BR><BR>
+    <strong>Domain</strong><BR><BR>
+    <?php
+    $sql_domain = "SELECT id, domain
                FROM domains
                WHERE (active NOT IN ('0', '10') OR id = '" . $new_domain_id . "')
                ORDER BY domain";
-$result_domain = mysqli_query($connection, $sql_domain) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_domain_id\">";
-while ($row_domain = mysqli_fetch_object($result_domain)) { ?>
+    $result_domain = mysqli_query($connection, $sql_domain) or $error->outputOldSqlError($connection);
+    echo "<select name=\"new_domain_id\">";
+    while ($row_domain = mysqli_fetch_object($result_domain)) { ?>
 
-    <option value="<?php echo $row_domain->id; ?>"<?php if ($row_domain->id == $new_domain_id) echo " selected";?>><?php echo $row_domain->domain; ?></option><?php
+        <option value="<?php echo $row_domain->id; ?>"<?php if ($row_domain->id == $new_domain_id) echo " selected"; ?>><?php echo $row_domain->domain; ?></option><?php
 
-}
-echo "</select>";
-?>
-<BR><BR>
-<strong>SSL Provider Account</strong><BR><BR>
-<?php
-$sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS sslp_name
+    }
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>SSL Provider Account</strong><BR><BR>
+    <?php
+    $sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS sslp_name
                 FROM ssl_accounts AS sslpa, owners AS o, ssl_providers AS sslp
                 WHERE sslpa.owner_id = o.id
                   AND sslpa.ssl_provider_id = sslp.id
-                ORDER BY sslp_name asc, o_name asc, sslpa.username asc";
-$result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_account_id\">";
-while ($row_account = mysqli_fetch_object($result_account)) { ?>
+                ORDER BY sslp_name ASC, o_name ASC, sslpa.username ASC";
+    $result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
+    echo "<select name=\"new_account_id\">";
+    while ($row_account = mysqli_fetch_object($result_account)) { ?>
 
-    <option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $new_account_id) echo " selected";?>><?php echo $row_account->sslp_name; ?>, <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
-
-}
-echo "</select>";
-?>
-<BR><BR>
-<strong>Certificate Type</strong><BR><BR>
-<?php
-$sql_type = "SELECT id, type
-             FROM ssl_cert_types
-             ORDER BY type asc";
-$result_type = mysqli_query($connection, $sql_type) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_type_id\">";
-while ($row_type = mysqli_fetch_object($result_type)) { ?>
-
-    <option value="<?php echo $row_type->id; ?>"<?php if ($row_type->id == $new_type_id) echo " selected";?>><?php echo $row_type->type; ?></option><?php
-
-}
-echo "</select>";
-?>
-<BR><BR>
-<strong>IP Address</strong><BR><BR>
-<?php
-$sql_ip = "SELECT id, ip, name
-           FROM ip_addresses
-           ORDER BY name, ip";
-$result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_ip_id\">";
-while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
-
-    <option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $new_ip_id) echo " selected";?>><?php echo $row_ip->name; ?> (<?php echo $row_ip->ip; ?>)</option><?php
-
-}
-echo "</select>";
-?>
-<BR><BR>
-<strong>Category</strong><BR><BR>
-<?php
-$sql_cat = "SELECT id, name
-            FROM categories
-            ORDER BY name";
-$result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_cat_id\">";
-while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
-
-    <option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $new_cat_id) echo " selected";?>><?php echo $row_cat->name; ?></option><?php
-
-}
-echo "</select>";
-?>
-<BR><BR>
-<strong>Certificate Status</strong><BR><BR>
-<?php
-echo "<select name=\"new_active\">";
-echo "<option value=\"1\""; if ($new_active == "1") echo " selected"; echo ">Active</option>";
-echo "<option value=\"2\""; if ($new_active == "2") echo " selected"; echo ">Pending (Registration)</option>";
-echo "<option value=\"3\""; if ($new_active == "3") echo " selected"; echo ">Pending (Renewal)</option>";
-echo "<option value=\"4\""; if ($new_active == "4") echo " selected"; echo ">Pending (Other)</option>";
-echo "<option value=\"0\""; if ($new_active == "0") echo " selected"; echo ">Expired</option>";
-echo "</select>";
-?>
-<BR><BR>
-<strong>Notes</strong><?php if ($new_notes != "") { ?> [<a target="_blank" href="ssl-cert-notes.php?sslcid=<?php echo $sslcid; ?>">view full notes</a>]<?php } ?><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<input type="hidden" name="new_sslcid" value="<?php echo $sslcid; ?>">
-<BR><BR>
-<?php
-$sql = "SELECT field_name
-        FROM ssl_cert_fields
-        ORDER BY type_id, name";
-$result = mysqli_query($connection, $sql);
-
-if (mysqli_num_rows($result) > 0) { ?>
-
-    <BR><font class="subheadline">Custom Fields</font><BR><BR><?php
-
-    $count = 0;
-
-    while ($row = mysqli_fetch_object($result)) {
-
-        $field_array[$count] = $row->field_name;
-        $count++;
+        <option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $new_account_id) echo " selected"; ?>><?php echo $row_account->sslp_name; ?>
+        , <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
 
     }
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>Certificate Type</strong><BR><BR>
+    <?php
+    $sql_type = "SELECT id, type
+             FROM ssl_cert_types
+             ORDER BY type ASC";
+    $result_type = mysqli_query($connection, $sql_type) or $error->outputOldSqlError($connection);
+    echo "<select name=\"new_type_id\">";
+    while ($row_type = mysqli_fetch_object($result_type)) { ?>
 
-    foreach ($field_array as $field) {
+        <option value="<?php echo $row_type->id; ?>"<?php if ($row_type->id == $new_type_id) echo " selected"; ?>><?php echo $row_type->type; ?></option><?php
 
-        $sql = "SELECT sf.name, sf.field_name, sf.type_id, sf.description
-                FROM ssl_cert_fields AS sf, custom_field_types AS cft
-                WHERE sf.type_id = cft.id
-                  AND sf.field_name = '" . $field . "'";
-        $result = mysqli_query($connection, $sql);
+    }
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>IP Address</strong><BR><BR>
+    <?php
+    $sql_ip = "SELECT id, ip, name
+           FROM ip_addresses
+           ORDER BY name, ip";
+    $result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
+    echo "<select name=\"new_ip_id\">";
+    while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
+
+        <option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $new_ip_id) echo " selected"; ?>><?php echo $row_ip->name; ?>
+        (<?php echo $row_ip->ip; ?>)</option><?php
+
+    }
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>Category</strong><BR><BR>
+    <?php
+    $sql_cat = "SELECT id, name
+            FROM categories
+            ORDER BY name";
+    $result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
+    echo "<select name=\"new_cat_id\">";
+    while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
+
+        <option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $new_cat_id) echo " selected"; ?>><?php echo $row_cat->name; ?></option><?php
+
+    }
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>Certificate Status</strong><BR><BR>
+    <?php
+    echo "<select name=\"new_active\">";
+    echo "<option value=\"1\"";
+    if ($new_active == "1") echo " selected";
+    echo ">Active</option>";
+    echo "<option value=\"2\"";
+    if ($new_active == "2") echo " selected";
+    echo ">Pending (Registration)</option>";
+    echo "<option value=\"3\"";
+    if ($new_active == "3") echo " selected";
+    echo ">Pending (Renewal)</option>";
+    echo "<option value=\"4\"";
+    if ($new_active == "4") echo " selected";
+    echo ">Pending (Other)</option>";
+    echo "<option value=\"0\"";
+    if ($new_active == "0") echo " selected";
+    echo ">Expired</option>";
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>Notes</strong><?php if ($new_notes != "") { ?> [<a target="_blank"
+                                                               href="ssl-cert-notes.php?sslcid=<?php echo $sslcid; ?>">view
+        full notes</a>]<?php } ?><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <input type="hidden" name="new_sslcid" value="<?php echo $sslcid; ?>">
+    <BR><BR>
+    <?php
+    $sql = "SELECT field_name
+        FROM ssl_cert_fields
+        ORDER BY type_id, name";
+    $result = mysqli_query($connection, $sql);
+
+    if (mysqli_num_rows($result) > 0) { ?>
+
+        <BR><font class="subheadline">Custom Fields</font><BR><BR><?php
+
+        $count = 0;
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $sql_data = "SELECT " . $row->field_name . "
+            $field_array[$count] = $row->field_name;
+            $count++;
+
+        }
+
+        foreach ($field_array as $field) {
+
+            $sql = "SELECT sf.name, sf.field_name, sf.type_id, sf.description
+                FROM ssl_cert_fields AS sf, custom_field_types AS cft
+                WHERE sf.type_id = cft.id
+                  AND sf.field_name = '" . $field . "'";
+            $result = mysqli_query($connection, $sql);
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $sql_data = "SELECT " . $row->field_name . "
                          FROM ssl_cert_field_data
                          WHERE ssl_id = '" . $sslcid . "'";
-            $result_data = mysqli_query($connection, $sql_data);
+                $result_data = mysqli_query($connection, $sql_data);
 
-            while ($row_data = mysqli_fetch_object($result_data)) {
+                while ($row_data = mysqli_fetch_object($result_data)) {
 
-                $field_data = $row_data->{$row->field_name};
-
-            }
-
-            if ($row->type_id == "1") { // Check Box ?>
-
-                <input type="checkbox" name="new_<?php echo $row->field_name; ?>" value="1"<?php if ($field_data == "1") echo " checked"; ?>>
-                &nbsp;<strong><?php echo $row->name; ?></strong><BR><?php
-
-                if ($row->description != "") {
-
-                    echo $row->description . "<BR><BR>";
-
-                } else {
-
-                    echo "<BR>";
+                    $field_data = $row_data->{$row->field_name};
 
                 }
 
-            } elseif ($row->type_id == "2") { // Text ?>
+                if ($row->type_id == "1") { // Check Box ?>
 
-                <strong><?php echo $row->name; ?> (255)</strong><BR><?php
-                if ($row->description != "") {
+                    <input type="checkbox" name="new_<?php echo $row->field_name; ?>"
+                           value="1"<?php if ($field_data == "1") echo " checked"; ?>>
+                    &nbsp;<strong><?php echo $row->name; ?></strong><BR><?php
 
-                    echo $row->description . "<BR><BR>";
+                    if ($row->description != "") {
 
-                } else {
+                        echo $row->description . "<BR><BR>";
 
-                    echo "<BR>";
+                    } else {
 
-                } ?>
-                <input type="text" name="new_<?php echo $row->field_name; ?>" size="50" maxlength="255" value="<?php echo htmlentities($field_data); ?>"><BR><BR><?php
+                        echo "<BR>";
 
-            } elseif ($row->type_id == "3") { // Text Area ?>
+                    }
 
-                <strong><?php echo $row->name; ?></strong><BR><?php
-                if ($row->description != "") {
+                } elseif ($row->type_id == "2") { // Text ?>
 
-                    echo $row->description . "<BR><BR>";
+                    <strong><?php echo $row->name; ?> (255)</strong><BR><?php
+                    if ($row->description != "") {
 
-                } else {
+                        echo $row->description . "<BR><BR>";
 
-                    echo "<BR>";
+                    } else {
 
-                } ?>
-                <textarea name="new_<?php echo $row->field_name; ?>" cols="60" rows="5"><?php echo $field_data; ?></textarea><BR><BR><?php
+                        echo "<BR>";
+
+                    } ?>
+                    <input type="text" name="new_<?php echo $row->field_name; ?>" size="50" maxlength="255"
+                           value="<?php echo htmlentities($field_data); ?>"><BR><BR><?php
+
+                } elseif ($row->type_id == "3") { // Text Area ?>
+
+                    <strong><?php echo $row->name; ?></strong><BR><?php
+                    if ($row->description != "") {
+
+                        echo $row->description . "<BR><BR>";
+
+                    } else {
+
+                        echo "<BR>";
+
+                    } ?>
+                    <textarea name="new_<?php echo $row->field_name; ?>" cols="60"
+                              rows="5"><?php echo $field_data; ?></textarea><BR><BR><?php
+
+                }
 
             }
 
         }
 
+        echo "<BR>";
+
     }
-
-    echo "<BR>";
-
-}
-?>
-<input type="submit" name="button" value="Update This SSL Certificate &raquo;">
+    ?>
+    <input type="submit" name="button" value="Update This SSL Certificate &raquo;">
 </form>
 <BR><BR>
 <a href="ssl-cert.php?sslcid=<?php echo $sslcid; ?>&del=1">DELETE THIS SSL CERTIFICATE</a>

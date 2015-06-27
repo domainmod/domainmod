@@ -76,12 +76,12 @@ $sql = "SELECT sslc.id, YEAR(sslc.expiry_date) AS year, MONTH(sslc.expiry_date) 
           AND f.currency_id = c.id
           AND sslc.active NOT IN ('0')
           " . $range_string . "
-        GROUP BY year, month
-        ORDER BY year, month";
+        GROUP BY YEAR, MONTH
+        ORDER BY YEAR, MONTH";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $total_rows = mysqli_num_rows($result);
 
-$sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) as grand_total, count(*) AS number_of_certs_total
+$sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
                     FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
                     WHERE sslc.fee_id = f.id
                       AND f.currency_id = c.id
@@ -189,18 +189,31 @@ if ($submission_failed != "1" && $total_rows > 0) {
                 $monthly_cost = $currency->format($monthly_cost, $_SESSION['default_currency_symbol'],
                     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-                if ($row->month == "1") { $display_month = "January"; }
-                elseif ($row->month == "2") { $display_month = "February"; }
-                elseif ($row->month == "3") { $display_month = "March"; }
-                elseif ($row->month == "4") { $display_month = "April"; }
-                elseif ($row->month == "5") { $display_month = "May"; }
-                elseif ($row->month == "6") { $display_month = "June"; }
-                elseif ($row->month == "7") { $display_month = "July"; }
-                elseif ($row->month == "8") { $display_month = "August"; }
-                elseif ($row->month == "9") { $display_month = "September"; }
-                elseif ($row->month == "10") { $display_month = "October"; }
-                elseif ($row->month == "11") { $display_month = "November"; }
-                elseif ($row->month == "12") { $display_month = "December"; }
+                if ($row->month == "1") {
+                    $display_month = "January";
+                } elseif ($row->month == "2") {
+                    $display_month = "February";
+                } elseif ($row->month == "3") {
+                    $display_month = "March";
+                } elseif ($row->month == "4") {
+                    $display_month = "April";
+                } elseif ($row->month == "5") {
+                    $display_month = "May";
+                } elseif ($row->month == "6") {
+                    $display_month = "June";
+                } elseif ($row->month == "7") {
+                    $display_month = "July";
+                } elseif ($row->month == "8") {
+                    $display_month = "August";
+                } elseif ($row->month == "9") {
+                    $display_month = "September";
+                } elseif ($row->month == "10") {
+                    $display_month = "October";
+                } elseif ($row->month == "11") {
+                    $display_month = "November";
+                } elseif ($row->month == "12") {
+                    $display_month = "December";
+                }
 
                 $sql_yearly_cost = "SELECT SUM(sslc.total_cost * cc.conversion) AS yearly_cost
                                     FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
@@ -244,23 +257,33 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
 <?php echo $reporting->showTableTop(); ?>
-    <form name="export_ssl_form" method="post">
-        <a href="cost-by-month.php?all=1">View All</a> or Expiring Between
-        <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and
-        <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-        <?php if ($total_rows > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-month.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
-        <?php } ?>
-    </form>
+<form name="export_ssl_form" method="post">
+    <a href="cost-by-month.php?all=1">View All</a> or Expiring Between
+    <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") {
+        echo "value=\"" . $time->timeBasic() . "\"";
+    } else {
+        echo "value=\"$new_start_date\"";
+    } ?>>
+    and
+    <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") {
+        echo "value=\"" . $time->timeBasic() . "\"";
+    } else {
+        echo "value=\"$new_end_date\"";
+    } ?>>
+    &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
+    <?php if ($total_rows > 0) { ?>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
+                href="cost-by-month.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
+                REPORT</a>]</strong>
+    <?php } ?>
+</form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
@@ -274,31 +297,31 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
     <strong>Number of SSL Certs:</strong> <?php echo $number_of_certs_total; ?><BR>
     <table class="main_table" cellpadding="0" cellspacing="0">
-    <tr class="main_table_row_heading_active">
-        <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Year</font></td>
-        <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Month</font></td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Cost</font>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">By Year</font>
-        </td>
-    </tr>
-    <?php
+        <tr class="main_table_row_heading_active">
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Year</font></td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Month</font></td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Cost</font>
+            </td>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">By Year</font>
+            </td>
+        </tr>
+        <?php
 
-    $new_year = "";
-    $last_year = "";
-    $new_month = "";
-    $last_month = "";
+        $new_year = "";
+        $last_year = "";
+        $new_month = "";
+        $last_month = "";
 
-    while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-        $new_year = $row->year;
-        $new_month = $row->month;
+            $new_year = $row->year;
+            $new_month = $row->month;
 
-        $sql_monthly_cost = "SELECT SUM(sslc.total_cost * cc.conversion) AS monthly_cost
+            $sql_monthly_cost = "SELECT SUM(sslc.total_cost * cc.conversion) AS monthly_cost
                              FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
                              WHERE sslc.fee_id = f.id
                                AND f.currency_id = c.id
@@ -308,31 +331,44 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                                AND YEAR(sslc.expiry_date) = '" . $row->year . "'
                                AND MONTH(sslc.expiry_date) = '" . $row->month . "'
                                  " . $range_string . "";
-        $result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
+            $result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
 
-        while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
-            $monthly_cost = $row_monthly_cost->monthly_cost;
-        }
+            while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
+                $monthly_cost = $row_monthly_cost->monthly_cost;
+            }
 
-        $monthly_cost = $currency->format($monthly_cost, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+            $monthly_cost = $currency->format($monthly_cost, $_SESSION['default_currency_symbol'],
+                $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
-        if ($row->month == "1") { $display_month = "January"; }
-        elseif ($row->month == "2") { $display_month = "February"; }
-        elseif ($row->month == "3") { $display_month = "March"; }
-        elseif ($row->month == "4") { $display_month = "April"; }
-        elseif ($row->month == "5") { $display_month = "May"; }
-        elseif ($row->month == "6") { $display_month = "June"; }
-        elseif ($row->month == "7") { $display_month = "July"; }
-        elseif ($row->month == "8") { $display_month = "August"; }
-        elseif ($row->month == "9") { $display_month = "September"; }
-        elseif ($row->month == "10") { $display_month = "October"; }
-        elseif ($row->month == "11") { $display_month = "November"; }
-        elseif ($row->month == "12") { $display_month = "December"; }
+            if ($row->month == "1") {
+                $display_month = "January";
+            } elseif ($row->month == "2") {
+                $display_month = "February";
+            } elseif ($row->month == "3") {
+                $display_month = "March";
+            } elseif ($row->month == "4") {
+                $display_month = "April";
+            } elseif ($row->month == "5") {
+                $display_month = "May";
+            } elseif ($row->month == "6") {
+                $display_month = "June";
+            } elseif ($row->month == "7") {
+                $display_month = "July";
+            } elseif ($row->month == "8") {
+                $display_month = "August";
+            } elseif ($row->month == "9") {
+                $display_month = "September";
+            } elseif ($row->month == "10") {
+                $display_month = "October";
+            } elseif ($row->month == "11") {
+                $display_month = "November";
+            } elseif ($row->month == "12") {
+                $display_month = "December";
+            }
 
-        if ($new_year > $last_year || $new_year == "") {
+            if ($new_year > $last_year || $new_year == "") {
 
-            $sql_yearly_cost = "SELECT SUM(sslc.total_cost * cc.conversion) AS yearly_cost
+                $sql_yearly_cost = "SELECT SUM(sslc.total_cost * cc.conversion) AS yearly_cost
                                 FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
                                 WHERE sslc.fee_id = f.id
                                   AND f.currency_id = c.id
@@ -341,46 +377,46 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                                   AND sslc.active NOT IN ('0')
                                   AND YEAR(sslc.expiry_date) = '" . $row->year . "'
                                     " . $range_string . "";
-            $result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
+                $result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
 
-            while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
-                $yearly_cost = $row_yearly_cost->yearly_cost;
+                while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
+                    $yearly_cost = $row_yearly_cost->yearly_cost;
+                }
+
+                $yearly_cost = $currency->format($yearly_cost, $_SESSION['default_currency_symbol'],
+                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                ?>
+
+                <tr class="main_table_row_active">
+                    <td class="main_table_cell_active"><?php echo $row->year; ?></td>
+                    <td class="main_table_cell_active"><?php echo $display_month; ?></td>
+                    <td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
+                    <td class="main_table_cell_active"><?php echo $yearly_cost; ?></td>
+                </tr>
+
+                <?php
+                $last_year = $row->year;
+                $last_month = $row->month;
+
+            } else { ?>
+
+                <tr class="main_table_row_active">
+                    <td class="main_table_cell_active">&nbsp;</td>
+                    <td class="main_table_cell_active"><?php echo $display_month; ?></td>
+                    <td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
+                    <td class="main_table_cell_active">&nbsp;</td>
+                </tr>
+
+                <?php
+                $last_year = $row->year;
+                $last_month = $row->month;
+
             }
 
-            $yearly_cost = $currency->format($yearly_cost, $_SESSION['default_currency_symbol'],
-                $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
-            ?>
-
-            <tr class="main_table_row_active">
-                <td class="main_table_cell_active"><?php echo $row->year; ?></td>
-                <td class="main_table_cell_active"><?php echo $display_month; ?></td>
-                <td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
-                <td class="main_table_cell_active"><?php echo $yearly_cost; ?></td>
-            </tr>
-
-            <?php
-            $last_year = $row->year;
-            $last_month = $row->month;
-
-        } else { ?>
-
-            <tr class="main_table_row_active">
-                <td class="main_table_cell_active">&nbsp;</td>
-                <td class="main_table_cell_active"><?php echo $display_month; ?></td>
-                <td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
-                <td class="main_table_cell_active">&nbsp;</td>
-            </tr>
-
-            <?php
-            $last_year = $row->year;
-            $last_month = $row->month;
-
         }
-
-    }
-    ?>
+        ?>
     </table>
-    <?php
+<?php
 }
 ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

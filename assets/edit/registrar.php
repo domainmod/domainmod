@@ -69,7 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $rid = $new_rid;
 
@@ -101,7 +103,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 }
 
@@ -127,7 +131,9 @@ if ($del == "1") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $query = "SELECT registrar_id
               FROM domains
@@ -149,7 +155,9 @@ if ($del == "1") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
 
@@ -179,7 +187,9 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $query = "DELETE FROM registrar_accounts
               WHERE registrar_id = ?";
@@ -191,7 +201,9 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $query = "DELETE FROM registrars
               WHERE id = ?";
@@ -203,7 +215,9 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Deleted<BR>";
 
@@ -217,25 +231,26 @@ if ($really_del == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_registrar_form" method="post">
-<strong>Registrar Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
-    </font></a><BR><BR>
-<input name="new_registrar" type="text" value="<?php echo htmlentities($new_registrar); ?>" size="50" maxlength="100">
-<BR><BR>
-<strong>Registrar's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
-    </font></a><BR><BR>
-<input name="new_url" type="text" value="<?php echo htmlentities($new_url); ?>" size="50" maxlength="100">
-<BR><BR>
-<strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<input type="hidden" name="new_rid" value="<?php echo $rid; ?>">
-<BR><BR>
-<input type="submit" name="button" value="Update This Registrar &raquo;">
+    <strong>Registrar Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
+    <input name="new_registrar" type="text" value="<?php echo htmlentities($new_registrar); ?>" size="50"
+           maxlength="100">
+    <BR><BR>
+    <strong>Registrar's URL (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+        </font></a><BR><BR>
+    <input name="new_url" type="text" value="<?php echo htmlentities($new_url); ?>" size="50" maxlength="100">
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <input type="hidden" name="new_rid" value="<?php echo $rid; ?>">
+    <BR><BR>
+    <input type="submit" name="button" value="Update This Registrar &raquo;">
 </form>
 <BR><BR><a href="registrar-fees.php?rid=<?php echo $rid; ?>">EDIT THIS REGISTRAR'S FEES</a><BR>
 <BR><a href="registrar.php?rid=<?php echo $rid; ?>&del=1">DELETE THIS REGISTRAR</a>

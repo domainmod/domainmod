@@ -49,7 +49,7 @@ $sql = "SELECT id, type, notes, insert_time, update_time
                      WHERE type_id != '0'
                        AND active NOT IN ('0')
                      GROUP BY type_id)
-        ORDER BY type asc";
+        ORDER BY type ASC";
 
 if ($export_data == "1") {
 
@@ -128,14 +128,14 @@ if ($export_data == "1") {
 
         $sql = "SELECT id, type, notes, insert_time, update_time
                 FROM ssl_cert_types
-                ORDER BY type asc";
+                ORDER BY type ASC";
 
     } else {
 
         $sql = "SELECT id, type, notes, insert_time, update_time
                 FROM ssl_cert_types
                 WHERE id NOT IN (" . $exclude_ssl_type_string . ")
-                ORDER BY type asc";
+                ORDER BY type ASC";
 
     }
 
@@ -179,8 +179,8 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
@@ -191,8 +191,8 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 
 if (mysqli_num_rows($result) > 0) {
 
-    $has_active = "1"; ?>
-    <table class="main_table" cellpadding="0" cellspacing="0">
+$has_active = "1"; ?>
+<table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Active SSL Types (<?php echo mysqli_num_rows($result); ?>)</font>
@@ -211,98 +211,102 @@ if (mysqli_num_rows($result) > 0) {
         } ?>
 
         <tr class="main_table_row_active">
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\">*</font></a>"; ?>
-            </td>
-            <td class="main_table_cell_active"><?php
-                $sql_total_count = "SELECT count(*) AS total_count
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\">*</font></a>"; ?>
+        </td>
+        <td class="main_table_cell_active"><?php
+            $sql_total_count = "SELECT count(*) AS total_count
                                     FROM ssl_certs
                                     WHERE type_id = '$row->id'
                                       AND active NOT IN ('0')";
-                $result_total_count = mysqli_query($connection, $sql_total_count);
-                while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-                    $active_certs = $row_total_count->total_count;
-                }
+            $result_total_count = mysqli_query($connection, $sql_total_count);
+            while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+                $active_certs = $row_total_count->total_count;
+            }
 
-                if ($active_certs == "0") {
+            if ($active_certs == "0") {
 
-                    echo number_format($active_certs);
+                echo number_format($active_certs);
 
-                } else { ?>
+            } else { ?>
 
-                    <a class="nobold" href="../ssl-certs.php?ssltid=<?php echo $row->id; ?>"><?php echo number_format($active_certs); ?></a><?php
+                <a class="nobold"
+                   href="../ssl-certs.php?ssltid=<?php echo $row->id; ?>"><?php echo number_format($active_certs); ?></a><?php
 
-                } ?>
-            </td>
+            } ?>
+        </td>
         </tr><?php
 
         $current_ssltid = $row->ssltid;
 
     }
 
-}
+    }
 
-if ($_SESSION['display_inactive_assets'] == "1") {
+    if ($_SESSION['display_inactive_assets'] == "1") {
 
-    $exclude_ssl_type_string = substr($exclude_ssl_type_string_raw, 0, -2);
+        $exclude_ssl_type_string = substr($exclude_ssl_type_string_raw, 0, -2);
 
-    if ($exclude_ssl_type_string == "") {
+        if ($exclude_ssl_type_string == "") {
 
-        $sql = "SELECT id, type
+            $sql = "SELECT id, type
                 FROM ssl_cert_types
                 ORDER BY type ASC";
 
-    } else {
+        } else {
 
-        $sql = "SELECT id, type
+            $sql = "SELECT id, type
                 FROM ssl_cert_types
                 WHERE id NOT IN (" . $exclude_ssl_type_string . ")
                 ORDER BY type ASC";
 
-    }
+        }
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    if (mysqli_num_rows($result) > 0) {
+        if (mysqli_num_rows($result) > 0) {
 
-        $has_inactive = "1";
-        if ($has_active == "1") echo "<BR>";
-        if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+            $has_inactive = "1";
+            if ($has_active == "1") echo "<BR>";
+            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
 
-        <tr class="main_table_row_heading_inactive">
-        <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive SSL Types (<?php echo mysqli_num_rows($result); ?>)</font>
-        </td>
-        </tr><?php
-
-        while ($row = mysqli_fetch_object($result)) { ?>
-
-            <tr class="main_table_row_inactive">
-            <td class="main_table_cell_inactive">
-                <a class="invisiblelink"
-                   href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\">*</font></a>"; ?>
+            <tr class="main_table_row_heading_inactive">
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Inactive SSL Types (<?php echo mysqli_num_rows($result); ?>)</font>
             </td>
             </tr><?php
+
+            while ($row = mysqli_fetch_object($result)) { ?>
+
+                <tr class="main_table_row_inactive">
+                <td class="main_table_cell_inactive">
+                    <a class="invisiblelink"
+                       href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\">*</font></a>"; ?>
+                </td>
+                </tr><?php
+
+            }
 
         }
 
     }
 
-}
+    if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
-if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+    if ($_SESSION['display_inactive_assets'] != "1") { ?>
+        <BR><em>Inactive SSL Types are currently not displayed. <a class="invisiblelink"
+                                                                   href="../system/display-settings.php">Click here to
+                display them</a>.</em><BR><?php
+    }
 
-if ($_SESSION['display_inactive_assets'] != "1") { ?>
-    <BR><em>Inactive SSL Types are currently not displayed. <a class="invisiblelink" href="../system/display-settings.php">Click here to display them</a>.</em><BR><?php
-}
+    if ($has_active || $has_inactive) { ?>
+        <BR><font class="default_highlight">*</font> = Default SSL Type<?php
+    }
 
-if ($has_active || $has_inactive) { ?>
-    <BR><font class="default_highlight">*</font> = Default SSL Type<?php
-}
-
-if (!$has_active && !$has_inactive) { ?>
-    <BR>You don't currently have any SSL Types. <a href="add/ssl-type.php">Click here to add one</a>.<?php
-} ?>
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+    if (!$has_active && !$has_inactive) { ?>
+        <BR>You don't currently have any SSL Types. <a href="add/ssl-type.php">Click here to add one</a>.<?php
+    } ?>
+    <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

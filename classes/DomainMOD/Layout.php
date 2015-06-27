@@ -37,23 +37,23 @@ class Layout
         if ($totalrows > 0) {
 
             $numSoFar = 1;
-            $cycle = ceil($totalrows/$amm);
+            $cycle = ceil($totalrows / $amm);
 
             if (!isset($numBegin) || $numBegin < 1) {
                 $numBegin = 1;
                 $num = 1;
             }
 
-            $minus = $numBegin-1;
-            $start = $minus*$amm;
+            $minus = $numBegin - 1;
+            $start = $minus * $amm;
 
             if (!isset($begin)) {
                 $begin = $start;
             }
 
-            $preBegin = $numBegin-$numLimit;
-            $preVBegin = $start-$amm;
-            $preRedBegin = $numBegin-1;
+            $preBegin = $numBegin - $numLimit;
+            $preVBegin = $start - $amm;
+            $preRedBegin = $numBegin - 1;
 
             if ($start > 0 || $numBegin > 1) {
 
@@ -65,9 +65,9 @@ class Layout
 
             }
 
-            for ($i=$numBegin; $i<=$cycle; $i++) {
+            for ($i = $numBegin; $i <= $cycle; $i++) {
 
-                if ($numSoFar == $numLimit+1) {
+                if ($numSoFar == $numLimit + 1) {
 
                     $piece = "<a href='?numBegin=" . $i
                         . "&num=" . $i
@@ -92,15 +92,15 @@ class Layout
                 }
 
                 $piece .= "</a>\n";
-                $start = $start+$amm;
+                $start = $start + $amm;
                 $numSoFar++;
                 $wholePiece .= $piece;
 
             }
 
             $wholePiece .= "\n";
-            $wheBeg = $begin+1;
-            $wheEnd = $begin+$amm;
+            $wheBeg = $begin + 1;
+            $wheEnd = $begin + $amm;
             $wheToWhe = "<b>" . number_format($wheBeg) . "</b>-<b>";
 
             if ($totalrows <= $wheEnd) {

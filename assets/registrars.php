@@ -47,7 +47,7 @@ $sql = "SELECT r.id AS rid, r.name AS rname, r.url, r.notes, r.insert_time, r.up
         WHERE r.id = d.registrar_id
           AND d.active NOT IN ('0', '10')
         GROUP BY r.name
-        ORDER BY r.name asc";
+        ORDER BY r.name ASC";
 
 if ($export_data == "1") {
 
@@ -141,7 +141,7 @@ if ($export_data == "1") {
         $sql = "SELECT r.id AS rid, r.name AS rname, r.url, r.notes, r.insert_time, r.update_time
                 FROM registrars AS r
                 GROUP BY r.name
-                ORDER BY r.name asc";
+                ORDER BY r.name ASC";
 
     } else {
 
@@ -150,7 +150,7 @@ if ($export_data == "1") {
                 WHERE r.id
                   AND r.id NOT IN (" . $exclude_registrar_string . ")
                 GROUP BY r.name
-                ORDER BY r.name asc";
+                ORDER BY r.name ASC";
 
     }
 
@@ -205,8 +205,8 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
@@ -217,8 +217,8 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 
 if (mysqli_num_rows($result) > 0) {
 
-    $has_active = "1"; ?>
-    <table class="main_table" cellpadding="0" cellspacing="0">
+$has_active = "1"; ?>
+<table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Active Registrars (<?php echo mysqli_num_rows($result); ?>)</font>
@@ -243,109 +243,114 @@ if (mysqli_num_rows($result) > 0) {
         } ?>
 
         <tr class="main_table_row_active">
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo $row->rname; ?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>
-            </td>
-            <td class="main_table_cell_active"><?php
-                $sql_total_count = "SELECT count(*) AS total_count
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo $row->rname; ?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>
+        </td>
+        <td class="main_table_cell_active"><?php
+            $sql_total_count = "SELECT count(*) AS total_count
                                     FROM registrar_accounts
                                     WHERE registrar_id = '" . $row->rid . "'";
-                $result_total_count = mysqli_query($connection, $sql_total_count);
+            $result_total_count = mysqli_query($connection, $sql_total_count);
 
-                while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-                    $total_accounts = $row_total_count->total_count;
-                }
+            while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+                $total_accounts = $row_total_count->total_count;
+            }
 
-                if ($total_accounts >= 1) { ?>
+            if ($total_accounts >= 1) { ?>
 
-                    <a class="nobold" href="registrar-accounts.php?rid=<?php echo $row->rid; ?>"><?php echo number_format($total_accounts); ?></a><?php
+                <a class="nobold"
+                   href="registrar-accounts.php?rid=<?php echo $row->rid; ?>"><?php echo number_format($total_accounts); ?></a><?php
 
-                } else {
+            } else {
 
-                    echo number_format($total_accounts);
+                echo number_format($total_accounts);
 
-                } ?>
-            </td>
-            <td class="main_table_cell_active"><?php
-                $sql_domain_count = "SELECT count(*) AS total_count
+            } ?>
+        </td>
+        <td class="main_table_cell_active"><?php
+            $sql_domain_count = "SELECT count(*) AS total_count
                                      FROM domains
                                      WHERE active NOT IN ('0', '10')
                                        AND registrar_id = '" . $row->rid . "'";
-                $result_domain_count = mysqli_query($connection, $sql_domain_count);
+            $result_domain_count = mysqli_query($connection, $sql_domain_count);
 
-                while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
-                    $total_domains = $row_domain_count->total_count;
-                }
+            while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
+                $total_domains = $row_domain_count->total_count;
+            }
 
-                if ($total_accounts >= 1) { ?>
+            if ($total_accounts >= 1) { ?>
 
-                    <a class="nobold" href="../domains.php?rid=<?php echo $row->rid; ?>"><?php echo number_format($total_domains); ?></a><?php
+                <a class="nobold"
+                   href="../domains.php?rid=<?php echo $row->rid; ?>"><?php echo number_format($total_domains); ?></a><?php
 
-                } else {
+            } else {
 
-                    echo number_format($total_domains);
+                echo number_format($total_domains);
 
-                } ?>
-            </td>
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/registrar-fees.php?rid=<?php echo $row->rid; ?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
-            </td>
+            } ?>
+        </td>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink" href="edit/registrar-fees.php?rid=<?php echo $row->rid; ?>">fees</a>&nbsp;&nbsp;<a
+                class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
+        </td>
         </tr><?php
 
         $current_rid = $row->rid;
 
     }
 
-}
+    }
 
-if ($_SESSION['display_inactive_assets'] == "1") {
+    if ($_SESSION['display_inactive_assets'] == "1") {
 
-    $exclude_registrar_string = substr($exclude_registrar_string_raw, 0, -2);
+        $exclude_registrar_string = substr($exclude_registrar_string_raw, 0, -2);
 
-    if ($exclude_registrar_string == "") {
+        if ($exclude_registrar_string == "") {
 
-        $sql = "SELECT r.id AS rid, r.name AS rname, r.url
+            $sql = "SELECT r.id AS rid, r.name AS rname, r.url
                 FROM registrars AS r
                 WHERE r.id
                 GROUP BY r.name
-                ORDER BY r.name asc";
+                ORDER BY r.name ASC";
 
-    } else {
+        } else {
 
-        $sql = "SELECT r.id AS rid, r.name AS rname, r.url
+            $sql = "SELECT r.id AS rid, r.name AS rname, r.url
                 FROM registrars AS r
                 WHERE r.id
                   AND r.id NOT IN (" . $exclude_registrar_string . ")
                 GROUP BY r.name
-                ORDER BY r.name asc";
+                ORDER BY r.name ASC";
 
-    }
+        }
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    if (mysqli_num_rows($result) > 0) {
+        if (mysqli_num_rows($result) > 0) {
 
-        $has_inactive = "1";
-        if ($has_active == "1") echo "<BR>";
-        if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+            $has_inactive = "1";
+            if ($has_active == "1") echo "<BR>";
+            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
 
             <tr class="main_table_row_heading_inactive">
-                <td class="main_table_cell_heading_inactive">
-                    <font class="main_table_heading">Inactive Registrars (<?php echo mysqli_num_rows($result); ?>)</font>
-                </td>
-                <td class="main_table_cell_heading_inactive">
-                    <font class="main_table_heading">Accounts</font>
-                </td>
-                <td class="main_table_cell_heading_inactive">
-                    <font class="main_table_heading">Options</font>
-                </td>
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Inactive Registrars (<?php echo mysqli_num_rows($result); ?>)</font>
+            </td>
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Accounts</font>
+            </td>
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Options</font>
+            </td>
             </tr><?php
 
-        while ($row = mysqli_fetch_object($result)) { ?>
+            while ($row = mysqli_fetch_object($result)) { ?>
 
-            <tr class="main_table_row_inactive">
+                <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo $row->rname; ?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>
+                    <a class="invisiblelink"
+                       href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo $row->rname; ?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive"><?php
                     $sql_total_count = "SELECT count(*) AS total_count
@@ -359,7 +364,8 @@ if ($_SESSION['display_inactive_assets'] == "1") {
 
                     if ($total_accounts >= 1) { ?>
 
-                        <a class="nobold" href="registrar-accounts.php?rid=<?php echo $row->rid; ?>"><?php echo number_format($total_accounts); ?></a><?php
+                        <a class="nobold"
+                           href="registrar-accounts.php?rid=<?php echo $row->rid; ?>"><?php echo number_format($total_accounts); ?></a><?php
 
                     } else {
 
@@ -368,29 +374,32 @@ if ($_SESSION['display_inactive_assets'] == "1") {
                     } ?>
                 </td>
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" href="edit/registrar-fees.php?rid=<?php echo $row->rid; ?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
+                    <a class="invisiblelink" href="edit/registrar-fees.php?rid=<?php echo $row->rid; ?>">fees</a>&nbsp;&nbsp;<a
+                        class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
                 </td>
-            </tr><?php
+                </tr><?php
+
+            }
 
         }
 
     }
 
-}
+    if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
-if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+    if ($_SESSION['display_inactive_assets'] != "1") { ?>
+        <BR><em>Inactive Registrars are currently not displayed. <a class="invisiblelink"
+                                                                    href="../system/display-settings.php">Click here to
+                display them</a>.</em><BR><?php
+    }
 
-if ($_SESSION['display_inactive_assets'] != "1") { ?>
-    <BR><em>Inactive Registrars are currently not displayed. <a class="invisiblelink" href="../system/display-settings.php">Click here to display them</a>.</em><BR><?php
-}
+    if ($has_active || $has_inactive) { ?>
+        <BR><font class="default_highlight">*</font> = Default Registrar<?php
+    }
 
-if ($has_active || $has_inactive) { ?>
-    <BR><font class="default_highlight">*</font> = Default Registrar<?php
-}
-
-if (!$has_active && !$has_inactive) { ?>
-    <BR>You don't currently have any Domain Registrars. <a href="add/registrar.php">Click here to add one</a>.<?php
-} ?>
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+    if (!$has_active && !$has_inactive) { ?>
+        <BR>You don't currently have any Domain Registrars. <a href="add/registrar.php">Click here to add one</a>.<?php
+    } ?>
+    <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

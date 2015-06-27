@@ -19,11 +19,11 @@
  *
  */
 ?>
-<?php
-namespace DomainMOD;
+    <?php
+    namespace DomainMOD;
 
-class System
-{
+    class System
+    {
 
     public function installCheck($connection)
     {
@@ -76,10 +76,10 @@ class System
     public function doctype()
     {
 
-        ob_start(); ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<?php
+    ob_start(); ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+    <?php
 
-        return ob_get_clean();
+    return ob_get_clean();
 
     }
 
@@ -97,40 +97,23 @@ class System
 
     }
 
-public function jumpMenu()
+    public function jumpMenu()
     {
 
-        ob_start(); ?>
+    ob_start(); ?>
 
-        <script type="text/javascript">
-            <!--
-            function MM_jumpMenu(targ,selObj,restore){ //v3.0
-                eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
-                if (restore) selObj.selectedIndex=0;
-            }
-            //-->
-        </script><?php
-
-        return ob_get_clean();
-
-    }
-
-    public function checkForRows($connection, $sql)
-    {
-
-        $result = mysqli_query($connection, $sql);
-
-        if (mysqli_num_rows($result) >= 1) {
-
-            return '1';
-
-        } else {
-
-            return '0';
-
+    <script type="text/javascript">
+        <!--
+        function MM_jumpMenu(targ, selObj, restore) { //v3.0
+            eval(targ + ".location='" + selObj.options[selObj.selectedIndex].value + "'");
+            if (restore) selObj.selectedIndex = 0;
         }
+        //-->
+    </script><?php
 
-    }
+    return ob_get_clean();
+
+}
 
     public function checkExistingAssets($connection)
     {
@@ -156,6 +139,23 @@ public function jumpMenu()
         $_SESSION['has_ssl_cert'] = $this->checkForRows($connection, $sql);
 
         return true;
+
+    }
+
+    public function checkForRows($connection, $sql)
+    {
+
+        $result = mysqli_query($connection, $sql);
+
+        if (mysqli_num_rows($result) >= 1) {
+
+            return '1';
+
+        } else {
+
+            return '0';
+
+        }
 
     }
 
@@ -211,9 +211,9 @@ public function jumpMenu()
         ob_start(); ?>
 
         <div class="result_message_outer">
-            <div class="result_message_inner">
-                <?php echo $_SESSION['result_message']; ?>
-            </div>
+        <div class="result_message_inner">
+            <?php echo $_SESSION['result_message']; ?>
+        </div>
         </div><?php
 
         $result = ob_get_clean();

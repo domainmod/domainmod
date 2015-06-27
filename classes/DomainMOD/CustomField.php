@@ -40,16 +40,6 @@ class CustomField
 
     }
 
-    public function queryCustomFields($connection, $table_name)
-    {
-
-        $sql = "SELECT field_name FROM " . $table_name . " ORDER BY `name` ASC";
-        $result = mysqli_query($connection, $sql);
-
-        return $result;
-
-    }
-
     public function getCustomFields($connection, $table_name)
     {
 
@@ -70,6 +60,16 @@ class CustomField
         }
 
         return $columns_array;
+
+    }
+
+    public function queryCustomFields($connection, $table_name)
+    {
+
+        $sql = "SELECT field_name FROM " . $table_name . " ORDER BY `name` ASC";
+        $result = mysqli_query($connection, $sql);
+
+        return $result;
 
     }
 

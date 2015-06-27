@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $reporting = new DomainMOD\Reporting();
 $range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_date, $new_end_date);
 
-$sql = "SELECT o.id, o.name, SUM(d.total_cost * cc.conversion) as total_cost, count(*) AS number_of_domains
+$sql = "SELECT o.id, o.name, SUM(d.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_domains
         FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, owners AS o
         WHERE d.fee_id = f.id
           AND f.currency_id = c.id
@@ -79,12 +79,12 @@ $sql = "SELECT o.id, o.name, SUM(d.total_cost * cc.conversion) as total_cost, co
           AND d.active NOT IN ('0', '10')
           AND cc.user_id = '" . $_SESSION['user_id'] . "'
           " . $range_string . "
-        GROUP BY name
-        ORDER BY name";
+        GROUP BY NAME
+        ORDER BY NAME";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $total_rows = mysqli_num_rows($result);
 
-$sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) as grand_total, count(*) AS number_of_domains_total
+$sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_domains_total
                     FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, owners AS o
                     WHERE d.fee_id = f.id
                       AND f.currency_id = c.id
@@ -196,23 +196,33 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
 <?php echo $reporting->showTableTop(); ?>
-    <form name="export_domains_form" method="post">
-        <a href="cost-by-owner.php?all=1">View All</a> or Expiring Between
-        <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and
-        <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-        <?php if ($total_rows > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-owner.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
-        <?php } ?>
-    </form>
+<form name="export_domains_form" method="post">
+    <a href="cost-by-owner.php?all=1">View All</a> or Expiring Between
+    <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") {
+        echo "value=\"" . $time->timeBasic() . "\"";
+    } else {
+        echo "value=\"$new_start_date\"";
+    } ?>>
+    and
+    <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") {
+        echo "value=\"" . $time->timeBasic() . "\"";
+    } else {
+        echo "value=\"$new_end_date\"";
+    } ?>>
+    &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
+    <?php if ($total_rows > 0) { ?>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
+                href="cost-by-owner.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
+                REPORT</a>]</strong>
+    <?php } ?>
+</form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
@@ -230,13 +240,13 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Owner</font></td>
+            <font class="main_table_heading">Owner</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Domains</font></td>
+            <font class="main_table_heading">Domains</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Cost</font></td>
+            <font class="main_table_heading">Cost</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Per Domain</font></td>
+            <font class="main_table_heading">Per Domain</font></td>
     </tr>
 
     <?php
@@ -251,14 +261,18 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']); ?>
 
         <tr class="main_table_row_active">
-            <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?oid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a></td>
-            <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?oid=<?php echo $row->id; ?>"><?php echo $row->number_of_domains; ?></a></td>
-            <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
-            <td class="main_table_cell_active"><?php echo $per_domain; ?></td>
+        <td class="main_table_cell_active"><a class="invisiblelink"
+                                              href="../../domains.php?oid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
+        </td>
+        <td class="main_table_cell_active"><a class="invisiblelink"
+                                              href="../../domains.php?oid=<?php echo $row->id; ?>"><?php echo $row->number_of_domains; ?></a>
+        </td>
+        <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
+        <td class="main_table_cell_active"><?php echo $per_domain; ?></td>
         </tr><?php
 
     }
-        ?>
+    ?>
     </table><?php
 
 }

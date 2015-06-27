@@ -60,10 +60,10 @@ $result = mysqli_query($connection, $sql);
 
 if (mysqli_num_rows($result) == 0) {
 
-        $_SESSION['result_message'] .= "You're trying to edit an invalid Custom Domain Field<BR>";
+    $_SESSION['result_message'] .= "You're trying to edit an invalid Custom Domain Field<BR>";
 
-        header("Location: ../domain-fields.php");
-        exit;
+    header("Location: ../domain-fields.php");
+    exit;
 
 }
 
@@ -81,7 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
             FROM domain_fields
             WHERE id = '" . $new_cdfid . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-    while ($row = mysqli_fetch_object($result)) { $temp_field_name = $row->field_name; }
+    while ($row = mysqli_fetch_object($result)) {
+        $temp_field_name = $row->field_name;
+    }
 
     $_SESSION['result_message'] .= "Custom Domain Field <font class=\"highlight\">" . $new_name . " (" . $temp_field_name . ")</font> Updated<BR>";
 
@@ -160,24 +162,27 @@ if ($really_del == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_user_form" method="post">
-<strong>Display Name (75)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_name" type="text" size="30" maxlength="75" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>"><BR><BR>
-<strong>Database Field Name</strong><BR><BR><?php echo $new_field_name; ?><BR><BR>
-<strong>Data Type</strong><BR><BR>
-<?php echo $new_field_type; ?>
-<BR><BR>
-<strong>Description (255)</strong></a><BR><BR><input name="new_description" type="text" size="50" maxlength="255" value="<?php if ($new_description != "") echo htmlentities($new_description); ?>">
-<BR><BR>
-<strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<input type="hidden" name="new_cdfid" value="<?php echo $cdfid; ?>">
-<BR><BR>
-<input type="submit" name="button" value="Update Custom Field &raquo;">
+    <strong>Display Name (75)</strong><a title="Required Field"><font
+            class="default_highlight">*</font></a><BR><BR><input name="new_name" type="text" size="30" maxlength="75"
+                                                                 value="<?php if ($new_name != "") echo htmlentities($new_name); ?>"><BR><BR>
+    <strong>Database Field Name</strong><BR><BR><?php echo $new_field_name; ?><BR><BR>
+    <strong>Data Type</strong><BR><BR>
+    <?php echo $new_field_type; ?>
+    <BR><BR>
+    <strong>Description (255)</strong></a><BR><BR><input name="new_description" type="text" size="50" maxlength="255"
+                                                         value="<?php if ($new_description != "") echo htmlentities($new_description); ?>">
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <input type="hidden" name="new_cdfid" value="<?php echo $cdfid; ?>">
+    <BR><BR>
+    <input type="submit" name="button" value="Update Custom Field &raquo;">
 </form>
 <BR><BR><a href="domain-field.php?cdfid=<?php echo $cdfid; ?>&del=1">DELETE THIS CUSTOM DOMAIN FIELD</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

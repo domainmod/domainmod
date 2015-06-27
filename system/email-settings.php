@@ -58,7 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $_SESSION['expiration_email'] = $new_expiration_email;
 
@@ -83,26 +85,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 }
 ?>
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="email_settings_form" method="post">
-<strong>Subscribe to Domain & SSL Certificate expiration emails?</strong>&nbsp;
-<select name="new_expiration_email">
-<option value="1"<?php if ($new_expiration_email == "1") echo " selected"; ?>>Yes</option>
-<option value="0"<?php if ($new_expiration_email == "0") echo " selected"; ?>>No</option>
-</select>
-<BR><BR>
-<input type="submit" name="button" value="Update Email Settings&raquo;">
+    <strong>Subscribe to Domain & SSL Certificate expiration emails?</strong>&nbsp;
+    <select name="new_expiration_email">
+        <option value="1"<?php if ($new_expiration_email == "1") echo " selected"; ?>>Yes</option>
+        <option value="0"<?php if ($new_expiration_email == "0") echo " selected"; ?>>No</option>
+    </select>
+    <BR><BR>
+    <input type="submit" name="button" value="Update Email Settings&raquo;">
 </form>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

@@ -197,14 +197,23 @@ if ($export_data == "1") {
 
     while ($row = mysqli_fetch_object($result)) {
 
-        if ($row->active == "0") { $domain_status = "EXPIRED"; }
-        elseif ($row->active == "1") { $domain_status = "ACTIVE"; }
-        elseif ($row->active == "2") { $domain_status = "IN TRANSFER"; }
-        elseif ($row->active == "3") { $domain_status = "PENDING (RENEWAL)"; }
-        elseif ($row->active == "4") { $domain_status = "PENDING (OTHER)"; }
-        elseif ($row->active == "5") { $domain_status = "PENDING (REGISTRATION)"; }
-        elseif ($row->active == "10") { $domain_status = "SOLD"; }
-        else { $domain_status = "ERROR -- PROBLEM WITH CODE IN DOMAIN-RENEWALS.PHP"; }
+        if ($row->active == "0") {
+            $domain_status = "EXPIRED";
+        } elseif ($row->active == "1") {
+            $domain_status = "ACTIVE";
+        } elseif ($row->active == "2") {
+            $domain_status = "IN TRANSFER";
+        } elseif ($row->active == "3") {
+            $domain_status = "PENDING (RENEWAL)";
+        } elseif ($row->active == "4") {
+            $domain_status = "PENDING (OTHER)";
+        } elseif ($row->active == "5") {
+            $domain_status = "PENDING (REGISTRATION)";
+        } elseif ($row->active == "10") {
+            $domain_status = "SOLD";
+        } else {
+            $domain_status = "ERROR -- PROBLEM WITH CODE IN DOMAIN-RENEWALS.PHP";
+        }
 
         if ($row->privacy == "1") {
             $privacy_status = "Private";
@@ -265,191 +274,204 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
 <?php echo $reporting->showTableTop(); ?>
-    <form name="export_domains_form" method="post">
-        <a href="renewals.php?all=1">View All</a> or Expiring Between
-        <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and
-        <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-        <?php if ($total_results > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="renewals.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
-        <?php } ?>
-    </form>
+<form name="export_domains_form" method="post">
+    <a href="renewals.php?all=1">View All</a> or Expiring Between
+    <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") {
+        echo "value=\"" . $time->timeBasic() . "\"";
+    } else {
+        echo "value=\"$new_start_date\"";
+    } ?>>
+    and
+    <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") {
+        echo "value=\"" . $time->timeBasic() . "\"";
+    } else {
+        echo "value=\"$new_end_date\"";
+    } ?>>
+    &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
+    <?php if ($total_results > 0) { ?>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
+                href="renewals.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
+                REPORT</a>]</strong>
+    <?php } ?>
+</form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php if ($total_results > 0) { ?>
-<BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR>
-<?php if ($all != "1") { ?>
-    <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
+    <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR>
+    <?php if ($all != "1") { ?>
+        <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
+    <?php } else { ?>
+        <strong>Date Range:</strong> ALL<BR><BR>
+    <?php } ?>
+    <strong>Total Cost:</strong> <?php echo $total_cost; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
+    <strong>Number of Domains:</strong> <?php echo number_format($total_results); ?><BR>
+    <table class="main_table" cellpadding="0" cellspacing="0">
+        <tr class="main_table_row_heading_active">
+            <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Expiry Date</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Fee</font>
+                </td>
+            <?php } ?>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Domain Name</font>
+            </td>
+            <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">TLD</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Registrar</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_domain_account'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Registrar Account</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">DNS Profile</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">IP Address</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_domain_host'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Web Host</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_domain_category'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Category</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Owner</font>
+                </td>
+            <?php } ?>
+        </tr>
+        <?php while ($row = mysqli_fetch_object($result)) { ?>
+            <tr class="main_table_row_active">
+                <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->expiry_date; ?>
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $temp_amount = $currency->format($row->converted_renewal_fee, $_SESSION['default_currency_symbol'],
+                            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                        echo $temp_amount;
+                        ?>
+                    </td>
+                <?php } ?>
+                <td class="main_table_cell_active">
+                    <?php echo $row->domain; ?>
+                </td>
+                <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        .<?php echo $row->tld; ?>
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->registrar_name; ?>
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_domain_account'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->registrar_name; ?>, <?php echo $row->owner_name; ?>
+                        (<?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?>
+                        )
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->dns_profile; ?>
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->name; ?> (<?php echo $row->ip; ?>)
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_domain_host'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->wh_name; ?>
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_domain_category'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->category_name; ?>
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->owner_name; ?>
+                    </td>
+                <?php } ?>
+            </tr>
+        <?php } ?>
+    </table>
 <?php } else { ?>
-    <strong>Date Range:</strong> ALL<BR><BR>
-<?php } ?>
-<strong>Total Cost:</strong> <?php echo $total_cost; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
-<strong>Number of Domains:</strong> <?php echo number_format($total_results); ?><BR>
-<table class="main_table" cellpadding="0" cellspacing="0">
-<tr class="main_table_row_heading_active">
-<?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Expiry Date</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_fee'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Fee</font>
-    </td>
-<?php } ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Domain Name</font>
-    </td>
-<?php if ($_SESSION['display_domain_tld'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">TLD</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Registrar</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_account'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Registrar Account</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_dns'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">DNS Profile</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_ip'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">IP Address</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_host'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Web Host</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_category'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Category</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_owner'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Owner</font>
-    </td>
-<?php } ?>
-</tr>
-<?php while ($row = mysqli_fetch_object($result)) { ?>
-<tr class="main_table_row_active">
-<?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->expiry_date; ?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_fee'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php
-        $temp_amount = $currency->format($row->converted_renewal_fee, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
-        echo $temp_amount;
-        ?>
-    </td>
-<?php } ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->domain; ?>
-    </td>
-<?php if ($_SESSION['display_domain_tld'] == "1") { ?>
-    <td class="main_table_cell_active">
-        .<?php echo $row->tld; ?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->registrar_name; ?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_account'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->registrar_name; ?>, <?php echo $row->owner_name; ?> (<?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?>)
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_dns'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->dns_profile; ?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_ip'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->name; ?> (<?php echo $row->ip; ?>)
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_host'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->wh_name; ?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_category'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->category_name; ?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_domain_owner'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->owner_name; ?>
-    </td>
-<?php } ?>
-</tr>
-<?php } ?>
-</table>
-<?php } else {?>
-<BR>The results that will be shown below will display the same columns as you have on your <a href="domains.php">Domains</a> page, but when you export the results you will be given even more information.<BR><BR>
-The full list of fields in the export is:<BR><BR>
-Domain Status<BR>
-Expiry Date<BR>
-Renewal Fee<BR>
-Total Renewal Cost<BR>
-Domain<BR>
-TLD<BR>
-Domain Function<BR>
-WHOIS Status<BR>
-Domain Registrar<BR>
-Registrar Account<BR>
-DNS Profile<BR>
-IP Address Name<BR>
-IP Address<BR>
-IP Address rDNS<BR>
-Web Hosting Provider<BR>
-Category<BR>
-Category Stakeholder<BR>
-Owner<BR>
-Notes<BR>
-Insert Time<BR>
-Last Update Time<BR>
-<?php
-$sql = "SELECT `name`
+    <BR>The results that will be shown below will display the same columns as you have on your <a href="domains.php">Domains</a> page, but when you export the results you will be given even more information.
+    <BR><BR>
+    The full list of fields in the export is:<BR><BR>
+    Domain Status<BR>
+    Expiry Date<BR>
+    Renewal Fee<BR>
+    Total Renewal Cost<BR>
+    Domain<BR>
+    TLD<BR>
+    Domain Function<BR>
+    WHOIS Status<BR>
+    Domain Registrar<BR>
+    Registrar Account<BR>
+    DNS Profile<BR>
+    IP Address Name<BR>
+    IP Address<BR>
+    IP Address rDNS<BR>
+    Web Hosting Provider<BR>
+    Category<BR>
+    Category Stakeholder<BR>
+    Owner<BR>
+    Notes<BR>
+    Insert Time<BR>
+    Last Update Time<BR>
+    <?php
+    $sql = "SELECT `name`
         FROM domain_fields
         ORDER BY `name` ASC";
-$result = mysqli_query($connection, $sql);
+    $result = mysqli_query($connection, $sql);
 
-if (mysqli_num_rows($result) > 0) {
+    if (mysqli_num_rows($result) > 0) {
 
-    echo "<BR><strong>Custom Fields</strong><BR>";
+        echo "<BR><strong>Custom Fields</strong><BR>";
 
-    while ($row = mysqli_fetch_object($result)) {
-        echo $row->name . "<BR>";
+        while ($row = mysqli_fetch_object($result)) {
+            echo $row->name . "<BR>";
+        }
+
     }
-
-}
-?>
+    ?>
 <?php } ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

@@ -99,214 +99,233 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="default_settings_form" method="post">
-<BR><font class="subheadline">Domain Defaults</font><BR><BR>
-<strong>Default Domain Registrar</strong><BR><BR>
-<select name="new_default_registrar">
-<?php
-$sql = "SELECT id, name
+    <BR><font class="subheadline">Domain Defaults</font><BR><BR>
+    <strong>Default Domain Registrar</strong><BR><BR>
+    <select name="new_default_registrar">
+        <?php
+        $sql = "SELECT id, name
         FROM registrars
         ORDER BY name";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    ?>
-    <option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_registrar'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
-    <?php
-}
-?>
-</select>
-<BR><BR>
-<strong>Default Domain Registrar Account</strong><BR><BR>
-<select name="new_default_registrar_account">
-<?php
-$sql = "SELECT ra.id, ra.username, r.name AS r_name, o.name AS o_name
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <option
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_registrar'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+        <?php
+        }
+        ?>
+    </select>
+    <BR><BR>
+    <strong>Default Domain Registrar Account</strong><BR><BR>
+    <select name="new_default_registrar_account">
+        <?php
+        $sql = "SELECT ra.id, ra.username, r.name AS r_name, o.name AS o_name
         FROM registrars AS r, registrar_accounts AS ra, owners AS o
         WHERE r.id = ra.registrar_id
           AND ra.owner_id = o.id
         ORDER BY r.name, o.name, ra.username";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    ?>
-    <option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_registrar_account'] == $row->id) echo " selected"; ?>><?php echo $row->r_name; ?> :: <?php echo $row->o_name; ?> :: <?php echo $row->username; ?></option>
-    <?php
-}
-?>
-</select>
-<BR><BR>
-<strong>Default DNS Profile</strong><BR><BR>
-<select name="new_default_dns">
-<?php
-$sql = "SELECT id, name
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <option
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_registrar_account'] == $row->id) echo " selected"; ?>><?php echo $row->r_name; ?>
+                :: <?php echo $row->o_name; ?> :: <?php echo $row->username; ?></option>
+        <?php
+        }
+        ?>
+    </select>
+    <BR><BR>
+    <strong>Default DNS Profile</strong><BR><BR>
+    <select name="new_default_dns">
+        <?php
+        $sql = "SELECT id, name
         FROM dns
         ORDER BY name";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    ?>
-    <option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_dns'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
-    <?php
-}
-?>
-</select>
-<BR><BR>
-<strong>Default Web Hosting Provider</strong><BR><BR>
-<select name="new_default_host">
-<?php
-$sql = "SELECT id, name
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <option
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_dns'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+        <?php
+        }
+        ?>
+    </select>
+    <BR><BR>
+    <strong>Default Web Hosting Provider</strong><BR><BR>
+    <select name="new_default_host">
+        <?php
+        $sql = "SELECT id, name
         FROM hosting
         ORDER BY name";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    ?>
-    <option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_host'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
-    <?php
-}
-?>
-</select>
-<BR><BR>
-<strong>Default IP Address</strong><BR><BR>
-<select name="new_default_ip_address_domains">
-<?php
-$sql = "SELECT id, ip, name
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <option
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_host'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+        <?php
+        }
+        ?>
+    </select>
+    <BR><BR>
+    <strong>Default IP Address</strong><BR><BR>
+    <select name="new_default_ip_address_domains">
+        <?php
+        $sql = "SELECT id, ip, name
         FROM ip_addresses
         ORDER BY name";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    ?>
-    <option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ip_address_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?> (<?php echo $row->ip; ?>)</option>
-    <?php
-}
-?>
-</select>
-<BR><BR>
-<strong>Default Category</strong><BR><BR>
-<select name="new_default_category_domains">
-<?php
-$sql = "SELECT id, name
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <option
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ip_address_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?>
+                (<?php echo $row->ip; ?>)
+            </option>
+        <?php
+        }
+        ?>
+    </select>
+    <BR><BR>
+    <strong>Default Category</strong><BR><BR>
+    <select name="new_default_category_domains">
+        <?php
+        $sql = "SELECT id, name
         FROM categories
         ORDER BY name";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    ?>
-    <option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_category_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
-    <?php
-}
-?>
-</select>
-<BR><BR>
-<strong>Default Account Owner</strong><BR><BR>
-<select name="new_default_owner_domains">
-<?php
-$sql = "SELECT id, name
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <option
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_category_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+        <?php
+        }
+        ?>
+    </select>
+    <BR><BR>
+    <strong>Default Account Owner</strong><BR><BR>
+    <select name="new_default_owner_domains">
+        <?php
+        $sql = "SELECT id, name
         FROM owners
         ORDER BY name";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    ?>
-    <option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_owner_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
-    <?php
-}
-?>
-</select>
-<BR><BR><BR>
-<font class="subheadline">SSL Defaults</font><BR><BR>
-<strong>Default SSL Provider</strong><BR><BR>
-<select name="new_default_ssl_provider">
-<?php
-$sql = "SELECT id, name
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <option
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_owner_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+        <?php
+        }
+        ?>
+    </select>
+    <BR><BR><BR>
+    <font class="subheadline">SSL Defaults</font><BR><BR>
+    <strong>Default SSL Provider</strong><BR><BR>
+    <select name="new_default_ssl_provider">
+        <?php
+        $sql = "SELECT id, name
         FROM ssl_providers
         ORDER BY name";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    ?>
-    <option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_provider'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
-    <?php
-}
-?>
-</select>
-<BR><BR>
-<strong>Default SSL Provider Account</strong><BR><BR>
-<select name="new_default_ssl_provider_account">
-<?php
-$sql = "SELECT sslpa.id, sslpa.username, sslp.name AS p_name, o.name AS o_name
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <option
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_provider'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+        <?php
+        }
+        ?>
+    </select>
+    <BR><BR>
+    <strong>Default SSL Provider Account</strong><BR><BR>
+    <select name="new_default_ssl_provider_account">
+        <?php
+        $sql = "SELECT sslpa.id, sslpa.username, sslp.name AS p_name, o.name AS o_name
         FROM ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
         WHERE sslp.id = sslpa.ssl_provider_id
           AND sslpa.owner_id = o.id
         ORDER BY sslp.name, o.name, sslpa.username";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    ?>
-    <option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_provider_account'] == $row->id) echo " selected"; ?>><?php echo $row->p_name; ?> :: <?php echo $row->o_name; ?> :: <?php echo $row->username; ?></option>
-    <?php
-}
-?>
-</select>
-<BR><BR>
-<strong>Default SSL Type</strong><BR><BR>
-<select name="new_default_ssl_type">
-<?php
-$sql = "SELECT id, type
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <option
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_provider_account'] == $row->id) echo " selected"; ?>><?php echo $row->p_name; ?>
+                :: <?php echo $row->o_name; ?> :: <?php echo $row->username; ?></option>
+        <?php
+        }
+        ?>
+    </select>
+    <BR><BR>
+    <strong>Default SSL Type</strong><BR><BR>
+    <select name="new_default_ssl_type">
+        <?php
+        $sql = "SELECT id, type
         FROM ssl_cert_types
         ORDER BY type";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    ?>
-    <option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_type'] == $row->id) echo " selected"; ?>><?php echo $row->type; ?></option>
-    <?php
-}
-?>
-</select>
-<BR><BR>
-<strong>Default IP Address</strong><BR><BR>
-<select name="new_default_ip_address_ssl">
-<?php
-$sql = "SELECT id, ip, name
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <option
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_type'] == $row->id) echo " selected"; ?>><?php echo $row->type; ?></option>
+        <?php
+        }
+        ?>
+    </select>
+    <BR><BR>
+    <strong>Default IP Address</strong><BR><BR>
+    <select name="new_default_ip_address_ssl">
+        <?php
+        $sql = "SELECT id, ip, name
         FROM ip_addresses
         ORDER BY name";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    ?>
-    <option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ip_address_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?> (<?php echo $row->ip; ?>)</option>
-    <?php
-}
-?>
-</select>
-<BR><BR>
-<strong>Default Category</strong><BR><BR>
-<select name="new_default_category_ssl">
-<?php
-$sql = "SELECT id, name
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <option
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ip_address_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?>
+                (<?php echo $row->ip; ?>)
+            </option>
+        <?php
+        }
+        ?>
+    </select>
+    <BR><BR>
+    <strong>Default Category</strong><BR><BR>
+    <select name="new_default_category_ssl">
+        <?php
+        $sql = "SELECT id, name
         FROM categories
         ORDER BY name";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    ?>
-    <option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_category_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
-    <?php
-}
-?>
-</select>
-<BR><BR>
-<strong>Default Account Owner</strong><BR><BR>
-<select name="new_default_owner_ssl">
-<?php
-$sql = "SELECT id, name
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <option
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_category_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+        <?php
+        }
+        ?>
+    </select>
+    <BR><BR>
+    <strong>Default Account Owner</strong><BR><BR>
+    <select name="new_default_owner_ssl">
+        <?php
+        $sql = "SELECT id, name
         FROM owners
         ORDER BY name";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    ?>
-    <option value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_owner_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
-    <?php
-}
-?>
-</select>
-<BR><BR><BR>
-<input type="submit" name="button" value="Update System Defaults &raquo;">
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            ?>
+            <option
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_owner_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+        <?php
+        }
+        ?>
+    </select>
+    <BR><BR><BR>
+    <input type="submit" name="button" value="Update System Defaults &raquo;">
 </form>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

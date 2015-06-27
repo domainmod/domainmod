@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $reporting = new DomainMOD\Reporting();
 $range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_date, $new_end_date);
 
-$sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS registrar_account_id, ra.username, SUM(d.total_cost * cc.conversion) as total_cost, count(*) AS number_of_domains
+$sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS registrar_account_id, ra.username, SUM(d.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_domains
         FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
         WHERE d.fee_id = f.id
           AND f.currency_id = c.id
@@ -179,7 +179,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
                 $new_registrar = $row->registrar_name;
 
-                $sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
+                $sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) AS registrar_total, count(*) AS number_of_domains_registrar
                                         FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
                                         WHERE d.fee_id = f.id
                                           AND f.currency_id = c.id
@@ -240,23 +240,33 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
 <?php echo $reporting->showTableTop(); ?>
-    <form name="export_domains_form" method="post">
-        <a href="cost-by-registrar.php?all=1">View All</a> or Expiring Between
-        <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and
-        <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-        <?php if ($total_rows > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-registrar.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
-        <?php } ?>
-    </form>
+<form name="export_domains_form" method="post">
+    <a href="cost-by-registrar.php?all=1">View All</a> or Expiring Between
+    <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") {
+        echo "value=\"" . $time->timeBasic() . "\"";
+    } else {
+        echo "value=\"$new_start_date\"";
+    } ?>>
+    and
+    <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") {
+        echo "value=\"" . $time->timeBasic() . "\"";
+    } else {
+        echo "value=\"$new_end_date\"";
+    } ?>>
+    &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
+    <?php if ($total_rows > 0) { ?>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
+                href="cost-by-registrar.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
+                REPORT</a>]</strong>
+    <?php } ?>
+</form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
@@ -274,21 +284,21 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Registrar</font></td>
+            <font class="main_table_heading">Registrar</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Domains</font></td>
+            <font class="main_table_heading">Domains</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Cost</font></td>
+            <font class="main_table_heading">Cost</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Per Domain</font></td>
+            <font class="main_table_heading">Per Domain</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Registrar Account</font></td>
+            <font class="main_table_heading">Registrar Account</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Domains</font></td>
+            <font class="main_table_heading">Domains</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Cost</font></td>
+            <font class="main_table_heading">Cost</font></td>
         <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Per Domain</font></td>
+            <font class="main_table_heading">Per Domain</font></td>
     </tr>
 
     <?php
@@ -299,7 +309,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
         $new_registrar = $row->registrar_name;
 
-        $sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
+        $sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) AS registrar_total, count(*) AS number_of_domains_registrar
                                 FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
                                 WHERE d.fee_id = f.id
                                   AND f.currency_id = c.id
@@ -336,14 +346,22 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
 
             <tr class="main_table_row_active">
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?rid=<?php echo $row->id; ?>"><?php echo $row->registrar_name; ?></a></td>
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?rid=<?php echo $row->id; ?>"><?php echo $number_of_domains_registrar; ?></a></td>
-                <td class="main_table_cell_active"><?php echo $temp_registrar_total; ?></td>
-                <td class="main_table_cell_active"><?php echo $per_domain_registrar; ?></td>
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?raid=<?php echo $row->registrar_account_id; ?>"><?php echo $row->owner_name; ?> (<?php echo $row->username; ?>)</a></td>
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?raid=<?php echo $row->registrar_account_id; ?>"><?php echo $row->number_of_domains; ?></a></td>
-                <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
-                <td class="main_table_cell_active"><?php echo $per_domain_account; ?></td>
+            <td class="main_table_cell_active"><a class="invisiblelink"
+                                                  href="../../domains.php?rid=<?php echo $row->id; ?>"><?php echo $row->registrar_name; ?></a>
+            </td>
+            <td class="main_table_cell_active"><a class="invisiblelink"
+                                                  href="../../domains.php?rid=<?php echo $row->id; ?>"><?php echo $number_of_domains_registrar; ?></a>
+            </td>
+            <td class="main_table_cell_active"><?php echo $temp_registrar_total; ?></td>
+            <td class="main_table_cell_active"><?php echo $per_domain_registrar; ?></td>
+            <td class="main_table_cell_active"><a class="invisiblelink"
+                                                  href="../../domains.php?raid=<?php echo $row->registrar_account_id; ?>"><?php echo $row->owner_name; ?>
+                    (<?php echo $row->username; ?>)</a></td>
+            <td class="main_table_cell_active"><a class="invisiblelink"
+                                                  href="../../domains.php?raid=<?php echo $row->registrar_account_id; ?>"><?php echo $row->number_of_domains; ?></a>
+            </td>
+            <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
+            <td class="main_table_cell_active"><?php echo $per_domain_account; ?></td>
             </tr><?php
 
             $last_registrar = $row->registrar_name;
@@ -351,14 +369,18 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         } else { ?>
 
             <tr class="main_table_row_active">
-                <td class="main_table_cell_active"></td>
-                <td class="main_table_cell_active"></td>
-                <td class="main_table_cell_active"></td>
-                <td class="main_table_cell_active"></td>
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?raid=<?php echo $row->registrar_account_id; ?>"><?php echo $row->owner_name; ?> (<?php echo $row->username; ?>)</a></td>
-                <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?raid=<?php echo $row->registrar_account_id; ?>"><?php echo $row->number_of_domains; ?></a></td>
-                <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
-                <td class="main_table_cell_active"><?php echo $per_domain_account; ?></td>
+            <td class="main_table_cell_active"></td>
+            <td class="main_table_cell_active"></td>
+            <td class="main_table_cell_active"></td>
+            <td class="main_table_cell_active"></td>
+            <td class="main_table_cell_active"><a class="invisiblelink"
+                                                  href="../../domains.php?raid=<?php echo $row->registrar_account_id; ?>"><?php echo $row->owner_name; ?>
+                    (<?php echo $row->username; ?>)</a></td>
+            <td class="main_table_cell_active"><a class="invisiblelink"
+                                                  href="../../domains.php?raid=<?php echo $row->registrar_account_id; ?>"><?php echo $row->number_of_domains; ?></a>
+            </td>
+            <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
+            <td class="main_table_cell_active"><?php echo $per_domain_account; ?></td>
             </tr><?php
 
             $last_registrar = $row->registrar_name;
@@ -366,7 +388,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         }
 
     }
-        ?>
+    ?>
     </table><?php
 
 }

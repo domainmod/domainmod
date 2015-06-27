@@ -68,7 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $ssltid = $new_ssltid;
 
@@ -99,7 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 }
 if ($del == "1") {
@@ -129,7 +133,9 @@ if ($del == "1") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 }
 
@@ -145,7 +151,9 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Deleted<BR>";
 
@@ -157,22 +165,22 @@ if ($really_del == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_type_form" method="post">
-<strong>Type Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>
+    <strong>Type Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>
     <BR><BR>
-<input name="new_type" type="text" value="<?php if ($new_type != "") echo htmlentities($new_type); ?>
+    <input name="new_type" type="text" value="<?php if ($new_type != "") echo htmlentities($new_type); ?>
 " size="50" maxlength="100">
-<BR><BR>
-<strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<input type="hidden" name="new_ssltid" value="<?php echo $ssltid; ?>">
-<BR><BR>
-<input type="submit" name="button" value="Update This SSL Type &raquo;">
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <input type="hidden" name="new_ssltid" value="<?php echo $ssltid; ?>">
+    <BR><BR>
+    <input type="submit" name="button" value="Update This SSL Type &raquo;">
 </form>
 <BR><BR><a href="ssl-type.php?ssltid=<?php echo $ssltid; ?>&del=1">DELETE THIS TYPE</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

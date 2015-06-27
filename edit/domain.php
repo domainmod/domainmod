@@ -100,7 +100,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 WHERE id = '" . $new_account_id . "'";
         $result = mysqli_query($connection, $sql);
 
-        while ($row = mysqli_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
+        while ($row = mysqli_fetch_object($result)) {
+            $new_registrar_id = $row->registrar_id;
+            $new_owner_id = $row->owner_id;
+        }
 
         $sql_fee_id = "SELECT id
                        FROM fees
@@ -138,7 +141,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   AND tld = '" . $tld . "'";
         $result = mysqli_query($connection, $sql);
 
-        while ($row = mysqli_fetch_object($result)) { $new_total_cost = $row->total_cost; }
+        while ($row = mysqli_fetch_object($result)) {
+            $new_total_cost = $row->total_cost;
+        }
 
         $sql_update = "UPDATE domains
                        SET owner_id = '" . $new_owner_id . "',
@@ -204,15 +209,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if (!$domain->checkDomainFormat($new_domain)) { $_SESSION['result_message'] .= "The domain format is incorrect<BR>"; }
-        if (!$date->checkDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }
+        if (!$domain->checkDomainFormat($new_domain)) {
+            $_SESSION['result_message'] .= "The domain format is incorrect<BR>";
+        }
+        if (!$date->checkDateFormat($new_expiry_date)) {
+            $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>";
+        }
 
     }
 
 } else {
 
-    $sql = "SELECT d.domain, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.hosting_id, d.function, d.notes, d.privacy, d.active, ra.id as account_id
-            FROM domains as d, registrar_accounts as ra
+    $sql = "SELECT d.domain, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.hosting_id, d.function, d.notes, d.privacy, d.active, ra.id AS account_id
+            FROM domains AS d, registrar_accounts AS ra
             WHERE d.account_id = ra.id
               AND d.id = '" . $did . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -282,218 +291,247 @@ if ($really_del == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_domain_form" method="post">
-<strong>Domain (255)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-<input name="new_domain" type="text" size="50" maxlength="255" value="<?php if ($new_domain != "") echo htmlentities($new_domain); ?>">
-<BR><BR>
-<strong>Function (255)</strong><BR><BR>
-<input name="new_function" type="text" size="50" maxlength="255" value="<?php if ($new_function != "") echo htmlentities($new_function); ?>">
-<BR><BR>
-<strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-<input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
-<BR><BR>
-<strong>Registrar Account</strong><BR><BR>
-<?php
-$sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
+    <strong>Domain (255)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <input name="new_domain" type="text" size="50" maxlength="255"
+           value="<?php if ($new_domain != "") echo htmlentities($new_domain); ?>">
+    <BR><BR>
+    <strong>Function (255)</strong><BR><BR>
+    <input name="new_function" type="text" size="50" maxlength="255"
+           value="<?php if ($new_function != "") echo htmlentities($new_function); ?>">
+    <BR><BR>
+    <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font
+            class="default_highlight">*</font></a><BR><BR>
+    <input name="new_expiry_date" type="text" size="10" maxlength="10"
+           value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
+    <BR><BR>
+    <strong>Registrar Account</strong><BR><BR>
+    <?php
+    $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                 FROM registrar_accounts AS ra, owners AS o, registrars AS r
                 WHERE ra.owner_id = o.id
                   AND ra.registrar_id = r.id
-                ORDER BY r_name asc, o_name asc, ra.username asc";
-$result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_account_id\">";
-while ($row_account = mysqli_fetch_object($result_account)) { ?>
+                ORDER BY r_name ASC, o_name ASC, ra.username ASC";
+    $result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
+    echo "<select name=\"new_account_id\">";
+    while ($row_account = mysqli_fetch_object($result_account)) { ?>
 
-    <option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $new_account_id) echo " selected";?>><?php echo $row_account->r_name; ?>, <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
-
-}
-echo "</select>";
-?>
-<BR><BR>
-<strong>DNS Profile</strong><BR><BR>
-<?php
-$sql_dns = "SELECT id, name
-            FROM dns
-            ORDER BY name asc";
-$result_dns = mysqli_query($connection, $sql_dns) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_dns_id\">";
-while ($row_dns = mysqli_fetch_object($result_dns)) { ?>
-
-    <option value="<?php echo $row_dns->id; ?>"<?php if ($row_dns->id == $new_dns_id) echo " selected";?>><?php echo $row_dns->name; ?></option><?php
-
-}
-echo "</select>";
-?>
-<BR><BR>
-<strong>IP Address</strong><BR><BR>
-<?php
-$sql_ip = "SELECT id, name, ip
-           FROM ip_addresses
-           ORDER BY name asc, ip asc";
-$result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_ip_id\">";
-
-while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
-
-    <option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $new_ip_id) echo " selected";?>><?php echo $row_ip->name; ?> (<?php echo $row_ip->ip; ?>)</option><?php
-
-}
-echo "</select>";
-?>
-<BR><BR>
-<strong>Web Hosting Provider</strong><BR><BR>
-<?php
-$sql_hosting = "SELECT id, name
-                FROM hosting
-                ORDER BY name asc";
-$result_hosting = mysqli_query($connection, $sql_hosting) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_hosting_id\">";
-while ($row_hosting = mysqli_fetch_object($result_hosting)) { ?>
-
-    <option value="<?php echo $row_hosting->id; ?>"<?php if ($row_hosting->id == $new_hosting_id) echo " selected";?>><?php echo $row_hosting->name; ?></option><?php
-
-}
-echo "</select>";
-?>
-<BR><BR>
-<strong>Category</strong><BR><BR>
-<?php
-$sql_cat = "SELECT id, name
-            FROM categories
-            ORDER BY name asc";
-$result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
-echo "<select name=\"new_cat_id\">";
-while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
-
-    <option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $new_cat_id) echo " selected";?>><?php echo $row_cat->name; ?></option><?php
-
-}
-echo "</select>";
-?>
-<BR><BR>
-<strong>Domain Status</strong><BR><BR>
-<?php
-echo "<select name=\"new_active\">";
-echo "<option value=\"1\""; if ($new_active == "1") echo " selected"; echo ">Active</option>";
-echo "<option value=\"2\""; if ($new_active == "2") echo " selected"; echo ">In Transfer</option>";
-echo "<option value=\"5\""; if ($new_active == "5") echo " selected"; echo ">Pending (Registration)</option>";
-echo "<option value=\"3\""; if ($new_active == "3") echo " selected"; echo ">Pending (Renewal)</option>";
-echo "<option value=\"4\""; if ($new_active == "4") echo " selected"; echo ">Pending (Other)</option>";
-echo "<option value=\"0\""; if ($new_active == "0") echo " selected"; echo ">Expired</option>";
-echo "<option value=\"10\""; if ($new_active == "10") echo " selected"; echo ">Sold</option>";
-echo "</select>";
-?>
-<BR><BR>
-<strong>Privacy Enabled?</strong><BR><BR>
-<?php
-echo "<select name=\"new_privacy\">";
-echo "<option value=\"0\""; if ($new_privacy == "0") echo " selected"; echo ">No</option>";
-echo "<option value=\"1\""; if ($new_privacy == "1") echo " selected"; echo ">Yes</option>";
-echo "</select>";
-?>
-<BR><BR>
-<strong>Notes</strong><?php if ($new_notes != "") { ?> [<a target="_blank" href="domain-notes.php?did=<?php echo $did; ?>">view full notes</a>]<?php } ?><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<input type="hidden" name="new_did" value="<?php echo $did; ?>">
-<BR><BR>
-<?php
-$sql = "SELECT field_name
-        FROM domain_fields
-        ORDER BY type_id, name";
-$result = mysqli_query($connection, $sql);
-
-if (mysqli_num_rows($result) > 0) { ?>
-
-    <BR><font class="subheadline">Custom Fields</font><BR><BR><?php
-
-    $count = 0;
-
-    while ($row = mysqli_fetch_object($result)) {
-
-        $field_array[$count] = $row->field_name;
-        $count++;
+        <option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $new_account_id) echo " selected"; ?>><?php echo $row_account->r_name; ?>
+        , <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
 
     }
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>DNS Profile</strong><BR><BR>
+    <?php
+    $sql_dns = "SELECT id, name
+            FROM dns
+            ORDER BY name ASC";
+    $result_dns = mysqli_query($connection, $sql_dns) or $error->outputOldSqlError($connection);
+    echo "<select name=\"new_dns_id\">";
+    while ($row_dns = mysqli_fetch_object($result_dns)) { ?>
 
-    foreach ($field_array as $field) {
+        <option value="<?php echo $row_dns->id; ?>"<?php if ($row_dns->id == $new_dns_id) echo " selected"; ?>><?php echo $row_dns->name; ?></option><?php
 
-        $sql = "SELECT df.name, df.field_name, df.type_id, df.description
-                FROM domain_fields AS df, custom_field_types AS cft
-                WHERE df.type_id = cft.id
-                  AND df.field_name = '" . $field . "'";
-        $result = mysqli_query($connection, $sql);
+    }
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>IP Address</strong><BR><BR>
+    <?php
+    $sql_ip = "SELECT id, name, ip
+           FROM ip_addresses
+           ORDER BY name ASC, ip ASC";
+    $result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
+    echo "<select name=\"new_ip_id\">";
+
+    while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
+
+        <option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $new_ip_id) echo " selected"; ?>><?php echo $row_ip->name; ?>
+        (<?php echo $row_ip->ip; ?>)</option><?php
+
+    }
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>Web Hosting Provider</strong><BR><BR>
+    <?php
+    $sql_hosting = "SELECT id, name
+                FROM hosting
+                ORDER BY name ASC";
+    $result_hosting = mysqli_query($connection, $sql_hosting) or $error->outputOldSqlError($connection);
+    echo "<select name=\"new_hosting_id\">";
+    while ($row_hosting = mysqli_fetch_object($result_hosting)) { ?>
+
+        <option value="<?php echo $row_hosting->id; ?>"<?php if ($row_hosting->id == $new_hosting_id) echo " selected"; ?>><?php echo $row_hosting->name; ?></option><?php
+
+    }
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>Category</strong><BR><BR>
+    <?php
+    $sql_cat = "SELECT id, name
+            FROM categories
+            ORDER BY name ASC";
+    $result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
+    echo "<select name=\"new_cat_id\">";
+    while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
+
+        <option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $new_cat_id) echo " selected"; ?>><?php echo $row_cat->name; ?></option><?php
+
+    }
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>Domain Status</strong><BR><BR>
+    <?php
+    echo "<select name=\"new_active\">";
+    echo "<option value=\"1\"";
+    if ($new_active == "1") echo " selected";
+    echo ">Active</option>";
+    echo "<option value=\"2\"";
+    if ($new_active == "2") echo " selected";
+    echo ">In Transfer</option>";
+    echo "<option value=\"5\"";
+    if ($new_active == "5") echo " selected";
+    echo ">Pending (Registration)</option>";
+    echo "<option value=\"3\"";
+    if ($new_active == "3") echo " selected";
+    echo ">Pending (Renewal)</option>";
+    echo "<option value=\"4\"";
+    if ($new_active == "4") echo " selected";
+    echo ">Pending (Other)</option>";
+    echo "<option value=\"0\"";
+    if ($new_active == "0") echo " selected";
+    echo ">Expired</option>";
+    echo "<option value=\"10\"";
+    if ($new_active == "10") echo " selected";
+    echo ">Sold</option>";
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>Privacy Enabled?</strong><BR><BR>
+    <?php
+    echo "<select name=\"new_privacy\">";
+    echo "<option value=\"0\"";
+    if ($new_privacy == "0") echo " selected";
+    echo ">No</option>";
+    echo "<option value=\"1\"";
+    if ($new_privacy == "1") echo " selected";
+    echo ">Yes</option>";
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>Notes</strong><?php if ($new_notes != "") { ?> [<a target="_blank"
+                                                               href="domain-notes.php?did=<?php echo $did; ?>">view full
+        notes</a>]<?php } ?><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <input type="hidden" name="new_did" value="<?php echo $did; ?>">
+    <BR><BR>
+    <?php
+    $sql = "SELECT field_name
+        FROM domain_fields
+        ORDER BY type_id, name";
+    $result = mysqli_query($connection, $sql);
+
+    if (mysqli_num_rows($result) > 0) { ?>
+
+        <BR><font class="subheadline">Custom Fields</font><BR><BR><?php
+
+        $count = 0;
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $sql_data = "SELECT " . $row->field_name . "
+            $field_array[$count] = $row->field_name;
+            $count++;
+
+        }
+
+        foreach ($field_array as $field) {
+
+            $sql = "SELECT df.name, df.field_name, df.type_id, df.description
+                FROM domain_fields AS df, custom_field_types AS cft
+                WHERE df.type_id = cft.id
+                  AND df.field_name = '" . $field . "'";
+            $result = mysqli_query($connection, $sql);
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $sql_data = "SELECT " . $row->field_name . "
                          FROM domain_field_data
                          WHERE domain_id = '" . $did . "'";
-            $result_data = mysqli_query($connection, $sql_data);
+                $result_data = mysqli_query($connection, $sql_data);
 
-            while ($row_data = mysqli_fetch_object($result_data)) {
+                while ($row_data = mysqli_fetch_object($result_data)) {
 
-                $field_data = $row_data->{$row->field_name};
-
-            }
-
-            if ($row->type_id == "1") { // Check Box ?>
-
-                <input type="checkbox" name="new_<?php echo $row->field_name; ?>" value="1"<?php if ($field_data == "1") echo " checked"; ?>>
-                &nbsp;<strong><?php echo $row->name; ?></strong><BR><?php
-
-                if ($row->description != "") {
-
-                    echo $row->description . "<BR><BR>";
-
-                } else {
-
-                    echo "<BR>";
+                    $field_data = $row_data->{$row->field_name};
 
                 }
 
-            } elseif ($row->type_id == "2") { // Text ?>
+                if ($row->type_id == "1") { // Check Box ?>
 
-                <strong><?php echo $row->name; ?> (255)</strong><BR><?php
-                if ($row->description != "") {
+                    <input type="checkbox" name="new_<?php echo $row->field_name; ?>"
+                           value="1"<?php if ($field_data == "1") echo " checked"; ?>>
+                    &nbsp;<strong><?php echo $row->name; ?></strong><BR><?php
 
-                    echo $row->description . "<BR><BR>";
+                    if ($row->description != "") {
 
-                } else {
+                        echo $row->description . "<BR><BR>";
 
-                    echo "<BR>";
+                    } else {
 
-                } ?>
-                <input type="text" name="new_<?php echo $row->field_name; ?>" size="50" maxlength="255" value="<?php echo htmlentities($field_data); ?>"><BR><BR><?php
+                        echo "<BR>";
 
-            } elseif ($row->type_id == "3") { // Text Area ?>
+                    }
 
-                <strong><?php echo $row->name; ?></strong><BR><?php
-                if ($row->description != "") {
+                } elseif ($row->type_id == "2") { // Text ?>
 
-                    echo $row->description . "<BR><BR>";
+                    <strong><?php echo $row->name; ?> (255)</strong><BR><?php
+                    if ($row->description != "") {
 
-                } else {
+                        echo $row->description . "<BR><BR>";
 
-                    echo "<BR>";
+                    } else {
 
-                } ?>
-                <textarea name="new_<?php echo $row->field_name; ?>" cols="60" rows="5"><?php echo $field_data; ?></textarea><BR><BR><?php
+                        echo "<BR>";
+
+                    } ?>
+                    <input type="text" name="new_<?php echo $row->field_name; ?>" size="50" maxlength="255"
+                           value="<?php echo htmlentities($field_data); ?>"><BR><BR><?php
+
+                } elseif ($row->type_id == "3") { // Text Area ?>
+
+                    <strong><?php echo $row->name; ?></strong><BR><?php
+                    if ($row->description != "") {
+
+                        echo $row->description . "<BR><BR>";
+
+                    } else {
+
+                        echo "<BR>";
+
+                    } ?>
+                    <textarea name="new_<?php echo $row->field_name; ?>" cols="60"
+                              rows="5"><?php echo $field_data; ?></textarea><BR><BR><?php
+
+                }
 
             }
 
         }
 
+        echo "<BR>";
+
     }
-
-    echo "<BR>";
-
-}
-?>
-<input type="submit" name="button" value="Update This Domain &raquo;">
+    ?>
+    <input type="submit" name="button" value="Update This Domain &raquo;">
 </form>
 
 <?php

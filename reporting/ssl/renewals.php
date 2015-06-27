@@ -193,12 +193,19 @@ if ($export_data == "1") {
 
     while ($row = mysqli_fetch_object($result)) {
 
-        if ($row->active == "0") { $ssl_status = "EXPIRED"; }
-        elseif ($row->active == "1") { $ssl_status = "ACTIVE"; }
-        elseif ($row->active == "3") { $ssl_status = "PENDING (RENEWAL)"; }
-        elseif ($row->active == "4") { $ssl_status = "PENDING (OTHER)"; }
-        elseif ($row->active == "5") { $ssl_status = "PENDING (REGISTRATION)"; }
-        else { $ssl_status = "ERROR -- PROBLEM WITH CODE IN SSL-CERT-RENEWALS.PHP"; }
+        if ($row->active == "0") {
+            $ssl_status = "EXPIRED";
+        } elseif ($row->active == "1") {
+            $ssl_status = "ACTIVE";
+        } elseif ($row->active == "3") {
+            $ssl_status = "PENDING (RENEWAL)";
+        } elseif ($row->active == "4") {
+            $ssl_status = "PENDING (OTHER)";
+        } elseif ($row->active == "5") {
+            $ssl_status = "PENDING (REGISTRATION)";
+        } else {
+            $ssl_status = "ERROR -- PROBLEM WITH CODE IN SSL-CERT-RENEWALS.PHP";
+        }
 
         $export_renewal_fee = $currency->format($row->converted_renewal_fee, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
@@ -249,181 +256,194 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
 <?php echo $reporting->showTableTop(); ?>
-    <form name="export_ssl_certs_form" method="post">
-        <a href="renewals.php?all=1">View All</a> or Expiring Between
-        <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and
-        <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-        <?php if ($total_results > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="renewals.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
-        <?php } ?>
-    </form>
+<form name="export_ssl_certs_form" method="post">
+    <a href="renewals.php?all=1">View All</a> or Expiring Between
+    <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") {
+        echo "value=\"" . $time->timeBasic() . "\"";
+    } else {
+        echo "value=\"$new_start_date\"";
+    } ?>>
+    and
+    <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") {
+        echo "value=\"" . $time->timeBasic() . "\"";
+    } else {
+        echo "value=\"$new_end_date\"";
+    } ?>>
+    &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
+    <?php if ($total_results > 0) { ?>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
+                href="renewals.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
+                REPORT</a>]</strong>
+    <?php } ?>
+</form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php if ($total_results > 0) { ?>
-<BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR>
-<?php if ($all != "1") { ?>
-    <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
+    <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR>
+    <?php if ($all != "1") { ?>
+        <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
+    <?php } else { ?>
+        <strong>Date Range:</strong> ALL<BR><BR>
+    <?php } ?>
+    <strong>Total Cost:</strong> <?php echo $total_cost; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
+    <strong>Number of SSL Certificates:</strong> <?php echo number_format($total_results); ?><BR>
+    <table class="main_table" cellpadding="0" cellspacing="0">
+        <tr class="main_table_row_heading_active">
+            <?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Expiry Date</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Fee</font>
+                </td>
+            <?php } ?>
+            <td class="main_table_cell_heading_active">
+                <font class="main_table_heading">Host / Label</font>
+            </td>
+            <?php if ($_SESSION['display_ssl_domain'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Domain</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_ssl_provider'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">SSL Provider</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_ssl_account'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">SSL Account</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_ssl_type'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Type</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_ssl_ip'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">IP Address</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_ssl_category'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Category</font>
+                </td>
+            <?php } ?>
+            <?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
+                <td class="main_table_cell_heading_active">
+                    <font class="main_table_heading">Owner</font>
+                </td>
+            <?php } ?>
+        </tr>
+        <?php while ($row = mysqli_fetch_object($result)) { ?>
+            <?php
+            $renewal_fee_individual = $row->renewal_fee * $row->conversion;
+            $total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
+            ?>
+            <tr class="main_table_row_active">
+                <?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->expiry_date; ?>
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php
+                        $temp_amount = $currency->format($row->converted_renewal_fee, $_SESSION['default_currency_symbol'],
+                            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                        echo $temp_amount;
+                        ?>
+                    </td>
+                <?php } ?>
+                <td class="main_table_cell_active">
+                    <?php echo $row->name; ?>
+                </td>
+                <?php if ($_SESSION['display_ssl_domain'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->domain; ?>
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_ssl_provider'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->ssl_provider_name; ?>
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_ssl_account'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->ssl_provider_name; ?>, <?php echo $row->owner_name; ?>
+                        (<?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?>
+                        )
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_ssl_type'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->type; ?>
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_ssl_ip'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->ip_name; ?> (<?php echo $row->ip; ?>)
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_ssl_category'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->cat_name; ?>
+                    </td>
+                <?php } ?>
+                <?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
+                    <td class="main_table_cell_active">
+                        <?php echo $row->owner_name; ?>
+                    </td>
+                <?php } ?>
+            </tr>
+        <?php } ?>
+    </table>
 <?php } else { ?>
-    <strong>Date Range:</strong> ALL<BR><BR>
-<?php } ?>
-<strong>Total Cost:</strong> <?php echo $total_cost; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
-<strong>Number of SSL Certificates:</strong> <?php echo number_format($total_results); ?><BR>
-<table class="main_table" cellpadding="0" cellspacing="0">
-<tr class="main_table_row_heading_active">
-<?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Expiry Date</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Fee</font>
-    </td>
-<?php } ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Host / Label</font>
-    </td>
-<?php if ($_SESSION['display_ssl_domain'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Domain</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_provider'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">SSL Provider</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_account'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">SSL Account</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_type'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Type</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_ip'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">IP Address</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_category'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Category</font>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
-    <td class="main_table_cell_heading_active">
-        <font class="main_table_heading">Owner</font>
-    </td>
-<?php } ?>
-</tr>
-<?php while ($row = mysqli_fetch_object($result)) { ?>
-<?php
-$renewal_fee_individual = $row->renewal_fee * $row->conversion;
-$total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
-?>
-<tr class="main_table_row_active">
-<?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->expiry_date; ?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php
-        $temp_amount = $currency->format($row->converted_renewal_fee, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
-        echo $temp_amount;
-        ?>
-    </td>
-<?php } ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->name; ?>
-    </td>
-<?php if ($_SESSION['display_ssl_domain'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->domain; ?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_provider'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->ssl_provider_name; ?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_account'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->ssl_provider_name; ?>, <?php echo $row->owner_name; ?> (<?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?>)
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_type'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->type; ?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_ip'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->ip_name; ?> (<?php echo $row->ip; ?>)
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_category'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->cat_name; ?>
-    </td>
-<?php } ?>
-<?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
-    <td class="main_table_cell_active">
-        <?php echo $row->owner_name; ?>
-    </td>
-<?php } ?>
-</tr>
-<?php } ?>
-</table>
-<?php } else { ?>
-<BR>The results that will be shown below will display the same columns as you have on your <a href="ssl-certs.php">SSL Certificates</a> page, but when you export the results you will be given even more information.<BR><BR>
-The full list of fields in the export is:<BR><BR>
-Certificate Status<BR>
-Expiry Date<BR>
-Renewal Fee<BR>
-Total Renewal Cost<BR>
-SSL Cert Name<BR>
-Associated Domain<BR>
-SSL Provider<BR>
-SSL Account<BR>
-SSL Type<BR>
-IP Address Name<BR>
-IP Address<BR>
-IP Address rDNS<BR>
-Category<BR>
-Owner<BR>
-Notes<BR>
-Insert Time<BR>
-Last Update Time<BR>
-<?php
-$sql = "SELECT `name`
+    <BR>The results that will be shown below will display the same columns as you have on your <a href="ssl-certs.php">SSL
+        Certificates</a> page, but when you export the results you will be given even more information.<BR><BR>
+    The full list of fields in the export is:<BR><BR>
+    Certificate Status<BR>
+    Expiry Date<BR>
+    Renewal Fee<BR>
+    Total Renewal Cost<BR>
+    SSL Cert Name<BR>
+    Associated Domain<BR>
+    SSL Provider<BR>
+    SSL Account<BR>
+    SSL Type<BR>
+    IP Address Name<BR>
+    IP Address<BR>
+    IP Address rDNS<BR>
+    Category<BR>
+    Owner<BR>
+    Notes<BR>
+    Insert Time<BR>
+    Last Update Time<BR>
+    <?php
+    $sql = "SELECT `name`
         FROM ssl_cert_fields
         ORDER BY `name` ASC";
-$result = mysqli_query($connection, $sql);
+    $result = mysqli_query($connection, $sql);
 
-if (mysqli_num_rows($result) > 0) {
+    if (mysqli_num_rows($result) > 0) {
 
-    echo "<BR><strong>Custom Fields</strong><BR>";
+        echo "<BR><strong>Custom Fields</strong><BR>";
 
-    while ($row = mysqli_fetch_object($result)) {
-        echo $row->name . "<BR>";
+        while ($row = mysqli_fetch_object($result)) {
+            echo $row->name . "<BR>";
+        }
+
     }
-
-}
-?>
+    ?>
 <?php } ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

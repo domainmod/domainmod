@@ -98,56 +98,56 @@ if ($demo_install != '1') {
             <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\">
                 <tr>
                     <td width=\"100%\" bgcolor=\"#FFFFFF\">";
-                        $message .= "<font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica, sans-serif\">";
-                        $message .= "<a title=\"" . $software_title . "\" href=\"" . $full_url . "/\"><img alt=\"" . $software_title . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
-                        $message .= "Below is a list of all the Domains & SSL Certificates in " . $software_title . " that are expiring in the next " . $number_of_days . " days. <BR>";
-                        $message .= "<BR>If you would like to change the frequency of this email notification please contact your " . $software_title . " administrator. <BR>";
-                        $message .= "<BR>";
+            $message .= "<font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica, sans-serif\">";
+            $message .= "<a title=\"" . $software_title . "\" href=\"" . $full_url . "/\"><img alt=\"" . $software_title . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
+            $message .= "Below is a list of all the Domains & SSL Certificates in " . $software_title . " that are expiring in the next " . $number_of_days . " days. <BR>";
+            $message .= "<BR>If you would like to change the frequency of this email notification please contact your " . $software_title . " administrator. <BR>";
+            $message .= "<BR>";
 
-                        if (mysqli_num_rows($result_domains) != 0) {
+            if (mysqli_num_rows($result_domains) != 0) {
 
-                            $message .= "<strong><u>Domains</u></strong><BR>";
-                            while ($row_domains = mysqli_fetch_object($result_domains)) {
+                $message .= "<strong><u>Domains</u></strong><BR>";
+                while ($row_domains = mysqli_fetch_object($result_domains)) {
 
-                                if ($row_domains->expiry_date < $timestamp_basic) {
+                    if ($row_domains->expiry_date < $timestamp_basic) {
 
-                                    $message .= "<font color=\"#CC0000\">" . $row_domains->expiry_date . "</font>&nbsp;&nbsp;<a href=\"" . $row_domains->domain . "\">" . $row_domains->domain . "</a> [<a href=\"" . $full_url . "/edit/domain.php?did=" . $row_domains->id . "\">edit</a>]&nbsp;&nbsp;<font color=\"#CC0000\">*EXPIRED*</font><BR>";
+                        $message .= "<font color=\"#CC0000\">" . $row_domains->expiry_date . "</font>&nbsp;&nbsp;<a href=\"" . $row_domains->domain . "\">" . $row_domains->domain . "</a> [<a href=\"" . $full_url . "/edit/domain.php?did=" . $row_domains->id . "\">edit</a>]&nbsp;&nbsp;<font color=\"#CC0000\">*EXPIRED*</font><BR>";
 
-                                } else {
+                    } else {
 
-                                    $message .= $row_domains->expiry_date . "&nbsp;&nbsp;<a href=\"" . $row_domains->domain . "\">" . $row_domains->domain . "</a> [<a href=\"" . $full_url . "/edit/domain.php?did=" . $row_domains->id . "\">edit</a>]<BR>";
+                        $message .= $row_domains->expiry_date . "&nbsp;&nbsp;<a href=\"" . $row_domains->domain . "\">" . $row_domains->domain . "</a> [<a href=\"" . $full_url . "/edit/domain.php?did=" . $row_domains->id . "\">edit</a>]<BR>";
 
-                                }
+                    }
 
-                            }
+                }
 
-                        }
+            }
 
-                        if (mysqli_num_rows($result_ssl) != 0) {
+            if (mysqli_num_rows($result_ssl) != 0) {
 
-                            $message .= "<BR><strong><u>SSL Certificates</u></strong><BR>";
-                            while ($row_ssl = mysqli_fetch_object($result_ssl)) {
+                $message .= "<BR><strong><u>SSL Certificates</u></strong><BR>";
+                while ($row_ssl = mysqli_fetch_object($result_ssl)) {
 
-                                if ($row_ssl->expiry_date < $timestamp_basic) {
+                    if ($row_ssl->expiry_date < $timestamp_basic) {
 
-                                    $message .= "<font color=\"#CC0000\">" . $row_ssl->expiry_date . "</font>&nbsp;&nbsp;" . $row_ssl->name . " (" . $row_ssl->type . ") [<a href=\"" . $full_url . "/edit/ssl-cert.php?sslcid=" . $row_ssl->id . "\">edit</a>]&nbsp;&nbsp;<font color=\"#CC0000\">*EXPIRED*</font><BR>";
+                        $message .= "<font color=\"#CC0000\">" . $row_ssl->expiry_date . "</font>&nbsp;&nbsp;" . $row_ssl->name . " (" . $row_ssl->type . ") [<a href=\"" . $full_url . "/edit/ssl-cert.php?sslcid=" . $row_ssl->id . "\">edit</a>]&nbsp;&nbsp;<font color=\"#CC0000\">*EXPIRED*</font><BR>";
 
-                                } else {
+                    } else {
 
-                                    $message .= "" . $row_ssl->expiry_date . "&nbsp;&nbsp;" . $row_ssl->name . " (" . $row_ssl->type . ") [<a href=\"" . $full_url . "/edit/ssl-cert.php?sslcid=" . $row_ssl->id . "\">edit</a>]<BR>";
+                        $message .= "" . $row_ssl->expiry_date . "&nbsp;&nbsp;" . $row_ssl->name . " (" . $row_ssl->type . ") [<a href=\"" . $full_url . "/edit/ssl-cert.php?sslcid=" . $row_ssl->id . "\">edit</a>]<BR>";
 
-                                }
+                    }
 
-                            }
+                }
 
-                        }
+            }
 
-                        $message .= "<BR>";
-                        $message .= "Best Regards,<BR>";
-                        $message .= "<BR>";
-                        $message .= "Greg Chetcuti<BR>";
-                        $message .= "<a target=\"_blank\" href=\"mailto:greg@domainmod.org\">greg@domainmod.org</a><BR>";
-                        $message .= "</font>
+            $message .= "<BR>";
+            $message .= "Best Regards,<BR>";
+            $message .= "<BR>";
+            $message .= "Greg Chetcuti<BR>";
+            $message .= "<a target=\"_blank\" href=\"mailto:greg@domainmod.org\">greg@domainmod.org</a><BR>";
+            $message .= "</font>
                     </td>
                 </tr>
             </table>
@@ -155,13 +155,13 @@ if ($demo_install != '1') {
             <table width=\"575\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\" bordercolor=\"#FFFFFF\">
                 <tr>
                     <td width=\"100%\"><font color=\"#000000\" size=\"1\" face=\"Verdana, Arial, Helvetica, sans-serif\">";
-                        $message .= "<BR><hr width=\"100%\" size=\"1\" noshade>";
-                        $message .= "You've received this email because you're currently subscribed to receive expiration ";
-                        $message .= "notifications from the $software_title installation located at: <a target=\"_blank\" href=\"" . $full_url . "/\">" . $full_url . "/</a><BR>";
-                        $message .= "<BR>";
-                        $message .= "To unsubscribe from these notifications please visit: <BR>";
-                        $message .= "<a target=\"_blank\" href=\"" . $full_url . "/system/email-settings.php\">" . $full_url . "/system/email-settings.php</a><BR>";
-                        $message .= "<BR></font>
+            $message .= "<BR><hr width=\"100%\" size=\"1\" noshade>";
+            $message .= "You've received this email because you're currently subscribed to receive expiration ";
+            $message .= "notifications from the $software_title installation located at: <a target=\"_blank\" href=\"" . $full_url . "/\">" . $full_url . "/</a><BR>";
+            $message .= "<BR>";
+            $message .= "To unsubscribe from these notifications please visit: <BR>";
+            $message .= "<a target=\"_blank\" href=\"" . $full_url . "/system/email-settings.php\">" . $full_url . "/system/email-settings.php</a><BR>";
+            $message .= "<BR></font>
                     </td>
                 </tr>
             </table>

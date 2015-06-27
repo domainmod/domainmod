@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
     $sql = "SELECT id
             FROM users
-            WHERE username = '" . $new_username. "'
+            WHERE username = '" . $new_username . "'
               AND password = password('" . $new_password . "')
               AND active = '1'";
     $result = mysqli_query($connection, $sql);
@@ -265,19 +265,19 @@ $new_password = "";
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<?php
-if ($page_title != "") { ?>
-    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title><?php
-} else { ?>
-    <title><?php echo $software_title; ?></title><?php
-} ?>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <?php
+    if ($page_title != "") { ?>
+        <title><?php echo $system->pageTitle($software_title, $page_title); ?></title><?php
+    } else { ?>
+        <title><?php echo $software_title; ?></title><?php
+    } ?>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <?php
 if ($new_username == "") { ?>
-    <body onLoad="document.forms[0].elements[0].focus()";><?php
+<body onLoad="document.forms[0].elements[0].focus()" ;><?php
 } else { ?>
-    <body onLoad="document.forms[0].elements[1].focus()";><?php
+<body onLoad="document.forms[0].elements[1].focus()" ;><?php
 } ?>
 <?php include(DIR_INC . "layout/header-login.inc.php"); ?>
 <?php
@@ -285,18 +285,20 @@ if ($_SESSION['installation_mode'] == '0') { ?>
 
     <BR>
     <form name="login_form" method="post">
-        <?php if ($demo_install == "1") { ?><div align="center"><strong>Demo Username & Password:</strong> "demo"</div><BR><BR><?php } ?>
-        <div class="login_form">
-            <strong>Username:</strong>&nbsp;
-            <input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
-            &nbsp;<strong>Password:</strong>&nbsp;
-            <input name="new_password" type="password" id="new_password" size="20" maxlength="255"><br>
-        </div>
-        <div class="login_form">
-            <?php if ($demo_install != "1") { ?><BR><font size="1"><a class="invisiblelink" href="reset-password.php">Forgot your Password?</a></font><BR><?php } ?>
-            <BR><BR>
-            <input type="submit" name="button" value="Manage Your Domains &raquo;">
-        </div>
+    <?php if ($demo_install == "1") { ?>
+        <div align="center"><strong>Demo Username & Password:</strong> "demo"</div><BR><BR><?php } ?>
+    <div class="login_form">
+        <strong>Username:</strong>&nbsp;
+        <input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
+        &nbsp;<strong>Password:</strong>&nbsp;
+        <input name="new_password" type="password" id="new_password" size="20" maxlength="255"><br>
+    </div>
+    <div class="login_form">
+        <?php if ($demo_install != "1") { ?><BR><font size="1"><a class="invisiblelink" href="reset-password.php">Forgot
+                your Password?</a></font><BR><?php } ?>
+        <BR><BR>
+        <input type="submit" name="button" value="Manage Your Domains &raquo;">
+    </div>
     </form><?php
 } ?>
 <?php include(DIR_INC . "layout/footer-login.inc.php"); ?>

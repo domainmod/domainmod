@@ -55,7 +55,8 @@ $new_raid = $_POST['new_raid'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" &&
-        $new_registrar_id != "0") {
+        $new_registrar_id != "0"
+    ) {
 
         $query = "UPDATE registrar_accounts
                   SET owner_id = ?,
@@ -77,7 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $query = "UPDATE domains
                   SET owner_id = ?
@@ -90,7 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $raid = $new_raid;
 
@@ -108,7 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->fetch();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $query = "SELECT `name`
                   FROM owners
@@ -124,7 +131,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->fetch();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar,
             $temp_owner)</font> Updated<BR>";
@@ -134,7 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($username == "") { $_SESSION['result_message'] .= "Please enter the username<BR>"; }
+        if ($username == "") {
+            $_SESSION['result_message'] .= "Please enter the username<BR>";
+        }
 
     }
 
@@ -154,7 +165,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 }
 
@@ -192,14 +205,16 @@ if ($del == "1") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
 }
 
 if ($really_del == "1") {
 
-    $query = "SELECT ra.username as username, o.name as owner_name, r.name as registrar_name
-              FROM registrar_accounts as ra, owners as o, registrars as r
+    $query = "SELECT ra.username AS username, o.name AS owner_name, r.name AS registrar_name
+              FROM registrar_accounts AS ra, owners AS o, registrars AS r
               WHERE ra.owner_id = o.id
                 AND ra.registrar_id = r.id
                 AND ra.id = ?";
@@ -214,7 +229,9 @@ if ($really_del == "1") {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $query = "DELETE FROM registrar_accounts
               WHERE id = ?";
@@ -226,7 +243,9 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     $_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$temp_username ($temp_registrar_name,
         $temp_owner_name)</font> Deleted<BR>";
@@ -241,99 +260,103 @@ if ($really_del == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_account_form" method="post">
-<strong>Owner</strong><BR><BR>
-<?php
-$query = "SELECT id, `name`
+    <strong>Owner</strong><BR><BR>
+    <?php
+    $query = "SELECT id, `name`
           FROM owners
           ORDER BY `name` ASC";
-$q = $conn->stmt_init();
+    $q = $conn->stmt_init();
 
-if ($q->prepare($query)) {
+    if ($q->prepare($query)) {
 
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($id, $name);
 
-    echo "<select name=\"new_owner_id\">";
+        echo "<select name=\"new_owner_id\">";
 
-    while ($q->fetch()) {
+        while ($q->fetch()) {
 
-        if ($id == $new_owner_id) {
+            if ($id == $new_owner_id) {
 
-            echo "<option value=\"$id\" selected>$name</option>";
+                echo "<option value=\"$id\" selected>$name</option>";
 
-        } else {
+            } else {
 
-            echo "<option value=\"$id\">$name</option>";
+                echo "<option value=\"$id\">$name</option>";
+
+            }
 
         }
 
+        echo "</select>";
+
+        $q->close();
+
+    } else {
+        $error->outputSqlError($conn, "ERROR");
     }
-
-    echo "</select>";
-
-    $q->close();
-
-} else { $error->outputSqlError($conn, "ERROR"); }
-?>
-<BR><BR>
-<strong>Registrar</strong><BR><BR>
-<?php
-$query = "SELECT id, `name`
+    ?>
+    <BR><BR>
+    <strong>Registrar</strong><BR><BR>
+    <?php
+    $query = "SELECT id, `name`
           FROM registrars
           ORDER BY `name` ASC";
-$q = $conn->stmt_init();
+    $q = $conn->stmt_init();
 
-if ($q->prepare($query)) {
+    if ($q->prepare($query)) {
 
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($id, $name);
 
-    echo "<select name=\"new_registrar_id\">";
+        echo "<select name=\"new_registrar_id\">";
 
-    while ($q->fetch()) {
+        while ($q->fetch()) {
 
-        if ($id == $new_registrar_id) {
+            if ($id == $new_registrar_id) {
 
-            echo "<option value=\"$id\" selected>$name</option>";
+                echo "<option value=\"$id\" selected>$name</option>";
 
-        } else {
+            } else {
 
-            echo "<option value=\"$id\">$name</option>";
+                echo "<option value=\"$id\">$name</option>";
 
+            }
         }
+        echo "</select>";
+
+        $q->close();
+
+    } else {
+        $error->outputSqlError($conn, "ERROR");
     }
-    echo "</select>";
-
-    $q->close();
-
-} else { $error->outputSqlError($conn, "ERROR"); }
-?>
-<BR><BR>
-<strong>Username (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
-<input name="new_username" type="text" size="50" maxlength="100" value="<?php echo htmlentities($new_username); ?>">
-<BR><BR>
-<strong>Password (255)</strong><BR><BR>
-<input name="new_password" type="text" size="50" maxlength="255" value="<?php echo htmlentities($new_password); ?>">
-<BR><BR>
-<strong>Reseller Account?</strong><BR><BR>
-<select name="new_reseller">";
-<option value="0"<?php if ($new_reseller == "0") echo " selected"; ?>>No</option>
-<option value="1"<?php if ($new_reseller == "1") echo " selected"; ?>>Yes</option>
-</select>
-<BR><BR>
-<strong>Notes</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<BR><BR>
-<input type="hidden" name="new_raid" value="<?php echo $raid; ?>">
-<input type="submit" name="button" value="Update This Registrar Account &raquo;">
+    ?>
+    <BR><BR>
+    <strong>Username (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <input name="new_username" type="text" size="50" maxlength="100" value="<?php echo htmlentities($new_username); ?>">
+    <BR><BR>
+    <strong>Password (255)</strong><BR><BR>
+    <input name="new_password" type="text" size="50" maxlength="255" value="<?php echo htmlentities($new_password); ?>">
+    <BR><BR>
+    <strong>Reseller Account?</strong><BR><BR>
+    <select name="new_reseller">";
+        <option value="0"<?php if ($new_reseller == "0") echo " selected"; ?>>No</option>
+        <option value="1"<?php if ($new_reseller == "1") echo " selected"; ?>>Yes</option>
+    </select>
+    <BR><BR>
+    <strong>Notes</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <BR><BR>
+    <input type="hidden" name="new_raid" value="<?php echo $raid; ?>">
+    <input type="submit" name="button" value="Update This Registrar Account &raquo;">
 </form>
 <BR><BR><a href="registrar-account.php?raid=<?php echo $raid; ?>&del=1">DELETE THIS REGISTRAR ACCOUNT</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

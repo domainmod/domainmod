@@ -45,9 +45,21 @@ $raid = $_GET['raid'];
 $oid = $_GET['oid'];
 $export_data = $_GET['export_data'];
 
-if ($rid != "") { $rid_string = " AND ra.registrar_id = '$rid' "; } else { $rid_string = ""; }
-if ($raid != "") { $raid_string = " AND ra.id = '$raid' "; } else { $raid_string = ""; }
-if ($oid != "") { $oid_string = " AND ra.owner_id = '$oid' "; } else { $oid_string = ""; }
+if ($rid != "") {
+    $rid_string = " AND ra.registrar_id = '$rid' ";
+} else {
+    $rid_string = "";
+}
+if ($raid != "") {
+    $raid_string = " AND ra.id = '$raid' ";
+} else {
+    $raid_string = "";
+}
+if ($oid != "") {
+    $oid_string = " AND ra.owner_id = '$oid' ";
+} else {
+    $oid_string = "";
+}
 
 $sql = "SELECT ra.id AS raid, ra.username, ra.password, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname, ra.notes, ra.insert_time, ra.update_time
         FROM registrar_accounts AS ra, owners AS o, registrars AS r, domains AS d
@@ -226,8 +238,8 @@ if ($export_data == "1") {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
@@ -238,8 +250,8 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 
 if (mysqli_num_rows($result) > 0) {
 
-    $has_active = 1; ?>
-    <table class="main_table" cellpadding="0" cellspacing="0">
+$has_active = 1; ?>
+<table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Registrar Name</font>
@@ -264,49 +276,52 @@ if (mysqli_num_rows($result) > 0) {
         } ?>
 
         <tr class="main_table_row_active">
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->rname; ?></a>
-            </td>
-            <td class="main_table_cell_active" valign="top">
-                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
-            </td>
-            <td class="main_table_cell_active">
-                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->oname; ?></a>
-            </td>
-            <td class="main_table_cell_active"><?php
-                $sql_domain_count = "SELECT count(*) AS total_domain_count
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->rname; ?></a>
+        </td>
+        <td class="main_table_cell_active" valign="top">
+            <a class="invisiblelink"
+               href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+        </td>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink"
+               href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->oname; ?></a>
+        </td>
+        <td class="main_table_cell_active"><?php
+            $sql_domain_count = "SELECT count(*) AS total_domain_count
                                      FROM domains
                                      WHERE account_id = '" . $row->raid . "'
                                        AND active NOT IN ('0', '10')";
-                $result_domain_count = mysqli_query($connection, $sql_domain_count);
+            $result_domain_count = mysqli_query($connection, $sql_domain_count);
 
-                while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
-                    echo "<a class=\"nobold\" href=\"../domains.php?oid=$row->oid&rid=$row->rid&raid=$row->raid\">" . number_format($row_domain_count->total_domain_count) . "</a>";
-                } ?>
-            </td>
+            while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
+                echo "<a class=\"nobold\" href=\"../domains.php?oid=$row->oid&rid=$row->rid&raid=$row->raid\">" . number_format($row_domain_count->total_domain_count) . "</a>";
+            } ?>
+        </td>
         </tr><?php
 
         $current_raid = $row->raid;
 
     }
 
-}
-
-if ($_SESSION['display_inactive_assets'] == "1") {
-
-    $exclude_account_string = substr($exclude_account_string_raw, 0, -2);
-
-    if ($exclude_account_string != "") {
-
-        $raid_string = " AND ra.id not in ($exclude_account_string) ";
-
-    } else {
-
-        $raid_string = "";
-
     }
 
-    $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
+    if ($_SESSION['display_inactive_assets'] == "1") {
+
+        $exclude_account_string = substr($exclude_account_string_raw, 0, -2);
+
+        if ($exclude_account_string != "") {
+
+            $raid_string = " AND ra.id not in ($exclude_account_string) ";
+
+        } else {
+
+            $raid_string = "";
+
+        }
+
+        $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
             FROM registrar_accounts AS ra, owners AS o, registrars AS r
             WHERE ra.owner_id = o.id
               AND ra.registrar_id = r.id
@@ -316,77 +331,82 @@ if ($_SESSION['display_inactive_assets'] == "1") {
             GROUP BY ra.username, oname, rname
             ORDER BY rname, username, oname";
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    if (mysqli_num_rows($result) > 0) {
+        if (mysqli_num_rows($result) > 0) {
 
-        $has_inactive = "1";
-        if ($has_active == "1") echo "<BR>";
-        if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+            $has_inactive = "1";
+            if ($has_active == "1") echo "<BR>";
+            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
 
-        <tr class="main_table_row_heading_inactive">
-        <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Registrar Name</font>
-        </td>
-        <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Inactive Accounts (<?php echo mysqli_num_rows($result); ?>)</font>
-        </td>
-        <td class="main_table_cell_heading_inactive">
-            <font class="main_table_heading">Owner</font>
-        </td>
-        </tr><?php
-
-        while ($row = mysqli_fetch_object($result)) { ?>
-
-            <tr class="main_table_row_inactive">
-            <td class="main_table_cell_inactive">
-                <a class="invisiblelink"
-                   href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->rname; ?></a>
+            <tr class="main_table_row_heading_inactive">
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Registrar Name</font>
             </td>
-            <td class="main_table_cell_inactive" valign="top">
-                <a class="invisiblelink"
-                   href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Inactive Accounts (<?php echo mysqli_num_rows($result); ?>)</font>
             </td>
-            <td class="main_table_cell_inactive">
-                <a class="invisiblelink"
-                   href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->oname; ?></a>
+            <td class="main_table_cell_heading_inactive">
+                <font class="main_table_heading">Owner</font>
             </td>
             </tr><?php
+
+            while ($row = mysqli_fetch_object($result)) { ?>
+
+                <tr class="main_table_row_inactive">
+                <td class="main_table_cell_inactive">
+                    <a class="invisiblelink"
+                       href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->rname; ?></a>
+                </td>
+                <td class="main_table_cell_inactive" valign="top">
+                    <a class="invisiblelink"
+                       href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                </td>
+                <td class="main_table_cell_inactive">
+                    <a class="invisiblelink"
+                       href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->oname; ?></a>
+                </td>
+                </tr><?php
+
+            }
 
         }
 
     }
 
-}
+    if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
-if ($has_active == "1" || $has_inactive == "1") echo "</table>";
-
-if ($_SESSION['display_inactive_assets'] != "1") { ?>
-    <BR><em>Inactive Accounts are currently not displayed. <a class="invisiblelink" href="../system/display-settings.php">Click here to display them</a>.</em><BR><?php
-}
-
-if ($has_active || $has_inactive) { ?>
-        <BR><font class="default_highlight">*</font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight">*</font> = Reseller Account<?php
-}
-
-if (!$has_active && !$has_inactive) {
-
-    $sql = "SELECT id
-            FROM registrars
-            LIMIT 1";
-    $result = mysqli_query($connection, $sql);
-
-    if (mysqli_num_rows($result) == 0) {  ?>
-
-        <BR>Before adding a Registrar Account you must add at least one Registrar. <a href="add/registrar.php">Click here to add a Registrar</a>.<BR><?php
-
-    } else { ?>
-
-        <BR>You don't currently have any Registrar Accounts. <a href="add/registrar-account.php">Click here to add one</a>.<BR><?php
-
+    if ($_SESSION['display_inactive_assets'] != "1") { ?>
+        <BR><em>Inactive Accounts are currently not displayed. <a class="invisiblelink"
+                                                                  href="../system/display-settings.php">Click here to
+                display them</a>.</em><BR><?php
     }
 
-} ?>
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+    if ($has_active || $has_inactive) { ?>
+        <BR><font class="default_highlight">*</font> = Default Account&nbsp;&nbsp;<font
+            class="reseller_highlight">*</font> = Reseller Account<?php
+    }
+
+    if (!$has_active && !$has_inactive) {
+
+        $sql = "SELECT id
+            FROM registrars
+            LIMIT 1";
+        $result = mysqli_query($connection, $sql);
+
+        if (mysqli_num_rows($result) == 0) { ?>
+
+            <BR>Before adding a Registrar Account you must add at least one Registrar. <a href="add/registrar.php">Click
+                here to add a Registrar</a>.<BR><?php
+
+        } else { ?>
+
+            <BR>You don't currently have any Registrar Accounts. <a href="add/registrar-account.php">Click here to add
+                one</a>.<BR><?php
+
+        }
+
+    } ?>
+    <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

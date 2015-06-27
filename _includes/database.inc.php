@@ -22,7 +22,7 @@
 <?php
 $connection = mysqli_connect($dbhostname, $dbusername, $dbpassword, $dbname);
 
-if(mysqli_connect_errno()) {
+if (mysqli_connect_errno()) {
     echo "Database Connection Error: " . mysqli_connect_errno();
     exit();
 }
@@ -33,7 +33,7 @@ mysqli_query($connection, "SET COLLATION_CONNECTION = utf8_unicode_ci") or $erro
 
 $conn = new mysqli($dbhostname, $dbusername, $dbpassword, $dbname);
 
-if(mysqli_connect_errno()) {
+if (mysqli_connect_errno()) {
     echo "Database Connection Error: " . mysqli_connect_errno();
     exit();
 }

@@ -52,7 +52,8 @@ $new_notes = $_POST['new_notes'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" &&
-        $new_hash != "") {
+        $new_hash != ""
+    ) {
 
         $query = "INSERT INTO dw_servers
                   (`name`, `host`, protocol, `port`, username, `hash`, notes, insert_time)
@@ -69,10 +70,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host .
-                                      ")</font> Added<BR>";
+            ")</font> Added<BR>";
 
         header("Location: ../servers.php");
         exit;
@@ -93,50 +96,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="dw_add_server_form" method="post">
-<strong>Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR>
+    <strong>Name (100):</strong><a title="Required Field"><font
+            class="default_highlight"><strong>*</strong></font></a><BR>
     <BR>
-Enter the display name for this server.<BR><BR>
-<input name="new_name" type="text" size="50" maxlength="100" value="<?php echo $new_name; ?>">
-<BR><BR>
-<strong>Host Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>
+    Enter the display name for this server.<BR><BR>
+    <input name="new_name" type="text" size="50" maxlength="100" value="<?php echo $new_name; ?>">
     <BR><BR>
-Enter the host name of your WHM installation (ie. server1.example.com).<BR><BR>
-<input name="new_host" type="text" size="50" maxlength="100" value="<?php echo $new_host; ?>">
-<BR><BR>
-<strong>Protocol (5):</strong><BR><BR>
-Enter the protocol you connect with.<BR><BR>
-<select name="new_protocol">
-<option value="https"<?php if ($new_protocol == "https") echo " selected";?>>Secured (https)</option>
-<option value="http"<?php if ($new_protocol == "http") echo " selected";?>>Unsecured (http)</option>
-</select>
-<BR><BR>
-<strong>Port (5):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a><BR>
+    <strong>Host Name (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>
+    <BR><BR>
+    Enter the host name of your WHM installation (ie. server1.example.com).<BR><BR>
+    <input name="new_host" type="text" size="50" maxlength="100" value="<?php echo $new_host; ?>">
+    <BR><BR>
+    <strong>Protocol (5):</strong><BR><BR>
+    Enter the protocol you connect with.<BR><BR>
+    <select name="new_protocol">
+        <option value="https"<?php if ($new_protocol == "https") echo " selected"; ?>>Secured (https)</option>
+        <option value="http"<?php if ($new_protocol == "http") echo " selected"; ?>>Unsecured (http)</option>
+    </select>
+    <BR><BR>
+    <strong>Port (5):</strong><a title="Required Field"><font
+            class="default_highlight"><strong>*</strong></font></a><BR>
     <BR>
-Enter the port that you connect to (usually 2086 or 2087).<BR><BR>
-<input name="new_port" type="text" size="5" maxlength="5" value="<?php echo $new_port; ?>">
-<BR><BR>
-<strong>Username (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>
+    Enter the port that you connect to (usually 2086 or 2087).<BR><BR>
+    <input name="new_port" type="text" size="5" maxlength="5" value="<?php echo $new_port; ?>">
     <BR><BR>
-Enter the username for your WHM installation.<BR><BR>
-<input name="new_username" type="text" size="50" maxlength="100" value="<?php echo $new_username; ?>">
-<BR><BR>
-<strong>Hash/Remote Access Key:</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
+    <strong>Username (100):</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>
+    <BR><BR>
+    Enter the username for your WHM installation.<BR><BR>
+    <input name="new_username" type="text" size="50" maxlength="100" value="<?php echo $new_username; ?>">
+    <BR><BR>
+    <strong>Hash/Remote Access Key:</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
         </font></a><BR><BR>
-Enter the hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote
+    Enter the hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote
     Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the
     right-hand side of the screen.<BR><BR>
-<textarea name="new_hash" cols="60" rows="5"><?php echo $new_hash; ?></textarea>
-<BR><BR>
-<strong>Notes:</strong><BR><BR>
-<textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-<BR><BR>
-<input type="submit" name="button" value="Add Server &raquo;">
+    <textarea name="new_hash" cols="60" rows="5"><?php echo $new_hash; ?></textarea>
+    <BR><BR>
+    <strong>Notes:</strong><BR><BR>
+    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
+    <BR><BR>
+    <input type="submit" name="button" value="Add Server &raquo;">
 </form>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

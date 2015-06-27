@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 
     } else {
 
-         $sql = "SELECT *
+        $sql = "SELECT *
                 FROM user_settings
                 WHERE user_id = '" . $_SESSION['user_id'] . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -174,79 +174,122 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="display_settings_form" method="post">
-<BR><font class="subheadline">Main Domain Page</font><BR><BR>
-<strong>Number of domains per page:</strong> <input name="new_number_of_domains" type="text" size="3" maxlength="5" value="<?php if ($new_number_of_domains != "") echo $new_number_of_domains; ?>">
-<BR><BR>
-<strong>Columns to display: </strong><BR><BR>
-<table class="main_table" cellpadding="0" cellspacing="0">
-    <tr class="main_table_row_heading_active">
-        <td class="main_table_cell_heading_active">Expiry Date</td>
-        <td class="main_table_cell_heading_active">Fee</td>
-        <td class="main_table_cell_heading_active">TLD</td>
-        <td class="main_table_cell_heading_active">Registrar</td>
-        <td class="main_table_cell_heading_active">Account</td>
-        <td class="main_table_cell_heading_active">DNS</td>
-        <td class="main_table_cell_heading_active">IP Address</td>
-        <td class="main_table_cell_heading_active">Web Host</td>
-        <td class="main_table_cell_heading_active">Category</td>
-        <td class="main_table_cell_heading_active">Owner</td>
-    </tr>
-    <tr class="main_table_row_active_nohover">
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_expiry_date" value="1"<?php if ($new_display_domain_expiry_date == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_fee" value="1"<?php if ($new_display_domain_fee == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_tld" value="1"<?php if ($new_display_domain_tld == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_registrar" value="1"<?php if ($new_display_domain_registrar == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_account" value="1"<?php if ($new_display_domain_account == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_dns" value="1"<?php if ($new_display_domain_dns == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_ip" value="1"<?php if ($new_display_domain_ip == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_host" value="1"<?php if ($new_display_domain_host == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_category" value="1"<?php if ($new_display_domain_category == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_owner" value="1"<?php if ($new_display_domain_owner == "1") echo " checked"; ?>></td>
-    </tr>
-</table>
-<BR><BR>
-<font class="subheadline">Main SSL Certificate Page</font><BR><BR>
-<strong>Number of SSL certificates per page:</strong> <input name="new_number_of_ssl_certs" type="text" size="3" maxlength="5" value="<?php if ($new_number_of_ssl_certs != "") echo $new_number_of_ssl_certs; ?>">
-<BR><BR>
-<strong>Columns to display: </strong><BR><BR>
-<table class="main_table" cellpadding="0" cellspacing="0">
-    <tr class="main_table_row_heading_active">
-        <td class="main_table_cell_heading_active">Expiry Date</td>
-        <td class="main_table_cell_heading_active">Fee</td>
-        <td class="main_table_cell_heading_active">Domain</td>
-        <td class="main_table_cell_heading_active">SSL Provider</td>
-        <td class="main_table_cell_heading_active">Account</td>
-        <td class="main_table_cell_heading_active">SSL Type</td>
-        <td class="main_table_cell_heading_active">IP Address</td>
-        <td class="main_table_cell_heading_active">Category</td>
-        <td class="main_table_cell_heading_active">Owner</td>
-    </tr>
-    <tr class="main_table_row_active_nohover">
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_expiry_date" value="1"<?php if ($new_display_ssl_expiry_date == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_fee" value="1"<?php if ($new_display_ssl_fee == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_domain" value="1"<?php if ($new_display_ssl_domain == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_provider" value="1"<?php if ($new_display_ssl_provider == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_account" value="1"<?php if ($new_display_ssl_account == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_type" value="1"<?php if ($new_display_ssl_type == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_ip" value="1"<?php if ($new_display_ssl_ip == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_category" value="1"<?php if ($new_display_ssl_category == "1") echo " checked"; ?>></td>
-        <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_owner" value="1"<?php if ($new_display_ssl_owner == "1") echo " checked"; ?>></td>
-    </tr>
-</table>
-<BR><BR>
-<font class="subheadline">Asset Management Pages</font><BR><BR>
-<strong>Display inactive Assets?</strong> <input type="checkbox" name="new_display_inactive_assets" value="1"<?php if ($new_display_inactive_assets == "1") echo " checked"; ?>>
-<BR><BR><BR>
-<font class="subheadline">Data Warehouse</font><BR><BR>
-<strong>Display intro page?</strong> <input type="checkbox" name="new_display_dw_intro_page" value="1"<?php if ($new_display_dw_intro_page == "1") echo " checked"; ?>>
-<BR><BR><BR>
-<input type="submit" name="button" value="Update Display Settings&raquo;">
+    <BR><font class="subheadline">Main Domain Page</font><BR><BR>
+    <strong>Number of domains per page:</strong> <input name="new_number_of_domains" type="text" size="3" maxlength="5"
+                                                        value="<?php if ($new_number_of_domains != "") echo $new_number_of_domains; ?>">
+    <BR><BR>
+    <strong>Columns to display: </strong><BR><BR>
+    <table class="main_table" cellpadding="0" cellspacing="0">
+        <tr class="main_table_row_heading_active">
+            <td class="main_table_cell_heading_active">Expiry Date</td>
+            <td class="main_table_cell_heading_active">Fee</td>
+            <td class="main_table_cell_heading_active">TLD</td>
+            <td class="main_table_cell_heading_active">Registrar</td>
+            <td class="main_table_cell_heading_active">Account</td>
+            <td class="main_table_cell_heading_active">DNS</td>
+            <td class="main_table_cell_heading_active">IP Address</td>
+            <td class="main_table_cell_heading_active">Web Host</td>
+            <td class="main_table_cell_heading_active">Category</td>
+            <td class="main_table_cell_heading_active">Owner</td>
+        </tr>
+        <tr class="main_table_row_active_nohover">
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_expiry_date"
+                                                               value="1"<?php if ($new_display_domain_expiry_date == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_fee"
+                                                               value="1"<?php if ($new_display_domain_fee == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_tld"
+                                                               value="1"<?php if ($new_display_domain_tld == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_registrar"
+                                                               value="1"<?php if ($new_display_domain_registrar == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_account"
+                                                               value="1"<?php if ($new_display_domain_account == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_dns"
+                                                               value="1"<?php if ($new_display_domain_dns == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_ip"
+                                                               value="1"<?php if ($new_display_domain_ip == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_host"
+                                                               value="1"<?php if ($new_display_domain_host == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_category"
+                                                               value="1"<?php if ($new_display_domain_category == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_owner"
+                                                               value="1"<?php if ($new_display_domain_owner == "1") echo " checked"; ?>>
+            </td>
+        </tr>
+    </table>
+    <BR><BR>
+    <font class="subheadline">Main SSL Certificate Page</font><BR><BR>
+    <strong>Number of SSL certificates per page:</strong> <input name="new_number_of_ssl_certs" type="text" size="3"
+                                                                 maxlength="5"
+                                                                 value="<?php if ($new_number_of_ssl_certs != "") echo $new_number_of_ssl_certs; ?>">
+    <BR><BR>
+    <strong>Columns to display: </strong><BR><BR>
+    <table class="main_table" cellpadding="0" cellspacing="0">
+        <tr class="main_table_row_heading_active">
+            <td class="main_table_cell_heading_active">Expiry Date</td>
+            <td class="main_table_cell_heading_active">Fee</td>
+            <td class="main_table_cell_heading_active">Domain</td>
+            <td class="main_table_cell_heading_active">SSL Provider</td>
+            <td class="main_table_cell_heading_active">Account</td>
+            <td class="main_table_cell_heading_active">SSL Type</td>
+            <td class="main_table_cell_heading_active">IP Address</td>
+            <td class="main_table_cell_heading_active">Category</td>
+            <td class="main_table_cell_heading_active">Owner</td>
+        </tr>
+        <tr class="main_table_row_active_nohover">
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_expiry_date"
+                                                               value="1"<?php if ($new_display_ssl_expiry_date == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_fee"
+                                                               value="1"<?php if ($new_display_ssl_fee == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_domain"
+                                                               value="1"<?php if ($new_display_ssl_domain == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_provider"
+                                                               value="1"<?php if ($new_display_ssl_provider == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_account"
+                                                               value="1"<?php if ($new_display_ssl_account == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_type"
+                                                               value="1"<?php if ($new_display_ssl_type == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_ip"
+                                                               value="1"<?php if ($new_display_ssl_ip == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_category"
+                                                               value="1"<?php if ($new_display_ssl_category == "1") echo " checked"; ?>>
+            </td>
+            <td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_ssl_owner"
+                                                               value="1"<?php if ($new_display_ssl_owner == "1") echo " checked"; ?>>
+            </td>
+        </tr>
+    </table>
+    <BR><BR>
+    <font class="subheadline">Asset Management Pages</font><BR><BR>
+    <strong>Display inactive Assets?</strong> <input type="checkbox" name="new_display_inactive_assets"
+                                                     value="1"<?php if ($new_display_inactive_assets == "1") echo " checked"; ?>>
+    <BR><BR><BR>
+    <font class="subheadline">Data Warehouse</font><BR><BR>
+    <strong>Display intro page?</strong> <input type="checkbox" name="new_display_dw_intro_page"
+                                                value="1"<?php if ($new_display_dw_intro_page == "1") echo " checked"; ?>>
+    <BR><BR><BR>
+    <input type="submit" name="button" value="Update Display Settings&raquo;">
 </form>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

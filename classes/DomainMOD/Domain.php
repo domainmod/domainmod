@@ -25,25 +25,6 @@ namespace DomainMOD;
 class Domain
 {
 
-    public function checkDomainFormat($input_domain)
-    {
-
-        /*
-        if (preg_match('/^[A-Z0-9.-]+\.[A-Z0-9-]{2,50}$/i', $input_domain, $output_domain)) {
-
-            return $output_domain;
-
-        } else {
-
-            return false;
-
-        }
-        */
-
-        return $input_domain;
-
-    }
-
     public function findInvalidDomains($lines)
     {
 
@@ -70,6 +51,25 @@ class Domain
         }
 
         return array($invalid_to_display, $invalid_domains, $invalid_count, $result_message);
+
+    }
+
+    public function checkDomainFormat($input_domain)
+    {
+
+        /*
+        if (preg_match('/^[A-Z0-9.-]+\.[A-Z0-9-]{2,50}$/i', $input_domain, $output_domain)) {
+
+            return $output_domain;
+
+        } else {
+
+            return false;
+
+        }
+        */
+
+        return $input_domain;
 
     }
 

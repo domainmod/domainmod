@@ -52,7 +52,8 @@ $new_admin = $_POST['new_admin'];
 $new_active = $_POST['new_active'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != ""
-    && $new_email_address != "") {
+    && $new_email_address != ""
+) {
 
     $query = "SELECT username
               FROM users
@@ -73,7 +74,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else {
+        $error->outputSqlError($conn, "ERROR");
+    }
 
     if ($existing_username == 1) {
 
@@ -96,7 +99,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $query = "SELECT id
                   FROM users
@@ -114,7 +119,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $q->fetch();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $query = "INSERT INTO user_settings
                   (user_id,
@@ -158,7 +165,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        }
 
         $_SESSION['result_message'] .= "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " ("
             . $new_username . " / " . $new_password . ")</font> Added<BR><BR>You can either manually email the above
@@ -188,34 +197,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-<?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()";>
+<body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_user_form" method="post">
-<strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
+    <strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
         name="new_first_name" type="text" size="50" maxlength="50" value="<?php echo $new_first_name; ?>"><BR><BR>
-<strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
+    <strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
         name="new_last_name" type="text" size="50" maxlength="50" value="<?php echo $new_last_name; ?>"><BR><BR>
-<strong>Username (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
+    <strong>Username (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
         name="new_username" type="text" size="20" maxlength="30" value="<?php echo $new_username; ?>"><BR><BR>
-<strong>Email Address (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input
+    <strong>Email Address (100)</strong><a title="Required Field"><font
+            class="default_highlight">*</font></a><BR><BR><input
         name="new_email_address" type="text" size="50" maxlength="100" value="<?php echo $new_email_address; ?>"><BR>
     <BR>
-<strong>Admin Privileges?</strong>&nbsp;
-<select name="new_admin">
-<option value="0"<?php if ($new_admin == 0) echo " selected"; ?>>No</option>
-<option value="1"<?php if ($new_admin == 1) echo " selected"; ?>>Yes</option>
-</select>
-<BR><BR>
-<strong>Active Account?</strong>&nbsp;
-<select name="new_active">
-<option value="0"<?php if ($new_active == 0) echo " selected"; ?>>No</option>
-<option value="1"<?php if ($new_active == 1) echo " selected"; ?>>Yes</option>
-</select>
-<BR><BR>
-<input type="submit" name="button" value="Add New User &raquo;">
+    <strong>Admin Privileges?</strong>&nbsp;
+    <select name="new_admin">
+        <option value="0"<?php if ($new_admin == 0) echo " selected"; ?>>No</option>
+        <option value="1"<?php if ($new_admin == 1) echo " selected"; ?>>Yes</option>
+    </select>
+    <BR><BR>
+    <strong>Active Account?</strong>&nbsp;
+    <select name="new_active">
+        <option value="0"<?php if ($new_active == 0) echo " selected"; ?>>No</option>
+        <option value="1"<?php if ($new_active == 1) echo " selected"; ?>>Yes</option>
+    </select>
+    <BR><BR>
+    <input type="submit" name="button" value="Add New User &raquo;">
 </form>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
