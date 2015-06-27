@@ -77,7 +77,7 @@
     }
 
     td.main_table_cell_active {
-        vertical-align: middle;
+        vertical-align: middle; /* right here */
         padding-top: 2px;
         padding-right: 26px;
         padding-bottom: 2px;
@@ -154,7 +154,7 @@
 
     td.dns_table_left {
         text-align: left;
-        vertical-align: center;
+        vertical-align: middle;
         border-top: 0px;
         border-bottom: 0px;
         border-right: 0px;
@@ -170,7 +170,7 @@
 
     td.dns_table_right {
         text-align: left;
-        vertical-align: center;
+        vertical-align: middle;
         border-top: 0px;
         border-bottom: 0px;
         border-right: 0px;
@@ -376,7 +376,7 @@
         font-size: 8pt;
         font-weight: normal;
         text-align: left;
-        vertical-align: center;
+        vertical-align: middle;
         border-top: 3px #CC0000 ridge;
         border-bottom: 3px #CC0000 ridge;
         border-right: 3px #CC0000 ridge;
@@ -406,7 +406,7 @@
         font-size: 8pt;
         font-weight: bold;
         text-align: center;
-        vertical-align: center;
+        vertical-align: middle;
         border-top: 1px #6699CC ridge;
         border-bottom: 1px #6699CC ridge;
         border-right: 1px #6699CC ridge;
@@ -502,7 +502,7 @@
 
     div.search-block-inner {
         text-align: left;
-        vertical-align: center;
+        vertical-align: middle;
         font-family: Verdana, sans-serif, Arial;
         font-weight: normal;
         font-size: 8pt;
@@ -545,7 +545,7 @@
 
     div.export-inner {
         text-align: left;
-        vertical-align: center;
+        vertical-align: middle;
         border-top: 1px #6699CC ridge;
         border-bottom: 1px #6699CC ridge;
         border-right: 1px #6699CC ridge;
@@ -611,7 +611,7 @@
 
     div.footer-container-center {
         text-align: center;
-        vertical-align: center;
+        vertical-align: middle;
         font-family: Verdana, sans-serif, Arial;
         font-size: 8pt;
         font-weight: normal;

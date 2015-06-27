@@ -74,11 +74,11 @@ if ($_SESSION['dw_view_all'] == "1") {
 if ($domain != "") {
 
     $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-                                FROM dw_accounts AS a, dw_servers AS s
-                                WHERE a.server_id = s.id
-                                  AND a.domain = '" . $domain . "'
-                                  " . $where_clause . "
-                                ORDER BY s.name, a.unix_startdate DESC";
+                            FROM dw_accounts AS a, dw_servers AS s
+                            WHERE a.server_id = s.id
+                              AND a.domain = '" . $domain . "'
+                            " . $where_clause . "
+                            ORDER BY s.name, a.unix_startdate DESC";
 
 } else {
 
