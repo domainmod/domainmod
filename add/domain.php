@@ -540,10 +540,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <BR><BR>
     <strong>Privacy Enabled?</strong><BR><BR>
     <select name="new_privacy">
-        <option value="0"
-        "<?php if ($new_privacy == "0") echo " selected"; ?>>No</option>
-        <option value="1"
-        "<?php if ($new_privacy == "1") echo " selected"; ?>>Yes</option>
+        <option value="0"<?php if ($new_privacy == "0") echo " selected"; ?>>No</option>
+        <option value="1"<?php if ($new_privacy == "1") echo " selected"; ?>>Yes</option>
     </select>
     <BR><BR>
     <strong>Notes</strong><BR><BR>
