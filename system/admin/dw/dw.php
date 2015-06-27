@@ -41,20 +41,20 @@ $action = $_GET['action'];
 $view_all = $_GET['view_all'];
 
 if ($action != "") {
-	
+
 	if ($action == "dw_accounts") {
-		
+
 		if ($view_all == '1') {
-			
+
 			$_SESSION['dw_view_all'] = 1;
 
 		} else {
-			
+
 			$sql = "SELECT name, host
 					FROM dw_servers
 					WHERE id = '" . $id . "'";
 			$result = mysqli_query($connection, $sql);
-			
+
 			while ($row = mysqli_fetch_object($result)) {
 
 				$_SESSION['dw_view_all'] = "";
@@ -65,23 +65,23 @@ if ($action != "") {
 			}
 
 		}
-		
+
 		header("Location: list-accounts.php");
 		exit;
 
 	} elseif ($action == "dw_dns_zones") {
-		
+
 		if ($view_all == '1') {
-			
+
 			$_SESSION['dw_view_all'] = 1;
 
 		} else {
-			
+
 			$sql = "SELECT name, host
 					FROM dw_servers
 					WHERE id = '" . $id . "'";
 			$result = mysqli_query($connection, $sql);
-			
+
 			while ($row = mysqli_fetch_object($result)) {
 
 				$_SESSION['dw_view_all'] = "";
@@ -92,7 +92,7 @@ if ($action != "") {
 			}
 
 		}
-		
+
 		header("Location: list-dns-zones.php");
 		exit;
 
@@ -196,59 +196,59 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
     <BR><font class="subheadline">View Data</font><BR><BR>
     <form name="dw_view_data_form" method="post">
     <?php
-    
+
     if ($temp_total_accounts == 0) {
-    
+
         echo "No Accounts exist<BR>";
-    
+
     } else { ?>
-    
+
         <select name="dw_accounts" onChange="MM_jumpMenu('parent',this,0)">
         <option value="dw.php">Server Accounts</option><?php
         $sql_dw_account = "SELECT id, name, dw_accounts
 						   FROM dw_servers
 						   ORDER BY name, host";
         $result_dw_account = mysqli_query($connection, $sql_dw_account); ?>
-    
+
         <option value="dw.php?action=dw_accounts&view_all=1">VIEW ALL</option><?php
-    
+
         while ($row_dw_account = mysqli_fetch_object($result_dw_account)) { ?>
-    
+
             <option value="dw.php?action=dw_accounts&id=<?php echo $row_dw_account->id; ?>"><?php echo $row_dw_account->name; ?> (<?php echo number_format($row_dw_account->dw_accounts); ?> Accounts)</option><?php
-    
+
         } ?>
         </select>
         <BR><BR><?php
-    
+
     }
 
     if ($temp_total_dns_zones == 0) {
-    
+
         echo "No DNS Zones exist<BR>";
-    
+
     } else { ?>
-    
+
         <select name="dw_dns_zones" onChange="MM_jumpMenu('parent',this,0)">
         <option value="dw.php">DNS Zones & Records</option><?php
         $sql_dw_dns_records = "SELECT id, name, dw_dns_zones, dw_dns_records
 							   FROM dw_servers
 							   ORDER BY name, host";
         $result_dw_dns_records = mysqli_query($connection, $sql_dw_dns_records); ?>
-    
+
         <option value="dw.php?action=dw_dns_zones&view_all=1">VIEW ALL</option><?php
-    
+
         while ($row_dw_dns_records = mysqli_fetch_object($result_dw_dns_records)) { ?>
-    
+
             <option value="dw.php?action=dw_dns_zones&id=<?php echo $row_dw_dns_records->id; ?>"><?php echo $row_dw_dns_records->name; ?> (<?php echo number_format($row_dw_dns_records->dw_dns_zones); ?> Zones, <?php echo number_format($row_dw_dns_records->dw_dns_records); ?> Records)</option><?php
-    
+
         } ?>
         </select>
         <BR><?php
-    
+
     }
     ?>
     </form><?php
-	
+
 }
 
 
@@ -272,29 +272,29 @@ if ($no_results_build_info !== 1) { ?>
 
     <BR><font class="subheadline">Build Information</font><BR>
     <table class="main_table" cellpadding="0" cellspacing="0"><?php
-    
+
         if ($temp_build_info == 0) {
-    
+
             echo "<BR>You don't currently have any servers setup in your Data Warehouse. <a href=\"add/server.php\">Click here to add one</a>.";
-        
+
         } else {
-        
-            while ($row_build_info = mysqli_fetch_object($result_build_info)) { 
-    
+
+            while ($row_build_info = mysqli_fetch_object($result_build_info)) {
+
                 if ($row_build_info->build_start_time_overall != "0000-00-00 00:00:00" && $row_build_info->build_end_time_overall != "0000-00-00 00:00:00") {
-    
+
                         $temp_build_status_overall = "<font color=\"green\"><strong>Successful</strong></font>";
-                        
+
                 }
-    
+
                 if ($row_build_info->build_start_time_overall != "0000-00-00 00:00:00" && $row_build_info->has_ever_been_built_overall == 0) {
-    
+
                         $temp_build_status_overall = "<font class=\"default_highlight\">Building...</font>";
-                        
+
                 }
-    
+
                 if ($row_build_info->build_start_time_overall != "0000-00-00 00:00:00" && $row_build_info->build_end_time_overall == "0000-00-00 00:00:00" && $row_build_info->build_status_overall == 0) {
-                    
+
                     $sql_check_builds = "SELECT id
                                          FROM dw_servers
                                          WHERE build_status = '0'";
@@ -321,41 +321,41 @@ if ($no_results_build_info !== 1) { ?>
                     $is_building = 1;
 
                 }
-    
+
                 if ($row_build_info->build_start_time_overall == "0000-00-00 00:00:00" && $row_build_info->has_ever_been_built_overall == 0) {
-    
+
                         $temp_build_status_overall = "<font class=\"default_highlight\">Never Built</font>";
-                        
+
                 }
-    
+
                 if ($row_build_info->build_start_time_overall == "0000-00-00 00:00:00") {
-                    
+
                     $temp_build_start_time_overall = "-";
-                    
+
                 } else {
-                    
+
                     $temp_build_start_time_overall = date("M jS @ g:i:sa", strtotime($row_build_info->build_start_time_overall));
-                    
+
                 }
-        
+
                 if ($row_build_info->build_end_time_overall == "0000-00-00 00:00:00") {
-                    
+
                     $temp_build_end_time_overall = "-";
-                    
+
                 } else {
-        
+
                     $temp_build_end_time_overall = date("M jS @ g:i:sa", strtotime($row_build_info->build_end_time_overall));
-                    
+
                 }
 
                 if ($row_build_info->build_time_overall <= 0) {
-                    
+
                     $temp_build_time_overall = "-";
-                    
+
                 } elseif ($row_build_info->build_time_overall > 0 && $row_build_info->build_time_overall <= 60) {
-    
+
                     $temp_build_time_overall = number_format($row_build_info->build_time_overall) . "s";
-    
+
                 } else {
 
                     $number_of_minutes = intval($row_build_info->build_time_overall / 60);
@@ -364,7 +364,7 @@ if ($no_results_build_info !== 1) { ?>
 					$temp_build_time_overall = $number_of_minutes . "m " . $number_of_seconds . "s";
 
                 } ?>
-    
+
                 <tr class="main_table_row_heading_active">
                     <td class="main_table_cell_heading_active">
                         <font class="main_table_heading">Server</font>
@@ -382,7 +382,7 @@ if ($no_results_build_info !== 1) { ?>
                         <font class="main_table_heading">Build Status</font>
                     </td>
                 </tr>
-    
+
                 <tr class="main_table_row_active">
                     <td class="main_table_cell_active"><em>Full Build</em></td>
                     <td class="main_table_cell_active"><?php echo $temp_build_start_time_overall; ?></td>
@@ -390,9 +390,9 @@ if ($no_results_build_info !== 1) { ?>
                     <td class="main_table_cell_active"><?php echo $temp_build_time_overall; ?></td>
                     <td class="main_table_cell_active"><?php echo $temp_build_status_overall; ?></td>
                 </tr><?php
-                
+
             }
-            
+
         } ?>
 
         <?php
@@ -496,7 +496,7 @@ if ($no_results_build_info !== 1) { ?>
 
         } ?>
     </table><?php
-	
+
 }
 
 $sql_data_check = "SELECT dw_accounts, dw_dns_zones, dw_dns_records
@@ -520,7 +520,7 @@ if ($result_data_check === false || mysqli_num_rows($result_data_check) <= 0) {
 }
 
 if (mysqli_num_rows($result) == 0) {
-	
+
 	// Placeholder
 
 } else {
@@ -531,12 +531,12 @@ if (mysqli_num_rows($result) == 0) {
 
 	} else {
 
-		$table_exists = 0;		
+		$table_exists = 0;
 
 	}
 
 	if ($is_building != 1 && $table_exists != 0 && $temp_dw_accounts != 0 && $temp_dw_dns_zones != 0 && $temp_dw_dns_zones != 0) { ?>
-    
+
         <BR><font class="subheadline">Data Warehouse Totals</font><BR>
         <table class="main_table" cellpadding="0" cellspacing="0">
             <tr class="main_table_row_heading_active">
@@ -558,10 +558,10 @@ if (mysqli_num_rows($result) == 0) {
                     FROM dw_server_totals";
             $result = mysqli_query($connection, $sql);
 
-            while ($row = mysqli_fetch_object($result)) { 
-			
+            while ($row = mysqli_fetch_object($result)) {
+
                 if ($row->dw_servers > 1) { ?>
-        
+
                     <tr class="main_table_row_active">
                         <td class="main_table_cell_active">
                             <em>All Servers</em>
@@ -576,19 +576,19 @@ if (mysqli_num_rows($result) == 0) {
                             <?php echo number_format($row->dw_dns_records); ?>
                         </td>
                     </tr><?php
-    
+
                 }
-    
+
             }
-    
+
             $sql = "SELECT name, dw_accounts, dw_dns_zones, dw_dns_records
                     FROM dw_servers
                     WHERE has_ever_been_built = '1'
                     ORDER BY name";
             $result = mysqli_query($connection, $sql);
-    
+
             while ($row = mysqli_fetch_object($result)) { ?>
-        
+
                 <tr class="main_table_row_active">
                     <td class="main_table_cell_active">
                         <?php echo $row->name; ?>
@@ -603,18 +603,18 @@ if (mysqli_num_rows($result) == 0) {
                         <?php echo number_format($row->dw_dns_records); ?>
                     </td>
                 </tr><?php
-                
+
             } ?>
-    
+
         </table><?php
-		
+
 	}
 
 }
 
 $sql_accounts_without_a_dns_zone = "SELECT domain
 									FROM dw_accounts
-									WHERE domain NOT IN (SELECT domain 
+									WHERE domain NOT IN (SELECT domain
 														 FROM dw_dns_zones)
 									ORDER BY domain";
 $result_accounts_without_a_dns_zone = mysqli_query($connection, $sql_accounts_without_a_dns_zone);
@@ -631,7 +631,7 @@ if ($result_accounts_without_a_dns_zone === false || mysqli_num_rows($result_acc
 
 $sql_dns_zones_without_an_account = "SELECT domain
 									 FROM dw_dns_zones
-									 WHERE domain NOT IN (SELECT domain 
+									 WHERE domain NOT IN (SELECT domain
 									 					  FROM dw_accounts)
 									ORDER BY domain";
 $result_dns_zones_without_an_account = mysqli_query($connection, $sql_dns_zones_without_an_account);
@@ -666,92 +666,92 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
 
     <BR><font class="subheadline">Potential Problems</font><?php
     if ($temp_accounts_without_a_dns_zone == 0) {
-        
+
         $accounts_without_a_dns_zone_flag = 1;
-        
+
     } else { ?>
-    
+
         <BR><BR><strong>Accounts without a DNS Zone</strong><BR><?php
-    
+
         while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
 
             $account_list_raw .= $row_accounts_without_a_dns_zone->domain . ", ";
 
         }
-        
+
         $account_list = substr($account_list_raw, 0, -2);
-    
-        if ($account_list != "") { 
-        
+
+        if ($account_list != "") {
+
             echo $account_list;
-        
+
         } else {
-        
+
             echo "n/a";
-        
+
         }
-    
+
     }
 
     if ($temp_dns_zones_without_an_account == 0) {
-        
+
         $dns_zones_without_an_account_flag = 1;
-        
+
     } else { ?>
-    
+
         <BR><BR><strong>DNS Zones without an Account</strong><BR><?php
-    
+
         while ($row_dns_zones_without_an_account = mysqli_fetch_object($result_dns_zones_without_an_account)) {
-        
+
             // $zone_list_raw .= "<a class=\"invisiblelink\" href=\"list-dns-zones.php?domain=" . $row_dns_zones_without_an_account->domain . "\">" . $row_dns_zones_without_an_account->domain . "</a>, ";
             $zone_list_raw .= $row_dns_zones_without_an_account->domain . ", ";
-        
+
         }
-        
+
         $zone_list = substr($zone_list_raw, 0, -2);
-    
-        if ($zone_list != "") { 
-        
+
+        if ($zone_list != "") {
+
             echo $zone_list;
-        
+
         } else {
-        
+
             echo "n/a";
-        
+
         }
-    
+
     }
 
     if ($temp_suspended_accounts == 0) {
-        
+
         $suspended_accounts_flag = 1;
-        
+
     } else { ?>
-    
+
         <BR><BR><strong>Suspended Accounts</strong><BR><?php
-    
+
         while ($row_suspended_accounts = mysqli_fetch_object($result_suspended_accounts)) {
 
             $suspended_list_raw .= $row_suspended_accounts->domain . ", ";
 
         }
-        
+
         $suspended_list = substr($suspended_list_raw, 0, -2);
-        
-        if ($suspended_list != "") { 
-        
+
+        if ($suspended_list != "") {
+
             echo $suspended_list;
-        
+
         } else {
-        
+
             echo "n/a";
-        
+
         }
-        
+
     }
-	
+
 	echo "<BR>";
-	
+
 } ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

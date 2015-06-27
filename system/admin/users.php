@@ -52,7 +52,7 @@ if ($_SESSION['username'] == "admin") {
 			ORDER BY u.first_name, u.last_name, u.username, u.email_address";
 
 } else {
-	
+
 	$sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.number_of_logins, u.last_login, u.insert_time, u.update_time, us.default_timezone, us.default_currency
 			FROM users AS u, user_settings AS us
 			WHERE u.id = us.user_id
@@ -90,17 +90,17 @@ if ($export_data == "1") {
     $export->writeRow($export_file, $row_contents);
 
     if (mysqli_num_rows($result) > 0) {
-	
+
 		while ($row = mysqli_fetch_object($result)) {
-			
+
 			if ($row->admin == "1") {
-				
+
 				$is_admin = "1";
-				
+
 			} else {
-				
+
 				$is_admin = "";
-				
+
 			}
 
             $row_contents = array(
@@ -120,28 +120,28 @@ if ($export_data == "1") {
             $export->writeRow($export_file, $row_contents);
 
         }
-			
+
 	}
-	
+
 	$sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.number_of_logins, u.last_login, u.insert_time, u.update_time, us.default_timezone, us.default_currency
 			FROM users AS u, user_settings AS us
 			WHERE u.id = us.user_id
 			  AND u.active = '0'
 			ORDER BY u.first_name, u.last_name, u.username, u.email_address";
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
+
 	if (mysqli_num_rows($result) > 0) {
-	
+
 		while ($row = mysqli_fetch_object($result)) {
-	
+
 			if ($row->admin == "1") {
-				
+
 				$is_admin = "1";
-				
+
 			} else {
-				
+
 				$is_admin = "";
-				
+
 			}
 
             $row_contents = array(
@@ -209,9 +209,9 @@ if (mysqli_num_rows($result) > 0) { ?>
             <td class="main_table_cell_active">
                 <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->email_address; ?></a>
             </td>
-        </tr><?php 
+        </tr><?php
 	}
-		
+
 }
 
 $sql = "SELECT id, first_name, last_name, username, email_address, admin
@@ -246,10 +246,10 @@ if (mysqli_num_rows($result) > 0) { ?>
             <td class="main_table_cell_inactive">
                 <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->email_address; ?></a>
             </td>
-        </tr><?php 
+        </tr><?php
 
     }
-	
+
 } ?>
 </table>
 <BR><font class="default_highlight">*</font> = Admin Account

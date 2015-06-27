@@ -44,10 +44,10 @@ $export_data = $_GET['export_data'];
 
 $sql = "SELECT id, type, notes, insert_time, update_time
 		FROM ssl_cert_types
-		WHERE id IN (SELECT type_id 
-					 FROM ssl_certs 
-					 WHERE type_id != '0' 
-					   AND active NOT IN ('0') 
+		WHERE id IN (SELECT type_id
+					 FROM ssl_certs
+					 WHERE type_id != '0'
+					   AND active NOT IN ('0')
 					 GROUP BY type_id)
 		ORDER BY type asc";
 
@@ -75,34 +75,34 @@ if ($export_data == "1") {
     $export->writeRow($export_file, $row_contents);
 
     if (mysqli_num_rows($result) > 0) {
-		
+
 		$has_active = "1";
 
 		while ($row = mysqli_fetch_object($result)) {
-	
+
 			$new_ssltid = $row->id;
-		
+
 			if ($current_ssltid != $new_ssltid) {
 				$exclude_ssl_type_string_raw .= "'" . $row->id . "', ";
 			}
-	
+
 			$sql_total_count = "SELECT count(*) AS total_count
 								FROM ssl_certs
 								WHERE type_id = '$row->id'
 								  AND active NOT IN ('0')";
 			$result_total_count = mysqli_query($connection, $sql_total_count);
-			while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
-				$active_certs = $row_total_count->total_count; 
+			while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+				$active_certs = $row_total_count->total_count;
 			}
-	
+
 			if ($row->id == $_SESSION['default_ssl_type']) {
-			
+
 				$is_default = "1";
-				
+
 			} else {
-			
+
 				$is_default = "";
-			
+
 			}
 
             $row_contents = array(
@@ -117,44 +117,44 @@ if ($export_data == "1") {
             $export->writeRow($export_file, $row_contents);
 
             $current_ssltid = $row->ssltid;
-	
+
 		}
-	
+
 	}
-	
-	$exclude_ssl_type_string = substr($exclude_ssl_type_string_raw, 0, -2); 
-	
+
+	$exclude_ssl_type_string = substr($exclude_ssl_type_string_raw, 0, -2);
+
 	if ($exclude_ssl_type_string == "") {
-	
+
 		$sql = "SELECT id, type, notes, insert_time, update_time
 				FROM ssl_cert_types
 				ORDER BY type asc";
-	
+
 	} else {
-	
+
 		$sql = "SELECT id, type, notes, insert_time, update_time
 				FROM ssl_cert_types
 				WHERE id NOT IN (" . $exclude_ssl_type_string . ")
 				ORDER BY type asc";
-	
+
 	}
-	
+
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
-	if (mysqli_num_rows($result) > 0) { 
-	
+
+	if (mysqli_num_rows($result) > 0) {
+
 		$has_inactive = "1";
-		
+
 		while ($row = mysqli_fetch_object($result)) {
-	
+
 			if ($row->id == $_SESSION['default_ssl_type']) {
-			
+
 				$is_default = "1";
-				
+
 			} else {
-			
+
 				$is_default = "";
-			
+
 			}
 
             $row_contents = array(
@@ -169,7 +169,7 @@ if ($export_data == "1") {
             $export->writeRow($export_file, $row_contents);
 
         }
-	
+
 	}
 
     $export->closeFile($export_file);
@@ -191,7 +191,7 @@ Below is a list of all the SSL Certificates Types that are stored in <?php echo 
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 if (mysqli_num_rows($result) > 0) {
-	
+
 	$has_active = "1"; ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
@@ -201,12 +201,12 @@ if (mysqli_num_rows($result) > 0) {
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">SSL Certs</font>
         </td>
-    </tr><?php 
-	
+    </tr><?php
+
 	while ($row = mysqli_fetch_object($result)) {
 
 	    $new_ssltid = $row->id;
-    
+
         if ($current_ssltid != $new_ssltid) {
 			$exclude_ssl_type_string_raw .= "'" . $row->id . "', ";
 		} ?>
@@ -221,24 +221,24 @@ if (mysqli_num_rows($result) > 0) {
 									WHERE type_id = '$row->id'
 									  AND active NOT IN ('0')";
 				$result_total_count = mysqli_query($connection, $sql_total_count);
-				while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
-					$active_certs = $row_total_count->total_count; 
+				while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+					$active_certs = $row_total_count->total_count;
 				}
-				
+
 				if ($active_certs == "0") {
-					
+
 					echo number_format($active_certs);
-					
+
 				} else { ?>
-                
+
                 	<a class="nobold" href="../ssl-certs.php?ssltid=<?php echo $row->id; ?>"><?php echo number_format($active_certs); ?></a><?php
-                    
+
 				} ?>
             </td>
-        </tr><?php 
+        </tr><?php
 
 		$current_ssltid = $row->ssltid;
-		
+
 	}
 
 }

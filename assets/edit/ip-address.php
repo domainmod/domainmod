@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		exit;
 
 	} else {
-	
+
 		if ($new_name == "") $_SESSION['result_message'] .= "Please enter a name for the IP Address<BR>";
 		if ($new_ip == "") $_SESSION['result_message'] .= "Please enter the IP Address<BR>";
 
@@ -153,7 +153,7 @@ if ($really_del == "1") {
     } else { $error->outputSqlError($conn, "ERROR"); }
 
     $_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Deleted<BR>";
-	
+
 	header("Location: ../ip-addresses.php");
 	exit;
 

@@ -243,7 +243,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
    }
 
 } else {
-	
+
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -265,7 +265,7 @@ $new_password = "";
 <?php echo $system->doctype(); ?>
 <html>
 <head>
-<?php 
+<?php
 if ($page_title != "") { ?>
 	<title><?php echo $system->pageTitle($software_title, $page_title); ?></title><?php
 } else { ?>
@@ -275,12 +275,12 @@ if ($page_title != "") { ?>
 </head>
 <?php
 if ($new_username == "") { ?>
-	<body onLoad="document.forms[0].elements[0].focus()";><?php 
+	<body onLoad="document.forms[0].elements[0].focus()";><?php
 } else { ?>
-	<body onLoad="document.forms[0].elements[1].focus()";><?php 
+	<body onLoad="document.forms[0].elements[1].focus()";><?php
 } ?>
 <?php include(DIR_INC . "layout/header-login.inc.php"); ?>
-<?php 
+<?php
 if ($_SESSION['installation_mode'] == '0') { ?>
 
     <BR>
@@ -297,7 +297,7 @@ if ($_SESSION['installation_mode'] == '0') { ?>
             <BR><BR>
             <input type="submit" name="button" value="Manage Your Domains &raquo;">
         </div>
-    </form><?php 
+    </form><?php
 } ?>
 <?php include(DIR_INC . "layout/footer-login.inc.php"); ?>
 </body>

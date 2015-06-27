@@ -252,9 +252,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
     <form name="export_domains_form" method="post">
         <a href="cost-by-month.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and 
+        and
         <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
+        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
         <?php if ($total_rows > 0) { ?>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-month.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
@@ -361,7 +361,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
             $last_month = $row->month;
 
         } else { ?>
-		
+
 			<tr class="main_table_row_active">
 				<td class="main_table_cell_active">&nbsp;</td>
 				<td class="main_table_cell_active"><?php echo $display_month; ?></td>
@@ -378,7 +378,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     }
 	?>
     </table>
-	
+
 	<?php
 }
 ?>

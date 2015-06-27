@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($new_name != "" && $new_dns1 != "" && $new_dns2 != "") {
 
 		$new_number_of_servers = 10;
-		
+
 		if ($new_dns10 == '') { $new_number_of_servers = '9'; }
 		if ($new_dns9 == '') { $new_number_of_servers = '8'; }
 		if ($new_dns8 == '') { $new_number_of_servers = '7'; }
@@ -130,14 +130,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else { $error->outputSqlError($conn, "ERROR"); }
 
         $dnsid = $new_dnsid;
-		
+
 		$_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Updated<BR>";
 
 		header("Location: ../dns.php");
 		exit;
 
 	} else {
-	
+
 		if ($new_name == "") $_SESSION['result_message'] .= "Please enter a name for the DNS profile<BR>";
 		if ($new_dns1 == "") $_SESSION['result_message'] .= "Please enter the first DNS server<BR>";
 		if ($new_dns2 == "") $_SESSION['result_message'] .= "Please enter the second DNS server<BR>";
@@ -212,7 +212,7 @@ if ($really_del == "1") {
     } else { $error->outputSqlError($conn, "ERROR"); }
 
     $_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Deleted<BR>";
-	
+
 	header("Location: ../dns.php");
 	exit;
 

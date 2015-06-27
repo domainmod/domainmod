@@ -57,7 +57,7 @@ if ($all == "1") {
 			  AND f.type_id = sslt.id
 			GROUP BY sslp.name, sslt.type
 			ORDER BY sslp.name, sslt.type";
-	
+
 } else {
 
 	$sql = "SELECT sslp.id, sslp.name AS ssl_provider, sslt.id AS type_id, sslt.type, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
@@ -128,11 +128,11 @@ if ($total_rows > 0) {
 		$last_ssl_provider = "";
 		$new_type = "";
 		$last_type = "";
-	
+
 		if (mysqli_num_rows($result) > 0) {
-	
+
 			while ($row = mysqli_fetch_object($result)) {
-				
+
 				$new_ssl_provider = $row->ssl_provider;
 				$new_type = $row->type;
 
@@ -174,9 +174,9 @@ if ($total_rows > 0) {
 
                 $last_ssl_provider = $row->ssl_provider;
 				$last_type = $row->type;
-	
+
 			}
-	
+
 		}
 
         $export->closeFile($export_file);

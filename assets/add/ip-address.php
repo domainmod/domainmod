@@ -71,9 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		header("Location: ../ip-addresses.php");
 		exit;
-		
+
 	} else {
-	
+
 		if ($new_name == '') { $_SESSION['result_message'] .= "Please enter a name for the IP address<BR>"; }
 		if ($new_ip == '') { $_SESSION['result_message'] .= "Please enter the IP address<BR>"; }
 

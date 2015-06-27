@@ -165,9 +165,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
         $export->writeRow($export_file, $row_contents);
 
         if (mysqli_num_rows($result) > 0) {
-	
+
 			while ($row = mysqli_fetch_object($result)) {
-	
+
 				$per_cert = $row->total_cost / $row->number_of_certs;
 
                 $per_cert = $currency->format($per_cert, $_SESSION['default_currency_symbol'],
@@ -187,7 +187,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
                 $export->writeRow($export_file, $row_contents);
 
             }
-	
+
 		}
 
         $export->closeFile($export_file);
@@ -210,9 +210,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
     <form name="export_ssl_form" method="post">
         <a href="cost-by-ip-address.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and 
+        and
         <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
+        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
         <?php if ($total_rows > 0) { ?>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-ip-address.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
@@ -263,7 +263,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
         $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']); ?>
-	
+
 		<tr class="main_table_row_active">
 			<td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a></td>
 			<td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->ip; ?></a></td>
@@ -277,7 +277,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		?>
     </table><?php
 
-} 
+}
 ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

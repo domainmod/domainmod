@@ -77,7 +77,7 @@ if ($export_data == "1") {
     $export->writeRow($export_file, $row_contents);
 
     if (mysqli_num_rows($result) > 0) {
-	
+
 		while ($row = mysqli_fetch_object($result)) {
 
             $row_contents = array(
@@ -98,7 +98,7 @@ if ($export_data == "1") {
             $export->writeRow($export_file, $row_contents);
 
         }
-			
+
 	}
 
     $export->closeFile($export_file);
@@ -142,9 +142,9 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <font class="main_table_heading">Updated</font>
             </td>
         </tr><?php
-    
+
         while ($row = mysqli_fetch_object($result)) { ?>
-    
+
             <tr class="main_table_row_active">
                 <td class="main_table_cell_active">
                     <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
@@ -166,16 +166,16 @@ if (mysqli_num_rows($result) > 0) { ?>
                 	<?php if ($row->update_time == "0000-00-00 00:00:00") $row->update_time = "-"; ?>
                     <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->update_time; ?></a>
                 </td>
-            </tr><?php 
+            </tr><?php
 
         } ?>
-	
+
 	</table><?php
 
 } else {
 
 	echo "You don't currently have any servers setup. <a href=\"add/server.php\">Click here to add one</a>.";
-	
+
 }
 ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

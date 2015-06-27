@@ -152,7 +152,7 @@ if ($del == "1") {
     } else { $error->outputSqlError($conn, "ERROR"); }
 
     if ($existing_ssl_provider_accounts > 0 || $existing_ssl_certs > 0) {
-		
+
 		if ($existing_ssl_provider_accounts > 0) $_SESSION['result_message'] .= "This SSL Provider has Accounts
             associated with it and cannot be deleted<BR>";
 		if ($existing_ssl_certs > 0) $_SESSION['result_message'] .= "This SSL Provider has SSL Certificates associated

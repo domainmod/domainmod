@@ -21,7 +21,7 @@
 ?>
 <?php
 // // CODE TO USE
-// // 
+// //
 // // Display Accounts
 // // Input: $sql_dw_account_temp
 // $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
@@ -39,19 +39,19 @@
     while ($row_dw_account_temp = mysqli_fetch_object($result_dw_account_temp)) {
 
         $visible_domain = wordwrap($row_dw_account_temp->domain, 20, "<BR>", true); ?>
-        
+
         <tr class="main_table_row_active_no_hover"><?php
-		
+
 			if ($from_main_dw_account_page == 1) { ?>
 
                 <td class="main_table_cell_active_top_aligned">
-                
+
                     <strong><?php echo $visible_domain; ?></strong><BR><?php
-                
+
                     if ($_SESSION['dw_view_all'] == "1") { ?>
-                    
+
                         <BR><?php echo $row_dw_account_temp->dw_server_name; ?><BR><?php
-    
+
                     }
 
                     $sql_zone = "SELECT id
@@ -59,17 +59,17 @@
                                  WHERE domain = '" . $row_dw_account_temp->domain . "'
                                    AND server_id = '" . $row_dw_account_temp->dw_server_id . "'";
                     $result_zone = mysqli_query($connection, $sql_zone);
-            
+
                     while ($row_zone = mysqli_fetch_object($result_zone)) { ?>
-        
+
                         <BR>[<a class="covert_link" href="list-dns-zones.php?domain=<?php echo $row_dw_account_temp->domain; ?>">dns zone</a>]<?php
-        
+
                     } ?>
 
                 </td><?php
-				
+
 			} ?>
-            
+
             <td>
 
                 <?php if ($from_main_dw_account_page == 0) { ?><font class="default_highlight"><?php echo $row_dw_account_temp->dw_server_name; ?></font><BR><BR><?php } ?>

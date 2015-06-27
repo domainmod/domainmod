@@ -66,9 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else { $error->outputSqlError($conn, "ERROR"); }
 
         $_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Added<BR>";
-		
+
 		if ($_SESSION['has_ssl_provider'] != '1') {
-			
+
  			$system->checkExistingAssets($connection);
 
             header("Location: ../../ssl-certs.php");
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		exit;
 
 	} else {
-	
+
 		if ($new_ssl_provider == "") $_SESSION['result_message'] .= "Please enter the SSL provider's name<BR>";
 		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the SSL provider's URL<BR>";
 

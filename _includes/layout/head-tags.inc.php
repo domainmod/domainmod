@@ -69,24 +69,24 @@ tr.main_table_row_active_nohover {
 }
 td.main_table_cell_active {
 	vertical-align: middle;
-	padding-top: 2px; 
+	padding-top: 2px;
 	padding-right: 26px;
-	padding-bottom: 2px; 
-	padding-left: 0px; 
+	padding-bottom: 2px;
+	padding-left: 0px;
 }
 td.main_table_cell_active_top_aligned {
 	vertical-align: top;
-	padding-top: 2px; 
+	padding-top: 2px;
 	padding-right: 26px;
-	padding-bottom: 2px; 
-	padding-left: 0px; 
+	padding-bottom: 2px;
+	padding-left: 0px;
 }
 td.main_table_cell_active_top_aligned_no_right_padding {
 	vertical-align: top;
-	padding-top: 2px; 
+	padding-top: 2px;
 	padding-right: 0px;
-	padding-bottom: 2px; 
-	padding-left: 0px; 
+	padding-bottom: 2px;
+	padding-left: 0px;
 }
 
 tr.main_table_row_heading_inactive {
@@ -106,10 +106,10 @@ tr.main_table_row_inactive_no_right_padding {
 /*	line-height: 18px; */
 }
 td.main_table_cell_inactive {
-	padding-top: 2px; 
+	padding-top: 2px;
 	padding-right: 26px;
-	padding-bottom: 2px; 
-	padding-left: 0px; 
+	padding-bottom: 2px;
+	padding-left: 0px;
 }
 td.main_table_cell_heading_active_centered {
 	vertical-align: bottom;
@@ -121,21 +121,21 @@ td.main_table_cell_heading_active_centered {
 }
 td.main_table_cell_active_centered {
 	text-align: center;
-	padding-top: 2px; 
+	padding-top: 2px;
 	padding-right: 26px;
-	padding-bottom: 2px; 
-	padding-left: 0px; 
+	padding-bottom: 2px;
+	padding-left: 0px;
 }
 table.dns_table {
 	border-spacing: 0px;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
 td.dns_table_left {
 	text-align: left;
-	vertical-align: center; 
+	vertical-align: center;
 	border-top: 0px;
 	border-bottom: 0px;
 	border-right: 0px;
@@ -144,13 +144,13 @@ td.dns_table_left {
 	font-weight: normal;
 	font-size: 8pt;
 	padding-top: 0px;
-	padding-right: 15px; 
+	padding-right: 15px;
 	padding-bottom: 14px;
 	padding-left: 0px;
 }
 td.dns_table_right {
 	text-align: left;
-	vertical-align: center; 
+	vertical-align: center;
 	border-top: 0px;
 	border-bottom: 0px;
 	border-right: 0px;
@@ -159,21 +159,21 @@ td.dns_table_right {
 	font-weight: normal;
 	font-size: 8pt;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 14px;
 	padding-left: 0px;
 }
 div.update_box_header {
 	text-align: right;
 	padding-top: 14px;
-	padding-right: 22px; 
+	padding-right: 22px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
 
 table.update-block-outer {
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
@@ -182,7 +182,7 @@ td.update-block-left {
 	vertical-align: top;
 	text-align: left;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
@@ -190,7 +190,7 @@ td.update-block-right {
 	vertical-align: top;
 	text-align: left;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
@@ -216,7 +216,7 @@ div.main-outer {
 	border-right: 1px #6699CC ridge;
 	border-left: 1px #6699CC ridge;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
@@ -232,7 +232,7 @@ div.main-outer-login {
 	border-right: 1px #6699CC ridge;
 	border-left: 1px #6699CC ridge;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
@@ -247,13 +247,13 @@ div.main-inner {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 12px;
-	padding-right: 23px; 
+	padding-right: 23px;
 	padding-bottom: 23px;
 	padding-left: 23px;
 }
 div.header-container {
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
@@ -261,7 +261,7 @@ div.header-left {
 	width: 42%;
 	float: left;
 	text-align: left;
-	vertical-align: bottom; 
+	vertical-align: bottom;
 	font-family: Verdana, sans-serif, Arial;
 	font-size: 8pt;
 	font-weight: normal;
@@ -271,7 +271,7 @@ div.header-left {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 7px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 5px;
 	padding-left: 25px;
 }
@@ -279,7 +279,7 @@ div.header-right {
 	width: 52%;
 	float: right;
 	text-align: right;
-	vertical-align: bottom; 
+	vertical-align: bottom;
 	font-family: Verdana, sans-serif, Arial;
 	font-size: 8pt;
 	font-weight: normal;
@@ -289,13 +289,13 @@ div.header-right {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 33px;
-	padding-right: 8px; 
+	padding-right: 8px;
 	padding-bottom: 8px;
 	padding-left: 0px;
 }
 div.header-center {
 	text-align: center;
-	vertical-align: bottom; 
+	vertical-align: bottom;
 	font-family: Verdana, sans-serif, Arial;
 	font-size: 8pt;
 	font-weight: normal;
@@ -305,7 +305,7 @@ div.header-center {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 33px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 8px;
 	padding-left: 0px;
 }
@@ -321,7 +321,7 @@ div.main-menu {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 15px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 24px;
 }
@@ -332,7 +332,7 @@ div.maintenance_warning_outer {
 	border-right: 0px;
 	border-left: 0px;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 13px;
 	padding-left: 0px;
 }
@@ -341,7 +341,7 @@ div.maintenance_warning_inner {
 	font-size: 8pt;
 	font-weight: normal;
 	text-align: left;
-	vertical-align: center; 
+	vertical-align: center;
 	border-top: 3px #CC0000 ridge;
 	border-bottom: 3px #CC0000 ridge;
 	border-right: 3px #CC0000 ridge;
@@ -349,7 +349,7 @@ div.maintenance_warning_inner {
 	color: #000000;
 	background-color: #fafafa;
 	padding-top: 23px;
-	padding-right: 8px; 
+	padding-right: 8px;
 	padding-bottom: 23px;
 	padding-left: 20px;
 }
@@ -360,7 +360,7 @@ div.result_message_outer {
 	border-right: 0px;
 	border-left: 0px;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 13px;
 	padding-left: 0px;
 }
@@ -369,7 +369,7 @@ div.result_message_inner {
 	font-size: 8pt;
 	font-weight: bold;
 	text-align: center;
-	vertical-align: center; 
+	vertical-align: center;
 	border-top: 1px #6699CC ridge;
 	border-bottom: 1px #6699CC ridge;
 	border-right: 1px #6699CC ridge;
@@ -377,67 +377,67 @@ div.result_message_inner {
 	color: #000000;
 	background-color: #E0E0E0;
 	padding-top: 21px;
-	padding-right: 8px; 
+	padding-right: 8px;
 	padding-bottom: 21px;
 	padding-left: 8px;
 }
 div.asset-management-block-outer {
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 65px;
 	padding-left: 0px;
 }
 div.asset-management-block-left {
 	float: left;
-	width: 235px; 
+	width: 235px;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
 div.asset-management-block-center {
 	float: left;
-	width: 235px; 
+	width: 235px;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
 div.asset-management-block-right {
 	float: left;
-	width: 235px; 
+	width: 235px;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
 div.reporting-block-outer {
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 65px;
 	padding-left: 0px;
 }
 div.reporting-block-left {
 	float: left;
-	width: 275px; 
+	width: 275px;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
 div.reporting-block-center {
 	float: left;
-	width: 275px; 
+	width: 275px;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
 div.reporting-block-right {
 	float: left;
-	width: 275px; 
+	width: 275px;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
@@ -448,20 +448,20 @@ div.search-block-outer {
 	border-right: 1px #6699CC ridge;
 	border-left: 1px #6699CC ridge;
 	padding-top: 20px;
-	padding-right: 20px; 
+	padding-right: 20px;
 	padding-bottom: 20px;
 	padding-left: 20px;
 	background-color: #E0E0E0;
 }
 div.search-block-inner {
 	text-align: left;
-	vertical-align: center; 
+	vertical-align: center;
 	font-family: Verdana, sans-serif, Arial;
 	font-weight: normal;
 	font-size: 8pt;
 	color: #404040;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
@@ -469,14 +469,14 @@ div.search-block-left {
 	float: left;
 	width: 575px;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
 div.search-block-right {
 	float: left;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
@@ -488,13 +488,13 @@ div.export-outer {
 	border-right: 0px;
 	border-left: 0px;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 12px;
 	padding-left: 0px;
 }
 div.export-inner {
 	text-align: left;
-	vertical-align: center; 
+	vertical-align: center;
 	border-top: 1px #6699CC ridge;
 	border-bottom: 1px #6699CC ridge;
 	border-right: 1px #6699CC ridge;
@@ -504,7 +504,7 @@ div.export-inner {
 	font-size: 8pt;
 	background-color: #E0E0E0;
 	padding-top: 18px;
-	padding-right: 22px; 
+	padding-right: 22px;
 	padding-bottom: 18px;
 	padding-left: 22px;
 }
@@ -514,14 +514,14 @@ div.login_form {
 div.pagination_menu_block {
 	text-align: left;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
 div.pagination_menu_block_inner {
 	text-align: left;
 	padding-top: 0px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 }
@@ -532,13 +532,13 @@ div.reset-password {
 	border-right: 0px;
 	border-left: 0px;
 	padding-top: 10px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 10px;
 	padding-left: 0px;
 }
 div.footer-container {
 	text-align: right;
-	vertical-align: right; 
+	vertical-align: right;
 	font-family: Verdana, sans-serif, Arial;
 	font-size: 8pt;
 	font-weight: normal;
@@ -548,13 +548,13 @@ div.footer-container {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 10px;
-	padding-right: 8px; 
+	padding-right: 8px;
 	padding-bottom: 10px;
 	padding-left: 0px;
 }
 div.footer-container-center {
 	text-align: center;
-	vertical-align: center; 
+	vertical-align: center;
 	font-family: Verdana, sans-serif, Arial;
 	font-size: 8pt;
 	font-weight: normal;
@@ -564,7 +564,7 @@ div.footer-container-center {
 	border-right: 0px #6699CC ridge;
 	border-left: 0px #6699CC ridge;
 	padding-top: 10px;
-	padding-right: 0px; 
+	padding-right: 0px;
 	padding-bottom: 10px;
 	padding-left: 0px;
 }

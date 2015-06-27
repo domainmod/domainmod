@@ -109,9 +109,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($lines);
 
         if ($new_data == "" || $invalid_domains == 1) {
-		
+
 			if ($invalid_domains == 1) {
-	
+
 				if ($invalid_count == 1) {
 
 					$_SESSION['result_message'] = "There is " . number_format($invalid_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
@@ -120,24 +120,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					$_SESSION['result_message'] = "There are " . number_format($invalid_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
 
-					if (($invalid_count-$invalid_to_display) == 1) { 
-	
+					if (($invalid_count-$invalid_to_display) == 1) {
+
 						$_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_count-$invalid_to_display) . " other<BR>";
-	
-					} elseif (($invalid_count-$invalid_to_display) > 1) { 
-	
+
+					} elseif (($invalid_count-$invalid_to_display) > 1) {
+
 						$_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_count-$invalid_to_display) . " others<BR>";
 					}
 
 				}
-	
+
 			} else {
 
 				$_SESSION['result_message'] = "Please enter the list of domains to apply the action to<BR>";
-	
+
 			}
 			$submission_failed = 1;
-	
+
 		} else {
 
             $new_data_formatted = "'" . $new_data;
@@ -145,16 +145,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$new_data_formatted = preg_replace("/\r\n/", "','", $new_data_formatted);
 			$new_data_formatted = str_replace (" ", "", $new_data_formatted);
 			$new_data_formatted = trim($new_data_formatted);
-	
-			if ($action == "R") { 
-			
+
+			if ($action == "R") {
+
 				$sql = "SELECT domain, expiry_date
 						FROM domains
 						WHERE domain IN (" . $new_data_formatted . ")";
 				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-				
+
 				while ($row = mysqli_fetch_object($result)) {
-				
+
 					$lines = explode("-", $row->expiry_date);
 					$old_expiry = $lines[0] . "-" . $lines[1] . "-" . $lines[2];
 					$new_expiry = $lines[0]+$new_renewal_years . "-" . $lines[1] . "-" . $lines[2];
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 									   	   notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 										   update_time = '" . $timestamp . "'
 									   WHERE domain = '" . $row->domain . "'";
-						
+
 					} else {
 
 						$sql_update = "UPDATE domains
@@ -176,19 +176,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					}
 					$result_update = mysqli_query($connection, $sql_update);
-				
+
 				}
 
 				$_SESSION['result_message'] = "Domains Renewed<BR>";
 
                 $_SESSION['result_message'] .= $maint->updateSegments($connection);
-	
+
 			} elseif ($action == "AD") {
 
                 $date = new DomainMOD\Date();
 
                 if (!$date->checkDateFormat($new_expiry_date) || $new_pcid == "" || $new_dnsid == "" || $new_ipid == "" || $new_whid == "" || $new_raid == "" || $new_pcid == "0" || $new_dnsid == "0" || $new_ipid == "0" || $new_whid == "0" || $new_raid == "0") {
-	
+
 					if (!$date->checkDateFormat($new_expiry_date)) $_SESSION['result_message'] .= "You have entered an invalid expiry date<BR>";
 					if ($new_pcid == "" || $new_pcid == "0") $_SESSION['result_message'] .= "Please choose the new Category<BR>";
 					if ($new_dnsid == "" || $new_dnsid == "0") $_SESSION['result_message'] .= "Please choose the new DNS Profile<BR>";
@@ -196,9 +196,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					if ($new_whid == "" || $new_whid == "0") $_SESSION['result_message'] .= "Please choose the new Web Hosting Provider<BR>";
 					if ($new_raid == "" || $new_raid == "0") $_SESSION['result_message'] .= "Please choose the new Registrar Account<BR>";
 					$submission_failed = 1;
-				
+
 				} else {
-	
+
 					$sql = "SELECT owner_id, registrar_id
 							FROM registrar_accounts
 							WHERE id = '" . $new_raid . "'";
@@ -207,16 +207,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						$temp_owner_id = $row->owner_id;
 						$temp_registrar_id = $row->registrar_id;
 					}
-		
+
 					$lines = explode("\r\n", $new_data);
 
                     reset($lines);
-			
+
 					// cycle through domains here
 					while (list($key, $new_domain) = each($lines)) {
-					
+
 						$new_tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
-		
+
 						$sql = "SELECT id
 								FROM fees
 								WHERE registrar_id = '" . $temp_registrar_id . "'
@@ -225,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						while ($row = mysqli_fetch_object($result)) {
 							$temp_fee_id = $row->id;
 						}
-		
+
 						if ($temp_fee_id == '0' || $temp_fee_id == "") { $temp_fee_fixed = 0; $temp_fee_id = 0; } else { $temp_fee_fixed = 1; }
 
                         if ($new_privacy == "1") {
@@ -258,12 +258,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								  AND insert_time = '" . $timestamp . "'";
 						$result = mysqli_query($connection, $sql);
 						while ($row = mysqli_fetch_object($result)) { $temp_domain_id = $row->id; }
-			
+
 						$sql = "INSERT INTO domain_field_data
-								(domain_id, insert_time) VALUES 
+								(domain_id, insert_time) VALUES
 								('" . $temp_domain_id . "', '" . $timestamp . "')";
 						$result = mysqli_query($connection, $sql);
-			
+
 						$sql = "SELECT field_name
 								FROM domain_fields
 								ORDER BY name";
@@ -308,20 +308,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['result_message'] .= $maint->updateTlds($connection);
 
                 }
-	
-			} elseif ($action == "FR") { 
-			
+
+			} elseif ($action == "FR") {
+
 				$sql = "SELECT domain, expiry_date
 						FROM domains
 						WHERE domain IN (" . $new_data_formatted . ")";
 				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-				
+
 				while ($row = mysqli_fetch_object($result)) {
-				
+
 					$lines = explode("-", $row->expiry_date);
 					$old_expiry = $lines[0] . "-" . $lines[1] . "-" . $lines[2];
 					$new_expiry = $lines[0]+$new_renewal_years . "-" . $lines[1] . "-" . $lines[2];
-					
+
 					if ($new_renewal_years == "1") {
 						$renewal_years_string = $new_renewal_years . " Year";
 					} else {
@@ -352,20 +352,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					}
 					$result_update = mysqli_query($connection, $sql_update);
-				
+
 				}
 
 				$_SESSION['result_message'] .= $maint->updateSegments($connection);
 
 				$_SESSION['result_message'] = "Domains Fully Renewed<BR>";
-				
-			} elseif ($action == "CPC") { 
-			
+
+			} elseif ($action == "CPC") {
+
 				if ($new_pcid == "" || $new_pcid == 0) {
-	
+
 					$_SESSION['result_message'] = "Please choose the new Category<BR>";
 					$submission_failed = 1;
-	
+
 				} else {
 
 					if ($new_notes != "") {
@@ -375,7 +375,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 									notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 									update_time = '" . $timestamp . "'
 								WHERE domain IN (" . $new_data_formatted . ")";
-						
+
 					} else {
 
 						$sql = "UPDATE domains
@@ -385,18 +385,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					}
 					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-					
+
 					$_SESSION['result_message'] = "Category Changed<BR>";
-	
+
 				}
-	
-			} elseif ($action == "CDNS") { 
-	
+
+			} elseif ($action == "CDNS") {
+
 				if ($new_dnsid == "" || $new_dnsid == 0) {
-	
+
 					$_SESSION['result_message'] = "Please choose the new DNS Profile<BR>";
 					$submission_failed = 1;
-	
+
 				} else {
 
 					if ($new_notes != "") {
@@ -406,7 +406,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 									notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 									update_time = '" . $timestamp . "'
 								WHERE domain IN (" . $new_data_formatted . ")";
-						
+
 					} else {
 
 						$sql = "UPDATE domains
@@ -416,17 +416,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					}
 					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-					
+
 					$_SESSION['result_message'] = "DNS Profile Changed<BR>";
 				}
-	
+
 			} elseif ($action == "CIP") {
-	
+
 				if ($new_ipid == "" || $new_ipid == 0) {
-	
+
 					$_SESSION['result_message'] = "Please choose the new IP Address<BR>";
 					$submission_failed = 1;
-	
+
 				} else {
 
 					if ($new_notes != "") {
@@ -436,7 +436,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 									notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 									update_time = '" . $timestamp . "'
 								WHERE domain IN (" . $new_data_formatted . ")";
-						
+
 					} else {
 
 						$sql = "UPDATE domains
@@ -446,18 +446,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 					}
 					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
+
 					$_SESSION['result_message'] = "IP Address Changed<BR>";
-	
+
 				}
-	
+
 			} elseif ($action == "AN") {
-				
+
 				if ($new_notes == "") {
-	
+
 					$_SESSION['result_message'] = "Please enter the new Note<BR>";
 					$submission_failed = 1;
-	
+
 				} else {
 
 					$sql_update = "UPDATE domains
@@ -465,20 +465,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								   	   update_time = '" . $timestamp . "'
 								   WHERE domain IN (" . $new_data_formatted . ")";
 					$result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
-					
+
 					$_SESSION['result_message'] = "Note Added<BR>";
-	
+
 				}
 
-			} elseif ($action == "CRA") { 
-	
+			} elseif ($action == "CRA") {
+
 				if ($new_raid == "" || $new_raid == 0) {
-	
+
 					$_SESSION['result_message'] = "Please choose the new Registrar Account<BR>";
 					$submission_failed = 1;
-	
+
 				} else {
-	
+
 					$sql = "SELECT ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS r_name, o.id AS o_id, o.name AS o_name
 							FROM registrar_accounts AS ra, registrars AS r, owners AS o
 							WHERE ra.registrar_id = r.id
@@ -487,7 +487,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							GROUP BY r.name, o.name, ra.username
 							ORDER BY r.name asc, o.name asc, ra.username asc";
 					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-			
+
 					while ($row = mysqli_fetch_object($result)) {
 						$new_owner_id = $row->o_id;
 						$new_registrar_id = $row->r_id;
@@ -500,22 +500,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					if ($new_notes != "") {
 
 						$sql = "UPDATE domains
-								SET owner_id = '" . $new_owner_id . "', 
-									registrar_id = '" . $new_registrar_id . "', 
+								SET owner_id = '" . $new_owner_id . "',
+									registrar_id = '" . $new_registrar_id . "',
 									account_id = '" . $new_registrar_account_id . "',
 									notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 									update_time = '" . $timestamp . "'
 								WHERE domain IN (" . $new_data_formatted . ")";
-						
+
 					} else {
 
 						$sql = "UPDATE domains
-								SET owner_id = '" . $new_owner_id . "', 
-									registrar_id = '" . $new_registrar_id . "', 
+								SET owner_id = '" . $new_owner_id . "',
+									registrar_id = '" . $new_registrar_id . "',
 									account_id = '" . $new_registrar_account_id . "',
 									update_time = '" . $timestamp . "'
 								WHERE domain IN (" . $new_data_formatted . ")";
-						
+
 					}
 					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -659,7 +659,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 								update_time = '" . $timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
+
 				} else {
 
 					$sql = "UPDATE domains
@@ -669,12 +669,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 				}
 				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-				
+
 				$_SESSION['result_message'] = "Domains marked as expired<BR>";
 
 				$_SESSION['result_message'] .= $maint->updateSegments($connection);
-	
-			} elseif ($action == "S") { 
+
+			} elseif ($action == "S") {
 
 				if ($new_notes != "") {
 
@@ -683,7 +683,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 								update_time = '" . $timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
+
 				} else {
 
 					$sql = "UPDATE domains
@@ -693,12 +693,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 				}
 				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-				
+
 				$_SESSION['result_message'] = "Domains marked as sold<BR>";
 
 				$_SESSION['result_message'] .= $maint->updateSegments($connection);
-	
-			} elseif ($action == "A") { 
+
+			} elseif ($action == "A") {
 
 				if ($new_notes != "") {
 
@@ -707,22 +707,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 								update_time = '" . $timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
+
 				} else {
 
 					$sql = "UPDATE domains
 							SET active = '1',
 								update_time = '" . $timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
+
 				}
 				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-				
+
 				$_SESSION['result_message'] = "Domains marked as active<BR>";
 
 				$_SESSION['result_message'] .= $maint->updateSegments($connection);
-	
-			} elseif ($action == "T") { 
+
+			} elseif ($action == "T") {
 
 				if ($new_notes != "") {
 
@@ -731,22 +731,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 								update_time = '" . $timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
+
 				} else {
 
 					$sql = "UPDATE domains
 							SET active = '2',
 								update_time = '" . $timestamp . "'
 							WHERE domain IN ($new_data_formatted)";
-					
+
 				}
 				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-				
+
 				$_SESSION['result_message'] = "Domains marked as 'In Transfer'<BR>";
 
 				$_SESSION['result_message'] .= $maint->updateSegments($connection);
-	
-			} elseif ($action == "PRg") { 
+
+			} elseif ($action == "PRg") {
 
 				if ($new_notes != "") {
 
@@ -755,22 +755,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 								update_time = '" . $timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
+
 				} else {
 
 					$sql = "UPDATE domains
 							SET active = '5',
 								update_time = '" . $timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
+
 				}
 				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-				
+
 				$_SESSION['result_message'] = "Domains marked as 'Pending (Registration)'<BR>";
 
 				$_SESSION['result_message'] .= $maint->updateSegments($connection);
-	
-			} elseif ($action == "PRn") { 
+
+			} elseif ($action == "PRn") {
 
 				if ($new_notes != "") {
 
@@ -779,22 +779,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 								update_time = '" . $timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
+
 				} else {
 
 					$sql = "UPDATE domains
 							SET active = '3',
 								update_time = '" . $timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
+
 				}
 				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-				
+
 				$_SESSION['result_message'] = "Domains marked as 'Pending (Renewal)'<BR>";
 
 				$_SESSION['result_message'] .= $maint->updateSegments($connection);
-	
-			} elseif ($action == "PO") { 
+
+			} elseif ($action == "PO") {
 
 				if ($new_notes != "") {
 
@@ -803,22 +803,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 								update_time = '" . $timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
+
 				} else {
 
 					$sql = "UPDATE domains
 							SET active = '4',
 								update_time = '" . $timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
+
 				}
 				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-				
+
 				$_SESSION['result_message'] = "Domains marked as 'Pending (Other)'<BR>";
 
 				$_SESSION['result_message'] .= $maint->updateSegments($connection);
-	
-			} elseif ($action == "PRVE") { 
+
+			} elseif ($action == "PRVE") {
 
 				if ($new_notes != "") {
 
@@ -856,8 +856,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['result_message'] = "Domains marked as 'Private WHOIS'<BR>";
 
 				$_SESSION['result_message'] .= $maint->updateSegments($connection);
-	
-			} elseif ($action == "PRVD") { 
+
+			} elseif ($action == "PRVD") {
 
 				if ($new_notes != "") {
 
@@ -866,7 +866,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 								update_time = '" . $timestamp . "'
 							WHERE domain IN (" . $new_data_formatted . ")";
-					
+
 				} else {
 
 					$sql = "UPDATE domains
@@ -893,51 +893,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
 
                 $_SESSION['result_message'] = "Domains marked as 'Public WHOIS'<BR>";
-	
-			} elseif ($action == "CED") { 
-	
+
+			} elseif ($action == "CED") {
+
 				if (!$date->checkDateFormat($new_expiry_date)) {
-	
+
 					$_SESSION['result_message'] = "The expiry date you entered is invalid<BR>";
 					$submission_failed = 1;
-	
+
 				} else {
 
 					if ($new_notes != "") {
-	
+
 						$sql = "UPDATE domains
 								SET expiry_date = '" . $new_expiry_date . "',
 									notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 									update_time = '" . $timestamp . "'
 								WHERE domain IN (" . $new_data_formatted . ")";
-						
+
 					} else {
-	
+
 						$sql = "UPDATE domains
 								SET expiry_date = '" . $new_expiry_date . "',
 									update_time = '" . $timestamp . "'
 								WHERE domain IN (" . $new_data_formatted . ")";
-	
+
 					}
 					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-					
+
 					$_SESSION['result_message'] = "Expiry Date Updated<BR>";
 
 				}
 
-			} elseif ($action == "UCF1" || $action == "UCF2" || $action == "UCF3") { 
-			
+			} elseif ($action == "UCF1" || $action == "UCF2" || $action == "UCF3") {
+
 				$sql = "SELECT id
 						FROM domains
 						WHERE domain in (" . $new_data_formatted . ")";
 				$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-				
+
 				while ($row = mysqli_fetch_object($result)) {
-					
+
 					$domain_id_list .= "'" . $row->id . "', ";
-					
+
 				}
-				
+
 				$domain_id_list_formatted = substr($domain_id_list, 0, -2);
 
 				$sql = "SELECT name, field_name
@@ -953,7 +953,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				}
 
 				$full_field = "new_" . $temp_field_name;
-			
+
 				$sql = "UPDATE domain_field_data
 						SET `" . $temp_field_name . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "',
 							 update_time = '" . $timestamp . "'
@@ -961,22 +961,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$result = mysqli_query($connection, $sql);
 
 				if ($new_notes != "") {
-				
+
 					$sql = "UPDATE domains
 							SET notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
 								update_time = '" . $timestamp . "'
 							WHERE id in (" . $domain_id_list_formatted . ")";
 					$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-					
+
 				}
-				
+
 				$_SESSION['result_message'] = "Custom Field <font class=\"highlight\">" . $name_array[0] . "</font> Updated<BR>";
 
 			}
-	
+
 			$done = "1";
 			$new_data_unformatted = strtolower(preg_replace("/\r\n/", ", ", $new_data));
-	
+
 		}
 
 	}
@@ -1082,9 +1082,9 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
             ORDER BY df.name";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
     while ($row = mysqli_fetch_object($result)) { ?>
-    
+
         <option value="bulk-updater.php?action=UCF<?php echo $row->type_id; ?>&field_id=<?php echo $row->id; ?>"<?php if ($row->id == $field_id) echo " selected"; ?>><?php echo $row->name; ?> (<?php echo $row->type; ?>)</option><?php
-    
+
     }
     ?>
 </select>
@@ -1103,7 +1103,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 <?php } ?>
 
 <?php if ($action == "R" || $action == "FR") { ?>
-    <strong>Renew For</strong> 
+    <strong>Renew For</strong>
     <select name="new_renewal_years">
       <option value="1"<?php if ($new_renewal_years == "1") { echo " selected"; } ?>>1 Year</option>
       <option value="2"<?php if ($new_renewal_years == "2") { echo " selected"; } ?>>2 Years</option>
@@ -1134,7 +1134,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     $result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_raid\">";
     while ($row_account = mysqli_fetch_object($result_account)) { ?>
-    
+
     	<option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $_SESSION['default_registrar_account']) echo " selected";?>><?php echo $row_account->r_name; ?>, <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
 
     }
@@ -1149,7 +1149,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     $result_dns = mysqli_query($connection, $sql_dns) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_dnsid\">";
     while ($row_dns = mysqli_fetch_object($result_dns)) { ?>
-    
+
 	    <option value="<?php echo $row_dns->id; ?>"<?php if ($row_dns->id == $_SESSION['default_dns']) echo " selected";?>><?php echo $row_dns->name; ?></option><?php
 
     }
@@ -1196,9 +1196,9 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     $result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_pcid\">";
     while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
-    
+
 		<option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $_SESSION['default_category_domains']) echo " selected";?>><?php echo $row_cat->name; ?></option><?php
-    
+
     }
     echo "</select>";
     ?>
@@ -1234,9 +1234,9 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<strong>New Category</strong><a title=\"Required Field\"><font class=\"default_highlight\">*</font></a><BR><BR>";
 	echo "<select name=\"new_pcid\">";
     echo "<option value=\"\""; if ($new_pcid == "") echo " selected"; echo ">"; echo "$choose_text Category</option>";
-	while ($row_cat = mysqli_fetch_object($result_cat)) { 
+	while ($row_cat = mysqli_fetch_object($result_cat)) {
     echo "<option value=\"$row_cat->id\""; if ($row_cat->id == $_SESSION['default_category_domains']) echo " selected"; echo ">"; echo "$row_cat->name</option>";
-    } 
+    }
     echo "</select>";
     ?>
     <BR><BR>
@@ -1250,9 +1250,9 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<strong>New DNS Profile</strong><a title=\"Required Field\"><font class=\"default_highlight\">*</font></a><BR><BR>";
     echo "<select name=\"new_dnsid\">";
     echo "<option value=\"\""; if ($new_dnsid == "") echo " selected"; echo ">"; echo "$choose_text DNS Profile</option>";
-    while ($row_dns = mysqli_fetch_object($result_dns)) { 
+    while ($row_dns = mysqli_fetch_object($result_dns)) {
     echo "<option value=\"$row_dns->id\""; if ($row_dns->id == $_SESSION['default_dns']) echo " selected"; echo ">"; echo "$row_dns->name</option>";
-    } 
+    }
     echo "</select>";
     ?>
     <BR><BR>
@@ -1266,9 +1266,9 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<strong>New IP Address</strong><a title=\"Required Field\"><font class=\"default_highlight\">*</font></a><BR><BR>";
     echo "<select name=\"new_ipid\">";
     echo "<option value=\"\""; if ($new_ipid == "") echo " selected"; echo ">"; echo "$choose_text IP Address</option>";
-    while ($row_ip = mysqli_fetch_object($result_ip)) { 
+    while ($row_ip = mysqli_fetch_object($result_ip)) {
     echo "<option value=\"$row_ip->id\""; if ($row_ip->id == $_SESSION['default_ip_address_domains']) echo " selected"; echo ">"; echo "$row_ip->name ($row_ip->ip)</option>";
-    } 
+    }
     echo "</select>";
     ?>
     <BR><BR>
@@ -1288,9 +1288,9 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
     echo "<strong>New Registrar Account</strong><a title=\"Required Field\"><font class=\"default_highlight\">*</font></a><BR><BR>";
     echo "<select name=\"new_raid\">";
     echo "<option value=\"\""; if ($new_raid == "") echo " selected"; echo ">"; echo "$choose_text Registrar Account</option>";
-	while ($row_account = mysqli_fetch_object($result_account)) { 
+	while ($row_account = mysqli_fetch_object($result_account)) {
 	    echo "<option value=\"$row_account->ra_id\""; if ($row_account->ra_id == $_SESSION['default_registrar_account']) echo " selected"; echo ">"; echo "$row_account->r_name, $row_account->o_name ($row_account->username)</option>";
-    } 
+    }
     echo "</select>";
     ?>
     <BR><BR>
@@ -1325,22 +1325,22 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 			WHERE df.type_id = cft.id
 			  AND df.id = '" . $field_id . "'";
 	$result = mysqli_query($connection, $sql);
-	
+
 	while ($row = mysqli_fetch_object($result)) { ?>
-	
+
         <strong><?php echo $row->name; ?></strong>
         <input type="checkbox" name="new_<?php echo $row->field_name; ?>" value="1"<?php if (${'new_' . $field} == "1") echo " checked"; ?>><BR><?php
-        
+
         if ($row->description != "") {
-            
+
             echo $row->description . "<BR><BR>";
-            
+
         } else {
-            
+
             echo "<BR>";
-            
+
         }
-	
+
 	}
 
 } elseif ($action == "UCF2") {
@@ -1350,19 +1350,19 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 			WHERE df.type_id = cft.id
 			  AND df.id = '" . $field_id . "'";
 	$result = mysqli_query($connection, $sql);
-	
+
 	while ($row = mysqli_fetch_object($result)) { ?>
 
 		<strong><?php echo $row->name; ?> (255)</strong><?php
 
 		if ($row->description != "") {
-			
+
 			echo "<BR>" . $row->description . "<BR><BR>";
-			
+
 		} else {
-			
+
 			echo "<BR><BR>";
-			
+
 		} ?>
 		<input type="text" name="new_<?php echo $row->field_name; ?>" size="50" maxlength="255" value="<?php echo ${'new_' . $row->field_name}; ?>"><BR><BR><?php
 
@@ -1375,19 +1375,19 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 			WHERE df.type_id = cft.id
 			  AND df.id = '" . $field_id . "'";
 	$result = mysqli_query($connection, $sql);
-	
+
 	while ($row = mysqli_fetch_object($result)) { ?>
 
 		<strong><?php echo $row->name; ?></strong><?php
 
 		if ($row->description != "") {
-			
+
 			echo "<BR>" . $row->description . "<BR><BR>";
-			
+
 		} else {
-			
+
 			echo "<BR><BR>";
-			
+
 		} ?>
 		<textarea name="new_<?php echo $row->field_name; ?>" cols="60" rows="5"><?php echo ${'new_' . $row->field_name}; ?></textarea><BR><BR><?php
 

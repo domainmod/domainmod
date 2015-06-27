@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		exit;
 
 	} else {
-	
+
 		if ($username == "") { $_SESSION['result_message'] .= "Please enter the username<BR>"; }
 
 	}

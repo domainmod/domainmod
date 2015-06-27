@@ -61,7 +61,7 @@ $result = mysqli_query($connection, $sql);
 if (mysqli_num_rows($result) == 0) {
 
 		$_SESSION['result_message'] .= "You're trying to edit an invalid Custom Domain Field<BR>";
-		
+
 		header("Location: ../domain-fields.php");
 		exit;
 
@@ -76,24 +76,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 				update_time = '" . $time->time() . "'
 			WHERE id = '" . $new_cdfid . "'";
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
+
 	$sql = "SELECT field_name
 			FROM domain_fields
 			WHERE id = '" . $new_cdfid . "'";
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 	while ($row = mysqli_fetch_object($result)) { $temp_field_name = $row->field_name; }
-	
+
 	$_SESSION['result_message'] .= "Custom Domain Field <font class=\"highlight\">" . $new_name . " (" . $temp_field_name . ")</font> Updated<BR>";
-	
+
 	header("Location: ../domain-fields.php");
 	exit;
 
 } else {
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	
+
 		if ($new_name == "") $_SESSION['result_message'] .= "Enter the display name<BR>";
-		
+
 	} else {
 
 		$sql = "SELECT f.name, f.field_name, f.description, f.notes, f.insert_time, f.update_time, t.name AS type
@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 		while ($row = mysqli_fetch_object($result)) {
-			
+
 			$new_name = $row->name;
 			$new_field_name = $row->field_name;
 			$new_description = $row->description;
@@ -130,7 +130,7 @@ if ($really_del == "1") {
 		$_SESSION['result_message'] = "The Custom Domain Field cannot be deleted<BR>";
 
 	} else {
-		
+
 		$sql = "SELECT name, field_name
 				FROM domain_fields
 				WHERE id = '" . $cdfid . "'";
@@ -149,7 +149,7 @@ if ($really_del == "1") {
 		$result = mysqli_query($connection, $sql);
 
 		$_SESSION['result_message'] = "Custom Domain Field <font class=\"highlight\">" . $temp_name . " (" . $temp_field_name . ")</font> Deleted<BR>";
-		
+
 		header("Location: ../domain-fields.php");
 		exit;
 

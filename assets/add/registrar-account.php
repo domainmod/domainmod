@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $temp_registrar . ", " . $temp_owner . ")</font> Added<BR>";
 
 		if ($_SESSION['has_registrar_account'] != '1') {
-			
+
 			$system->checkExistingAssets($connection);
 
             header("Location: ../../domains.php");
@@ -114,12 +114,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		} else {
 
 			header("Location: ../registrar-accounts.php");
-			
+
 		}
 		exit;
 
 	} else {
-	
+
 		if ($username == "") { $_SESSION['result_message'] .= "Please enter a username<BR>"; }
 
 	}

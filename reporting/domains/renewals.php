@@ -88,7 +88,7 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
 		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 		  AND d.active NOT IN ('0', '10')
 		  " . $range_string . "
-		ORDER BY d.expiry_date asc, d.domain";	
+		ORDER BY d.expiry_date asc, d.domain";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $total_results = mysqli_num_rows($result);
 
@@ -197,15 +197,15 @@ if ($export_data == "1") {
 
     while ($row = mysqli_fetch_object($result)) {
 
-		if ($row->active == "0") { $domain_status = "EXPIRED"; } 
-		elseif ($row->active == "1") { $domain_status = "ACTIVE"; } 
-		elseif ($row->active == "2") { $domain_status = "IN TRANSFER"; } 
-		elseif ($row->active == "3") { $domain_status = "PENDING (RENEWAL)"; } 
-		elseif ($row->active == "4") { $domain_status = "PENDING (OTHER)"; } 
-		elseif ($row->active == "5") { $domain_status = "PENDING (REGISTRATION)"; } 
-		elseif ($row->active == "10") { $domain_status = "SOLD"; } 
-		else { $domain_status = "ERROR -- PROBLEM WITH CODE IN DOMAIN-RENEWALS.PHP"; } 
-		
+		if ($row->active == "0") { $domain_status = "EXPIRED"; }
+		elseif ($row->active == "1") { $domain_status = "ACTIVE"; }
+		elseif ($row->active == "2") { $domain_status = "IN TRANSFER"; }
+		elseif ($row->active == "3") { $domain_status = "PENDING (RENEWAL)"; }
+		elseif ($row->active == "4") { $domain_status = "PENDING (OTHER)"; }
+		elseif ($row->active == "5") { $domain_status = "PENDING (REGISTRATION)"; }
+		elseif ($row->active == "10") { $domain_status = "SOLD"; }
+		else { $domain_status = "ERROR -- PROBLEM WITH CODE IN DOMAIN-RENEWALS.PHP"; }
+
 		if ($row->privacy == "1") {
 			$privacy_status = "Private";
 		} elseif ($row->privacy == "0") {
@@ -276,9 +276,9 @@ if ($export_data == "1") {
     <form name="export_domains_form" method="post">
         <a href="renewals.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and 
+        and
         <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
+        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
         <?php if ($total_results > 0) { ?>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="renewals.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
@@ -448,7 +448,7 @@ if (mysqli_num_rows($result) > 0) {
 	while ($row = mysqli_fetch_object($result)) {
 		echo $row->name . "<BR>";
 	}
-	
+
 }
 ?>
 <?php } ?>

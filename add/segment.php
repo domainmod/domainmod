@@ -62,48 +62,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($lines);
 
         if ($new_segment == "" || $invalid_domains == 1) {
-		
+
 			if ($invalid_domains == 1) {
-	
+
 				if ($invalid_count == 1) {
-	
+
 					$_SESSION['result_message'] = "There is " . number_format($invalid_count) . " invalid domain
 					    on your list<BR><BR>" . $temp_result_message;
-	
+
 				} else {
-	
+
 					$_SESSION['result_message'] = "There are " . number_format($invalid_count) . " invalid
 					    domains on your list<BR><BR>" . $temp_result_message;
-	
+
 					if (($invalid_count-$invalid_to_display) == 1) {
-	
+
 						$_SESSION['result_message'] .= "<BR>Plus " .
                             number_format($invalid_count-$invalid_to_display) . " other<BR>";
-	
+
 					} elseif (($invalid_count-$invalid_to_display) > 1) {
-	
+
 						$_SESSION['result_message'] .= "<BR>Plus " .
                             number_format($invalid_count-$invalid_to_display) . " others<BR>";
 					}
-	
+
 				}
-	
+
 			}
 			$submission_failed = 1;
-	
+
 		} else {
 
 			$lines = explode("\r\n", $new_segment);
 			$number_of_domains = count($lines);
 
             $domain = new DomainMOD\Domain();
-			
+
 			while (list($key, $new_domain) = each($lines)) {
-	
+
 				if (!$domain->checkDomainFormat($new_domain)) {
 					echo "invalid domain $key"; exit;
 				}
-	
+
 			}
 
 			$new_segment_formatted = "'" . $new_segment;
@@ -181,11 +181,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             header("Location: ../segments.php");
 			exit;
-			
+
 		}
 
 	} else {
-	
+
 		if ($new_name == "") { $_SESSION['result_message'] .= "Please enter the segment name<BR>"; }
 		if ($new_segment == "") { $_SESSION['result_message'] .= "Please enter the segment<BR>"; }
 

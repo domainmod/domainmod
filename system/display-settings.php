@@ -129,19 +129,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	
+
 		if ($new_number_of_domains == "") $_SESSION['result_message'] .= "Enter the default number of domains to display<BR>";
 		if ($new_number_of_ssl_certs == "") $_SESSION['result_message'] .= "Enter the default number of SSL certficates to display<BR>";
-		
+
 	} else {
-		
+
  		$sql = "SELECT *
 				FROM user_settings
 				WHERE user_id = '" . $_SESSION['user_id'] . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
+
 		while ($row = mysqli_fetch_object($result)) {
-			
+
 			$new_number_of_domains = $row->number_of_domains;
 			$new_number_of_ssl_certs = $row->number_of_ssl_certs;
 			$new_display_domain_owner = $row->display_domain_owner;
@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_category" value="1"<?php if ($new_display_domain_category == "1") echo " checked"; ?>></td>
     	<td class="main_table_cell_active_centered"><input type="checkbox" name="new_display_domain_owner" value="1"<?php if ($new_display_domain_owner == "1") echo " checked"; ?>></td>
     </tr>
-</table>        
+</table>
 <BR><BR>
 <font class="subheadline">Main SSL Certificate Page</font><BR><BR>
 <strong>Number of SSL certificates per page:</strong> <input name="new_number_of_ssl_certs" type="text" size="3" maxlength="5" value="<?php if ($new_number_of_ssl_certs != "") echo $new_number_of_ssl_certs; ?>">

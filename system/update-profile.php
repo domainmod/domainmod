@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
                         WHERE id = ?
                           AND email_address = ?";
             $q_u = $conn->stmt_init();
-            
+
             if ($q_u->prepare($query_u)) {
 
                 $timestamp = $time->time();
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 } else {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	
+
 	   if ($new_email_address == "") $_SESSION['result_message'] .= "Your email address could not be updated<BR>";
 	   if ($new_first_name == "") $_SESSION['result_message'] .= "Your first name could not be updated<BR>";
 	   if ($new_last_name == "") $_SESSION['result_message'] .= "Your last name could not be updated<BR>";

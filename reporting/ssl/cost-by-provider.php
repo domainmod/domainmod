@@ -173,11 +173,11 @@ if ($submission_failed != "1" && $total_rows > 0) {
 		$last_provider = "";
 
 		if (mysqli_num_rows($result) > 0) {
-	
+
 			while ($row = mysqli_fetch_object($result)) {
-	
+
 				$new_provider = $row->provider_name;
-	
+
 				$sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) as provider_total, count(*) AS number_of_certs_provider
 									   FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
 									   WHERE sslc.fee_id = f.id
@@ -191,11 +191,11 @@ if ($submission_failed != "1" && $total_rows > 0) {
 										 AND sslp.id = '" . $row->id . "'
 										 " . $range_string . "";
 				$result_provider_total = mysqli_query($connection, $sql_provider_total) or $error->outputOldSqlError($connection);
-				while ($row_provider_total = mysqli_fetch_object($result_provider_total)) { 
-					$temp_provider_total = $row_provider_total->provider_total; 
-					$number_of_certs_provider = $row_provider_total->number_of_certs_provider; 
+				while ($row_provider_total = mysqli_fetch_object($result_provider_total)) {
+					$temp_provider_total = $row_provider_total->provider_total;
+					$number_of_certs_provider = $row_provider_total->number_of_certs_provider;
 				}
-	
+
 				$per_cert_account = $row->total_cost / $row->number_of_certs;
 
                 $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
@@ -225,9 +225,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
                 $export->writeRow($export_file, $row_contents);
 
                 $last_provider = $row->provider_name;
-	
+
 			}
-	
+
 		}
 
         $export->closeFile($export_file);
@@ -250,9 +250,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
     <form name="export_ssl_form" method="post">
         <a href="cost-by-provider.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and 
+        and
         <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
+        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
         <?php if ($total_rows > 0) { ?>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-provider.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
@@ -311,9 +311,9 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 								 AND sslp.id = '" . $row->id . "'
 								 " . $range_string . "";
 		$result_provider_total = mysqli_query($connection, $sql_provider_total) or $error->outputOldSqlError($connection);
-		while ($row_provider_total = mysqli_fetch_object($result_provider_total)) { 
-			$temp_provider_total = $row_provider_total->provider_total; 
-			$number_of_certs_provider = $row_provider_total->number_of_certs_provider; 
+		while ($row_provider_total = mysqli_fetch_object($result_provider_total)) {
+			$temp_provider_total = $row_provider_total->provider_total;
+			$number_of_certs_provider = $row_provider_total->number_of_certs_provider;
 		}
 
 		$per_cert_account = $row->total_cost / $row->number_of_certs;
@@ -333,7 +333,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
         if ($new_provider != $last_provider || $new_provider == "") { ?>
-	
+
             <tr class="main_table_row_active">
                 <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo $row->provider_name; ?></a></td>
                 <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo $number_of_certs_provider; ?></a></td>
@@ -368,7 +368,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		?>
     </table><?php
 
-} 
+}
 ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

@@ -56,7 +56,7 @@ if ($all == "1") {
 			  AND f.currency_id = c.id
 			GROUP BY r.name, f.tld
 			ORDER BY r.name, f.tld";
-	
+
 } else {
 
 	$sql = "SELECT r.id, r.name AS registrar, d.tld, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
@@ -99,14 +99,14 @@ if ($total_rows > 0) {
         if ($all == "1") {
 
             $row_contents = array('All Registrar Fees');
-        
+
         } else {
 
             $row_contents = array('Active Registrar Fees');
-        
+
         }
         $export->writeRow($export_file, $row_contents);
-        
+
         $export->writeBlankRow($export_file);
 
         $row_contents = array(
@@ -130,9 +130,9 @@ if ($total_rows > 0) {
 		$last_tld = "";
 
 		if (mysqli_num_rows($result) > 0) {
-	
+
 			while ($row = mysqli_fetch_object($result)) {
-				
+
 				$new_registrar = $row->registrar;
 				$new_tld = $row->tld;
 
@@ -162,7 +162,7 @@ if ($total_rows > 0) {
                 $row_contents[$count++] = $row->privacy_fee;
                 $row_contents[$count++] = $row->misc_fee;
 				$row_contents[$count++] = $row->currency;
-				
+
 				$sql_domain_count = "SELECT count(*) AS total_domain_count
 									 FROM domains
 									 WHERE registrar_id = '" . $row->id . "'
@@ -181,9 +181,9 @@ if ($total_rows > 0) {
                 $export->writeRow($export_file, $row_contents);
 
                 $last_registrar = $row->registrar;
-	
+
 			}
-	
+
 		}
 
         $export->closeFile($export_file);

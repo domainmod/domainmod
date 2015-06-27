@@ -71,14 +71,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else { $error->outputSqlError($conn, "ERROR"); }
 
         $ssltid = $new_ssltid;
-		
+
 		$_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Updated<BR>";
 
 		header("Location: ../ssl-types.php");
 		exit;
 
 	} else {
-	
+
 		$_SESSION['result_message'] = "Please enter the Type name<BR>";
 
 	}
@@ -148,7 +148,7 @@ if ($really_del == "1") {
     } else { $error->outputSqlError($conn, "ERROR"); }
 
     $_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Deleted<BR>";
-	
+
 	header("Location: ../ssl-types.php");
 	exit;
 

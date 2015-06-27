@@ -66,28 +66,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			FROM user_settings
 			WHERE user_id = '" . $_SESSION['user_id'] . "'";
 	$result = mysqli_query($connection, $sql);
-	while ($row = mysqli_fetch_object($result)) { 
-	
-		$saved_default_currency = $row->default_currency; 
-		$saved_default_timezone = $row->default_timezone; 
-		$saved_default_category_domains = $row->default_category_domains; 
-		$saved_default_category_ssl = $row->default_category_ssl; 
-		$saved_default_dns = $row->default_dns; 
-		$saved_default_host = $row->default_host; 
-		$saved_default_ip_address_domains = $row->default_ip_address_domains; 
-		$saved_default_ip_address_ssl = $row->default_ip_address_ssl; 
-		$saved_default_owner_domains = $row->default_owner_domains; 
-		$saved_default_owner_ssl = $row->default_owner_ssl; 
-		$saved_default_registrar = $row->default_registrar; 
-		$saved_default_registrar_account = $row->default_registrar_account; 
-		$saved_default_ssl_provider_account = $row->default_ssl_provider_account; 
-		$saved_default_ssl_type = $row->default_ssl_type; 
-		$saved_default_ssl_provider = $row->default_ssl_provider; 
+	while ($row = mysqli_fetch_object($result)) {
+
+		$saved_default_currency = $row->default_currency;
+		$saved_default_timezone = $row->default_timezone;
+		$saved_default_category_domains = $row->default_category_domains;
+		$saved_default_category_ssl = $row->default_category_ssl;
+		$saved_default_dns = $row->default_dns;
+		$saved_default_host = $row->default_host;
+		$saved_default_ip_address_domains = $row->default_ip_address_domains;
+		$saved_default_ip_address_ssl = $row->default_ip_address_ssl;
+		$saved_default_owner_domains = $row->default_owner_domains;
+		$saved_default_owner_ssl = $row->default_owner_ssl;
+		$saved_default_registrar = $row->default_registrar;
+		$saved_default_registrar_account = $row->default_registrar_account;
+		$saved_default_ssl_provider_account = $row->default_ssl_provider_account;
+		$saved_default_ssl_type = $row->default_ssl_type;
+		$saved_default_ssl_provider = $row->default_ssl_provider;
 
 	}
-	
+
 	if ($saved_default_currency != $new_default_currency) {
-		
+
 		$sql_get_currency_id = "SELECT id
 								FROM currencies
 								WHERE currency = '" . $new_default_currency . "'";
@@ -99,11 +99,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							 WHERE user_id = '" . $_SESSION['user_id'] . "'
 							   AND currency_id = '" . $temp_new_currency_id . "'";
 		$result_new_currency = mysqli_query($connection, $sql_new_currency);
-		
+
 		if (mysqli_num_rows($result_new_currency) == 0) {
 
 			$sql_insert_currency = "INSERT INTO currency_conversions
-									(currency_id, user_id, conversion, insert_time, update_time) VALUES 
+									(currency_id, user_id, conversion, insert_time, update_time) VALUES
 									('" . $temp_new_currency_id . "', '" . $_SESSION['user_id'] . "', '1', '" . $timestamp . "', '" . $timestamp . "')";
 			$result_insert_currency = mysqli_query($connection, $sql_insert_currency);
 
@@ -153,14 +153,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					   FROM currencies
 					   WHERE currency = '" . $new_default_currency . "'";
 	$result_currencies = mysqli_query($connection, $sql_currencies);
-	
+
 	while ($row_currencies = mysqli_fetch_object($result_currencies)) {
 		$_SESSION['default_currency_name'] = $row_currencies->name;
 		$_SESSION['default_currency_symbol'] = $row_currencies->symbol;
 		$_SESSION['default_currency_symbol_order'] = $row_currencies->symbol_order;
 		$_SESSION['default_currency_symbol_space'] = $row_currencies->symbol_space;
 	}
-	
+
 	header("Location: index.php");
 	exit;
 
@@ -168,18 +168,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-		
+
 		// placeholder
 
 	} else {
-		
+
  		$sql = "SELECT *
 				FROM user_settings
 				WHERE user_id = '" . $_SESSION['user_id'] . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
+
 		while ($row = mysqli_fetch_object($result)) {
-			
+
 			$new_default_currency = $row->default_currency;
 			$new_default_timezone = $row->default_timezone;
 			$new_default_category_domains = $row->default_category_domains;

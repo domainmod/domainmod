@@ -73,14 +73,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else { $error->outputSqlError($conn, "ERROR"); }
 
         $oid = $new_oid;
-		
+
 		$_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Updated<BR>";
 
 		header("Location: ../account-owners.php");
 		exit;
 
 	} else {
-	
+
 		$_SESSION['result_message'] = "Please enter the owner's name<BR>";
 
 	}
@@ -237,7 +237,7 @@ if ($really_del == "1") {
     } else { $error->outputSqlError($conn, "ERROR"); }
 
     $_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Deleted<BR>";
-	
+
 	header("Location: ../account-owners.php");
 	exit;
 

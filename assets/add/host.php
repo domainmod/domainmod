@@ -66,12 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else { $error->outputSqlError($conn, "ERROR"); }
 
         $_SESSION['result_message'] = "Web Host <font class=\"highlight\">" . $new_host . "</font> Added<BR>";
-		
+
 		header("Location: ../hosting.php");
 		exit;
 
 	} else {
-	
+
 		if ($new_host == "") $_SESSION['result_message'] .= "Please enter the web host name<BR>";
 		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the web host's URL<BR>";
 

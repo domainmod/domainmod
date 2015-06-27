@@ -52,32 +52,32 @@ if ($new_username != "") {
    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 	if (mysqli_num_rows($result) == 1) {
-   
+
 		while($row = mysqli_fetch_object($result)) {
-	
+
 			$new_password = substr(md5(time()), 0, 8);
-			
-			$sql_update = "UPDATE users 
-						   SET password = password('$new_password'), 
+
+			$sql_update = "UPDATE users
+						   SET password = password('$new_password'),
 						   	   new_password = '1',
 							   update_time = '" . $time->time() . "'
 						   WHERE username = '$row->username'
 						     AND email_address = '$row->email_address'";
 			$result_update = mysqli_query($connection, $sql_update);
-			
+
 			include(DIR_INC . "email/send-new-password.inc.php");
-					
+
 			$_SESSION['result_message'] .= "Your new password has been emailed to you<BR>";
-			
+
 			header("Location: index.php");
 			exit;
-			
+
 		}
 
 	} else {
 
 		$_SESSION['result_message'] .= "You have entered an invalid username<BR>";
-		
+
 	}
 
 } else {

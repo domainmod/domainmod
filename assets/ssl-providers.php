@@ -44,10 +44,10 @@ $export_data = $_GET['export_data'];
 
 $sql = "SELECT id, name, url, notes, insert_time, update_time
 		FROM ssl_providers
-		WHERE id IN (SELECT ssl_provider_id 
-					 FROM ssl_certs 
-					 WHERE ssl_provider_id != '0' 
-					   AND active != '0' 
+		WHERE id IN (SELECT ssl_provider_id
+					 FROM ssl_certs
+					 WHERE ssl_provider_id != '0'
+					   AND active != '0'
 					 GROUP BY ssl_provider_id)
 		ORDER BY name asc";
 
@@ -77,42 +77,42 @@ if ($export_data == "1") {
     $export->writeRow($export_file, $row_contents);
 
     if (mysqli_num_rows($result) > 0) {
-	
+
 		$has_active = "1";
 
 		while ($row = mysqli_fetch_object($result)) {
 
 			$new_sslpid = $row->id;
-		
+
 			if ($current_sslpid != $new_sslpid) {
 				$exclude_ssl_provider_string_raw .= "'" . $row->id . "', ";
 			}
-	
+
 			$sql_total_count = "SELECT count(*) AS total_count
 								FROM ssl_accounts
 								WHERE ssl_provider_id = '" . $row->id . "'";
 			$result_total_count = mysqli_query($connection, $sql_total_count);
-			while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
-				$total_accounts = $row_total_count->total_count; 
+			while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+				$total_accounts = $row_total_count->total_count;
 			}
-	
+
 			$sql_cert_count = "SELECT count(*) AS total_count
 							   FROM ssl_certs
 							   WHERE active != '0'
 								 AND ssl_provider_id = '" . $row->id . "'";
 			$result_cert_count = mysqli_query($connection, $sql_cert_count);
-			while ($row_cert_count = mysqli_fetch_object($result_cert_count)) { 
-				$total_certs = $row_cert_count->total_count; 
+			while ($row_cert_count = mysqli_fetch_object($result_cert_count)) {
+				$total_certs = $row_cert_count->total_count;
 			}
-	
+
 			if ($row->id == $_SESSION['default_ssl_provider']) {
-			
+
 				$is_default = "1";
-				
+
 			} else {
-			
+
 				$is_default = "";
-			
+
 			}
 
             $row_contents = array(
@@ -129,52 +129,52 @@ if ($export_data == "1") {
             $export->writeRow($export_file, $row_contents);
 
             $current_sslpid = $row->id;
-	
+
 		}
-		
+
 	}
 
-	$exclude_ssl_provider_string = substr($exclude_ssl_provider_string_raw, 0, -2); 
+	$exclude_ssl_provider_string = substr($exclude_ssl_provider_string_raw, 0, -2);
 
 	if ($exclude_ssl_provider_string == "") {
-	
+
 		$sql = "SELECT id, name, url, notes, insert_time, update_time
 				FROM ssl_providers
 				ORDER BY name asc";
-	
+
 	} else {
-		
+
 		$sql = "SELECT id, name, url, notes, insert_time, update_time
 				FROM ssl_providers
 				WHERE id NOT IN (" . $exclude_ssl_provider_string . ")
 				ORDER BY name asc";
 
 	}
-	
+
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
-	if (mysqli_num_rows($result) > 0) { 
-	
+
+	if (mysqli_num_rows($result) > 0) {
+
 		$has_inactive = "1";
-	
+
 		while ($row = mysqli_fetch_object($result)) {
-	
+
 			$sql_total_count = "SELECT count(*) AS total_count
 								FROM ssl_accounts
 								WHERE ssl_provider_id = '" . $row->id . "'";
 			$result_total_count = mysqli_query($connection, $sql_total_count);
-			while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
-				$total_accounts = $row_total_count->total_count; 
+			while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+				$total_accounts = $row_total_count->total_count;
 			}
-	
+
 			if ($row->id == $_SESSION['default_ssl_provider']) {
-			
+
 				$is_default = "1";
-				
+
 			} else {
-			
+
 				$is_default = "";
-			
+
 			}
 
             $row_contents = array(
@@ -191,7 +191,7 @@ if ($export_data == "1") {
             $export->writeRow($export_file, $row_contents);
 
         }
-	
+
 	}
 
     $export->closeFile($export_file);
@@ -229,12 +229,12 @@ if (mysqli_num_rows($result) > 0) {
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Options</font>
         </td>
-    </tr><?php 
+    </tr><?php
 
 	while ($row = mysqli_fetch_object($result)) {
 
 	    $new_sslpid = $row->id;
-    
+
         if ($current_sslpid != $new_sslpid) {
 			$exclude_ssl_provider_string_raw .= "'" . $row->id . "', ";
 		} ?>
@@ -248,18 +248,18 @@ if (mysqli_num_rows($result) > 0) {
 									FROM ssl_accounts
 									WHERE ssl_provider_id = '" . $row->id . "'";
                 $result_total_count = mysqli_query($connection, $sql_total_count);
-                while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
-					$total_accounts = $row_total_count->total_count; 
+                while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+					$total_accounts = $row_total_count->total_count;
 				}
-				
+
 				if ($total_accounts >= 1) { ?>
-        
+
                     <a class="nobold" href="ssl-accounts.php?sslpid=<?php echo $row->id; ?>"><?php echo number_format($total_accounts); ?></a><?php
-        
+
                 } else {
-					
+
 					echo number_format($total_accounts);
-					
+
 				} ?>
             </td>
             <td class="main_table_cell_active"><?php
@@ -268,29 +268,29 @@ if (mysqli_num_rows($result) > 0) {
 								   WHERE active != '0'
 								     AND ssl_provider_id = '" . $row->id . "'";
                 $result_cert_count = mysqli_query($connection, $sql_cert_count);
-                while ($row_cert_count = mysqli_fetch_object($result_cert_count)) { 
-					$total_certs = $row_cert_count->total_count; 
+                while ($row_cert_count = mysqli_fetch_object($result_cert_count)) {
+					$total_certs = $row_cert_count->total_count;
 				}
-				
+
 				if ($total_certs >= 1) { ?>
-        
+
                     <a class="nobold" href="../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
-				
+
 				} else {
-					
+
 					echo number_format($total_certs);
-					
+
 				} ?>
             </td>
             <td class="main_table_cell_active">
 				<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?php echo $row->id; ?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
             </td>
-        </tr><?php 
+        </tr><?php
 
 		$current_sslpid = $row->id;
 
 	}
-	
+
 }
 
 if ($_SESSION['display_inactive_assets'] == "1") {

@@ -53,19 +53,19 @@ $page_title = "Data Warehouse";
 if ($_SESSION['dw_view_all'] == "1") {
 
 	$page_subtitle = "Listing All DNS Zones & Records";
-	
+
 } else {
 
 	$page_subtitle = 'Listing DNS Zones & Records on ' . $_SESSION['dw_server_name'] . ' (' . $_SESSION['dw_server_host'] . ')';
-	
+
 }
 $software_section = "admin-dw-list-dns-zones";
 
 if ($_SESSION['dw_view_all'] == "1") {
-	
+
 	$where_clause = "";
 	$where_clause_no_join = "";
-	
+
 } else {
 
 	$where_clause = "AND z.server_id = '" . $_SESSION['dw_server_id'] . "'";
@@ -122,36 +122,36 @@ if ($export_data == "1") {
     $export->writeBlankRow($export_file);
 
     if ($domain != "") {
-	
+
 			$sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
 										   FROM dw_dns_records
 										   WHERE domain = '" . $domain . "'
 										     " . $where_clause_no_join . "";
-	
+
 	} else {
-	
+
 		if ($search_for != "") {
-	
+
 			$sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
 										   FROM dw_dns_records
 										   WHERE domain LIKE '%" . $search_for . "%'
 										     " . $where_clause_no_join . "";
-	
+
 		} else {
-	
+
 			$sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
 										   FROM dw_dns_records
 										     " . $where_clause_no_join_first_line . "";
-	
+
 		}
-	
+
 	}
 	$result_total_dns_record_count = mysqli_query($connection, $sql_total_dns_record_count);
-	
+
 	while ($row_total_dns_record_count = mysqli_fetch_object($result_total_dns_record_count)) {
-		
+
 		$total_dns_record_count_temp = $row_total_dns_record_count->total_dns_record_count;
-		
+
 	}
 
     $row_contents = array(
@@ -179,7 +179,7 @@ if ($export_data == "1") {
         $export->writeBlankRow($export_file);
 
     }
-	
+
 	if ($domain != "") {
 
         $row_contents = array(
@@ -231,7 +231,7 @@ if ($export_data == "1") {
 								  AND domain = '" . $row_dw_dns_zone_temp->domain . "'
 								ORDER BY new_order";
 			$result_get_records = mysqli_query($connection, $sql_get_records);
-			
+
 			while ($row_get_records = mysqli_fetch_object($result_get_records)) {
 
                 $row_contents = array(
@@ -264,9 +264,9 @@ if ($export_data == "1") {
                 $export->writeRow($export_file, $row_contents);
 
             }
-			
+
 		}
-	
+
 	}
 
     $export->closeFile($export_file);
@@ -292,9 +292,9 @@ $sql_dw_dns_zone_temp = $sql_dw_dns_zone_temp.$navigate[0];
 $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or $error->outputOldSqlError($connection);
 
 if(mysqli_num_rows($result_dw_dns_zone_temp) == 0) {
-	
+
 	echo "Your search returned 0 results.";
-	
+
 } else { ?>
 
 	<form name="form1" method="post">
@@ -304,40 +304,40 @@ if(mysqli_num_rows($result_dw_dns_zone_temp) == 0) {
 		<input type="hidden" name="num" value="1">
 		<input type="hidden" name="numBegin" value="1">
 	</form><BR>
-	
+
 	<strong>[<a href="list-dns-zones.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong><BR><BR><?php
-	
+
 	if ($domain != "") {
-	
+
 			$sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
 										   FROM dw_dns_records
 										   WHERE domain = '" . $domain . "'
 										     " . $where_clause_no_join . "";
-	
+
 	} else {
-	
+
 		if ($search_for != "") {
-	
+
 			$sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
 										   FROM dw_dns_records
 										   WHERE domain LIKE '%" . $search_for . "%'
 										     " . $where_clause_no_join . "";
-	
+
 		} else {
-	
+
 			$sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
 										   FROM dw_dns_records
 										     " . $where_clause_no_join_first_line . "";
-	
+
 		}
-	
+
 	}
 	$result_total_dns_record_count = mysqli_query($connection, $sql_total_dns_record_count);
-	
+
 	while ($row_total_dns_record_count = mysqli_fetch_object($result_total_dns_record_count)) {
-		
+
 		$total_dns_record_count_temp = $row_total_dns_record_count->total_dns_record_count;
-		
+
 	} ?>
 
     <strong>Number of DNS Zones:</strong> <?php echo number_format($totalrows); ?><BR><BR>

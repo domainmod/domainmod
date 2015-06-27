@@ -48,7 +48,7 @@ $export_data = $_GET['export_data'];
 
 $sql_accounts_without_a_dns_zone = "SELECT domain
 									FROM dw_accounts
-									WHERE domain NOT IN (SELECT domain 
+									WHERE domain NOT IN (SELECT domain
 														 FROM dw_dns_zones)
 									ORDER BY domain";
 $result_accounts_without_a_dns_zone = mysqli_query($connection, $sql_accounts_without_a_dns_zone) or $error->outputOldSqlError($connection);
@@ -56,7 +56,7 @@ $temp_accounts_without_a_dns_zone = mysqli_num_rows($result_accounts_without_a_d
 
 $sql_dns_zones_without_an_account = "SELECT domain
 									 FROM dw_dns_zones
-									 WHERE domain NOT IN (SELECT domain 
+									 WHERE domain NOT IN (SELECT domain
 									 					  FROM dw_accounts)
 									ORDER BY domain";
 $result_dns_zones_without_an_account = mysqli_query($connection, $sql_dns_zones_without_an_account) or $error->outputOldSqlError($connection);
@@ -81,9 +81,9 @@ if ($export_data == "1") {
     $export->writeBlankRow($export_file);
 
     if ($temp_accounts_without_a_dns_zone == 0) {
-        
+
         $accounts_without_a_dns_zone_flag = 1;
-        
+
     } else {
 
         while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
@@ -162,93 +162,93 @@ if ($export_data == "1") {
 <?php } ?>
 <?php
 if ($generate == 1) {
-	
+
 	if ($temp_accounts_without_a_dns_zone == 0) {
-        
+
         $accounts_without_a_dns_zone_flag = 1;
-        
+
     } else { ?>
-    
+
         <strong>Accounts without a DNS Zone (<?php echo $temp_accounts_without_a_dns_zone; ?>)</strong><BR><?php
-    
+
         while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
-        
+
             $account_list_raw .= $row_accounts_without_a_dns_zone->domain . ", ";
-        
+
         }
-        
+
         $account_list = substr($account_list_raw, 0, -2);
-    
-        if ($account_list != "") { 
-        
+
+        if ($account_list != "") {
+
             echo $account_list;
-        
+
         } else {
-        
+
             echo "n/a";
-        
+
         }
-		
+
 		echo "<BR><BR>";
-    
+
     }
 
     if ($temp_dns_zones_without_an_account == 0) {
-        
+
         $dns_zones_without_an_account_flag = 1;
-        
+
     } else { ?>
-    
+
         <strong>DNS Zones without an Account (<?php echo $temp_dns_zones_without_an_account; ?>)</strong><BR><?php
-    
+
         while ($row_dns_zones_without_an_account = mysqli_fetch_object($result_dns_zones_without_an_account)) {
-        
+
             $zone_list_raw .= $row_dns_zones_without_an_account->domain . ", ";
-        
+
         }
-        
+
         $zone_list = substr($zone_list_raw, 0, -2);
-    
-        if ($zone_list != "") { 
-        
+
+        if ($zone_list != "") {
+
             echo $zone_list;
-        
+
         } else {
-        
+
             echo "n/a";
-        
+
         }
 
 		echo "<BR><BR>";
-    
+
     }
 
     if ($temp_suspended_accounts == 0) {
-        
+
         $suspended_accounts_flag = 1;
-        
+
     } else { ?>
-    
+
         <strong>Suspended Accounts (<?php echo $temp_suspended_accounts; ?>)</strong><BR><?php
-    
+
         while ($row_suspended_accounts = mysqli_fetch_object($result_suspended_accounts)) {
-        
+
             $suspended_list_raw .= $row_suspended_accounts->domain . ", ";
-        
+
         }
-        
+
         $suspended_list = substr($suspended_list_raw, 0, -2);
-        
-        if ($suspended_list != "") { 
-        
+
+        if ($suspended_list != "") {
+
             echo $suspended_list;
-        
+
         } else {
-        
+
             echo "n/a";
-        
+
         }
-        
+
     }
 
 } ?>

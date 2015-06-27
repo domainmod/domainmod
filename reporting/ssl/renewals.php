@@ -88,7 +88,7 @@ $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date,
 		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
 		  AND sslc.active NOT IN ('0')
 		  " . $range_string . "
-		ORDER BY sslc.expiry_date asc, sslc.name asc";	
+		ORDER BY sslc.expiry_date asc, sslc.name asc";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $total_results = mysqli_num_rows($result);
 
@@ -192,12 +192,12 @@ if ($export_data == "1") {
     $export->writeRow($export_file, $row_contents);
 
     while ($row = mysqli_fetch_object($result)) {
-		
-		if ($row->active == "0") { $ssl_status = "EXPIRED"; } 
-		elseif ($row->active == "1") { $ssl_status = "ACTIVE"; } 
-		elseif ($row->active == "3") { $ssl_status = "PENDING (RENEWAL)"; } 
-		elseif ($row->active == "4") { $ssl_status = "PENDING (OTHER)"; } 
-		elseif ($row->active == "5") { $ssl_status = "PENDING (REGISTRATION)"; } 
+
+		if ($row->active == "0") { $ssl_status = "EXPIRED"; }
+		elseif ($row->active == "1") { $ssl_status = "ACTIVE"; }
+		elseif ($row->active == "3") { $ssl_status = "PENDING (RENEWAL)"; }
+		elseif ($row->active == "4") { $ssl_status = "PENDING (OTHER)"; }
+		elseif ($row->active == "5") { $ssl_status = "PENDING (REGISTRATION)"; }
 		else { $ssl_status = "ERROR -- PROBLEM WITH CODE IN SSL-CERT-RENEWALS.PHP"; }
 
         $export_renewal_fee = $currency->format($row->converted_renewal_fee, $_SESSION['default_currency_symbol'],
@@ -260,9 +260,9 @@ if ($export_data == "1") {
     <form name="export_ssl_certs_form" method="post">
         <a href="renewals.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and 
+        and
         <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
+        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
         <?php if ($total_results > 0) { ?>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="renewals.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
@@ -329,9 +329,9 @@ if ($export_data == "1") {
 <?php } ?>
 </tr>
 <?php while ($row = mysqli_fetch_object($result)) { ?>
-<?php 
+<?php
 $renewal_fee_individual = $row->renewal_fee * $row->conversion;
-$total_renewal_cost = $total_renewal_cost + $renewal_fee_individual; 
+$total_renewal_cost = $total_renewal_cost + $renewal_fee_individual;
 ?>
 <tr class="main_table_row_active">
 <?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
@@ -422,7 +422,7 @@ if (mysqli_num_rows($result) > 0) {
 	while ($row = mysqli_fetch_object($result)) {
 		echo $row->name . "<BR>";
 	}
-	
+
 }
 ?>
 <?php } ?>

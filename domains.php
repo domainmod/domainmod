@@ -127,7 +127,7 @@ else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6',
 if ($segid != "") {
 
     $seg_sql = "SELECT segment
-				FROM segments 
+				FROM segments
 				WHERE id = '$segid'";
     $seg_result = mysqli_query($connection, $seg_sql);
     while ($seg_row = mysqli_fetch_object($seg_result)) { $temp_segment = $seg_row->segment; }

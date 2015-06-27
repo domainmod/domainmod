@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		header("Location: ../registrars.php");
 		exit;
-		
+
 	} else {
 
 		if ($new_registrar == "") $_SESSION['result_message'] .= "Please enter the registrar name<BR>";
@@ -152,7 +152,7 @@ if ($del == "1") {
 	} else { $error->outputSqlError($conn, "ERROR"); }
 
     if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
-		
+
 		if ($existing_registrar_accounts > 0) $_SESSION['result_message'] .= "This Registrar has Registrar Accounts
             associated with it and cannot be deleted<BR>";
 		if ($existing_domains > 0) $_SESSION['result_message'] .= "This Registrar has domains associated with it and

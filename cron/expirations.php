@@ -40,21 +40,21 @@ if ($demo_install != '1') {
 	$sql = "SELECT expiration_email_days
 			FROM settings";
 	$result = mysqli_query($connection, $sql);
-	
+
 	while ($row = mysqli_fetch_object($result)) {
 		$number_of_days = $row->expiration_email_days;
 	}
-	
+
 	$sql_settings = "SELECT full_url, email_address
 					 FROM settings";
 	$result_settings = mysqli_query($connection, $sql_settings);
-	
+
 	while ($row_settings = mysqli_fetch_object($result_settings)) {
 		$full_url = $row_settings->full_url;
 		$from_address = $row_settings->email_address;
 		$return_path = $row_settings->email_address;
 	}
-	
+
 	$timestamp_basic_plus_x_days = $time->timeBasicPlusDays($number_of_days);
 
     $sql_domains = "SELECT id, expiry_date, domain
@@ -63,7 +63,7 @@ if ($demo_install != '1') {
 					  AND expiry_date <= '$timestamp_basic_plus_x_days'
 					ORDER BY expiry_date, domain";
 	$result_domains = mysqli_query($connection, $sql_domains);
-	
+
 	$sql_ssl = "SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
 				FROM ssl_certs AS sslc, ssl_cert_types AS sslt
 				WHERE sslc.type_id = sslt.id
@@ -71,21 +71,21 @@ if ($demo_install != '1') {
 				  AND sslc.expiry_date <= '$timestamp_basic_plus_x_days'
 				ORDER BY sslc.expiry_date, sslc.name";
 	$result_ssl = mysqli_query($connection, $sql_ssl);
-	
+
 	$sql_recipients = "SELECT u.email_address
 					   FROM users AS u, user_settings AS us
 					   WHERE u.id = us.user_id
 						 AND u.active = '1'
 						 AND us.expiration_emails = '1'";
 	$result_recipients = mysqli_query($connection, $sql_recipients);
-	
+
 	if ((mysqli_num_rows($result_domains) != 0 || mysqli_num_rows($result_ssl) != 0) && mysqli_num_rows($result_recipients) > 0) {
-	
+
 		while ($row_recipients = mysqli_fetch_object($result_recipients)) {
-	
+
 			$subject = "Upcoming Expirations - $timestamp_long";
 			$headline = "Upcoming Expirations - $timestamp_long";
-			
+
 			$headers = '';
 			$headers .= "MIME-Version: 1.0" . "\r\n";
 			$headers .= "Content-type: text/html; charset=iso-8859-1" . "\r\n";
@@ -103,43 +103,43 @@ if ($demo_install != '1') {
 						$message .= "Below is a list of all the Domains & SSL Certificates in " . $software_title . " that are expiring in the next " . $number_of_days . " days. <BR>";
 						$message .= "<BR>If you would like to change the frequency of this email notification please contact your " . $software_title . " administrator. <BR>";
 						$message .= "<BR>";
-				
+
 						if (mysqli_num_rows($result_domains) != 0) {
-						
+
 							$message .= "<strong><u>Domains</u></strong><BR>";
 							while ($row_domains = mysqli_fetch_object($result_domains)) {
-								
+
 								if ($row_domains->expiry_date < $timestamp_basic) {
-							
+
 									$message .= "<font color=\"#CC0000\">" . $row_domains->expiry_date . "</font>&nbsp;&nbsp;<a href=\"" . $row_domains->domain . "\">" . $row_domains->domain . "</a> [<a href=\"" . $full_url . "/edit/domain.php?did=" . $row_domains->id . "\">edit</a>]&nbsp;&nbsp;<font color=\"#CC0000\">*EXPIRED*</font><BR>";
-							
+
 								} else {
-							
+
 									$message .= $row_domains->expiry_date . "&nbsp;&nbsp;<a href=\"" . $row_domains->domain . "\">" . $row_domains->domain . "</a> [<a href=\"" . $full_url . "/edit/domain.php?did=" . $row_domains->id . "\">edit</a>]<BR>";
-							
+
 								}
-							
+
 							}
-							
+
 						}
-				
+
 						if (mysqli_num_rows($result_ssl) != 0) {
-						
+
 							$message .= "<BR><strong><u>SSL Certificates</u></strong><BR>";
 							while ($row_ssl = mysqli_fetch_object($result_ssl)) {
-								
+
 								if ($row_ssl->expiry_date < $timestamp_basic) {
-							
+
 									$message .= "<font color=\"#CC0000\">" . $row_ssl->expiry_date . "</font>&nbsp;&nbsp;" . $row_ssl->name . " (" . $row_ssl->type . ") [<a href=\"" . $full_url . "/edit/ssl-cert.php?sslcid=" . $row_ssl->id . "\">edit</a>]&nbsp;&nbsp;<font color=\"#CC0000\">*EXPIRED*</font><BR>";
-							
+
 								} else {
-							
+
 									$message .= "" . $row_ssl->expiry_date . "&nbsp;&nbsp;" . $row_ssl->name . " (" . $row_ssl->type . ") [<a href=\"" . $full_url . "/edit/ssl-cert.php?sslcid=" . $row_ssl->id . "\">edit</a>]<BR>";
-							
+
 								}
-							
+
 							}
-							
+
 						}
 
                         $message .= "<BR>";
@@ -151,7 +151,7 @@ if ($demo_install != '1') {
 					</td>
 				</tr>
 			</table>
-			
+
 			<table width=\"575\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\" bordercolor=\"#FFFFFF\">
 				<tr>
 					<td width=\"100%\"><font color=\"#000000\" size=\"1\" face=\"Verdana, Arial, Helvetica, sans-serif\">";
@@ -167,11 +167,11 @@ if ($demo_install != '1') {
 			</table>
 			</body>
 			</html>";
-	
+
 			mail("$row_recipients->email_address", "$subject", "$message", "$headers");
-	
+
 		}
-	
+
 	}
-	
+
 }

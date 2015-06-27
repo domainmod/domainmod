@@ -165,7 +165,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
         if (mysqli_num_rows($result) > 0) {
 
 			while ($row = mysqli_fetch_object($result)) {
-	
+
 				$per_domain = $row->total_cost / $row->number_of_domains;
 
                 $per_domain = $currency->format($per_domain, $_SESSION['default_currency_symbol'],
@@ -206,9 +206,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
     <form name="export_domains_form" method="post">
         <a href="cost-by-host.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and 
+        and
         <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
+        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
         <?php if ($total_rows > 0) { ?>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-host.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
@@ -241,7 +241,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
 	<?php
 	while ($row = mysqli_fetch_object($result)) {
-		
+
 		$per_domain = $row->total_cost / $row->number_of_domains;
 
         $per_domain = $currency->format($per_domain, $_SESSION['default_currency_symbol'],
@@ -261,7 +261,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		?>
     </table><?php
 
-} 
+}
 ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

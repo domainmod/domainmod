@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				FROM registrar_accounts
 				WHERE id = '" . $new_account_id . "'";
 		$result = mysqli_query($connection, $sql);
-		
+
 		while ($row = mysqli_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
 
 		$sql_fee_id = "SELECT id
@@ -107,15 +107,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					   WHERE registrar_id = '" . $new_registrar_id . "'
 						 AND tld = '" . $tld . "'";
 		$result_fee_id = mysqli_query($connection, $sql_fee_id);
-		
+
 		if (mysqli_num_rows($result_fee_id) >= 1) {
-		
+
 			while ($row_fee_id = mysqli_fetch_object($result_fee_id)) {
 				$temp_fee_id = $row_fee_id->id;
 			}
-			$temp_fee_fixed = "1"; 
+			$temp_fee_fixed = "1";
 
-		} else { 
+		} else {
 
 			$temp_fee_id = "0";
 			$temp_fee_fixed = "0";
@@ -166,30 +166,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				FROM domain_fields
 				ORDER BY name";
 		$result = mysqli_query($connection, $sql);
-		
+
 		$count = 0;
-		
+
 		while ($row = mysqli_fetch_object($result)) {
-			
+
 			$field_array[$count] = $row->field_name;
 			$count++;
-		
+
 		}
-		
+
 		foreach($field_array as $field) {
-			
+
 			$full_field = "new_" . $field;
-			
+
 			$sql = "UPDATE domain_field_data
 					SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "',
 						update_time = '" . $timestamp . "'
 					WHERE domain_id = '" . $new_did . "'";
 			$result = mysqli_query($connection, $sql);
-		
+
 		}
 
 		$did = $new_did;
-		
+
 		$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Updated<BR>";
 
         $_SESSION['result_message'] .= $maint->updateSegments($connection);
@@ -203,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		exit;
 
 	} else {
-	
+
 		if (!$domain->checkDomainFormat($new_domain)) { $_SESSION['result_message'] .= "The domain format is incorrect<BR>"; }
 		if (!$date->checkDateFormat($new_expiry_date)) { $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>"; }
 
@@ -216,9 +216,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			WHERE d.account_id = ra.id
 			  AND d.id = '" . $did . "'";
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
+
 	while ($row = mysqli_fetch_object($result)) {
-	
+
 		$new_domain = $row->domain;
 		$new_expiry_date = $row->expiry_date;
 		$new_cat_id = $row->cat_id;
@@ -230,7 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$new_privacy = $row->privacy;
 		$new_active = $row->active;
 		$new_account_id = $row->account_id;
-	
+
 	}
 
 }
@@ -241,11 +241,11 @@ if ($del == "1") {
 			FROM ssl_certs
 			WHERE domain_id = '" . $did . "'";
 	$result = mysqli_query($connection, $sql);
-	
+
 	while ($row = mysqli_fetch_object($result)) {
 		$existing_ssl_certs = 1;
 	}
-	
+
 	if ($existing_ssl_certs > 0) {
 
 		$_SESSION['result_message'] = "This Domain has SSL Certificates associated with it and cannot be deleted<BR>";
@@ -267,7 +267,7 @@ if ($really_del == "1") {
 	$sql = "DELETE FROM domain_field_data
 			WHERE domain_id = '" . $did . "'";
 	$result = mysqli_query($connection, $sql);
-	
+
 	$_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Deleted<BR>";
 
 	$_SESSION['result_message'] .= $maint->updateSegments($connection);
@@ -298,7 +298,7 @@ if ($really_del == "1") {
 <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
 <BR><BR>
 <strong>Registrar Account</strong><BR><BR>
-<?php 
+<?php
 $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
 				FROM registrar_accounts AS ra, owners AS o, registrars AS r
 				WHERE ra.owner_id = o.id
@@ -411,86 +411,86 @@ if (mysqli_num_rows($result) > 0) { ?>
 	<BR><font class="subheadline">Custom Fields</font><BR><BR><?php
 
 	$count = 0;
-	
+
 	while ($row = mysqli_fetch_object($result)) {
-		
+
 		$field_array[$count] = $row->field_name;
 		$count++;
-	
+
 	}
-	
+
 	foreach($field_array as $field) {
-		
+
 		$sql = "SELECT df.name, df.field_name, df.type_id, df.description
 				FROM domain_fields AS df, custom_field_types AS cft
 				WHERE df.type_id = cft.id
 				  AND df.field_name = '" . $field . "'";
 		$result = mysqli_query($connection, $sql);
-		
+
 		while ($row = mysqli_fetch_object($result)) {
-			
-			$sql_data = "SELECT " . $row->field_name . " 
+
+			$sql_data = "SELECT " . $row->field_name . "
 						 FROM domain_field_data
 						 WHERE domain_id = '" . $did . "'";
 			$result_data = mysqli_query($connection, $sql_data);
-			
+
 			while ($row_data = mysqli_fetch_object($result_data)) {
-				
+
 				$field_data = $row_data->{$row->field_name};
-	
+
 			}
-	
+
 			if ($row->type_id == "1") { // Check Box ?>
 
                 <input type="checkbox" name="new_<?php echo $row->field_name; ?>" value="1"<?php if ($field_data == "1") echo " checked"; ?>>
                 &nbsp;<strong><?php echo $row->name; ?></strong><BR><?php
-				
+
 				if ($row->description != "") {
 
 					echo $row->description . "<BR><BR>";
 
 				} else {
-					
+
 					echo "<BR>";
-					
+
 				}
-	
+
 			} elseif ($row->type_id == "2") { // Text ?>
-	
+
 				<strong><?php echo $row->name; ?> (255)</strong><BR><?php
 				if ($row->description != "") {
 
 					echo $row->description . "<BR><BR>";
 
 				} else {
-					
+
 					echo "<BR>";
-					
+
 				} ?>
                 <input type="text" name="new_<?php echo $row->field_name; ?>" size="50" maxlength="255" value="<?php echo htmlentities($field_data); ?>"><BR><BR><?php
 
 			} elseif ($row->type_id == "3") { // Text Area ?>
-	
+
 				<strong><?php echo $row->name; ?></strong><BR><?php
 				if ($row->description != "") {
 
 					echo $row->description . "<BR><BR>";
 
 				} else {
-					
+
 					echo "<BR>";
-					
+
 				} ?>
                 <textarea name="new_<?php echo $row->field_name; ?>" cols="60" rows="5"><?php echo $field_data; ?></textarea><BR><BR><?php
 
 			}
-			
+
 		}
-	
+
 	}
-	
+
 	echo "<BR>";
-	
+
 }
 ?>
 <input type="submit" name="button" value="Update This Domain &raquo;">

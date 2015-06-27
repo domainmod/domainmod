@@ -20,26 +20,26 @@
  */
 ?>
 <br><br>
-<?php 
+<?php
 if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<strong>Domains</strong>&nbsp; <?php
 	if ($_SESSION['has_registrar'] == '1' && $_SESSION['has_registrar_account'] == '1') { ?>
     	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/add/domain.php">Add A New Domain</a>&nbsp;<?php
-	} 
+	}
 
 } elseif ($software_section == "domain-add") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/domains.php">Domains</a>&nbsp;
-	&raquo;&nbsp;<strong>Adding A New Domain</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Adding A New Domain</strong>&nbsp;<?php
 
 } elseif ($software_section == "domain-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/domains.php">Domains</a>&nbsp;
-	&raquo;&nbsp;<strong>Editing A Domain</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Editing A Domain</strong>&nbsp;<?php
 
 } elseif ($software_section == "ssl-certs") { ?>
-	
+
 	&raquo;&nbsp;<strong>SSL Certificates</strong>&nbsp;<?php
 	if ($_SESSION['has_ssl_provider'] == '1' && $_SESSION['has_ssl_account'] == '1' &&
             $_SESSION['has_domain'] == '1') { ?>
@@ -49,12 +49,12 @@ if ($software_section == "domains") { ?>
 } elseif ($software_section == "ssl-cert-add") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/ssl-certs.php">SSL Certificates</a>&nbsp;
-	&raquo;&nbsp;<strong>Adding A New SSL Certificate</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Adding A New SSL Certificate</strong>&nbsp;<?php
 
 } elseif ($software_section == "ssl-cert-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/ssl-certs.php">SSL Certificates</a>&nbsp;
-	&raquo;&nbsp;<strong>Editing An SSL Certificate</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Editing An SSL Certificate</strong>&nbsp;<?php
 
 } elseif ($software_section == "segments") { ?>
 
@@ -64,19 +64,19 @@ if ($software_section == "domains") { ?>
 } elseif ($software_section == "segment-add") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/segments.php">Segments</a>&nbsp;
-	&raquo;&nbsp;<strong>Adding A New Segment</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Adding A New Segment</strong>&nbsp;<?php
 
 } elseif ($software_section == "segment-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/segments.php">Segments</a>&nbsp;
-	&raquo;&nbsp;<strong>Editing A Segment</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Editing A Segment</strong>&nbsp;<?php
 
 } elseif ($software_section == "bulk-updater") {
 
 	if ($action == "") { ?>
 
 		&raquo;&nbsp;<strong>Bulk Updater</strong>&nbsp;<?php
-        
+
 	} else { ?>
 
 		&raquo;&nbsp;<a href="<?php echo $web_root; ?>/bulk-updater.php">Bulk Updater</a>&nbsp;<?php
@@ -149,7 +149,7 @@ if ($software_section == "domains") { ?>
 
 } elseif ($software_section == "assets") { ?>
 
-	&raquo;&nbsp;<strong>Assets</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Assets</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting") { ?>
 
@@ -265,13 +265,13 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/registrars.php">Domain Registrars</a>&nbsp;
-	&raquo;&nbsp;<strong>Adding A New Registrar</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Adding A New Registrar</strong>&nbsp;<?php
 
 } elseif ($software_section == "registrars-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/registrars.php">Domain Registrars</a>&nbsp;
-	&raquo;&nbsp;<strong>Editing A Registrar</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Editing A Registrar</strong>&nbsp;<?php
 
 } elseif ($software_section == "registrar-fees") { ?>
 
@@ -285,13 +285,13 @@ if ($software_section == "domains") { ?>
 	while ($row_registrar = mysqli_fetch_object($result_registrar)) { $temp_registrar_name = $row_registrar->name; } ?>
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/edit/registrar.php?rid=<?php echo $rid; ?>"><?php
         echo $temp_registrar_name; ?></a>&nbsp;
-	&raquo;&nbsp;<strong>Registrar Fees</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Registrar Fees</strong>&nbsp;<?php
 
 } elseif ($software_section == "registrar-fees-missing") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/registrars.php">Domain Registrars</a>&nbsp;
-	&raquo;&nbsp;<strong>Missing Domain Registrar Fees</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Missing Domain Registrar Fees</strong>&nbsp;<?php
 
 } elseif ($software_section == "registrar-accounts") { ?>
 
@@ -306,13 +306,13 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/registrar-accounts.php">Domain Registrar Accounts</a>&nbsp;
-	&raquo;&nbsp;<strong>Adding A New Registrar Account</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Adding A New Registrar Account</strong>&nbsp;<?php
 
 } elseif ($software_section == "registrar-accounts-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/registrar-accounts.php">Domain Registrar Accounts</a>&nbsp;
-	&raquo;&nbsp;<strong>Editing A Registrar Account</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Editing A Registrar Account</strong>&nbsp;<?php
 
 } elseif ($software_section == "dns") { ?>
 
@@ -324,13 +324,13 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/dns.php">DNS Profiles</a>&nbsp;
-	&raquo;&nbsp;<strong>Adding A New DNS Profile</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Adding A New DNS Profile</strong>&nbsp;<?php
 
 } elseif ($software_section == "dns-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/dns.php">DNS Profiles</a>&nbsp;
-	&raquo;&nbsp;<strong>Editing A DNS Profile</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Editing A DNS Profile</strong>&nbsp;<?php
 
 } elseif ($software_section == "ip-addresses") { ?>
 
@@ -342,13 +342,13 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/ip-addresses.php">IP Addresses</a>&nbsp;
-	&raquo;&nbsp;<strong>Adding A New IP Address</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Adding A New IP Address</strong>&nbsp;<?php
 
 } elseif ($software_section == "ip-addresses-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/ip-addresses.php">IP Addresses</a>&nbsp;
-	&raquo;&nbsp;<strong>Editing An IP Address</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Editing An IP Address</strong>&nbsp;<?php
 
 } elseif ($software_section == "hosting") { ?>
 
@@ -360,13 +360,13 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/hosting.php">Web Hosting Providers</a>&nbsp;
-	&raquo;&nbsp;<strong>Adding A New Web Host</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Adding A New Web Host</strong>&nbsp;<?php
 
 } elseif ($software_section == "hosting-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/hosting.php">Web Hosting Providers</a>&nbsp;
-	&raquo;&nbsp;<strong>Editing A Web Host</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Editing A Web Host</strong>&nbsp;<?php
 
 } elseif ($software_section == "ssl-providers") { ?>
 
@@ -378,13 +378,13 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/ssl-providers.php">SSL Providers</a>&nbsp;
-	&raquo;&nbsp;<strong>Adding A New SSL Provider</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Adding A New SSL Provider</strong>&nbsp;<?php
 
 } elseif ($software_section == "ssl-providers-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/ssl-providers.php">SSL Providers</a>&nbsp;
-	&raquo;&nbsp;<strong>Editing An SSL Provider</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Editing An SSL Provider</strong>&nbsp;<?php
 
 } elseif ($software_section == "ssl-provider-fees") { ?>
 
@@ -399,13 +399,13 @@ if ($software_section == "domains") { ?>
         $row_ssl_provider->name; } ?>
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/edit/ssl-provider.php?sslpid=<?php echo $sslpid; ?>"><?php
         echo $temp_ssl_provider_name; ?></a>&nbsp;
-	&raquo;&nbsp;<strong>SSL Provider Fees</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>SSL Provider Fees</strong>&nbsp;<?php
 
 } elseif ($software_section == "ssl-provider-fees-missing") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/ssl-providers.php">SSL Providers</a>&nbsp;
-	&raquo;&nbsp;<strong>Missing SSL Provider Fees</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Missing SSL Provider Fees</strong>&nbsp;<?php
 
 } elseif ($software_section == "ssl-provider-accounts") { ?>
 
@@ -420,13 +420,13 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/ssl-accounts.php">SSL Provider Accounts</a>&nbsp;
-	&raquo;&nbsp;<strong>Adding A New SSL Provider Account</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Adding A New SSL Provider Account</strong>&nbsp;<?php
 
 } elseif ($software_section == "ssl-provider-accounts-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/ssl-accounts.php">SSL Provider Accounts</a>&nbsp;
-	&raquo;&nbsp;<strong>Editing An SSL Provider Account</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Editing An SSL Provider Account</strong>&nbsp;<?php
 
 } elseif ($software_section == "ssl-types") { ?>
 
@@ -438,13 +438,13 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/ssl-types.php">SSL Types</a>&nbsp;
-	&raquo;&nbsp;<strong>Adding A New SSL Type</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Adding A New SSL Type</strong>&nbsp;<?php
 
 } elseif ($software_section == "ssl-types-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/ssl-types.php">SSL Types</a>&nbsp;
-	&raquo;&nbsp;<strong>Editing An SSL Type</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Editing An SSL Type</strong>&nbsp;<?php
 
 } elseif ($software_section == "categories") { ?>
 
@@ -456,13 +456,13 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/categories.php">Categories</a>&nbsp;
-	&raquo;&nbsp;<strong>Adding A New Category</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Adding A New Category</strong>&nbsp;<?php
 
 } elseif ($software_section == "categories-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/categories.php">Categories</a>&nbsp;
-	&raquo;&nbsp;<strong>Editing A Category</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Editing A Category</strong>&nbsp;<?php
 
 } elseif ($software_section == "account-owners") { ?>
 
@@ -474,13 +474,13 @@ if ($software_section == "domains") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/account-owners.php">Account Owners</a>&nbsp;
-	&raquo;&nbsp;<strong>Adding A New Account Owner</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Adding A New Account Owner</strong>&nbsp;<?php
 
 } elseif ($software_section == "account-owners-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/index.php">Assets</a>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/assets/account-owners.php">Account Owners</a>&nbsp;
-	&raquo;&nbsp;<strong>Editing An Account Owner</strong>&nbsp;<?php 
+	&raquo;&nbsp;<strong>Editing An Account Owner</strong>&nbsp;<?php
 
 } elseif ($software_section == "system") { ?>
 
@@ -535,14 +535,14 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/domain-fields.php">Custom Domain Fields</a>&nbsp;
-	&raquo;&nbsp;Adding A Custom Field&nbsp;<?php 
+	&raquo;&nbsp;Adding A Custom Field&nbsp;<?php
 
 } elseif ($software_section == "admin-domain-field-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/domain-fields.php">Custom Domain Fields</a>&nbsp;
-	&raquo;&nbsp;Editing A Custom Field&nbsp;<?php 
+	&raquo;&nbsp;Editing A Custom Field&nbsp;<?php
 
 } elseif ($software_section == "admin-ssl-fields") { ?>
 
@@ -556,14 +556,14 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/ssl-fields.php">Custom SSL Fields</a>&nbsp;
-	&raquo;&nbsp;Adding A Custom Field&nbsp;<?php 
+	&raquo;&nbsp;Adding A Custom Field&nbsp;<?php
 
 } elseif ($software_section == "admin-ssl-field-edit") { ?>
 
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/ssl-fields.php">Custom SSL Fields</a>&nbsp;
-	&raquo;&nbsp;Editing A Custom Field&nbsp;<?php 
+	&raquo;&nbsp;Editing A Custom Field&nbsp;<?php
 
 } elseif ($software_section == "admin-system-info") { ?>
 
@@ -583,7 +583,7 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/users.php">Users</a>&nbsp;
-	&raquo;&nbsp;Adding A New User&nbsp;<?php 
+	&raquo;&nbsp;Adding A New User&nbsp;<?php
 
 } elseif ($software_section == "admin-user-edit") { ?>
 
@@ -637,7 +637,7 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/servers.php">Servers</a>&nbsp;
-	&raquo;&nbsp;Adding A Server&nbsp;<?php 
+	&raquo;&nbsp;Adding A Server&nbsp;<?php
 
 } elseif ($software_section == "admin-dw-manage-servers-edit") { ?>
 
@@ -645,7 +645,7 @@ if ($software_section == "domains") { ?>
 	&raquo;&nbsp;<font class="default_highlight">ADMIN</font>&nbsp;
 	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/servers.php">Servers</a>&nbsp;
-	&raquo;&nbsp;Editing A Server&nbsp;<?php 
+	&raquo;&nbsp;Editing A Server&nbsp;<?php
 
 } elseif ($software_section == "help") { ?>
 

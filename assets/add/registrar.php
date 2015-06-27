@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		exit;
 
 	} else {
-	
+
 		if ($new_registrar == "") $_SESSION['result_message'] .= "Please enter the registrar name<BR>";
 		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the registrar's URL<BR>";
 

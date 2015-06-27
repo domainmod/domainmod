@@ -30,10 +30,10 @@
 
     <div class="main-outer-login">
         <div class="main-inner">
-            <BR><?php 
+            <BR><?php
                 include(DIR_INC . "layout/table-maintenance.inc.php");
             ?>
-            <?php 
+            <?php
             if ($_SESSION['result_message'] != "") {
 
                 echo $system->showResultMessage();

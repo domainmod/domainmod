@@ -58,10 +58,10 @@ $sql = "SELECT sa.id AS sslpaid, sa.username, sa.password, sa.owner_id, sa.ssl_p
 		  $sslpid_string
 		  $sslpaid_string
 		  $oid_string
-		  AND (SELECT count(*) 
-		  	   FROM ssl_certs 
-			   WHERE account_id = sa.id 
-			     AND active NOT IN ('0')) 
+		  AND (SELECT count(*)
+		  	   FROM ssl_certs
+			   WHERE account_id = sa.id
+			     AND active NOT IN ('0'))
 				 > 0
 		GROUP BY sa.username, oname, sslpname
 		ORDER BY sslpname, username, oname";
@@ -94,17 +94,17 @@ if ($export_data == "1") {
     $export->writeRow($export_file, $row_contents);
 
     if (mysqli_num_rows($result) > 0) {
-		
+
 		$has_active = 1;
-	
-		while ($row = mysqli_fetch_object($result)) { 
-	
+
+		while ($row = mysqli_fetch_object($result)) {
+
 			$new_sslpaid = $row->sslpaid;
-		
+
 			if ($current_sslpaid != $new_sslpaid) {
 				$exclude_account_string_raw .= "'" . $row->sslpaid . "', ";
 			}
-	
+
 			$sql_total_count = "SELECT count(*) AS total_cert_count
 								FROM ssl_certs
 								WHERE account_id = '$row->sslpaid'
@@ -113,25 +113,25 @@ if ($export_data == "1") {
 			while ($row_cert_count = mysqli_fetch_object($result_total_count)) {
 				$total_cert_count = $row_cert_count->total_cert_count;
 			}
-	
+
 			if ($row->sslpaid == $_SESSION['default_ssl_provider_account']) {
-			
+
 				$is_default = "1";
-				
+
 			} else {
-			
+
 				$is_default = "";
-			
+
 			}
-			
+
 			if ($row->reseller == "0") {
-				
+
 				$is_reseller = "";
-				
+
 			} else {
-				
+
 				$is_reseller = "1";
-	
+
 			}
 
             $row_contents = array(
@@ -150,23 +150,23 @@ if ($export_data == "1") {
             $export->writeRow($export_file, $row_contents);
 
             $current_sslpaid = $row->sslpaid;
-		
+
 		}
-		
+
 	}
-	
-	$exclude_account_string = substr($exclude_account_string_raw, 0, -2); 
-	
-	if ($exclude_account_string != "") { 
-	
-		$sslpaid_string = " AND sa.id not in (" . $exclude_account_string . ") "; 
-		
-	} else { 
-	
-		$sslpaid_string = ""; 
-	
+
+	$exclude_account_string = substr($exclude_account_string_raw, 0, -2);
+
+	if ($exclude_account_string != "") {
+
+		$sslpaid_string = " AND sa.id not in (" . $exclude_account_string . ") ";
+
+	} else {
+
+		$sslpaid_string = "";
+
 	}
-	
+
 	$sql = "SELECT sa.id AS sslpaid, sa.username, sa.password, sa.owner_id, sa.ssl_provider_id, sa.reseller, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname, sa.notes, sa.insert_time, sa.update_time
 			FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
 			WHERE sa.owner_id = o.id
@@ -177,31 +177,31 @@ if ($export_data == "1") {
 			GROUP BY sa.username, oname, sslpname
 			ORDER BY sslpname, username, oname";
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
-	if (mysqli_num_rows($result) > 0) { 
-	
+
+	if (mysqli_num_rows($result) > 0) {
+
 		$has_inactive = "1";
-	
+
 		while ($row = mysqli_fetch_object($result)) {
-	
+
 			if ($row->sslpaid == $_SESSION['default_ssl_provider_account']) {
-			
+
 				$is_default = "1";
-				
+
 			} else {
-			
+
 				$is_default = "";
-			
+
 			}
-			
+
 			if ($row->reseller == "0") {
-				
+
 				$is_reseller = "";
-				
+
 			} else {
-				
+
 				$is_reseller = "1";
-	
+
 			}
 
             $row_contents = array(
@@ -220,7 +220,7 @@ if ($export_data == "1") {
             $export->writeRow($export_file, $row_contents);
 
         }
-	
+
 	}
 
     $export->closeFile($export_file);
@@ -242,7 +242,7 @@ Below is a list of all the SSL Provider Accounts that are stored in <?php echo $
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 if (mysqli_num_rows($result) > 0) {
-	
+
 	$has_active = 1; ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
@@ -258,12 +258,12 @@ if (mysqli_num_rows($result) > 0) {
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">SSL Certs</font>
         </td>
-    </tr><?php 
+    </tr><?php
 
-    while ($row = mysqli_fetch_object($result)) { 
+    while ($row = mysqli_fetch_object($result)) {
 
 	    $new_sslpaid = $row->sslpaid;
-    
+
         if ($current_sslpaid != $new_sslpaid) {
 			$exclude_account_string_raw .= "'" . $row->sslpaid . "', ";
 		} ?>
@@ -285,16 +285,16 @@ if (mysqli_num_rows($result) > 0) {
 									  AND active NOT IN ('0')";
 				$result_total_count = mysqli_query($connection, $sql_total_count);
 
-				while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
-					echo "<a class=\"nobold\" href=\"../ssl-certs.php?oid=$row->oid&sslpid=$row->sslpid&sslpaid=$row->sslpaid\">" . number_format($row_total_count->total_cert_count) . "</a>"; 
+				while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+					echo "<a class=\"nobold\" href=\"../ssl-certs.php?oid=$row->oid&sslpid=$row->sslpid&sslpaid=$row->sslpaid\">" . number_format($row_total_count->total_cert_count) . "</a>";
 				} ?>
 			</td>
-		</tr><?php 
+		</tr><?php
 
 		$current_sslpaid = $row->sslpaid;
-	
+
 	}
-	
+
 }
 
 if ($_SESSION['display_inactive_assets'] == "1") {
@@ -376,11 +376,11 @@ if ($_SESSION['display_inactive_assets'] != "1") { ?>
 }
 
 if ($has_active || $has_inactive) { ?>
-	<BR><font class="default_highlight">*</font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight">*</font> = Reseller Account<?php 
+	<BR><font class="default_highlight">*</font> = Default Account&nbsp;&nbsp;<font class="reseller_highlight">*</font> = Reseller Account<?php
 }
 
 if (!$has_active && !$has_inactive) {
-	
+
 	$sql = "SELECT id
 			FROM ssl_providers
 			LIMIT 1";
@@ -388,11 +388,11 @@ if (!$has_active && !$has_inactive) {
 
 	if (mysqli_num_rows($result) == 0) { ?>
 
-		<BR>Before adding an SSL Provider Account you must add at least one SSL Provider. <a href="add/ssl-provider.php">Click here to add an SSL Provider</a>.<BR><?php 
+		<BR>Before adding an SSL Provider Account you must add at least one SSL Provider. <a href="add/ssl-provider.php">Click here to add an SSL Provider</a>.<BR><?php
 
 	} else { ?>
 
-		<BR>You don't currently have any SSL Provider Accounts. <a href="add/ssl-provider-account.php">Click here to add one</a>.<BR><?php 
+		<BR>You don't currently have any SSL Provider Accounts. <a href="add/ssl-provider-account.php">Click here to add one</a>.<BR><?php
 
 	}
 

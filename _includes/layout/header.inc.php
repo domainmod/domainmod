@@ -56,10 +56,10 @@
             } ?>
             <font class="headline"><?php echo $page_title; ?></font>
             <BR><BR>
-            <?php 
+            <?php
                 include(DIR_INC . "layout/table-maintenance.inc.php");
             ?>
-            <?php 
+            <?php
             if ($_SESSION['result_message'] != "") {
 
                 echo $system->showResultMessage();

@@ -89,19 +89,19 @@ if ($export_data != "1") {
 if ($result_limit == "") $result_limit = $_SESSION['number_of_ssl_certs'];
 if ($is_active == "") $is_active = "LIVE";
 
-if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; }
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; }
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; }
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; }
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; }
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; }
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; }
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; }
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; }
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; }
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; }
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; }
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; }
 
 if ($oid != "") { $oid_string = " AND o.id = '$oid' "; } else { $oid_string = ""; }
 if ($did != "") { $did_string = " AND d.id = '$did' "; } else { $did_string = ""; }
@@ -114,23 +114,23 @@ if ($_SESSION['search_for_ssl'] != "") { $search_string = " AND (sslc.name LIKE 
 
 if ($sort_by == "") $sort_by = "ed_a";
 
-if ($sort_by == "ed_a") { $sort_by_string = " ORDER BY sslc.expiry_date asc, sslc.name asc "; } 
-elseif ($sort_by == "ed_d") { $sort_by_string = " ORDER BY sslc.expiry_date desc, sslc.name asc "; } 
-elseif ($sort_by == "dn_a") { $sort_by_string = " ORDER BY d.domain asc "; } 
-elseif ($sort_by == "dn_d") {  $sort_by_string = " ORDER BY d.domain desc "; } 
-elseif ($sort_by == "sslc_a") { $sort_by_string = " ORDER BY sslc.name asc "; } 
-elseif ($sort_by == "sslc_d") { $sort_by_string = " ORDER BY sslc.name desc "; } 
-elseif ($sort_by == "sslf_a") { $sort_by_string = " ORDER BY sslcf.type asc, sslc.name asc "; } 
-elseif ($sort_by == "sslf_d") { $sort_by_string = " ORDER BY sslcf.type desc, sslc.name asc "; } 
-elseif ($sort_by == "sslip_a") { $sort_by_string = " ORDER BY ip.name asc, ip.ip asc "; } 
-elseif ($sort_by == "sslip_d") { $sort_by_string = " ORDER BY ip.name desc, ip.ip desc "; } 
-elseif ($sort_by == "sslpc_a") { $sort_by_string = " ORDER BY cat.name asc "; } 
-elseif ($sort_by == "sslpc_d") { $sort_by_string = " ORDER BY cat.name desc "; } 
-elseif ($sort_by == "o_a") { $sort_by_string = " ORDER BY o.name asc, sslc.name asc "; } 
-elseif ($sort_by == "o_d") { $sort_by_string = " ORDER BY o.name desc, sslc.name asc "; } 
-elseif ($sort_by == "sslp_a") { $sort_by_string = " ORDER BY sslp.name asc, sslc.name asc "; } 
+if ($sort_by == "ed_a") { $sort_by_string = " ORDER BY sslc.expiry_date asc, sslc.name asc "; }
+elseif ($sort_by == "ed_d") { $sort_by_string = " ORDER BY sslc.expiry_date desc, sslc.name asc "; }
+elseif ($sort_by == "dn_a") { $sort_by_string = " ORDER BY d.domain asc "; }
+elseif ($sort_by == "dn_d") {  $sort_by_string = " ORDER BY d.domain desc "; }
+elseif ($sort_by == "sslc_a") { $sort_by_string = " ORDER BY sslc.name asc "; }
+elseif ($sort_by == "sslc_d") { $sort_by_string = " ORDER BY sslc.name desc "; }
+elseif ($sort_by == "sslf_a") { $sort_by_string = " ORDER BY sslcf.type asc, sslc.name asc "; }
+elseif ($sort_by == "sslf_d") { $sort_by_string = " ORDER BY sslcf.type desc, sslc.name asc "; }
+elseif ($sort_by == "sslip_a") { $sort_by_string = " ORDER BY ip.name asc, ip.ip asc "; }
+elseif ($sort_by == "sslip_d") { $sort_by_string = " ORDER BY ip.name desc, ip.ip desc "; }
+elseif ($sort_by == "sslpc_a") { $sort_by_string = " ORDER BY cat.name asc "; }
+elseif ($sort_by == "sslpc_d") { $sort_by_string = " ORDER BY cat.name desc "; }
+elseif ($sort_by == "o_a") { $sort_by_string = " ORDER BY o.name asc, sslc.name asc "; }
+elseif ($sort_by == "o_d") { $sort_by_string = " ORDER BY o.name desc, sslc.name asc "; }
+elseif ($sort_by == "sslp_a") { $sort_by_string = " ORDER BY sslp.name asc, sslc.name asc "; }
 elseif ($sort_by == "sslp_d") { $sort_by_string = " ORDER BY sslp.name desc, sslc.name asc "; }
-elseif ($sort_by == "sslpa_a") { $sort_by_string = " ORDER BY sslp.name asc, sslc.name asc "; } 
+elseif ($sort_by == "sslpa_a") { $sort_by_string = " ORDER BY sslp.name asc, sslc.name asc "; }
 elseif ($sort_by == "sslpa_d") { $sort_by_string = " ORDER BY sslp.name desc, sslc.name asc "; }
 elseif ($sort_by == "sf_a") { $sort_by_string = " ORDER BY sslc.total_cost asc "; }
 elseif ($sort_by == "sf_d") { $sort_by_string = " ORDER BY sslc.total_cost desc "; }
@@ -186,7 +186,7 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total
 					  $sslipid_string
 					  $sslpcid_string
 					  $search_string
-					  $sort_by_string";	
+					  $sort_by_string";
 
 $result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
@@ -277,7 +277,7 @@ if ($export_data == "1") {
 
 	}
 
-	if ($sslpaid > 0) { 
+	if ($sslpaid > 0) {
 
 		$sql_filter = "SELECT sslp.name AS ssl_provider_name, o.name AS owner_name, sslpa.username
 					   FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o
@@ -355,7 +355,7 @@ if ($export_data == "1") {
 
 	}
 
-	if ($oid > 0) { 
+	if ($oid > 0) {
 
 		$sql_filter = "SELECT name
 					   FROM owners
@@ -455,17 +455,17 @@ if ($export_data == "1") {
     $export->writeRow($export_file, $row_contents);
 
     while ($row = mysqli_fetch_object($result)) {
-		
+
 		$temp_initial_fee = $row->initial_fee * $row->conversion;
         $temp_renewal_fee = $row->renewal_fee * $row->conversion;
         $temp_misc_fee = $row->misc_fee * $row->conversion;
         $temp_total_cost = $row->total_cost * $row->conversion;
 
-		if ($row->active == "0") { $ssl_status = "EXPIRED"; } 
-		elseif ($row->active == "1") { $ssl_status = "ACTIVE"; } 
-		elseif ($row->active == "3") { $ssl_status = "PENDING (RENEWAL)"; } 
-		elseif ($row->active == "4") { $ssl_status = "PENDING (OTHER)"; } 
-		elseif ($row->active == "5") { $ssl_status = "PENDING (REGISTRATION)"; } 
+		if ($row->active == "0") { $ssl_status = "EXPIRED"; }
+		elseif ($row->active == "1") { $ssl_status = "ACTIVE"; }
+		elseif ($row->active == "3") { $ssl_status = "PENDING (RENEWAL)"; }
+		elseif ($row->active == "4") { $ssl_status = "PENDING (OTHER)"; }
+		elseif ($row->active == "5") { $ssl_status = "PENDING (REGISTRATION)"; }
 		else { $ssl_status = "ERROR -- PROBLEM WITH CODE IN SSL-CERTS.PHP"; }
 
         $export_initial_fee = $currency->format($temp_initial_fee,
@@ -484,7 +484,7 @@ if ($export_data == "1") {
 
         unset($row_contents);
         $count = 0;
-        
+
         $row_contents[$count++] = $ssl_status;
 		$row_contents[$count++] = $row->expiry_date;
 		$row_contents[$count++] = $export_initial_fee;
@@ -570,21 +570,21 @@ $total_rows = number_format(mysqli_num_rows($result));
 <div class="search-block-inner">
 <div class="search-block-left">
 &nbsp;&nbsp;
-<?php 
+<?php
 // DOMAIN
-if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; }
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; }
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; }
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; }
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; }
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; }
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; }
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; }
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; }
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; }
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; }
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; }
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; }
 
 if ($oid != "") { $oid_string = " AND sslc.owner_id = '$oid' "; } else { $oid_string = ""; }
 if ($sslpid != "") { $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
@@ -594,7 +594,7 @@ if ($sslipid != "") { $sslipid_string = " AND sslc.ip_id = '$sslipid' "; } else 
 if ($sslpcid != "") { $sslpcid_string = " AND sslc.cat_id = '$sslpcid' "; } else { $sslpcid_string = ""; }
 if ($_SESSION['search_for_ssl'] != "") { $search_string = " AND (sslc.name LIKE '%" . $_SESSION['search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['search_for_ssl'] . "%')"; } else { $search_string = ""; }
 
-$sql_domain = "SELECT d.id, d.domain 
+$sql_domain = "SELECT d.id, d.domain
 			   FROM domains AS d, ssl_certs AS sslc
 			   WHERE d.id = sslc.domain_id
 			     AND d.active not in ('0', '10')
@@ -607,33 +607,33 @@ $sql_domain = "SELECT d.id, d.domain
 			     $sslpcid_string
 			     $search_string
 			   GROUP BY d.domain
-			   ORDER BY d.domain asc"; 
+			   ORDER BY d.domain asc";
 $result_domain = mysqli_query($connection, $sql_domain);
 echo "<select name=\"did\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"ssl-certs.php?oid=$oid&did=&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">Domain - ALL</option>";
-while ($row_domain = mysqli_fetch_object($result_domain)) { 
+while ($row_domain = mysqli_fetch_object($result_domain)) {
 	echo "<option value=\"ssl-certs.php?oid=$oid&did=$row_domain->id&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_domain->id == $did) echo " selected"; echo ">"; echo "$row_domain->domain</option>";
-} 
+}
 echo "</select>";
 ?>
 <BR><BR>
 
 &nbsp;&nbsp;
-<?php 
+<?php
 // SSL PROVIDER
-if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; }
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; }
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; }
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; }
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; }
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; }
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; }
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; }
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; }
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; }
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; }
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; }
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; }
 
 if ($oid != "") { $oid_string = " AND sslc.owner_id = '$oid' "; } else { $oid_string = ""; }
 if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
@@ -643,7 +643,7 @@ if ($sslipid != "") { $sslipid_string = " AND sslc.ip_id = '$sslipid' "; } else 
 if ($sslpcid != "") { $sslpcid_string = " AND sslc.cat_id = '$sslpcid' "; } else { $sslpcid_string = ""; }
 if ($_SESSION['search_for_ssl'] != "") { $search_string = " AND (sslc.name LIKE '%" . $_SESSION['search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['search_for_ssl'] . "%')"; } else { $search_string = ""; }
 
-$sql_ssl_provider = "SELECT sslp.id, sslp.name 
+$sql_ssl_provider = "SELECT sslp.id, sslp.name
 					 FROM ssl_providers AS sslp, ssl_certs AS sslc, domains AS d
 					 WHERE sslp.id = sslc.ssl_provider_id
 					   AND sslc.domain_id = d.id
@@ -660,29 +660,29 @@ $sql_ssl_provider = "SELECT sslp.id, sslp.name
 $result_ssl_provider = mysqli_query($connection, $sql_ssl_provider);
 echo "<select name=\"sslpid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">SSL Provider - ALL</option>";
-while ($row_ssl_provider = mysqli_fetch_object($result_ssl_provider)) { 
+while ($row_ssl_provider = mysqli_fetch_object($result_ssl_provider)) {
 	echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$row_ssl_provider->id&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_ssl_provider->id == $sslpid) echo " selected"; echo ">"; echo "$row_ssl_provider->name</option>";
-} 
+}
 echo "</select>";
 ?>
 <BR><BR>
 
 &nbsp;&nbsp;
-<?php 
+<?php
 // SSL PROVIDER ACCOUNT
-if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; }
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; }
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; }
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; }
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; }
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; }
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; }
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; }
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; }
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; }
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; }
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; }
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; }
 
 if ($oid != "") { $oid_string = " AND sslc.owner_id = '$oid' "; } else { $oid_string = ""; }
 if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
@@ -711,29 +711,29 @@ $sql_account = "SELECT sslpa.id AS sslpa_id, sslpa.username, sslp.name AS sslp_n
 $result_account = mysqli_query($connection, $sql_account);
 echo "<select name=\"sslpaid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">SSL Provider Account - ALL</option>";
-while ($row_account = mysqli_fetch_object($result_account)) { 
+while ($row_account = mysqli_fetch_object($result_account)) {
 	echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$row_account->sslpa_id&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_account->sslpa_id == $sslpaid) echo " selected"; echo ">"; echo "$row_account->sslp_name, $row_account->owner_name ($row_account->username)</option>";
-} 
+}
 echo "</select>";
 ?>
 <BR><BR>
 
 &nbsp;&nbsp;
-<?php 
+<?php
 // TYPE
-if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; }
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; }
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; }
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; }
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; }
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; }
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; }
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; }
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; }
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; }
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; }
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; }
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; }
 
 if ($oid != "") { $oid_string = " AND sslc.owner_id = '$oid' "; } else { $oid_string = ""; }
 if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
@@ -760,29 +760,29 @@ $sql_type = "SELECT sslc.type_id, sslcf.type
 $result_type = mysqli_query($connection, $sql_type);
 echo "<select name=\"ssltid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">SSL Type - ALL</option>";
-while ($row_type = mysqli_fetch_object($result_type)) { 
+while ($row_type = mysqli_fetch_object($result_type)) {
 	echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$row_type->type_id&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_type->type_id == $ssltid) echo " selected"; echo ">"; echo "$row_type->type</option>";
-} 
+}
 echo "</select>";
 ?>
 <BR><BR>
 
 &nbsp;&nbsp;
-<?php 
+<?php
 // IP ADDRESS
-if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; }
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; }
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; }
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; }
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; }
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; }
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; }
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; }
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; }
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; }
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; }
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; }
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; }
 
 if ($oid != "") { $oid_string = " AND sslc.owner_id = '$oid' "; } else { $oid_string = ""; }
 if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
@@ -809,29 +809,29 @@ $sql_ip = "SELECT ip.id AS ip_id, ip.name AS ip_name, ip.ip
 $result_ip = mysqli_query($connection, $sql_ip);
 echo "<select name=\"sslipid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">IP Address - ALL</option>";
-while ($row_ip = mysqli_fetch_object($result_ip)) { 
+while ($row_ip = mysqli_fetch_object($result_ip)) {
 	echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$row_ip->ip_id&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_ip->ip_id == $sslipid) echo " selected"; echo ">"; echo "$row_ip->ip_name ($row_ip->ip)</option>";
-} 
+}
 echo "</select>";
 ?>
 <BR><BR>
 
 &nbsp;&nbsp;
-<?php 
+<?php
 // CATEGORY
-if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; }
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; }
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; }
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; }
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; }
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; }
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; }
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; }
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; }
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; }
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; }
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; }
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; }
 
 if ($oid != "") { $oid_string = " AND sslc.owner_id = '$oid' "; } else { $oid_string = ""; }
 if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
@@ -858,29 +858,29 @@ $sql_cat = "SELECT c.id AS cat_id, c.name AS cat_name
 $result_cat = mysqli_query($connection, $sql_cat);
 echo "<select name=\"sslpcid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">Category - ALL</option>";
-while ($row_cat = mysqli_fetch_object($result_cat)) { 
+while ($row_cat = mysqli_fetch_object($result_cat)) {
 	echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$row_cat->cat_id&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_cat->cat_id == $sslpcid) echo " selected"; echo ">"; echo "$row_cat->cat_name</option>";
-} 
+}
 echo "</select>";
 ?>
 <BR><BR>
 
 &nbsp;&nbsp;
-<?php 
+<?php
 // OWNER
-if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND sslc.active = '0' "; }
+elseif ($is_active == "1") { $is_active_string = " AND sslc.active = '1' "; }
+elseif ($is_active == "2") { $is_active_string = " AND sslc.active = '2' "; }
+elseif ($is_active == "3") { $is_active_string = " AND sslc.active = '3' "; }
+elseif ($is_active == "4") { $is_active_string = " AND sslc.active = '4' "; }
+elseif ($is_active == "5") { $is_active_string = " AND sslc.active = '5' "; }
+elseif ($is_active == "6") { $is_active_string = " AND sslc.active = '6' "; }
+elseif ($is_active == "7") { $is_active_string = " AND sslc.active = '7' "; }
+elseif ($is_active == "8") { $is_active_string = " AND sslc.active = '8' "; }
+elseif ($is_active == "9") { $is_active_string = " AND sslc.active = '9' "; }
+elseif ($is_active == "10") { $is_active_string = " AND sslc.active = '10' "; }
+elseif ($is_active == "LIVE") { $is_active_string = " AND sslc.active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; }
+elseif ($is_active == "ALL") { $is_active_string = " AND sslc.active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; }
 
 if ($did != "") { $did_string = " AND sslc.domain_id = '$did' "; } else { $did_string = ""; }
 if ($sslpid != "") { $sslpid_string = " AND sslc.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ""; }
@@ -890,7 +890,7 @@ if ($sslipid != "") { $sslipid_string = " AND sslc.ip_id = '$sslipid' "; } else 
 if ($sslpcid != "") { $sslpcid_string = " AND sslc.cat_id = '$sslpcid' "; } else { $sslpcid_string = ""; }
 if ($_SESSION['search_for_ssl'] != "") { $search_string = " AND (sslc.name LIKE '%" . $_SESSION['search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['search_for_ssl'] . "%')"; } else { $search_string = ""; }
 
-$sql_owner = "SELECT o.id, o.name 
+$sql_owner = "SELECT o.id, o.name
 			  FROM owners AS o, ssl_certs AS sslc, domains AS d
 			  WHERE o.id = sslc.owner_id
 			    AND o.id = d.owner_id
@@ -907,29 +907,29 @@ $sql_owner = "SELECT o.id, o.name
 $result_owner = mysqli_query($connection, $sql_owner);
 echo "<select name=\"oid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"ssl-certs.php?oid=&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">Owner - ALL</option>";
-while ($row_owner = mysqli_fetch_object($result_owner)) { 
+while ($row_owner = mysqli_fetch_object($result_owner)) {
 	echo "<option value=\"ssl-certs.php?oid=$row_owner->id&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_owner->id == $oid) echo " selected"; echo ">"; echo "$row_owner->name</option>";
-} 
+}
 echo "</select>";
 ?>
 <BR><BR>
 
 &nbsp;&nbsp;
-<?php 
+<?php
 // STATUS
-if ($is_active == "0") { $is_active_string = " AND active = '0' "; } 
-elseif ($is_active == "1") { $is_active_string = " AND active = '1' "; } 
-elseif ($is_active == "2") { $is_active_string = " AND active = '2' "; } 
-elseif ($is_active == "3") { $is_active_string = " AND active = '3' "; } 
-elseif ($is_active == "4") { $is_active_string = " AND active = '4' "; } 
-elseif ($is_active == "5") { $is_active_string = " AND active = '5' "; } 
-elseif ($is_active == "6") { $is_active_string = " AND active = '6' "; } 
-elseif ($is_active == "7") { $is_active_string = " AND active = '7' "; } 
-elseif ($is_active == "8") { $is_active_string = " AND active = '8' "; } 
-elseif ($is_active == "9") { $is_active_string = " AND active = '9' "; } 
-elseif ($is_active == "10") { $is_active_string = " AND active = '10' "; } 
-elseif ($is_active == "LIVE") { $is_active_string = " AND active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; } 
-elseif ($is_active == "ALL") { $is_active_string = " AND active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; } 
+if ($is_active == "0") { $is_active_string = " AND active = '0' "; }
+elseif ($is_active == "1") { $is_active_string = " AND active = '1' "; }
+elseif ($is_active == "2") { $is_active_string = " AND active = '2' "; }
+elseif ($is_active == "3") { $is_active_string = " AND active = '3' "; }
+elseif ($is_active == "4") { $is_active_string = " AND active = '4' "; }
+elseif ($is_active == "5") { $is_active_string = " AND active = '5' "; }
+elseif ($is_active == "6") { $is_active_string = " AND active = '6' "; }
+elseif ($is_active == "7") { $is_active_string = " AND active = '7' "; }
+elseif ($is_active == "8") { $is_active_string = " AND active = '8' "; }
+elseif ($is_active == "9") { $is_active_string = " AND active = '9' "; }
+elseif ($is_active == "10") { $is_active_string = " AND active = '10' "; }
+elseif ($is_active == "LIVE") { $is_active_string = " AND active IN ('1', '2', '3', '4', '5', '6', '7', '8', '9')"; }
+elseif ($is_active == "ALL") { $is_active_string = " AND active IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')"; }
 
 if ($oid != "") { $oid_string = " AND owner_id = '$oid' "; } else { $oid_string = ""; }
 if ($did != "") { $did_string = " AND domain_id = '$did' "; } else { $did_string = ""; }
@@ -956,15 +956,15 @@ echo "<select name=\"is_active\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=LIVE&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($is_active == "LIVE") echo " selected"; echo ">"; echo "\"Live\" (Active / Pending)</option>";
 while ($row_active = mysqli_fetch_object($result_active)) {
 	echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$row_active->active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($row_active->active == $is_active) echo " selected"; echo ">"; if ($row_active->active == "0") { echo "Expired"; } elseif ($row_active->active == "1") { echo "Active"; } elseif ($row_active->active == "3") { echo "Pending (Renewal)"; } elseif ($row_active->active == "4") { echo "Pending (Other)"; } elseif ($row_active->active == "5") { echo "Pending (Registration)"; } echo "</option>";
-} 
+}
 echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=ALL&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($is_active == "ALL") echo " selected"; echo ">"; echo "ALL</option>";
 echo "</select>";
 ?>
 
 &nbsp;&nbsp;
-<?php 
+<?php
 // NUMBER OF SSL CERTS TO DISPLAY
-echo "<select name=\"result_limit\" onChange=\"MM_jumpMenu('parent',this,0)\">"; 
+echo "<select name=\"result_limit\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 
 if ($_SESSION['number_of_ssl_certs'] != "10" && $_SESSION['number_of_ssl_certs'] != "50" && $_SESSION['number_of_ssl_certs'] != "100" && $_SESSION['number_of_ssl_certs'] != "500" && $_SESSION['number_of_ssl_certs'] != "1000" && $_SESSION['number_of_ssl_certs'] != "1000000") {
 	echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=" . $_SESSION['number_of_ssl_certs'] . "&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\""; if ($result_limit == $_SESSION['number_of_ssl_certs']) echo " selected"; echo ">"; echo "" . $_SESSION['number_of_ssl_certs'] . "</option>";
@@ -1076,14 +1076,14 @@ echo "</select>";
 	</td>
 <?php } ?>
 	<td class="main_table_cell_active">
-		  <?php if ($row->active == "0") { 
-					echo "<a title=\"Expired\"><strong><font class=\"highlight\">x</font></strong></a>&nbsp;"; 
-		  		} elseif ($row->active == "2") { 
-					echo "<a title=\"Pending (Registration)\"><strong><font class=\"highlight\">PRg</font></strong></a>&nbsp;"; 
-				} elseif ($row->active == "3") { 
-					echo "<a title=\"Pending (Renewal)\"><strong><font class=\"highlight\">PRn</font></strong></a>&nbsp;"; 
-				} elseif ($row->active == "4") { 
-					echo "<a title=\"Pending (Other)\"><strong><font class=\"highlight\">PO</font></strong></a>&nbsp;"; 
+		  <?php if ($row->active == "0") {
+					echo "<a title=\"Expired\"><strong><font class=\"highlight\">x</font></strong></a>&nbsp;";
+		  		} elseif ($row->active == "2") {
+					echo "<a title=\"Pending (Registration)\"><strong><font class=\"highlight\">PRg</font></strong></a>&nbsp;";
+				} elseif ($row->active == "3") {
+					echo "<a title=\"Pending (Renewal)\"><strong><font class=\"highlight\">PRn</font></strong></a>&nbsp;";
+				} elseif ($row->active == "4") {
+					echo "<a title=\"Pending (Other)\"><strong><font class=\"highlight\">PO</font></strong></a>&nbsp;";
 				}
 			?><a class="invisiblelink" href="edit/ssl-cert.php?sslcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
 	</td>

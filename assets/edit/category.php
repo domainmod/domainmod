@@ -75,14 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else { $error->outputSqlError($conn, "ERROR"); }
 
         $pcid = $new_pcid;
-		
+
 		$_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Updated<BR>";
 
 		header("Location: ../categories.php");
 		exit;
 
 	} else {
-	
+
 		$_SESSION['result_message'] = "Please enter the category name<BR>";
 
 	}
@@ -153,7 +153,7 @@ if ($really_del == "1") {
     } else { $error->outputSqlError($conn, "ERROR"); }
 
     $_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Deleted<BR>";
-	
+
 	header("Location: ../categories.php");
 	exit;
 

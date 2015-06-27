@@ -148,25 +148,25 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <a class="invisiblelink" href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $row->insert_time; ?></a>
             </td>
             <td class="main_table_cell_active">
-            	<?php 
+            	<?php
 				if ($row->update_time == "0000-00-00 00:00:00") {
-					
+
 					$temp_update_time = "n/a";
-					
+
 				} else {
-					
+
 					$temp_update_time = $row->update_time;
-					
+
 				}
 				?>
                 <a class="invisiblelink" href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $temp_update_time; ?></a>
             </td>
-        </tr><?php 
+        </tr><?php
 	}
-		
+
 } else { ?>
-	
-	It appears as though you haven't created any Custom Domain Fields yet. <a href="add/domain-field.php">Click here</a> to add one.<?php 
+
+	It appears as though you haven't created any Custom Domain Fields yet. <a href="add/domain-field.php">Click here</a> to add one.<?php
 
 } ?>
 </table>

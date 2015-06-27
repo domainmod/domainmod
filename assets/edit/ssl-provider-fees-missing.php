@@ -94,7 +94,7 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
                 <a class="nobold" href="ssl-provider-fees.php?sslpid=<?php echo $row->ssl_provider_id . "\">" . $full_type_list_formatted; ?></a>
             </td>
         </tr>
-    <?php 
+    <?php
 	} ?>
 </table>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

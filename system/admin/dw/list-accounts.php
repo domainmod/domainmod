@@ -53,18 +53,18 @@ $page_title = "Data Warehouse";
 if ($_SESSION['dw_view_all'] == "1") {
 
 	$page_subtitle = "Listing All Accounts";
-	
+
 } else {
 
 	$page_subtitle = 'Listing Accounts on ' . $_SESSION['dw_server_name'] . ' (' . $_SESSION['dw_server_host'] . ')';
-	
+
 }
 $software_section = "admin-dw-list-accounts";
 
 if ($_SESSION['dw_view_all'] == "1") {
-	
+
 	$where_clause = "";
-	
+
 } else {
 
 	$where_clause = "AND a.server_id = '" . $_SESSION['dw_server_id'] . "'";
@@ -137,7 +137,7 @@ if ($export_data == "1") {
         $export->writeBlankRow($export_file);
 
     }
-	
+
 	if ($domain != "") {
 
         $row_contents = array(
@@ -221,7 +221,7 @@ if ($export_data == "1") {
             $export->writeRow($export_file, $row_contents);
 
         }
-	
+
 	}
 
     $export->closeFile($export_file);
@@ -247,9 +247,9 @@ $sql_dw_account_temp = $sql_dw_account_temp.$navigate[0];
 $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or $error->outputOldSqlError($connection);
 
 if(mysqli_num_rows($result_dw_account_temp) == 0) {
-	
+
 	echo "Your search returned 0 results.";
-	
+
 } else { ?>
 
 	<form name="form1" method="post">
@@ -259,9 +259,9 @@ if(mysqli_num_rows($result_dw_account_temp) == 0) {
 		<input type="hidden" name="num" value="1">
 		<input type="hidden" name="numBegin" value="1">
 	</form><BR>
-	
+
 	<strong>[<a href="list-accounts.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong><BR><BR>
-	
+
 	<strong>Number of Accounts:</strong> <?php echo $totalrows; ?><BR><BR>
 	<?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?><BR>
     <?php

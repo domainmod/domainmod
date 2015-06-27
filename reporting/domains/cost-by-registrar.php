@@ -176,9 +176,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 		if (mysqli_num_rows($result) > 0) {
 
 			while ($row = mysqli_fetch_object($result)) {
-	
+
 				$new_registrar = $row->registrar_name;
-	
+
 				$sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
 										FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
 										WHERE d.fee_id = f.id
@@ -192,11 +192,11 @@ if ($submission_failed != "1" && $total_rows > 0) {
 										  AND r.id = '" . $row->id . "'
 										  " . $range_string . "";
 				$result_registrar_total = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
-				while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) { 
-					$temp_registrar_total = $row_registrar_total->registrar_total; 
-					$number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar; 
+				while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) {
+					$temp_registrar_total = $row_registrar_total->registrar_total;
+					$number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar;
 				}
-	
+
 				$per_domain_account = $row->total_cost / $row->number_of_domains;
 
                 $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
@@ -251,9 +251,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
     <form name="export_domains_form" method="post">
         <a href="cost-by-registrar.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and 
+        and
         <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
+        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
         <?php if ($total_rows > 0) { ?>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-registrar.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
@@ -313,9 +313,9 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 								  AND r.id = '" . $row->id . "'
 								  " . $range_string . "";
 		$result_registrar_total = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
-		while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) { 
-			$temp_registrar_total = $row_registrar_total->registrar_total; 
-			$number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar; 
+		while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) {
+			$temp_registrar_total = $row_registrar_total->registrar_total;
+			$number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar;
 		}
 
 		$per_domain_account = $row->total_cost / $row->number_of_domains;
@@ -335,7 +335,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
 
         if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
-	
+
             <tr class="main_table_row_active">
                 <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?rid=<?php echo $row->id; ?>"><?php echo $row->registrar_name; ?></a></td>
                 <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?rid=<?php echo $row->id; ?>"><?php echo $number_of_domains_registrar; ?></a></td>
@@ -370,7 +370,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 		?>
     </table><?php
 
-} 
+}
 ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

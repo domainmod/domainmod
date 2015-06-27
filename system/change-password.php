@@ -99,17 +99,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 } else {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	
+
 		if ($new_password == "" && $new_password_confirmation == "") {
-		
+
 			$_SESSION['result_message'] .= "Your passwords were left blank<BR>";
 
 		} else {
 
 			$_SESSION['result_message'] .= "Your passwords didn't match<BR>";
-		
+
 		}
-		
+
 	}
 }
 ?>

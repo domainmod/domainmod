@@ -166,10 +166,10 @@ if ($submission_failed != "1" && $total_rows > 0) {
 		if (mysqli_num_rows($result) > 0) {
 
 			while ($row = mysqli_fetch_object($result)) {
-				
+
 				$new_year = $row->year;
 				$new_month = $row->month;
-		
+
 				$sql_monthly_cost = "SELECT SUM(sslc.total_cost * cc.conversion) AS monthly_cost
 									 FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
 									 WHERE sslc.fee_id = f.id
@@ -181,7 +181,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 									   AND MONTH(sslc.expiry_date) = '" . $row->month . "'
 									   " . $range_string . "";
 				$result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
-				
+
 				while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
 					$monthly_cost = $row_monthly_cost->monthly_cost;
 				}
@@ -201,7 +201,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 				elseif ($row->month == "10") { $display_month = "October"; }
 				elseif ($row->month == "11") { $display_month = "November"; }
 				elseif ($row->month == "12") { $display_month = "December"; }
-		
+
 				$sql_yearly_cost = "SELECT SUM(sslc.total_cost * cc.conversion) AS yearly_cost
 									FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc
 									WHERE sslc.fee_id = f.id
@@ -212,7 +212,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 									  AND YEAR(sslc.expiry_date) = '" . $row->year . "'
 									  " . $range_string . "";
 				$result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
-				
+
 				while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
 					$yearly_cost = $row_yearly_cost->yearly_cost;
 				}
@@ -230,9 +230,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
                 $last_year = $row->year;
 				$last_month = $row->month;
-	
+
 			}
-	
+
 		}
 
         $export->closeFile($export_file);
@@ -255,9 +255,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
     <form name="export_ssl_form" method="post">
         <a href="cost-by-month.php?all=1">View All</a> or Expiring Between
         <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_start_date\""; } ?>>
-        and 
+        and
         <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") { echo "value=\"" . $time->timeBasic() . "\""; } else { echo "value=\"$new_end_date\""; } ?>>
-        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;"> 
+        &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
         <?php if ($total_rows > 0) { ?>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-month.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT REPORT</a>]</strong>
         <?php } ?>
@@ -295,7 +295,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 	$last_month = "";
 
     while ($row = mysqli_fetch_object($result)) {
-		
+
 		$new_year = $row->year;
 		$new_month = $row->month;
 
@@ -310,7 +310,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 							   AND MONTH(sslc.expiry_date) = '" . $row->month . "'
 		  					   " . $range_string . "";
 		$result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
-		
+
 		while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
 			$monthly_cost = $row_monthly_cost->monthly_cost;
 		}
@@ -343,7 +343,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 								  AND YEAR(sslc.expiry_date) = '" . $row->year . "'
 		  						  " . $range_string . "";
 			$result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
-			
+
 			while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
 				$yearly_cost = $row_yearly_cost->yearly_cost;
 			}
@@ -362,9 +362,9 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
             <?php
 			$last_year = $row->year;
 			$last_month = $row->month;
-			
+
 		} else { ?>
-		
+
 			<tr class="main_table_row_active">
 				<td class="main_table_cell_active">&nbsp;</td>
 				<td class="main_table_cell_active"><?php echo $display_month; ?></td>
@@ -382,7 +382,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 	?>
     </table>
 	<?php
-} 
+}
 ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

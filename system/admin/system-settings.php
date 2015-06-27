@@ -78,13 +78,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 } else {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	
+
 		if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the system email address<BR>";
 		if ($new_full_url == "") $_SESSION['result_message'] .= "Enter the full URL of your " . $software_title .
             " installation<BR>";
 		if ($new_expiration_email_days == "") $_SESSION['result_message'] .= "Enter the number of days to display in
             expiration emails<BR>";
-		
+
 	} else {
 
         $query = "SELECT full_url, email_address, expiration_email_days

@@ -234,7 +234,7 @@ if ($really_del == "1") {
 			  AND ssl_provider_id = '" . $sslpid . "'
 			  AND type_id = '" . $ssltid . "'";
 	$result = mysqli_query($connection, $sql);
-	
+
 	if (mysqli_num_rows($result) == 0) {
 
 		$_SESSION['result_message'] = "The fee you're trying to delete doesn't exist<BR>";
@@ -249,7 +249,7 @@ if ($really_del == "1") {
 				  AND ssl_provider_id = '" . $sslpid . "'
 				  AND type_id = '" . $ssltid . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
+
 		$sql = "UPDATE ssl_certs
 				SET fee_id = '0',
 					update_time = '" . $timestamp . "'
@@ -257,13 +257,13 @@ if ($really_del == "1") {
 				  AND ssl_provider_id = '" . $sslpid . "'
 				  AND type_id = '" . $ssltid . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
+
 		$sql = "SELECT type
 				FROM ssl_cert_types
 				WHERE id = '" . $ssltid . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 		while ($row = mysqli_fetch_object($result)) { $temp_type = $row->type; }
-		
+
 		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been deleted<BR>";
 
         $queryB = new DomainMOD\QueryBuild();
@@ -277,7 +277,7 @@ if ($really_del == "1") {
 		exit;
 
 	}
-	
+
 }
 ?>
 <?php echo $system->doctype(); ?>
@@ -313,7 +313,7 @@ if (mysqli_num_rows($result) > 0) {
         $temp_all_missing_fees = $temp_all_missing_fees .= "$row->type, ";
 		$count++;
     }
-	$all_missing_fees = substr($temp_all_missing_fees, 0, -2); 
+	$all_missing_fees = substr($temp_all_missing_fees, 0, -2);
     ?>
     <?php echo $all_missing_fees; ?><BR><BR>
     <?php if ($count > 1) { ?>
@@ -339,26 +339,26 @@ if (mysqli_num_rows($result) != 0) {
 ?>
 
     <BR><font class="subheadline">SSL Types Linked to Active SSL Certificates</font><BR><BR>
-    
+
     <?php
     while ($row = mysqli_fetch_object($result)) {
-        
+
         $sql_temp = "SELECT fee_id
                      FROM ssl_certs
                      WHERE ssl_provider_id = '" . $sslpid . "'
                        AND type_id = '" . $row->id . "'";
         $result_temp = mysqli_query($connection, $sql_temp) or $error->outputOldSqlError($connection);
         while ($row_temp = mysqli_fetch_object($result_temp)) { $temp_fee_id = $row_temp->fee_id; }
-        
+
         if ($temp_fee_id == "0") {
             $temp_all_types = $temp_all_types .= "<font class=\"highlight\">$row->type</font>, ";
         } else {
             $temp_all_types = $temp_all_types .= "$row->type, ";
         }
-    
+
     }
 
-	$all_types = substr($temp_all_types, 0, -2); 
+	$all_types = substr($temp_all_types, 0, -2);
 	echo $all_types;
 	echo "<BR><BR><BR>";
 
@@ -413,7 +413,7 @@ if (mysqli_num_rows($result) != 0) {
 					ORDER BY currency";
 			$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 			while ($row = mysqli_fetch_object($result)) {
-			
+
 			if ($row->currency == $_SESSION['default_currency']) {
 			?>
 			    <option value="<?php echo $row->id; ?>" selected><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>

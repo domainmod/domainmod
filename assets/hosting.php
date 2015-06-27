@@ -44,10 +44,10 @@ $export_data = $_GET['export_data'];
 
 $sql = "SELECT id, name, url, notes, insert_time, update_time
 		FROM hosting
-		WHERE id IN (SELECT hosting_id 
-					 FROM domains 
-					 WHERE hosting_id != '0' 
-					   AND active NOT IN ('0','10') 
+		WHERE id IN (SELECT hosting_id
+					 FROM domains
+					 WHERE hosting_id != '0'
+					   AND active NOT IN ('0','10')
 					 GROUP BY hosting_id)
 		ORDER BY name";
 
@@ -76,34 +76,34 @@ if ($export_data == "1") {
     $export->writeRow($export_file, $row_contents);
 
 	if (mysqli_num_rows($result) > 0) {
-		
+
 		$has_active = "1";
 
 		while ($row = mysqli_fetch_object($result)) {
-	
+
 			$new_whid = $row->id;
-		
+
 			if ($current_whid != $new_whid) {
 				$exclude_web_host_string_raw .= "'" . $row->id . "', ";
 			}
-	
+
 			$sql_total_count = "SELECT count(*) AS total_count
 								FROM domains
 								WHERE hosting_id = '" . $row->id . "'
 								  AND active NOT IN ('0', '10')";
 			$result_total_count = mysqli_query($connection, $sql_total_count);
-			while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
-				$active_domains = $row_total_count->total_count; 
+			while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+				$active_domains = $row_total_count->total_count;
 			}
 
 			if ($row->id == $_SESSION['default_host']) {
-			
+
 				$is_default = "1";
-				
+
 			} else {
-			
+
 				$is_default = "";
-			
+
 			}
 
             $row_contents = array(
@@ -119,44 +119,44 @@ if ($export_data == "1") {
             $export->writeRow($export_file, $row_contents);
 
             $current_whid = $row->id;
-	
+
 		}
-	
+
 	}
-	
-	$exclude_web_host_string = substr($exclude_web_host_string_raw, 0, -2); 
-	
+
+	$exclude_web_host_string = substr($exclude_web_host_string_raw, 0, -2);
+
 	if ($exclude_web_host_string == "") {
-	
+
 		$sql = "SELECT id, name, url, notes, insert_time, update_time
 				FROM hosting
 				ORDER BY name";
-	
+
 	} else {
-	
+
 		$sql = "SELECT id, name, url, notes, insert_time, update_time
 				FROM hosting
 				WHERE id NOT IN (" . $exclude_web_host_string . ")
 				ORDER BY name";
-	
+
 	}
-	
+
 	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	
-	if (mysqli_num_rows($result) > 0) { 
-	
+
+	if (mysqli_num_rows($result) > 0) {
+
 		$has_inactive = "1";
-	
+
 		while ($row = mysqli_fetch_object($result)) {
 
 			if ($row->id == $_SESSION['default_host']) {
-			
+
 				$is_default = "1";
-				
+
 			} else {
-			
+
 				$is_default = "";
-			
+
 			}
 
             $row_contents = array(
@@ -172,7 +172,7 @@ if ($export_data == "1") {
             $export->writeRow($export_file, $row_contents);
 
         }
-	
+
 	}
 
     $export->closeFile($export_file);
@@ -197,7 +197,7 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 $number_of_hosting_providers = mysqli_num_rows($result);
 
 if (mysqli_num_rows($result) > 0) {
-	
+
 	$has_active = "1"; ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
@@ -210,12 +210,12 @@ if (mysqli_num_rows($result) > 0) {
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Options</font>
         </td>
-    </tr><?php 
-	
+    </tr><?php
+
 	while ($row = mysqli_fetch_object($result)) {
 
 	    $new_whid = $row->id;
-    
+
         if ($current_whid != $new_whid) {
 			$exclude_web_host_string_raw .= "'" . $row->id . "', ";
 		} ?>
@@ -230,24 +230,24 @@ if (mysqli_num_rows($result) > 0) {
 									WHERE hosting_id = '" . $row->id . "'
 									  AND active NOT IN ('0', '10')";
 				$result_total_count = mysqli_query($connection, $sql_total_count);
-				while ($row_total_count = mysqli_fetch_object($result_total_count)) { 
-					$active_domains = $row_total_count->total_count; 
+				while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+					$active_domains = $row_total_count->total_count;
 				}
-				
+
 				if ($active_domains == "0") {
-					
+
 					echo number_format($active_domains);
-					
+
 				} else { ?>
-	
+
 					<a class="nobold" href="../domains.php?whid=<?php echo $row->id; ?>"><?php echo number_format($active_domains); ?></a><?php
-					
+
 				} ?>
             </td>
             <td class="main_table_cell_active">
 				<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
             </td>
-        </tr><?php 
+        </tr><?php
 
 		$current_whid = $row->id;
 

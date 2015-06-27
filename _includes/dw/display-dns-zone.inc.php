@@ -21,7 +21,7 @@
 ?>
 <?php
 // // CODE TO USE
-// // 
+// //
 // // Display DNS Zones
 // // Input: $sql_dw_dns_zone_temp
 // $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
@@ -40,33 +40,33 @@
         $visible_domain = wordwrap($row_dw_dns_zone_temp->domain, 20, "<BR>", true); ?>
 
             <tr class="main_table_row_active_no_hover"><?php
-			
+
 				if ($from_main_dw_dns_zone_page == 1) { ?>
 
                     <td class="main_table_cell_active_top_aligned"><?php
-    
+
                         $visible_domain = wordwrap($row_dw_dns_zone_temp->domain, 22, "<BR>", true);
                         $visible_zonefile = wordwrap($row_dw_dns_zone_temp->zonefile, 22, "<BR>", true); ?>
-    
+
                         <strong><?php echo $visible_zonefile; ?></strong><?php
-                        
+
                         if ($_SESSION['dw_view_all'] == "1") { ?>
-                        
+
                             <BR><BR><?php echo $row_dw_dns_zone_temp->dw_server_name; ?><?php
-    
+
                         }
-    
+
                         $sql_temp = "SELECT id
                                      FROM dw_accounts
                                      WHERE domain = '" . $row_dw_dns_zone_temp->domain . "'";
                         $result_temp = mysqli_query($connection, $sql_temp);
-                
+
                         if (mysqli_num_rows($result_temp) > 0 && $from_main_dw_dns_zone_page == 1) { ?>
-        
+
                             <BR><BR>[<a class="covert_link" href="list-accounts.php?domain=<?php echo $row_dw_dns_zone_temp->domain; ?>">account</a>]<?php
-        
+
                         } ?>
-    
+
                     </td><?php
 
 				} ?>
@@ -82,9 +82,9 @@
 											  AND domain = '" . $row_dw_dns_zone_temp->domain . "'
 											ORDER BY new_order";
 						$result_get_records = mysqli_query($connection, $sql_get_records);
-						
+
 						while ($row_get_records = mysqli_fetch_object($result_get_records)) { ?>
-	
+
 							<tr class="main_table_row_active_no_right_padding">
 								<td class="main_table_cell_active_top_aligned_no_right_padding" width="70" align="right" valign="top">
 									<?php $wrapped_raw = wordwrap($row_get_records->raw, 100, "<BR>", true); ?>
@@ -114,13 +114,13 @@
 									<?php if ($row_get_records->type != "SOA") { ?><?php if ($row_get_records->ttl != "" && $row_get_records->ttl != '0') { ?><?php if ($row_get_records->type != "ZONE TTL") { ?> | <?php } ?><?php if ($row_get_records->type != "ZONE TTL" && $row_get_records->type != "SOA" && $row_get_records->type != "NS" && $row_get_records->type != "A" && $row_get_records->type != "MX" && $row_get_records->type != "TXT" && $row_get_records->type != "CNAME" && $row_get_records->type != ":RAW" && $row_get_records->type != "COMMENT") { ?>TTL: <?php } ?><?php echo $row_get_records->ttl; ?><?php } ?><?php } ?>
 								</td>
 							</tr><?php
-								
+
 						} ?>
 
                     </table><BR>
 
 				</td>
-    
+
             </tr><?php
 
     } ?>

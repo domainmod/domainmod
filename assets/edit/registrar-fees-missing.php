@@ -95,7 +95,7 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
             </td>
         </tr>
 
-    <?php 
+    <?php
 	} ?>
 
 </table>

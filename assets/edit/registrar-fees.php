@@ -253,7 +253,7 @@ if ($really_del == "1") {
 			  AND registrar_id = '" . $rid . "'
 			  AND tld = '" . $tld . "'";
 	$result = mysqli_query($connection, $sql);
-	
+
 	if (mysqli_num_rows($result) == 0) {
 
 		$_SESSION['result_message'] = "The fee you're trying to delete doesn't exist<BR>";
@@ -268,7 +268,7 @@ if ($really_del == "1") {
 				  AND registrar_id = '" . $rid . "'
 				  AND tld = '" . $tld . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
+
 		$sql = "UPDATE domains
 				SET fee_id = '0',
 					update_time = '" . $timestamp . "'
@@ -276,7 +276,7 @@ if ($really_del == "1") {
 				  AND registrar_id = '" . $rid . "'
 				  AND tld = '" . $tld . "'";
 		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		
+
 		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
 
         $queryB = new DomainMOD\QueryBuild();
@@ -325,7 +325,7 @@ if (mysqli_num_rows($result) > 0) {
         $temp_all_missing_fees = $temp_all_missing_fees .= ".$row->tld, ";
 		$count++;
     }
-	$all_missing_fees = substr($temp_all_missing_fees, 0, -2); 
+	$all_missing_fees = substr($temp_all_missing_fees, 0, -2);
     ?>
     <?php echo $all_missing_fees; ?><BR><BR>
     <?php if ($count > 1) { ?>
@@ -338,7 +338,7 @@ if (mysqli_num_rows($result) > 0) {
 }
 ?>
 <?php
-$sql = "SELECT tld 
+$sql = "SELECT tld
 		FROM domains
 		WHERE registrar_id = '" . $rid . "'
 		  AND active not in ('0', '10')
@@ -351,23 +351,23 @@ if (mysqli_num_rows($result) != 0) {
     <BR><font class="subheadline">TLDs Linked to Active Domains</font><BR><BR>
     <?php
     while ($row = mysqli_fetch_object($result)) {
-        
+
         $sql_temp = "SELECT tld, fee_id
                      FROM domains
                      WHERE registrar_id = '" . $rid . "'
                        AND tld = '" . $row->tld . "'";
         $result_temp = mysqli_query($connection, $sql_temp) or $error->outputOldSqlError($connection);
         while ($row_temp = mysqli_fetch_object($result_temp)) { $temp_fee_id = $row_temp->fee_id; }
-        
+
         if ($temp_fee_id == "0") {
             $temp_all_tlds = $temp_all_tlds .= "<font class=\"highlight\">.$row->tld</font>, ";
         } else {
             $temp_all_tlds = $temp_all_tlds .= ".$row->tld, ";
         }
-    
+
     }
 
-	$all_tlds = substr($temp_all_tlds, 0, -2); 
+	$all_tlds = substr($temp_all_tlds, 0, -2);
 	echo $all_tlds;
 	echo "<BR><BR><BR>";
 
@@ -409,7 +409,7 @@ if (mysqli_num_rows($result) != 0) {
 					ORDER BY currency";
 			$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 			while ($row = mysqli_fetch_object($result)) {
-			
+
 			if ($row->currency == $_SESSION['default_currency']) {
 			?>
 			    <option value="<?php echo $row->id; ?>" selected><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
