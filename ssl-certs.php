@@ -606,7 +606,10 @@ if ($export_data == "1") {
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
-    <?php echo $system->jumpMenu(); ?>
+    <?php
+    $layout = new DomainMOD\Layout();
+    echo $layout->jumpMenu();
+    ?>
 </head>
 <body onLoad="document.forms[0].elements[10].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
@@ -631,7 +634,6 @@ if ($_SESSION['has_domain'] != '1' && $_SESSION['has_ssl_provider'] == '1' && $_
     exit;
 }
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
-$layout = new DomainMOD\Layout();
 $parameters = array($totalrows, 15, $result_limit, "&oid=$oid&did=$did&sslpid=$sslpid&sslpaid=$sslpaid&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&search_for=" . $_SESSION['search_for_ssl'] . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
 $navigate = $layout->pageBrowser($parameters);
 $sql = $sql . $navigate[0];

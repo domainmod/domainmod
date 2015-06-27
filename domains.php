@@ -922,7 +922,10 @@ if ($export_data == "1") {
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
-    <?php echo $system->jumpMenu(); ?>
+    <?php
+    $layout = new DomainMOD\Layout();
+    echo $layout->jumpMenu();
+    ?>
 </head>
 <body onLoad="document.forms[0].elements[12].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
@@ -942,7 +945,6 @@ if ($_SESSION['has_domain'] != '1' && $_SESSION['has_registrar'] == '1' && $_SES
     exit;
 }
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
-$layout = new DomainMOD\Layout();
 $parameters = array($totalrows, 15, $result_limit, "&pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
 $navigate = $layout->pageBrowser($parameters);
 $sql = $sql . $navigate[0];

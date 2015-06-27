@@ -108,7 +108,10 @@ $software_section = "admin-dw-main";
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
-    <?php echo $system->jumpMenu(); ?>
+    <?php
+    $layout = new DomainMOD\Layout();
+    echo $layout->jumpMenu();
+    ?>
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
