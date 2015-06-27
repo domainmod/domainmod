@@ -37,7 +37,7 @@ table.main_table tr.main_table_row_active:hover td, tr.main_table_row_inactive:h
     padding-right: 26px;
     padding-bottom: 2px;
     padding-left: 0px;
- 	color: #000000;
+     color: #000000;
     background-color: #D1D1D1;
 }
 table.main_table_no_right_padding tr.main_table_row_active_no_right_padding:hover td, tr.main_table_row_inactive_no_right_padding:hover td {
@@ -45,11 +45,11 @@ table.main_table_no_right_padding tr.main_table_row_active_no_right_padding:hove
     padding-right: 0px;
     padding-bottom: 2px;
     padding-left: 0px;
- 	color: #000000;
+     color: #000000;
     background-color: #D1D1D1;
 }
 tr.main_table_row_heading_active {
-/*	line-height: 18px; */
+/*    line-height: 18px; */
 }
 td.main_table_cell_heading_active {
     vertical-align: bottom;
@@ -59,13 +59,13 @@ td.main_table_cell_heading_active {
     padding-left: 0px;
 }
 tr.main_table_row_active {
-/*	line-height: 18px; */
+/*    line-height: 18px; */
 }
 tr.main_table_row_active_no_right_padding {
-/*	line-height: 18px; */
+/*    line-height: 18px; */
 }
 tr.main_table_row_active_nohover {
-/*	line-height: 18px; */
+/*    line-height: 18px; */
 }
 td.main_table_cell_active {
     vertical-align: middle;
@@ -90,7 +90,7 @@ td.main_table_cell_active_top_aligned_no_right_padding {
 }
 
 tr.main_table_row_heading_inactive {
-/*	line-height: 18px; */
+/*    line-height: 18px; */
 }
 td.main_table_cell_heading_inactive {
     vertical-align: bottom;
@@ -100,10 +100,10 @@ td.main_table_cell_heading_inactive {
     padding-left: 0px;
 }
 tr.main_table_row_inactive {
-/*	line-height: 18px; */
+/*    line-height: 18px; */
 }
 tr.main_table_row_inactive_no_right_padding {
-/*	line-height: 18px; */
+/*    line-height: 18px; */
 }
 td.main_table_cell_inactive {
     padding-top: 2px;
@@ -578,7 +578,7 @@ font.subheadline {
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-weight: bold;
     font-size: 9pt;
-/*	color: #BB0000; */
+/*    color: #BB0000; */
     color: #AA0000;
 }
 font.main_table_heading_extra {

@@ -65,11 +65,11 @@ if ($demo_install != '1') {
     $result_domains = mysqli_query($connection, $sql_domains);
 
     $sql_ssl = "SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
-            	FROM ssl_certs AS sslc, ssl_cert_types AS sslt
-            	WHERE sslc.type_id = sslt.id
-            	  AND sslc.active NOT IN ('0')
-            	  AND sslc.expiry_date <= '$timestamp_basic_plus_x_days'
-            	ORDER BY sslc.expiry_date, sslc.name";
+                FROM ssl_certs AS sslc, ssl_cert_types AS sslt
+                WHERE sslc.type_id = sslt.id
+                  AND sslc.active NOT IN ('0')
+                  AND sslc.expiry_date <= '$timestamp_basic_plus_x_days'
+                ORDER BY sslc.expiry_date, sslc.name";
     $result_ssl = mysqli_query($connection, $sql_ssl);
 
     $sql_recipients = "SELECT u.email_address
@@ -96,7 +96,7 @@ if ($demo_install != '1') {
             <head><title>" . $headline . "</title></head>
             <body bgcolor=\"#FFFFFF\">
             <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\">
-            	<tr>
+                <tr>
                     <td width=\"100%\" bgcolor=\"#FFFFFF\">";
                         $message .= "<font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica, sans-serif\">";
                         $message .= "<a title=\"" . $software_title . "\" href=\"" . $full_url . "/\"><img alt=\"" . $software_title . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
@@ -149,11 +149,11 @@ if ($demo_install != '1') {
                         $message .= "<a target=\"_blank\" href=\"mailto:greg@domainmod.org\">greg@domainmod.org</a><BR>";
                         $message .= "</font>
                     </td>
-            	</tr>
+                </tr>
             </table>
 
             <table width=\"575\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\" bordercolor=\"#FFFFFF\">
-            	<tr>
+                <tr>
                     <td width=\"100%\"><font color=\"#000000\" size=\"1\" face=\"Verdana, Arial, Helvetica, sans-serif\">";
                         $message .= "<BR><hr width=\"100%\" size=\"1\" noshade>";
                         $message .= "You've received this email because you're currently subscribed to receive expiration ";
@@ -163,7 +163,7 @@ if ($demo_install != '1') {
                         $message .= "<a target=\"_blank\" href=\"" . $full_url . "/system/email-settings.php\">" . $full_url . "/system/email-settings.php</a><BR>";
                         $message .= "<BR></font>
                     </td>
-            	</tr>
+                </tr>
             </table>
             </body>
             </html>";

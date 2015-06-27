@@ -164,7 +164,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
             while ($row = mysqli_fetch_object($result)) {
 
-            	$per_domain = $row->total_cost / $row->number_of_domains;
+                $per_domain = $row->total_cost / $row->number_of_domains;
 
                 $per_domain = $currency->format($per_domain, $_SESSION['default_currency_symbol'],
                     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);

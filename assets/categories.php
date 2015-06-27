@@ -90,7 +90,7 @@ if ($export_data == "1") {
             $new_pcid = $row->id;
 
             if ($current_pcid != $new_pcid) {
-            	$exclude_category_string_raw .= "'" . $row->id . "', ";
+                $exclude_category_string_raw .= "'" . $row->id . "', ";
             }
 
             $sql_total_count = "SELECT count(*) AS total_count
@@ -99,7 +99,7 @@ if ($export_data == "1") {
                                   AND cat_id = '" . $row->id . "'";
             $result_total_count = mysqli_query($connection, $sql_total_count);
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-            	$total_domains = $row_total_count->total_count;
+                $total_domains = $row_total_count->total_count;
             }
 
             $sql_total_count = "SELECT count(*) AS total_count
@@ -108,26 +108,26 @@ if ($export_data == "1") {
                                   AND cat_id = '" . $row->id . "'";
             $result_total_count = mysqli_query($connection, $sql_total_count);
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-            	$total_certs = $row_total_count->total_count;
+                $total_certs = $row_total_count->total_count;
             }
 
             if ($row->id == $_SESSION['default_category_domains']) {
 
-            	$is_default_domains = "1";
+                $is_default_domains = "1";
 
             } else {
 
-            	$is_default_domains = "";
+                $is_default_domains = "";
 
             }
 
             if ($row->id == $_SESSION['default_category_ssl']) {
 
-            	$is_default_ssl = "1";
+                $is_default_ssl = "1";
 
             } else {
 
-            	$is_default_ssl = "";
+                $is_default_ssl = "";
 
             }
 
@@ -156,15 +156,15 @@ if ($export_data == "1") {
     if ($exclude_category_string == "") {
 
         $sql = "SELECT id, name, stakeholer, notes, insert_time, update_time
-            	FROM categories
-            	ORDER BY name asc";
+                FROM categories
+                ORDER BY name asc";
 
     } else {
 
         $sql = "SELECT id, name, stakeholder, notes, insert_time, update_time
-            	FROM categories
-            	WHERE id NOT IN (" . $exclude_category_string . ")
-            	ORDER BY name asc";
+                FROM categories
+                WHERE id NOT IN (" . $exclude_category_string . ")
+                ORDER BY name asc";
 
     }
 
@@ -178,21 +178,21 @@ if ($export_data == "1") {
 
             if ($row->id == $_SESSION['default_category_domains']) {
 
-            	$is_default_domains = "1";
+                $is_default_domains = "1";
 
             } else {
 
-            	$is_default_domains = "";
+                $is_default_domains = "";
 
             }
 
             if ($row->id == $_SESSION['default_category_ssl']) {
 
-            	$is_default_ssl = "1";
+                $is_default_ssl = "1";
 
             } else {
 
-            	$is_default_ssl = "";
+                $is_default_ssl = "";
 
             }
 
@@ -266,44 +266,44 @@ if (mysqli_num_rows($result) > 0) {
                 <a class="invisiblelink" href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->stakeholder; ?></a>
             </td>
             <td class="main_table_cell_active"><?php
-            	$sql_total_count = "SELECT count(*) AS total_count
+                $sql_total_count = "SELECT count(*) AS total_count
                                     FROM domains
                                     WHERE active NOT IN ('0', '10')
                                       AND cat_id = '" . $row->id . "'";
-            	$result_total_count = mysqli_query($connection, $sql_total_count);
-            	while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+                $result_total_count = mysqli_query($connection, $sql_total_count);
+                while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                     $total_domains = $row_total_count->total_count;
-            	}
+                }
 
-            	if ($total_domains >= 1) { ?>
+                if ($total_domains >= 1) { ?>
 
                     <a class="nobold" href="../domains.php?pcid=<?php echo $row->id; ?>"><?php echo number_format($total_domains); ?></a><?php
 
-            	} else {
+                } else {
 
                     echo "-";
 
-            	} ?>
+                } ?>
             </td>
             <td class="main_table_cell_active"><?php
-            	$sql_total_count = "SELECT count(*) AS total_count
+                $sql_total_count = "SELECT count(*) AS total_count
                                     FROM ssl_certs
                                     WHERE active NOT IN ('0')
                                       AND cat_id = '" . $row->id . "'";
-            	$result_total_count = mysqli_query($connection, $sql_total_count);
-            	while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+                $result_total_count = mysqli_query($connection, $sql_total_count);
+                while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                     $total_certs = $row_total_count->total_count;
-            	}
+                }
 
-            	if ($total_certs >= 1) { ?>
+                if ($total_certs >= 1) { ?>
 
                     <a class="nobold" href="../ssl-certs.php?sslpcid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
 
-            	} else {
+                } else {
 
                     echo "-";
 
-            	} ?>
+                } ?>
             </td>
         </tr><?php
 

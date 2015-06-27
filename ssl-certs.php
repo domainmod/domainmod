@@ -438,8 +438,8 @@ if ($export_data == "1") {
     $row_contents[$count++] = "CUSTOM FIELDS";
 
     $sql_field = "SELECT `name`
-            	  FROM ssl_cert_fields
-            	  ORDER BY `name` ASC";
+                  FROM ssl_cert_fields
+                  ORDER BY `name` ASC";
     $result_field = mysqli_query($connection, $sql_field);
 
     if (mysqli_num_rows($result_field) > 0) {
@@ -692,21 +692,21 @@ if ($sslpcid != "") { $sslpcid_string = " AND sslc.cat_id = '$sslpcid' "; } else
 if ($_SESSION['search_for_ssl'] != "") { $search_string = " AND (sslc.name LIKE '%" . $_SESSION['search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['search_for_ssl'] . "%')"; } else { $search_string = ""; }
 
 $sql_account = "SELECT sslpa.id AS sslpa_id, sslpa.username, sslp.name AS sslp_name, o.name AS owner_name
-            	FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_certs AS sslc, domains AS d
-            	WHERE sslpa.ssl_provider_id = sslp.id
-            	  AND sslpa.owner_id = o.id
-            	  AND sslpa.id = sslc.account_id
-            	  AND sslc.domain_id = d.id
-            	  $is_active_string
-            	  $oid_string
-            	  $did_string
-            	  $sslpid_string
-            	  $ssltid_string
-            	  $sslipid_string
-            	  $sslpcid_string
-            	  $search_string
-            	GROUP BY sslp.name, o.name, sslpa.username
-            	ORDER BY sslp.name asc, o.name asc, sslpa.username asc";
+                FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_certs AS sslc, domains AS d
+                WHERE sslpa.ssl_provider_id = sslp.id
+                  AND sslpa.owner_id = o.id
+                  AND sslpa.id = sslc.account_id
+                  AND sslc.domain_id = d.id
+                  $is_active_string
+                  $oid_string
+                  $did_string
+                  $sslpid_string
+                  $ssltid_string
+                  $sslipid_string
+                  $sslpcid_string
+                  $search_string
+                GROUP BY sslp.name, o.name, sslpa.username
+                ORDER BY sslp.name asc, o.name asc, sslpa.username asc";
 $result_account = mysqli_query($connection, $sql_account);
 echo "<select name=\"sslpaid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 echo "<option value=\"ssl-certs.php?oid=$oid&did=$did&sslpid=$sslpid&sslpaid=&ssltid=$ssltid&sslipid=$sslipid&sslpcid=$sslpcid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1&search_for=" . $_SESSION['search_for_ssl'] . "\">SSL Provider Account - ALL</option>";
@@ -893,14 +893,14 @@ $sql_owner = "SELECT o.id, o.name
               FROM owners AS o, ssl_certs AS sslc, domains AS d
               WHERE o.id = sslc.owner_id
                 AND o.id = d.owner_id
-            	$is_active_string
-            	$did_string
-            	$sslpid_string
-            	$sslpaid_string
-            	$ssltid_string
-            	$sslipid_string
-            	$sslpcid_string
-            	$search_string
+                $is_active_string
+                $did_string
+                $sslpid_string
+                $sslpaid_string
+                $ssltid_string
+                $sslipid_string
+                $sslpcid_string
+                $search_string
               GROUP BY o.name
               ORDER BY o.name asc";
 $result_owner = mysqli_query($connection, $sql_owner);
@@ -1077,13 +1077,13 @@ echo "</select>";
     <td class="main_table_cell_active">
           <?php if ($row->active == "0") {
                     echo "<a title=\"Expired\"><strong><font class=\"highlight\">x</font></strong></a>&nbsp;";
-          		} elseif ($row->active == "2") {
+                  } elseif ($row->active == "2") {
                     echo "<a title=\"Pending (Registration)\"><strong><font class=\"highlight\">PRg</font></strong></a>&nbsp;";
-            	} elseif ($row->active == "3") {
+                } elseif ($row->active == "3") {
                     echo "<a title=\"Pending (Renewal)\"><strong><font class=\"highlight\">PRn</font></strong></a>&nbsp;";
-            	} elseif ($row->active == "4") {
+                } elseif ($row->active == "4") {
                     echo "<a title=\"Pending (Other)\"><strong><font class=\"highlight\">PO</font></strong></a>&nbsp;";
-            	}
+                }
             ?><a class="invisiblelink" href="edit/ssl-cert.php?sslcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
     </td>
 <?php if ($_SESSION['display_ssl_domain'] == "1") { ?>

@@ -84,7 +84,7 @@ if ($export_data == "1") {
             $new_whid = $row->id;
 
             if ($current_whid != $new_whid) {
-            	$exclude_web_host_string_raw .= "'" . $row->id . "', ";
+                $exclude_web_host_string_raw .= "'" . $row->id . "', ";
             }
 
             $sql_total_count = "SELECT count(*) AS total_count
@@ -93,16 +93,16 @@ if ($export_data == "1") {
                                   AND active NOT IN ('0', '10')";
             $result_total_count = mysqli_query($connection, $sql_total_count);
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-            	$active_domains = $row_total_count->total_count;
+                $active_domains = $row_total_count->total_count;
             }
 
             if ($row->id == $_SESSION['default_host']) {
 
-            	$is_default = "1";
+                $is_default = "1";
 
             } else {
 
-            	$is_default = "";
+                $is_default = "";
 
             }
 
@@ -129,15 +129,15 @@ if ($export_data == "1") {
     if ($exclude_web_host_string == "") {
 
         $sql = "SELECT id, name, url, notes, insert_time, update_time
-            	FROM hosting
-            	ORDER BY name";
+                FROM hosting
+                ORDER BY name";
 
     } else {
 
         $sql = "SELECT id, name, url, notes, insert_time, update_time
-            	FROM hosting
-            	WHERE id NOT IN (" . $exclude_web_host_string . ")
-            	ORDER BY name";
+                FROM hosting
+                WHERE id NOT IN (" . $exclude_web_host_string . ")
+                ORDER BY name";
 
     }
 
@@ -151,11 +151,11 @@ if ($export_data == "1") {
 
             if ($row->id == $_SESSION['default_host']) {
 
-            	$is_default = "1";
+                $is_default = "1";
 
             } else {
 
-            	$is_default = "";
+                $is_default = "";
 
             }
 
@@ -201,7 +201,7 @@ if (mysqli_num_rows($result) > 0) {
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-        	<font class="main_table_heading">Active Hosts (<?php echo $number_of_hosting_providers; ?>)</font>
+            <font class="main_table_heading">Active Hosts (<?php echo $number_of_hosting_providers; ?>)</font>
         </td>
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Domains</font>
@@ -224,27 +224,27 @@ if (mysqli_num_rows($result) > 0) {
                 <a class="invisiblelink" href="edit/host.php?whid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_host'] == $row->id) echo "<a title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_active"><?php
-            	$sql_total_count = "SELECT count(*) AS total_count
+                $sql_total_count = "SELECT count(*) AS total_count
                                     FROM domains
                                     WHERE hosting_id = '" . $row->id . "'
                                       AND active NOT IN ('0', '10')";
-            	$result_total_count = mysqli_query($connection, $sql_total_count);
-            	while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+                $result_total_count = mysqli_query($connection, $sql_total_count);
+                while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                     $active_domains = $row_total_count->total_count;
-            	}
+                }
 
-            	if ($active_domains == "0") {
+                if ($active_domains == "0") {
 
                     echo number_format($active_domains);
 
-            	} else { ?>
+                } else { ?>
 
                     <a class="nobold" href="../domains.php?whid=<?php echo $row->id; ?>"><?php echo number_format($active_domains); ?></a><?php
 
-            	} ?>
+                } ?>
             </td>
             <td class="main_table_cell_active">
-            	<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
+                <a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
             </td>
         </tr><?php
 

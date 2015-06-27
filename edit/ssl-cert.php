@@ -90,8 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($date->checkDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "" && $new_ip_id != "" && $new_cat_id != "" && $new_domain_id != "0" && $new_account_id != "0" && $new_type_id != "0" && $new_ip_id != "0" && $new_cat_id != "0") {
 
         $sql = "SELECT ssl_provider_id, owner_id
-            	FROM ssl_accounts
-            	WHERE id = '" . $new_account_id . "'";
+                FROM ssl_accounts
+                WHERE id = '" . $new_account_id . "'";
         $result = mysqli_query($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) { $new_ssl_provider_id = $row->ssl_provider_id; $new_owner_id = $row->owner_id; }
@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (mysqli_num_rows($result_fee_id) >= 1) {
 
             while ($row_fee_id = mysqli_fetch_object($result_fee_id)) {
-            	$temp_fee_id = $row_fee_id->id;
+                $temp_fee_id = $row_fee_id->id;
             }
             $temp_fee_fixed = "1";
 
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $sql_update = "UPDATE ssl_certs
                        SET owner_id = '" . $new_owner_id . "',
-                       	   ssl_provider_id = '" . $new_ssl_provider_id . "',
+                              ssl_provider_id = '" . $new_ssl_provider_id . "',
                            account_id = '" . $new_account_id . "',
                            domain_id = '" . $new_domain_id . "',
                            name = '" . mysqli_real_escape_string($connection, $new_name) . "',
@@ -146,8 +146,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 
         $sql = "SELECT field_name
-            	FROM ssl_cert_fields
-            	ORDER BY name";
+                FROM ssl_cert_fields
+                ORDER BY name";
         $result = mysqli_query($connection, $sql);
 
         $count = 0;
@@ -282,10 +282,10 @@ echo "</select>";
 <strong>SSL Provider Account</strong><BR><BR>
 <?php
 $sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS sslp_name
-            	FROM ssl_accounts AS sslpa, owners AS o, ssl_providers AS sslp
-            	WHERE sslpa.owner_id = o.id
-            	  AND sslpa.ssl_provider_id = sslp.id
-            	ORDER BY sslp_name asc, o_name asc, sslpa.username asc";
+                FROM ssl_accounts AS sslpa, owners AS o, ssl_providers AS sslp
+                WHERE sslpa.owner_id = o.id
+                  AND sslpa.ssl_provider_id = sslp.id
+                ORDER BY sslp_name asc, o_name asc, sslpa.username asc";
 $result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysqli_fetch_object($result_account)) { ?>
@@ -378,9 +378,9 @@ if (mysqli_num_rows($result) > 0) { ?>
     foreach($field_array as $field) {
 
         $sql = "SELECT sf.name, sf.field_name, sf.type_id, sf.description
-            	FROM ssl_cert_fields AS sf, custom_field_types AS cft
-            	WHERE sf.type_id = cft.id
-            	  AND sf.field_name = '" . $field . "'";
+                FROM ssl_cert_fields AS sf, custom_field_types AS cft
+                WHERE sf.type_id = cft.id
+                  AND sf.field_name = '" . $field . "'";
         $result = mysqli_query($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
@@ -392,7 +392,7 @@ if (mysqli_num_rows($result) > 0) { ?>
 
             while ($row_data = mysqli_fetch_object($result_data)) {
 
-            	$field_data = $row_data->{$row->field_name};
+                $field_data = $row_data->{$row->field_name};
 
             }
 
@@ -401,42 +401,42 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <input type="checkbox" name="new_<?php echo $row->field_name; ?>" value="1"<?php if ($field_data == "1") echo " checked"; ?>>
                 &nbsp;<strong><?php echo $row->name; ?></strong><BR><?php
 
-            	if ($row->description != "") {
+                if ($row->description != "") {
 
                     echo $row->description . "<BR><BR>";
 
-            	} else {
+                } else {
 
                     echo "<BR>";
 
-            	}
+                }
 
             } elseif ($row->type_id == "2") { // Text ?>
 
-            	<strong><?php echo $row->name; ?> (255)</strong><BR><?php
-            	if ($row->description != "") {
+                <strong><?php echo $row->name; ?> (255)</strong><BR><?php
+                if ($row->description != "") {
 
                     echo $row->description . "<BR><BR>";
 
-            	} else {
+                } else {
 
                     echo "<BR>";
 
-            	} ?>
+                } ?>
                 <input type="text" name="new_<?php echo $row->field_name; ?>" size="50" maxlength="255" value="<?php echo htmlentities($field_data); ?>"><BR><BR><?php
 
             } elseif ($row->type_id == "3") { // Text Area ?>
 
-            	<strong><?php echo $row->name; ?></strong><BR><?php
-            	if ($row->description != "") {
+                <strong><?php echo $row->name; ?></strong><BR><?php
+                if ($row->description != "") {
 
                     echo $row->description . "<BR><BR>";
 
-            	} else {
+                } else {
 
                     echo "<BR>";
 
-            	} ?>
+                } ?>
                 <textarea name="new_<?php echo $row->field_name; ?>" cols="60" rows="5"><?php echo $field_data; ?></textarea><BR><BR><?php
 
             }

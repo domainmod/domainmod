@@ -25,10 +25,10 @@
 // // Display Accounts
 // // Input: $sql_dw_account_temp
 // $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-// 						   FROM dw_accounts AS a, dw_servers AS s
-// 						   WHERE a.server_id = s.id
-// 						     AND X
-// 						   ORDER BY s.name, a.unix_startdate DESC";
+//                            FROM dw_accounts AS a, dw_servers AS s
+//                            WHERE a.server_id = s.id
+//                              AND X
+//                            ORDER BY s.name, a.unix_startdate DESC";
 // $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or $error->outputOldSqlError($connection);
 // $from_main_dw_account_page = 0;
 // include("_includes/dw/display-account.inc.php");

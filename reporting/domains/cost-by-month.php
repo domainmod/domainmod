@@ -349,10 +349,10 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
             ?>
 
             <tr class="main_table_row_active">
-            	<td class="main_table_cell_active"><?php echo $row->year; ?></td>
-            	<td class="main_table_cell_active"><?php echo $display_month; ?></td>
-            	<td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
-            	<td class="main_table_cell_active"><?php echo $yearly_cost; ?></td>
+                <td class="main_table_cell_active"><?php echo $row->year; ?></td>
+                <td class="main_table_cell_active"><?php echo $display_month; ?></td>
+                <td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
+                <td class="main_table_cell_active"><?php echo $yearly_cost; ?></td>
             </tr>
 
             <?php
@@ -362,10 +362,10 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         } else { ?>
 
             <tr class="main_table_row_active">
-            	<td class="main_table_cell_active">&nbsp;</td>
-            	<td class="main_table_cell_active"><?php echo $display_month; ?></td>
-            	<td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
-            	<td class="main_table_cell_active">&nbsp;</td>
+                <td class="main_table_cell_active">&nbsp;</td>
+                <td class="main_table_cell_active"><?php echo $display_month; ?></td>
+                <td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
+                <td class="main_table_cell_active">&nbsp;</td>
             </tr>
 
             <?php

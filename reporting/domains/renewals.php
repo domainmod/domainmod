@@ -179,8 +179,8 @@ if ($export_data == "1") {
     $row_contents[$count++] = "CUSTOM FIELDS";
 
     $sql_field = "SELECT `name`
-            	  FROM domain_fields
-            	  ORDER BY `name` ASC";
+                  FROM domain_fields
+                  ORDER BY `name` ASC";
     $result_field = mysqli_query($connection, $sql_field);
 
     if (mysqli_num_rows($result_field) > 0) {
@@ -296,55 +296,55 @@ if ($export_data == "1") {
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Expiry Date</font>
+        <font class="main_table_heading">Expiry Date</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Fee</font>
+        <font class="main_table_heading">Fee</font>
     </td>
 <?php } ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Domain Name</font>
+        <font class="main_table_heading">Domain Name</font>
     </td>
 <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">TLD</font>
+        <font class="main_table_heading">TLD</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Registrar</font>
+        <font class="main_table_heading">Registrar</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_account'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Registrar Account</font>
+        <font class="main_table_heading">Registrar Account</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">DNS Profile</font>
+        <font class="main_table_heading">DNS Profile</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">IP Address</font>
+        <font class="main_table_heading">IP Address</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_host'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Web Host</font>
+        <font class="main_table_heading">Web Host</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_category'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Category</font>
+        <font class="main_table_heading">Category</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Owner</font>
+        <font class="main_table_heading">Owner</font>
     </td>
 <?php } ?>
 </tr>

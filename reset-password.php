@@ -59,7 +59,7 @@ if ($new_username != "") {
 
             $sql_update = "UPDATE users
                            SET password = password('$new_password'),
-                           	   new_password = '1',
+                                  new_password = '1',
                                update_time = '" . $time->time() . "'
                            WHERE username = '$row->username'
                              AND email_address = '$row->email_address'";

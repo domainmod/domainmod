@@ -166,7 +166,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
             while ($row = mysqli_fetch_object($result)) {
 
-            	$per_cert = $row->total_cost / $row->number_of_certs;
+                $per_cert = $row->total_cost / $row->number_of_certs;
 
                 $per_cert = $currency->format($per_cert, $_SESSION['default_currency_symbol'],
                     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
@@ -229,16 +229,16 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-        	<font class="main_table_heading">Domain</font>
+            <font class="main_table_heading">Domain</font>
         </td>
         <td class="main_table_cell_heading_active">
-        	<font class="main_table_heading">SSL Certs</font>
+            <font class="main_table_heading">SSL Certs</font>
         </td>
         <td class="main_table_cell_heading_active">
-        	<font class="main_table_heading">Cost</font>
+            <font class="main_table_heading">Cost</font>
         </td>
         <td class="main_table_cell_heading_active">
-        	<font class="main_table_heading">Per Cert</font>
+            <font class="main_table_heading">Per Cert</font>
         </td>
     </tr>
 

@@ -97,7 +97,7 @@ if ($export_data == "1") {
             $new_raid = $row->raid;
 
             if ($current_raid != $new_raid) {
-            	$exclude_account_string_raw .= "'" . $row->raid . "', ";
+                $exclude_account_string_raw .= "'" . $row->raid . "', ";
             }
 
             $sql_domain_count = "SELECT count(*) AS total_domain_count
@@ -106,26 +106,26 @@ if ($export_data == "1") {
                                    AND active NOT IN ('0', '10')";
             $result_domain_count = mysqli_query($connection, $sql_domain_count);
             while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
-            	$total_domain_count = $row_domain_count->total_domain_count;
+                $total_domain_count = $row_domain_count->total_domain_count;
             }
 
             if ($row->raid == $_SESSION['default_registrar_account']) {
 
-            	$is_default = "1";
+                $is_default = "1";
 
             } else {
 
-            	$is_default = "";
+                $is_default = "";
 
             }
 
             if ($row->reseller == "0") {
 
-            	$is_reseller = "";
+                $is_reseller = "";
 
             } else {
 
-            	$is_reseller = "1";
+                $is_reseller = "1";
 
             }
 
@@ -182,21 +182,21 @@ if ($export_data == "1") {
 
             if ($row->raid == $_SESSION['default_registrar_account']) {
 
-            	$is_default = "1";
+                $is_default = "1";
 
             } else {
 
-            	$is_default = "";
+                $is_default = "";
 
             }
 
             if ($row->reseller == "0") {
 
-            	$is_reseller = "";
+                $is_reseller = "";
 
             } else {
 
-            	$is_reseller = "1";
+                $is_reseller = "1";
 
             }
 
@@ -268,21 +268,21 @@ if (mysqli_num_rows($result) > 0) {
                 <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->rname; ?></a>
             </td>
             <td class="main_table_cell_active" valign="top">
-            	<a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_active">
-            	<a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->oname; ?></a>
+                <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->oname; ?></a>
             </td>
             <td class="main_table_cell_active"><?php
-            	$sql_domain_count = "SELECT count(*) AS total_domain_count
+                $sql_domain_count = "SELECT count(*) AS total_domain_count
                                      FROM domains
                                      WHERE account_id = '" . $row->raid . "'
                                        AND active NOT IN ('0', '10')";
-            	$result_domain_count = mysqli_query($connection, $sql_domain_count);
+                $result_domain_count = mysqli_query($connection, $sql_domain_count);
 
-            	while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
+                while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
                     echo "<a class=\"nobold\" href=\"../domains.php?oid=$row->oid&rid=$row->rid&raid=$row->raid\">" . number_format($row_domain_count->total_domain_count) . "</a>";
-            	} ?>
+                } ?>
             </td>
         </tr><?php
 

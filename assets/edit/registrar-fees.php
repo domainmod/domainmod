@@ -264,17 +264,17 @@ if ($really_del == "1") {
     } else {
 
         $sql = "DELETE FROM fees
-            	WHERE id = '" . $feeid . "'
-            	  AND registrar_id = '" . $rid . "'
-            	  AND tld = '" . $tld . "'";
+                WHERE id = '" . $feeid . "'
+                  AND registrar_id = '" . $rid . "'
+                  AND tld = '" . $tld . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $sql = "UPDATE domains
-            	SET fee_id = '0',
+                SET fee_id = '0',
                     update_time = '" . $timestamp . "'
-            	WHERE fee_id = '" . $feeid . "'
-            	  AND registrar_id = '" . $rid . "'
-            	  AND tld = '" . $tld . "'";
+                WHERE fee_id = '" . $feeid . "'
+                  AND registrar_id = '" . $rid . "'
+                  AND tld = '" . $tld . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
@@ -377,16 +377,16 @@ if (mysqli_num_rows($result) != 0) {
 <form name="add_registrar_fee_form" method="post">
 <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
-    	<td class="main_table_cell_heading_active">
-        	<strong>TLD</strong><BR>
+        <td class="main_table_cell_heading_active">
+            <strong>TLD</strong><BR>
             <input name="new_tld" type="text" value="<?php echo $new_tld; ?>" size="4">
         </td>
         <td class="main_table_cell_heading_active">
-        	<strong>Initial Fee</strong><BR>
+            <strong>Initial Fee</strong><BR>
             <input name="new_initial_fee" type="text" value="<?php echo $new_initial_fee; ?>" size="4">
         </td>
         <td class="main_table_cell_heading_active">
-        	<strong>Renewal Fee</strong><BR>
+            <strong>Renewal Fee</strong><BR>
             <input name="new_renewal_fee" type="text" value="<?php echo $new_renewal_fee; ?>" size="4">
         </td>
         <td class="main_table_cell_heading_active">
@@ -401,9 +401,9 @@ if (mysqli_num_rows($result) != 0) {
             <strong>Misc Fee</strong><BR>
             <input name="new_misc_fee" type="text" value="<?php echo $new_misc_fee; ?>" size="4">
         </td>
-      	<td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
+          <td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
           <select name="new_currency_id" id="new_currency">
-          	<?php
+              <?php
             $sql = "SELECT id, currency, name, symbol
                     FROM currencies
                     ORDER BY currency";
@@ -434,7 +434,7 @@ if (mysqli_num_rows($result) != 0) {
 <form name="edit_registrar_fee_form" method="post">
 <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
-    	<td class="main_table_cell_heading_active"><strong>TLD</strong></td>
+        <td class="main_table_cell_heading_active"><strong>TLD</strong></td>
         <td class="main_table_cell_heading_active"><strong>Initial Fee</strong></td>
         <td class="main_table_cell_heading_active"><strong>Renewal Fee</strong></td>
         <td class="main_table_cell_heading_active"><strong>Transfer Fee</strong></td>
@@ -453,7 +453,7 @@ $count = 0;
 while ($row = mysqli_fetch_object($result)) {
 ?>
     <tr class="main_table_row_active">
-    	<td class="main_table_cell_active">.<?php echo htmlentities($row->tld); ?></td>
+        <td class="main_table_cell_active">.<?php echo htmlentities($row->tld); ?></td>
         <td class="main_table_cell_active">
             <input type="hidden" name="fee_id[<?php echo $count; ?>]" value="<?php echo $row->id; ?>">
             <input name="initial_fee[<?php echo $count; ?>]" type="text" value="<?php echo $row->initial_fee; ?>" size="4">

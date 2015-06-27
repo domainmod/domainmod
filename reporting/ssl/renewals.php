@@ -175,8 +175,8 @@ if ($export_data == "1") {
     $row_contents[$count++] = "CUSTOM FIELDS";
 
     $sql_field = "SELECT `name`
-            	  FROM ssl_cert_fields
-            	  ORDER BY `name` ASC";
+                  FROM ssl_cert_fields
+                  ORDER BY `name` ASC";
     $result_field = mysqli_query($connection, $sql_field);
 
     if (mysqli_num_rows($result_field) > 0) {
@@ -280,50 +280,50 @@ if ($export_data == "1") {
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_ssl_expiry_date'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Expiry Date</font>
+        <font class="main_table_heading">Expiry Date</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Fee</font>
+        <font class="main_table_heading">Fee</font>
     </td>
 <?php } ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Host / Label</font>
+        <font class="main_table_heading">Host / Label</font>
     </td>
 <?php if ($_SESSION['display_ssl_domain'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Domain</font>
+        <font class="main_table_heading">Domain</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_provider'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">SSL Provider</font>
+        <font class="main_table_heading">SSL Provider</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_account'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">SSL Account</font>
+        <font class="main_table_heading">SSL Account</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_type'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Type</font>
+        <font class="main_table_heading">Type</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_ip'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">IP Address</font>
+        <font class="main_table_heading">IP Address</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_category'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Category</font>
+        <font class="main_table_heading">Category</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
     <td class="main_table_cell_heading_active">
-    	<font class="main_table_heading">Owner</font>
+        <font class="main_table_heading">Owner</font>
     </td>
 <?php } ?>
 </tr>

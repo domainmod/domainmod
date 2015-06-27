@@ -71,12 +71,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($invalid_domains == 1) {
 
-            	if ($invalid_count == 1) {
+                if ($invalid_count == 1) {
 
                     $_SESSION['result_message'] = "There is " . number_format($invalid_count) . " invalid domain
                         on your list<BR><BR>" . $temp_result_message;
 
-            	} else {
+                } else {
 
                     $_SESSION['result_message'] = "There are " . number_format($invalid_count) . " invalid
                         domains on your list<BR><BR>" . $temp_result_message;
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             number_format($invalid_count-$invalid_to_display) . " others<BR>";
                     }
 
-            	}
+                }
 
             }
             $submission_failed = 1;
@@ -105,9 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             while (list($key, $new_domain) = each($lines)) {
 
-            	if (!$domain->checkDomainFormat($new_domain)) {
+                if (!$domain->checkDomainFormat($new_domain)) {
                     echo "invalid domain $key"; exit;
-            	}
+                }
 
             }
 

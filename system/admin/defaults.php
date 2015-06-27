@@ -62,19 +62,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $sql = "UPDATE settings
             SET default_category_domains = '$new_default_category_domains',
-            	default_category_ssl = '$new_default_category_ssl',
-            	default_dns = '$new_default_dns',
-            	default_host = '$new_default_host',
-            	default_ip_address_domains = '$new_default_ip_address_domains',
-            	default_ip_address_ssl = '$new_default_ip_address_ssl',
-            	default_owner_domains = '$new_default_owner_domains',
-            	default_owner_ssl = '$new_default_owner_ssl',
-            	default_registrar = '$new_default_registrar',
-            	default_registrar_account = '$new_default_registrar_account',
-            	default_ssl_provider_account = '$new_default_ssl_provider_account',
-            	default_ssl_type = '$new_default_ssl_type',
-            	default_ssl_provider = '$new_default_ssl_provider',
-            	update_time = '" . $time->time() . "'";
+                default_category_ssl = '$new_default_category_ssl',
+                default_dns = '$new_default_dns',
+                default_host = '$new_default_host',
+                default_ip_address_domains = '$new_default_ip_address_domains',
+                default_ip_address_ssl = '$new_default_ip_address_ssl',
+                default_owner_domains = '$new_default_owner_domains',
+                default_owner_ssl = '$new_default_owner_ssl',
+                default_registrar = '$new_default_registrar',
+                default_registrar_account = '$new_default_registrar_account',
+                default_ssl_provider_account = '$new_default_ssl_provider_account',
+                default_ssl_type = '$new_default_ssl_type',
+                default_ssl_provider = '$new_default_ssl_provider',
+                update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $_SESSION['system_default_category_domains'] = $new_default_category_domains;

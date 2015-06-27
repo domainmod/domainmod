@@ -127,8 +127,8 @@ else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6',
 if ($segid != "") {
 
     $seg_sql = "SELECT segment
-            	FROM segments
-            	WHERE id = '$segid'";
+                FROM segments
+                WHERE id = '$segid'";
     $seg_result = mysqli_query($connection, $seg_sql);
     while ($seg_row = mysqli_fetch_object($seg_result)) { $temp_segment = $seg_row->segment; }
     $segid_string = " AND d.domain IN ($temp_segment)";
@@ -295,7 +295,7 @@ if ($segid != "") {
     $result = mysqli_query($connection, $sql);
 
     $active_domains = "'";
-    while ($row = mysqli_fetch_object($result)) { $active_domains .= $row->domain . "', '";	}
+    while ($row = mysqli_fetch_object($result)) { $active_domains .= $row->domain . "', '";    }
     $active_domains .= "'";
     $active_domains = substr($active_domains, 0, -4);
 
@@ -718,8 +718,8 @@ if ($export_data == "1") {
     $row_contents[$count++] = "CUSTOM FIELDS";
 
     $sql_field = "SELECT `name`
-            	  FROM domain_fields
-            	  ORDER BY `name` ASC";
+                  FROM domain_fields
+                  ORDER BY `name` ASC";
     $result_field = mysqli_query($connection, $sql_field);
 
     if (mysqli_num_rows($result_field) > 0) {

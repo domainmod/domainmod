@@ -96,8 +96,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 
         $sql = "SELECT registrar_id, owner_id
-            	FROM registrar_accounts
-            	WHERE id = '" . $new_account_id . "'";
+                FROM registrar_accounts
+                WHERE id = '" . $new_account_id . "'";
         $result = mysqli_query($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) { $new_registrar_id = $row->registrar_id; $new_owner_id = $row->owner_id; }
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (mysqli_num_rows($result_fee_id) >= 1) {
 
             while ($row_fee_id = mysqli_fetch_object($result_fee_id)) {
-            	$temp_fee_id = $row_fee_id->id;
+                $temp_fee_id = $row_fee_id->id;
             }
             $temp_fee_fixed = "1";
 
@@ -163,8 +163,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 
         $sql = "SELECT field_name
-            	FROM domain_fields
-            	ORDER BY name";
+                FROM domain_fields
+                ORDER BY name";
         $result = mysqli_query($connection, $sql);
 
         $count = 0;
@@ -300,10 +300,10 @@ if ($really_del == "1") {
 <strong>Registrar Account</strong><BR><BR>
 <?php
 $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
-            	FROM registrar_accounts AS ra, owners AS o, registrars AS r
-            	WHERE ra.owner_id = o.id
-            	  AND ra.registrar_id = r.id
-            	ORDER BY r_name asc, o_name asc, ra.username asc";
+                FROM registrar_accounts AS ra, owners AS o, registrars AS r
+                WHERE ra.owner_id = o.id
+                  AND ra.registrar_id = r.id
+                ORDER BY r_name asc, o_name asc, ra.username asc";
 $result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_account_id\">";
 while ($row_account = mysqli_fetch_object($result_account)) { ?>
@@ -348,8 +348,8 @@ echo "</select>";
 <strong>Web Hosting Provider</strong><BR><BR>
 <?php
 $sql_hosting = "SELECT id, name
-            	FROM hosting
-            	ORDER BY name asc";
+                FROM hosting
+                ORDER BY name asc";
 $result_hosting = mysqli_query($connection, $sql_hosting) or $error->outputOldSqlError($connection);
 echo "<select name=\"new_hosting_id\">";
 while ($row_hosting = mysqli_fetch_object($result_hosting)) { ?>
@@ -422,9 +422,9 @@ if (mysqli_num_rows($result) > 0) { ?>
     foreach($field_array as $field) {
 
         $sql = "SELECT df.name, df.field_name, df.type_id, df.description
-            	FROM domain_fields AS df, custom_field_types AS cft
-            	WHERE df.type_id = cft.id
-            	  AND df.field_name = '" . $field . "'";
+                FROM domain_fields AS df, custom_field_types AS cft
+                WHERE df.type_id = cft.id
+                  AND df.field_name = '" . $field . "'";
         $result = mysqli_query($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
@@ -436,7 +436,7 @@ if (mysqli_num_rows($result) > 0) { ?>
 
             while ($row_data = mysqli_fetch_object($result_data)) {
 
-            	$field_data = $row_data->{$row->field_name};
+                $field_data = $row_data->{$row->field_name};
 
             }
 
@@ -445,42 +445,42 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <input type="checkbox" name="new_<?php echo $row->field_name; ?>" value="1"<?php if ($field_data == "1") echo " checked"; ?>>
                 &nbsp;<strong><?php echo $row->name; ?></strong><BR><?php
 
-            	if ($row->description != "") {
+                if ($row->description != "") {
 
                     echo $row->description . "<BR><BR>";
 
-            	} else {
+                } else {
 
                     echo "<BR>";
 
-            	}
+                }
 
             } elseif ($row->type_id == "2") { // Text ?>
 
-            	<strong><?php echo $row->name; ?> (255)</strong><BR><?php
-            	if ($row->description != "") {
+                <strong><?php echo $row->name; ?> (255)</strong><BR><?php
+                if ($row->description != "") {
 
                     echo $row->description . "<BR><BR>";
 
-            	} else {
+                } else {
 
                     echo "<BR>";
 
-            	} ?>
+                } ?>
                 <input type="text" name="new_<?php echo $row->field_name; ?>" size="50" maxlength="255" value="<?php echo htmlentities($field_data); ?>"><BR><BR><?php
 
             } elseif ($row->type_id == "3") { // Text Area ?>
 
-            	<strong><?php echo $row->name; ?></strong><BR><?php
-            	if ($row->description != "") {
+                <strong><?php echo $row->name; ?></strong><BR><?php
+                if ($row->description != "") {
 
                     echo $row->description . "<BR><BR>";
 
-            	} else {
+                } else {
 
                     echo "<BR>";
 
-            	} ?>
+                } ?>
                 <textarea name="new_<?php echo $row->field_name; ?>" cols="60" rows="5"><?php echo $field_data; ?></textarea><BR><BR><?php
 
             }
@@ -498,8 +498,8 @@ if (mysqli_num_rows($result) > 0) { ?>
 
 <?php
 $sql_accounts = "SELECT id
-            	 FROM dw_accounts
-            	 WHERE domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'";
+                 FROM dw_accounts
+                 WHERE domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'";
 $result_accounts = mysqli_query($connection, $sql_accounts);
 
 if ($result_accounts === false || mysqli_num_rows($result_accounts) <= 0) {
@@ -509,8 +509,8 @@ if ($result_accounts === false || mysqli_num_rows($result_accounts) <= 0) {
 }
 
 $sql_dns_zones = "SELECT id
-            	  FROM dw_dns_zones
-            	  WHERE domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'";
+                  FROM dw_dns_zones
+                  WHERE domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'";
 $result_dns_zones = mysqli_query($connection, $sql_dns_zones);
 
 if ($result_dns_zones === false || mysqli_num_rows($result_dns_zones) <= 0) {

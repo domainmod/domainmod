@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($_SESSION['has_ssl_provider'] != '1') {
 
- 			$system->checkExistingAssets($connection);
+             $system->checkExistingAssets($connection);
 
             header("Location: ../../ssl-certs.php");
 

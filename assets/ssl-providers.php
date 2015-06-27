@@ -85,7 +85,7 @@ if ($export_data == "1") {
             $new_sslpid = $row->id;
 
             if ($current_sslpid != $new_sslpid) {
-            	$exclude_ssl_provider_string_raw .= "'" . $row->id . "', ";
+                $exclude_ssl_provider_string_raw .= "'" . $row->id . "', ";
             }
 
             $sql_total_count = "SELECT count(*) AS total_count
@@ -93,7 +93,7 @@ if ($export_data == "1") {
                                 WHERE ssl_provider_id = '" . $row->id . "'";
             $result_total_count = mysqli_query($connection, $sql_total_count);
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-            	$total_accounts = $row_total_count->total_count;
+                $total_accounts = $row_total_count->total_count;
             }
 
             $sql_cert_count = "SELECT count(*) AS total_count
@@ -102,16 +102,16 @@ if ($export_data == "1") {
                                  AND ssl_provider_id = '" . $row->id . "'";
             $result_cert_count = mysqli_query($connection, $sql_cert_count);
             while ($row_cert_count = mysqli_fetch_object($result_cert_count)) {
-            	$total_certs = $row_cert_count->total_count;
+                $total_certs = $row_cert_count->total_count;
             }
 
             if ($row->id == $_SESSION['default_ssl_provider']) {
 
-            	$is_default = "1";
+                $is_default = "1";
 
             } else {
 
-            	$is_default = "";
+                $is_default = "";
 
             }
 
@@ -139,15 +139,15 @@ if ($export_data == "1") {
     if ($exclude_ssl_provider_string == "") {
 
         $sql = "SELECT id, name, url, notes, insert_time, update_time
-            	FROM ssl_providers
-            	ORDER BY name asc";
+                FROM ssl_providers
+                ORDER BY name asc";
 
     } else {
 
         $sql = "SELECT id, name, url, notes, insert_time, update_time
-            	FROM ssl_providers
-            	WHERE id NOT IN (" . $exclude_ssl_provider_string . ")
-            	ORDER BY name asc";
+                FROM ssl_providers
+                WHERE id NOT IN (" . $exclude_ssl_provider_string . ")
+                ORDER BY name asc";
 
     }
 
@@ -164,16 +164,16 @@ if ($export_data == "1") {
                                 WHERE ssl_provider_id = '" . $row->id . "'";
             $result_total_count = mysqli_query($connection, $sql_total_count);
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-            	$total_accounts = $row_total_count->total_count;
+                $total_accounts = $row_total_count->total_count;
             }
 
             if ($row->id == $_SESSION['default_ssl_provider']) {
 
-            	$is_default = "1";
+                $is_default = "1";
 
             } else {
 
-            	$is_default = "";
+                $is_default = "";
 
             }
 
@@ -249,9 +249,9 @@ if (mysqli_num_rows($result) > 0) {
                 $result_total_count = mysqli_query($connection, $sql_total_count);
                 while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                     $total_accounts = $row_total_count->total_count;
-            	}
+                }
 
-            	if ($total_accounts >= 1) { ?>
+                if ($total_accounts >= 1) { ?>
 
                     <a class="nobold" href="ssl-accounts.php?sslpid=<?php echo $row->id; ?>"><?php echo number_format($total_accounts); ?></a><?php
 
@@ -259,7 +259,7 @@ if (mysqli_num_rows($result) > 0) {
 
                     echo number_format($total_accounts);
 
-            	} ?>
+                } ?>
             </td>
             <td class="main_table_cell_active"><?php
                 $sql_cert_count = "SELECT count(*) AS total_count
@@ -269,20 +269,20 @@ if (mysqli_num_rows($result) > 0) {
                 $result_cert_count = mysqli_query($connection, $sql_cert_count);
                 while ($row_cert_count = mysqli_fetch_object($result_cert_count)) {
                     $total_certs = $row_cert_count->total_count;
-            	}
+                }
 
-            	if ($total_certs >= 1) { ?>
+                if ($total_certs >= 1) { ?>
 
                     <a class="nobold" href="../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
 
-            	} else {
+                } else {
 
                     echo number_format($total_certs);
 
-            	} ?>
+                } ?>
             </td>
             <td class="main_table_cell_active">
-            	<a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?php echo $row->id; ?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
+                <a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?php echo $row->id; ?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
             </td>
         </tr><?php
 

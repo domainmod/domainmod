@@ -25,10 +25,10 @@
 // // Display DNS Zones
 // // Input: $sql_dw_dns_zone_temp
 // $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-//							FROM dw_dns_zones AS z, dw_servers AS s
-//							WHERE z.server_id = s.id
-//							  AND X
-//							ORDER BY s.name, z.zonefile, z.domain";
+//                            FROM dw_dns_zones AS z, dw_servers AS s
+//                            WHERE z.server_id = s.id
+//                              AND X
+//                            ORDER BY s.name, z.zonefile, z.domain";
 // $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or $error->outputOldSqlError($connection);
 // $from_main_dw_dns_zone_page = 0;
 // include("_includes/dw/display-dns-zone.inc.php");
@@ -41,7 +41,7 @@
 
             <tr class="main_table_row_active_no_hover"><?php
 
-            	if ($from_main_dw_dns_zone_page == 1) { ?>
+                if ($from_main_dw_dns_zone_page == 1) { ?>
 
                     <td class="main_table_cell_active_top_aligned"><?php
 
@@ -69,7 +69,7 @@
 
                     </td><?php
 
-            	} ?>
+                } ?>
 
                 <td>
 
@@ -119,7 +119,7 @@
 
                     </table><BR>
 
-            	</td>
+                </td>
 
             </tr><?php
 

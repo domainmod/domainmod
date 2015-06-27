@@ -83,7 +83,7 @@ if ($export_data == "1") {
             $new_rid = $row->rid;
 
             if ($current_rid != $new_rid) {
-            	$exclude_registrar_string_raw .= "'" . $row->rid . "', ";
+                $exclude_registrar_string_raw .= "'" . $row->rid . "', ";
             }
 
             $sql_total_count = "SELECT count(*) AS total_count
@@ -92,7 +92,7 @@ if ($export_data == "1") {
             $result_total_count = mysqli_query($connection, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-            	$total_accounts = $row_total_count->total_count;
+                $total_accounts = $row_total_count->total_count;
             }
 
             $sql_domain_count = "SELECT count(*) AS total_count
@@ -102,16 +102,16 @@ if ($export_data == "1") {
             $result_domain_count = mysqli_query($connection, $sql_domain_count);
 
             while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
-            	$total_domains = $row_domain_count->total_count;
+                $total_domains = $row_domain_count->total_count;
             }
 
             if ($row->rid == $_SESSION['default_registrar']) {
 
-            	$is_default = "1";
+                $is_default = "1";
 
             } else {
 
-            	$is_default = "";
+                $is_default = "";
 
             }
 
@@ -139,18 +139,18 @@ if ($export_data == "1") {
     if ($exclude_registrar_string == "") {
 
         $sql = "SELECT r.id AS rid, r.name AS rname, r.url, r.notes, r.insert_time, r.update_time
-            	FROM registrars AS r
-            	GROUP BY r.name
-            	ORDER BY r.name asc";
+                FROM registrars AS r
+                GROUP BY r.name
+                ORDER BY r.name asc";
 
     } else {
 
         $sql = "SELECT r.id AS rid, r.name AS rname, r.url, r.notes, r.insert_time, r.update_time
-            	FROM registrars AS r
-            	WHERE r.id
-            	  AND r.id NOT IN (" . $exclude_registrar_string . ")
-            	GROUP BY r.name
-            	ORDER BY r.name asc";
+                FROM registrars AS r
+                WHERE r.id
+                  AND r.id NOT IN (" . $exclude_registrar_string . ")
+                GROUP BY r.name
+                ORDER BY r.name asc";
 
     }
 
@@ -168,16 +168,16 @@ if ($export_data == "1") {
             $result_total_count = mysqli_query($connection, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-            	$total_accounts = $row_total_count->total_count;
+                $total_accounts = $row_total_count->total_count;
             }
 
             if ($row->rid == $_SESSION['default_registrar']) {
 
-            	$is_default = "1";
+                $is_default = "1";
 
             } else {
 
-            	$is_default = "";
+                $is_default = "";
 
             }
 
@@ -256,15 +256,15 @@ if (mysqli_num_rows($result) > 0) {
                     $total_accounts = $row_total_count->total_count;
                 }
 
-            	if ($total_accounts >= 1) { ?>
+                if ($total_accounts >= 1) { ?>
 
                     <a class="nobold" href="registrar-accounts.php?rid=<?php echo $row->rid; ?>"><?php echo number_format($total_accounts); ?></a><?php
 
-            	} else {
+                } else {
 
                     echo number_format($total_accounts);
 
-            	} ?>
+                } ?>
             </td>
             <td class="main_table_cell_active"><?php
                 $sql_domain_count = "SELECT count(*) AS total_count
@@ -277,18 +277,18 @@ if (mysqli_num_rows($result) > 0) {
                     $total_domains = $row_domain_count->total_count;
                 }
 
-            	if ($total_accounts >= 1) { ?>
+                if ($total_accounts >= 1) { ?>
 
                     <a class="nobold" href="../domains.php?rid=<?php echo $row->rid; ?>"><?php echo number_format($total_domains); ?></a><?php
 
-            	} else {
+                } else {
 
                     echo number_format($total_domains);
 
-            	} ?>
+                } ?>
             </td>
             <td class="main_table_cell_active">
-            	<a class="invisiblelink" href="edit/registrar-fees.php?rid=<?php echo $row->rid; ?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
+                <a class="invisiblelink" href="edit/registrar-fees.php?rid=<?php echo $row->rid; ?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
             </td>
         </tr><?php
 

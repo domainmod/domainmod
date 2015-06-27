@@ -91,7 +91,7 @@ if ($export_data == "1") {
             $new_ipid = $row->id;
 
             if ($current_ipid != $new_ipid) {
-            	$exclude_ip_address_string_raw .= "'" . $row->id . "', ";
+                $exclude_ip_address_string_raw .= "'" . $row->id . "', ";
             }
 
             $sql_total_count = "SELECT count(*) AS total_count
@@ -100,7 +100,7 @@ if ($export_data == "1") {
                                   AND ip_id = '" . $row->id . "'";
             $result_total_count = mysqli_query($connection, $sql_total_count);
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-            	$total_domains = $row_total_count->total_count;
+                $total_domains = $row_total_count->total_count;
             }
 
             $sql_total_count = "SELECT count(*) AS total_count
@@ -109,26 +109,26 @@ if ($export_data == "1") {
                                   AND ip_id = '" . $row->id . "'";
             $result_total_count = mysqli_query($connection, $sql_total_count);
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-            	$total_certs = $row_total_count->total_count;
+                $total_certs = $row_total_count->total_count;
             }
 
             if ($row->id == $_SESSION['default_ip_address_domains']) {
 
-            	$is_default_domains = "1";
+                $is_default_domains = "1";
 
             } else {
 
-            	$is_default_domains = "";
+                $is_default_domains = "";
 
             }
 
             if ($row->id == $_SESSION['default_ip_address_ssl']) {
 
-            	$is_default_ssl = "1";
+                $is_default_ssl = "1";
 
             } else {
 
-            	$is_default_ssl = "";
+                $is_default_ssl = "";
 
             }
 
@@ -158,15 +158,15 @@ if ($export_data == "1") {
     if ($exclude_ip_address_string == "") {
 
         $sql = "SELECT id, name, ip, rdns, notes, insert_time, update_time
-            	FROM ip_addresses
-            	ORDER BY name ASC, ip ASC";
+                FROM ip_addresses
+                ORDER BY name ASC, ip ASC";
 
     } else {
 
         $sql = "SELECT id, name, ip, rdns, notes, insert_time, update_time
-            	FROM ip_addresses
-            	WHERE id NOT IN (" . $exclude_ip_address_string . ")
-            	ORDER BY name ASC, ip ASC";
+                FROM ip_addresses
+                WHERE id NOT IN (" . $exclude_ip_address_string . ")
+                ORDER BY name ASC, ip ASC";
 
     }
 
@@ -180,21 +180,21 @@ if ($export_data == "1") {
 
             if ($row->id == $_SESSION['default_ip_address_domains']) {
 
-            	$is_default_domains = "1";
+                $is_default_domains = "1";
 
             } else {
 
-            	$is_default_domains = "";
+                $is_default_domains = "";
 
             }
 
             if ($row->id == $_SESSION['default_ip_address_ssl']) {
 
-            	$is_default_ssl = "1";
+                $is_default_ssl = "1";
 
             } else {
 
-            	$is_default_ssl = "";
+                $is_default_ssl = "";
 
             }
 
@@ -275,44 +275,44 @@ if (mysqli_num_rows($result) > 0) {
                 <a class="invisiblelink" href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->rdns; ?></a>
             </td>
             <td class="main_table_cell_active"><?php
-            	$sql_total_count = "SELECT count(*) AS total_count
+                $sql_total_count = "SELECT count(*) AS total_count
                                     FROM domains
                                     WHERE active NOT IN ('0', '10')
                                       AND ip_id = '" . $row->id . "'";
-            	$result_total_count = mysqli_query($connection, $sql_total_count);
-            	while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+                $result_total_count = mysqli_query($connection, $sql_total_count);
+                while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                     $total_domains = $row_total_count->total_count;
-            	}
+                }
 
-            	if ($total_domains >= 1) { ?>
+                if ($total_domains >= 1) { ?>
 
                     <a class="nobold" href="../domains.php?ipid=<?php echo $row->id; ?>"><?php echo number_format($total_domains); ?></a><?php
 
-            	} else {
+                } else {
 
                     echo "-";
 
-            	} ?>
+                } ?>
             </td>
             <td class="main_table_cell_active"><?php
-            	$sql_total_count = "SELECT count(*) AS total_count
+                $sql_total_count = "SELECT count(*) AS total_count
                                     FROM ssl_certs
                                     WHERE active NOT IN ('0')
                                       AND ip_id = '" . $row->id . "'";
-            	$result_total_count = mysqli_query($connection, $sql_total_count);
-            	while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+                $result_total_count = mysqli_query($connection, $sql_total_count);
+                while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                     $total_certs = $row_total_count->total_count;
-            	}
+                }
 
-            	if ($total_certs >= 1) { ?>
+                if ($total_certs >= 1) { ?>
 
                     <a class="nobold" href="../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
 
-            	} else {
+                } else {
 
                     echo "-";
 
-            	} ?>
+                } ?>
             </td>
         </tr><?php
 

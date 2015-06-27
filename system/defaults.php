@@ -115,21 +115,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $sql = "UPDATE user_settings
             SET default_currency = '$new_default_currency',
-            	default_timezone = '$new_default_timezone',
-            	default_category_domains = '$new_default_category_domains',
-            	default_category_ssl = '$new_default_category_ssl',
-            	default_dns = '$new_default_dns',
-            	default_host = '$new_default_host',
-            	default_ip_address_domains = '$new_default_ip_address_domains',
-            	default_ip_address_ssl = '$new_default_ip_address_ssl',
-            	default_owner_domains = '$new_default_owner_domains',
-            	default_owner_ssl = '$new_default_owner_ssl',
-            	default_registrar = '$new_default_registrar',
-            	default_registrar_account = '$new_default_registrar_account',
-            	default_ssl_provider_account = '$new_default_ssl_provider_account',
-            	default_ssl_type = '$new_default_ssl_type',
-            	default_ssl_provider = '$new_default_ssl_provider',
-            	update_time = '$timestamp'
+                default_timezone = '$new_default_timezone',
+                default_category_domains = '$new_default_category_domains',
+                default_category_ssl = '$new_default_category_ssl',
+                default_dns = '$new_default_dns',
+                default_host = '$new_default_host',
+                default_ip_address_domains = '$new_default_ip_address_domains',
+                default_ip_address_ssl = '$new_default_ip_address_ssl',
+                default_owner_domains = '$new_default_owner_domains',
+                default_owner_ssl = '$new_default_owner_ssl',
+                default_registrar = '$new_default_registrar',
+                default_registrar_account = '$new_default_registrar_account',
+                default_ssl_provider_account = '$new_default_ssl_provider_account',
+                default_ssl_type = '$new_default_ssl_type',
+                default_ssl_provider = '$new_default_ssl_provider',
+                update_time = '$timestamp'
             WHERE user_id = '" . $_SESSION['user_id'] . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -173,9 +173,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
- 		$sql = "SELECT *
-            	FROM user_settings
-            	WHERE user_id = '" . $_SESSION['user_id'] . "'";
+         $sql = "SELECT *
+                FROM user_settings
+                WHERE user_id = '" . $_SESSION['user_id'] . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         while ($row = mysqli_fetch_object($result)) {

@@ -25,7 +25,7 @@ if ($software_section == "domains") { ?>
 
     &raquo;&nbsp;<strong>Domains</strong>&nbsp; <?php
     if ($_SESSION['has_registrar'] == '1' && $_SESSION['has_registrar_account'] == '1') { ?>
-    	&raquo;&nbsp;<a href="<?php echo $web_root; ?>/add/domain.php">Add A New Domain</a>&nbsp;<?php
+        &raquo;&nbsp;<a href="<?php echo $web_root; ?>/add/domain.php">Add A New Domain</a>&nbsp;<?php
     }
 
 } elseif ($software_section == "domain-add") { ?>
@@ -120,7 +120,7 @@ if ($software_section == "domains") { ?>
         } elseif ($action == "UCF") { ?>
             &raquo;&nbsp;<strong>Update Custom Domain Field</strong>&nbsp;<?php
         } elseif ($action == "UCF1" || $action == "UCF2" || $action == "UCF3") { ?>
-        	<?php
+            <?php
             $query = "SELECT df.name, cft.name AS type
                       FROM domain_fields AS df, custom_field_types AS cft
                       WHERE df.type_id = cft.id

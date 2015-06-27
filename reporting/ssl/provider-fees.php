@@ -133,8 +133,8 @@ if ($total_rows > 0) {
 
             while ($row = mysqli_fetch_object($result)) {
 
-            	$new_ssl_provider = $row->ssl_provider;
-            	$new_type = $row->type;
+                $new_ssl_provider = $row->ssl_provider;
+                $new_type = $row->type;
 
                 $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
                     $row->symbol_space);
@@ -149,31 +149,31 @@ if ($total_rows > 0) {
                 $count = 0;
 
                 $row_contents[$count++] = $row->ssl_provider;
-            	$row_contents[$count++] = $row->type;
-            	$row_contents[$count++] = $row->initial_fee;
+                $row_contents[$count++] = $row->type;
+                $row_contents[$count++] = $row->initial_fee;
                 $row_contents[$count++] = $row->renewal_fee;
                 $row_contents[$count++] = $row->misc_fee;
-            	$row_contents[$count++] = $row->currency;
+                $row_contents[$count++] = $row->currency;
 
-            	$sql_ssl_count = "SELECT count(*) AS total_ssl_count
+                $sql_ssl_count = "SELECT count(*) AS total_ssl_count
                                   FROM ssl_certs
                                   WHERE ssl_provider_id = '" . $row->id . "'
                                     AND fee_id = '" . $row->fee_id . "'
                                     AND active NOT IN ('0')";
-            	$result_ssl_count = mysqli_query($connection, $sql_ssl_count);
+                $result_ssl_count = mysqli_query($connection, $sql_ssl_count);
 
-            	while ($row_ssl_count = mysqli_fetch_object($result_ssl_count)) {
+                while ($row_ssl_count = mysqli_fetch_object($result_ssl_count)) {
 
                     $row_contents[$count++] = $row_ssl_count->total_ssl_count;
 
-            	}
+                }
 
-            	$row_contents[$count++] = $row->insert_time;
-            	$row_contents[$count++] = $row->update_time;
+                $row_contents[$count++] = $row->insert_time;
+                $row_contents[$count++] = $row->update_time;
                 $export->writeRow($export_file, $row_contents);
 
                 $last_ssl_provider = $row->ssl_provider;
-            	$last_type = $row->type;
+                $last_type = $row->type;
 
             }
 

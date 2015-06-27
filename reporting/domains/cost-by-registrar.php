@@ -177,9 +177,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
             while ($row = mysqli_fetch_object($result)) {
 
-            	$new_registrar = $row->registrar_name;
+                $new_registrar = $row->registrar_name;
 
-            	$sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
+                $sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
                                         FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
                                         WHERE d.fee_id = f.id
                                           AND f.currency_id = c.id
@@ -191,13 +191,13 @@ if ($submission_failed != "1" && $total_rows > 0) {
                                           AND cc.user_id = '" . $_SESSION['user_id'] . "'
                                           AND r.id = '" . $row->id . "'
                                           " . $range_string . "";
-            	$result_registrar_total = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
-            	while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) {
+                $result_registrar_total = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
+                while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) {
                     $temp_registrar_total = $row_registrar_total->registrar_total;
                     $number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar;
-            	}
+                }
 
-            	$per_domain_account = $row->total_cost / $row->number_of_domains;
+                $per_domain_account = $row->total_cost / $row->number_of_domains;
 
                 $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
                     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);

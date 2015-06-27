@@ -104,7 +104,7 @@ if ($export_data == "1") {
             $new_dnsid = $row->id;
 
             if ($current_dnsid != $new_dnsid) {
-            	$exclude_dns_string_raw .= "'" . $row->id . "', ";
+                $exclude_dns_string_raw .= "'" . $row->id . "', ";
             }
 
             $sql_total_count = "SELECT count(*) AS total_count
@@ -113,16 +113,16 @@ if ($export_data == "1") {
                                   AND active NOT IN ('0', '10')";
             $result_total_count = mysqli_query($connection, $sql_total_count);
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-            	$total_dns_count = $row_total_count->total_count;
+                $total_dns_count = $row_total_count->total_count;
             }
 
             if ($row->id == $_SESSION['default_dns']) {
 
-            	$is_default = "1";
+                $is_default = "1";
 
             } else {
 
-            	$is_default = "";
+                $is_default = "";
 
             }
 
@@ -169,15 +169,15 @@ if ($export_data == "1") {
     if ($exclude_dns_string == "") {
 
         $sql = "SELECT id, name, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, insert_time, update_time
-            	FROM dns
-            	ORDER BY name, number_of_servers desc";
+                FROM dns
+                ORDER BY name, number_of_servers desc";
 
     } else {
 
         $sql = "SELECT id, name, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, insert_time, update_time
-            	FROM dns
-            	WHERE id NOT IN (" . $exclude_dns_string . ")
-            	ORDER BY name, number_of_servers desc";
+                FROM dns
+                WHERE id NOT IN (" . $exclude_dns_string . ")
+                ORDER BY name, number_of_servers desc";
 
     }
 
@@ -191,11 +191,11 @@ if ($export_data == "1") {
 
             if ($row->id == $_SESSION['default_dns']) {
 
-            	$is_default = "1";
+                $is_default = "1";
 
             } else {
 
-            	$is_default = "";
+                $is_default = "";
 
             }
 

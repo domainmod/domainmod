@@ -56,7 +56,7 @@ $message .= "
 
             <table width=\"575\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\"
                 bordercolor=\"#FFFFFF\">
-            	<tr>
+                <tr>
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
                     <td width=\"92%\"><font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica,
                         sans-serif\">";
@@ -83,12 +83,12 @@ $message .= "
                         $message .= "</font>
                     </td>
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
-            	</tr>
+                </tr>
             </table>
 
             <table width=\"575\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\"
                 bordercolor=\"#FFFFFF\">
-            	<tr>
+                <tr>
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
                     <td width=\"92%\"><font color=\"#000000\" size=\"1\" face=\"Verdana, Arial, Helvetica,
                         sans-serif\">";
@@ -107,7 +107,7 @@ $message .= "
                     </td>
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;
                     </td>
-            	</tr>
+                </tr>
             </table>
 
         </td>

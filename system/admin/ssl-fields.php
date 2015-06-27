@@ -148,17 +148,17 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <a class="invisiblelink" href="edit/ssl-field.php?csfid=<?php echo $row->id; ?>"><?php echo $row->insert_time; ?></a>
             </td>
             <td class="main_table_cell_active">
-            	<?php
-            	if ($row->update_time == "0000-00-00 00:00:00") {
+                <?php
+                if ($row->update_time == "0000-00-00 00:00:00") {
 
                     $temp_update_time = "n/a";
 
-            	} else {
+                } else {
 
                     $temp_update_time = $row->update_time;
 
-            	}
-            	?>
+                }
+                ?>
                 <a class="invisiblelink" href="edit/ssl-field.php?csfid=<?php echo $row->id; ?>"><?php echo $temp_update_time; ?></a>
             </td>
         </tr><?php

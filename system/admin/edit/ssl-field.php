@@ -71,9 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 
     $sql = "UPDATE ssl_cert_fields
             SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
-            	description = '" . mysqli_real_escape_string($connection, $new_description) . "',
-            	notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-            	update_time = '" . $time->time() . "'
+                description = '" . mysqli_real_escape_string($connection, $new_description) . "',
+                notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
+                update_time = '" . $time->time() . "'
             WHERE id = '" . $new_csfid . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -97,10 +97,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
     } else {
 
         $sql = "SELECT f.name, f.field_name, f.description, f.notes, f.insert_time, f.update_time, t.name AS type
-            	FROM ssl_cert_fields AS f, custom_field_types AS t
-            	WHERE f.type_id = t.id
-            	  AND f.id = '" . $csfid . "'
-            	ORDER BY f.name";
+                FROM ssl_cert_fields AS f, custom_field_types AS t
+                WHERE f.type_id = t.id
+                  AND f.id = '" . $csfid . "'
+                ORDER BY f.name";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         while ($row = mysqli_fetch_object($result)) {
@@ -132,8 +132,8 @@ if ($really_del == "1") {
     } else {
 
         $sql = "SELECT name, field_name
-            	FROM ssl_cert_fields
-            	WHERE id = '" . $csfid . "'";
+                FROM ssl_cert_fields
+                WHERE id = '" . $csfid . "'";
         $result = mysqli_query($connection, $sql);
         while ($row = mysqli_fetch_object($result)) {
             $temp_name = $row->name;
@@ -141,11 +141,11 @@ if ($really_del == "1") {
         }
 
         $sql = "ALTER TABLE `ssl_cert_field_data`
-            	DROP `" . $temp_field_name . "`";
+                DROP `" . $temp_field_name . "`";
         $result = mysqli_query($connection, $sql);
 
         $sql = "DELETE FROM ssl_cert_fields
-            	WHERE id = '" . $csfid . "'";
+                WHERE id = '" . $csfid . "'";
         $result = mysqli_query($connection, $sql);
 
         $_SESSION['result_message'] = "Custom SSL Field <font class=\"highlight\">" . $temp_name . " (" . $temp_field_name . ")</font> Deleted<BR>";

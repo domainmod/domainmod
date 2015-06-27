@@ -59,10 +59,10 @@ $sql = "SELECT sa.id AS sslpaid, sa.username, sa.password, sa.owner_id, sa.ssl_p
           $sslpaid_string
           $oid_string
           AND (SELECT count(*)
-          	   FROM ssl_certs
+                 FROM ssl_certs
                WHERE account_id = sa.id
                  AND active NOT IN ('0'))
-            	 > 0
+                 > 0
         GROUP BY sa.username, oname, sslpname
         ORDER BY sslpname, username, oname";
 
@@ -102,7 +102,7 @@ if ($export_data == "1") {
             $new_sslpaid = $row->sslpaid;
 
             if ($current_sslpaid != $new_sslpaid) {
-            	$exclude_account_string_raw .= "'" . $row->sslpaid . "', ";
+                $exclude_account_string_raw .= "'" . $row->sslpaid . "', ";
             }
 
             $sql_total_count = "SELECT count(*) AS total_cert_count
@@ -111,26 +111,26 @@ if ($export_data == "1") {
                                   AND active NOT IN ('0')";
             $result_total_count = mysqli_query($connection, $sql_total_count);
             while ($row_cert_count = mysqli_fetch_object($result_total_count)) {
-            	$total_cert_count = $row_cert_count->total_cert_count;
+                $total_cert_count = $row_cert_count->total_cert_count;
             }
 
             if ($row->sslpaid == $_SESSION['default_ssl_provider_account']) {
 
-            	$is_default = "1";
+                $is_default = "1";
 
             } else {
 
-            	$is_default = "";
+                $is_default = "";
 
             }
 
             if ($row->reseller == "0") {
 
-            	$is_reseller = "";
+                $is_reseller = "";
 
             } else {
 
-            	$is_reseller = "1";
+                $is_reseller = "1";
 
             }
 
@@ -186,21 +186,21 @@ if ($export_data == "1") {
 
             if ($row->sslpaid == $_SESSION['default_ssl_provider_account']) {
 
-            	$is_default = "1";
+                $is_default = "1";
 
             } else {
 
-            	$is_default = "";
+                $is_default = "";
 
             }
 
             if ($row->reseller == "0") {
 
-            	$is_reseller = "";
+                $is_reseller = "";
 
             } else {
 
-            	$is_reseller = "1";
+                $is_reseller = "1";
 
             }
 
@@ -269,24 +269,24 @@ if (mysqli_num_rows($result) > 0) {
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
-            	<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->sslpname; ?></a>
+                <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->sslpname; ?></a>
             </td>
             <td class="main_table_cell_active">
-            	<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
             </td>
             <td class="main_table_cell_active">
-            	<a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->oname; ?></a>
+                <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->oname; ?></a>
             </td>
             <td class="main_table_cell_active"><?php
-            	$sql_total_count = "SELECT count(*) AS total_cert_count
+                $sql_total_count = "SELECT count(*) AS total_cert_count
                                     FROM ssl_certs
                                     WHERE account_id = '$row->sslpaid'
                                       AND active NOT IN ('0')";
-            	$result_total_count = mysqli_query($connection, $sql_total_count);
+                $result_total_count = mysqli_query($connection, $sql_total_count);
 
-            	while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+                while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                     echo "<a class=\"nobold\" href=\"../ssl-certs.php?oid=$row->oid&sslpid=$row->sslpid&sslpaid=$row->sslpaid\">" . number_format($row_total_count->total_cert_count) . "</a>";
-            	} ?>
+                } ?>
             </td>
         </tr><?php
 

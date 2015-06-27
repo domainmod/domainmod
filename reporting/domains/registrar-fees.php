@@ -133,8 +133,8 @@ if ($total_rows > 0) {
 
             while ($row = mysqli_fetch_object($result)) {
 
-            	$new_registrar = $row->registrar;
-            	$new_tld = $row->tld;
+                $new_registrar = $row->registrar;
+                $new_tld = $row->tld;
 
                 $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
                     $row->symbol_space);
@@ -155,29 +155,29 @@ if ($total_rows > 0) {
                 $count = 0;
 
                 $row_contents[$count++] = $row->registrar;
-            	$row_contents[$count++] = '.' . $row->tld;
-            	$row_contents[$count++] = $row->initial_fee;
-            	$row_contents[$count++] = $row->renewal_fee;
+                $row_contents[$count++] = '.' . $row->tld;
+                $row_contents[$count++] = $row->initial_fee;
+                $row_contents[$count++] = $row->renewal_fee;
                 $row_contents[$count++] = $row->transfer_fee;
                 $row_contents[$count++] = $row->privacy_fee;
                 $row_contents[$count++] = $row->misc_fee;
-            	$row_contents[$count++] = $row->currency;
+                $row_contents[$count++] = $row->currency;
 
-            	$sql_domain_count = "SELECT count(*) AS total_domain_count
+                $sql_domain_count = "SELECT count(*) AS total_domain_count
                                      FROM domains
                                      WHERE registrar_id = '" . $row->id . "'
                                        AND fee_id = '" . $row->fee_id . "'
                                        AND active NOT IN ('0', '10')";
-            	$result_domain_count = mysqli_query($connection, $sql_domain_count);
+                $result_domain_count = mysqli_query($connection, $sql_domain_count);
 
-            	while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
+                while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
 
                     $row_contents[$count++] = $row_domain_count->total_domain_count;
 
-            	}
+                }
 
-            	$row_contents[$count++] = $row->insert_time;
-            	$row_contents[$count++] = $row->update_time;
+                $row_contents[$count++] = $row->insert_time;
+                $row_contents[$count++] = $row->update_time;
                 $export->writeRow($export_file, $row_contents);
 
                 $last_registrar = $row->registrar;

@@ -176,9 +176,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
             while ($row = mysqli_fetch_object($result)) {
 
-            	$new_provider = $row->provider_name;
+                $new_provider = $row->provider_name;
 
-            	$sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) as provider_total, count(*) AS number_of_certs_provider
+                $sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) as provider_total, count(*) AS number_of_certs_provider
                                        FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
                                        WHERE sslc.fee_id = f.id
                                          AND f.currency_id = c.id
@@ -190,13 +190,13 @@ if ($submission_failed != "1" && $total_rows > 0) {
                                          AND cc.user_id = '" . $_SESSION['user_id'] . "'
                                          AND sslp.id = '" . $row->id . "'
                                          " . $range_string . "";
-            	$result_provider_total = mysqli_query($connection, $sql_provider_total) or $error->outputOldSqlError($connection);
-            	while ($row_provider_total = mysqli_fetch_object($result_provider_total)) {
+                $result_provider_total = mysqli_query($connection, $sql_provider_total) or $error->outputOldSqlError($connection);
+                while ($row_provider_total = mysqli_fetch_object($result_provider_total)) {
                     $temp_provider_total = $row_provider_total->provider_total;
                     $number_of_certs_provider = $row_provider_total->number_of_certs_provider;
-            	}
+                }
 
-            	$per_cert_account = $row->total_cost / $row->number_of_certs;
+                $per_cert_account = $row->total_cost / $row->number_of_certs;
 
                 $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
                     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);

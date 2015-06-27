@@ -91,9 +91,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
     if ($new_username == "admin" || $new_username == "administrator") {
 
         $sql = "SELECT username
-            	FROM users
-            	WHERE username = '" . mysqli_real_escape_string($connection, $new_username) . "'
-            	AND id = '" . $new_uid . "'";
+                FROM users
+                WHERE username = '" . mysqli_real_escape_string($connection, $new_username) . "'
+                AND id = '" . $new_uid . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
         $is_it_my_username = mysqli_num_rows($result);
 
@@ -112,12 +112,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
     $sql = "UPDATE users
             SET first_name = '" . mysqli_real_escape_string($connection, $new_first_name). "',
-            	last_name = '" . mysqli_real_escape_string($connection, $new_last_name). "',
-            	username = '" . mysqli_real_escape_string($connection, $new_username) . "',
-            	email_address = '" . mysqli_real_escape_string($connection, $new_email_address) . "',
-            	admin = '" . $new_is_admin . "',
-            	active = '" . $new_is_active . "',
-            	update_time = '" . $time->time() . "'
+                last_name = '" . mysqli_real_escape_string($connection, $new_last_name). "',
+                username = '" . mysqli_real_escape_string($connection, $new_username) . "',
+                email_address = '" . mysqli_real_escape_string($connection, $new_email_address) . "',
+                admin = '" . $new_is_admin . "',
+                active = '" . $new_is_active . "',
+                update_time = '" . $time->time() . "'
             WHERE id = '" . $new_uid . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -146,8 +146,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
     } else {
 
         $sql = "SELECT first_name, last_name, username, email_address, admin, active
-            	FROM users
-            	WHERE id = '" . $uid . "'";
+                FROM users
+                WHERE id = '" . $uid . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         while ($row = mysqli_fetch_object($result)) {
@@ -187,11 +187,11 @@ if ($really_del == "1") {
     } else {
 
         $sql = "DELETE FROM user_settings
-            	WHERE user_id = '" . $uid . "'";
+                WHERE user_id = '" . $uid . "'";
         $result = mysqli_query($connection, $sql);
 
         $sql = "DELETE FROM users
-            	WHERE id = '" . $uid . "'";
+                WHERE id = '" . $uid . "'";
         $result = mysqli_query($connection, $sql);
 
         $_SESSION['result_message'] = "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</font> Deleted<BR>";

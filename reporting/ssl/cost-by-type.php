@@ -166,7 +166,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
             while ($row = mysqli_fetch_object($result)) {
 
-            	$per_cert = $row->total_cost / $row->number_of_certs;
+                $per_cert = $row->total_cost / $row->number_of_certs;
 
                 $per_cert = $currency->format($per_cert, $_SESSION['default_currency_symbol'],
                     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);

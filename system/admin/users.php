@@ -95,11 +95,11 @@ if ($export_data == "1") {
 
             if ($row->admin == "1") {
 
-            	$is_admin = "1";
+                $is_admin = "1";
 
             } else {
 
-            	$is_admin = "";
+                $is_admin = "";
 
             }
 
@@ -136,11 +136,11 @@ if ($export_data == "1") {
 
             if ($row->admin == "1") {
 
-            	$is_admin = "1";
+                $is_admin = "1";
 
             } else {
 
-            	$is_admin = "";
+                $is_admin = "";
 
             }
 
