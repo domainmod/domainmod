@@ -59,7 +59,6 @@ class System
             $sql = "UPDATE settings
                     SET upgrade_available = '1'";
 
-
         } else {
 
             $sql = "UPDATE settings
