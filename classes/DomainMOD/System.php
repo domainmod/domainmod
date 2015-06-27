@@ -19,11 +19,11 @@
  *
  */
 ?>
-    <?php
-    namespace DomainMOD;
+<?php
+namespace DomainMOD;
 
-    class System
-    {
+class System
+{
 
     public function installCheck($connection)
     {
@@ -73,16 +73,6 @@
 
     }
 
-    public function doctype()
-    {
-
-    ob_start(); ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-    <?php
-
-    return ob_get_clean();
-
-    }
-
     public function pageTitle($software_title, $page_title)
     {
 
@@ -100,20 +90,20 @@
     public function jumpMenu()
     {
 
-    ob_start(); ?>
+        ob_start(); ?>
 
-    <script type="text/javascript">
-        <!--
-        function MM_jumpMenu(targ, selObj, restore) { //v3.0
-            eval(targ + ".location='" + selObj.options[selObj.selectedIndex].value + "'");
-            if (restore) selObj.selectedIndex = 0;
-        }
-        //-->
-    </script><?php
+        <script type="text/javascript">
+            <!--
+            function MM_jumpMenu(targ, selObj, restore) { //v3.0
+                eval(targ + ".location='" + selObj.options[selObj.selectedIndex].value + "'");
+                if (restore) selObj.selectedIndex = 0;
+            }
+            //-->
+        </script><?php
 
-    return ob_get_clean();
+        return ob_get_clean();
 
-}
+    }
 
     public function checkExistingAssets($connection)
     {

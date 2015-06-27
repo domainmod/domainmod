@@ -251,7 +251,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
 }
 ?>
-<?php echo $system->doctype(); ?>
+<?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>

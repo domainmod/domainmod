@@ -1,6 +1,6 @@
 <?php
 /**
- * /invalid.php
+ * /_includes/doctype.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -19,25 +19,4 @@
  *
  */
 ?>
-<?php
-include("_includes/start-session.inc.php");
-include("_includes/init.inc.php");
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "software.inc.php");
-
-$page_title = "Invalid Page";
-$software_section = "invalid";
-?>
-<?php include(DIR_INC . 'doctype.inc.php'); ?>
-<html>
-<head>
-    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
-</head>
-<body>
-<?php include(DIR_INC . "layout/header.inc.php"); ?>
-The page you're trying to access is invalid.
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
-</body>
-</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">

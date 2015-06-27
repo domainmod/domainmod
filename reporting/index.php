@@ -39,7 +39,7 @@ $page_title = $reporting_section_title;
 $page_subtitle = "Reporting Main";
 $software_section = "reporting";
 ?>
-<?php echo $system->doctype(); ?>
+<?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>

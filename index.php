@@ -262,7 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 }
 $new_password = "";
 ?>
-<?php echo $system->doctype(); ?>
+<?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
     <?php

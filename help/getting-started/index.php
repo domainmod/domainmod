@@ -38,7 +38,7 @@ $system->authCheck();
 $page_title = "Getting Started";
 $software_section = "help";
 ?>
-<?php echo $system->doctype(); ?>
+<?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>

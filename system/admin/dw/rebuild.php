@@ -42,7 +42,7 @@ $system->checkAdminUser();
 $page_title = "Rebuilding Data Warehouse...";
 $software_section = "admin-dw-rebuild";
 ?>
-<?php echo $system->doctype(); ?>
+<?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
