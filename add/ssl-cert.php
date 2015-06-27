@@ -290,8 +290,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         while ($q->fetch()) { ?>
 
-            <option value="<?php echo $id; ?>"<?php if ($id == $new_domain_id) echo " selected"; ?>><?php echo $domain; ?>
-            </option><?php
+            <option value="<?php echo $id; ?>"<?php if ($id == $new_domain_id) echo " selected"; ?>><?php echo
+            $domain; ?></option><?php
 
         }
 
@@ -307,10 +307,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <strong>SSL Provider Account</strong><BR><BR>
     <?php
     $query = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS sslp_name
-          FROM ssl_accounts AS sslpa, owners AS o, ssl_providers AS sslp
-          WHERE sslpa.owner_id = o.id
-            AND sslpa.ssl_provider_id = sslp.id
-          ORDER BY sslp_name, o_name, sslpa.username";
+              FROM ssl_accounts AS sslpa, owners AS o, ssl_providers AS sslp
+              WHERE sslpa.owner_id = o.id
+                AND sslpa.ssl_provider_id = sslp.id
+                ORDER BY sslp_name, o_name, sslpa.username";
     $q = $conn->stmt_init();
 
     if ($q->prepare($query)) {

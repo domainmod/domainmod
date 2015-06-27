@@ -240,8 +240,9 @@ $has_active = "1"; ?>
 
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
-            <a class="invisiblelink"
-               href="edit/ssl-provider.php?sslpid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>
+            <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?php echo $row->id; ?>"><?php echo
+                $row->name; ?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a title=\"Default
+                SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>
         </td>
         <td class="main_table_cell_active"><?php
             $sql_total_count = "SELECT count(*) AS total_count
@@ -254,8 +255,8 @@ $has_active = "1"; ?>
 
             if ($total_accounts >= 1) { ?>
 
-                <a class="nobold"
-                   href="ssl-accounts.php?sslpid=<?php echo $row->id; ?>"><?php echo number_format($total_accounts); ?></a><?php
+                <a class="nobold" href="ssl-accounts.php?sslpid=<?php echo $row->id; ?>"><?php echo number_format
+                ($total_accounts); ?></a><?php
 
             } else {
 
@@ -275,8 +276,8 @@ $has_active = "1"; ?>
 
             if ($total_certs >= 1) { ?>
 
-                <a class="nobold"
-                   href="../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
+                <a class="nobold" href="../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo number_format
+                ($total_certs); ?></a><?php
 
             } else {
 
@@ -285,8 +286,8 @@ $has_active = "1"; ?>
             } ?>
         </td>
         <td class="main_table_cell_active">
-            <a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?php echo $row->id; ?>">fees</a>&nbsp;&nbsp;<a
-                class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
+            <a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?php echo $row->id; ?>">fees</a>&nbsp;
+            &nbsp;<a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
         </td>
         </tr><?php
 
@@ -321,7 +322,8 @@ $has_active = "1"; ?>
 
             $has_inactive = "1";
             if ($has_active == "1") echo "<BR>";
-            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\"
+            cellspacing=\"0\">"; ?>
 
             <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
@@ -339,8 +341,9 @@ $has_active = "1"; ?>
 
                 <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink"
-                       href="edit/ssl-provider.php?sslpid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>
+                    <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?php echo $row->id; ?>"><?php echo
+                        $row->name; ?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a
+                        title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive"><?php
                     $sql_total_count = "SELECT count(*) AS total_count
@@ -353,8 +356,8 @@ $has_active = "1"; ?>
 
                     if ($total_accounts >= 1) { ?>
 
-                        <a class="nobold"
-                           href="ssl-accounts.php?sslpid=<?php echo $row->id; ?>"><?php echo number_format($total_accounts); ?></a><?php
+                        <a class="nobold" href="ssl-accounts.php?sslpid=<?php echo $row->id; ?>"><?php echo
+                        number_format($total_accounts); ?></a><?php
 
                     } else {
 
@@ -363,8 +366,9 @@ $has_active = "1"; ?>
                     } ?>
                 </td>
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?php echo $row->id; ?>">fees</a>&nbsp;&nbsp;<a
-                        class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
+                    <a class="invisiblelink" href="edit/ssl-provider-fees.php?sslpid=<?php echo $row->id;
+                    ?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?php echo $row->url;
+                    ?>">www</a>
                 </td>
                 </tr><?php
 

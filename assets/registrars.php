@@ -244,8 +244,9 @@ $has_active = "1"; ?>
 
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
-            <a class="invisiblelink"
-               href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo $row->rname; ?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>
+            <a class="invisiblelink" href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo $row->rname;
+                ?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default
+                Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>
         </td>
         <td class="main_table_cell_active"><?php
             $sql_total_count = "SELECT count(*) AS total_count
@@ -259,8 +260,8 @@ $has_active = "1"; ?>
 
             if ($total_accounts >= 1) { ?>
 
-                <a class="nobold"
-                   href="registrar-accounts.php?rid=<?php echo $row->rid; ?>"><?php echo number_format($total_accounts); ?></a><?php
+                <a class="nobold" href="registrar-accounts.php?rid=<?php echo $row->rid; ?>"><?php echo number_format
+                ($total_accounts); ?></a><?php
 
             } else {
 
@@ -281,8 +282,8 @@ $has_active = "1"; ?>
 
             if ($total_accounts >= 1) { ?>
 
-                <a class="nobold"
-                   href="../domains.php?rid=<?php echo $row->rid; ?>"><?php echo number_format($total_domains); ?></a><?php
+                <a class="nobold" href="../domains.php?rid=<?php echo $row->rid; ?>"><?php echo number_format
+                ($total_domains); ?></a><?php
 
             } else {
 
@@ -291,8 +292,8 @@ $has_active = "1"; ?>
             } ?>
         </td>
         <td class="main_table_cell_active">
-            <a class="invisiblelink" href="edit/registrar-fees.php?rid=<?php echo $row->rid; ?>">fees</a>&nbsp;&nbsp;<a
-                class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
+            <a class="invisiblelink" href="edit/registrar-fees.php?rid=<?php echo $row->rid; ?>">fees</a>&nbsp;&nbsp;
+            <a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
         </td>
         </tr><?php
 
@@ -331,7 +332,8 @@ $has_active = "1"; ?>
 
             $has_inactive = "1";
             if ($has_active == "1") echo "<BR>";
-            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\"
+            cellspacing=\"0\">"; ?>
 
             <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
@@ -349,8 +351,9 @@ $has_active = "1"; ?>
 
                 <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink"
-                       href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo $row->rname; ?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>
+                    <a class="invisiblelink" href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo
+                        $row->rname; ?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a
+                        title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive"><?php
                     $sql_total_count = "SELECT count(*) AS total_count
@@ -364,8 +367,8 @@ $has_active = "1"; ?>
 
                     if ($total_accounts >= 1) { ?>
 
-                        <a class="nobold"
-                           href="registrar-accounts.php?rid=<?php echo $row->rid; ?>"><?php echo number_format($total_accounts); ?></a><?php
+                        <a class="nobold" href="registrar-accounts.php?rid=<?php echo $row->rid; ?>"><?php echo
+                        number_format($total_accounts); ?></a><?php
 
                     } else {
 
@@ -374,8 +377,9 @@ $has_active = "1"; ?>
                     } ?>
                 </td>
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" href="edit/registrar-fees.php?rid=<?php echo $row->rid; ?>">fees</a>&nbsp;&nbsp;<a
-                        class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
+                    <a class="invisiblelink" href="edit/registrar-fees.php?rid=<?php echo $row->rid;
+                    ?>">fees</a>&nbsp;&nbsp;<a class="invisiblelink" target="_blank" href="<?php echo $row->url;
+                    ?>">www</a>
                 </td>
                 </tr><?php
 

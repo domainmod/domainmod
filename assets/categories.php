@@ -260,8 +260,11 @@ $has_active = "1"; ?>
 
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
-            <a class="invisiblelink"
-               href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a title=\"Default Domain Category\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
+            <a class="invisiblelink" href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->name;
+                ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a title=\"Default Domain
+                Category\"><font class=\"default_highlight\">*</font></a>"; ?><?php if
+            ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><font
+            class=\"default_highlight_secondary\">*</font></a>"; ?>
         </td>
         <td class="main_table_cell_active">
             <a class="invisiblelink"
@@ -279,8 +282,8 @@ $has_active = "1"; ?>
 
             if ($total_domains >= 1) { ?>
 
-                <a class="nobold"
-                   href="../domains.php?pcid=<?php echo $row->id; ?>"><?php echo number_format($total_domains); ?></a><?php
+                <a class="nobold" href="../domains.php?pcid=<?php echo $row->id; ?>"><?php echo number_format
+                ($total_domains); ?></a><?php
 
             } else {
 
@@ -300,8 +303,8 @@ $has_active = "1"; ?>
 
             if ($total_certs >= 1) { ?>
 
-                <a class="nobold"
-                   href="../ssl-certs.php?sslpcid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
+                <a class="nobold" href="../ssl-certs.php?sslpcid=<?php echo $row->id; ?>"><?php echo number_format
+                ($total_certs); ?></a><?php
 
             } else {
 
@@ -342,7 +345,8 @@ $has_active = "1"; ?>
 
             $has_inactive = "1";
             if ($has_active == "1") echo "<BR>";
-            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\"
+            cellspacing=\"0\">"; ?>
 
             <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
@@ -357,8 +361,11 @@ $has_active = "1"; ?>
 
                 <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink"
-                       href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a title=\"Default Domain Category\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
+                    <a class="invisiblelink" href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo
+                        $row->name; ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a
+                        title=\"Default Domain Category\"><font class=\"default_highlight\">*</font></a>"; ?><?php if
+                    ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><font
+                    class=\"default_highlight_secondary\">*</font></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink"

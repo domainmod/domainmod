@@ -61,7 +61,8 @@ if ($oid != "") {
     $oid_string = "";
 }
 
-$sql = "SELECT sa.id AS sslpaid, sa.username, sa.password, sa.owner_id, sa.ssl_provider_id, sa.reseller, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname, sa.notes, sa.insert_time, sa.update_time
+$sql = "SELECT sa.id AS sslpaid, sa.username, sa.password, sa.owner_id, sa.ssl_provider_id, sa.reseller, o.id AS oid,
+            o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname, sa.notes, sa.insert_time, sa.update_time
         FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp, ssl_certs as sslc
         WHERE sa.owner_id = o.id
           AND sa.ssl_provider_id = sslp.id
@@ -179,7 +180,9 @@ if ($export_data == "1") {
 
     }
 
-    $sql = "SELECT sa.id AS sslpaid, sa.username, sa.password, sa.owner_id, sa.ssl_provider_id, sa.reseller, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname, sa.notes, sa.insert_time, sa.update_time
+    $sql = "SELECT sa.id AS sslpaid, sa.username, sa.password, sa.owner_id, sa.ssl_provider_id, sa.reseller,
+                o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname, sa.notes,
+                sa.insert_time, sa.update_time
             FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
             WHERE sa.owner_id = o.id
               AND sa.ssl_provider_id = sslp.id
@@ -248,7 +251,8 @@ if ($export_data == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 Below is a list of all the SSL Provider Accounts that are stored in <?php echo $software_title; ?>.<BR><BR>
-[<a href="ssl-accounts.php?export_data=1&sslpid=<?php echo $sslpid; ?>&sslpaid=<?php echo $sslpaid; ?>&oid=<?php echo $oid; ?>">EXPORT</a>]<?php
+[<a href="ssl-accounts.php?export_data=1&sslpid=<?php echo $sslpid; ?>&sslpaid=<?php echo $sslpaid; ?>&oid=<?php echo
+$oid; ?>">EXPORT</a>]<?php
 
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -281,12 +285,15 @@ $has_active = 1; ?>
 
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
-            <a class="invisiblelink"
-               href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->sslpname; ?></a>
+            <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php
+                    echo $row->sslpname; ?></a>
         </td>
         <td class="main_table_cell_active">
-            <a class="invisiblelink"
-               href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+            <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php
+                    echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid)
+                echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if
+            ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font
+            class=\"reseller_highlight\">*</font></a>"; ?>
         </td>
         <td class="main_table_cell_active">
             <a class="invisiblelink"
@@ -300,7 +307,9 @@ $has_active = 1; ?>
             $result_total_count = mysqli_query($connection, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-                echo "<a class=\"nobold\" href=\"../ssl-certs.php?oid=$row->oid&sslpid=$row->sslpid&sslpaid=$row->sslpaid\">" . number_format($row_total_count->total_cert_count) . "</a>";
+                echo "<a class=\"nobold\" href=\"../ssl-certs
+                .php?oid=$row->oid&sslpid=$row->sslpid&sslpaid=$row->sslpaid\">" . number_format
+                    ($row_total_count->total_cert_count) . "</a>";
             } ?>
         </td>
         </tr><?php
@@ -325,22 +334,24 @@ $has_active = 1; ?>
 
         }
 
-        $sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname
-            FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
-            WHERE sa.owner_id = o.id
-              AND sa.ssl_provider_id = sslp.id
-              " . $sslpid_string . "
-              " . $sslpaid_string . "
-              " . $oid_string . "
-            GROUP BY sa.username, oname, sslpname
-            ORDER BY sslpname, username, oname";
+        $sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, o.id AS oid,
+                    o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname
+                FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
+                WHERE sa.owner_id = o.id
+                  AND sa.ssl_provider_id = sslp.id
+                  " . $sslpid_string . "
+                  " . $sslpaid_string . "
+                  " . $oid_string . "
+                GROUP BY sa.username, oname, sslpname
+                ORDER BY sslpname, username, oname";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         if (mysqli_num_rows($result) > 0) {
 
             $has_inactive = "1";
             if ($has_active == "1") echo "<BR>";
-            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\"
+            cellspacing=\"0\">"; ?>
 
             <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
@@ -361,16 +372,19 @@ $has_active = 1; ?>
 
                 <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink"
-                       href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->sslpname; ?></a>
+                    <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid;
+                    ?>"><?php echo $row->sslpname; ?></a>
                 </td>
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink"
-                       href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                    <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid;
+                    ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] ==
+                        $row->sslpaid) echo "<a title=\"Default Account\"><font
+                        class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a
+                        title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink"
-                       href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->oname; ?></a>
+                    <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid;
+                    ?>"><?php echo $row->oname; ?></a>
                 </td>
                 <td class="main_table_cell_inactive">&nbsp;
 

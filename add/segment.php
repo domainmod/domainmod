@@ -59,7 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $domain = new DomainMOD\Domain();
 
-        list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($lines);
+        list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) =
+            $domain->findInvalidDomains($lines);
 
         if ($new_segment == "" || $invalid_domains == 1) {
 

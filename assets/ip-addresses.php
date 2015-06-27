@@ -266,8 +266,11 @@ $has_active = "1"; ?>
 
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
-            <a class="invisiblelink"
-               href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_ip_address_domains'] == $row->id) echo "<a title=\"Default Domain IP Address\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_ip_address_ssl'] == $row->id) echo "<a title=\"Default SSL IP Address\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
+            <a class="invisiblelink" href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->name;
+                ?></a><?php if ($_SESSION['default_ip_address_domains'] == $row->id) echo "<a title=\"Default Domain
+                IP Address\"><font class=\"default_highlight\">*</font></a>"; ?><?php if
+            ($_SESSION['default_ip_address_ssl'] == $row->id) echo "<a title=\"Default SSL IP Address\"><font
+            class=\"default_highlight_secondary\">*</font></a>"; ?>
         </td>
         <td class="main_table_cell_active">
             <a class="invisiblelink" href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->ip; ?></a>
@@ -288,8 +291,8 @@ $has_active = "1"; ?>
 
             if ($total_domains >= 1) { ?>
 
-                <a class="nobold"
-                   href="../domains.php?ipid=<?php echo $row->id; ?>"><?php echo number_format($total_domains); ?></a><?php
+                <a class="nobold" href="../domains.php?ipid=<?php echo $row->id; ?>"><?php echo number_format
+                ($total_domains); ?></a><?php
 
             } else {
 
@@ -309,8 +312,8 @@ $has_active = "1"; ?>
 
             if ($total_certs >= 1) { ?>
 
-                <a class="nobold"
-                   href="../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
+                <a class="nobold" href="../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo number_format
+                ($total_certs); ?></a><?php
 
             } else {
 
@@ -351,7 +354,8 @@ $has_active = "1"; ?>
 
             $has_inactive = "1";
             if ($has_active == "1") echo "<BR>";
-            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\"
+            cellspacing=\"0\">"; ?>
 
             <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
@@ -369,8 +373,11 @@ $has_active = "1"; ?>
 
                 <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink"
-                       href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['default_ip_address_domains'] == $row->id) echo "<a title=\"Default Domain IP Address\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_ip_address_ssl'] == $row->id) echo "<a title=\"Default SSL IP Address\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
+                    <a class="invisiblelink" href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo
+                        $row->name; ?></a><?php if ($_SESSION['default_ip_address_domains'] == $row->id) echo "<a
+                        title=\"Default Domain IP Address\"><font class=\"default_highlight\">*</font></a>"; ?><?php
+                        if ($_SESSION['default_ip_address_ssl'] == $row->id) echo "<a title=\"Default SSL IP
+                        Address\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink"

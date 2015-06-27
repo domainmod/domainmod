@@ -212,8 +212,9 @@ $has_active = "1"; ?>
 
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
-            <a class="invisiblelink"
-               href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\">*</font></a>"; ?>
+            <a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo $row->type;
+                ?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a title=\"Default SSL Type\"><font
+                class=\"default_highlight\">*</font></a>"; ?>
         </td>
         <td class="main_table_cell_active"><?php
             $sql_total_count = "SELECT count(*) AS total_count
@@ -231,8 +232,8 @@ $has_active = "1"; ?>
 
             } else { ?>
 
-                <a class="nobold"
-                   href="../ssl-certs.php?ssltid=<?php echo $row->id; ?>"><?php echo number_format($active_certs); ?></a><?php
+                <a class="nobold" href="../ssl-certs.php?ssltid=<?php echo $row->id; ?>"><?php echo number_format
+                ($active_certs); ?></a><?php
 
             } ?>
         </td>
@@ -269,7 +270,8 @@ $has_active = "1"; ?>
 
             $has_inactive = "1";
             if ($has_active == "1") echo "<BR>";
-            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\"
+            cellspacing=\"0\">"; ?>
 
             <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
@@ -281,8 +283,9 @@ $has_active = "1"; ?>
 
                 <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
-                    <a class="invisiblelink"
-                       href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo $row->type; ?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a title=\"Default SSL Type\"><font class=\"default_highlight\">*</font></a>"; ?>
+                    <a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo
+                        $row->type; ?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a
+                        title=\"Default SSL Type\"><font class=\"default_highlight\">*</font></a>"; ?>
                 </td>
                 </tr><?php
 

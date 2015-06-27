@@ -61,7 +61,8 @@ if ($oid != "") {
     $oid_string = "";
 }
 
-$sql = "SELECT ra.id AS raid, ra.username, ra.password, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname, ra.notes, ra.insert_time, ra.update_time
+$sql = "SELECT ra.id AS raid, ra.username, ra.password, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid,
+            o.name AS oname, r.id AS rid, r.name AS rname, ra.notes, ra.insert_time, ra.update_time
         FROM registrar_accounts AS ra, owners AS o, registrars AS r, domains AS d
         WHERE ra.owner_id = o.id
           AND ra.registrar_id = r.id
@@ -174,7 +175,8 @@ if ($export_data == "1") {
 
     }
 
-    $sql = "SELECT ra.id AS raid, ra.username, ra.password, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname, ra.notes, ra.insert_time, ra.update_time
+    $sql = "SELECT ra.id AS raid, ra.username, ra.password, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid,
+                o.name AS oname, r.id AS rid, r.name AS rname, ra.notes, ra.insert_time, ra.update_time
             FROM registrar_accounts AS ra, owners AS o, registrars AS r
             WHERE ra.owner_id = o.id
               AND ra.registrar_id = r.id
@@ -244,7 +246,8 @@ if ($export_data == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 Below is a list of all the Domain Registrar Accounts that are stored in <?php echo $software_title; ?>.<BR><BR>
-[<a href="registrar-accounts.php?export_data=1&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&oid=<?php echo $oid; ?>">EXPORT</a>]<?php
+[<a href="registrar-accounts.php?export_data=1&rid=<?php echo $rid; ?>&raid=<?php echo $raid; ?>&oid=<?php echo $oid;
+?>">EXPORT</a>]<?php
 
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -281,8 +284,10 @@ $has_active = 1; ?>
                href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->rname; ?></a>
         </td>
         <td class="main_table_cell_active" valign="top">
-            <a class="invisiblelink"
-               href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+            <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo
+                $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a
+                title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller
+                == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
         </td>
         <td class="main_table_cell_active">
             <a class="invisiblelink"
@@ -296,7 +301,8 @@ $has_active = 1; ?>
             $result_domain_count = mysqli_query($connection, $sql_domain_count);
 
             while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
-                echo "<a class=\"nobold\" href=\"../domains.php?oid=$row->oid&rid=$row->rid&raid=$row->raid\">" . number_format($row_domain_count->total_domain_count) . "</a>";
+                echo "<a class=\"nobold\" href=\"../domains.php?oid=$row->oid&rid=$row->rid&raid=$row->raid\">" .
+                    number_format($row_domain_count->total_domain_count) . "</a>";
             } ?>
         </td>
         </tr><?php
@@ -321,15 +327,16 @@ $has_active = 1; ?>
 
         }
 
-        $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname
-            FROM registrar_accounts AS ra, owners AS o, registrars AS r
-            WHERE ra.owner_id = o.id
-              AND ra.registrar_id = r.id
-              " . $rid_string . "
-              " . $raid_string . "
-              " . $oid_string . "
-            GROUP BY ra.username, oname, rname
-            ORDER BY rname, username, oname";
+        $sql = "SELECT ra.id AS raid, ra.username, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid,
+                    o.name AS oname, r.id AS rid, r.name AS rname
+                FROM registrar_accounts AS ra, owners AS o, registrars AS r
+                WHERE ra.owner_id = o.id
+                  AND ra.registrar_id = r.id
+                  " . $rid_string . "
+                  " . $raid_string . "
+                  " . $oid_string . "
+                GROUP BY ra.username, oname, rname
+                ORDER BY rname, username, oname";
 
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -337,7 +344,8 @@ $has_active = 1; ?>
 
             $has_inactive = "1";
             if ($has_active == "1") echo "<BR>";
-            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">"; ?>
+            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\"
+            cellspacing=\"0\">"; ?>
 
             <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
@@ -359,8 +367,11 @@ $has_active = 1; ?>
                        href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->rname; ?></a>
                 </td>
                 <td class="main_table_cell_inactive" valign="top">
-                    <a class="invisiblelink"
-                       href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a title=\"Default Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
+                    <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php
+                            echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] ==
+                        $row->raid) echo "<a title=\"Default Account\"><font
+                        class=\"default_highlight\">*</font></a>"; ?><?php if ($row->reseller == "1") echo "<a
+                        title=\"Reseller Account\"><font class=\"reseller_highlight\">*</font></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink"
