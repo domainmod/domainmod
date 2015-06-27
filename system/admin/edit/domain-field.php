@@ -175,8 +175,11 @@ if ($really_del == "1") {
     <strong>Data Type</strong><BR><BR>
     <?php echo $new_field_type; ?>
     <BR><BR>
-    <strong>Description (255)</strong></a><BR><BR><input name="new_description" type="text" size="50" maxlength="255"
-                                                         value="<?php if ($new_description != "") echo htmlentities($new_description); ?>">
+    <strong>Description (255)</strong><BR><BR>
+    <?php //@formatter:off ?>
+    <input name="new_description" type="text" size="50" maxlength="255" value="<?php
+        if ($new_description != "") echo htmlentities($new_description); ?>">
+    <?php //@formatter:on ?>
     <BR><BR>
     <strong>Notes</strong><BR><BR>
     <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
