@@ -298,11 +298,13 @@ $has_active = "1"; ?>
 
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
+            <?php //@formatter:off ?>
             <a class="invisiblelink" href="edit/account-owner.php?oid=<?php echo $row->id; ?>"><?php echo $row->name;
                 ?></a><?php if ($_SESSION['default_owner_domains'] == $row->id) echo "<a title=\"Default Domain
                 Owner\"><font class=\"default_highlight\">*</font></a>"; ?><?php if ($_SESSION['default_owner_ssl']
                 == $row->id) echo "<a title=\"Default SSL Owner\"><font
                 class=\"default_highlight_secondary\">*</font></a>"; ?>
+            <?php //@formatter:on ?>
         </td>
         <td class="main_table_cell_active"><?php
             $sql_total_count = "SELECT count(*) AS total_count
