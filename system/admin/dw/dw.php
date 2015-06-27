@@ -290,6 +290,8 @@ if ($no_results_build_info !== 1) { ?>
 
         while ($row_build_info = mysqli_fetch_object($result_build_info)) {
 
+            //@formatter:off
+
             if ($row_build_info->build_start_time_overall != "0000-00-00 00:00:00" &&
                 $row_build_info->build_end_time_overall != "0000-00-00 00:00:00") {
 
@@ -309,8 +311,8 @@ if ($no_results_build_info !== 1) { ?>
                 $row_build_info->build_status_overall == 0) {
 
                 $sql_check_builds = "SELECT id
-                                         FROM dw_servers
-                                         WHERE build_status = '0'";
+                                     FROM dw_servers
+                                     WHERE build_status = '0'";
                 $result_check_builds = mysqli_query($connection, $sql_check_builds);
 
                 if ($result_check_builds === false || mysqli_num_rows($result_check_builds) <= 0) {
@@ -351,7 +353,7 @@ if ($no_results_build_info !== 1) { ?>
             } else {
 
                 $temp_build_start_time_overall
-                    = date("M jS @ g:i:sa", strtotime ($row_build_info->build_start_time_overall));
+                    = date("M jS @ g:i:sa", strtotime($row_build_info->build_start_time_overall));
 
             }
 
@@ -402,12 +404,24 @@ if ($no_results_build_info !== 1) { ?>
             </tr>
 
             <tr class="main_table_row_active">
-            <td class="main_table_cell_active"><em>Full Build</em></td>
-            <td class="main_table_cell_active"><?php echo $temp_build_start_time_overall; ?></td>
-            <td class="main_table_cell_active"><?php echo $temp_build_end_time_overall; ?></td>
-            <td class="main_table_cell_active"><?php echo $temp_build_time_overall; ?></td>
-            <td class="main_table_cell_active"><?php echo $temp_build_status_overall; ?></td>
+                <td class="main_table_cell_active">
+                    <em>Full Build</em>
+                </td>
+                <td class="main_table_cell_active">
+                    <?php echo $temp_build_start_time_overall; ?>
+                </td>
+                <td class="main_table_cell_active">
+                    <?php echo $temp_build_end_time_overall; ?>
+                </td>
+                <td class="main_table_cell_active">
+                    <?php echo $temp_build_time_overall; ?>
+                </td>
+                <td class="main_table_cell_active">
+                    <?php echo $temp_build_status_overall; ?>
+                </td>
             </tr><?php
+
+            //@formatter:on
 
         }
 
@@ -426,6 +440,8 @@ if ($no_results_build_info !== 1) { ?>
     } else {
 
         while ($row = mysqli_fetch_object($result)) {
+
+            //@formatter:off
 
             if ($row->build_start_time != "0000-00-00 00:00:00" && $row->build_end_time != "0000-00-00 00:00:00") {
 
@@ -498,18 +514,29 @@ if ($no_results_build_info !== 1) { ?>
 
                 $number_of_minutes = intval($row->build_time / 60);
                 $number_of_seconds = $row->build_time - ($number_of_minutes * 60);
-
                 $temp_build_time = $number_of_minutes . "m " . $number_of_seconds . "s";
 
             } ?>
 
             <tr class="main_table_row_active">
-            <td class="main_table_cell_active"><?php echo $row->name; ?></td>
-            <td class="main_table_cell_active"><?php echo $temp_build_start_time; ?></td>
-            <td class="main_table_cell_active"><?php echo $temp_build_end_time; ?></td>
-            <td class="main_table_cell_active"><?php echo $temp_build_time; ?></td>
-            <td class="main_table_cell_active"><?php echo $temp_build_status; ?></td>
+                <td class="main_table_cell_active">
+                    <?php echo $row->name; ?>
+                </td>
+                <td class="main_table_cell_active">
+                    <?php echo $temp_build_start_time; ?>
+                </td>
+                <td class="main_table_cell_active">
+                    <?php echo $temp_build_end_time; ?>
+                </td>
+                <td class="main_table_cell_active">
+                    <?php echo $temp_build_time; ?>
+                </td>
+                <td class="main_table_cell_active">
+                    <?php echo $temp_build_status; ?>
+                </td>
             </tr><?php
+
+            //@formatter:off
 
         }
 
@@ -555,7 +582,8 @@ if (mysqli_num_rows($result) == 0) {
     }
 
     if ($is_building != 1 && $table_exists != 0 && $temp_dw_accounts != 0 && $temp_dw_dns_zones != 0 &&
-        $temp_dw_dns_zones != 0) { ?>
+        $temp_dw_dns_zones != 0
+    ) { ?>
 
         <BR><font class="subheadline">Data Warehouse Totals</font><BR>
         <table class="main_table" cellpadding="0" cellspacing="0">
@@ -683,7 +711,8 @@ if ($result_suspended_accounts === false || mysqli_num_rows($result_suspended_ac
 }
 
 if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account != 0
-        || $temp_suspended_accounts != 0)) { ?>
+        || $temp_suspended_accounts != 0)
+) { ?>
 
     <BR><font class="subheadline">Potential Problems</font><?php
     if ($temp_accounts_without_a_dns_zone == 0) {
