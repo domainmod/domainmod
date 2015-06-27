@@ -76,7 +76,7 @@ if ($q->prepare($query)) {
 
         }
 
-        foreach($field_array as $field) {
+        foreach ($field_array as $field) {
 
             $full_field = "new_" . $field . "";
             ${'new_' . $field} = $_POST[$full_field];
@@ -189,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                foreach($field_array as $field) {
+                foreach ($field_array as $field) {
 
                     $full_field = "new_" . $field;
 
@@ -472,7 +472,7 @@ if ($q->prepare($query)) {
 
         }
 
-        foreach($field_array as $field) {
+        foreach ($field_array as $field) {
 
             $query_cf = "SELECT sf.name, sf.field_name, sf.type_id, sf.description
                          FROM ssl_cert_fields AS sf, custom_field_types AS cft

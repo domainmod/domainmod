@@ -1432,7 +1432,7 @@ Instead of having to waste time editing domains one-by-one, you can use the belo
 
             }
 
-            foreach($field_array as $field) {
+            foreach ($field_array as $field) {
 
                 $sql = "SELECT df.name, df.field_name, df.type_id, df.description
                         FROM domain_fields AS df, custom_field_types AS cft

@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         }
 
-        foreach($field_array as $field) {
+        foreach ($field_array as $field) {
 
             $full_field = "new_" . $field;
 
@@ -419,7 +419,7 @@ if (mysqli_num_rows($result) > 0) { ?>
 
     }
 
-    foreach($field_array as $field) {
+    foreach ($field_array as $field) {
 
         $sql = "SELECT df.name, df.field_name, df.type_id, df.description
                 FROM domain_fields AS df, custom_field_types AS cft

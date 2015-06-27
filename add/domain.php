@@ -537,7 +537,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             }
 
-            foreach($field_array as $field) {
+            foreach ($field_array as $field) {
 
                 $query_df = "SELECT df.name, df.field_name, df.type_id, df.description
                              FROM domain_fields AS df, custom_field_types AS cft
