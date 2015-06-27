@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
     $_SESSION['system_full_url'] = $new_full_url;
     $_SESSION['system_email_address'] = $new_email_address;
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
             $q->fetch();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 }

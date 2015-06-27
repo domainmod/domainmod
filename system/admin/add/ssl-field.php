@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
                 $q_i->execute();
                 $q_i->close();
 
-            } else { $error->outputSqlError($conn, "ERROR"); }
+            } else $error->outputSqlError($conn, "ERROR");
 
             if ($new_field_type_id == '1') { // Check Box
 
@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
                     $q->execute();
                     $q->close();
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else $error->outputSqlError($conn, "ERROR");
 
             } elseif ($new_field_type_id == '2') { // Text
 
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
                     $q->execute();
                     $q->close();
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else $error->outputSqlError($conn, "ERROR");
 
             } elseif ($new_field_type_id == '3') { // Text Area
 
@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
                     $q->execute();
                     $q->close();
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else $error->outputSqlError($conn, "ERROR");
 
             }
 
@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
 } else {
 
@@ -194,7 +194,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else { $error->outputSqlError($conn, "ERROR"); }
+} else $error->outputSqlError($conn, "ERROR");
 ?>
 <BR><BR>
 <strong>Description (255)</strong><BR><BR><input name="new_description" type="text" size="50" maxlength="255"

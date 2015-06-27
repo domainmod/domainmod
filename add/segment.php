@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->execute();
                 $q->close();
 
-            } else { $error->outputSqlError($conn, "ERROR"); }
+            } else $error->outputSqlError($conn, "ERROR");
 
             $query = "SELECT id
                       FROM segments
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->fetch();
                 $q->close();
 
-            } else { $error->outputSqlError($conn, "ERROR"); }
+            } else $error->outputSqlError($conn, "ERROR");
 
             $query = "DELETE FROM segment_data
                       WHERE segment_id = ?";
@@ -155,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->execute();
                 $q->close();
 
-            } else { $error->outputSqlError($conn, "ERROR"); }
+            } else $error->outputSqlError($conn, "ERROR");
 
             foreach ($lines as $domain) {
 
@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q->execute();
                     $q->close();
 
-                } else { $error->outputSqlError($conn, "ERROR"); }
+                } else $error->outputSqlError($conn, "ERROR");
 
             }
 

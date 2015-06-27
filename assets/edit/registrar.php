@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else $error->outputSqlError($conn, "ERROR");
 
         $rid = $new_rid;
 
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
 }
 
@@ -127,7 +127,7 @@ if ($del == "1") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
     $query = "SELECT registrar_id
               FROM domains
@@ -149,7 +149,7 @@ if ($del == "1") {
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
     if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
 
@@ -179,7 +179,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
     $query = "DELETE FROM registrar_accounts
               WHERE registrar_id = ?";
@@ -191,7 +191,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
     $query = "DELETE FROM registrars
               WHERE id = ?";
@@ -203,7 +203,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
     $_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Deleted<BR>";
 

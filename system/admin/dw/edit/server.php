@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else $error->outputSqlError($conn, "ERROR");
 
         $dwsid = $new_dwsid;
 
@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
 }
 if ($del == "1") {
@@ -156,7 +156,7 @@ if ($really_del == "1") {
         $q->fetch();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
     $query = "DELETE FROM dw_accounts
               WHERE server_id = ?";
@@ -168,7 +168,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
     $query = "DELETE FROM dw_dns_records
               WHERE server_id = ?";
@@ -180,7 +180,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
     $query = "DELETE FROM dw_dns_zones
               WHERE server_id = ?";
@@ -192,7 +192,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
     $query = "DELETE FROM dw_servers
               WHERE id = ?";
@@ -204,7 +204,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
     $dw->updateDwTotalsTable($connection);
 

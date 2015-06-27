@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
                 $q_u->execute();
                 $q_u->close();
 
-            } else { $error->outputSqlError($conn, "ERROR"); }
+            } else $error->outputSqlError($conn, "ERROR");
 
             $_SESSION['email_address'] = $new_email_address;
             $_SESSION['first_name'] = $new_first_name;
@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
 } else {
 

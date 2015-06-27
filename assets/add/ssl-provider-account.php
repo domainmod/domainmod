@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else $error->outputSqlError($conn, "ERROR");
 
         $query = "SELECT `name`
                   FROM ssl_providers
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->fetch();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else $error->outputSqlError($conn, "ERROR");
 
         $query = "SELECT `name`
                   FROM owners
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->fetch();
             $q->close();
 
-        } else { $error->outputSqlError($conn, "ERROR"); }
+        } else $error->outputSqlError($conn, "ERROR");
 
         $_SESSION['result_message'] = "SSL Account <font class=\"highlight\">$new_username (" . $temp_ssl_provider .
             ", " . $temp_owner . ")</font> Added<BR>";
@@ -168,7 +168,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else { $error->outputSqlError($conn, "ERROR"); }
+} else $error->outputSqlError($conn, "ERROR");
 ?>
 <BR><BR>
 <strong>SSL Provider</strong><BR><BR>
@@ -203,7 +203,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else { $error->outputSqlError($conn, "ERROR"); }
+} else $error->outputSqlError($conn, "ERROR");
 ?>
 <BR><BR>
 <strong>Username (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>

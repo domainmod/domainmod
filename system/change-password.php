@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
                 $q_update->execute();
                 $q_update->close();
 
-            } else { $error->outputSqlError($conn, "ERROR"); }
+            } else $error->outputSqlError($conn, "ERROR");
 
             $_SESSION['result_message'] .= "Your password has been changed<BR>";
 
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
         $q->close();
 
-    } else { $error->outputSqlError($conn, "ERROR"); }
+    } else $error->outputSqlError($conn, "ERROR");
 
 } else {
 

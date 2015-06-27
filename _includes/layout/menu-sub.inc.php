@@ -136,7 +136,7 @@ if ($software_section == "domains") { ?>
                 $q->fetch();
                 $q->close();
 
-            } else { $error->outputSqlError($conn, "ERROR"); }
+            } else $error->outputSqlError($conn, "ERROR");
             ?>
             &raquo;&nbsp;<a href="<?php echo $web_root; ?>/bulk-updater.php?action=UCF">Update Custom Domain Field</a>
                 </strong>&nbsp;&raquo;&nbsp;<strong><?php echo $temp_field_name; ?> (<?php echo $temp_field_type; ?>)
