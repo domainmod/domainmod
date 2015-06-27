@@ -20,7 +20,7 @@
  */
 ?>
 <div class="pagination_menu_block">
-	<div class="pagination_menu_block_inner">
+    <div class="pagination_menu_block_inner">
         <?php echo $navigate[2]; ?>&nbsp;
         <?php if ($totalrows != '0') {
                   echo "(Listing $navigate[1] of " . number_format($totalrows) . ")";

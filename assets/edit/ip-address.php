@@ -52,7 +52,7 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_name != "" && $new_ip != "") {
+    if ($new_name != "" && $new_ip != "") {
 
         $query = "UPDATE ip_addresses
                   SET name = ?,
@@ -77,15 +77,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Updated<BR>";
 
-		header("Location: ../ip-addresses.php");
-		exit;
+        header("Location: ../ip-addresses.php");
+        exit;
 
-	} else {
+    } else {
 
-		if ($new_name == "") $_SESSION['result_message'] .= "Please enter a name for the IP Address<BR>";
-		if ($new_ip == "") $_SESSION['result_message'] .= "Please enter the IP Address<BR>";
+        if ($new_name == "") $_SESSION['result_message'] .= "Please enter a name for the IP Address<BR>";
+        if ($new_ip == "") $_SESSION['result_message'] .= "Please enter the IP Address<BR>";
 
-	}
+    }
 
 } else {
 
@@ -154,8 +154,8 @@ if ($really_del == "1") {
 
     $_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Deleted<BR>";
 
-	header("Location: ../ip-addresses.php");
-	exit;
+    header("Location: ../ip-addresses.php");
+    exit;
 
 }
 ?>

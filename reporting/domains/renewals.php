@@ -56,13 +56,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date) || $new_start_date > $new_end_date) {
 
-		if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
-		if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
-		if ($new_start_date > $new_end_date) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
+        if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
+        if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
+        if ($new_start_date > $new_end_date) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
 
-	}
+    }
 
-	$all = "0";
+    $all = "0";
 
 }
 
@@ -72,30 +72,30 @@ $range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_dat
 $dfd_columns = $customField->getCustomFieldsSql($connection, 'domain_fields', 'dfd');
 
 $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, (d.total_cost * cc.conversion) AS converted_renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name" . $dfd_columns . "
-		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
-		WHERE d.account_id = ra.id
-		  AND ra.registrar_id = r.id
-		  AND ra.owner_id = o.id
-		  AND d.registrar_id = f.registrar_id
-		  AND d.tld = f.tld
-		  AND f.currency_id = c.id
-		  AND c.id = cc.currency_id
-		  AND d.cat_id = cat.id
-		  AND d.dns_id = dns.id
-		  AND d.ip_id = ip.id
-		  AND d.hosting_id = h.id
-		  AND d.id = dfd.domain_id
-		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-		  AND d.active NOT IN ('0', '10')
-		  " . $range_string . "
-		ORDER BY d.expiry_date asc, d.domain";
+        FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
+        WHERE d.account_id = ra.id
+          AND ra.registrar_id = r.id
+          AND ra.owner_id = o.id
+          AND d.registrar_id = f.registrar_id
+          AND d.tld = f.tld
+          AND f.currency_id = c.id
+          AND c.id = cc.currency_id
+          AND d.cat_id = cat.id
+          AND d.dns_id = dns.id
+          AND d.ip_id = ip.id
+          AND d.hosting_id = h.id
+          AND d.id = dfd.domain_id
+          AND cc.user_id = '" . $_SESSION['user_id'] . "'
+          AND d.active NOT IN ('0', '10')
+          " . $range_string . "
+        ORDER BY d.expiry_date asc, d.domain";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $total_results = mysqli_num_rows($result);
 
 $result_cost = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $total_cost = 0;
 while ($row_cost = mysqli_fetch_object($result_cost)) {
-	$temp_total_cost = $temp_total_cost + $row_cost->converted_renewal_fee;
+    $temp_total_cost = $temp_total_cost + $row_cost->converted_renewal_fee;
 }
 
 $total_cost = $currency->format($temp_total_cost, $_SESSION['default_currency_symbol'],
@@ -103,7 +103,7 @@ $total_cost = $currency->format($temp_total_cost, $_SESSION['default_currency_sy
 
 if ($export_data == "1") {
 
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
 
@@ -179,8 +179,8 @@ if ($export_data == "1") {
     $row_contents[$count++] = "CUSTOM FIELDS";
 
     $sql_field = "SELECT `name`
-				  FROM domain_fields
-				  ORDER BY `name` ASC";
+            	  FROM domain_fields
+            	  ORDER BY `name` ASC";
     $result_field = mysqli_query($connection, $sql_field);
 
     if (mysqli_num_rows($result_field) > 0) {
@@ -197,20 +197,20 @@ if ($export_data == "1") {
 
     while ($row = mysqli_fetch_object($result)) {
 
-		if ($row->active == "0") { $domain_status = "EXPIRED"; }
-		elseif ($row->active == "1") { $domain_status = "ACTIVE"; }
-		elseif ($row->active == "2") { $domain_status = "IN TRANSFER"; }
-		elseif ($row->active == "3") { $domain_status = "PENDING (RENEWAL)"; }
-		elseif ($row->active == "4") { $domain_status = "PENDING (OTHER)"; }
-		elseif ($row->active == "5") { $domain_status = "PENDING (REGISTRATION)"; }
-		elseif ($row->active == "10") { $domain_status = "SOLD"; }
-		else { $domain_status = "ERROR -- PROBLEM WITH CODE IN DOMAIN-RENEWALS.PHP"; }
+        if ($row->active == "0") { $domain_status = "EXPIRED"; }
+        elseif ($row->active == "1") { $domain_status = "ACTIVE"; }
+        elseif ($row->active == "2") { $domain_status = "IN TRANSFER"; }
+        elseif ($row->active == "3") { $domain_status = "PENDING (RENEWAL)"; }
+        elseif ($row->active == "4") { $domain_status = "PENDING (OTHER)"; }
+        elseif ($row->active == "5") { $domain_status = "PENDING (REGISTRATION)"; }
+        elseif ($row->active == "10") { $domain_status = "SOLD"; }
+        else { $domain_status = "ERROR -- PROBLEM WITH CODE IN DOMAIN-RENEWALS.PHP"; }
 
-		if ($row->privacy == "1") {
-			$privacy_status = "Private";
-		} elseif ($row->privacy == "0") {
-			$privacy_status = "Public";
-		}
+        if ($row->privacy == "1") {
+            $privacy_status = "Private";
+        } elseif ($row->privacy == "0") {
+            $privacy_status = "Public";
+        }
 
         $export_renewal_fee = $currency->format($row->converted_renewal_fee, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
@@ -219,25 +219,25 @@ if ($export_data == "1") {
         $count = 0;
 
         $row_contents[$count++] = $domain_status;
-		$row_contents[$count++] = $row->expiry_date;
-		$row_contents[$count++] = '';
-		$row_contents[$count++] = $export_renewal_fee;
-		$row_contents[$count++] = $row->domain;
-		$row_contents[$count++] = '.' . $row->tld;
-		$row_contents[$count++] = $row->function;
-		$row_contents[$count++] = $privacy_status;
-		$row_contents[$count++] = $row->registrar_name;
-		$row_contents[$count++] = $row->registrar_name . ', ' . $row->owner_name . ' (' . $row->username . ')';
-		$row_contents[$count++] = $row->username;
-		$row_contents[$count++] = $row->dns_profile;
-		$row_contents[$count++] = $row->name;
-		$row_contents[$count++] = $row->ip;
-		$row_contents[$count++] = $row->rdns;
-		$row_contents[$count++] = $row->wh_name;
-		$row_contents[$count++] = $row->category_name;
-		$row_contents[$count++] = $row->category_stakeholder;
-		$row_contents[$count++] = $row->owner_name;
-		$row_contents[$count++] = $row->notes;
+        $row_contents[$count++] = $row->expiry_date;
+        $row_contents[$count++] = '';
+        $row_contents[$count++] = $export_renewal_fee;
+        $row_contents[$count++] = $row->domain;
+        $row_contents[$count++] = '.' . $row->tld;
+        $row_contents[$count++] = $row->function;
+        $row_contents[$count++] = $privacy_status;
+        $row_contents[$count++] = $row->registrar_name;
+        $row_contents[$count++] = $row->registrar_name . ', ' . $row->owner_name . ' (' . $row->username . ')';
+        $row_contents[$count++] = $row->username;
+        $row_contents[$count++] = $row->dns_profile;
+        $row_contents[$count++] = $row->name;
+        $row_contents[$count++] = $row->ip;
+        $row_contents[$count++] = $row->rdns;
+        $row_contents[$count++] = $row->wh_name;
+        $row_contents[$count++] = $row->category_name;
+        $row_contents[$count++] = $row->category_stakeholder;
+        $row_contents[$count++] = $row->owner_name;
+        $row_contents[$count++] = $row->notes;
         $row_contents[$count++] = $row->insert_time;
         $row_contents[$count++] = $row->update_time;
         $row_contents[$count++] = '';
@@ -287,64 +287,64 @@ if ($export_data == "1") {
 <?php if ($total_results > 0) { ?>
 <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR>
 <?php if ($all != "1") { ?>
-	<strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
+    <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
 <?php } else { ?>
-	<strong>Date Range:</strong> ALL<BR><BR>
+    <strong>Date Range:</strong> ALL<BR><BR>
 <?php } ?>
 <strong>Total Cost:</strong> <?php echo $total_cost; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
 <strong>Number of Domains:</strong> <?php echo number_format($total_results); ?><BR>
 <table class="main_table" cellpadding="0" cellspacing="0">
 <tr class="main_table_row_heading_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
+    <td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Expiry Date</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
+    <td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Fee</font>
     </td>
 <?php } ?>
-	<td class="main_table_cell_heading_active">
+    <td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Domain Name</font>
     </td>
 <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
+    <td class="main_table_cell_heading_active">
     	<font class="main_table_heading">TLD</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
+    <td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Registrar</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_account'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
+    <td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Registrar Account</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
+    <td class="main_table_cell_heading_active">
     	<font class="main_table_heading">DNS Profile</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
+    <td class="main_table_cell_heading_active">
     	<font class="main_table_heading">IP Address</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_host'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
+    <td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Web Host</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_category'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
+    <td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Category</font>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
-	<td class="main_table_cell_heading_active">
+    <td class="main_table_cell_heading_active">
     	<font class="main_table_heading">Owner</font>
     </td>
 <?php } ?>
@@ -352,60 +352,60 @@ if ($export_data == "1") {
 <?php while ($row = mysqli_fetch_object($result)) { ?>
 <tr class="main_table_row_active">
 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
-	<td class="main_table_cell_active">
-		<?php echo $row->expiry_date; ?>
-	</td>
+    <td class="main_table_cell_active">
+        <?php echo $row->expiry_date; ?>
+    </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
-	<td class="main_table_cell_active">
-		<?php
+    <td class="main_table_cell_active">
+        <?php
         $temp_amount = $currency->format($row->converted_renewal_fee, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
         echo $temp_amount;
-		?>
-	</td>
+        ?>
+    </td>
 <?php } ?>
-	<td class="main_table_cell_active">
-		<?php echo $row->domain; ?>
-	</td>
+    <td class="main_table_cell_active">
+        <?php echo $row->domain; ?>
+    </td>
 <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
-	<td class="main_table_cell_active">
-		.<?php echo $row->tld; ?>
-	</td>
+    <td class="main_table_cell_active">
+        .<?php echo $row->tld; ?>
+    </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
-	<td class="main_table_cell_active">
-		<?php echo $row->registrar_name; ?>
+    <td class="main_table_cell_active">
+        <?php echo $row->registrar_name; ?>
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_account'] == "1") { ?>
-	<td class="main_table_cell_active">
-		<?php echo $row->registrar_name; ?>, <?php echo $row->owner_name; ?> (<?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?>)
+    <td class="main_table_cell_active">
+        <?php echo $row->registrar_name; ?>, <?php echo $row->owner_name; ?> (<?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?>)
     </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
-	<td class="main_table_cell_active">
-		<?php echo $row->dns_profile; ?>
-	</td>
+    <td class="main_table_cell_active">
+        <?php echo $row->dns_profile; ?>
+    </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
-	<td class="main_table_cell_active">
-		<?php echo $row->name; ?> (<?php echo $row->ip; ?>)
-	</td>
+    <td class="main_table_cell_active">
+        <?php echo $row->name; ?> (<?php echo $row->ip; ?>)
+    </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_host'] == "1") { ?>
-	<td class="main_table_cell_active">
-		<?php echo $row->wh_name; ?>
-	</td>
+    <td class="main_table_cell_active">
+        <?php echo $row->wh_name; ?>
+    </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_category'] == "1") { ?>
-	<td class="main_table_cell_active">
-		<?php echo $row->category_name; ?>
-	</td>
+    <td class="main_table_cell_active">
+        <?php echo $row->category_name; ?>
+    </td>
 <?php } ?>
 <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
-	<td class="main_table_cell_active">
-		<?php echo $row->owner_name; ?>
+    <td class="main_table_cell_active">
+        <?php echo $row->owner_name; ?>
     </td>
 <?php } ?>
 </tr>
@@ -437,17 +437,17 @@ Insert Time<BR>
 Last Update Time<BR>
 <?php
 $sql = "SELECT `name`
-		FROM domain_fields
-		ORDER BY `name` ASC";
+        FROM domain_fields
+        ORDER BY `name` ASC";
 $result = mysqli_query($connection, $sql);
 
 if (mysqli_num_rows($result) > 0) {
 
-	echo "<BR><strong>Custom Fields</strong><BR>";
+    echo "<BR><strong>Custom Fields</strong><BR>";
 
-	while ($row = mysqli_fetch_object($result)) {
-		echo $row->name . "<BR>";
-	}
+    while ($row = mysqli_fetch_object($result)) {
+        echo $row->name . "<BR>";
+    }
 
 }
 ?>

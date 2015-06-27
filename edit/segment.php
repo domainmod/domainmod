@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_name != "" && $new_segment != "") {
 
-		$lines = explode("\r\n", $new_segment);
+        $lines = explode("\r\n", $new_segment);
         $number_of_domains = count($lines);
 
         $domain = new DomainMOD\Domain();
@@ -69,35 +69,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_segment == "" || $invalid_domains == 1) {
 
-			if ($invalid_domains == 1) {
+            if ($invalid_domains == 1) {
 
-				if ($invalid_count == 1) {
+            	if ($invalid_count == 1) {
 
-					$_SESSION['result_message'] = "There is " . number_format($invalid_count) . " invalid domain
-					    on your list<BR><BR>" . $temp_result_message;
+                    $_SESSION['result_message'] = "There is " . number_format($invalid_count) . " invalid domain
+                        on your list<BR><BR>" . $temp_result_message;
 
-				} else {
+            	} else {
 
-					$_SESSION['result_message'] = "There are " . number_format($invalid_count) . " invalid
-					    domains on your list<BR><BR>" . $temp_result_message;
+                    $_SESSION['result_message'] = "There are " . number_format($invalid_count) . " invalid
+                        domains on your list<BR><BR>" . $temp_result_message;
 
-					if (($invalid_count-$invalid_to_display) == 1) {
+                    if (($invalid_count-$invalid_to_display) == 1) {
 
-						$_SESSION['result_message'] .= "<BR>Plus " .
+                        $_SESSION['result_message'] .= "<BR>Plus " .
                             number_format($invalid_count-$invalid_to_display) . " other<BR>";
 
-					} elseif (($invalid_count-$invalid_to_display) > 1) {
+                    } elseif (($invalid_count-$invalid_to_display) > 1) {
 
-						$_SESSION['result_message'] .= "<BR>Plus " .
+                        $_SESSION['result_message'] .= "<BR>Plus " .
                             number_format($invalid_count-$invalid_to_display) . " others<BR>";
-					}
+                    }
 
-				}
+            	}
 
-			}
-			$submission_failed = 1;
+            }
+            $submission_failed = 1;
 
-		} else {
+        } else {
 
             $lines = explode("\r\n", $new_segment);
 
@@ -105,17 +105,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             while (list($key, $new_domain) = each($lines)) {
 
-				if (!$domain->checkDomainFormat($new_domain)) {
-					echo "invalid domain $key"; exit;
-				}
+            	if (!$domain->checkDomainFormat($new_domain)) {
+                    echo "invalid domain $key"; exit;
+            	}
 
-			}
+            }
 
-			$new_segment_formatted = "'" . $new_segment;
-			$new_segment_formatted = $new_segment_formatted . "'";
-			$new_segment_formatted = preg_replace("/\r\n/", "','", $new_segment_formatted);
-			$new_segment_formatted = str_replace (" ", "", $new_segment_formatted);
-			$new_segment_formatted = trim($new_segment_formatted);
+            $new_segment_formatted = "'" . $new_segment;
+            $new_segment_formatted = $new_segment_formatted . "'";
+            $new_segment_formatted = preg_replace("/\r\n/", "','", $new_segment_formatted);
+            $new_segment_formatted = str_replace (" ", "", $new_segment_formatted);
+            $new_segment_formatted = trim($new_segment_formatted);
 
             $query = "UPDATE segments
                       SET `name` = ?,
@@ -168,21 +168,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $segid = $new_segid;
 
-			$_SESSION['result_message'] = "Segment <font class=\"highlight\">$new_name</font> Updated<BR>";
+            $_SESSION['result_message'] = "Segment <font class=\"highlight\">$new_name</font> Updated<BR>";
 
-			$_SESSION['result_message'] .= $maint->updateSegments($connection);
+            $_SESSION['result_message'] .= $maint->updateSegments($connection);
 
             header("Location: ../segments.php");
-			exit;
+            exit;
 
-		}
+        }
 
-	} else {
+    } else {
 
-		if ($new_name == "") $_SESSION['result_message'] .= "Please enter the segment name<BR>";
-		if ($new_segment == "") $_SESSION['result_message'] .= "Please enter the segment<BR>";
+        if ($new_name == "") $_SESSION['result_message'] .= "Please enter the segment name<BR>";
+        if ($new_segment == "") $_SESSION['result_message'] .= "Please enter the segment<BR>";
 
-	}
+    }
 
 } else {
 
@@ -210,7 +210,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del == "1") {
 
-	$_SESSION['result_message'] = "Are you sure you want to delete this Segment?<BR><BR><a
+    $_SESSION['result_message'] = "Are you sure you want to delete this Segment?<BR><BR><a
         href=\"segment.php?segid=$segid&really_del=1\">YES, REALLY DELETE THIS SEGMENT</a><BR>";
 
 }
@@ -260,7 +260,7 @@ if ($really_del == "1") {
     $_SESSION['result_message'] = "Segment <font class=\"highlight\">$temp_segment_name</font> Deleted<BR>";
 
     header("Location: ../segments.php");
-	exit;
+    exit;
 
 }
 ?>

@@ -71,36 +71,36 @@ $reporting = new DomainMOD\Reporting();
 $range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_date, $new_end_date);
 
 $sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS registrar_account_id, ra.username, SUM(d.total_cost * cc.conversion) as total_cost, count(*) AS number_of_domains
-		FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
-		WHERE d.fee_id = f.id
-		  AND f.currency_id = c.id
-		  AND c.id = cc.currency_id
-		  AND d.registrar_id = r.id
-		  AND d.account_id = ra.id
-		  AND d.owner_id = o.id
-		  AND d.active NOT IN ('0', '10')
-		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-		  " . $range_string . "
-		GROUP BY r.name, o.name, ra.username
-		ORDER BY r.name, o.name, ra.username";
+        FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
+        WHERE d.fee_id = f.id
+          AND f.currency_id = c.id
+          AND c.id = cc.currency_id
+          AND d.registrar_id = r.id
+          AND d.account_id = ra.id
+          AND d.owner_id = o.id
+          AND d.active NOT IN ('0', '10')
+          AND cc.user_id = '" . $_SESSION['user_id'] . "'
+          " . $range_string . "
+        GROUP BY r.name, o.name, ra.username
+        ORDER BY r.name, o.name, ra.username";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_domains_total
-					FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
-					WHERE d.fee_id = f.id
-					  AND f.currency_id = c.id
-					  AND c.id = cc.currency_id
-					  AND d.registrar_id = r.id
-					  AND d.account_id = ra.id
-					  AND d.owner_id = o.id
-					  AND d.active NOT IN ('0', '10')
-					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-					  " . $range_string . "";
+                    FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
+                    WHERE d.fee_id = f.id
+                      AND f.currency_id = c.id
+                      AND c.id = cc.currency_id
+                      AND d.registrar_id = r.id
+                      AND d.account_id = ra.id
+                      AND d.owner_id = o.id
+                      AND d.active NOT IN ('0', '10')
+                      AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                      " . $range_string . "";
 $result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
-	$grand_total = $row_grand_total->grand_total;
-	$number_of_domains_total = $row_grand_total->number_of_domains_total;
+    $grand_total = $row_grand_total->grand_total;
+    $number_of_domains_total = $row_grand_total->number_of_domains_total;
 }
 
 $grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbol'],
@@ -108,9 +108,9 @@ $grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbo
 
 if ($submission_failed != "1" && $total_rows > 0) {
 
-	if ($export_data == "1") {
+    if ($export_data == "1") {
 
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $export = new DomainMOD\Export();
 
@@ -171,33 +171,33 @@ if ($submission_failed != "1" && $total_rows > 0) {
         $export->writeRow($export_file, $row_contents);
 
         $new_registrar = "";
-		$last_registrar = "";
+        $last_registrar = "";
 
-		if (mysqli_num_rows($result) > 0) {
+        if (mysqli_num_rows($result) > 0) {
 
-			while ($row = mysqli_fetch_object($result)) {
+            while ($row = mysqli_fetch_object($result)) {
 
-				$new_registrar = $row->registrar_name;
+            	$new_registrar = $row->registrar_name;
 
-				$sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
-										FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
-										WHERE d.fee_id = f.id
-										  AND f.currency_id = c.id
-										  AND c.id = cc.currency_id
-										  AND d.registrar_id = r.id
-										  AND d.account_id = ra.id
-										  AND d.owner_id = o.id
-										  AND d.active NOT IN ('0', '10')
-										  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-										  AND r.id = '" . $row->id . "'
-										  " . $range_string . "";
-				$result_registrar_total = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
-				while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) {
-					$temp_registrar_total = $row_registrar_total->registrar_total;
-					$number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar;
-				}
+            	$sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
+                                        FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
+                                        WHERE d.fee_id = f.id
+                                          AND f.currency_id = c.id
+                                          AND c.id = cc.currency_id
+                                          AND d.registrar_id = r.id
+                                          AND d.account_id = ra.id
+                                          AND d.owner_id = o.id
+                                          AND d.active NOT IN ('0', '10')
+                                          AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                                          AND r.id = '" . $row->id . "'
+                                          " . $range_string . "";
+            	$result_registrar_total = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
+            	while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) {
+                    $temp_registrar_total = $row_registrar_total->registrar_total;
+                    $number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar;
+            	}
 
-				$per_domain_account = $row->total_cost / $row->number_of_domains;
+            	$per_domain_account = $row->total_cost / $row->number_of_domains;
 
                 $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
                     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
@@ -227,9 +227,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
                 $last_registrar = $row->registrar_name;
 
-			}
+            }
 
-		}
+        }
 
         $export->closeFile($export_file);
         exit;
@@ -262,12 +262,12 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
 
-	<BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
-	<BR>
+    <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
+    <BR>
     <?php if ($all != "1") { ?>
-	    <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
+        <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
     <?php } else { ?>
-	    <strong>Date Range:</strong> ALL<BR><BR>
+        <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
 
     <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
@@ -292,33 +292,33 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         <font class="main_table_heading">Per Domain</font></td>
     </tr>
 
-	<?php
-	$new_registrar = "";
-	$last_registrar = "";
+    <?php
+    $new_registrar = "";
+    $last_registrar = "";
 
-	while ($row = mysqli_fetch_object($result)) {
+    while ($row = mysqli_fetch_object($result)) {
 
-		$new_registrar = $row->registrar_name;
+        $new_registrar = $row->registrar_name;
 
-		$sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
-								FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
-								WHERE d.fee_id = f.id
-								  AND f.currency_id = c.id
-								  AND c.id = cc.currency_id
-								  AND d.registrar_id = r.id
-								  AND d.account_id = ra.id
-								  AND d.owner_id = o.id
-								  AND d.active NOT IN ('0', '10')
-								  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-								  AND r.id = '" . $row->id . "'
-								  " . $range_string . "";
-		$result_registrar_total = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
-		while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) {
-			$temp_registrar_total = $row_registrar_total->registrar_total;
-			$number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar;
-		}
+        $sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) as registrar_total, count(*) AS number_of_domains_registrar
+                                FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
+                                WHERE d.fee_id = f.id
+                                  AND f.currency_id = c.id
+                                  AND c.id = cc.currency_id
+                                  AND d.registrar_id = r.id
+                                  AND d.account_id = ra.id
+                                  AND d.owner_id = o.id
+                                  AND d.active NOT IN ('0', '10')
+                                  AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                                  AND r.id = '" . $row->id . "'
+                                  " . $range_string . "";
+        $result_registrar_total = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
+        while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) {
+            $temp_registrar_total = $row_registrar_total->registrar_total;
+            $number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar;
+        }
 
-		$per_domain_account = $row->total_cost / $row->number_of_domains;
+        $per_domain_account = $row->total_cost / $row->number_of_domains;
 
         $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
@@ -347,9 +347,9 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                 <td class="main_table_cell_active"><?php echo $per_domain_account; ?></td>
             </tr><?php
 
-			$last_registrar = $row->registrar_name;
+            $last_registrar = $row->registrar_name;
 
-		} else { ?>
+        } else { ?>
 
             <tr class="main_table_row_active">
                 <td class="main_table_cell_active"></td>
@@ -362,12 +362,12 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                 <td class="main_table_cell_active"><?php echo $per_domain_account; ?></td>
             </tr><?php
 
-			$last_registrar = $row->registrar_name;
+            $last_registrar = $row->registrar_name;
 
-		}
+        }
 
-	}
-		?>
+    }
+        ?>
     </table><?php
 
 }

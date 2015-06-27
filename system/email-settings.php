@@ -62,10 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $_SESSION['expiration_email'] = $new_expiration_email;
 
-	$_SESSION['result_message'] .= "Your Email Settings were updated<BR>";
+    $_SESSION['result_message'] .= "Your Email Settings were updated<BR>";
 
-	header("Location: index.php");
-	exit;
+    header("Location: index.php");
+    exit;
 
 } else {
 

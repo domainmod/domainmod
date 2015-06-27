@@ -55,48 +55,48 @@ $software_section = "segments";
 if ($type == "inactive") {
 
     $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
-			FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
-			WHERE d.account_id = ra.id
-			  AND ra.registrar_id = r.id
-			  AND ra.owner_id = o.id
-			  AND d.registrar_id = f.registrar_id
-			  AND d.tld = f.tld
-			  AND f.currency_id = c.id
-			  AND c.id = cc.currency_id
-			  AND d.cat_id = cat.id
-			  AND d.dns_id = dns.id
-			  AND d.ip_id = ip.id
-			  AND d.hosting_id = h.id
-			  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-			  AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = '$segid' AND inactive = '1' ORDER BY domain)
-			ORDER BY d.domain asc";
+            FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
+            WHERE d.account_id = ra.id
+              AND ra.registrar_id = r.id
+              AND ra.owner_id = o.id
+              AND d.registrar_id = f.registrar_id
+              AND d.tld = f.tld
+              AND f.currency_id = c.id
+              AND c.id = cc.currency_id
+              AND d.cat_id = cat.id
+              AND d.dns_id = dns.id
+              AND d.ip_id = ip.id
+              AND d.hosting_id = h.id
+              AND cc.user_id = '" . $_SESSION['user_id'] . "'
+              AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = '$segid' AND inactive = '1' ORDER BY domain)
+            ORDER BY d.domain asc";
 
 } elseif ($type == "filtered") {
 
     $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
-			FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
-			WHERE d.account_id = ra.id
-			  AND ra.registrar_id = r.id
-			  AND ra.owner_id = o.id
-			  AND d.registrar_id = f.registrar_id
-			  AND d.tld = f.tld
-			  AND f.currency_id = c.id
-			  AND c.id = cc.currency_id
-			  AND d.cat_id = cat.id
-			  AND d.dns_id = dns.id
-			  AND d.ip_id = ip.id
-			  AND d.hosting_id = h.id
-			  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-			  AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = '$segid' AND filtered = '1' ORDER BY domain)
-			ORDER BY d.domain asc";
+            FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
+            WHERE d.account_id = ra.id
+              AND ra.registrar_id = r.id
+              AND ra.owner_id = o.id
+              AND d.registrar_id = f.registrar_id
+              AND d.tld = f.tld
+              AND f.currency_id = c.id
+              AND c.id = cc.currency_id
+              AND d.cat_id = cat.id
+              AND d.dns_id = dns.id
+              AND d.ip_id = ip.id
+              AND d.hosting_id = h.id
+              AND cc.user_id = '" . $_SESSION['user_id'] . "'
+              AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = '$segid' AND filtered = '1' ORDER BY domain)
+            ORDER BY d.domain asc";
 
 } elseif ($type == "missing") {
 
     $sql = "SELECT domain
-			FROM segment_data
-			WHERE segment_id = '$segid'
-			  AND missing = '1'
-			ORDER BY domain";
+            FROM segment_data
+            WHERE segment_id = '$segid'
+              AND missing = '1'
+            ORDER BY domain";
 
 }
 $result = mysqli_query($connection, $sql);
@@ -260,8 +260,8 @@ if ($export_data == "1") {
 <?php include(DIR_INC . "layout/header-bare.inc.php"); ?>
 <?php
 $sql_name = "SELECT name
-			 FROM segments
-			 WHERE id = '$segid'";
+             FROM segments
+             WHERE id = '$segid'";
 $result_name = mysqli_query($connection, $sql_name);
 while ($row_name = mysqli_fetch_object($result_name)) { $segment_name = $row_name->name; }
 ?>

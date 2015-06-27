@@ -242,42 +242,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($del == "1") {
-	$_SESSION['result_message'] = "Are you sure you want to delete this Registrar Fee?<BR><BR><a href=\"registrar-fees.php?rid=$rid&tld=$tld&feeid=$feeid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR FEE</a><BR>";
+    $_SESSION['result_message'] = "Are you sure you want to delete this Registrar Fee?<BR><BR><a href=\"registrar-fees.php?rid=$rid&tld=$tld&feeid=$feeid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR FEE</a><BR>";
 }
 
 if ($really_del == "1") {
 
-	$sql = "SELECT *
-			FROM fees
-			WHERE id = '" . $feeid . "'
-			  AND registrar_id = '" . $rid . "'
-			  AND tld = '" . $tld . "'";
-	$result = mysqli_query($connection, $sql);
+    $sql = "SELECT *
+            FROM fees
+            WHERE id = '" . $feeid . "'
+              AND registrar_id = '" . $rid . "'
+              AND tld = '" . $tld . "'";
+    $result = mysqli_query($connection, $sql);
 
-	if (mysqli_num_rows($result) == 0) {
+    if (mysqli_num_rows($result) == 0) {
 
-		$_SESSION['result_message'] = "The fee you're trying to delete doesn't exist<BR>";
+        $_SESSION['result_message'] = "The fee you're trying to delete doesn't exist<BR>";
 
-		header("Location: registrar-fees.php?rid=$rid");
-		exit;
+        header("Location: registrar-fees.php?rid=$rid");
+        exit;
 
-	} else {
+    } else {
 
-		$sql = "DELETE FROM fees
-				WHERE id = '" . $feeid . "'
-				  AND registrar_id = '" . $rid . "'
-				  AND tld = '" . $tld . "'";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $sql = "DELETE FROM fees
+            	WHERE id = '" . $feeid . "'
+            	  AND registrar_id = '" . $rid . "'
+            	  AND tld = '" . $tld . "'";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-		$sql = "UPDATE domains
-				SET fee_id = '0',
-					update_time = '" . $timestamp . "'
-				WHERE fee_id = '" . $feeid . "'
-				  AND registrar_id = '" . $rid . "'
-				  AND tld = '" . $tld . "'";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $sql = "UPDATE domains
+            	SET fee_id = '0',
+                    update_time = '" . $timestamp . "'
+            	WHERE fee_id = '" . $feeid . "'
+            	  AND registrar_id = '" . $rid . "'
+            	  AND tld = '" . $tld . "'";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-		$_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
+        $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
 
         $queryB = new DomainMOD\QueryBuild();
 
@@ -287,9 +287,9 @@ if ($really_del == "1") {
         $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 
         header("Location: registrar-fees.php?rid=$rid");
-		exit;
+        exit;
 
-	}
+    }
 
 }
 ?>
@@ -303,35 +303,35 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 $sql = "SELECT name
-		FROM registrars
-		WHERE id = '" . $rid . "'";
+        FROM registrars
+        WHERE id = '" . $rid . "'";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 while ($row = mysqli_fetch_object($result)) { $temp_registrar_name = $row->name; } ?>
 The below fees are for the registrar <a href="registrar.php?rid=<?php echo $rid; ?>"><?php echo $temp_registrar_name; ?></a>.<BR><BR>
 <?php
 $sql = "SELECT tld
-		FROM domains
-		WHERE registrar_id = '" . $rid . "'
-		  AND fee_id = '0'
-		GROUP BY tld
-		ORDER BY tld asc";
+        FROM domains
+        WHERE registrar_id = '" . $rid . "'
+          AND fee_id = '0'
+        GROUP BY tld
+        ORDER BY tld asc";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 if (mysqli_num_rows($result) > 0) {
 ?>
     <BR><a name="missingfees"></a><font class="subheadline">Missing TLD Fees</font><BR><BR>
     <?php
-	$count = 0;
+    $count = 0;
     while ($row = mysqli_fetch_object($result)) {
         $temp_all_missing_fees = $temp_all_missing_fees .= ".$row->tld, ";
-		$count++;
+        $count++;
     }
-	$all_missing_fees = substr($temp_all_missing_fees, 0, -2);
+    $all_missing_fees = substr($temp_all_missing_fees, 0, -2);
     ?>
     <?php echo $all_missing_fees; ?><BR><BR>
     <?php if ($count > 1) { ?>
-	    <strong>Please update the fees for these TLDs below in order to ensure proper domain accounting.</strong>
-	<?php } else { ?>
-	    <strong>Please update the fees for this TLD below in order to ensure proper domain accounting.</strong>
+        <strong>Please update the fees for these TLDs below in order to ensure proper domain accounting.</strong>
+    <?php } else { ?>
+        <strong>Please update the fees for this TLD below in order to ensure proper domain accounting.</strong>
     <?php } ?>
     <BR><BR>
 <?php
@@ -339,11 +339,11 @@ if (mysqli_num_rows($result) > 0) {
 ?>
 <?php
 $sql = "SELECT tld
-		FROM domains
-		WHERE registrar_id = '" . $rid . "'
-		  AND active not in ('0', '10')
-		GROUP BY tld
-		ORDER BY tld";
+        FROM domains
+        WHERE registrar_id = '" . $rid . "'
+          AND active not in ('0', '10')
+        GROUP BY tld
+        ORDER BY tld";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 if (mysqli_num_rows($result) != 0) {
@@ -367,28 +367,28 @@ if (mysqli_num_rows($result) != 0) {
 
     }
 
-	$all_tlds = substr($temp_all_tlds, 0, -2);
-	echo $all_tlds;
-	echo "<BR><BR><BR>";
+    $all_tlds = substr($temp_all_tlds, 0, -2);
+    echo $all_tlds;
+    echo "<BR><BR><BR>";
 
 }
 ?>
 <font class="subheadline">Add A New TLD Fee</font><BR>
 <form name="add_registrar_fee_form" method="post">
 <table class="main_table" cellpadding="0" cellspacing="0">
-	<tr class="main_table_row_heading_active">
+    <tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active">
         	<strong>TLD</strong><BR>
             <input name="new_tld" type="text" value="<?php echo $new_tld; ?>" size="4">
-		</td>
-		<td class="main_table_cell_heading_active">
+        </td>
+        <td class="main_table_cell_heading_active">
         	<strong>Initial Fee</strong><BR>
             <input name="new_initial_fee" type="text" value="<?php echo $new_initial_fee; ?>" size="4">
-		</td>
-		<td class="main_table_cell_heading_active">
+        </td>
+        <td class="main_table_cell_heading_active">
         	<strong>Renewal Fee</strong><BR>
             <input name="new_renewal_fee" type="text" value="<?php echo $new_renewal_fee; ?>" size="4">
-		</td>
+        </td>
         <td class="main_table_cell_heading_active">
             <strong>Transfer Fee</strong><BR>
             <input name="new_transfer_fee" type="text" value="<?php echo $new_transfer_fee; ?>" size="4">
@@ -401,29 +401,29 @@ if (mysqli_num_rows($result) != 0) {
             <strong>Misc Fee</strong><BR>
             <input name="new_misc_fee" type="text" value="<?php echo $new_misc_fee; ?>" size="4">
         </td>
-	  	<td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
-		  <select name="new_currency_id" id="new_currency">
-		  	<?php
-			$sql = "SELECT id, currency, name, symbol
-					FROM currencies
-					ORDER BY currency";
-			$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-			while ($row = mysqli_fetch_object($result)) {
+      	<td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
+          <select name="new_currency_id" id="new_currency">
+          	<?php
+            $sql = "SELECT id, currency, name, symbol
+                    FROM currencies
+                    ORDER BY currency";
+            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            while ($row = mysqli_fetch_object($result)) {
 
-			if ($row->currency == $_SESSION['default_currency']) {
-			?>
-			    <option value="<?php echo $row->id; ?>" selected><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
-			<?php
-			} else {
-			?>
-			    <option value="<?php echo $row->id; ?>"><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
-			<?php
-			}
-			}
-			?>
-	      </select>
-	    </td>
-	</tr>
+            if ($row->currency == $_SESSION['default_currency']) {
+            ?>
+                <option value="<?php echo $row->id; ?>" selected><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
+            <?php
+            } else {
+            ?>
+                <option value="<?php echo $row->id; ?>"><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
+            <?php
+            }
+            }
+            ?>
+          </select>
+        </td>
+    </tr>
 </table>
     <input type="hidden" name="new_rid" value="<?php echo $rid; ?>"><BR>
     <input type="hidden" name="which_form" value="add"><BR>
@@ -433,7 +433,7 @@ if (mysqli_num_rows($result) != 0) {
 <font class="subheadline">TLD Fees</font><BR>
 <form name="edit_registrar_fee_form" method="post">
 <table class="main_table" cellpadding="0" cellspacing="0">
-	<tr class="main_table_row_heading_active">
+    <tr class="main_table_row_heading_active">
     	<td class="main_table_cell_heading_active"><strong>TLD</strong></td>
         <td class="main_table_cell_heading_active"><strong>Initial Fee</strong></td>
         <td class="main_table_cell_heading_active"><strong>Renewal Fee</strong></td>
@@ -441,18 +441,18 @@ if (mysqli_num_rows($result) != 0) {
         <td class="main_table_cell_heading_active"><strong>Privacy Fee</strong></td>
         <td class="main_table_cell_heading_active"><strong>Misc Fee</strong></td>
         <td class="main_table_cell_heading_active"><strong>Currency</strong></td>
-	</tr>
+    </tr>
 <?php
 $sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, c.symbol, c.symbol_order, c.symbol_space
-		FROM fees AS f, currencies AS c
-		WHERE f.currency_id = c.id
-		  AND f.registrar_id = '" . $rid . "'
-		ORDER BY f.tld asc";
+        FROM fees AS f, currencies AS c
+        WHERE f.currency_id = c.id
+          AND f.registrar_id = '" . $rid . "'
+        ORDER BY f.tld asc";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $count = 0;
 while ($row = mysqli_fetch_object($result)) {
 ?>
-	<tr class="main_table_row_active">
+    <tr class="main_table_row_active">
     	<td class="main_table_cell_active">.<?php echo htmlentities($row->tld); ?></td>
         <td class="main_table_cell_active">
             <input type="hidden" name="fee_id[<?php echo $count; ?>]" value="<?php echo $row->id; ?>">
@@ -493,7 +493,7 @@ while ($row = mysqli_fetch_object($result)) {
             </select>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="registrar-fees.php?rid=<?php echo $rid; ?>&tld=<?php echo $row->tld; ?>&feeid=<?php echo $row->id; ?>&del=1">delete</a>]
         </td>
-	</tr>
+    </tr>
 <?php
 $count++;
 }

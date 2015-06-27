@@ -50,25 +50,25 @@ $all = $_GET['all'];
 
 if ($all == "1") {
 
-	$sql = "SELECT sslp.id, sslp.name AS ssl_provider, sslt.id AS type_id, sslt.type, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
-			FROM ssl_providers AS sslp, ssl_fees AS f, currencies AS c, ssl_cert_types AS sslt
-			WHERE sslp.id = f.ssl_provider_id
-			  AND f.currency_id = c.id
-			  AND f.type_id = sslt.id
-			GROUP BY sslp.name, sslt.type
-			ORDER BY sslp.name, sslt.type";
+    $sql = "SELECT sslp.id, sslp.name AS ssl_provider, sslt.id AS type_id, sslt.type, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
+            FROM ssl_providers AS sslp, ssl_fees AS f, currencies AS c, ssl_cert_types AS sslt
+            WHERE sslp.id = f.ssl_provider_id
+              AND f.currency_id = c.id
+              AND f.type_id = sslt.id
+            GROUP BY sslp.name, sslt.type
+            ORDER BY sslp.name, sslt.type";
 
 } else {
 
-	$sql = "SELECT sslp.id, sslp.name AS ssl_provider, sslt.id AS type_id, sslt.type, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
-			FROM ssl_providers AS sslp, ssl_certs AS sslc, ssl_fees AS f, currencies AS c, ssl_cert_types AS sslt
-			WHERE sslp.id = sslc.ssl_provider_id
-			  AND sslc.fee_id = f.id
-			  AND f.currency_id = c.id
-			  AND sslc.type_id = sslt.id
-			  AND sslc.active NOT IN ('0')
-			GROUP BY sslp.name, sslt.type
-			ORDER BY sslp.name, sslt.type";
+    $sql = "SELECT sslp.id, sslp.name AS ssl_provider, sslt.id AS type_id, sslt.type, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
+            FROM ssl_providers AS sslp, ssl_certs AS sslc, ssl_fees AS f, currencies AS c, ssl_cert_types AS sslt
+            WHERE sslp.id = sslc.ssl_provider_id
+              AND sslc.fee_id = f.id
+              AND f.currency_id = c.id
+              AND sslc.type_id = sslt.id
+              AND sslc.active NOT IN ('0')
+            GROUP BY sslp.name, sslt.type
+            ORDER BY sslp.name, sslt.type";
 
 }
 
@@ -77,9 +77,9 @@ $total_rows = mysqli_num_rows($result);
 
 if ($total_rows > 0) {
 
-	if ($export_data == "1") {
+    if ($export_data == "1") {
 
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $export = new DomainMOD\Export();
 
@@ -125,16 +125,16 @@ if ($total_rows > 0) {
         $export->writeRow($export_file, $row_contents);
 
         $new_ssl_provider = "";
-		$last_ssl_provider = "";
-		$new_type = "";
-		$last_type = "";
+        $last_ssl_provider = "";
+        $new_type = "";
+        $last_type = "";
 
-		if (mysqli_num_rows($result) > 0) {
+        if (mysqli_num_rows($result) > 0) {
 
-			while ($row = mysqli_fetch_object($result)) {
+            while ($row = mysqli_fetch_object($result)) {
 
-				$new_ssl_provider = $row->ssl_provider;
-				$new_type = $row->type;
+            	$new_ssl_provider = $row->ssl_provider;
+            	$new_type = $row->type;
 
                 $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
                     $row->symbol_space);
@@ -149,35 +149,35 @@ if ($total_rows > 0) {
                 $count = 0;
 
                 $row_contents[$count++] = $row->ssl_provider;
-				$row_contents[$count++] = $row->type;
-				$row_contents[$count++] = $row->initial_fee;
+            	$row_contents[$count++] = $row->type;
+            	$row_contents[$count++] = $row->initial_fee;
                 $row_contents[$count++] = $row->renewal_fee;
                 $row_contents[$count++] = $row->misc_fee;
-				$row_contents[$count++] = $row->currency;
+            	$row_contents[$count++] = $row->currency;
 
-				$sql_ssl_count = "SELECT count(*) AS total_ssl_count
-								  FROM ssl_certs
-								  WHERE ssl_provider_id = '" . $row->id . "'
-								    AND fee_id = '" . $row->fee_id . "'
-									AND active NOT IN ('0')";
-				$result_ssl_count = mysqli_query($connection, $sql_ssl_count);
+            	$sql_ssl_count = "SELECT count(*) AS total_ssl_count
+                                  FROM ssl_certs
+                                  WHERE ssl_provider_id = '" . $row->id . "'
+                                    AND fee_id = '" . $row->fee_id . "'
+                                    AND active NOT IN ('0')";
+            	$result_ssl_count = mysqli_query($connection, $sql_ssl_count);
 
-				while ($row_ssl_count = mysqli_fetch_object($result_ssl_count)) {
+            	while ($row_ssl_count = mysqli_fetch_object($result_ssl_count)) {
 
-					$row_contents[$count++] = $row_ssl_count->total_ssl_count;
+                    $row_contents[$count++] = $row_ssl_count->total_ssl_count;
 
-				}
+            	}
 
-				$row_contents[$count++] = $row->insert_time;
-				$row_contents[$count++] = $row->update_time;
+            	$row_contents[$count++] = $row->insert_time;
+            	$row_contents[$count++] = $row->update_time;
                 $export->writeRow($export_file, $row_contents);
 
                 $last_ssl_provider = $row->ssl_provider;
-				$last_type = $row->type;
+            	$last_type = $row->type;
 
-			}
+            }
 
-		}
+        }
 
         $export->closeFile($export_file);
         exit;

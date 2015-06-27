@@ -50,7 +50,7 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_username != "" && $new_owner_id != "" && $new_ssl_provider_id != "" && $new_owner_id != "0" &&
+    if ($new_username != "" && $new_owner_id != "" && $new_ssl_provider_id != "" && $new_owner_id != "0" &&
         $new_ssl_provider_id != "0") {
 
         $query = "INSERT into ssl_accounts
@@ -105,24 +105,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['result_message'] = "SSL Account <font class=\"highlight\">$new_username (" . $temp_ssl_provider .
             ", " . $temp_owner . ")</font> Added<BR>";
 
-		if ($_SESSION['has_ssl_account'] != '1') {
+        if ($_SESSION['has_ssl_account'] != '1') {
 
-			$system->checkExistingAssets($connection);
+            $system->checkExistingAssets($connection);
 
             header("Location: ../../ssl-certs.php");
 
-		} else {
+        } else {
 
-			header("Location: ../ssl-accounts.php");
+            header("Location: ../ssl-accounts.php");
 
-		}
-		exit;
+        }
+        exit;
 
-	} else {
+    } else {
 
-		if ($username == "") { $_SESSION['result_message'] .= "Please enter a username<BR>"; }
+        if ($username == "") { $_SESSION['result_message'] .= "Please enter a username<BR>"; }
 
-	}
+    }
 
 }
 ?>

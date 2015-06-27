@@ -44,12 +44,12 @@ $software_section = "admin-dw-manage-servers";
 $export_data = $_GET['export_data'];
 
 $sql = "SELECT id, name, host, protocol, port, username, hash, notes, dw_accounts, dw_dns_zones, dw_dns_records, build_end_time, insert_time, update_time
-		FROM dw_servers
-		ORDER BY name, host";
+        FROM dw_servers
+        ORDER BY name, host";
 
 if ($export_data == "1") {
 
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dw_servers', strtotime($time->time()));
@@ -78,7 +78,7 @@ if ($export_data == "1") {
 
     if (mysqli_num_rows($result) > 0) {
 
-		while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
             $row_contents = array(
                 $row->name,
@@ -99,7 +99,7 @@ if ($export_data == "1") {
 
         }
 
-	}
+    }
 
     $export->closeFile($export_file);
     exit;
@@ -119,7 +119,7 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 
 if (mysqli_num_rows($result) > 0) { ?>
 
-	[<a href="servers.php?export_data=1">EXPORT</a>]
+    [<a href="servers.php?export_data=1">EXPORT</a>]
 
     <table class="main_table" cellpadding="0" cellspacing="0">
         <tr class="main_table_row_heading_active">
@@ -170,11 +170,11 @@ if (mysqli_num_rows($result) > 0) { ?>
 
         } ?>
 
-	</table><?php
+    </table><?php
 
 } else {
 
-	echo "You don't currently have any servers setup. <a href=\"add/server.php\">Click here to add one</a>.";
+    echo "You don't currently have any servers setup. <a href=\"add/server.php\">Click here to add one</a>.";
 
 }
 ?>

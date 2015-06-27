@@ -104,11 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	   if ($new_email_address == "") $_SESSION['result_message'] .= "Your email address could not be updated<BR>";
-	   if ($new_first_name == "") $_SESSION['result_message'] .= "Your first name could not be updated<BR>";
-	   if ($new_last_name == "") $_SESSION['result_message'] .= "Your last name could not be updated<BR>";
+       if ($new_email_address == "") $_SESSION['result_message'] .= "Your email address could not be updated<BR>";
+       if ($new_first_name == "") $_SESSION['result_message'] .= "Your first name could not be updated<BR>";
+       if ($new_last_name == "") $_SESSION['result_message'] .= "Your last name could not be updated<BR>";
 
-	}
+    }
 
 }
 ?>

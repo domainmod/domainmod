@@ -47,7 +47,7 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_registrar != "" && $new_url != "") {
+    if ($new_registrar != "" && $new_url != "") {
 
         $query = "INSERT INTO registrars
                   (`name`, url, notes, insert_time)
@@ -67,25 +67,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['result_message'] = "Registrar <font class=\"highlight\">" . $new_registrar . "</font> Added<BR>";
 
-		if ($_SESSION['has_registrar'] != '1') {
+        if ($_SESSION['has_registrar'] != '1') {
 
-			$system->checkExistingAssets($connection);
+            $system->checkExistingAssets($connection);
 
             header("Location: ../../domains.php");
 
-		} else {
+        } else {
 
-			header("Location: ../registrars.php");
+            header("Location: ../registrars.php");
 
-		}
-		exit;
+        }
+        exit;
 
-	} else {
+    } else {
 
-		if ($new_registrar == "") $_SESSION['result_message'] .= "Please enter the registrar name<BR>";
-		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the registrar's URL<BR>";
+        if ($new_registrar == "") $_SESSION['result_message'] .= "Please enter the registrar name<BR>";
+        if ($new_url == "") $_SESSION['result_message'] .= "Please enter the registrar's URL<BR>";
 
-	}
+    }
 
 }
 ?>

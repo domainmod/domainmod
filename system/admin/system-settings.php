@@ -67,25 +67,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
     } else { $error->outputSqlError($conn, "ERROR"); }
 
     $_SESSION['system_full_url'] = $new_full_url;
-	$_SESSION['system_email_address'] = $new_email_address;
-	$_SESSION['system_expiration_email_days'] = $new_expiration_email_days;
+    $_SESSION['system_email_address'] = $new_email_address;
+    $_SESSION['system_expiration_email_days'] = $new_expiration_email_days;
 
-	$_SESSION['result_message'] .= "The System Settings were updated<BR>";
+    $_SESSION['result_message'] .= "The System Settings were updated<BR>";
 
-	header("Location: ../index.php");
-	exit;
+    header("Location: ../index.php");
+    exit;
 
 } else {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-		if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the system email address<BR>";
-		if ($new_full_url == "") $_SESSION['result_message'] .= "Enter the full URL of your " . $software_title .
+        if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the system email address<BR>";
+        if ($new_full_url == "") $_SESSION['result_message'] .= "Enter the full URL of your " . $software_title .
             " installation<BR>";
-		if ($new_expiration_email_days == "") $_SESSION['result_message'] .= "Enter the number of days to display in
+        if ($new_expiration_email_days == "") $_SESSION['result_message'] .= "Enter the number of days to display in
             expiration emails<BR>";
 
-	} else {
+    } else {
 
         $query = "SELECT full_url, email_address, expiration_email_days
                   FROM settings";

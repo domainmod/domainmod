@@ -42,7 +42,7 @@
 
         <tr class="main_table_row_active_no_hover"><?php
 
-			if ($from_main_dw_account_page == 1) { ?>
+            if ($from_main_dw_account_page == 1) { ?>
 
                 <td class="main_table_cell_active_top_aligned">
 
@@ -68,7 +68,7 @@
 
                 </td><?php
 
-			} ?>
+            } ?>
 
             <td>
 
@@ -107,8 +107,8 @@
                         </td>
                     </tr>
                 </table>
-			</td>
-		</tr><?php
+            </td>
+        </tr><?php
 
     } ?>
 

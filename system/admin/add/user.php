@@ -77,11 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
     if ($existing_username == 1) {
 
-		$_SESSION['result_message'] .= "You have entered an invalid username<BR>";
+        $_SESSION['result_message'] .= "You have entered an invalid username<BR>";
 
-	} else {
+    } else {
 
-		$new_password = substr(md5(time()), 0, 8);
+        $new_password = substr(md5(time()), 0, 8);
 
         $query = "INSERT INTO users
                   (first_name, last_name, username, email_address, `password`, admin, active, insert_time)
@@ -174,14 +174,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
 } else {
 
-	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-		if ($new_first_name == "") $_SESSION['result_message'] .= "Enter the new user's first name<BR>";
-		if ($new_last_name == "") $_SESSION['result_message'] .= "Enter the new user's last name<BR>";
-		if ($new_username == "") $_SESSION['result_message'] .= "Enter the new user's username<BR>";
-		if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the new user's email address<BR>";
+        if ($new_first_name == "") $_SESSION['result_message'] .= "Enter the new user's first name<BR>";
+        if ($new_last_name == "") $_SESSION['result_message'] .= "Enter the new user's last name<BR>";
+        if ($new_username == "") $_SESSION['result_message'] .= "Enter the new user's username<BR>";
+        if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the new user's email address<BR>";
 
-	}
+    }
 
 }
 ?>

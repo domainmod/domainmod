@@ -45,25 +45,25 @@ $export_data = $_GET['export_data'];
 
 if ($_SESSION['username'] == "admin") {
 
-	$sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.number_of_logins, u.last_login, u.insert_time, u.update_time, us.default_timezone, us.default_currency
-			FROM users AS u, user_settings AS us
-			WHERE u.id = us.user_id
-			  AND u.active = '1'
-			ORDER BY u.first_name, u.last_name, u.username, u.email_address";
+    $sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.number_of_logins, u.last_login, u.insert_time, u.update_time, us.default_timezone, us.default_currency
+            FROM users AS u, user_settings AS us
+            WHERE u.id = us.user_id
+              AND u.active = '1'
+            ORDER BY u.first_name, u.last_name, u.username, u.email_address";
 
 } else {
 
-	$sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.number_of_logins, u.last_login, u.insert_time, u.update_time, us.default_timezone, us.default_currency
-			FROM users AS u, user_settings AS us
-			WHERE u.id = us.user_id
-			  AND u.active = '1'
-			ORDER BY u.first_name, u.last_name, u.username, u.email_address";
+    $sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.number_of_logins, u.last_login, u.insert_time, u.update_time, us.default_timezone, us.default_currency
+            FROM users AS u, user_settings AS us
+            WHERE u.id = us.user_id
+              AND u.active = '1'
+            ORDER BY u.first_name, u.last_name, u.username, u.email_address";
 
 }
 
 if ($export_data == "1") {
 
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('user_list', strtotime($time->time()));
@@ -91,17 +91,17 @@ if ($export_data == "1") {
 
     if (mysqli_num_rows($result) > 0) {
 
-		while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-			if ($row->admin == "1") {
+            if ($row->admin == "1") {
 
-				$is_admin = "1";
+            	$is_admin = "1";
 
-			} else {
+            } else {
 
-				$is_admin = "";
+            	$is_admin = "";
 
-			}
+            }
 
             $row_contents = array(
                 'Active',
@@ -121,28 +121,28 @@ if ($export_data == "1") {
 
         }
 
-	}
+    }
 
-	$sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.number_of_logins, u.last_login, u.insert_time, u.update_time, us.default_timezone, us.default_currency
-			FROM users AS u, user_settings AS us
-			WHERE u.id = us.user_id
-			  AND u.active = '0'
-			ORDER BY u.first_name, u.last_name, u.username, u.email_address";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.number_of_logins, u.last_login, u.insert_time, u.update_time, us.default_timezone, us.default_currency
+            FROM users AS u, user_settings AS us
+            WHERE u.id = us.user_id
+              AND u.active = '0'
+            ORDER BY u.first_name, u.last_name, u.username, u.email_address";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-	if (mysqli_num_rows($result) > 0) {
+    if (mysqli_num_rows($result) > 0) {
 
-		while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-			if ($row->admin == "1") {
+            if ($row->admin == "1") {
 
-				$is_admin = "1";
+            	$is_admin = "1";
 
-			} else {
+            } else {
 
-				$is_admin = "";
+            	$is_admin = "";
 
-			}
+            }
 
             $row_contents = array(
                 'Inactive',
@@ -162,7 +162,7 @@ if ($export_data == "1") {
 
         }
 
-	}
+    }
 
     $export->closeFile($export_file);
     exit;
@@ -210,14 +210,14 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->email_address; ?></a>
             </td>
         </tr><?php
-	}
+    }
 
 }
 
 $sql = "SELECT id, first_name, last_name, username, email_address, admin
-		FROM users
-		WHERE active = '0'
-		ORDER BY first_name, last_name, username, email_address";
+        FROM users
+        WHERE active = '0'
+        ORDER BY first_name, last_name, username, email_address";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 if (mysqli_num_rows($result) > 0) { ?>

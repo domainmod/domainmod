@@ -51,7 +51,7 @@ $new_ssltid = $_REQUEST['new_ssltid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_type != "") {
+    if ($new_type != "") {
 
         $query = "UPDATE ssl_cert_types
                   SET type = ?,
@@ -72,16 +72,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $ssltid = $new_ssltid;
 
-		$_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Updated<BR>";
+        $_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Updated<BR>";
 
-		header("Location: ../ssl-types.php");
-		exit;
+        header("Location: ../ssl-types.php");
+        exit;
 
-	} else {
+    } else {
 
-		$_SESSION['result_message'] = "Please enter the Type name<BR>";
+        $_SESSION['result_message'] = "Please enter the Type name<BR>";
 
-	}
+    }
 
 } else {
 
@@ -149,8 +149,8 @@ if ($really_del == "1") {
 
     $_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Deleted<BR>";
 
-	header("Location: ../ssl-types.php");
-	exit;
+    header("Location: ../ssl-types.php");
+    exit;
 
 }
 ?>

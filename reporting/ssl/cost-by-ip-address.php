@@ -71,32 +71,32 @@ $reporting = new DomainMOD\Reporting();
 $range_string = $reporting->getRangeString($all, 'sslc.expiry_date', $new_start_date, $new_end_date);
 
 $sql = "SELECT ip.id, ip.name, ip.ip, ip.rdns, SUM(sslc.total_cost * cc.conversion) as total_cost, count(*) AS number_of_certs
-		FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ip_addresses AS ip
-		WHERE sslc.fee_id = f.id
-		  AND f.currency_id = c.id
-		  AND c.id = cc.currency_id
-		  AND sslc.ip_id = ip.id
-		  AND sslc.active NOT IN ('0')
-		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-		  " . $range_string . "
-		GROUP BY ip.name
-		ORDER BY ip.name";
+        FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ip_addresses AS ip
+        WHERE sslc.fee_id = f.id
+          AND f.currency_id = c.id
+          AND c.id = cc.currency_id
+          AND sslc.ip_id = ip.id
+          AND sslc.active NOT IN ('0')
+          AND cc.user_id = '" . $_SESSION['user_id'] . "'
+          " . $range_string . "
+        GROUP BY ip.name
+        ORDER BY ip.name";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) as grand_total, count(*) AS number_of_certs_total
-					FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ip_addresses AS ip
-					WHERE sslc.fee_id = f.id
-					  AND f.currency_id = c.id
-					  AND c.id = cc.currency_id
-					  AND sslc.ip_id = ip.id
-					  AND sslc.active NOT IN ('0')
-					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-					  " . $range_string . "";
+                    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ip_addresses AS ip
+                    WHERE sslc.fee_id = f.id
+                      AND f.currency_id = c.id
+                      AND c.id = cc.currency_id
+                      AND sslc.ip_id = ip.id
+                      AND sslc.active NOT IN ('0')
+                      AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                      " . $range_string . "";
 $result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
-	$grand_total = $row_grand_total->grand_total;
-	$number_of_certs_total = $row_grand_total->number_of_certs_total;
+    $grand_total = $row_grand_total->grand_total;
+    $number_of_certs_total = $row_grand_total->number_of_certs_total;
 }
 
 $grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbol'],
@@ -104,9 +104,9 @@ $grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbo
 
 if ($submission_failed != "1" && $total_rows > 0) {
 
-	if ($export_data == "1") {
+    if ($export_data == "1") {
 
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $export = new DomainMOD\Export();
 
@@ -166,9 +166,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
         if (mysqli_num_rows($result) > 0) {
 
-			while ($row = mysqli_fetch_object($result)) {
+            while ($row = mysqli_fetch_object($result)) {
 
-				$per_cert = $row->total_cost / $row->number_of_certs;
+            	$per_cert = $row->total_cost / $row->number_of_certs;
 
                 $per_cert = $currency->format($per_cert, $_SESSION['default_currency_symbol'],
                     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
@@ -188,7 +188,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
             }
 
-		}
+        }
 
         $export->closeFile($export_file);
         exit;
@@ -221,12 +221,12 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
 
-	<BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
-	<BR>
+    <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
+    <BR>
     <?php if ($all != "1") { ?>
-	    <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
+        <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
     <?php } else { ?>
-	    <strong>Date Range:</strong> ALL<BR><BR>
+        <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
 
     <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
@@ -235,28 +235,28 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
         	<font class="main_table_heading">IP Address Name</font>
-		</td>
+        </td>
         <td class="main_table_cell_heading_active">
         	<font class="main_table_heading">IP Address</font>
-		</td>
+        </td>
         <td class="main_table_cell_heading_active">
         	<font class="main_table_heading">rDNS</font>
-		</td>
+        </td>
         <td class="main_table_cell_heading_active">
         	<font class="main_table_heading">SSL Certs</font>
-		</td>
+        </td>
         <td class="main_table_cell_heading_active">
         	<font class="main_table_heading">Cost</font>
-		</td>
+        </td>
         <td class="main_table_cell_heading_active">
         	<font class="main_table_heading">Per Cert</font>
-		</td>
+        </td>
     </tr>
 
-	<?php
-	while ($row = mysqli_fetch_object($result)) {
+    <?php
+    while ($row = mysqli_fetch_object($result)) {
 
-		$per_cert = $row->total_cost / $row->number_of_certs;
+        $per_cert = $row->total_cost / $row->number_of_certs;
 
         $per_cert = $currency->format($per_cert, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
@@ -264,17 +264,17 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']); ?>
 
-		<tr class="main_table_row_active">
-			<td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a></td>
-			<td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->ip; ?></a></td>
-			<td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->rdns; ?></a></td>
-			<td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->number_of_certs; ?></a></td>
-			<td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
-			<td class="main_table_cell_active"><?php echo $per_cert; ?></td>
-		</tr><?php
+        <tr class="main_table_row_active">
+            <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a></td>
+            <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->ip; ?></a></td>
+            <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->rdns; ?></a></td>
+            <td class="main_table_cell_active"><a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->number_of_certs; ?></a></td>
+            <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
+            <td class="main_table_cell_active"><?php echo $per_cert; ?></td>
+        </tr><?php
 
-	}
-		?>
+    }
+        ?>
     </table><?php
 
 }

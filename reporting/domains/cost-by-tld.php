@@ -71,30 +71,30 @@ $reporting = new DomainMOD\Reporting();
 $range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_date, $new_end_date);
 
 $sql = "SELECT d.tld, SUM(d.total_cost * cc.conversion) as total_cost, count(*) AS number_of_domains
-		FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
-		WHERE d.fee_id = f.id
-		  AND f.currency_id = c.id
-		  AND c.id = cc.currency_id
-		  AND d.active NOT IN ('0', '10')
-		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-		  " . $range_string . "
-		GROUP BY d.tld
-		ORDER BY d.tld";
+        FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
+        WHERE d.fee_id = f.id
+          AND f.currency_id = c.id
+          AND c.id = cc.currency_id
+          AND d.active NOT IN ('0', '10')
+          AND cc.user_id = '" . $_SESSION['user_id'] . "'
+          " . $range_string . "
+        GROUP BY d.tld
+        ORDER BY d.tld";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) as grand_total, count(*) AS number_of_domains_total
-					FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
-					WHERE d.fee_id = f.id
-					  AND f.currency_id = c.id
-					  AND c.id = cc.currency_id
-					  AND d.active NOT IN ('0', '10')
-					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-					  " . $range_string . "";
+                    FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
+                    WHERE d.fee_id = f.id
+                      AND f.currency_id = c.id
+                      AND c.id = cc.currency_id
+                      AND d.active NOT IN ('0', '10')
+                      AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                      " . $range_string . "";
 $result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
-	$grand_total = $row_grand_total->grand_total;
-	$number_of_domains_total = $row_grand_total->number_of_domains_total;
+    $grand_total = $row_grand_total->grand_total;
+    $number_of_domains_total = $row_grand_total->number_of_domains_total;
 }
 
 $grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbol'],
@@ -102,9 +102,9 @@ $grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbo
 
 if ($submission_failed != "1" && $total_rows > 0) {
 
-	if ($export_data == "1") {
+    if ($export_data == "1") {
 
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $export = new DomainMOD\Export();
 
@@ -162,9 +162,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
         if (mysqli_num_rows($result) > 0) {
 
-			while ($row = mysqli_fetch_object($result)) {
+            while ($row = mysqli_fetch_object($result)) {
 
-				$per_domain = $row->total_cost / $row->number_of_domains;
+            	$per_domain = $row->total_cost / $row->number_of_domains;
 
                 $per_domain = $currency->format($per_domain, $_SESSION['default_currency_symbol'],
                     $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
@@ -182,7 +182,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
             }
 
-		}
+        }
 
         $export->closeFile($export_file);
         exit;
@@ -215,12 +215,12 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
 
-	<BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
-	<BR>
+    <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
+    <BR>
     <?php if ($all != "1") { ?>
-	    <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
+        <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
     <?php } else { ?>
-	    <strong>Date Range:</strong> ALL<BR><BR>
+        <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
 
     <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
@@ -237,10 +237,10 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         <font class="main_table_heading">Per Domain</font></td>
     </tr>
 
-	<?php
-	while ($row = mysqli_fetch_object($result)) {
+    <?php
+    while ($row = mysqli_fetch_object($result)) {
 
-		$per_domain = $row->total_cost / $row->number_of_domains;
+        $per_domain = $row->total_cost / $row->number_of_domains;
 
         $per_domain = $currency->format($per_domain, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
@@ -248,15 +248,15 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']); ?>
 
-		<tr class="main_table_row_active">
-			<td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?tld=<?php echo $row->tld; ?>">.<?php echo $row->tld; ?></a></td>
-			<td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?tld=<?php echo $row->tld; ?>"><?php echo $row->number_of_domains; ?></a></td>
-			<td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
-			<td class="main_table_cell_active"><?php echo $per_domain; ?></td>
-		</tr><?php
+        <tr class="main_table_row_active">
+            <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?tld=<?php echo $row->tld; ?>">.<?php echo $row->tld; ?></a></td>
+            <td class="main_table_cell_active"><a class="invisiblelink" href="../../domains.php?tld=<?php echo $row->tld; ?>"><?php echo $row->number_of_domains; ?></a></td>
+            <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
+            <td class="main_table_cell_active"><?php echo $per_domain; ?></td>
+        </tr><?php
 
-	}
-		?>
+    }
+        ?>
     </table><?php
 
 }

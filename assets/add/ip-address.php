@@ -48,7 +48,7 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_name != '' && $new_ip != '') {
+    if ($new_name != '' && $new_ip != '') {
 
         $query = "INSERT INTO ip_addresses
                   (`name`, ip, rdns, notes, insert_time)
@@ -69,15 +69,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['result_message'] = "IP Address <font class=\"highlight\">" . $new_name . " (" . $new_ip . ")</font>
             Added<BR>";
 
-		header("Location: ../ip-addresses.php");
-		exit;
+        header("Location: ../ip-addresses.php");
+        exit;
 
-	} else {
+    } else {
 
-		if ($new_name == '') { $_SESSION['result_message'] .= "Please enter a name for the IP address<BR>"; }
-		if ($new_ip == '') { $_SESSION['result_message'] .= "Please enter the IP address<BR>"; }
+        if ($new_name == '') { $_SESSION['result_message'] .= "Please enter a name for the IP address<BR>"; }
+        if ($new_ip == '') { $_SESSION['result_message'] .= "Please enter the IP address<BR>"; }
 
-	}
+    }
 
 }
 ?>

@@ -21,33 +21,33 @@
 ?>
 <style type="text/css">
 body {
-	background-color: #FFFFFF;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	color: #000000;
-	font-size: 8pt;
+    background-color: #FFFFFF;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    color: #000000;
+    font-size: 8pt;
 }
 a:link {
-	font-weight: bold;
-	color: #0066FF;
-	text-decoration: none;
+    font-weight: bold;
+    color: #0066FF;
+    text-decoration: none;
 }
 a:visited {
-	font-weight: bold;
-	color: #0066FF;
-	text-decoration: none;
+    font-weight: bold;
+    color: #0066FF;
+    text-decoration: none;
 }
 a:hover {
-	font-weight: bold;
-	color: #CC0000;
-	text-decoration: none;
+    font-weight: bold;
+    color: #CC0000;
+    text-decoration: none;
 }
 a:active {
-	font-weight: bold;
-	color: #0066FF;
-	text-decoration: none;
+    font-weight: bold;
+    color: #0066FF;
+    text-decoration: none;
 }
 font.highlight {
-	color: #CC0000;
+    color: #CC0000;
 }
 </style>
 <link rel="icon" type="image/ico" href="<?php echo $web_root; ?>/images/favicon.ico"/>

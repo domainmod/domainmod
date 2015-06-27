@@ -47,7 +47,7 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_host != "" && $new_url != "") {
+    if ($new_host != "" && $new_url != "") {
 
         $query = "INSERT INTO hosting
                   (`name`, url, notes, insert_time)
@@ -67,15 +67,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['result_message'] = "Web Host <font class=\"highlight\">" . $new_host . "</font> Added<BR>";
 
-		header("Location: ../hosting.php");
-		exit;
+        header("Location: ../hosting.php");
+        exit;
 
-	} else {
+    } else {
 
-		if ($new_host == "") $_SESSION['result_message'] .= "Please enter the web host name<BR>";
-		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the web host's URL<BR>";
+        if ($new_host == "") $_SESSION['result_message'] .= "Please enter the web host name<BR>";
+        if ($new_url == "") $_SESSION['result_message'] .= "Please enter the web host's URL<BR>";
 
-	}
+    }
 
 }
 ?>

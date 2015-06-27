@@ -44,10 +44,10 @@ $segid = $_GET['segid'];
 $export_data = $_GET['export_data'];
 
 $sql = "SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.insert_time, s.update_time, sd.domain
-		FROM segments AS s, segment_data AS sd
-		WHERE s.id = sd.segment_id
-		GROUP BY s.id
-		ORDER BY s.name ASC, sd.domain ASC";
+        FROM segments AS s, segment_data AS sd
+        WHERE s.id = sd.segment_id
+        GROUP BY s.id
+        ORDER BY s.name ASC, sd.domain ASC";
 
 if ($export_data == "1") {
 
@@ -213,8 +213,8 @@ Segment filters will tell you which domains match with domains that are saved in
 [<a href="segments.php?export_data=1">EXPORT</a>]
 <?php
 $sql_segment_check = "SELECT id
-					  FROM segments
-					  LIMIT 1";
+                      FROM segments
+                      LIMIT 1";
 $result_segment_check = mysqli_query($connection, $sql_segment_check) or $error->outputOldSqlError($connection);
 if (mysqli_num_rows($result_segment_check) == 0) {
     ?>

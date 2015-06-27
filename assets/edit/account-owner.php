@@ -53,7 +53,7 @@ $new_oid = $_POST['new_oid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_owner != "") {
+    if ($new_owner != "") {
 
         $query = "UPDATE owners
                   SET `name` = ?,
@@ -74,16 +74,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $oid = $new_oid;
 
-		$_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Updated<BR>";
+        $_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Updated<BR>";
 
-		header("Location: ../account-owners.php");
-		exit;
+        header("Location: ../account-owners.php");
+        exit;
 
-	} else {
+    } else {
 
-		$_SESSION['result_message'] = "Please enter the owner's name<BR>";
+        $_SESSION['result_message'] = "Please enter the owner's name<BR>";
 
-	}
+    }
 
 } else {
 
@@ -200,7 +200,7 @@ if ($del == "1") {
                 deleted<BR>";
         }
 
-		if ($existing_domains > 0) {
+        if ($existing_domains > 0) {
             $_SESSION['result_message'] .= "This Owner has domains associated with it and cannot be deleted<BR>";
         }
 
@@ -208,17 +208,17 @@ if ($del == "1") {
             $_SESSION['result_message'] .= "This Owner has SSL accounts associated with it and cannot be deleted<BR>";
         }
 
-		if ($existing_ssl_certs > 0) {
+        if ($existing_ssl_certs > 0) {
             $_SESSION['result_message'] .= "This Owner has SSL certificates associated with it and cannot be
                 deleted<BR>";
         }
 
-	} else {
+    } else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Owner?<BR><BR><a
+        $_SESSION['result_message'] = "Are you sure you want to delete this Owner?<BR><BR><a
             href=\"account-owner.php?oid=$oid&really_del=1\">YES, REALLY DELETE THIS OWNER</a><BR>";
 
-	}
+    }
 
 }
 
@@ -238,8 +238,8 @@ if ($really_del == "1") {
 
     $_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Deleted<BR>";
 
-	header("Location: ../account-owners.php");
-	exit;
+    header("Location: ../account-owners.php");
+    exit;
 
 }
 ?>

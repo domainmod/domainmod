@@ -44,13 +44,13 @@ $_SESSION['result_message'] .= $result_message;
 
 if ($_SESSION['installation_mode'] == '1') {
 
-	$page_title = "";
-	$software_section = "installation";
+    $page_title = "";
+    $software_section = "installation";
 
 } else {
 
-	$page_title = "";
-	$software_section = "login";
+    $page_title = "";
+    $software_section = "login";
 
 }
 
@@ -245,19 +245,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 } else {
 
 
-	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-		if ($new_username == "" && $new_password == "") {
+        if ($new_username == "" && $new_password == "") {
 
-			$_SESSION['result_message'] .= "Enter your username & password<BR>";
+            $_SESSION['result_message'] .= "Enter your username & password<BR>";
 
-		} elseif ($new_username == "" || $new_password == "") {
+        } elseif ($new_username == "" || $new_password == "") {
 
-			if ($new_username == "") $_SESSION['result_message'] .= "Enter your username<BR>";
-			if ($new_password == "") $_SESSION['result_message'] .= "Enter your password<BR>";
+            if ($new_username == "") $_SESSION['result_message'] .= "Enter your username<BR>";
+            if ($new_password == "") $_SESSION['result_message'] .= "Enter your password<BR>";
 
-		}
-	}
+        }
+    }
 
 }
 $new_password = "";
@@ -267,17 +267,17 @@ $new_password = "";
 <head>
 <?php
 if ($page_title != "") { ?>
-	<title><?php echo $system->pageTitle($software_title, $page_title); ?></title><?php
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title><?php
 } else { ?>
-	<title><?php echo $software_title; ?></title><?php
+    <title><?php echo $software_title; ?></title><?php
 } ?>
 <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
 <?php
 if ($new_username == "") { ?>
-	<body onLoad="document.forms[0].elements[0].focus()";><?php
+    <body onLoad="document.forms[0].elements[0].focus()";><?php
 } else { ?>
-	<body onLoad="document.forms[0].elements[1].focus()";><?php
+    <body onLoad="document.forms[0].elements[1].focus()";><?php
 } ?>
 <?php include(DIR_INC . "layout/header-login.inc.php"); ?>
 <?php
@@ -285,7 +285,7 @@ if ($_SESSION['installation_mode'] == '0') { ?>
 
     <BR>
     <form name="login_form" method="post">
-		<?php if ($demo_install == "1") { ?><div align="center"><strong>Demo Username & Password:</strong> "demo"</div><BR><BR><?php } ?>
+        <?php if ($demo_install == "1") { ?><div align="center"><strong>Demo Username & Password:</strong> "demo"</div><BR><BR><?php } ?>
         <div class="login_form">
             <strong>Username:</strong>&nbsp;
             <input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>

@@ -50,23 +50,23 @@ $all = (integer) urlencode($_GET['all']);
 
 if ($all == "1") {
 
-	$sql = "SELECT r.id, r.name AS registrar, f.id AS fee_id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
-			FROM registrars AS r, fees AS f, currencies AS c
-			WHERE r.id = f.registrar_id
-			  AND f.currency_id = c.id
-			GROUP BY r.name, f.tld
-			ORDER BY r.name, f.tld";
+    $sql = "SELECT r.id, r.name AS registrar, f.id AS fee_id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
+            FROM registrars AS r, fees AS f, currencies AS c
+            WHERE r.id = f.registrar_id
+              AND f.currency_id = c.id
+            GROUP BY r.name, f.tld
+            ORDER BY r.name, f.tld";
 
 } else {
 
-	$sql = "SELECT r.id, r.name AS registrar, d.tld, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
-			FROM registrars AS r, domains AS d, fees AS f, currencies AS c
-			WHERE r.id = d.registrar_id
-			  AND d.fee_id = f.id
-			  AND f.currency_id = c.id
-			  AND d.active NOT IN ('0', '10')
-			GROUP BY r.name, d.tld
-			ORDER BY r.name, d.tld";
+    $sql = "SELECT r.id, r.name AS registrar, d.tld, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
+            FROM registrars AS r, domains AS d, fees AS f, currencies AS c
+            WHERE r.id = d.registrar_id
+              AND d.fee_id = f.id
+              AND f.currency_id = c.id
+              AND d.active NOT IN ('0', '10')
+            GROUP BY r.name, d.tld
+            ORDER BY r.name, d.tld";
 
 }
 
@@ -75,9 +75,9 @@ $total_rows = mysqli_num_rows($result);
 
 if ($total_rows > 0) {
 
-	if ($export_data == "1") {
+    if ($export_data == "1") {
 
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $export = new DomainMOD\Export();
 
@@ -125,16 +125,16 @@ if ($total_rows > 0) {
         $export->writeRow($export_file, $row_contents);
 
         $new_registrar = "";
-		$last_registrar = "";
-		$new_tld = "";
-		$last_tld = "";
+        $last_registrar = "";
+        $new_tld = "";
+        $last_tld = "";
 
-		if (mysqli_num_rows($result) > 0) {
+        if (mysqli_num_rows($result) > 0) {
 
-			while ($row = mysqli_fetch_object($result)) {
+            while ($row = mysqli_fetch_object($result)) {
 
-				$new_registrar = $row->registrar;
-				$new_tld = $row->tld;
+            	$new_registrar = $row->registrar;
+            	$new_tld = $row->tld;
 
                 $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
                     $row->symbol_space);
@@ -155,36 +155,36 @@ if ($total_rows > 0) {
                 $count = 0;
 
                 $row_contents[$count++] = $row->registrar;
-				$row_contents[$count++] = '.' . $row->tld;
-				$row_contents[$count++] = $row->initial_fee;
-				$row_contents[$count++] = $row->renewal_fee;
+            	$row_contents[$count++] = '.' . $row->tld;
+            	$row_contents[$count++] = $row->initial_fee;
+            	$row_contents[$count++] = $row->renewal_fee;
                 $row_contents[$count++] = $row->transfer_fee;
                 $row_contents[$count++] = $row->privacy_fee;
                 $row_contents[$count++] = $row->misc_fee;
-				$row_contents[$count++] = $row->currency;
+            	$row_contents[$count++] = $row->currency;
 
-				$sql_domain_count = "SELECT count(*) AS total_domain_count
-									 FROM domains
-									 WHERE registrar_id = '" . $row->id . "'
-									   AND fee_id = '" . $row->fee_id . "'
-									   AND active NOT IN ('0', '10')";
-				$result_domain_count = mysqli_query($connection, $sql_domain_count);
+            	$sql_domain_count = "SELECT count(*) AS total_domain_count
+                                     FROM domains
+                                     WHERE registrar_id = '" . $row->id . "'
+                                       AND fee_id = '" . $row->fee_id . "'
+                                       AND active NOT IN ('0', '10')";
+            	$result_domain_count = mysqli_query($connection, $sql_domain_count);
 
-				while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
+            	while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
 
-					$row_contents[$count++] = $row_domain_count->total_domain_count;
+                    $row_contents[$count++] = $row_domain_count->total_domain_count;
 
-				}
+            	}
 
-				$row_contents[$count++] = $row->insert_time;
-				$row_contents[$count++] = $row->update_time;
+            	$row_contents[$count++] = $row->insert_time;
+            	$row_contents[$count++] = $row->update_time;
                 $export->writeRow($export_file, $row_contents);
 
                 $last_registrar = $row->registrar;
 
-			}
+            }
 
-		}
+        }
 
         $export->closeFile($export_file);
         exit;

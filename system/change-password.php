@@ -100,17 +100,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-		if ($new_password == "" && $new_password_confirmation == "") {
+        if ($new_password == "" && $new_password_confirmation == "") {
 
-			$_SESSION['result_message'] .= "Your passwords were left blank<BR>";
+            $_SESSION['result_message'] .= "Your passwords were left blank<BR>";
 
-		} else {
+        } else {
 
-			$_SESSION['result_message'] .= "Your passwords didn't match<BR>";
+            $_SESSION['result_message'] .= "Your passwords didn't match<BR>";
 
-		}
+        }
 
-	}
+    }
 }
 ?>
 <?php echo $system->doctype(); ?>

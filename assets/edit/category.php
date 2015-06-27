@@ -54,7 +54,7 @@ $new_pcid = $_REQUEST['new_pcid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_category != "") {
+    if ($new_category != "") {
 
         $query = "UPDATE categories
                   SET `name` = ?,
@@ -76,16 +76,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $pcid = $new_pcid;
 
-		$_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Updated<BR>";
+        $_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Updated<BR>";
 
-		header("Location: ../categories.php");
-		exit;
+        header("Location: ../categories.php");
+        exit;
 
-	} else {
+    } else {
 
-		$_SESSION['result_message'] = "Please enter the category name<BR>";
+        $_SESSION['result_message'] = "Please enter the category name<BR>";
 
-	}
+    }
 
 } else {
 
@@ -154,8 +154,8 @@ if ($really_del == "1") {
 
     $_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Deleted<BR>";
 
-	header("Location: ../categories.php");
-	exit;
+    header("Location: ../categories.php");
+    exit;
 
 }
 ?>

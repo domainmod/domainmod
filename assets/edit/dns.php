@@ -73,20 +73,20 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_name != "" && $new_dns1 != "" && $new_dns2 != "") {
+    if ($new_name != "" && $new_dns1 != "" && $new_dns2 != "") {
 
-		$new_number_of_servers = 10;
+        $new_number_of_servers = 10;
 
-		if ($new_dns10 == '') { $new_number_of_servers = '9'; }
-		if ($new_dns9 == '') { $new_number_of_servers = '8'; }
-		if ($new_dns8 == '') { $new_number_of_servers = '7'; }
-		if ($new_dns7 == '') { $new_number_of_servers = '6'; }
-		if ($new_dns6 == '') { $new_number_of_servers = '5'; }
-		if ($new_dns5 == '') { $new_number_of_servers = '4'; }
-		if ($new_dns4 == '') { $new_number_of_servers = '3'; }
-		if ($new_dns3 == '') { $new_number_of_servers = '2'; }
-		if ($new_dns2 == '') { $new_number_of_servers = '1'; }
-		if ($new_dns1 == '') { $new_number_of_servers = '0'; }
+        if ($new_dns10 == '') { $new_number_of_servers = '9'; }
+        if ($new_dns9 == '') { $new_number_of_servers = '8'; }
+        if ($new_dns8 == '') { $new_number_of_servers = '7'; }
+        if ($new_dns7 == '') { $new_number_of_servers = '6'; }
+        if ($new_dns6 == '') { $new_number_of_servers = '5'; }
+        if ($new_dns5 == '') { $new_number_of_servers = '4'; }
+        if ($new_dns4 == '') { $new_number_of_servers = '3'; }
+        if ($new_dns3 == '') { $new_number_of_servers = '2'; }
+        if ($new_dns2 == '') { $new_number_of_servers = '1'; }
+        if ($new_dns1 == '') { $new_number_of_servers = '0'; }
 
         $query = "UPDATE dns
                   SET `name` = ?,
@@ -131,18 +131,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $dnsid = $new_dnsid;
 
-		$_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Updated<BR>";
+        $_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Updated<BR>";
 
-		header("Location: ../dns.php");
-		exit;
+        header("Location: ../dns.php");
+        exit;
 
-	} else {
+    } else {
 
-		if ($new_name == "") $_SESSION['result_message'] .= "Please enter a name for the DNS profile<BR>";
-		if ($new_dns1 == "") $_SESSION['result_message'] .= "Please enter the first DNS server<BR>";
-		if ($new_dns2 == "") $_SESSION['result_message'] .= "Please enter the second DNS server<BR>";
+        if ($new_name == "") $_SESSION['result_message'] .= "Please enter a name for the DNS profile<BR>";
+        if ($new_dns1 == "") $_SESSION['result_message'] .= "Please enter the first DNS server<BR>";
+        if ($new_dns2 == "") $_SESSION['result_message'] .= "Please enter the second DNS server<BR>";
 
-	}
+    }
 
 } else {
 
@@ -213,8 +213,8 @@ if ($really_del == "1") {
 
     $_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Deleted<BR>";
 
-	header("Location: ../dns.php");
-	exit;
+    header("Location: ../dns.php");
+    exit;
 
 }
 ?>
@@ -233,127 +233,127 @@ if ($really_del == "1") {
     echo htmlentities($new_name); ?>">
 <BR><BR>
 <table class="dns_table">
-	<tr>
+    <tr>
     	<td class="dns_table_left">
             <strong>DNS Server 1</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
                 </font></a><BR><BR>
             <input name="new_dns1" type="text" size="28" maxlength="255" value="<?php if ($new_dns1 != "")
                 echo $new_dns1; ?>">
-		</td>
+        </td>
         <td class="dns_table_right">
             <strong>IP Address 1</strong><BR><BR>
         	<input name="new_ip1" type="text" size="28" maxlength="255" value="<?php if ($new_ip1 != "")
                 echo $new_ip1; ?>">
-		</td>
+        </td>
     </tr>
-	<tr>
+    <tr>
     	<td class="dns_table_left">
             <strong>DNS Server 2</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
                 </font></a><BR><BR>
             <input name="new_dns2" type="text" size="28" maxlength="255" value="<?php if ($new_dns2 != "")
                 echo $new_dns2; ?>">
-		</td>
+        </td>
         <td class="dns_table_right">
             <strong>IP Address 2</strong><BR><BR>
         	<input name="new_ip2" type="text" size="28" maxlength="255" value="<?php if ($new_ip2 != "")
                 echo $new_ip2; ?>">
-		</td>
+        </td>
     </tr>
-	<tr>
+    <tr>
     	<td class="dns_table_left">
             <strong>DNS Server 3</strong><BR><BR>
             <input name="new_dns3" type="text" size="28" maxlength="255" value="<?php if ($new_dns3 != "")
                 echo $new_dns3; ?>">
-		</td>
+        </td>
         <td class="dns_table_right">
             <strong>IP Address 3</strong><BR><BR>
         	<input name="new_ip3" type="text" size="28" maxlength="255" value="<?php if ($new_ip3 != "")
                 echo $new_ip3; ?>">
-		</td>
+        </td>
     </tr>
-	<tr>
+    <tr>
     	<td class="dns_table_left">
             <strong>DNS Server 4</strong><BR><BR>
             <input name="new_dns4" type="text" size="28" maxlength="255" value="<?php if ($new_dns4 != "")
                 echo $new_dns4; ?>">
-		</td>
+        </td>
         <td class="dns_table_right">
             <strong>IP Address 4</strong><BR><BR>
         	<input name="new_ip4" type="text" size="28" maxlength="255" value="<?php if ($new_ip4 != "")
                 echo $new_ip4; ?>">
-		</td>
+        </td>
     </tr>
-	<tr>
+    <tr>
     	<td class="dns_table_left">
             <strong>DNS Server 5</strong><BR><BR>
             <input name="new_dns5" type="text" size="28" maxlength="255" value="<?php if ($new_dns5 != "")
                 echo $new_dns5; ?>">
-		</td>
+        </td>
         <td class="dns_table_right">
             <strong>IP Address 5</strong><BR><BR>
         	<input name="new_ip5" type="text" size="28" maxlength="255" value="<?php if ($new_ip5 != "")
                 echo $new_ip5; ?>">
-		</td>
+        </td>
     </tr>
-	<tr>
+    <tr>
     	<td class="dns_table_left">
             <strong>DNS Server 6</strong><BR><BR>
             <input name="new_dns6" type="text" size="28" maxlength="255" value="<?php if ($new_dns6 != "")
                 echo $new_dns6; ?>">
-		</td>
+        </td>
         <td class="dns_table_right">
             <strong>IP Address 6</strong><BR><BR>
         	<input name="new_ip6" type="text" size="28" maxlength="255" value="<?php if ($new_ip6 != "")
                 echo $new_ip6; ?>">
-		</td>
+        </td>
     </tr>
-	<tr>
+    <tr>
     	<td class="dns_table_left">
             <strong>DNS Server 7</strong><BR><BR>
             <input name="new_dns7" type="text" size="28" maxlength="255" value="<?php if ($new_dns7 != "")
                 echo $new_dns7; ?>">
-		</td>
+        </td>
         <td class="dns_table_right">
             <strong>IP Address 7</strong><BR><BR>
         	<input name="new_ip7" type="text" size="28" maxlength="255" value="<?php if ($new_ip7 != "")
                 echo $new_ip7; ?>">
-		</td>
+        </td>
     </tr>
-	<tr>
+    <tr>
     	<td class="dns_table_left">
             <strong>DNS Server 8</strong><BR><BR>
             <input name="new_dns8" type="text" size="28" maxlength="255" value="<?php if ($new_dns8 != "")
                 echo $new_dns8; ?>">
-		</td>
+        </td>
         <td class="dns_table_right">
             <strong>IP Address 8</strong><BR><BR>
         	<input name="new_ip8" type="text" size="28" maxlength="255" value="<?php if ($new_ip8 != "")
                 echo $new_ip8; ?>">
-		</td>
+        </td>
     </tr>
-	<tr>
+    <tr>
     	<td class="dns_table_left">
             <strong>DNS Server 9</strong><BR><BR>
             <input name="new_dns9" type="text" size="28" maxlength="255" value="<?php if ($new_dns9 != "")
                 echo $new_dns9; ?>">
-		</td>
+        </td>
         <td class="dns_table_right">
             <strong>IP Address 9</strong><BR><BR>
         	<input name="new_ip9" type="text" size="28" maxlength="255" value="<?php if ($new_ip9 != "")
                 echo $new_ip9; ?>">
-		</td>
+        </td>
     </tr>
-	<tr>
+    <tr>
     	<td class="dns_table_left">
             <strong>DNS Server 10</strong><BR><BR>
             <input name="new_dns10" type="text" size="28" maxlength="255" value="<?php if ($new_dns10 != "")
                 echo $new_dns10; ?>">
-		</td>
+        </td>
         <td class="dns_table_right">
             <strong>IP Address 10</strong><BR><BR>
         	<input name="new_ip10" type="text" size="28" maxlength="255" value="<?php if ($new_ip10 != "")
                 echo $new_ip10; ?>">
-		</td>
+        </td>
     </tr>
 </table>
 <strong>Notes</strong><BR><BR>

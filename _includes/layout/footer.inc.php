@@ -19,11 +19,11 @@
  *
  */
 ?>
-		</div>
-	</div>
+        </div>
+    </div>
 
     <div class="footer-container">
-	    <?php echo $software_title; ?> is open source software released under the <a target="_blank" class="invisiblelink" href="http://www.gnu.org/licenses/">GNU/GPL License</a><br>
+        <?php echo $software_title; ?> is open source software released under the <a target="_blank" class="invisiblelink" href="http://www.gnu.org/licenses/">GNU/GPL License</a><br>
         To obtain your own copy of the <?php echo $software_title . " software <a target=\"_blank\" class=\"invisiblelink\" href=\"" . $code_home_url . "\">click here</a><BR>"; ?>
         Created by <a target="_blank" class="invisiblelink" href="http://chetcuti.com">Greg Chetcuti</a><BR><BR>
         <a target="_blank" href="http://www.gnu.org/licenses/"><img border="0" width="88" height="31" src="<?php echo $web_root; ?>/images/gpl_logo.png" /></a>

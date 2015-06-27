@@ -59,147 +59,147 @@ $new_is_active = $_POST['new_is_active'];
 $new_uid = $_POST['new_uid'];
 
 $sql = "SELECT username
-		FROM users
-		WHERE id = '" . $uid . "'";
+        FROM users
+        WHERE id = '" . $uid . "'";
 $result = mysqli_query($connection, $sql);
 
 while ($row = mysqli_fetch_object($result)) {
 
-	if ($row->username == "admin" && $_SESSION['username'] != "admin") {
+    if ($row->username == "admin" && $_SESSION['username'] != "admin") {
 
-		$_SESSION['result_message'] .= "You're trying to edit an invalid user<BR>";
+        $_SESSION['result_message'] .= "You're trying to edit an invalid user<BR>";
 
-		header("Location: ../users.php");
-		exit;
+        header("Location: ../users.php");
+        exit;
 
-	}
+    }
 
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != "" && $new_email_address != "") {
 
-	// Check to see if another user already has the username
-	$sql = "SELECT username
-			FROM users
-			WHERE username = '" . mysqli_real_escape_string($connection, $new_username) . "'
-			AND id != '" . $new_uid . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	$is_username_taken = mysqli_num_rows($result);
-	if ($is_username_taken > 0) { $invalid_username = 1; $new_username = ""; }
+    // Check to see if another user already has the username
+    $sql = "SELECT username
+            FROM users
+            WHERE username = '" . mysqli_real_escape_string($connection, $new_username) . "'
+            AND id != '" . $new_uid . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $is_username_taken = mysqli_num_rows($result);
+    if ($is_username_taken > 0) { $invalid_username = 1; $new_username = ""; }
 
-	// Make sure they aren't trying to assign a reserved username
-	if ($new_username == "admin" || $new_username == "administrator") {
+    // Make sure they aren't trying to assign a reserved username
+    if ($new_username == "admin" || $new_username == "administrator") {
 
-		$sql = "SELECT username
-				FROM users
-				WHERE username = '" . mysqli_real_escape_string($connection, $new_username) . "'
-				AND id = '" . $new_uid . "'";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-		$is_it_my_username = mysqli_num_rows($result);
+        $sql = "SELECT username
+            	FROM users
+            	WHERE username = '" . mysqli_real_escape_string($connection, $new_username) . "'
+            	AND id = '" . $new_uid . "'";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $is_it_my_username = mysqli_num_rows($result);
 
-		if ($is_it_my_username == 0) {
+        if ($is_it_my_username == 0) {
 
-			$invalid_username = 1;
-			$new_username = "";
+            $invalid_username = 1;
+            $new_username = "";
 
-		}
+        }
 
-	}
+    }
 
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != "" && $new_email_address != "" && $invalid_username != 1) {
 
-	$sql = "UPDATE users
-			SET first_name = '" . mysqli_real_escape_string($connection, $new_first_name). "',
-				last_name = '" . mysqli_real_escape_string($connection, $new_last_name). "',
-				username = '" . mysqli_real_escape_string($connection, $new_username) . "',
-				email_address = '" . mysqli_real_escape_string($connection, $new_email_address) . "',
-				admin = '" . $new_is_admin . "',
-				active = '" . $new_is_active . "',
-				update_time = '" . $time->time() . "'
-			WHERE id = '" . $new_uid . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $sql = "UPDATE users
+            SET first_name = '" . mysqli_real_escape_string($connection, $new_first_name). "',
+            	last_name = '" . mysqli_real_escape_string($connection, $new_last_name). "',
+            	username = '" . mysqli_real_escape_string($connection, $new_username) . "',
+            	email_address = '" . mysqli_real_escape_string($connection, $new_email_address) . "',
+            	admin = '" . $new_is_admin . "',
+            	active = '" . $new_is_active . "',
+            	update_time = '" . $time->time() . "'
+            WHERE id = '" . $new_uid . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-	$_SESSION['result_message'] .= "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</font> Updated<BR>";
+    $_SESSION['result_message'] .= "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</font> Updated<BR>";
 
-	if ($_SESSION['username'] == $new_username) {
+    if ($_SESSION['username'] == $new_username) {
 
-		$_SESSION['first_name'] = $new_first_name;
-		$_SESSION['last_name'] = $new_last_name;
-		$_SESSION['email_address'] = $new_email_address;
+        $_SESSION['first_name'] = $new_first_name;
+        $_SESSION['last_name'] = $new_last_name;
+        $_SESSION['email_address'] = $new_email_address;
 
-	}
+    }
 
-	header("Location: ../users.php");
-	exit;
+    header("Location: ../users.php");
+    exit;
 
 } else {
 
-	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-		if ($invalid_username == 1 || $new_username == "") $_SESSION['result_message'] .= "You have entered an invalid username<BR>";
-		if ($new_first_name == "") $_SESSION['result_message'] .= "Enter the user's first name<BR>";
-		if ($new_last_name == "") $_SESSION['result_message'] .= "Enter the user's last name<BR>";
-		if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the user's email address<BR>";
+        if ($invalid_username == 1 || $new_username == "") $_SESSION['result_message'] .= "You have entered an invalid username<BR>";
+        if ($new_first_name == "") $_SESSION['result_message'] .= "Enter the user's first name<BR>";
+        if ($new_last_name == "") $_SESSION['result_message'] .= "Enter the user's last name<BR>";
+        if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the user's email address<BR>";
 
-	} else {
+    } else {
 
-		$sql = "SELECT first_name, last_name, username, email_address, admin, active
-				FROM users
-				WHERE id = '" . $uid . "'";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $sql = "SELECT first_name, last_name, username, email_address, admin, active
+            	FROM users
+            	WHERE id = '" . $uid . "'";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-		while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-			$new_first_name = $row->first_name;
-			$new_last_name = $row->last_name;
-			$new_username = $row->username;
-			$new_email_address = $row->email_address;
-			$new_is_admin = $row->admin;
-			$new_is_active = $row->active;
+            $new_first_name = $row->first_name;
+            $new_last_name = $row->last_name;
+            $new_username = $row->username;
+            $new_email_address = $row->email_address;
+            $new_is_admin = $row->admin;
+            $new_is_active = $row->active;
 
-		}
+        }
 
-	}
+    }
 }
 if ($del == "1") {
 
-	$_SESSION['result_message'] = "Are you sure you want to delete this User?<BR><BR><a href=\"user.php?uid=" . $uid . "&really_del=1\">YES, REALLY DELETE THIS USER</a><BR>";
+    $_SESSION['result_message'] = "Are you sure you want to delete this User?<BR><BR><a href=\"user.php?uid=" . $uid . "&really_del=1\">YES, REALLY DELETE THIS USER</a><BR>";
 
 }
 
 if ($really_del == "1") {
 
-	$sql = "SELECT id
-			FROM users
-			WHERE username = 'admin'";
-	$result = mysqli_query($connection, $sql);
-	while ($row = mysqli_fetch_object($result)) {
-		$temp_uid = $row->id;
-	}
+    $sql = "SELECT id
+            FROM users
+            WHERE username = 'admin'";
+    $result = mysqli_query($connection, $sql);
+    while ($row = mysqli_fetch_object($result)) {
+        $temp_uid = $row->id;
+    }
 
-	if ($uid == $temp_uid || $uid == $_SESSION['user_id']) {
+    if ($uid == $temp_uid || $uid == $_SESSION['user_id']) {
 
-		if ($uid == $temp_uid) $_SESSION['result_message'] = "The user <font class=\"highlight\">admin</font> cannot be deleted<BR>";
-		if ($uid == $_SESSION['user_id']) $_SESSION['result_message'] = "You can't delete yourself<BR>";
+        if ($uid == $temp_uid) $_SESSION['result_message'] = "The user <font class=\"highlight\">admin</font> cannot be deleted<BR>";
+        if ($uid == $_SESSION['user_id']) $_SESSION['result_message'] = "You can't delete yourself<BR>";
 
-	} else {
+    } else {
 
-		$sql = "DELETE FROM user_settings
-				WHERE user_id = '" . $uid . "'";
-		$result = mysqli_query($connection, $sql);
+        $sql = "DELETE FROM user_settings
+            	WHERE user_id = '" . $uid . "'";
+        $result = mysqli_query($connection, $sql);
 
-		$sql = "DELETE FROM users
-				WHERE id = '" . $uid . "'";
-		$result = mysqli_query($connection, $sql);
+        $sql = "DELETE FROM users
+            	WHERE id = '" . $uid . "'";
+        $result = mysqli_query($connection, $sql);
 
-		$_SESSION['result_message'] = "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</font> Deleted<BR>";
+        $_SESSION['result_message'] = "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</font> Deleted<BR>";
 
-		header("Location: ../users.php");
-		exit;
+        header("Location: ../users.php");
+        exit;
 
-	}
+    }
 
 }
 ?>
@@ -215,9 +215,9 @@ if ($really_del == "1") {
 <strong>First Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_first_name" type="text" size="50" maxlength="50" value="<?php if ($new_first_name != "") echo htmlentities($new_first_name); ?>"><BR><BR>
 <strong>Last Name (50)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_last_name" type="text" size="50" maxlength="50" value="<?php if ($new_last_name != "") echo htmlentities($new_last_name); ?>"><BR><BR>
 <?php if ($new_username == "admin" || $new_username == "administrator") { ?>
-	<strong>Username</strong><BR><BR><?php echo $new_username; ?><BR><BR>
+    <strong>Username</strong><BR><BR><?php echo $new_username; ?><BR><BR>
 <?php } else { ?>
-	<strong>Username (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_username" type="text" size="20" maxlength="30" value="<?php if ($new_username != "") echo htmlentities($new_username); ?>"><BR><BR>
+    <strong>Username (30)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_username" type="text" size="20" maxlength="30" value="<?php if ($new_username != "") echo htmlentities($new_username); ?>"><BR><BR>
 <?php } ?>
 <strong>Email Address (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR><input name="new_email_address" type="text" size="50" maxlength="100" value="<?php if ($new_email_address != "") echo htmlentities($new_email_address); ?>"><BR><BR>
 <?php if ($new_username == "admin" || $new_username == "administrator") { ?>

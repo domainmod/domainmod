@@ -43,17 +43,17 @@ $software_section = "dns";
 $export_data = $_GET['export_data'];
 
 $sql = "SELECT id, name, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, insert_time, update_time
-		FROM dns
-		WHERE id IN (SELECT dns_id
-					 FROM domains
-					 WHERE dns_id != '0'
-					   AND active NOT IN ('0','10')
-					   GROUP BY dns_id)
-		ORDER BY name, number_of_servers desc";
+        FROM dns
+        WHERE id IN (SELECT dns_id
+                     FROM domains
+                     WHERE dns_id != '0'
+                       AND active NOT IN ('0','10')
+                       GROUP BY dns_id)
+        ORDER BY name, number_of_servers desc";
 
 if ($export_data == "1") {
 
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dns_profile_list', strtotime($time->time()));
@@ -97,34 +97,34 @@ if ($export_data == "1") {
 
     if (mysqli_num_rows($result) > 0) {
 
-		$has_active = "1";
+        $has_active = "1";
 
-		while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-			$new_dnsid = $row->id;
+            $new_dnsid = $row->id;
 
-			if ($current_dnsid != $new_dnsid) {
-				$exclude_dns_string_raw .= "'" . $row->id . "', ";
-			}
+            if ($current_dnsid != $new_dnsid) {
+            	$exclude_dns_string_raw .= "'" . $row->id . "', ";
+            }
 
-			$sql_total_count = "SELECT count(*) AS total_count
-								FROM domains
-								WHERE dns_id = '" . $row->id . "'
-								  AND active NOT IN ('0', '10')";
-			$result_total_count = mysqli_query($connection, $sql_total_count);
-			while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-				$total_dns_count = $row_total_count->total_count;
-			}
+            $sql_total_count = "SELECT count(*) AS total_count
+                                FROM domains
+                                WHERE dns_id = '" . $row->id . "'
+                                  AND active NOT IN ('0', '10')";
+            $result_total_count = mysqli_query($connection, $sql_total_count);
+            while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+            	$total_dns_count = $row_total_count->total_count;
+            }
 
-			if ($row->id == $_SESSION['default_dns']) {
+            if ($row->id == $_SESSION['default_dns']) {
 
-				$is_default = "1";
+            	$is_default = "1";
 
-			} else {
+            } else {
 
-				$is_default = "";
+            	$is_default = "";
 
-			}
+            }
 
             $row_contents = array(
                 'Active',
@@ -160,44 +160,44 @@ if ($export_data == "1") {
 
             $current_dnsid = $row->id;
 
-		}
+        }
 
-	}
+    }
 
-	$exclude_dns_string = substr($exclude_dns_string_raw, 0, -2);
+    $exclude_dns_string = substr($exclude_dns_string_raw, 0, -2);
 
-	if ($exclude_dns_string == "") {
+    if ($exclude_dns_string == "") {
 
-		$sql = "SELECT id, name, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, insert_time, update_time
-				FROM dns
-				ORDER BY name, number_of_servers desc";
+        $sql = "SELECT id, name, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, insert_time, update_time
+            	FROM dns
+            	ORDER BY name, number_of_servers desc";
 
-	} else {
+    } else {
 
-		$sql = "SELECT id, name, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, insert_time, update_time
-				FROM dns
-				WHERE id NOT IN (" . $exclude_dns_string . ")
-				ORDER BY name, number_of_servers desc";
+        $sql = "SELECT id, name, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, insert_time, update_time
+            	FROM dns
+            	WHERE id NOT IN (" . $exclude_dns_string . ")
+            	ORDER BY name, number_of_servers desc";
 
-	}
+    }
 
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-	if (mysqli_num_rows($result) > 0) {
+    if (mysqli_num_rows($result) > 0) {
 
-		$has_inactive = "1";
+        $has_inactive = "1";
 
-		while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-			if ($row->id == $_SESSION['default_dns']) {
+            if ($row->id == $_SESSION['default_dns']) {
 
-				$is_default = "1";
+            	$is_default = "1";
 
-			} else {
+            } else {
 
-				$is_default = "";
+            	$is_default = "";
 
-			}
+            }
 
             $row_contents = array(
                 'Inactive',
@@ -233,7 +233,7 @@ if ($export_data == "1") {
 
         }
 
-	}
+    }
 
     $export->closeFile($export_file);
     exit;
@@ -255,8 +255,8 @@ $result = mysqli_query($connection, $sql);
 
 if (mysqli_num_rows($result) > 0) {
 
-	$has_active = "1"; ?>
-	<table class="main_table" cellpadding="0" cellspacing="0">
+    $has_active = "1"; ?>
+    <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
             <font class="main_table_heading">Active Profiles (<?php echo mysqli_num_rows($result); ?>)</font>
@@ -271,11 +271,11 @@ if (mysqli_num_rows($result) > 0) {
 
     while ($row = mysqli_fetch_object($result)) {
 
-	    $new_dnsid = $row->id;
+        $new_dnsid = $row->id;
 
         if ($current_dnsid != $new_dnsid) {
-			$exclude_dns_string_raw .= "'" . $row->id . "', ";
-		} ?>
+            $exclude_dns_string_raw .= "'" . $row->id . "', ";
+        } ?>
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
@@ -297,7 +297,7 @@ if (mysqli_num_rows($result) > 0) {
             </td>
         </tr><?php
 
-		$current_dnsid = $row->id;
+        $current_dnsid = $row->id;
 
     }
 
@@ -365,11 +365,11 @@ if ($_SESSION['display_inactive_assets'] != "1") { ?>
 }
 
 if ($has_active || $has_inactive) { ?>
-		<BR><font class="default_highlight">*</font> = Default DNS Profile<?php
+        <BR><font class="default_highlight">*</font> = Default DNS Profile<?php
 }
 
 if (!$has_active && !$has_inactive) { ?>
-		<BR>You don't currently have any DNS Profiles. <a href="add/dns.php">Click here to add one</a>.<?php
+        <BR>You don't currently have any DNS Profiles. <a href="add/dns.php">Click here to add one</a>.<?php
 } ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

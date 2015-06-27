@@ -48,11 +48,11 @@ $software_section = "registrar-fees-missing";
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 $sql = "SELECT r.id AS registrar_id, r.name AS registrar_name
-		FROM registrars r, domains d
-		WHERE r.id = d.registrar_id
-		  AND d.fee_id = '0'
-		GROUP BY r.name
-		ORDER BY r.name asc";
+        FROM registrars r, domains d
+        WHERE r.id = d.registrar_id
+          AND d.fee_id = '0'
+        GROUP BY r.name
+        ORDER BY r.name asc";
 $result = mysqli_query($connection, $sql);
 ?>
 The following Registrars/TLDs are missing Domain fees. In order to ensure your domain reporting is accurate please update these fees.<BR>
@@ -76,11 +76,11 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
             <td class="main_table_cell_active">
                 <?php
                 $sql_missing_tlds = "SELECT tld
-									 FROM domains
-									 WHERE registrar_id = '" . $row->registrar_id . "'
-									   AND fee_id = '0'
-									 GROUP BY tld
-									 ORDER BY tld asc";
+                                     FROM domains
+                                     WHERE registrar_id = '" . $row->registrar_id . "'
+                                       AND fee_id = '0'
+                                     GROUP BY tld
+                                     ORDER BY tld asc";
                 $result_missing_tlds = mysqli_query($connection, $sql_missing_tlds);
                 $full_tld_list = "";
 
@@ -96,7 +96,7 @@ The following Registrars/TLDs are missing Domain fees. In order to ensure your d
         </tr>
 
     <?php
-	} ?>
+    } ?>
 
 </table>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

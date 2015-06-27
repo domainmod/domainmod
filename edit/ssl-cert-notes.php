@@ -41,8 +41,8 @@ $software_section = "ssl-certs";
 $sslcid = $_GET['sslcid'];
 
 $sql = "SELECT name, notes
-		FROM ssl_certs
-		WHERE id = '$sslcid'";
+        FROM ssl_certs
+        WHERE id = '$sslcid'";
 $result = mysqli_query($connection, $sql);
 
 while ($row = mysqli_fetch_object($result)) {

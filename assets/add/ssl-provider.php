@@ -47,7 +47,7 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_ssl_provider != "" && $new_url != "") {
+    if ($new_ssl_provider != "" && $new_url != "") {
 
         $query = "INSERT INTO ssl_providers
                   (`name`, url, notes, insert_time)
@@ -67,25 +67,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Added<BR>";
 
-		if ($_SESSION['has_ssl_provider'] != '1') {
+        if ($_SESSION['has_ssl_provider'] != '1') {
 
  			$system->checkExistingAssets($connection);
 
             header("Location: ../../ssl-certs.php");
 
-		} else {
+        } else {
 
-			header("Location: ../ssl-providers.php");
+            header("Location: ../ssl-providers.php");
 
-		}
-		exit;
+        }
+        exit;
 
-	} else {
+    } else {
 
-		if ($new_ssl_provider == "") $_SESSION['result_message'] .= "Please enter the SSL provider's name<BR>";
-		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the SSL provider's URL<BR>";
+        if ($new_ssl_provider == "") $_SESSION['result_message'] .= "Please enter the SSL provider's name<BR>";
+        if ($new_url == "") $_SESSION['result_message'] .= "Please enter the SSL provider's URL<BR>";
 
-	}
+    }
 
 }
 ?>

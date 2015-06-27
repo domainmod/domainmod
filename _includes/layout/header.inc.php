@@ -47,7 +47,7 @@
             </div>
             <div class="update_box_header">
                 &nbsp;
-			</div>
+            </div>
             <div style="clear: both;"></div>
         </div>
         <div class="main-inner"><?php

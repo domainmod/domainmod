@@ -51,7 +51,7 @@ $new_rid = $_POST['new_rid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_registrar != "" && $new_url != "") {
+    if ($new_registrar != "" && $new_url != "") {
 
         $query = "UPDATE registrars
                   SET `name` = ?,
@@ -73,17 +73,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $rid = $new_rid;
 
-		$_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Updated<BR>";
+        $_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Updated<BR>";
 
-		header("Location: ../registrars.php");
-		exit;
+        header("Location: ../registrars.php");
+        exit;
 
-	} else {
+    } else {
 
-		if ($new_registrar == "") $_SESSION['result_message'] .= "Please enter the registrar name<BR>";
-		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the registrar's URL<BR>";
+        if ($new_registrar == "") $_SESSION['result_message'] .= "Please enter the registrar name<BR>";
+        if ($new_url == "") $_SESSION['result_message'] .= "Please enter the registrar's URL<BR>";
 
-	}
+    }
 
 } else {
 
@@ -133,12 +133,12 @@ if ($del == "1") {
               FROM domains
               WHERE registrar_id = '" . $rid . "'
               LIMIT 1";
-	$q = $conn->stmt_init();
+    $q = $conn->stmt_init();
 
-	if ($q->prepare($query)) {
+    if ($q->prepare($query)) {
 
-	    $q->bind_param('i', $rid);
-	    $q->execute();
+        $q->bind_param('i', $rid);
+        $q->execute();
         $q->store_result();
 
         if ($q->num_rows() > 0) {
@@ -149,21 +149,21 @@ if ($del == "1") {
 
         $q->close();
 
-	} else { $error->outputSqlError($conn, "ERROR"); }
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
 
-		if ($existing_registrar_accounts > 0) $_SESSION['result_message'] .= "This Registrar has Registrar Accounts
+        if ($existing_registrar_accounts > 0) $_SESSION['result_message'] .= "This Registrar has Registrar Accounts
             associated with it and cannot be deleted<BR>";
-		if ($existing_domains > 0) $_SESSION['result_message'] .= "This Registrar has domains associated with it and
+        if ($existing_domains > 0) $_SESSION['result_message'] .= "This Registrar has domains associated with it and
             cannot be deleted<BR>";
 
-	} else {
+    } else {
 
-		$_SESSION['result_message'] = "Are you sure you want to delete this Registrar?<BR><BR><a
+        $_SESSION['result_message'] = "Are you sure you want to delete this Registrar?<BR><BR><a
             href=\"registrar.php?rid=$rid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
 
-	}
+    }
 
 }
 
@@ -210,7 +210,7 @@ if ($really_del == "1") {
     $system->checkExistingAssets($connection);
 
     header("Location: ../registrars.php");
-	exit;
+    exit;
 
 }
 ?>

@@ -44,13 +44,13 @@ $software_section = "admin-domain-fields";
 $export_data = $_GET['export_data'];
 
 $sql = "SELECT f.id, f.name, f.field_name, f.description, f.notes, f.insert_time, f.update_time, t.name AS type
-		FROM domain_fields AS f, custom_field_types AS t
-		WHERE f.type_id = t.id
-		ORDER BY f.name";
+        FROM domain_fields AS f, custom_field_types AS t
+        WHERE f.type_id = t.id
+        ORDER BY f.name";
 
 if ($export_data == "1") {
 
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('custom_domain_field_list', strtotime($time->time()));
@@ -73,7 +73,7 @@ if ($export_data == "1") {
 
     if (mysqli_num_rows($result) > 0) {
 
-		while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
             $row_contents = array(
                 $row->name,
@@ -88,7 +88,7 @@ if ($export_data == "1") {
 
         }
 
-	}
+    }
 
     $export->closeFile($export_file);
     exit;
@@ -111,7 +111,7 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 
 if (mysqli_num_rows($result) > 0) { ?>
 
-	[<a href="domain-fields.php?export_data=1">EXPORT</a>]
+    [<a href="domain-fields.php?export_data=1">EXPORT</a>]
 
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
@@ -149,24 +149,24 @@ if (mysqli_num_rows($result) > 0) { ?>
             </td>
             <td class="main_table_cell_active">
             	<?php
-				if ($row->update_time == "0000-00-00 00:00:00") {
+            	if ($row->update_time == "0000-00-00 00:00:00") {
 
-					$temp_update_time = "n/a";
+                    $temp_update_time = "n/a";
 
-				} else {
+            	} else {
 
-					$temp_update_time = $row->update_time;
+                    $temp_update_time = $row->update_time;
 
-				}
-				?>
+            	}
+            	?>
                 <a class="invisiblelink" href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $temp_update_time; ?></a>
             </td>
         </tr><?php
-	}
+    }
 
 } else { ?>
 
-	It appears as though you haven't created any Custom Domain Fields yet. <a href="add/domain-field.php">Click here</a> to add one.<?php
+    It appears as though you haven't created any Custom Domain Fields yet. <a href="add/domain-field.php">Click here</a> to add one.<?php
 
 } ?>
 </table>

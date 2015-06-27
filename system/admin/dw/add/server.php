@@ -51,7 +51,7 @@ $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" &&
+    if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" &&
         $new_hash != "") {
 
         $query = "INSERT INTO dw_servers
@@ -74,19 +74,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host .
                                       ")</font> Added<BR>";
 
-		header("Location: ../servers.php");
-		exit;
+        header("Location: ../servers.php");
+        exit;
 
-	} else {
+    } else {
 
-		if ($new_name == "") $_SESSION['result_message'] .= "Please enter a display name for the server<BR>";
-		if ($new_host == "") $_SESSION['result_message'] .= "Please enter the hostname<BR>";
-		if ($new_protocol == "") $_SESSION['result_message'] .= "Please enter the protocol<BR>";
-		if ($new_port == "") $_SESSION['result_message'] .= "Please enter the port<BR>";
-		if ($new_username == "") $_SESSION['result_message'] .= "Please enter the username<BR>";
-		if ($new_hash == "") $_SESSION['result_message'] .= "Please enter the hash<BR>";
+        if ($new_name == "") $_SESSION['result_message'] .= "Please enter a display name for the server<BR>";
+        if ($new_host == "") $_SESSION['result_message'] .= "Please enter the hostname<BR>";
+        if ($new_protocol == "") $_SESSION['result_message'] .= "Please enter the protocol<BR>";
+        if ($new_port == "") $_SESSION['result_message'] .= "Please enter the port<BR>";
+        if ($new_username == "") $_SESSION['result_message'] .= "Please enter the username<BR>";
+        if ($new_hash == "") $_SESSION['result_message'] .= "Please enter the hash<BR>";
 
-	}
+    }
 
 }
 ?>

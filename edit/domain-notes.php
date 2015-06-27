@@ -41,8 +41,8 @@ $software_section = "domains";
 $did = $_GET['did'];
 
 $sql = "SELECT domain, notes
-		FROM domains
-		WHERE id = '$did'";
+        FROM domains
+        WHERE id = '$did'";
 $result = mysqli_query($connection, $sql);
 
 while ($row = mysqli_fetch_object($result)) {

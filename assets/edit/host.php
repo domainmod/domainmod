@@ -51,7 +51,7 @@ $new_whid = $_REQUEST['new_whid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_host != "" && $new_url != "") {
+    if ($new_host != "" && $new_url != "") {
 
         $query = "UPDATE hosting
                   SET `name` = ?,
@@ -73,17 +73,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $whid = $new_whid;
 
-		$_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Updated<BR>";
+        $_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Updated<BR>";
 
-		header("Location: ../hosting.php");
-		exit;
+        header("Location: ../hosting.php");
+        exit;
 
-	} else {
+    } else {
 
-		if ($new_host == "") $_SESSION['result_message'] .= "Please enter the web host's name<BR>";
-		if ($new_url == "") $_SESSION['result_message'] .= "Please enter the web host's URL<BR>";
+        if ($new_host == "") $_SESSION['result_message'] .= "Please enter the web host's name<BR>";
+        if ($new_url == "") $_SESSION['result_message'] .= "Please enter the web host's URL<BR>";
 
-	}
+    }
 
 } else {
 
@@ -152,8 +152,8 @@ if ($really_del == "1") {
 
     $_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Deleted<BR>";
 
-	header("Location: ../hosting.php");
-	exit;
+    header("Location: ../hosting.php");
+    exit;
 
 }
 ?>

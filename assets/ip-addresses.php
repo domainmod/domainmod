@@ -43,21 +43,21 @@ $software_section = "ip-addresses";
 $export_data = $_GET['export_data'];
 
 $sql = "(SELECT ip.id, ip.name, ip.ip, ip.rdns, ip.notes, ip.insert_time, ip.update_time
-		 FROM ip_addresses AS ip, domains AS d
-		 WHERE ip.id = d.ip_id
-		   AND d.active NOT IN ('0', '10')
-		 GROUP BY ip.name)
-		UNION
-		(SELECT ip.id, ip.name, ip.ip, ip.rdns, ip.notes, ip.insert_time, ip.update_time
-		 FROM ip_addresses AS ip, ssl_certs AS sslc
-		 WHERE ip.id = sslc.ip_id
-		   AND sslc.active NOT IN ('0')
-		 GROUP BY ip.name)
-		ORDER BY name";
+         FROM ip_addresses AS ip, domains AS d
+         WHERE ip.id = d.ip_id
+           AND d.active NOT IN ('0', '10')
+         GROUP BY ip.name)
+        UNION
+        (SELECT ip.id, ip.name, ip.ip, ip.rdns, ip.notes, ip.insert_time, ip.update_time
+         FROM ip_addresses AS ip, ssl_certs AS sslc
+         WHERE ip.id = sslc.ip_id
+           AND sslc.active NOT IN ('0')
+         GROUP BY ip.name)
+        ORDER BY name";
 
 if ($export_data == "1") {
 
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('ip_address_list', strtotime($time->time()));
@@ -84,53 +84,53 @@ if ($export_data == "1") {
 
     if (mysqli_num_rows($result) > 0) {
 
-		$has_active = "1";
+        $has_active = "1";
 
-		while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-			$new_ipid = $row->id;
+            $new_ipid = $row->id;
 
-			if ($current_ipid != $new_ipid) {
-				$exclude_ip_address_string_raw .= "'" . $row->id . "', ";
-			}
+            if ($current_ipid != $new_ipid) {
+            	$exclude_ip_address_string_raw .= "'" . $row->id . "', ";
+            }
 
-			$sql_total_count = "SELECT count(*) AS total_count
-								FROM domains
-								WHERE active NOT IN ('0', '10')
-								  AND ip_id = '" . $row->id . "'";
-			$result_total_count = mysqli_query($connection, $sql_total_count);
-			while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-				$total_domains = $row_total_count->total_count;
-			}
+            $sql_total_count = "SELECT count(*) AS total_count
+                                FROM domains
+                                WHERE active NOT IN ('0', '10')
+                                  AND ip_id = '" . $row->id . "'";
+            $result_total_count = mysqli_query($connection, $sql_total_count);
+            while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+            	$total_domains = $row_total_count->total_count;
+            }
 
-			$sql_total_count = "SELECT count(*) AS total_count
-								FROM ssl_certs
-								WHERE active NOT IN ('0')
-								  AND ip_id = '" . $row->id . "'";
-			$result_total_count = mysqli_query($connection, $sql_total_count);
-			while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-				$total_certs = $row_total_count->total_count;
-			}
+            $sql_total_count = "SELECT count(*) AS total_count
+                                FROM ssl_certs
+                                WHERE active NOT IN ('0')
+                                  AND ip_id = '" . $row->id . "'";
+            $result_total_count = mysqli_query($connection, $sql_total_count);
+            while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+            	$total_certs = $row_total_count->total_count;
+            }
 
-			if ($row->id == $_SESSION['default_ip_address_domains']) {
+            if ($row->id == $_SESSION['default_ip_address_domains']) {
 
-				$is_default_domains = "1";
+            	$is_default_domains = "1";
 
-			} else {
+            } else {
 
-				$is_default_domains = "";
+            	$is_default_domains = "";
 
-			}
+            }
 
-			if ($row->id == $_SESSION['default_ip_address_ssl']) {
+            if ($row->id == $_SESSION['default_ip_address_ssl']) {
 
-				$is_default_ssl = "1";
+            	$is_default_ssl = "1";
 
-			} else {
+            } else {
 
-				$is_default_ssl = "";
+            	$is_default_ssl = "";
 
-			}
+            }
 
             $row_contents = array(
                 'Active',
@@ -149,54 +149,54 @@ if ($export_data == "1") {
 
             $current_ipid = $row->id;
 
-		}
+        }
 
-	}
+    }
 
-	$exclude_ip_address_string = substr($exclude_ip_address_string_raw, 0, -2);
+    $exclude_ip_address_string = substr($exclude_ip_address_string_raw, 0, -2);
 
-	if ($exclude_ip_address_string == "") {
+    if ($exclude_ip_address_string == "") {
 
-		$sql = "SELECT id, name, ip, rdns, notes, insert_time, update_time
-				FROM ip_addresses
-				ORDER BY name ASC, ip ASC";
+        $sql = "SELECT id, name, ip, rdns, notes, insert_time, update_time
+            	FROM ip_addresses
+            	ORDER BY name ASC, ip ASC";
 
-	} else {
+    } else {
 
-		$sql = "SELECT id, name, ip, rdns, notes, insert_time, update_time
-				FROM ip_addresses
-				WHERE id NOT IN (" . $exclude_ip_address_string . ")
-				ORDER BY name ASC, ip ASC";
+        $sql = "SELECT id, name, ip, rdns, notes, insert_time, update_time
+            	FROM ip_addresses
+            	WHERE id NOT IN (" . $exclude_ip_address_string . ")
+            	ORDER BY name ASC, ip ASC";
 
-	}
+    }
 
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-	if (mysqli_num_rows($result) > 0) {
+    if (mysqli_num_rows($result) > 0) {
 
-		$has_inactive = "1";
+        $has_inactive = "1";
 
-		while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-			if ($row->id == $_SESSION['default_ip_address_domains']) {
+            if ($row->id == $_SESSION['default_ip_address_domains']) {
 
-				$is_default_domains = "1";
+            	$is_default_domains = "1";
 
-			} else {
+            } else {
 
-				$is_default_domains = "";
+            	$is_default_domains = "";
 
-			}
+            }
 
-			if ($row->id == $_SESSION['default_ip_address_ssl']) {
+            if ($row->id == $_SESSION['default_ip_address_ssl']) {
 
-				$is_default_ssl = "1";
+            	$is_default_ssl = "1";
 
-			} else {
+            } else {
 
-				$is_default_ssl = "";
+            	$is_default_ssl = "";
 
-			}
+            }
 
             $row_contents = array(
                 'Inactive',
@@ -215,7 +215,7 @@ if ($export_data == "1") {
 
         }
 
-	}
+    }
 
     $export->closeFile($export_file);
     exit;
@@ -237,33 +237,33 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 
 if (mysqli_num_rows($result) > 0) {
 
-	$has_active = "1"; ?>
-	<table class="main_table" cellpadding="0" cellspacing="0">
-	<tr class="main_table_row_heading_active">
-		<td class="main_table_cell_heading_active">
-			<font class="main_table_heading">Active IP Names (<?php echo mysqli_num_rows($result); ?>)</font>
-		</td>
-		<td class="main_table_cell_heading_active">
-			<font class="main_table_heading">IP Address</font>
-		</td>
-		<td class="main_table_cell_heading_active">
-			<font class="main_table_heading">rDNS</font>
-		</td>
-		<td class="main_table_cell_heading_active">
-			<font class="main_table_heading">Domains</font>
-		</td>
-		<td class="main_table_cell_heading_active">
-			<font class="main_table_heading">SSL Certs</font>
-		</td>
-	</tr><?php
+    $has_active = "1"; ?>
+    <table class="main_table" cellpadding="0" cellspacing="0">
+    <tr class="main_table_row_heading_active">
+        <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">Active IP Names (<?php echo mysqli_num_rows($result); ?>)</font>
+        </td>
+        <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">IP Address</font>
+        </td>
+        <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">rDNS</font>
+        </td>
+        <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">Domains</font>
+        </td>
+        <td class="main_table_cell_heading_active">
+            <font class="main_table_heading">SSL Certs</font>
+        </td>
+    </tr><?php
 
-	while ($row = mysqli_fetch_object($result)) {
+    while ($row = mysqli_fetch_object($result)) {
 
-		$new_ipid = $row->id;
+        $new_ipid = $row->id;
 
-		if ($current_ipid != $new_ipid) {
-			$exclude_ip_address_string_raw .= "'" . $row->id . "', ";
-		} ?>
+        if ($current_ipid != $new_ipid) {
+            $exclude_ip_address_string_raw .= "'" . $row->id . "', ";
+        } ?>
 
         <tr class="main_table_row_active">
             <td class="main_table_cell_active">
@@ -276,50 +276,50 @@ if (mysqli_num_rows($result) > 0) {
                 <a class="invisiblelink" href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->rdns; ?></a>
             </td>
             <td class="main_table_cell_active"><?php
-				$sql_total_count = "SELECT count(*) AS total_count
-									FROM domains
-									WHERE active NOT IN ('0', '10')
-									  AND ip_id = '" . $row->id . "'";
-				$result_total_count = mysqli_query($connection, $sql_total_count);
-				while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-					$total_domains = $row_total_count->total_count;
-				}
+            	$sql_total_count = "SELECT count(*) AS total_count
+                                    FROM domains
+                                    WHERE active NOT IN ('0', '10')
+                                      AND ip_id = '" . $row->id . "'";
+            	$result_total_count = mysqli_query($connection, $sql_total_count);
+            	while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+                    $total_domains = $row_total_count->total_count;
+            	}
 
-				if ($total_domains >= 1) { ?>
+            	if ($total_domains >= 1) { ?>
 
-					<a class="nobold" href="../domains.php?ipid=<?php echo $row->id; ?>"><?php echo number_format($total_domains); ?></a><?php
+                    <a class="nobold" href="../domains.php?ipid=<?php echo $row->id; ?>"><?php echo number_format($total_domains); ?></a><?php
 
-				} else {
+            	} else {
 
-					echo "-";
+                    echo "-";
 
-				} ?>
+            	} ?>
             </td>
             <td class="main_table_cell_active"><?php
-				$sql_total_count = "SELECT count(*) AS total_count
-									FROM ssl_certs
-									WHERE active NOT IN ('0')
-									  AND ip_id = '" . $row->id . "'";
-				$result_total_count = mysqli_query($connection, $sql_total_count);
-				while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-					$total_certs = $row_total_count->total_count;
-				}
+            	$sql_total_count = "SELECT count(*) AS total_count
+                                    FROM ssl_certs
+                                    WHERE active NOT IN ('0')
+                                      AND ip_id = '" . $row->id . "'";
+            	$result_total_count = mysqli_query($connection, $sql_total_count);
+            	while ($row_total_count = mysqli_fetch_object($result_total_count)) {
+                    $total_certs = $row_total_count->total_count;
+            	}
 
-				if ($total_certs >= 1) { ?>
+            	if ($total_certs >= 1) { ?>
 
-					<a class="nobold" href="../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
+                    <a class="nobold" href="../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo number_format($total_certs); ?></a><?php
 
-				} else {
+            	} else {
 
-					echo "-";
+                    echo "-";
 
-				} ?>
+            	} ?>
             </td>
         </tr><?php
 
-		$current_ipid = $row->id;
+        $current_ipid = $row->id;
 
-	}
+    }
 
 }
 
@@ -392,11 +392,11 @@ if ($_SESSION['display_inactive_assets'] != "1") { ?>
 }
 
 if ($has_active || $has_inactive) { ?>
-	<BR><font class="default_highlight">*</font> = Default Domain IP Address&nbsp;&nbsp;<font class="default_highlight_secondary">*</font> = Default SSL IP Address<?php
+    <BR><font class="default_highlight">*</font> = Default Domain IP Address&nbsp;&nbsp;<font class="default_highlight_secondary">*</font> = Default SSL IP Address<?php
 }
 
 if (!$has_active && !$has_inactive) { ?>
-	<BR><BR>You don't currently have any IP Addresses. <a href="add/ip-address.php">Click here to add one</a>.<?php
+    <BR><BR>You don't currently have any IP Addresses. <a href="add/ip-address.php">Click here to add one</a>.<?php
 } ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

@@ -42,61 +42,61 @@ $view_all = $_GET['view_all'];
 
 if ($action != "") {
 
-	if ($action == "dw_accounts") {
+    if ($action == "dw_accounts") {
 
-		if ($view_all == '1') {
+        if ($view_all == '1') {
 
-			$_SESSION['dw_view_all'] = 1;
+            $_SESSION['dw_view_all'] = 1;
 
-		} else {
+        } else {
 
-			$sql = "SELECT name, host
-					FROM dw_servers
-					WHERE id = '" . $id . "'";
-			$result = mysqli_query($connection, $sql);
+            $sql = "SELECT name, host
+                    FROM dw_servers
+                    WHERE id = '" . $id . "'";
+            $result = mysqli_query($connection, $sql);
 
-			while ($row = mysqli_fetch_object($result)) {
+            while ($row = mysqli_fetch_object($result)) {
 
-				$_SESSION['dw_view_all'] = "";
-				$_SESSION['dw_server_id'] = $id;
-				$_SESSION['dw_server_name'] = $row->name;
-				$_SESSION['dw_server_host'] = $row->host;
+            	$_SESSION['dw_view_all'] = "";
+            	$_SESSION['dw_server_id'] = $id;
+            	$_SESSION['dw_server_name'] = $row->name;
+            	$_SESSION['dw_server_host'] = $row->host;
 
-			}
+            }
 
-		}
+        }
 
-		header("Location: list-accounts.php");
-		exit;
+        header("Location: list-accounts.php");
+        exit;
 
-	} elseif ($action == "dw_dns_zones") {
+    } elseif ($action == "dw_dns_zones") {
 
-		if ($view_all == '1') {
+        if ($view_all == '1') {
 
-			$_SESSION['dw_view_all'] = 1;
+            $_SESSION['dw_view_all'] = 1;
 
-		} else {
+        } else {
 
-			$sql = "SELECT name, host
-					FROM dw_servers
-					WHERE id = '" . $id . "'";
-			$result = mysqli_query($connection, $sql);
+            $sql = "SELECT name, host
+                    FROM dw_servers
+                    WHERE id = '" . $id . "'";
+            $result = mysqli_query($connection, $sql);
 
-			while ($row = mysqli_fetch_object($result)) {
+            while ($row = mysqli_fetch_object($result)) {
 
-				$_SESSION['dw_view_all'] = "";
-				$_SESSION['dw_server_id'] = $id;
-				$_SESSION['dw_server_name'] = $row->name;
-				$_SESSION['dw_server_host'] = $row->host;
+            	$_SESSION['dw_view_all'] = "";
+            	$_SESSION['dw_server_id'] = $id;
+            	$_SESSION['dw_server_name'] = $row->name;
+            	$_SESSION['dw_server_host'] = $row->host;
 
-			}
+            }
 
-		}
+        }
 
-		header("Location: list-dns-zones.php");
-		exit;
+        header("Location: list-dns-zones.php");
+        exit;
 
-	}
+    }
 
 }
 
@@ -115,8 +115,8 @@ $software_section = "admin-dw-main";
 
 <?php
 $sql = "SELECT id
-		FROM dw_servers
-		LIMIT 1";
+        FROM dw_servers
+        LIMIT 1";
 $result = mysqli_query($connection, $sql);
 
 if ($result === false || mysqli_num_rows($result) <= 0) {
@@ -142,7 +142,7 @@ if ($result === false || mysqli_num_rows($result) <= 0) {
 
 <?php
 $sql_accounts = "SELECT id
-				 FROM dw_accounts";
+            	 FROM dw_accounts";
 $result_accounts = mysqli_query($connection, $sql_accounts);
 
 if ($result_accounts === false || mysqli_num_rows($result_accounts) <= 0) {
@@ -157,7 +157,7 @@ if ($result_accounts === false || mysqli_num_rows($result_accounts) <= 0) {
 }
 
 $sql_dns_zones = "SELECT id
-				  FROM dw_dns_records";
+            	  FROM dw_dns_records";
 $result_dns_zones = mysqli_query($connection, $sql_dns_zones);
 
 if ($result_dns_zones === false || mysqli_num_rows($result_dns_zones) <= 0) {
@@ -172,8 +172,8 @@ if ($result_dns_zones === false || mysqli_num_rows($result_dns_zones) <= 0) {
 }
 
 $sql_build_finished = "SELECT build_status_overall
-					   FROM dw_servers
-					   LIMIT 1";
+                       FROM dw_servers
+                       LIMIT 1";
 $result_build_finished = mysqli_query($connection, $sql_build_finished);
 
 if ($result_build_finished === false || mysqli_num_rows($result_build_finished) <= 0) {
@@ -206,8 +206,8 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
         <select name="dw_accounts" onChange="MM_jumpMenu('parent',this,0)">
         <option value="dw.php">Server Accounts</option><?php
         $sql_dw_account = "SELECT id, name, dw_accounts
-						   FROM dw_servers
-						   ORDER BY name, host";
+                           FROM dw_servers
+                           ORDER BY name, host";
         $result_dw_account = mysqli_query($connection, $sql_dw_account); ?>
 
         <option value="dw.php?action=dw_accounts&view_all=1">VIEW ALL</option><?php
@@ -231,8 +231,8 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
         <select name="dw_dns_zones" onChange="MM_jumpMenu('parent',this,0)">
         <option value="dw.php">DNS Zones & Records</option><?php
         $sql_dw_dns_records = "SELECT id, name, dw_dns_zones, dw_dns_records
-							   FROM dw_servers
-							   ORDER BY name, host";
+                               FROM dw_servers
+                               ORDER BY name, host";
         $result_dw_dns_records = mysqli_query($connection, $sql_dw_dns_records); ?>
 
         <option value="dw.php?action=dw_dns_zones&view_all=1">VIEW ALL</option><?php
@@ -253,9 +253,9 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
 
 
 $sql_build_info = "SELECT build_status_overall, build_start_time_overall, build_end_time_overall, build_time_overall, has_ever_been_built_overall, build_end_time_overall, build_start_time_overall
-				   FROM dw_servers
-				   ORDER BY build_end_time_overall desc
-				   LIMIT 1";
+            	   FROM dw_servers
+            	   ORDER BY build_end_time_overall desc
+            	   LIMIT 1";
 $result_build_info = mysqli_query($connection, $sql_build_info);
 
 if ($result_build_info === false || mysqli_num_rows($result_build_info) <= 0) {
@@ -361,7 +361,7 @@ if ($no_results_build_info !== 1) { ?>
                     $number_of_minutes = intval($row_build_info->build_time_overall / 60);
                     $number_of_seconds = $row_build_info->build_time_overall - ($number_of_minutes * 60);
 
-					$temp_build_time_overall = $number_of_minutes . "m " . $number_of_seconds . "s";
+                    $temp_build_time_overall = $number_of_minutes . "m " . $number_of_seconds . "s";
 
                 } ?>
 
@@ -480,7 +480,7 @@ if ($no_results_build_info !== 1) { ?>
                     $number_of_minutes = intval($row->build_time / 60);
                     $number_of_seconds = $row->build_time - ($number_of_minutes * 60);
 
-					$temp_build_time = $number_of_minutes . "m " . $number_of_seconds . "s";
+                    $temp_build_time = $number_of_minutes . "m " . $number_of_seconds . "s";
 
                 } ?>
 
@@ -500,7 +500,7 @@ if ($no_results_build_info !== 1) { ?>
 }
 
 $sql_data_check = "SELECT dw_accounts, dw_dns_zones, dw_dns_records
-				   FROM dw_server_totals";
+            	   FROM dw_server_totals";
 $result_data_check = mysqli_query($connection, $sql_data_check);
 
 if ($result_data_check === false || mysqli_num_rows($result_data_check) <= 0) {
@@ -521,21 +521,21 @@ if ($result_data_check === false || mysqli_num_rows($result_data_check) <= 0) {
 
 if (mysqli_num_rows($result) == 0) {
 
-	// Placeholder
+    // Placeholder
 
 } else {
 
-	if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_server_totals` . "'")) == 1) {
+    if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_server_totals` . "'")) == 1) {
 
-		$table_exists = 1;
+        $table_exists = 1;
 
-	} else {
+    } else {
 
-		$table_exists = 0;
+        $table_exists = 0;
 
-	}
+    }
 
-	if ($is_building != 1 && $table_exists != 0 && $temp_dw_accounts != 0 && $temp_dw_dns_zones != 0 && $temp_dw_dns_zones != 0) { ?>
+    if ($is_building != 1 && $table_exists != 0 && $temp_dw_accounts != 0 && $temp_dw_dns_zones != 0 && $temp_dw_dns_zones != 0) { ?>
 
         <BR><font class="subheadline">Data Warehouse Totals</font><BR>
         <table class="main_table" cellpadding="0" cellspacing="0">
@@ -608,15 +608,15 @@ if (mysqli_num_rows($result) == 0) {
 
         </table><?php
 
-	}
+    }
 
 }
 
 $sql_accounts_without_a_dns_zone = "SELECT domain
-									FROM dw_accounts
-									WHERE domain NOT IN (SELECT domain
-														 FROM dw_dns_zones)
-									ORDER BY domain";
+                                    FROM dw_accounts
+                                    WHERE domain NOT IN (SELECT domain
+                                                         FROM dw_dns_zones)
+                                    ORDER BY domain";
 $result_accounts_without_a_dns_zone = mysqli_query($connection, $sql_accounts_without_a_dns_zone);
 
 if ($result_accounts_without_a_dns_zone === false || mysqli_num_rows($result_accounts_without_a_dns_zone) <= 0) {
@@ -630,10 +630,10 @@ if ($result_accounts_without_a_dns_zone === false || mysqli_num_rows($result_acc
 }
 
 $sql_dns_zones_without_an_account = "SELECT domain
-									 FROM dw_dns_zones
-									 WHERE domain NOT IN (SELECT domain
-									 					  FROM dw_accounts)
-									ORDER BY domain";
+                                     FROM dw_dns_zones
+                                     WHERE domain NOT IN (SELECT domain
+                                     					  FROM dw_accounts)
+                                    ORDER BY domain";
 $result_dns_zones_without_an_account = mysqli_query($connection, $sql_dns_zones_without_an_account);
 
 if ($result_dns_zones_without_an_account === false || mysqli_num_rows($result_dns_zones_without_an_account) <= 0) {
@@ -647,9 +647,9 @@ if ($result_dns_zones_without_an_account === false || mysqli_num_rows($result_dn
 }
 
 $sql_suspended_accounts = "SELECT domain
-						   FROM dw_accounts
-						   WHERE suspended = '1'
-						   ORDER BY domain";
+                           FROM dw_accounts
+                           WHERE suspended = '1'
+                           ORDER BY domain";
 $result_suspended_accounts = mysqli_query($connection, $sql_suspended_accounts);
 
 if ($result_suspended_accounts === false || mysqli_num_rows($result_suspended_accounts) <= 0) {
@@ -750,7 +750,7 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
 
     }
 
-	echo "<BR>";
+    echo "<BR>";
 
 } ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

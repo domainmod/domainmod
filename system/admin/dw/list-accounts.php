@@ -52,60 +52,60 @@ if ($search_for != "") $domain = "";
 $page_title = "Data Warehouse";
 if ($_SESSION['dw_view_all'] == "1") {
 
-	$page_subtitle = "Listing All Accounts";
+    $page_subtitle = "Listing All Accounts";
 
 } else {
 
-	$page_subtitle = 'Listing Accounts on ' . $_SESSION['dw_server_name'] . ' (' . $_SESSION['dw_server_host'] . ')';
+    $page_subtitle = 'Listing Accounts on ' . $_SESSION['dw_server_name'] . ' (' . $_SESSION['dw_server_host'] . ')';
 
 }
 $software_section = "admin-dw-list-accounts";
 
 if ($_SESSION['dw_view_all'] == "1") {
 
-	$where_clause = "";
+    $where_clause = "";
 
 } else {
 
-	$where_clause = "AND a.server_id = '" . $_SESSION['dw_server_id'] . "'";
+    $where_clause = "AND a.server_id = '" . $_SESSION['dw_server_id'] . "'";
 
 }
 
 if ($domain != "") {
 
-		$sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-								FROM dw_accounts AS a, dw_servers AS s
-								WHERE a.server_id = s.id
-								  AND a.domain = '" . $domain . "'
-								  " . $where_clause . "
-								ORDER BY s.name, a.unix_startdate DESC";
+        $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+                                FROM dw_accounts AS a, dw_servers AS s
+                                WHERE a.server_id = s.id
+                                  AND a.domain = '" . $domain . "'
+                                  " . $where_clause . "
+                                ORDER BY s.name, a.unix_startdate DESC";
 
 } else {
 
-	if ($search_for != "") {
+    if ($search_for != "") {
 
-		$sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-								FROM dw_accounts AS a, dw_servers AS s
-								WHERE a.server_id = s.id
-								  AND a.domain LIKE '%" . $search_for . "%'
-								  " . $where_clause . "
-								ORDER BY s.name, a.unix_startdate DESC";
+        $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+                                FROM dw_accounts AS a, dw_servers AS s
+                                WHERE a.server_id = s.id
+                                  AND a.domain LIKE '%" . $search_for . "%'
+                                  " . $where_clause . "
+                                ORDER BY s.name, a.unix_startdate DESC";
 
-	} else {
+    } else {
 
-		$sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-								FROM dw_accounts AS a, dw_servers AS s
-								WHERE a.server_id = s.id
-								  " . $where_clause . "
-								ORDER BY s.name, a.unix_startdate DESC";
+        $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+                                FROM dw_accounts AS a, dw_servers AS s
+                                WHERE a.server_id = s.id
+                                  " . $where_clause . "
+                                ORDER BY s.name, a.unix_startdate DESC";
 
-	}
+    }
 
 }
 
 if ($export_data == "1") {
 
-	$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or $error->outputOldSqlError($connection);
+    $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dw_account_list', strtotime($time->time()));
@@ -138,7 +138,7 @@ if ($export_data == "1") {
 
     }
 
-	if ($domain != "") {
+    if ($domain != "") {
 
         $row_contents = array(
             'Domain Filter:',
@@ -185,7 +185,7 @@ if ($export_data == "1") {
 
     if (mysqli_num_rows($result_dw_account_temp) > 0) {
 
-		while ($row_dw_account_temp = mysqli_fetch_object($result_dw_account_temp)) {
+        while ($row_dw_account_temp = mysqli_fetch_object($result_dw_account_temp)) {
 
             $row_contents = array(
                 $row_dw_account_temp->dw_server_name,
@@ -222,7 +222,7 @@ if ($export_data == "1") {
 
         }
 
-	}
+    }
 
     $export->closeFile($export_file);
     exit;
@@ -237,7 +237,7 @@ if ($export_data == "1") {
 </head>
 <body onLoad="document.forms[0].elements[0].focus()";>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-	<font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR><?php
+    <font class="subheadline"><?php echo $page_subtitle; ?></font><BR><BR><?php
 
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_account_temp));
 $layout = new DomainMOD\Layout();
@@ -248,25 +248,25 @@ $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or $er
 
 if(mysqli_num_rows($result_dw_account_temp) == 0) {
 
-	echo "Your search returned 0 results.";
+    echo "Your search returned 0 results.";
 
 } else { ?>
 
-	<form name="form1" method="post">
-		<input type="text" name="search_for" size="17" value="<?php echo $search_for; ?>">&nbsp;
-		<input type="submit" name="button" value="Search &raquo;">
-		<input type="hidden" name="begin" value="0">
-		<input type="hidden" name="num" value="1">
-		<input type="hidden" name="numBegin" value="1">
-	</form><BR>
+    <form name="form1" method="post">
+        <input type="text" name="search_for" size="17" value="<?php echo $search_for; ?>">&nbsp;
+        <input type="submit" name="button" value="Search &raquo;">
+        <input type="hidden" name="begin" value="0">
+        <input type="hidden" name="num" value="1">
+        <input type="hidden" name="numBegin" value="1">
+    </form><BR>
 
-	<strong>[<a href="list-accounts.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong><BR><BR>
+    <strong>[<a href="list-accounts.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong><BR><BR>
 
-	<strong>Number of Accounts:</strong> <?php echo $totalrows; ?><BR><BR>
-	<?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?><BR>
+    <strong>Number of Accounts:</strong> <?php echo $totalrows; ?><BR><BR>
+    <?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?><BR>
     <?php
     $from_main_dw_account_page = 1;
-	include(DIR_INC . "dw/display-account.inc.php");
+    include(DIR_INC . "dw/display-account.inc.php");
 
 }
 ?>

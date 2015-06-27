@@ -115,13 +115,13 @@ if ($new_username != "") {
 
 } else {
 
-	if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-		if ($new_username == "") $_SESSION['result_message'] .= "Enter the username<BR>";
+        if ($new_username == "") $_SESSION['result_message'] .= "Enter the username<BR>";
 
-		header("Location: users.php");
-		exit;
+        header("Location: users.php");
+        exit;
 
-	}
+    }
 
 }

@@ -54,106 +54,106 @@ $new_notes = $_POST['new_notes'];
 if ($new_cdfid == "") $new_cdfid = $cdfid;
 
 $sql = "SELECT id
-		FROM domain_fields
-		WHERE id = '" . $cdfid . "'";
+        FROM domain_fields
+        WHERE id = '" . $cdfid . "'";
 $result = mysqli_query($connection, $sql);
 
 if (mysqli_num_rows($result) == 0) {
 
-		$_SESSION['result_message'] .= "You're trying to edit an invalid Custom Domain Field<BR>";
+        $_SESSION['result_message'] .= "You're trying to edit an invalid Custom Domain Field<BR>";
 
-		header("Location: ../domain-fields.php");
-		exit;
+        header("Location: ../domain-fields.php");
+        exit;
 
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 
-	$sql = "UPDATE domain_fields
-			SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
-				description = '" . mysqli_real_escape_string($connection, $new_description) . "',
-				notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-				update_time = '" . $time->time() . "'
-			WHERE id = '" . $new_cdfid . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $sql = "UPDATE domain_fields
+            SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
+            	description = '" . mysqli_real_escape_string($connection, $new_description) . "',
+            	notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
+            	update_time = '" . $time->time() . "'
+            WHERE id = '" . $new_cdfid . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-	$sql = "SELECT field_name
-			FROM domain_fields
-			WHERE id = '" . $new_cdfid . "'";
-	$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-	while ($row = mysqli_fetch_object($result)) { $temp_field_name = $row->field_name; }
+    $sql = "SELECT field_name
+            FROM domain_fields
+            WHERE id = '" . $new_cdfid . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    while ($row = mysqli_fetch_object($result)) { $temp_field_name = $row->field_name; }
 
-	$_SESSION['result_message'] .= "Custom Domain Field <font class=\"highlight\">" . $new_name . " (" . $temp_field_name . ")</font> Updated<BR>";
+    $_SESSION['result_message'] .= "Custom Domain Field <font class=\"highlight\">" . $new_name . " (" . $temp_field_name . ")</font> Updated<BR>";
 
-	header("Location: ../domain-fields.php");
-	exit;
+    header("Location: ../domain-fields.php");
+    exit;
 
 } else {
 
-	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-		if ($new_name == "") $_SESSION['result_message'] .= "Enter the display name<BR>";
+        if ($new_name == "") $_SESSION['result_message'] .= "Enter the display name<BR>";
 
-	} else {
+    } else {
 
-		$sql = "SELECT f.name, f.field_name, f.description, f.notes, f.insert_time, f.update_time, t.name AS type
-				FROM domain_fields AS f, custom_field_types AS t
-				WHERE f.type_id = t.id
-				  AND f.id = '" . $cdfid . "'
-				ORDER BY f.name";
-		$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $sql = "SELECT f.name, f.field_name, f.description, f.notes, f.insert_time, f.update_time, t.name AS type
+            	FROM domain_fields AS f, custom_field_types AS t
+            	WHERE f.type_id = t.id
+            	  AND f.id = '" . $cdfid . "'
+            	ORDER BY f.name";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-		while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-			$new_name = $row->name;
-			$new_field_name = $row->field_name;
-			$new_description = $row->description;
-			$new_field_type = $row->type;
-			$new_notes = $row->notes;
+            $new_name = $row->name;
+            $new_field_name = $row->field_name;
+            $new_description = $row->description;
+            $new_field_type = $row->type;
+            $new_notes = $row->notes;
 
-		}
+        }
 
-	}
+    }
 
 }
 
 if ($del == "1") {
 
-	$_SESSION['result_message'] = "Are you sure you want to delete this Custom Domain Field?<BR><BR><a href=\"domain-field.php?cdfid=" . $cdfid . "&really_del=1\">YES, REALLY DELETE THIS CUSTOM DOMAIN FIELD</a><BR>";
+    $_SESSION['result_message'] = "Are you sure you want to delete this Custom Domain Field?<BR><BR><a href=\"domain-field.php?cdfid=" . $cdfid . "&really_del=1\">YES, REALLY DELETE THIS CUSTOM DOMAIN FIELD</a><BR>";
 
 }
 
 if ($really_del == "1") {
 
-	if ($cdfid == "") {
+    if ($cdfid == "") {
 
-		$_SESSION['result_message'] = "The Custom Domain Field cannot be deleted<BR>";
+        $_SESSION['result_message'] = "The Custom Domain Field cannot be deleted<BR>";
 
-	} else {
+    } else {
 
-		$sql = "SELECT name, field_name
-				FROM domain_fields
-				WHERE id = '" . $cdfid . "'";
-		$result = mysqli_query($connection, $sql);
-		while ($row = mysqli_fetch_object($result)) {
-			$temp_name = $row->name;
-			$temp_field_name = $row->field_name;
-		}
+        $sql = "SELECT name, field_name
+            	FROM domain_fields
+            	WHERE id = '" . $cdfid . "'";
+        $result = mysqli_query($connection, $sql);
+        while ($row = mysqli_fetch_object($result)) {
+            $temp_name = $row->name;
+            $temp_field_name = $row->field_name;
+        }
 
-		$sql = "ALTER TABLE `domain_field_data`
-				DROP `" . $temp_field_name . "`";
-		$result = mysqli_query($connection, $sql);
+        $sql = "ALTER TABLE `domain_field_data`
+            	DROP `" . $temp_field_name . "`";
+        $result = mysqli_query($connection, $sql);
 
-		$sql = "DELETE FROM domain_fields
-				WHERE id = '" . $cdfid . "'";
-		$result = mysqli_query($connection, $sql);
+        $sql = "DELETE FROM domain_fields
+            	WHERE id = '" . $cdfid . "'";
+        $result = mysqli_query($connection, $sql);
 
-		$_SESSION['result_message'] = "Custom Domain Field <font class=\"highlight\">" . $temp_name . " (" . $temp_field_name . ")</font> Deleted<BR>";
+        $_SESSION['result_message'] = "Custom Domain Field <font class=\"highlight\">" . $temp_name . " (" . $temp_field_name . ")</font> Deleted<BR>";
 
-		header("Location: ../domain-fields.php");
-		exit;
+        header("Location: ../domain-fields.php");
+        exit;
 
-	}
+    }
 
 }
 ?>

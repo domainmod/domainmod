@@ -51,67 +51,67 @@ $message .= "
 <head><title>" . $headline . "</title></head>
 <body bgcolor=\"#FFFFFF\">
 <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\">
-	<tr>
-		<td width=\"100%\" bgcolor=\"#FFFFFF\">
+    <tr>
+        <td width=\"100%\" bgcolor=\"#FFFFFF\">
 
-			<table width=\"575\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\"
-			    bordercolor=\"#FFFFFF\">
-				<tr>
-					<td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
-					<td width=\"92%\"><font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica,
-					    sans-serif\">";
-						$message .= "<BR>";
-						$message .= "<a title=\"" . $software_title . "\" href=\"" . $full_url . "/\"><img alt=\"" .
+            <table width=\"575\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\"
+                bordercolor=\"#FFFFFF\">
+            	<tr>
+                    <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
+                    <td width=\"92%\"><font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica,
+                        sans-serif\">";
+                        $message .= "<BR>";
+                        $message .= "<a title=\"" . $software_title . "\" href=\"" . $full_url . "/\"><img alt=\"" .
                             $software_title . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
-						$message .= "Your password has been reset and you can find it below. The next ";
-						$message .= "time you login you should change your password to something that ";
-						$message .= "will be easier for you to remember, but still hard for someone ";
-						$message .= "else to guess.<BR>";
-						$message .= "<BR>";
-						$message .= "URL: <a title=\"DomainMOD\" target=\"_blank\" href=\"" . $full_url . "/\">" .
+                        $message .= "Your password has been reset and you can find it below. The next ";
+                        $message .= "time you login you should change your password to something that ";
+                        $message .= "will be easier for you to remember, but still hard for someone ";
+                        $message .= "else to guess.<BR>";
+                        $message .= "<BR>";
+                        $message .= "URL: <a title=\"DomainMOD\" target=\"_blank\" href=\"" . $full_url . "/\">" .
                             $full_url . "/</a><BR>";
-						$message .= "<BR>";
-						$message .= "Your Username: $row->username<BR>";
-						$message .= "Your New Password: $new_password<BR>";
-						$message .= "<BR>";
-						$message .= "Best Regards,<BR>";
-						$message .= "<BR>";
-						$message .= "Greg Chetcuti<BR>";
-						$message .= "<a target=\"_blank\"
+                        $message .= "<BR>";
+                        $message .= "Your Username: $row->username<BR>";
+                        $message .= "Your New Password: $new_password<BR>";
+                        $message .= "<BR>";
+                        $message .= "Best Regards,<BR>";
+                        $message .= "<BR>";
+                        $message .= "Greg Chetcuti<BR>";
+                        $message .= "<a target=\"_blank\"
                             href=\"mailto:greg@domainmod.org\">greg@domainmod.org</a><BR>";
-						$message .= "<BR>";
-						$message .= "</font>
-					</td>
-					<td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
-				</tr>
-			</table>
+                        $message .= "<BR>";
+                        $message .= "</font>
+                    </td>
+                    <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
+            	</tr>
+            </table>
 
-			<table width=\"575\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\"
-			    bordercolor=\"#FFFFFF\">
-				<tr>
-					<td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
-					<td width=\"92%\"><font color=\"#000000\" size=\"1\" face=\"Verdana, Arial, Helvetica,
-					    sans-serif\">";
-						$message .= "<hr width=\"100%\" size=\"1\" noshade>";
-						$message .= "You've received this notification because someone requested a password reset for
-						    your ";
-						$message .= $software_title . " account.<BR>";
-						$message .= "<BR>";
-						$message .= "If you did not request this yourself, it sounds like somebody might be trying to
-						    gain access ";
-						$message .= "to your account. This might be a good time to reset your password again just to be
+            <table width=\"575\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\"
+                bordercolor=\"#FFFFFF\">
+            	<tr>
+                    <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
+                    <td width=\"92%\"><font color=\"#000000\" size=\"1\" face=\"Verdana, Arial, Helvetica,
+                        sans-serif\">";
+                        $message .= "<hr width=\"100%\" size=\"1\" noshade>";
+                        $message .= "You've received this notification because someone requested a password reset for
+                            your ";
+                        $message .= $software_title . " account.<BR>";
+                        $message .= "<BR>";
+                        $message .= "If you did not request this yourself, it sounds like somebody might be trying to
+                            gain access ";
+                        $message .= "to your account. This might be a good time to reset your password again just to be
                             safe. <BR>";
-						$message .= "<a target=\"_blank\" href=\"" . $full_url . "/reset-password.php\">" . $full_url .
+                        $message .= "<a target=\"_blank\" href=\"" . $full_url . "/reset-password.php\">" . $full_url .
                             "/reset-password.php</a>";
-						$message .= "<BR></font>
-					</td>
-					<td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;
-					</td>
-				</tr>
-			</table>
+                        $message .= "<BR></font>
+                    </td>
+                    <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;
+                    </td>
+            	</tr>
+            </table>
 
-		</td>
-	</tr>
+        </td>
+    </tr>
 </table>
 </body>
 </html>";

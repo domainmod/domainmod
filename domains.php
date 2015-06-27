@@ -127,8 +127,8 @@ else { $is_active_string = " AND d.active IN ('0', '1', '2', '3', '4', '5', '6',
 if ($segid != "") {
 
     $seg_sql = "SELECT segment
-				FROM segments
-				WHERE id = '$segid'";
+            	FROM segments
+            	WHERE id = '$segid'";
     $seg_result = mysqli_query($connection, $seg_sql);
     while ($seg_row = mysqli_fetch_object($seg_result)) { $temp_segment = $seg_row->segment; }
     $segid_string = " AND d.domain IN ($temp_segment)";
@@ -226,61 +226,61 @@ else { $sort_by_string = " ORDER BY d.expiry_date asc, d.domain asc "; }
 $dfd_columns = $customField->getCustomFieldsSql($connection, 'domain_fields', 'dfd');
 
 $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name" . $dfd_columns . "
-		FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
-		WHERE d.account_id = ra.id
-		  AND ra.registrar_id = r.id
-		  AND ra.owner_id = o.id
-		  AND d.cat_id = cat.id
-		  AND d.fee_id = f.id
-		  AND d.dns_id = dns.id
-		  AND d.ip_id = ip.id
-		  AND d.hosting_id = h.id
-		  AND f.currency_id = c.id
-		  AND c.id = cc.currency_id
-		  AND d.id = dfd.domain_id
-		  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-		  $is_active_string
-		  $segid_string
-		  $pcid_string
-		  $oid_string
-		  $dnsid_string
-		  $ipid_string
-		  $whid_string
-		  $rid_string
-		  $raid_string
-		  $tld_string
-		  $search_string
-		  $quick_search_string
-		  $sort_by_string";
+        FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
+        WHERE d.account_id = ra.id
+          AND ra.registrar_id = r.id
+          AND ra.owner_id = o.id
+          AND d.cat_id = cat.id
+          AND d.fee_id = f.id
+          AND d.dns_id = dns.id
+          AND d.ip_id = ip.id
+          AND d.hosting_id = h.id
+          AND f.currency_id = c.id
+          AND c.id = cc.currency_id
+          AND d.id = dfd.domain_id
+          AND cc.user_id = '" . $_SESSION['user_id'] . "'
+          $is_active_string
+          $segid_string
+          $pcid_string
+          $oid_string
+          $dnsid_string
+          $ipid_string
+          $whid_string
+          $rid_string
+          $raid_string
+          $tld_string
+          $search_string
+          $quick_search_string
+          $sort_by_string";
 $_SESSION['raw_list_type'] = 'domains';
 $_SESSION['raw_list_query'] = $sql;
 
 $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total
-					FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
-					WHERE d.account_id = ra.id
-					  AND ra.registrar_id = r.id
-					  AND ra.owner_id = o.id
-					  AND d.cat_id = cat.id
-					  AND d.fee_id = f.id
-					  AND d.dns_id = dns.id
-					  AND d.ip_id = ip.id
-					  AND d.hosting_id = h.id
-					  AND f.currency_id = c.id
-					  AND c.id = cc.currency_id
-					  AND cc.user_id = '" . $_SESSION['user_id'] . "'
-					  $is_active_string
-					  $segid_string
-					  $pcid_string
-					  $oid_string
-					  $dnsid_string
-					  $ipid_string
-					  $whid_string
-					  $rid_string
-					  $raid_string
-					  $tld_string
-					  $search_string
-					  $quick_search_string
-					  $sort_by_string";
+                    FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
+                    WHERE d.account_id = ra.id
+                      AND ra.registrar_id = r.id
+                      AND ra.owner_id = o.id
+                      AND d.cat_id = cat.id
+                      AND d.fee_id = f.id
+                      AND d.dns_id = dns.id
+                      AND d.ip_id = ip.id
+                      AND d.hosting_id = h.id
+                      AND f.currency_id = c.id
+                      AND c.id = cc.currency_id
+                      AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                      $is_active_string
+                      $segid_string
+                      $pcid_string
+                      $oid_string
+                      $dnsid_string
+                      $ipid_string
+                      $whid_string
+                      $rid_string
+                      $raid_string
+                      $tld_string
+                      $search_string
+                      $quick_search_string
+                      $sort_by_string";
 
 $result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
@@ -300,30 +300,30 @@ if ($segid != "") {
     $active_domains = substr($active_domains, 0, -4);
 
     $sql_filter_update = "UPDATE segment_data
-						  SET filtered = '0'
-						  WHERE active = '1'
-						    AND segment_id = '$segid'";
+                          SET filtered = '0'
+                          WHERE active = '1'
+                            AND segment_id = '$segid'";
     $result_filter_update = mysqli_query($connection, $sql_filter_update);
 
     $sql_filter_update = "UPDATE segment_data
-						  SET filtered = '1'
-						  WHERE active = '1'
-							AND segment_id = '$segid'
-							AND domain NOT IN ($active_domains)";
+                          SET filtered = '1'
+                          WHERE active = '1'
+                            AND segment_id = '$segid'
+                            AND domain NOT IN ($active_domains)";
     $result_filter_update = mysqli_query($connection, $sql_filter_update);
 
     $sql_filter_update = "UPDATE segment_data
-						  SET filtered = '1'
-						  WHERE active = '1'
-							AND segment_id = '$segid'
-							AND domain NOT LIKE '%" . $search_for . "%'";
+                          SET filtered = '1'
+                          WHERE active = '1'
+                            AND segment_id = '$segid'
+                            AND domain NOT LIKE '%" . $search_for . "%'";
     $result_filter_update = mysqli_query($connection, $sql_filter_update);
 
     $sql_filter_update = "UPDATE segment_data
-						  SET filtered = '1'
-						  WHERE active = '1'
-							AND segment_id = '$segid'
-							AND domain NOT IN (" . $_SESSION['quick_search'] . ")";
+                          SET filtered = '1'
+                          WHERE active = '1'
+                            AND segment_id = '$segid'
+                            AND domain NOT IN (" . $_SESSION['quick_search'] . ")";
     $result_filter_update = mysqli_query($connection, $sql_filter_update);
 
 }
@@ -384,34 +384,34 @@ if ($export_data == "1") {
     if ($segid != "") {
 
         $sql_segment = "SELECT domain
-						FROM segment_data
-						WHERE segment_id = '" . $segid . "'
-						  AND inactive = '1'
-						ORDER BY domain";
+                        FROM segment_data
+                        WHERE segment_id = '" . $segid . "'
+                          AND inactive = '1'
+                        ORDER BY domain";
         $result_segment = mysqli_query($connection, $sql_segment);
         $totalrows_inactive = mysqli_num_rows($result_segment);
 
         $sql_segment = "SELECT domain
-						FROM segment_data
-						WHERE segment_id = '" . $segid . "'
-						  AND missing = '1'
-						ORDER BY domain";
+                        FROM segment_data
+                        WHERE segment_id = '" . $segid . "'
+                          AND missing = '1'
+                        ORDER BY domain";
         $result_segment = mysqli_query($connection, $sql_segment);
         $totalrows_missing = mysqli_num_rows($result_segment);
 
         $sql_segment = "SELECT domain
-						FROM segment_data
-						WHERE segment_id = '" . $segid . "'
-						  AND filtered = '1'
-						ORDER BY domain";
+                        FROM segment_data
+                        WHERE segment_id = '" . $segid . "'
+                          AND filtered = '1'
+                        ORDER BY domain";
         $result_segment = mysqli_query($connection, $sql_segment);
         $totalrows_filtered = mysqli_num_rows($result_segment);
 
         if ($segid != "") {
 
             $sql_segment = "SELECT number_of_domains
-							FROM segments
-							WHERE id = '" . $segid . "'";
+                            FROM segments
+                            WHERE id = '" . $segid . "'";
             $result_segment = mysqli_query($connection, $sql_segment);
             while ($row_segment = mysqli_fetch_object($result_segment)) { $number_of_domains = $row_segment->number_of_domains; }
 
@@ -421,8 +421,8 @@ if ($export_data == "1") {
         $export->writeRow($export_file, $row_contents);
 
         $sql_filter = "SELECT `name`
-					   FROM segments
-					   WHERE id = '" . $segid . "'";
+                       FROM segments
+                       WHERE id = '" . $segid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
 
         while ($row_filter = mysqli_fetch_object($result_filter)) {
@@ -508,8 +508,8 @@ if ($export_data == "1") {
     if ($rid > 0) {
 
         $sql_filter = "SELECT `name`
-					   FROM registrars
-					   WHERE id = '" . $rid . "'";
+                       FROM registrars
+                       WHERE id = '" . $rid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
 
         while ($row_filter = mysqli_fetch_object($result_filter)) {
@@ -527,10 +527,10 @@ if ($export_data == "1") {
     if ($raid > 0) {
 
         $sql_filter = "SELECT r.name AS registrar_name, o.name AS owner_name, ra.username
-					   FROM registrar_accounts AS ra, registrars AS r, owners AS o
-					   WHERE ra.registrar_id = r.id
-						 AND ra.owner_id = o.id
-						 AND ra.id = '" . $raid . "'";
+                       FROM registrar_accounts AS ra, registrars AS r, owners AS o
+                       WHERE ra.registrar_id = r.id
+                         AND ra.owner_id = o.id
+                         AND ra.id = '" . $raid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
 
         while ($row_filter = mysqli_fetch_object($result_filter)) {
@@ -548,8 +548,8 @@ if ($export_data == "1") {
     if ($dnsid > 0) {
 
         $sql_filter = "SELECT `name`
-					   FROM dns
-					   WHERE id = '" . $dnsid . "'";
+                       FROM dns
+                       WHERE id = '" . $dnsid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
 
         while ($row_filter = mysqli_fetch_object($result_filter)) {
@@ -567,8 +567,8 @@ if ($export_data == "1") {
     if ($ipid > 0) {
 
         $sql_filter = "SELECT `name`, ip
-					   FROM ip_addresses
-					   WHERE id = '" . $ipid . "'";
+                       FROM ip_addresses
+                       WHERE id = '" . $ipid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
 
         while ($row_filter = mysqli_fetch_object($result_filter)) {
@@ -586,8 +586,8 @@ if ($export_data == "1") {
     if ($whid > 0) {
 
         $sql_filter = "SELECT `name`
-					   FROM hosting
-					   WHERE id = '" . $whid . "'";
+                       FROM hosting
+                       WHERE id = '" . $whid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
 
         while ($row_filter = mysqli_fetch_object($result_filter)) {
@@ -605,8 +605,8 @@ if ($export_data == "1") {
     if ($pcid > 0) {
 
         $sql_filter = "SELECT `name`
-					   FROM categories
-					   WHERE id = '" . $pcid . "'";
+                       FROM categories
+                       WHERE id = '" . $pcid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
 
         while ($row_filter = mysqli_fetch_object($result_filter)) {
@@ -624,8 +624,8 @@ if ($export_data == "1") {
     if ($oid > 0) {
 
         $sql_filter = "SELECT `name`
-					   FROM owners
-					   WHERE id = '" . $oid . "'";
+                       FROM owners
+                       WHERE id = '" . $oid . "'";
         $result_filter = mysqli_query($connection, $sql_filter);
 
         while ($row_filter = mysqli_fetch_object($result_filter)) {
@@ -718,8 +718,8 @@ if ($export_data == "1") {
     $row_contents[$count++] = "CUSTOM FIELDS";
 
     $sql_field = "SELECT `name`
-				  FROM domain_fields
-				  ORDER BY `name` ASC";
+            	  FROM domain_fields
+            	  ORDER BY `name` ASC";
     $result_field = mysqli_query($connection, $sql_field);
 
     if (mysqli_num_rows($result_field) > 0) {
@@ -863,8 +863,8 @@ $total_rows = number_format(mysqli_num_rows($result));
 if ($segid != "") {
 
     $sql_segment = "SELECT number_of_domains
-					FROM segments
-					WHERE id = '$segid'";
+                    FROM segments
+                    WHERE id = '$segid'";
     $result_segment = mysqli_query($connection, $sql_segment);
     while ($row_segment = mysqli_fetch_object($result_segment)) { $number_of_domains = $row_segment->number_of_domains; }
 

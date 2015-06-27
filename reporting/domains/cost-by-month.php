@@ -263,12 +263,12 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
 
-	<BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
-	<BR>
+    <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
+    <BR>
     <?php if ($all != "1") { ?>
-	    <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
+        <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
     <?php } else { ?>
-	    <strong>Date Range:</strong> ALL<BR><BR>
+        <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
     <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
     <strong>Number of Domains:</strong> <?php echo $number_of_domains_total; ?><BR>
@@ -349,12 +349,12 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                 $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
             ?>
 
-			<tr class="main_table_row_active">
-				<td class="main_table_cell_active"><?php echo $row->year; ?></td>
-				<td class="main_table_cell_active"><?php echo $display_month; ?></td>
-				<td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
-				<td class="main_table_cell_active"><?php echo $yearly_cost; ?></td>
-			</tr>
+            <tr class="main_table_row_active">
+            	<td class="main_table_cell_active"><?php echo $row->year; ?></td>
+            	<td class="main_table_cell_active"><?php echo $display_month; ?></td>
+            	<td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
+            	<td class="main_table_cell_active"><?php echo $yearly_cost; ?></td>
+            </tr>
 
             <?php
             $last_year = $row->year;
@@ -362,12 +362,12 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
         } else { ?>
 
-			<tr class="main_table_row_active">
-				<td class="main_table_cell_active">&nbsp;</td>
-				<td class="main_table_cell_active"><?php echo $display_month; ?></td>
-				<td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
-				<td class="main_table_cell_active">&nbsp;</td>
-			</tr>
+            <tr class="main_table_row_active">
+            	<td class="main_table_cell_active">&nbsp;</td>
+            	<td class="main_table_cell_active"><?php echo $display_month; ?></td>
+            	<td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
+            	<td class="main_table_cell_active">&nbsp;</td>
+            </tr>
 
             <?php
             $last_year = $row->year;
@@ -376,10 +376,10 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         }
 
     }
-	?>
+    ?>
     </table>
 
-	<?php
+    <?php
 }
 ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

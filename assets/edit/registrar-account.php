@@ -54,7 +54,7 @@ $new_raid = $_POST['new_raid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" &&
+    if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" &&
         $new_registrar_id != "0") {
 
         $query = "UPDATE registrar_accounts
@@ -129,14 +129,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar,
             $temp_owner)</font> Updated<BR>";
 
-		header("Location: ../registrar-accounts.php");
-		exit;
+        header("Location: ../registrar-accounts.php");
+        exit;
 
-	} else {
+    } else {
 
-		if ($username == "") { $_SESSION['result_message'] .= "Please enter the username<BR>"; }
+        if ($username == "") { $_SESSION['result_message'] .= "Please enter the username<BR>"; }
 
-	}
+    }
 
 } else {
 
@@ -234,7 +234,7 @@ if ($really_del == "1") {
     $system->checkExistingAssets($connection);
 
     header("Location: ../registrar-accounts.php");
-	exit;
+    exit;
 
 }
 ?>

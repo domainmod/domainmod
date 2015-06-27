@@ -48,11 +48,11 @@ $software_section = "ssl-provider-fees-missing";
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 $sql = "SELECT sp.id AS ssl_provider_id, sp.name AS ssl_provider_name
-		FROM ssl_providers sp, ssl_certs sc
-		WHERE sp.id = sc.ssl_provider_id
-		  AND sc.fee_id = '0'
-		GROUP BY sp.name
-		ORDER BY sp.name asc";
+        FROM ssl_providers sp, ssl_certs sc
+        WHERE sp.id = sc.ssl_provider_id
+          AND sc.fee_id = '0'
+        GROUP BY sp.name
+        ORDER BY sp.name asc";
 $result = mysqli_query($connection, $sql);
 ?>
 The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these fees.<BR>
@@ -95,7 +95,7 @@ The following SSL Certificates are missing fees. In order to ensure your SSL rep
             </td>
         </tr>
     <?php
-	} ?>
+    } ?>
 </table>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

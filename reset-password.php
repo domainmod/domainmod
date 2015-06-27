@@ -46,48 +46,48 @@ if ($new_username != "") {
 
    $sql = "SELECT username, email_address
            FROM users
-		   WHERE username = '$new_username'
-		     AND active = '1'";
+           WHERE username = '$new_username'
+             AND active = '1'";
 
    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-	if (mysqli_num_rows($result) == 1) {
+    if (mysqli_num_rows($result) == 1) {
 
-		while($row = mysqli_fetch_object($result)) {
+        while($row = mysqli_fetch_object($result)) {
 
-			$new_password = substr(md5(time()), 0, 8);
+            $new_password = substr(md5(time()), 0, 8);
 
-			$sql_update = "UPDATE users
-						   SET password = password('$new_password'),
-						   	   new_password = '1',
-							   update_time = '" . $time->time() . "'
-						   WHERE username = '$row->username'
-						     AND email_address = '$row->email_address'";
-			$result_update = mysqli_query($connection, $sql_update);
+            $sql_update = "UPDATE users
+                           SET password = password('$new_password'),
+                           	   new_password = '1',
+                               update_time = '" . $time->time() . "'
+                           WHERE username = '$row->username'
+                             AND email_address = '$row->email_address'";
+            $result_update = mysqli_query($connection, $sql_update);
 
-			include(DIR_INC . "email/send-new-password.inc.php");
+            include(DIR_INC . "email/send-new-password.inc.php");
 
-			$_SESSION['result_message'] .= "Your new password has been emailed to you<BR>";
+            $_SESSION['result_message'] .= "Your new password has been emailed to you<BR>";
 
-			header("Location: index.php");
-			exit;
+            header("Location: index.php");
+            exit;
 
-		}
+        }
 
-	} else {
+    } else {
 
-		$_SESSION['result_message'] .= "You have entered an invalid username<BR>";
+        $_SESSION['result_message'] .= "You have entered an invalid username<BR>";
 
-	}
+    }
 
 } else {
 
-	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-		if ($new_username == "") {
-		    $_SESSION['result_message'] .= "Enter your username<BR>";
-		}
-	}
+        if ($new_username == "") {
+            $_SESSION['result_message'] .= "Enter your username<BR>";
+        }
+    }
 
 }
 ?>
