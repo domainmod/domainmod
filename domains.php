@@ -970,7 +970,7 @@ if ($segid != "") {
                 // SEGMENT
                 $sql_segment = "SELECT id, `name`
                                 FROM segments
-                                ORDER BY `name` asc";
+                                ORDER BY `name` ASC";
                 $result_segment = mysqli_query($connection, $sql_segment);
 
                 echo "<select name=\"segid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
