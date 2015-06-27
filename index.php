@@ -240,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         $_SESSION['result_message'] = "Login Failed<BR>";
 
-   }
+    }
 
 } else {
 
