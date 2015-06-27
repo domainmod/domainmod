@@ -180,7 +180,6 @@ if ($total_rows > 0) {
         }
 
         $export->closeFile($export_file);
-        exit;
 
     }
 
