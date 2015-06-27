@@ -77,11 +77,11 @@ update these fees.<BR>
         <td class="main_table_cell_active">
             <?php
             $sql_missing_tlds = "SELECT tld
-                                     FROM domains
-                                     WHERE registrar_id = '" . $row->registrar_id . "'
-                                       AND fee_id = '0'
-                                     GROUP BY tld
-                                     ORDER BY tld ASC";
+                                 FROM domains
+                                 WHERE registrar_id = '" . $row->registrar_id . "'
+                                   AND fee_id = '0'
+                                 GROUP BY tld
+                                 ORDER BY tld ASC";
             $result_missing_tlds = mysqli_query($connection, $sql_missing_tlds);
             $full_tld_list = "";
 
@@ -92,14 +92,12 @@ update these fees.<BR>
             }
             $full_tld_list_formatted = substr($full_tld_list, 0, -2);
             ?>
-            <a class="nobold"
-               href="registrar-fees.php?rid=<?php echo $row->registrar_id . "\">" . $full_tld_list_formatted; ?></a>
-            </td>
-        </tr>
+            <a class="nobold" href="registrar-fees.php?rid=<?php echo $row->registrar_id . "\">" .
+                $full_tld_list_formatted; ?></a>
+        </td>
+    </tr><?php
 
-    <?php
-               } ?>
-
+    } ?>
 </table>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
