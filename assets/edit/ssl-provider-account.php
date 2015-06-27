@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $sslpaid = $new_sslpaid;
 
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->fetch();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $query = "SELECT `name`
                   FROM owners
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->fetch();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $_SESSION['result_message'] = "SSL Account <font class=\"highlight\">$new_username ($temp_ssl_provider,
             $temp_owner)</font> Updated<BR>";
@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 
@@ -167,7 +167,7 @@ if ($del == "1") {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     if ($existing_ssl_certs > 0) {
 
@@ -201,7 +201,7 @@ if ($really_del == "1") {
         $q->fetch();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     $query = "DELETE FROM ssl_accounts
               WHERE id = ?";
@@ -213,7 +213,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     $_SESSION['result_message'] = "SSL Account <font class=\"highlight\">$temp_username ($temp_ssl_provider_name,
         $temp_owner_name)</font> Deleted<BR>";
@@ -267,7 +267,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <BR><BR>
 <strong>SSL Provider</strong><BR><BR>
@@ -303,7 +303,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <BR><BR>
 <strong>Username (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>

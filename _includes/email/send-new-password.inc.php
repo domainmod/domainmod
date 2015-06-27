@@ -32,7 +32,7 @@ if ($q_settings->prepare($query_settings)) {
     $q_settings->fetch();
     $q_settings->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else { $error->outputSqlError($conn, "ERROR"); }
 
 $to = $row->email_address;
 $from_name = $software_title;

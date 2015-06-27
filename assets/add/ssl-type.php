@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Added<BR>";
 

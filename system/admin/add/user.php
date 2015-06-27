@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     if ($existing_username == 1) {
 
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $query = "SELECT id
                   FROM users
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $q->fetch();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $query = "INSERT INTO user_settings
                   (user_id,
@@ -158,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $_SESSION['result_message'] .= "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " ("
             . $new_username . " / " . $new_password . ")</font> Added<BR><BR>You can either manually email the above

@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $oid = $new_oid;
 
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 
@@ -127,7 +127,7 @@ if ($del == "1") {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     $query = "SELECT owner_id
               FROM ssl_accounts
@@ -148,7 +148,7 @@ if ($del == "1") {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     $query = "SELECT owner_id
               FROM domains
@@ -169,7 +169,7 @@ if ($del == "1") {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     $query = "SELECT owner_id
               FROM ssl_certs
@@ -190,7 +190,7 @@ if ($del == "1") {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     if ($existing_registrar_accounts > 0 || $existing_ssl_accounts > 0 || $existing_domains > 0 ||
         $existing_ssl_certs > 0) {
@@ -234,7 +234,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     $_SESSION['result_message'] = "Owner <font class=\"highlight\">$new_owner</font> Deleted<BR>";
 

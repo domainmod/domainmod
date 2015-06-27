@@ -87,7 +87,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else { $error->outputSqlError($conn, "ERROR"); }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->fetch();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $query = "SELECT id, (renewal_fee + misc_fee) AS total_cost
                   FROM ssl_fees
@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($new_fee_id == "") $new_fee_id = 0;
             if ($new_total_cost == "") $new_total_cost = 0;
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $query = "INSERT INTO ssl_certs
                   (owner_id, ssl_provider_id, account_id, domain_id, `name`, type_id, ip_id, cat_id, expiry_date,
@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $query = "INSERT INTO ssl_cert_field_data
                   (ssl_id, insert_time)
@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $query = "SELECT field_name
                   FROM ssl_cert_fields
@@ -204,7 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q_f->execute();
                         $q_f->close();
 
-                    } else $error->outputSqlError($conn, "ERROR");
+                    } else { $error->outputSqlError($conn, "ERROR"); }
 
                 }
 
@@ -212,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
 
@@ -276,7 +276,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <BR><BR>
 <strong>SSL Provider Account</strong><BR><BR>
@@ -317,7 +317,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <BR><BR>
 <strong>Certificate Type</strong><BR><BR>
@@ -355,7 +355,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <BR><BR>
 <strong>IP Address</strong><BR><BR>
@@ -394,7 +394,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <BR><BR>
 <strong>Category</strong><BR><BR>
@@ -432,7 +432,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <BR><BR>
 <strong>Certificate Status</strong><BR><BR>
@@ -543,7 +543,7 @@ if ($q->prepare($query)) {
 
                 $q_cf->close();
 
-            } else $error->outputSqlError($conn, "ERROR");
+            } else { $error->outputSqlError($conn, "ERROR"); }
 
         }
 
@@ -553,7 +553,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <input type="submit" name="button" value="Add This SSL Certificate &raquo;">
 </form>

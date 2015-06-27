@@ -61,7 +61,7 @@ if ($q->prepare($query)) {
     $q->fetch();
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else { $error->outputSqlError($conn, "ERROR"); }
 ?>
 <strong>Operating System:</strong> <?php echo php_uname(); ?><BR>
 <strong>Web Server:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>

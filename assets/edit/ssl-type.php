@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $ssltid = $new_ssltid;
 
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 if ($del == "1") {
@@ -129,7 +129,7 @@ if ($del == "1") {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 
@@ -145,7 +145,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     $_SESSION['result_message'] = "SSL Type <font class=\"highlight\">$new_type</font> Deleted<BR>";
 

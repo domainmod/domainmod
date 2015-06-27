@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
         $sslpid = $new_sslpid;
 
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->fetch();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
 }
 
@@ -127,7 +127,7 @@ if ($del == "1") {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     $query = "SELECT ssl_provider_id
               FROM ssl_certs
@@ -149,7 +149,7 @@ if ($del == "1") {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     if ($existing_ssl_provider_accounts > 0 || $existing_ssl_certs > 0) {
 
@@ -179,7 +179,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     $query = "DELETE FROM ssl_accounts
               WHERE ssl_provider_id = ?";
@@ -191,7 +191,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     $query = "DELETE FROM ssl_providers
               WHERE id = ?";
@@ -203,7 +203,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
 
     $_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Deleted<BR>";
 

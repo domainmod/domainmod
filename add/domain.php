@@ -90,7 +90,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else { $error->outputSqlError($conn, "ERROR"); }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q_ra->fetch();
                     $q_ra->close();
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else { $error->outputSqlError($conn, "ERROR"); }
 
                 if ($new_privacy == "1") {
 
@@ -162,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if ($new_fee_id == "") $new_fee_id = 0;
                     if ($new_total_cost == "") $new_total_cost = 0;
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else { $error->outputSqlError($conn, "ERROR"); }
 
                 $query_d = "INSERT INTO domains
                             (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q_d->close();
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else { $error->outputSqlError($conn, "ERROR"); }
 
                 $query_df = "INSERT INTO domain_field_data
                              (domain_id, insert_time)
@@ -196,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q_df->execute();
                     $q_df->close();
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else { $error->outputSqlError($conn, "ERROR"); }
 
                 $query_df = "SELECT field_name
                              FROM domain_fields
@@ -235,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $q_dfd->execute();
                                 $q_dfd->close();
 
-                            } else $error->outputSqlError($conn, "ERROR");
+                            } else { $error->outputSqlError($conn, "ERROR"); }
 
                         }
 
@@ -254,7 +254,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $system->checkExistingAssets($connection);
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else { $error->outputSqlError($conn, "ERROR"); }
 
             } else {
 
@@ -264,7 +264,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else { $error->outputSqlError($conn, "ERROR"); }
 
     } else {
 
@@ -336,7 +336,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
     ?>
     <BR><BR>
     <strong>DNS Profile</strong><BR><BR>
@@ -375,7 +375,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
     ?>
     <BR><BR>
     <strong>IP Address</strong><BR><BR>
@@ -413,7 +413,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
     ?>
     <BR><BR>
     <strong>Web Hosting Provider</strong><BR><BR>
@@ -451,7 +451,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
     ?>
     <BR><BR>
     <strong>Category</strong><BR><BR>
@@ -490,7 +490,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
     ?>
     <BR><BR>
     <strong>Domain Status</strong><BR><BR>
@@ -608,7 +608,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q_df->close();
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else { $error->outputSqlError($conn, "ERROR"); }
 
             }
 
@@ -618,7 +618,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else { $error->outputSqlError($conn, "ERROR"); }
     ?>
     <input type="submit" name="button" value="Add This Domain &raquo;">
 </form>
