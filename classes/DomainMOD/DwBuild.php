@@ -28,6 +28,11 @@ class DwBuild
     public function build($connection)
     {
 
+        $accounts = new DwAccounts();
+        $zones = new DwZones();
+        $records = new DwRecords();
+        $stats = new DwStats();
+
         $result = $this->getServers($connection);
         if ($this->checkForHosts($result) == '0')
             return false;
@@ -49,19 +54,19 @@ class DwBuild
                     dw_dns_records = '0'";
         mysqli_query($connection, $sql);
 
-        $this->createTableAccounts($connection);
-        $this->createTableZones($connection);
-        $this->createTableRecords($connection);
+        $accounts->createTable($connection);
+        $zones->createTable($connection);
+        $records->createTable($connection);
         $this->processEachServer($connection, $result);
-        $this->cleanupRecords($connection);
-        $this->reorderRecords($connection);
+        $records->cleanupRecords($connection);
+        $records->reorderRecords($connection);
         $result = $this->getServers($connection);
-        $this->updateServerStats($connection, $result);
-        $this->updateDwTotalsTable($connection);
-        $this->buildTimestamp($connection, $build_start_time_o);
-        list($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records) = $this->getServerTotals($connection);
+        $stats->updateServerStats($connection, $result);
+        $stats->updateDwTotalsTable($connection);
+        $this->buildFinish($connection, $build_start_time_o);
+        list($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records) = $stats->getServerTotals($connection);
         $has_empty = $this->checkDwAssets($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records);
-        $this->endOverallBuild($connection, $has_empty);
+        $this->updateEmpty($connection, $has_empty);
 
         $result_message = 'Data Warehouse Rebuilt.<BR>';
 
@@ -121,105 +126,11 @@ class DwBuild
 
     }
 
-    public function createTableAccounts($connection)
-    {
-
-        $sql_accounts = "CREATE TABLE IF NOT EXISTS dw_accounts (
-                             id INT(10) NOT NULL AUTO_INCREMENT,
-                             server_id INT(10) NOT NULL,
-                             domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             ip VARCHAR(15) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             `owner` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             `user` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             email VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             plan VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             theme VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             shell VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             `partition` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             disklimit VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             diskused VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxaddons VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxftp VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxlst VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxparked VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxpop VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxsql VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             maxsub VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             startdate VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             unix_startdate INT(10) NOT NULL,
-                             suspended INT(1) NOT NULL,
-                             suspendreason VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                             suspendtime INT(10) NOT NULL,
-                             MAX_EMAIL_PER_HOUR INT(10) NOT NULL,
-                             MAX_DEFER_FAIL_PERCENTAGE INT(10) NOT NULL,
-                             MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION INT(10) NOT NULL,
-                             insert_time DATETIME NOT NULL,
-                             PRIMARY KEY  (id)
-                         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        mysqli_query($connection, $sql_accounts);
-
-        return true;
-
-    }
-
-    public function createTableZones($connection)
-    {
-
-        $sql_zones = "CREATE TABLE IF NOT EXISTS dw_dns_zones (
-                          id INT(10) NOT NULL AUTO_INCREMENT,
-                          server_id INT(10) NOT NULL,
-                          domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                          zonefile VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                          insert_time DATETIME NOT NULL,
-                          PRIMARY KEY  (id)
-                          ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        mysqli_query($connection, $sql_zones);
-
-        return true;
-
-    }
-
-    public function createTableRecords($connection)
-    {
-
-        $sql_records = "CREATE TABLE IF NOT EXISTS dw_dns_records (
-                            id INT(10) NOT NULL AUTO_INCREMENT,
-                            server_id INT(10) NOT NULL,
-                            dns_zone_id INT(10) NOT NULL,
-                            domain VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            zonefile VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-                            new_order INT(10) NOT NULL,
-                            mname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            rname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            `serial` INT(20) NOT NULL,
-                            refresh INT(10) NOT NULL,
-                            retry INT(10) NOT NULL,
-                            expire VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            minimum INT(10) NOT NULL,
-                            nsdname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            ttl INT(10) NOT NULL,
-                            class VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            type VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            address VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            cname VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            `exchange` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            preference INT(10) NOT NULL,
-                            txtdata VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            line INT(10) NOT NULL,
-                            nlines INT(10) NOT NULL,
-                            raw LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                            insert_time DATETIME NOT NULL,
-                            PRIMARY KEY  (id)
-                        ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        mysqli_query($connection, $sql_records);
-
-        return true;
-
-    }
-
     public function processEachServer($connection, $result)
     {
+
+        $accounts = new DwAccounts();
+        $zones = new DwZones();
 
         while ($row = mysqli_fetch_object($result)) {
 
@@ -231,29 +142,19 @@ class DwBuild
                     WHERE id = '" . $row->id . "'";
             mysqli_query($connection, $sql);
 
-            $api_results = $this->apiGetAccounts($row->protocol, $row->host, $row->port, $row->username, $row->hash);
-            $this->insertAccounts($connection, $api_results, $row->id);
-            $api_results = $this->apiGetZones($row->protocol, $row->host, $row->port, $row->username, $row->hash);
-            $this->insertZones($connection, $api_results, $row->id);
-            $result_zones = $this->getInsertedZones($connection, $row->id);
-            $this->processEachZone($connection, $result_zones, $row->id, $row->protocol, $row->host, $row->port,
+            $api_results = $accounts->apiGetAccounts($row->protocol, $row->host, $row->port, $row->username,
+                $row->hash);
+            $accounts->insertAccounts($connection, $api_results, $row->id);
+            $api_results = $zones->apiGetZones($row->protocol, $row->host, $row->port, $row->username, $row->hash);
+            $zones->insertZones($connection, $api_results, $row->id);
+            $result_zones = $zones->getInsertedZones($connection, $row->id);
+            $zones->processEachZone($connection, $result_zones, $row->id, $row->protocol, $row->host, $row->port,
                 $row->username, $row->hash);
-            $this->serverTimestamp($connection, $row->id, $build_start_time);
+            $this->serverFinish($connection, $row->id, $build_start_time);
 
         }
 
         return true;
-
-    }
-
-    public function apiGetAccounts($protocol, $host, $port, $username, $hash)
-    {
-
-        $api_type = "/xml-api/listaccts?searchtype=domain&search=";
-
-        $api_results = $this->apiCall($api_type, $protocol, $host, $port, $username, $hash);
-
-        return $api_results;
 
     }
 
@@ -279,146 +180,7 @@ class DwBuild
 
     }
 
-    public function insertAccounts($connection, $api_results, $server_id)
-    {
-
-        if ($api_results !== false) {
-
-            $xml = simplexml_load_string($api_results);
-
-            foreach ($xml->acct as $hit) {
-
-                $disklimit_formatted = rtrim($hit->disklimit, 'M');
-                $diskused_formatted = rtrim($hit->diskused, 'M');
-
-                $sql = "INSERT INTO dw_accounts
-                        (server_id, domain, ip, `owner`, `user`, email, plan, theme, shell, `partition`, disklimit,
-                         diskused, maxaddons, maxftp, maxlst, maxparked, maxpop, maxsql, maxsub, startdate,
-                         unix_startdate, suspended, suspendreason, suspendtime, MAX_EMAIL_PER_HOUR,
-                         MAX_DEFER_FAIL_PERCENTAGE, MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION, insert_time)
-                        VALUES
-                        ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->ip . "', '" . $hit->owner
-                    . "', '" . $hit->user . "', '" . $hit->email . "', '" . $hit->plan . "', '" . $hit->theme
-                    . "', '" . $hit->shell . "', '" . $hit->partition . "', '" . $disklimit_formatted
-                    . "', '" . $diskused_formatted . "', '" . $hit->maxaddons . "', '" . $hit->maxftp . "', '"
-                    . $hit->maxlst . "', '" . $hit->maxparked . "', '" . $hit->maxpop . "', '" . $hit->maxsql
-                    . "', '" . $hit->maxsub . "', '" . $hit->startdate . "', '" . $hit->unix_startdate
-                    . "', '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime
-                    . "', '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "', '"
-                    . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . $this->time() . "')";
-                mysqli_query($connection, $sql);
-
-            }
-
-        }
-
-        return true;
-
-    }
-
-    public function apiGetZones($protocol, $host, $port, $username, $hash)
-    {
-
-        $api_type = "/xml-api/listzones";
-
-        $api_results = $this->apiCall($api_type, $protocol, $host, $port, $username, $hash);
-
-        return $api_results;
-
-    }
-
-    public function insertZones($connection, $api_results, $server_id)
-    {
-
-        if ($api_results !== false) {
-
-            $xml = simplexml_load_string($api_results);
-
-            foreach ($xml->zone as $hit) {
-
-                $sql = "INSERT INTO dw_dns_zones
-                        (server_id, domain, zonefile, insert_time)
-                        VALUES
-                        ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->zonefile . "', '" . $this->time()
-                    . "')";
-                mysqli_query($connection, $sql);
-
-            }
-
-        }
-
-        return true;
-
-    }
-
-    public function getInsertedZones($connection, $server_id)
-    {
-
-        $sql = "SELECT id, domain
-                FROM dw_dns_zones
-                WHERE server_id = '" . $server_id . "'
-                ORDER BY domain";
-        $result = mysqli_query($connection, $sql);
-
-        return $result;
-
-    }
-
-    public function processEachZone($connection, $result_zones, $server_id, $protocol, $host, $port, $username, $hash)
-    {
-
-        while ($row_zones = mysqli_fetch_object($result_zones)) {
-
-            $api_results = $this->apiGetRecords($protocol, $host, $port, $username, $hash, $row_zones->domain);
-            $this->insertRecords($connection, $api_results, $server_id, $row_zones->id, $row_zones->domain);
-
-        }
-
-    }
-
-    public function apiGetRecords($protocol, $host, $port, $username, $hash, $domain)
-    {
-
-        $api_type = "/xml-api/dumpzone?domain=" . $domain . "";
-
-        $api_results = $this->apiCall($api_type, $protocol, $host, $port, $username, $hash);
-
-        return $api_results;
-
-    }
-
-    public function insertRecords($connection, $api_results, $server_id, $zone_id, $domain)
-    {
-
-        if ($api_results !== false) {
-
-            $xml = simplexml_load_string($api_results);
-
-            foreach ($xml->result->record as $hit) {
-
-                $sql = "INSERT INTO dw_dns_records
-                        (server_id, dns_zone_id, domain, mname, rname, `serial`, refresh, retry, expire,
-                         minimum, nsdname, `name`, ttl, class, type, address, cname, `exchange`, preference,
-                         txtdata, line, nlines, raw, insert_time)
-                        VALUES
-                        ('" . $server_id . "', '" . $zone_id . "', '" . $domain . "', '" .
-                    $hit->mname . "', '" . $hit->rname . "', '" . $hit->serial . "', '" . $hit->refresh . "', '" .
-                    $hit->retry . "', '" . $hit->expire . "', '" . $hit->minimum . "', '" . $hit->nsdname . "', '"
-                    . $hit->name . "', '" . $hit->ttl . "', '" . $hit->class . "', '" . $hit->type . "', '" .
-                    $hit->address . "', '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference .
-                    "', '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw .
-                    "', '" . $this->time() . "')";
-                mysqli_query($connection, $sql);
-
-            }
-
-        }
-
-        return true;
-
-    }
-
-    public function serverTimestamp($connection, $server_id, $build_start_time)
+    public function serverFinish($connection, $server_id, $build_start_time)
     {
 
         list($build_end_time, $total_build_time) = $this->getBuildTime($build_start_time);
@@ -446,259 +208,7 @@ class DwBuild
 
     }
 
-    public function cleanupRecords($connection)
-    {
-
-        $sql = "DELETE FROM dw_dns_records
-                WHERE type = ':RAW'
-                  AND raw = ''";
-        mysqli_query($connection, $sql);
-
-        $sql = "UPDATE dw_dns_records
-                SET type = 'COMMENT'
-                WHERE type = ':RAW'";
-        mysqli_query($connection, $sql);
-
-        $sql = "UPDATE dw_dns_records
-                SET type = 'ZONE TTL'
-                WHERE type = '\$TTL'";
-        mysqli_query($connection, $sql);
-
-        $sql = "UPDATE dw_dns_records
-                SET nlines = '1'
-                WHERE nlines = '0'";
-        mysqli_query($connection, $sql);
-
-        $sql = "SELECT domain, zonefile
-                FROM dw_dns_zones";
-        $result = mysqli_query($connection, $sql);
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $sql_update = "UPDATE dw_dns_records
-                           SET zonefile = '" . $row->zonefile . "'
-                           WHERE domain = '" . $row->domain . "'";
-            mysqli_query($connection, $sql_update);
-
-        }
-
-        return true;
-
-    }
-
-    public function reorderRecords($connection)
-    {
-
-        $type_order = array();
-        $count = 0;
-        $new_order = 1;
-        $type_order[$count++] = 'COMMENT';
-        $type_order[$count++] = 'ZONE TTL';
-        $type_order[$count++] = 'SOA';
-        $type_order[$count++] = 'NS';
-        $type_order[$count++] = 'MX';
-        $type_order[$count++] = 'A';
-        $type_order[$count++] = 'CNAME';
-        $type_order[$count++] = 'TXT';
-        $type_order[$count++] = 'SRV';
-
-        foreach ($type_order as $key) {
-
-            $sql = "UPDATE dw_dns_records
-                    SET new_order = '" . $new_order++ . "'
-                    WHERE type = '" . $key . "'";
-            mysqli_query($connection, $sql);
-
-        }
-
-        return true;
-
-    }
-
-    public function updateServerStats($connection, $result)
-    {
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $total_dw_accounts = $this->getTotals($connection, $row->id, 'dw_accounts');
-            $total_dw_dns_zones = $this->getTotals($connection, $row->id, 'dw_dns_zones');
-            $total_dw_dns_records = $this->getTotals($connection, $row->id, 'dw_dns_records');
-            $this->updateServerTotals($connection, $row->id, $total_dw_accounts, $total_dw_dns_zones,
-                $total_dw_dns_records);
-
-        }
-
-    }
-
-    public function getTotals($connection, $server_id, $table)
-    {
-
-        $sql = "SELECT count(*) AS total
-                FROM `" . $table . "`
-                WHERE server_id = '" . $server_id . "'";
-        $result = mysqli_query($connection, $sql);
-
-        $total = '';
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $total = $row->total;
-
-        }
-
-        return $total;
-
-    }
-
-    public function updateServerTotals($connection, $server_id, $total_dw_accounts, $total_dw_dns_zones,
-                                       $total_dw_dns_records)
-    {
-
-        $sql_update = "UPDATE dw_servers
-                       SET dw_accounts = '" . $total_dw_accounts . "',
-                           dw_dns_zones = '" . $total_dw_dns_zones . "',
-                           dw_dns_records = '" . $total_dw_dns_records . "'
-                       WHERE id = '" . $server_id . "'";
-        mysqli_query($connection, $sql_update);
-
-        return true;
-
-    }
-
-    public function updateDwTotalsTable($connection)
-    {
-
-        $this->deleteTotalsTable($connection);
-        $this->recreateDwTotalsTable($connection);
-        $total_dw_servers = $this->getTotalDwServers($connection);
-        $total_dw_accounts = $this->getTotalDwAccounts($connection);
-        $total_dw_zones = $this->getTotalDwZones($connection);
-        $total_dw_records = $this->getTotalDwRecords($connection);
-        $this->updateTable($connection, $total_dw_servers, $total_dw_accounts, $total_dw_zones, $total_dw_records);
-
-        return true;
-
-    }
-
-    public function deleteTotalsTable($connection)
-    {
-
-        $sql = "DROP TABLE IF EXISTS dw_server_totals";
-        mysqli_query($connection, $sql);
-
-        return true;
-
-    }
-
-    public function recreateDwTotalsTable($connection)
-    {
-
-        $sql = "CREATE TABLE IF NOT EXISTS `dw_server_totals` (
-                    `id` INT(10) NOT NULL AUTO_INCREMENT,
-                    `dw_servers` INT(10) NOT NULL,
-                    `dw_accounts` INT(10) NOT NULL,
-                    `dw_dns_zones` INT(10) NOT NULL,
-                    `dw_dns_records` INT(10) NOT NULL,
-                    `insert_time` DATETIME NOT NULL,
-                    PRIMARY KEY  (`id`)
-                ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-        mysqli_query($connection, $sql);
-
-        return true;
-
-    }
-
-    public function getTotalDwServers($connection)
-    {
-
-        $total_dw_servers = '';
-
-        $sql_servers = "SELECT count(*) AS total_dw_servers
-                        FROM `dw_servers`";
-        $result_servers = mysqli_query($connection, $sql_servers);
-
-        while ($row_servers = mysqli_fetch_object($result_servers)) {
-
-            $total_dw_servers = $row_servers->total_dw_servers;
-
-        }
-
-        return $total_dw_servers;
-
-    }
-
-    public function getTotalDwAccounts($connection)
-    {
-
-        $total_dw_accounts = '';
-
-        $sql_accounts = "SELECT count(*) AS total_dw_accounts
-                         FROM `dw_accounts`";
-        $result_accounts = mysqli_query($connection, $sql_accounts);
-
-        while ($row_accounts = mysqli_fetch_object($result_accounts)) {
-
-            $total_dw_accounts = $row_accounts->total_dw_accounts;
-
-        }
-
-        return $total_dw_accounts;
-
-    }
-
-    public function getTotalDwZones($connection)
-    {
-
-        $total_dw_zones = '';
-
-        $sql_zones = "SELECT count(*) AS total_dw_zones
-                      FROM `dw_dns_zones`";
-        $result_zones = mysqli_query($connection, $sql_zones);
-
-        while ($row_zones = mysqli_fetch_object($result_zones)) {
-
-            $total_dw_zones = $row_zones->total_dw_zones;
-
-        }
-
-        return $total_dw_zones;
-
-    }
-
-    public function getTotalDwRecords($connection)
-    {
-
-        $total_dw_records = '';
-
-        $sql_records = "SELECT count(*) AS total_dw_records
-                      FROM `dw_dns_records`";
-        $result_records = mysqli_query($connection, $sql_records);
-
-        while ($row_records = mysqli_fetch_object($result_records)) {
-
-            $total_dw_records = $row_records->total_dw_records;
-
-        }
-
-        return $total_dw_records;
-
-    }
-
-    public function updateTable($connection, $total_dw_servers, $total_dw_accounts, $total_dw_dns_zones, $total_dw_records)
-    {
-
-        $sql_insert = "INSERT INTO dw_server_totals
-                       (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
-                       VALUES
-                       ('" . $total_dw_servers . "', '" . $total_dw_accounts . "', '" . $total_dw_dns_zones . "', '" .
-            $total_dw_records . "', '" . $this->time() . "')";
-        mysqli_query($connection, $sql_insert);
-
-        return true;
-
-    }
-
-    public function buildTimestamp($connection, $build_start_time_o)
+    public function buildFinish($connection, $build_start_time_o)
     {
 
         list($build_end_time_o, $total_build_time_o) = $this->getBuildTime($build_start_time_o);
@@ -711,29 +221,6 @@ class DwBuild
         mysqli_query($connection, $sql);
 
         return true;
-
-    }
-
-    public function getServerTotals($connection)
-    {
-
-        $temp_dw_accounts = '0';
-        $temp_dw_dns_zones = '0';
-        $temp_dw_dns_records = '0';
-
-        $sql = "SELECT dw_accounts, dw_dns_zones, dw_dns_records
-                FROM dw_server_totals";
-        $result = mysqli_query($connection, $sql);
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $temp_dw_accounts = $row->dw_accounts;
-            $temp_dw_dns_zones = $row->dw_dns_zones;
-            $temp_dw_dns_records = $row->dw_dns_records;
-
-        }
-
-        return array($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records);
 
     }
 
@@ -752,7 +239,7 @@ class DwBuild
 
     }
 
-    public function endOverallBuild($connection, $empty_assets)
+    public function updateEmpty($connection, $empty_assets)
     {
 
         if ($empty_assets == '1') {
