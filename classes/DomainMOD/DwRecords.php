@@ -64,15 +64,10 @@ class DwRecords
 
     }
 
-    public function apiGetRecords($protocol, $host, $port, $username, $hash, $domain)
+    public function getApiCall($domain)
     {
 
-        $api_type = "/xml-api/dumpzone?domain=" . $domain . "";
-
-        $build = new DwBuild();
-        $api_results = $build->apiCall($api_type, $protocol, $host, $port, $username, $hash);
-
-        return $api_results;
+        return "/xml-api/dumpzone?domain=" . $domain;
 
     }
 

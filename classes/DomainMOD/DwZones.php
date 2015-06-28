@@ -42,15 +42,10 @@ class DwZones
 
     }
 
-    public function apiGetZones($protocol, $host, $port, $username, $hash)
+    public function getApiCall()
     {
 
-        $api_type = "/xml-api/listzones";
-
-        $build = new DwBuild();
-        $api_results = $build->apiCall($api_type, $protocol, $host, $port, $username, $hash);
-
-        return $api_results;
+        return "/xml-api/listzones";
 
     }
 
@@ -98,9 +93,11 @@ class DwZones
 
         while ($row_zones = mysqli_fetch_object($result_zones)) {
 
+            $build = new DwBuild();
             $records = new DwRecords();
 
-            $api_results = $records->apiGetRecords($protocol, $host, $port, $username, $hash, $row_zones->domain);
+            $api_call = $records->getApiCall($row_zones->domain);
+            $api_results = $build->apiCall($api_call, $host, $protocol, $port, $username, $hash);
             $records->insertRecords($connection, $api_results, $server_id, $row_zones->id, $row_zones->domain);
 
         }

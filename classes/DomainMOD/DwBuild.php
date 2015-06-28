@@ -142,11 +142,16 @@ class DwBuild
                     WHERE id = '" . $row->id . "'";
             mysqli_query($connection, $sql);
 
-            $api_results = $accounts->apiGetAccounts($row->protocol, $row->host, $row->port, $row->username,
+            $api_call = $accounts->getApiCall();
+            $api_results = $this->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
                 $row->hash);
             $accounts->insertAccounts($connection, $api_results, $row->id);
-            $api_results = $zones->apiGetZones($row->protocol, $row->host, $row->port, $row->username, $row->hash);
+
+            $api_call = $zones->getApiCall();
+            $api_results = $this->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
+                $row->hash);
             $zones->insertZones($connection, $api_results, $row->id);
+
             $result_zones = $zones->getInsertedZones($connection, $row->id);
             $zones->processEachZone($connection, $result_zones, $row->id, $row->protocol, $row->host, $row->port,
                 $row->username, $row->hash);
@@ -158,10 +163,17 @@ class DwBuild
 
     }
 
-    public function apiCall($api_type, $protocol, $host, $port, $username, $hash)
+    public function apiCall($api_call, $host, $protocol, $port, $username, $hash)
     {
 
-        $query = $protocol . "://" . $host . ":" . $port . $api_type;
+        return $this->apiGet($api_call, $host, $protocol, $port, $username, $hash);
+
+    }
+
+    public function apiGet($api_call, $host, $protocol, $port, $username, $hash)
+    {
+
+        $query = $protocol . "://" . $host . ":" . $port . $api_call;
         $header = '';
         $curl = curl_init(); # Create Curl Object
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0); # Allow certs that do not match the domain

@@ -66,15 +66,10 @@ class DwAccounts
 
     }
 
-    public function apiGetAccounts($protocol, $host, $port, $username, $hash)
+    public function getApiCall()
     {
 
-        $api_type = "/xml-api/listaccts?searchtype=domain&search=";
-
-        $build = new DwBuild();
-        $api_results = $build->apiCall($api_type, $protocol, $host, $port, $username, $hash);
-
-        return $api_results;
+        return "/xml-api/listaccts?searchtype=domain&search=";
 
     }
 
