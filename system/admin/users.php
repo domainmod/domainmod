@@ -36,7 +36,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser();
+$system->checkAdminUser($_SESSION['is_admin'], $web_root);
 
 $page_title = $software_title . " Users";
 $software_section = "admin-user-list";

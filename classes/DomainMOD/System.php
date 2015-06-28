@@ -25,7 +25,7 @@ namespace DomainMOD;
 class System
 {
 
-    public function installCheck($connection)
+    public function installCheck($connection, $web_root)
     {
 
         $full_install_path = DIR_ROOT . "install/";
@@ -36,7 +36,7 @@ class System
         ) {
 
             $installation_mode = 1;
-            $result_message = "<a href=\"" . $_SESSION['web_root'] . "/install/\">Click here to install</a><BR>";
+            $result_message = "<a href=\"" . $web_root . "/install/\">Click here to install</a><BR>";
 
         } else {
 
@@ -52,7 +52,8 @@ class System
     public function checkVersion($connection, $software_version)
     {
 
-        $live_version = file_get_contents('https://raw.githubusercontent.com/domainmod/domainmod/master/version-db.txt');
+        $live_version
+            = file_get_contents('https://raw.githubusercontent.com/domainmod/domainmod/master/version-db.txt');
 
         if ($software_version != $live_version && $live_version != '') {
 
@@ -164,32 +165,30 @@ class System
 
     }
 
-    public function checkAdminUser()
+    public function checkAdminUser($is_admin, $web_root)
     {
 
-        if ($_SESSION['is_admin'] !== 1) {
+        if ($is_admin !== 1) {
 
-            header("Location: " . $_SESSION['web_root'] . "/invalid.php");
+            header("Location: " . $web_root . "/invalid.php");
             exit;
 
         }
 
     }
 
-    public function showResultMessage()
+    public function showResultMessage($result_message)
     {
 
         ob_start(); ?>
 
         <div class="result_message_outer">
-        <div class="result_message_inner">
-            <?php echo $_SESSION['result_message']; ?>
-        </div>
+            <div class="result_message_inner">
+                <?php echo $result_message; ?>
+            </div>
         </div><?php
 
         $result = ob_get_clean();
-
-        unset($_SESSION['result_message']);
 
         return $result;
 

@@ -33,7 +33,7 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser();
+$system->checkAdminUser($_SESSION['is_admin'], $web_root);
 ?>
 <?php
 if ($_SESSION['display_dw_intro_page'] == "1") {
