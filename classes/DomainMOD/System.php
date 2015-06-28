@@ -180,6 +180,7 @@ class System
     public function showResultMessage($result_message)
     {
 
+        //@formatter:off
         ob_start(); ?>
 
         <div class="result_message_outer">
@@ -187,6 +188,7 @@ class System
                 <?php echo $result_message; ?>
             </div>
         </div><?php
+        //@formatter:on
 
         $result = ob_get_clean();
 

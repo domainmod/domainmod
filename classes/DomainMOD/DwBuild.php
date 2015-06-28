@@ -92,48 +92,6 @@ class DwBuild
 
     }
 
-    public function apiCall($api_call, $host, $protocol, $port, $username, $hash)
-    {
-
-        return $this->apiGet($api_call, $host, $protocol, $port, $username, $hash);
-
-    }
-
-    public function apiGet($api_call, $host, $protocol, $port, $username, $hash)
-    {
-
-        $query = $protocol . "://" . $host . ":" . $port . $api_call;
-        $header = '';
-        $curl = curl_init(); # Create Curl Object
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0); # Allow certs that do not match the domain
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); # Allow self-signed certs
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); # Return contents of transfer on curl_exec
-        $header[0] = "Authorization: WHM " . $username . ":" . preg_replace("'(\r|\n)'", "", $hash); # Remove newlines
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $header); # Set curl header
-        curl_setopt($curl, CURLOPT_URL, $query); # Set your URL
-        $api_results = curl_exec($curl); # Execute Query, assign to $api_results
-        if ($api_results === false) {
-            error_log("curl_exec error \"" . curl_error($curl) . "\" for " . $query . "");
-        }
-        curl_close($curl);
-
-        return $api_results;
-
-    }
-
-    public function getBuildTime($build_start_time)
-    {
-
-        $time = new Timestamp();
-
-        $build_end_time = $time->time();
-
-        $total_build_time = (strtotime($build_end_time) - strtotime($build_start_time));
-
-        return array($build_end_time, $total_build_time);
-
-    }
-
     public function buildFinish($connection, $build_start_time_o)
     {
 
@@ -147,6 +105,19 @@ class DwBuild
         mysqli_query($connection, $sql);
 
         return true;
+
+    }
+
+    public function getBuildTime($build_start_time)
+    {
+
+        $time = new Timestamp();
+
+        $build_end_time = $time->time();
+
+        $total_build_time = (strtotime($build_end_time) - strtotime($build_start_time));
+
+        return array($build_end_time, $total_build_time);
 
     }
 
@@ -188,6 +159,35 @@ class DwBuild
         }
 
         return true;
+
+    }
+
+    public function apiCall($api_call, $host, $protocol, $port, $username, $hash)
+    {
+
+        return $this->apiGet($api_call, $host, $protocol, $port, $username, $hash);
+
+    }
+
+    public function apiGet($api_call, $host, $protocol, $port, $username, $hash)
+    {
+
+        $query = $protocol . "://" . $host . ":" . $port . $api_call;
+        $header = '';
+        $curl = curl_init(); # Create Curl Object
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0); # Allow certs that do not match the domain
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); # Allow self-signed certs
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); # Return contents of transfer on curl_exec
+        $header[0] = "Authorization: WHM " . $username . ":" . preg_replace("'(\r|\n)'", "", $hash); # Remove newlines
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $header); # Set curl header
+        curl_setopt($curl, CURLOPT_URL, $query); # Set your URL
+        $api_results = curl_exec($curl); # Execute Query, assign to $api_results
+        if ($api_results === false) {
+            error_log("curl_exec error \"" . curl_error($curl) . "\" for " . $query . "");
+        }
+        curl_close($curl);
+
+        return $api_results;
 
     }
 
