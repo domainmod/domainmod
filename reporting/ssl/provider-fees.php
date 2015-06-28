@@ -219,28 +219,28 @@ if ($total_rows > 0) { ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
         <tr class="main_table_row_heading_active">
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">SSL Provider</font>
+                <div class="main_table_heading">SSL Provider</div>
             </td>
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Certificate Type</font>
+                <div class="main_table_heading">Certificate Type</div>
             </td>
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Initial Fee</font>
+                <div class="main_table_heading">Initial Fee</div>
             </td>
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Renewal Fee</font>
+                <div class="main_table_heading">Renewal Fee</div>
             </td>
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Misc Fee</font>
+                <div class="main_table_heading">Misc Fee</div>
             </td>
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Currency</font>
+                <div class="main_table_heading">Currency</div>
             </td>
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Certs</font>
+                <div class="main_table_heading">Certs</div>
             </td>
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Last Updated</font>
+                <div class="main_table_heading">Last Updated</div>
             </td>
         </tr>
         <?php

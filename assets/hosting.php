@@ -201,13 +201,13 @@ $has_active = "1"; ?>
 <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Active Hosts (<?php echo $number_of_hosting_providers; ?>)</font>
+            <div class="main_table_heading">Active Hosts (<?php echo $number_of_hosting_providers; ?>)</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Domains</font>
+            <div class="main_table_heading">Domains</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Options</font>
+            <div class="main_table_heading">Options</div>
         </td>
     </tr><?php
 
@@ -289,10 +289,10 @@ $has_active = "1"; ?>
 
             <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
-                <font class="main_table_heading">Inactive Hosts (<?php echo $number_of_hosting_providers; ?>)</font>
+                <div class="main_table_heading">Inactive Hosts (<?php echo $number_of_hosting_providers; ?>)</div>
             </td>
             <td class="main_table_cell_heading_inactive">
-                <font class="main_table_heading">Options</font>
+                <div class="main_table_heading">Options</div>
             </td>
             </tr><?php
 

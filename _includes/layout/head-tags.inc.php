@@ -643,7 +643,7 @@
         padding: 0;
     }
 
-    font.main_table_heading {
+    div.main_table_heading {
         font-family: Verdana, Arial, Helvetica, sans-serif;
         font-weight: bold;
         font-size: 8pt;

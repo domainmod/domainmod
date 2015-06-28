@@ -261,13 +261,13 @@ $has_active = "1"; ?>
 <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Active Profiles (<?php echo mysqli_num_rows($result); ?>)</font>
+            <div class="main_table_heading">Active Profiles (<?php echo mysqli_num_rows($result); ?>)</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Servers</font>
+            <div class="main_table_heading">Servers</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Domains</font>
+            <div class="main_table_heading">Domains</div>
         </td>
     </tr><?php
 
@@ -339,10 +339,10 @@ $has_active = "1"; ?>
 
             <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
-                <font class="main_table_heading">Inactive Profiles (<?php echo mysqli_num_rows($result); ?>)</font>
+                <div class="main_table_heading">Inactive Profiles (<?php echo mysqli_num_rows($result); ?>)</div>
             </td>
             <td class="main_table_cell_heading_inactive">
-                <font class="main_table_heading">Servers</font>
+                <div class="main_table_heading">Servers</div>
             </td>
             </tr><?php
 

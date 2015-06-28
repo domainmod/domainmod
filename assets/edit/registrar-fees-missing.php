@@ -60,10 +60,10 @@ update these fees.<BR>
 <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Registrar</font>
+            <div class="main_table_heading">Registrar</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Missing TLD Fees</font>
+            <div class="main_table_heading">Missing TLD Fees</div>
         </td>
     </tr>
 

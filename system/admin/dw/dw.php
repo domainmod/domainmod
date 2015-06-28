@@ -387,19 +387,19 @@ if ($no_results_build_info !== 1) { ?>
 
             <tr class="main_table_row_heading_active">
                 <td class="main_table_cell_heading_active">
-                    <font class="main_table_heading">Server</font>
+                    <div class="main_table_heading">Server</div>
                 </td>
                 <td class="main_table_cell_heading_active">
-                    <font class="main_table_heading">Build Start</font>
+                    <div class="main_table_heading">Build Start</div>
                 </td>
                 <td class="main_table_cell_heading_active">
-                    <font class="main_table_heading">Build End</font>
+                    <div class="main_table_heading">Build End</div>
                 </td>
                 <td class="main_table_cell_heading_active">
-                    <font class="main_table_heading">Build Time</font>
+                    <div class="main_table_heading">Build Time</div>
                 </td>
                 <td class="main_table_cell_heading_active">
-                    <font class="main_table_heading">Build Status</font>
+                    <div class="main_table_heading">Build Status</div>
                 </td>
             </tr>
 
@@ -589,16 +589,16 @@ if (mysqli_num_rows($result) == 0) {
         <table class="main_table" cellpadding="0" cellspacing="0">
         <tr class="main_table_row_heading_active">
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Server</font>
+                <div class="main_table_heading">Server</div>
             </td>
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Accounts</font>
+                <div class="main_table_heading">Accounts</div>
             </td>
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">DNS Zones</font>
+                <div class="main_table_heading">DNS Zones</div>
             </td>
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">DNS Records</font>
+                <div class="main_table_heading">DNS Records</div>
             </td>
         </tr><?php
 

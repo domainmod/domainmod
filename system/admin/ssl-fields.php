@@ -120,19 +120,19 @@ if (mysqli_num_rows($result) > 0) { ?>
 <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Display Name (<?php echo mysqli_num_rows($result); ?>)</font>
+            <div class="main_table_heading">Display Name (<?php echo mysqli_num_rows($result); ?>)</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">DB Field</font>
+            <div class="main_table_heading">DB Field</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Data Type</font>
+            <div class="main_table_heading">Data Type</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Inserted</font>
+            <div class="main_table_heading">Inserted</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Updated</font>
+            <div class="main_table_heading">Updated</div>
         </td>
     </tr><?php
 

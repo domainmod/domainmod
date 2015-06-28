@@ -2141,7 +2141,7 @@ if ($segid != "") {
                         } else {
                             echo "ed_a";
                         }
-                        ?>&from_dropdown=1"><font class="main_table_heading">Expiry Date</font></a>
+                        ?>&from_dropdown=1"><div class="main_table_heading">Expiry Date</div></a>
                         <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
@@ -2158,7 +2158,7 @@ if ($segid != "") {
                         } else {
                             echo "df_a";
                         }
-                        ?>&from_dropdown=1"><font class="main_table_heading">Fee</font></a>
+                        ?>&from_dropdown=1"><div class="main_table_heading">Fee</div></a>
                         <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
@@ -2172,7 +2172,7 @@ if ($segid != "") {
                         echo "dn_d";
                     } else {
                         echo "dn_a";
-                    } ?>&from_dropdown=1"><font class="main_table_heading">Domain Name</font></a>
+                    } ?>&from_dropdown=1"><div class="main_table_heading">Domain Name</div></a>
                     <?php //@formatter:on ?>
                 </td>
                 <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
@@ -2186,7 +2186,7 @@ if ($segid != "") {
                             echo "tld_d";
                         } else {
                             echo "tld_a";
-                        } ?>&from_dropdown=1"><font class="main_table_heading">TLD</font></a>
+                        } ?>&from_dropdown=1"><div class="main_table_heading">TLD</div></a>
                         <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
@@ -2201,7 +2201,7 @@ if ($segid != "") {
                             echo "r_d";
                         } else {
                             echo "r_a";
-                        } ?>&from_dropdown=1"><font class="main_table_heading">Registrar</font></a>
+                        } ?>&from_dropdown=1"><div class="main_table_heading">Registrar</div></a>
                         <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
@@ -2216,7 +2216,7 @@ if ($segid != "") {
                             echo "ra_d";
                         } else {
                             echo "ra_a";
-                        } ?>&from_dropdown=1"><font class="main_table_heading">Registrar Account</font></a>
+                        } ?>&from_dropdown=1"><div class="main_table_heading">Registrar Account</div></a>
                         <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
@@ -2231,7 +2231,7 @@ if ($segid != "") {
                             echo "dns_d";
                         } else {
                             echo "dns_a";
-                        } ?>&from_dropdown=1"><font class="main_table_heading">DNS Profile</font></a>
+                        } ?>&from_dropdown=1"><div class="main_table_heading">DNS Profile</div></a>
                         <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
@@ -2246,7 +2246,7 @@ if ($segid != "") {
                             echo "ip_d";
                         } else {
                             echo "ip_a";
-                        } ?>&from_dropdown=1"><font class="main_table_heading">IP Address</font></a>
+                        } ?>&from_dropdown=1"><div class="main_table_heading">IP Address</div></a>
                         <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
@@ -2261,7 +2261,7 @@ if ($segid != "") {
                             echo "wh_d";
                         } else {
                             echo "wh_a";
-                        } ?>&from_dropdown=1"><font class="main_table_heading">Web Host</font></a>
+                        } ?>&from_dropdown=1"><div class="main_table_heading">Web Host</div></a>
                         <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
@@ -2276,7 +2276,7 @@ if ($segid != "") {
                             echo "pc_d";
                         } else {
                             echo "pc_a";
-                        } ?>&from_dropdown=1"><font class="main_table_heading">Category</font></a>
+                        } ?>&from_dropdown=1"><div class="main_table_heading">Category</div></a>
                         <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
@@ -2291,7 +2291,7 @@ if ($segid != "") {
                             echo "o_d";
                         } else {
                             echo "o_a";
-                        } ?>&from_dropdown=1"><font class="main_table_heading">Owner</font></a>
+                        } ?>&from_dropdown=1"><div class="main_table_heading">Owner</div></a>
                         <?php //@formatter:on ?>
                     </td>
                 <?php } ?>

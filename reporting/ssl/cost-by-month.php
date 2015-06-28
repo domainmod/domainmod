@@ -303,14 +303,14 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
         <tr class="main_table_row_heading_active">
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Year</font></td>
+                <div class="main_table_heading">Year</div></td>
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Month</font></td>
+                <div class="main_table_heading">Month</div></td>
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">Cost</font>
+                <div class="main_table_heading">Cost</div>
             </td>
             <td class="main_table_cell_heading_active">
-                <font class="main_table_heading">By Year</font>
+                <div class="main_table_heading">By Year</div>
             </td>
         </tr>
         <?php

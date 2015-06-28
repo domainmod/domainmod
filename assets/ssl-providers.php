@@ -217,16 +217,16 @@ $has_active = "1"; ?>
 <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Active Providers (<?php echo mysqli_num_rows($result); ?>)</font>
+            <div class="main_table_heading">Active Providers (<?php echo mysqli_num_rows($result); ?>)</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Accounts</font>
+            <div class="main_table_heading">Accounts</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Certs</font>
+            <div class="main_table_heading">Certs</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Options</font>
+            <div class="main_table_heading">Options</div>
         </td>
     </tr><?php
 
@@ -327,13 +327,13 @@ $has_active = "1"; ?>
 
             <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
-                <font class="main_table_heading">Inactive Providers (<?php echo mysqli_num_rows($result); ?>)</font>
+                <div class="main_table_heading">Inactive Providers (<?php echo mysqli_num_rows($result); ?>)</div>
             </td>
             <td class="main_table_cell_heading_inactive">
-                <font class="main_table_heading">Accounts</font>
+                <div class="main_table_heading">Accounts</div>
             </td>
             <td class="main_table_cell_heading_inactive">
-                <font class="main_table_heading">Options</font>
+                <div class="main_table_heading">Options</div>
             </td>
             </tr><?php
 

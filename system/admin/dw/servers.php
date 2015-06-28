@@ -123,22 +123,22 @@ if (mysqli_num_rows($result) > 0) { ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Name</font>
+            <div class="main_table_heading">Name</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Host</font>
+            <div class="main_table_heading">Host</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Port</font>
+            <div class="main_table_heading">Port</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Username</font>
+            <div class="main_table_heading">Username</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Inserted</font>
+            <div class="main_table_heading">Inserted</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Updated</font>
+            <div class="main_table_heading">Updated</div>
         </td>
     </tr><?php
 

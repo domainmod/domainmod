@@ -257,16 +257,16 @@ $has_active = 1; ?>
 <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Registrar Name</font>
+            <div class="main_table_heading">Registrar Name</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Active Accounts (<?php echo mysqli_num_rows($result); ?>)</font>
+            <div class="main_table_heading">Active Accounts (<?php echo mysqli_num_rows($result); ?>)</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Owner</font>
+            <div class="main_table_heading">Owner</div>
         </td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Domains</font>
+            <div class="main_table_heading">Domains</div>
         </td>
     </tr><?php
 
@@ -353,13 +353,13 @@ $has_active = 1; ?>
 
             <tr class="main_table_row_heading_inactive">
             <td class="main_table_cell_heading_inactive">
-                <font class="main_table_heading">Registrar Name</font>
+                <div class="main_table_heading">Registrar Name</div>
             </td>
             <td class="main_table_cell_heading_inactive">
-                <font class="main_table_heading">Inactive Accounts (<?php echo mysqli_num_rows($result); ?>)</font>
+                <div class="main_table_heading">Inactive Accounts (<?php echo mysqli_num_rows($result); ?>)</div>
             </td>
             <td class="main_table_cell_heading_inactive">
-                <font class="main_table_heading">Owner</font>
+                <div class="main_table_heading">Owner</div>
             </td>
             </tr><?php
 

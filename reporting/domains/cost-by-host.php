@@ -241,13 +241,13 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Web Hosting Provider</font></td>
+            <div class="main_table_heading">Web Hosting Provider</div></td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Domains</font></td>
+            <div class="main_table_heading">Domains</div></td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Cost</font></td>
+            <div class="main_table_heading">Cost</div></td>
         <td class="main_table_cell_heading_active">
-            <font class="main_table_heading">Per Domain</font></td>
+            <div class="main_table_heading">Per Domain</div></td>
     </tr>
 
     <?php
