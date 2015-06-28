@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="default_settings_form" method="post">
-    <BR><font class="subheadline">Domain Defaults</font><BR><BR>
+    <BR><div class="subheadline">Domain Defaults</div><BR>
     <strong>Default Domain Registrar</strong><BR><BR>
     <select name="new_default_registrar">
         <?php
@@ -223,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ?>
     </select>
     <BR><BR><BR>
-    <font class="subheadline">SSL Defaults</font><BR><BR>
+    <div class="subheadline">SSL Defaults</div><BR>
     <strong>Default SSL Provider</strong><BR><BR>
     <select name="new_default_ssl_provider">
         <?php

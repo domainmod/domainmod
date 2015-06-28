@@ -196,7 +196,7 @@ if ($result_build_finished === false || mysqli_num_rows($result_build_finished) 
 
 if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dns_zones !== 1)) { ?>
 
-    <BR><font class="subheadline">View Data</font><BR><BR>
+    <BR><BR><div class="subheadline">View Data</div><BR>
     <form name="dw_view_data_form" method="post">
     <?php
 
@@ -278,7 +278,7 @@ if ($result_build_info === false || mysqli_num_rows($result_build_info) <= 0) {
 
 if ($no_results_build_info !== 1) { ?>
 
-    <BR><font class="subheadline">Build Information</font><BR>
+    <BR><BR><div class="subheadline">Build Information</div>
     <table class="main_table" cellpadding="0" cellspacing="0"><?php
 
     if ($temp_build_info == 0) {
@@ -571,7 +571,7 @@ if (mysqli_num_rows($result) == 0) {
 
 } else {
 
-    if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_server_totals` . "'")) == 1) {
+    if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_server_totals` . "'")) >= 1) {
 
         $table_exists = 1;
 
@@ -582,10 +582,10 @@ if (mysqli_num_rows($result) == 0) {
     }
 
     if ($is_building != 1 && $table_exists != 0 && $temp_dw_accounts != 0 && $temp_dw_dns_zones != 0 &&
-        $temp_dw_dns_zones != 0
+        $temp_dw_dns_records != 0
     ) { ?>
 
-        <BR><font class="subheadline">Data Warehouse Totals</font><BR>
+        <BR><BR><div class="subheadline">Data Warehouse Totals</div>
         <table class="main_table" cellpadding="0" cellspacing="0">
         <tr class="main_table_row_heading_active">
             <td class="main_table_cell_heading_active">
@@ -714,14 +714,14 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
         || $temp_suspended_accounts != 0)
 ) { ?>
 
-    <BR><font class="subheadline">Potential Problems</font><?php
+    <BR><BR><div class="subheadline">Potential Problems</div><?php
     if ($temp_accounts_without_a_dns_zone == 0) {
 
         $accounts_without_a_dns_zone_flag = 1;
 
     } else { ?>
 
-        <BR><BR><strong>Accounts without a DNS Zone</strong><BR><?php
+        <BR><strong>Accounts without a DNS Zone</strong><BR><?php
 
         while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
 
@@ -741,6 +741,8 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
 
         }
 
+        echo '<BR>';
+
     }
 
     if ($temp_dns_zones_without_an_account == 0) {
@@ -749,7 +751,7 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
 
     } else { ?>
 
-        <BR><BR><strong>DNS Zones without an Account</strong><BR><?php
+        <BR><strong>DNS Zones without an Account</strong><BR><?php
 
         while ($row_dns_zones_without_an_account = mysqli_fetch_object($result_dns_zones_without_an_account)) {
 
@@ -769,6 +771,8 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
 
         }
 
+        echo '<BR>';
+
     }
 
     if ($temp_suspended_accounts == 0) {
@@ -777,7 +781,7 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
 
     } else { ?>
 
-        <BR><BR><strong>Suspended Accounts</strong><BR><?php
+        <BR><strong>Suspended Accounts</strong><BR><?php
 
         while ($row_suspended_accounts = mysqli_fetch_object($result_suspended_accounts)) {
 
@@ -797,9 +801,9 @@ if ($is_the_build_finished == 1 && ($temp_accounts_without_a_dns_zone != 0 || $t
 
         }
 
-    }
+        echo '<BR>';
 
-    echo "<BR>";
+    }
 
 } ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>

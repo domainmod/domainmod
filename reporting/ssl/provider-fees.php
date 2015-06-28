@@ -206,8 +206,8 @@ if ($total_rows > 0) {
 <?php } ?>
 <?php echo $reporting->showTableBottom(); ?>
 
-<BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
-<BR>
+<BR><div class="subheadline"><?php echo $page_subtitle; ?></div><BR>
+
 <?php if ($all == "1") { ?>
     <strong>All SSL Provider Fees</strong><BR>
 <?php } else { ?>

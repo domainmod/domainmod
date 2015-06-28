@@ -560,7 +560,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->num_rows() > 0) { ?>
 
-            <BR><font class="subheadline">Custom Fields</font><BR><BR><?php
+            <BR><div class="subheadline">Custom Fields</div><BR><?php
 
             $count = 0;
 

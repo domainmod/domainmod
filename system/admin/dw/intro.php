@@ -61,7 +61,7 @@ only, and you will see its data referenced throughout the system where applicabl
 editing has information stored in your data warehouse, the system will automatically match them up and display the
 additional information for you, giving you even more insight into your data.<BR><BR>
 
-<font class="subheadline">Data Structure</font><BR><BR>
+<div class="subheadline">Data Structure</div><BR>
 The following data is currently imported into the data warehouse.<BR><BR>
 <strong>Accounts</strong><BR>
 Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max
@@ -77,7 +77,7 @@ Authoritative Name Server<BR><BR>
 TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW
 Data<BR><BR>
 
-<font class="subheadline">Automating Builds</font><BR><BR>
+<div class="subheadline">Automating Builds</div><BR>
 If you're going to use the data warehouse, it's recommended that you setup a cron job up to execute /cron/dw.php at
 regular intervals in order to automate your builds. There's a lot of work being done in the background during a build,
 and more often than not a web browser will timeout if you try to build through the UI instead of using a cron job,

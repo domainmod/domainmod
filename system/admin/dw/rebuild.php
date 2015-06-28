@@ -50,13 +50,24 @@ $software_section = "admin-dw-rebuild";
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<font class="subheadline"><?php echo $page_subtitle; ?></font>
+<div class="subheadline"><?php echo $page_subtitle; ?></div>
 <?php
-$dw->build($connection);
+$result_message = $dw->build($connection);
+
+if ($result_message && $result_message != false && $result_message != '') {
+
+    echo $result_message;
+    echo '<BR><BR>';
+    echo '<a href="dw.php">Go to Data Warehouse</a>.';
+
+} else {
+
+    echo 'There was a problem rebuilding the Data Warehouse.';
+    echo '<BR><BR>';
+    echo '<a href="rebuild.php">Try again</a>.';
+
+}
 ?>
-The Data Warehouse has been rebuilt.<BR>
-<BR>
-<a href="dw.php">Go to Data Warehouse</a>.
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

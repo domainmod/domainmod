@@ -27,7 +27,7 @@ echo $layout->jumpMenu();
     the conversion rates</a>.<BR><BR><BR>
     <div class="reporting-block-outer">
         <div class="reporting-block-left">
-            <font class="subheadline">Domain Reports</font><BR><BR>
+            <div class="subheadline">Domain Reports</div><BR>
 
             <form name="reporting_menu_domain_form" method="post" action="index.php">
                 <select name="reporting_menu_domains" onChange="MM_jumpMenu('parent',this,0)">
@@ -79,7 +79,7 @@ echo $layout->jumpMenu();
             </form>
         </div>
         <div class="reporting-block-center">
-            <font class="subheadline">SSL Certificate Reports</font><BR><BR>
+            <div class="subheadline">SSL Certificate Reports</div><BR>
 
             <form name="reporting_menu_ssl_form" method="post" action="index.php">
                 <select name="reporting_menu_ssl" onChange="MM_jumpMenu('parent',this,0)">
@@ -127,7 +127,7 @@ echo $layout->jumpMenu();
             </form>
         </div>
         <div class="reporting-block-right">
-            <font class="subheadline">Data Warehouse Reports</font><BR><BR>
+            <div class="subheadline">Data Warehouse Reports</div><BR>
 
             <form name="reporting_menu_dw_form" method="post" action="index.php">
                 <select name="reporting_menu_dw" onChange="MM_jumpMenu('parent',this,0)">

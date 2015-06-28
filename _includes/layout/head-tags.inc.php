@@ -634,12 +634,13 @@
         padding: 0;
     }
 
-    font.subheadline {
+    div.subheadline {
         font-family: Verdana, Arial, Helvetica, sans-serif;
         font-weight: bold;
         font-size: 9pt;
         /*    color: #BB0000; */
         color: #AA0000;
+        padding: 0;
     }
 
     font.main_table_heading_extra {

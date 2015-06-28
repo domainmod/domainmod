@@ -392,7 +392,7 @@ if ($really_del == "1") {
 
     if (mysqli_num_rows($result) > 0) { ?>
 
-        <BR><font class="subheadline">Custom Fields</font><BR><BR><?php
+        <BR><div class="subheadline">Custom Fields</div><BR><?php
 
         $count = 0;
 

@@ -443,7 +443,7 @@ if ($really_del == "1") {
 
     if (mysqli_num_rows($result) > 0) { ?>
 
-        <BR><font class="subheadline">Custom Fields</font><BR><BR><?php
+        <BR><div class="subheadline">Custom Fields</div><BR><?php
 
         $count = 0;
 
@@ -559,7 +559,7 @@ if ($result_dns_zones === false || mysqli_num_rows($result_dns_zones) <= 0) {
 
 if ($no_results_accounts !== 1 || $no_results_dns_zones !== 1) { ?>
 
-    <BR><BR><font class="subheadline">Data Warehouse Information for <?php echo $new_domain; ?></font><?php
+    <BR><BR><BR><div class="subheadline">Data Warehouse Information for <?php echo $new_domain; ?></div><?php
 
 }
 
@@ -590,7 +590,7 @@ if ($no_results_dns_zones === 1) {
 
 } else { ?>
 
-    <BR><BR><strong>DNS Zones & Records</strong><BR><BR><?php
+    <BR><strong>DNS Zones & Records</strong><BR><BR><?php
     $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
                              FROM dw_dns_zones AS z, dw_servers AS s
                              WHERE z.server_id = s.id
