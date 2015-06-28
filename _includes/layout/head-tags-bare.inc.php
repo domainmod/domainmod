@@ -55,9 +55,4 @@
         color: #CC0000;
     }
 </style>
-<link rel="icon" type="image/ico" href="<?php echo $web_root; ?>/images/favicon.ico"/>
-<style type="text/css">
-    html {
-        overflow-y: scroll;
-    }
-</style>
+<?php include('head-tags-common.inc.php'); ?>

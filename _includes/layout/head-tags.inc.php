@@ -770,10 +770,4 @@
         text-decoration: none;
     }
 </style>
-<link rel="icon" type="image/ico" href="<?php echo $web_root; ?>/images/favicon.ico"/>
-<style type="text/css">
-    html {
-        overflow-y: scroll;
-    }
-</style>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<?php include('head-tags-common.inc.php'); ?>
