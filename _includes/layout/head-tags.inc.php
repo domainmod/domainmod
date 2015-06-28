@@ -657,6 +657,7 @@
     div.default_highlight {
         font-weight: bold;
         color: #CC0000;
+        padding: 0;
     }
 
     div.default_highlight_secondary {
@@ -665,9 +666,10 @@
         padding: 0;
     }
 
-    font.reseller_highlight {
+    div.reseller_highlight {
         font-weight: bold;
         color: #0040FF;
+        padding: 0;
     }
 
     a:link {

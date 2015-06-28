@@ -292,10 +292,18 @@ $has_active = 1; ?>
             <?php //@formatter:off ?>
             <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php
                 echo $row->username; ?></a><?php
-            if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default Account\"><font
-                class=\"default_highlight\">*</font></a>"; ?><?php
-            if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font
-                class=\"reseller_highlight\">*</font></a>"; ?>
+
+            if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) { ?>
+
+                <a title="Default Account"><font class="default_highlight">*</font></a><?php
+
+            }
+
+            if ($row->reseller == "1") { ?>
+
+                <a title="Reseller Account"><div class="reseller_highlight">*</div></a><?php
+
+            } ?>
             <?php //@formatter:on ?>
         </td>
         <td class="main_table_cell_active">
@@ -382,10 +390,18 @@ $has_active = 1; ?>
                     <?php //@formatter:off ?>
                     <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid;
                         ?>"><?php echo $row->username; ?></a><?php
-                    if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) echo "<a title=\"Default
-                        Account\"><font class=\"default_highlight\">*</font></a>"; ?><?php
-                    if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><font
-                        class=\"reseller_highlight\">*</font></a>"; ?>
+
+                    if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) { ?>
+
+                        <a title="Default Account"><font class="default_highlight">*</font></a><?php
+
+                    }
+
+                    if ($row->reseller == "1") { ?>
+
+                        <a title="Reseller Account"><div class="reseller_highlight">*</div></a><?php
+
+                    } ?>
                     <?php //@formatter:on ?>
                 </td>
                 <td class="main_table_cell_inactive">
@@ -412,8 +428,8 @@ $has_active = 1; ?>
     }
 
     if ($has_active || $has_inactive) { ?>
-        <BR><div class="default_highlight">*</div> = Default Account&nbsp;&nbsp;<font
-            class="reseller_highlight">*</font> = Reseller Account<?php
+        <BR><div class="default_highlight">*</div> = Default Account&nbsp;&nbsp;
+        <div class="reseller_highlight">*</div> = Reseller Account<?php
     }
 
     if (!$has_active && !$has_inactive) {
