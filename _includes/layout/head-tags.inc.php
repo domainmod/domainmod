@@ -626,11 +626,12 @@
         padding-left: 0px;
     }
 
-    font.headline {
+    div.headline {
         font-family: Verdana, Arial, Helvetica, sans-serif;
         font-weight: bold;
         font-size: 10pt;
         color: #AA0000;
+        padding: 0;
     }
 
     font.subheadline {

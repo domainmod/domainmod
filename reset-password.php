@@ -100,8 +100,8 @@ if ($new_username != "") {
 <body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header-login.inc.php"); ?>
 <div class="reset-password">
-    <font class="headline">Reset Your Password</font>
-    <BR><BR><BR>
+    <div class="headline">Reset Your Password</div>
+    <BR><BR>
 
     <form name="reset_password_form" method="post">
         <strong>Username:</strong>&nbsp;<input name="new_username" type="text" value="<?php echo $new_username; ?>"

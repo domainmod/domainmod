@@ -55,8 +55,8 @@
 if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['running_login_checks'] != 1) { ?>
     <hr width="100%" size="1" noshade><BR><?php
 } ?>
-    <font class="headline"><?php echo $page_title; ?></font>
-    <BR><BR>
+    <div class="headline"><?php echo $page_title; ?></div>
+    <BR>
 <?php
 include(DIR_INC . "layout/table-maintenance.inc.php");
 ?>
