@@ -66,7 +66,7 @@ class Export
 
         fclose($open_file);
 
-        return true;
+        return exit;
 
     }
 
