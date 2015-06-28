@@ -31,14 +31,16 @@ class DwBuild
         $accounts = new DwAccounts();
         $zones = new DwZones();
         $records = new DwRecords();
+        $servers = new DwServers();
         $stats = new DwStats();
+        $time = new Timestamp();
 
-        $result = $this->getServers($connection);
-        if ($this->checkForHosts($result) == '0')
+        $result = $servers->get($connection);
+        if ($servers->checkForHosts($result) == '0')
             return false;
         $this->dropDwTables($connection);
 
-        $build_start_time_o = $this->time();
+        $build_start_time_o = $time->time();
 
         $sql = "UPDATE dw_servers
                 SET build_status_overall = '0',
@@ -57,10 +59,10 @@ class DwBuild
         $accounts->createTable($connection);
         $zones->createTable($connection);
         $records->createTable($connection);
-        $this->processEachServer($connection, $result);
+        $servers->processEachServer($connection, $result);
         $records->cleanupRecords($connection);
         $records->reorderRecords($connection);
-        $result = $this->getServers($connection);
+        $result = $servers->get($connection);
         $stats->updateServerStats($connection, $result);
         $stats->updateDwTotalsTable($connection);
         $this->buildFinish($connection, $build_start_time_o);
@@ -71,33 +73,6 @@ class DwBuild
         $result_message = 'Data Warehouse Rebuilt.<BR>';
 
         return $result_message;
-
-    }
-
-    public function getServers($connection)
-    {
-
-        $sql = "SELECT id, `host`, protocol, `port`, username, `hash`
-                FROM dw_servers
-                ORDER BY `name`";
-        $result = mysqli_query($connection, $sql);
-
-        return $result;
-
-    }
-
-    public function checkForHosts($result)
-    {
-
-        if (mysqli_num_rows($result) >= 1) {
-
-            return '1';
-
-        } else {
-
-            return '0';
-
-        }
 
     }
 
@@ -112,52 +87,6 @@ class DwBuild
 
         $sql_records = "DROP TABLE IF EXISTS dw_dns_records";
         mysqli_query($connection, $sql_records);
-
-        return true;
-
-    }
-
-    public function time()
-    {
-
-        $time = new Timestamp();
-
-        return $time->time();
-
-    }
-
-    public function processEachServer($connection, $result)
-    {
-
-        $accounts = new DwAccounts();
-        $zones = new DwZones();
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $build_start_time = $this->time();
-
-            $sql = "UPDATE dw_servers
-                    SET build_start_time = '" . $build_start_time . "',
-                        build_status = '0'
-                    WHERE id = '" . $row->id . "'";
-            mysqli_query($connection, $sql);
-
-            $api_call = $accounts->getApiCall();
-            $api_results = $this->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
-                $row->hash);
-            $accounts->insertAccounts($connection, $api_results, $row->id);
-
-            $api_call = $zones->getApiCall();
-            $api_results = $this->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
-                $row->hash);
-            $zones->insertZones($connection, $api_results, $row->id);
-
-            $result_zones = $zones->getInsertedZones($connection, $row->id);
-            $zones->processEachZone($connection, $result_zones, $row->id, $row->protocol, $row->host, $row->port,
-                $row->username, $row->hash);
-            $this->serverFinish($connection, $row->id, $build_start_time);
-
-        }
 
         return true;
 
@@ -192,27 +121,12 @@ class DwBuild
 
     }
 
-    public function serverFinish($connection, $server_id, $build_start_time)
-    {
-
-        list($build_end_time, $total_build_time) = $this->getBuildTime($build_start_time);
-
-        $sql = "UPDATE dw_servers
-                SET build_status = '1',
-                    build_end_time = '" . $build_end_time . "',
-                    build_time = '" . $total_build_time . "',
-                    has_ever_been_built = '1'
-                WHERE id = '" . $server_id . "'";
-        mysqli_query($connection, $sql);
-
-        return true;
-
-    }
-
     public function getBuildTime($build_start_time)
     {
 
-        $build_end_time = $this->time();
+        $time = new Timestamp();
+
+        $build_end_time = $time->time();
 
         $total_build_time = (strtotime($build_end_time) - strtotime($build_start_time));
 
