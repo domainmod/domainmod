@@ -650,8 +650,9 @@
         color: #000000;
     }
 
-    font.highlight {
+    div.highlight {
         color: #CC0000;
+        padding: 0;
     }
 
     div.default_highlight {

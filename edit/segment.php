@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $segid = $new_segid;
 
-            $_SESSION['result_message'] = "Segment <font class=\"highlight\">$new_name</font> Updated<BR>";
+            $_SESSION['result_message'] = "Segment <div class=\"highlight\">$new_name</div> Updated<BR>";
 
             $_SESSION['result_message'] .= $maint->updateSegments($connection);
 
@@ -273,7 +273,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "Segment <font class=\"highlight\">$temp_segment_name</font> Deleted<BR>";
+    $_SESSION['result_message'] = "Segment <div class=\"highlight\">$temp_segment_name</div> Deleted<BR>";
 
     header("Location: ../segments.php");
     exit;

@@ -109,8 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">" . $new_username . " (" .
-            $temp_registrar . ", " . $temp_owner . ")</font> Added<BR>";
+        $_SESSION['result_message'] = "Registrar Account <div class=\"highlight\">" . $new_username . " (" .
+            $temp_registrar . ", " . $temp_owner . ")</div> Added<BR>";
 
         if ($_SESSION['has_registrar_account'] != '1') {
 

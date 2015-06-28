@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $pcid = $new_pcid;
 
-        $_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Updated<BR>";
+        $_SESSION['result_message'] = "Category <div class=\"highlight\">$new_category</div> Updated<BR>";
 
         header("Location: ../categories.php");
         exit;
@@ -160,7 +160,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "Category <font class=\"highlight\">$new_category</font> Deleted<BR>";
+    $_SESSION['result_message'] = "Category <div class=\"highlight\">$new_category</div> Deleted<BR>";
 
     header("Location: ../categories.php");
     exit;

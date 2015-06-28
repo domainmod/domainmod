@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "Category <font class=\"highlight\">" . $new_category . "</font> Added<BR>";
+        $_SESSION['result_message'] = "Category <div class=\"highlight\">" . $new_category . "</div> Added<BR>";
 
         header("Location: ../categories.php");
         exit;

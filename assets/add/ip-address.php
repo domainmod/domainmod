@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "IP Address <font class=\"highlight\">" . $new_name . " (" . $new_ip . ")</font>
+        $_SESSION['result_message'] = "IP Address <div class=\"highlight\">" . $new_name . " (" . $new_ip . ")</div>
             Added<BR>";
 
         header("Location: ../ip-addresses.php");

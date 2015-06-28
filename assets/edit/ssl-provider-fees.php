@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $sslpid = $new_sslpid;
 
-                $_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been updated<BR>";
+                $_SESSION['result_message'] = "The fee for <div class=\"highlight\">$temp_type</div> has been updated<BR>";
 
                 $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 
@@ -206,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     WHERE sslc.fee_id = '" . $new_fee_id . "'";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been added<BR>";
+                $_SESSION['result_message'] = "The fee for <div class=\"highlight\">$temp_type</div> has been added<BR>";
 
                 $queryB = new DomainMOD\QueryBuild();
 
@@ -266,7 +266,7 @@ if ($really_del == "1") {
             $temp_type = $row->type;
         }
 
-        $_SESSION['result_message'] = "The fee for <font class=\"highlight\">$temp_type</font> has been deleted<BR>";
+        $_SESSION['result_message'] = "The fee for <div class=\"highlight\">$temp_type</div> has been deleted<BR>";
 
         $queryB = new DomainMOD\QueryBuild();
 
@@ -358,7 +358,7 @@ if (mysqli_num_rows($result) != 0) {
         }
 
         if ($temp_fee_id == "0") {
-            $temp_all_types = $temp_all_types .= "<font class=\"highlight\">$row->type</font>, ";
+            $temp_all_types = $temp_all_types .= "<div class=\"highlight\">$row->type</div>, ";
         } else {
             $temp_all_types = $temp_all_types .= "$row->type, ";
         }

@@ -185,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             }
 
-            $_SESSION['result_message'] = "Segment <font class=\"highlight\">$new_name</font> Added<BR>";
+            $_SESSION['result_message'] = "Segment <div class=\"highlight\">$new_name</div> Added<BR>";
 
             $_SESSION['result_message'] .= $maint->updateSegments($connection);
 

@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $ipid = $new_ipid;
 
-        $_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Updated<BR>";
+        $_SESSION['result_message'] = "IP Address <div class=\"highlight\">$new_name ($new_ip)</div> Updated<BR>";
 
         header("Location: ../ip-addresses.php");
         exit;
@@ -160,7 +160,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "IP Address <font class=\"highlight\">$new_name ($new_ip)</font> Deleted<BR>";
+    $_SESSION['result_message'] = "IP Address <div class=\"highlight\">$new_name ($new_ip)</div> Deleted<BR>";
 
     header("Location: ../ip-addresses.php");
     exit;

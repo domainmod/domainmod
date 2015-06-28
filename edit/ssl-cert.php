@@ -178,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $sslcid = $new_sslcid;
 
-        $_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Updated<BR>";
+        $_SESSION['result_message'] = "SSL Certificate <div class=\"highlight\">$new_name</div> Updated<BR>";
 
         $queryB = new DomainMOD\QueryBuild();
 
@@ -250,7 +250,7 @@ if ($really_del == "1") {
         $temp_type = $row->type;
     }
 
-    $_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name ($temp_type)</font> Deleted<BR>";
+    $_SESSION['result_message'] = "SSL Certificate <div class=\"highlight\">$new_name ($temp_type)</div> Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 

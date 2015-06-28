@@ -135,8 +135,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$new_username ($temp_registrar,
-            $temp_owner)</font> Updated<BR>";
+        $_SESSION['result_message'] = "Registrar Account <div class=\"highlight\">$new_username ($temp_registrar,
+            $temp_owner)</div> Updated<BR>";
 
         header("Location: ../registrar-accounts.php");
         exit;
@@ -247,8 +247,8 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "Registrar Account <font class=\"highlight\">$temp_username ($temp_registrar_name,
-        $temp_owner_name)</font> Deleted<BR>";
+    $_SESSION['result_message'] = "Registrar Account <div class=\"highlight\">$temp_username ($temp_registrar_name,
+        $temp_owner_name)</div> Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 

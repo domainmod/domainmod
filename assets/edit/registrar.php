@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $rid = $new_rid;
 
-        $_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Updated<BR>";
+        $_SESSION['result_message'] = "Registrar <div class=\"highlight\">$new_registrar</div> Updated<BR>";
 
         header("Location: ../registrars.php");
         exit;
@@ -219,7 +219,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "Registrar <font class=\"highlight\">$new_registrar</font> Deleted<BR>";
+    $_SESSION['result_message'] = "Registrar <div class=\"highlight\">$new_registrar</div> Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 

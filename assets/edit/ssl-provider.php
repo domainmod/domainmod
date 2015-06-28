@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $sslpid = $new_sslpid;
 
-        $_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Updated<BR>";
+        $_SESSION['result_message'] = "SSL Provider <div class=\"highlight\">$new_ssl_provider</div> Updated<BR>";
 
         header("Location: ../ssl-providers.php");
         exit;
@@ -219,7 +219,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Deleted<BR>";
+    $_SESSION['result_message'] = "SSL Provider <div class=\"highlight\">$new_ssl_provider</div> Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 

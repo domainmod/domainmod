@@ -278,11 +278,11 @@ while ($row_name = mysqli_fetch_object($result_name)) {
 
 <?php
 if ($type == "inactive") {
-    echo "The below domains are in the segment <strong><font class=\"highlight\">" . $segment_name . "</font></strong>, and they are stored in your  " . $software_title . " database, but they are currently marked as inactive.<BR><BR>";
+    echo "The below domains are in the segment <strong><div class=\"highlight\">" . $segment_name . "</div></strong>, and they are stored in your  " . $software_title . " database, but they are currently marked as inactive.<BR><BR>";
 } elseif ($type == "filtered") {
-    echo "The below domains are in the segment <strong><font class=\"highlight\">" . $segment_name . "</font></strong>, and they are stored in your  " . $software_title . " database, but they were filtered out based on your search criteria.<BR><BR>";
+    echo "The below domains are in the segment <strong><div class=\"highlight\">" . $segment_name . "</div></strong>, and they are stored in your  " . $software_title . " database, but they were filtered out based on your search criteria.<BR><BR>";
 } elseif ($type == "missing") {
-    echo "The below domains are in the segment <strong><font class=\"highlight\">" . $segment_name . "</font></strong>, but they are not in your " . $software_title . " database.<BR><BR>";
+    echo "The below domains are in the segment <strong><div class=\"highlight\">" . $segment_name . "</div></strong>, but they are not in your " . $software_title . " database.<BR><BR>";
 }
 ?>
 <?php

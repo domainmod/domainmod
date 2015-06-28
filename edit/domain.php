@@ -195,7 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $did = $new_did;
 
-        $_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Updated<BR>";
+        $_SESSION['result_message'] = "Domain <div class=\"highlight\">$new_domain</div> Updated<BR>";
 
         $_SESSION['result_message'] .= $maint->updateSegments($connection);
 
@@ -277,7 +277,7 @@ if ($really_del == "1") {
             WHERE domain_id = '" . $did . "'";
     $result = mysqli_query($connection, $sql);
 
-    $_SESSION['result_message'] = "Domain <font class=\"highlight\">$new_domain</font> Deleted<BR>";
+    $_SESSION['result_message'] = "Domain <div class=\"highlight\">$new_domain</div> Deleted<BR>";
 
     $_SESSION['result_message'] .= $maint->updateSegments($connection);
 

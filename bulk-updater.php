@@ -979,7 +979,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['result_message'] = "Custom Field <font class=\"highlight\">" . $name_array[0] . "</font> Updated<BR>";
+                $_SESSION['result_message'] = "Custom Field <div class=\"highlight\">" . $name_array[0] . "</div> Updated<BR>";
 
             }
 

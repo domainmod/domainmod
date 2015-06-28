@@ -931,17 +931,17 @@ if ($export_data == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 if ($_SESSION['has_registrar'] != '1') {
-    echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrars found. Please <a href=\"assets/add/registrar.php\">click here</a> to add one.<BR><BR>";
+    echo "<strong><div class=\"highlight\">0</div></strong> Domain Registrars found. Please <a href=\"assets/add/registrar.php\">click here</a> to add one.<BR><BR>";
     exit;
 }
 
 if ($_SESSION['has_registrar_account'] != '1' && $_SESSION['has_registrar'] == '1') {
-    echo "<strong><font class=\"highlight\">0</font></strong> Domain Registrar Accounts found. Please <a href=\"assets/add/registrar-account.php\">click here</a> to add one.<BR><BR>";
+    echo "<strong><div class=\"highlight\">0</div></strong> Domain Registrar Accounts found. Please <a href=\"assets/add/registrar-account.php\">click here</a> to add one.<BR><BR>";
     exit;
 }
 
 if ($_SESSION['has_domain'] != '1' && $_SESSION['has_registrar'] == '1' && $_SESSION['has_registrar_account'] == '1') {
-    echo "<strong><font class=\"highlight\">0</font></strong> Domains found. Please <a href=\"add/domain.php\">click here</a> to add one.<BR><BR>";
+    echo "<strong><div class=\"highlight\">0</div></strong> Domains found. Please <a href=\"add/domain.php\">click here</a> to add one.<BR><BR>";
     exit;
 }
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
@@ -2320,22 +2320,22 @@ if ($segid != "") {
                     <?php } ?>
                     <td class="main_table_cell_active">
                         <?php if ($row->active == "0") {
-                            echo "<a title=\"Inactive Domain\"><strong><font class=\"highlight\">x</font></strong></a>&nbsp;";
+                            echo "<a title=\"Inactive Domain\"><strong><div class=\"highlight\">x</div></strong></a>&nbsp;";
                         } elseif ($row->active == "10") {
-                            echo "<a title=\"Sold\"><strong><font class=\"highlight\">S</font></strong></a>&nbsp;";
+                            echo "<a title=\"Sold\"><strong><div class=\"highlight\">S</div></strong></a>&nbsp;";
                             echo "<a title=\"Sold\"></a>";
                         } elseif ($row->active == "2") {
-                            echo "<a title=\"In Transfer\"><strong><font class=\"highlight\">T</font></strong></a>&nbsp;";
+                            echo "<a title=\"In Transfer\"><strong><div class=\"highlight\">T</div></strong></a>&nbsp;";
                         } elseif ($row->active == "3") {
-                            echo "<a title=\"Pending (Renewal)\"><strong><font class=\"highlight\">PRn</font></strong></a>&nbsp;";
+                            echo "<a title=\"Pending (Renewal)\"><strong><div class=\"highlight\">PRn</div></strong></a>&nbsp;";
                         } elseif ($row->active == "4") {
-                            echo "<a title=\"Pending (Other)\"><strong><font class=\"highlight\">PO</font></strong></a>&nbsp;";
+                            echo "<a title=\"Pending (Other)\"><strong><div class=\"highlight\">PO</div></strong></a>&nbsp;";
                         } elseif ($row->active == "5") {
-                            echo "<a title=\"Pending (Registration)\"><strong><font class=\"highlight\">PRg</font></strong></a>&nbsp;";
+                            echo "<a title=\"Pending (Registration)\"><strong><div class=\"highlight\">PRg</div></strong></a>&nbsp;";
                         }
                         ?><a class="invisiblelink"
                              href="edit/domain.php?did=<?php echo $row->id; ?>"><?php echo $row->domain; ?></a><?php if ($row->privacy == "1") {
-                            echo "&nbsp;<a title=\"Private WHOIS Registration\"><strong><font class=\"highlight\">prv</font></strong></a>&nbsp;";
+                            echo "&nbsp;<a title=\"Private WHOIS Registration\"><strong><div class=\"highlight\">prv</div></strong></a>&nbsp;";
                         } else {
                             echo "&nbsp;";
                         } ?>[<a class="invisiblelink" target="_blank" href="http://<?php echo $row->domain; ?>">v</a>] [<a

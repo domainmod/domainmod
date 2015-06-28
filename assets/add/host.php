@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "Web Host <font class=\"highlight\">" . $new_host . "</font> Added<BR>";
+        $_SESSION['result_message'] = "Web Host <div class=\"highlight\">" . $new_host . "</div> Added<BR>";
 
         header("Location: ../hosting.php");
         exit;

@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">" . $new_name . "</font> Added<BR>";
+        $_SESSION['result_message'] = "DNS Profile <div class=\"highlight\">" . $new_name . "</div> Added<BR>";
 
         header("Location: ../dns.php");
         exit;

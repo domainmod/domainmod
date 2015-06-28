@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $whid = $new_whid;
 
-        $_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Updated<BR>";
+        $_SESSION['result_message'] = "Web Host <div class=\"highlight\">$new_host</div> Updated<BR>";
 
         header("Location: ../hosting.php");
         exit;
@@ -158,7 +158,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "Web Host <font class=\"highlight\">$new_host</font> Deleted<BR>";
+    $_SESSION['result_message'] = "Web Host <div class=\"highlight\">$new_host</div> Deleted<BR>";
 
     header("Location: ../hosting.php");
     exit;

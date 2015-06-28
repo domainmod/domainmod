@@ -615,17 +615,17 @@ if ($export_data == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 if ($_SESSION['has_ssl_provider'] != '1') {
-    echo "<strong><font class=\"highlight\">0</font></strong> SSL Providers found. Please <a href=\"assets/add/ssl-provider.php\">click here</a> to add one.<BR><BR>";
+    echo "<strong><div class=\"highlight\">0</div></strong> SSL Providers found. Please <a href=\"assets/add/ssl-provider.php\">click here</a> to add one.<BR><BR>";
     exit;
 }
 
 if ($_SESSION['has_ssl_account'] != '1' && $_SESSION['has_ssl_provider'] == '1') {
-    echo "<strong><font class=\"highlight\">0</font></strong> SSL Provider Accounts found. Please <a href=\"assets/add/ssl-provider-account.php\">click here</a> to add one.<BR><BR>";
+    echo "<strong><div class=\"highlight\">0</div></strong> SSL Provider Accounts found. Please <a href=\"assets/add/ssl-provider-account.php\">click here</a> to add one.<BR><BR>";
     exit;
 }
 
 if ($_SESSION['has_ssl_cert'] != '1' && $_SESSION['has_ssl_provider'] == '1' && $_SESSION['has_ssl_account'] == '1' && $_SESSION['has_domain'] == '1') {
-    echo "<strong><font class=\"highlight\">0</font></strong> SSL Certificates. Please <a href=\"add/ssl-cert.php\">click here</a> to add one.<BR><BR>";
+    echo "<strong><div class=\"highlight\">0</div></strong> SSL Certificates. Please <a href=\"add/ssl-cert.php\">click here</a> to add one.<BR><BR>";
     exit;
 }
 
@@ -1603,13 +1603,13 @@ $total_rows = number_format(mysqli_num_rows($result));
                     <?php } ?>
                     <td class="main_table_cell_active">
                         <?php if ($row->active == "0") {
-                            echo "<a title=\"Expired\"><strong><font class=\"highlight\">x</font></strong></a>&nbsp;";
+                            echo "<a title=\"Expired\"><strong><div class=\"highlight\">x</div></strong></a>&nbsp;";
                         } elseif ($row->active == "2") {
-                            echo "<a title=\"Pending (Registration)\"><strong><font class=\"highlight\">PRg</font></strong></a>&nbsp;";
+                            echo "<a title=\"Pending (Registration)\"><strong><div class=\"highlight\">PRg</div></strong></a>&nbsp;";
                         } elseif ($row->active == "3") {
-                            echo "<a title=\"Pending (Renewal)\"><strong><font class=\"highlight\">PRn</font></strong></a>&nbsp;";
+                            echo "<a title=\"Pending (Renewal)\"><strong><div class=\"highlight\">PRn</div></strong></a>&nbsp;";
                         } elseif ($row->active == "4") {
-                            echo "<a title=\"Pending (Other)\"><strong><font class=\"highlight\">PO</font></strong></a>&nbsp;";
+                            echo "<a title=\"Pending (Other)\"><strong><div class=\"highlight\">PO</div></strong></a>&nbsp;";
                         }
                         ?><a class="invisiblelink"
                              href="edit/ssl-cert.php?sslcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>

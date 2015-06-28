@@ -229,7 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "SSL Certificate <font class=\"highlight\">$new_name</font> Added<BR>";
+        $_SESSION['result_message'] = "SSL Certificate <div class=\"highlight\">$new_name</div> Added<BR>";
 
         $queryB = new DomainMOD\QueryBuild();
 

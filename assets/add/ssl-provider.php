@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "SSL Provider <font class=\"highlight\">$new_ssl_provider</font> Added<BR>";
+        $_SESSION['result_message'] = "SSL Provider <div class=\"highlight\">$new_ssl_provider</div> Added<BR>";
 
         if ($_SESSION['has_ssl_provider'] != '1') {
 

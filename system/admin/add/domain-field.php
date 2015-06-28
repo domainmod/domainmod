@@ -136,8 +136,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 
             }
 
-            $_SESSION['result_message'] .= "Custom Domain Field <font class=\"highlight\">" . $new_name . " (" .
-                $new_field_name . ")</font> Added<BR>";
+            $_SESSION['result_message'] .= "Custom Domain Field <div class=\"highlight\">" . $new_name . " (" .
+                $new_field_name . ")</div> Added<BR>";
 
             header("Location: ../domain-fields.php");
             exit;

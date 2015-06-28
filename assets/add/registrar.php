@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "Registrar <font class=\"highlight\">" . $new_registrar . "</font> Added<BR>";
+        $_SESSION['result_message'] = "Registrar <div class=\"highlight\">" . $new_registrar . "</div> Added<BR>";
 
         if ($_SESSION['has_registrar'] != '1') {
 

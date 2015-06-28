@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "Owner <font class=\"highlight\">" . $new_owner . "</font> Added<BR>";
+        $_SESSION['result_message'] = "Owner <div class=\"highlight\">" . $new_owner . "</div> Added<BR>";
 
         header("Location: ../account-owners.php");
         exit;

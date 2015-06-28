@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $dwsid = $new_dwsid;
 
-        $_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font>
+        $_SESSION['result_message'] = "Server <div class=\"highlight\">" . $new_name . " (" . $new_host . ")</div>
         Updated<BR>";
 
         header("Location: ../servers.php");
@@ -223,7 +223,7 @@ if ($really_del == "1") {
     $dwstats = new DomainMOD\DwStats();
     $dwstats->updateDwTotalsTable($connection);
 
-    $_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font>
+    $_SESSION['result_message'] = "Server <div class=\"highlight\">" . $new_name . " (" . $new_host . ")</div>
     Deleted<BR>";
 
     header("Location: ../servers.php");

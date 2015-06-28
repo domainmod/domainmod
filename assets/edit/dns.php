@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $dnsid = $new_dnsid;
 
-        $_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Updated<BR>";
+        $_SESSION['result_message'] = "DNS Profile <div class=\"highlight\">$new_name</div> Updated<BR>";
 
         header("Location: ../dns.php");
         exit;
@@ -239,7 +239,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "DNS Profile <font class=\"highlight\">$new_name</font> Deleted<BR>";
+    $_SESSION['result_message'] = "DNS Profile <div class=\"highlight\">$new_name</div> Deleted<BR>";
 
     header("Location: ../dns.php");
     exit;

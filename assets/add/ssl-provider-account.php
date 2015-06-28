@@ -109,8 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "SSL Account <font class=\"highlight\">$new_username (" . $temp_ssl_provider .
-            ", " . $temp_owner . ")</font> Added<BR>";
+        $_SESSION['result_message'] = "SSL Account <div class=\"highlight\">$new_username (" . $temp_ssl_provider .
+            ", " . $temp_owner . ")</div> Added<BR>";
 
         if ($_SESSION['has_ssl_account'] != '1') {
 

@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $rid = $new_rid;
 
-                $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been updated<BR>";
+                $_SESSION['result_message'] = "The fee for <div class=\"highlight\">.$new_tld</div> has been updated<BR>";
 
                 $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 
@@ -224,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       AND d.fee_id = '" . $new_fee_id . "'";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$new_tld</font> has been added<BR>";
+                $_SESSION['result_message'] = "The fee for <div class=\"highlight\">.$new_tld</div> has been added<BR>";
 
                 $queryB = new DomainMOD\QueryBuild();
 
@@ -277,7 +277,7 @@ if ($really_del == "1") {
                   AND tld = '" . $tld . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-        $_SESSION['result_message'] = "The fee for <font class=\"highlight\">.$tld</font> has been deleted<BR>";
+        $_SESSION['result_message'] = "The fee for <div class=\"highlight\">.$tld</div> has been deleted<BR>";
 
         $queryB = new DomainMOD\QueryBuild();
 
@@ -365,7 +365,7 @@ if (mysqli_num_rows($result) != 0) {
         }
 
         if ($temp_fee_id == "0") {
-            $temp_all_tlds = $temp_all_tlds .= "<font class=\"highlight\">.$row->tld</font>, ";
+            $temp_all_tlds = $temp_all_tlds .= "<div class=\"highlight\">.$row->tld</div>, ";
         } else {
             $temp_all_tlds = $temp_all_tlds .= ".$row->tld, ";
         }

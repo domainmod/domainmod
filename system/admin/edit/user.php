@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             WHERE id = '" . $new_uid . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $_SESSION['result_message'] .= "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</font> Updated<BR>";
+    $_SESSION['result_message'] .= "User <div class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</div> Updated<BR>";
 
     if ($_SESSION['username'] == $new_username) {
 
@@ -184,7 +184,7 @@ if ($really_del == "1") {
 
     if ($uid == $temp_uid || $uid == $_SESSION['user_id']) {
 
-        if ($uid == $temp_uid) $_SESSION['result_message'] = "The user <font class=\"highlight\">admin</font> cannot be deleted<BR>";
+        if ($uid == $temp_uid) $_SESSION['result_message'] = "The user <div class=\"highlight\">admin</div> cannot be deleted<BR>";
         if ($uid == $_SESSION['user_id']) $_SESSION['result_message'] = "You can't delete yourself<BR>";
 
     } else {
@@ -197,7 +197,7 @@ if ($really_del == "1") {
                 WHERE id = '" . $uid . "'";
         $result = mysqli_query($connection, $sql);
 
-        $_SESSION['result_message'] = "User <font class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</font> Deleted<BR>";
+        $_SESSION['result_message'] = "User <div class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</div> Deleted<BR>";
 
         header("Location: ../users.php");
         exit;

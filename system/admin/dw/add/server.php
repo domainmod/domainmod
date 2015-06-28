@@ -74,8 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host .
-            ")</font> Added<BR>";
+        $_SESSION['result_message']
+            .= "Server <div class=\"highlight\">" . $new_name . " (" . $new_host . ")</div> Added<BR>";
 
         header("Location: ../servers.php");
         exit;

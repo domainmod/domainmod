@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
         $temp_field_name = $row->field_name;
     }
 
-    $_SESSION['result_message'] .= "Custom SSL Field <font class=\"highlight\">" . $new_name . " (" . $temp_field_name . ")</font> Updated<BR>";
+    $_SESSION['result_message'] .= "Custom SSL Field <div class=\"highlight\">" . $new_name . " (" . $temp_field_name . ")</div> Updated<BR>";
 
     header("Location: ../ssl-fields.php");
     exit;
@@ -150,7 +150,7 @@ if ($really_del == "1") {
                 WHERE id = '" . $csfid . "'";
         $result = mysqli_query($connection, $sql);
 
-        $_SESSION['result_message'] = "Custom SSL Field <font class=\"highlight\">" . $temp_name . " (" . $temp_field_name . ")</font> Deleted<BR>";
+        $_SESSION['result_message'] = "Custom SSL Field <div class=\"highlight\">" . $temp_name . " (" . $temp_field_name . ")</div> Deleted<BR>";
 
         header("Location: ../ssl-fields.php");
         exit;
