@@ -228,8 +228,8 @@ if ($really_del == "1") {
         <input name="new_username" type="text" size="20" maxlength="30"
                value="<?php if ($new_username != "") echo htmlentities($new_username); ?>"><BR><BR>
     <?php } ?>
-    <strong>Email Address (100)</strong><a title="Required Field"><font
-            class="default_highlight">*</font></a><BR><BR><input name="new_email_address" type="text" size="50"
+    <strong>Email Address (100)</strong><a title="Required Field"><div
+            class="default_highlight">*</div></a><BR><BR><input name="new_email_address" type="text" size="50"
                                                                  maxlength="100"
                                                                  value="<?php if ($new_email_address != "") echo htmlentities($new_email_address); ?>"><BR><BR>
     <?php if ($new_username == "admin" || $new_username == "administrator") { ?>

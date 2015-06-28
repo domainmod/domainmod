@@ -222,8 +222,8 @@ $has_active = "1"; ?>
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
             <a class="invisiblelink" href="edit/host.php?whid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
-            <?php if ($_SESSION['default_host'] == $row->id) echo "<a title=\"Default Web Host\"><font
-                class=\"default_highlight\">*</font></a>"; ?>
+            <?php if ($_SESSION['default_host'] == $row->id) echo "<a title=\"Default Web Host\"><div
+                class=\"default_highlight\">*</div></a>"; ?>
         </td>
         <td class="main_table_cell_active"><?php
             $sql_total_count = "SELECT count(*) AS total_count
@@ -302,7 +302,7 @@ $has_active = "1"; ?>
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink" href="edit/host.php?whid=<?php echo $row->id; ?>"><?php
                         echo $row->name; ?></a><?php if ($_SESSION['default_host'] == "1") echo "<a
-                        title=\"Default Web Host\"><font class=\"default_highlight\">*</font></a>"; ?>
+                        title=\"Default Web Host\"><div class=\"default_highlight\">*</div></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>

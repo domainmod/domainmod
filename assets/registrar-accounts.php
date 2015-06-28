@@ -290,7 +290,7 @@ $has_active = 1; ?>
 
             if ($_SESSION['default_registrar_account'] == $row->raid) { ?>
 
-                <a title="Default Account"><font class="default_highlight">*</font></a><?php
+                <a title="Default Account"><div class=\"default_highlight\">*</div></a><?php
 
             }
 
@@ -385,7 +385,7 @@ $has_active = 1; ?>
 
                     if ($_SESSION['default_registrar_account'] == $row->raid) { ?>
 
-                        <a title="Default Account"><font class="default_highlight">*</font></a><?php
+                        <a title="Default Account"><div class=\"default_highlight\">*</div></a><?php
 
                     }
 

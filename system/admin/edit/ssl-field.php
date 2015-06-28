@@ -168,8 +168,8 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_user_form" method="post">
-    <strong>Display Name (75)</strong><a title="Required Field"><font
-            class="default_highlight">*</font></a><BR><BR><input name="new_name" type="text" size="30" maxlength="75"
+    <strong>Display Name (75)</strong><a title="Required Field"><div
+            class="default_highlight">*</div></a><BR><BR><input name="new_name" type="text" size="30" maxlength="75"
                                                                  value="<?php if ($new_name != "") echo htmlentities($new_name); ?>"><BR><BR>
     <strong>Database Field Name</strong><BR><BR><?php echo $new_field_name; ?><BR><BR>
     <strong>Data Type</strong><BR><BR>

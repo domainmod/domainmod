@@ -201,7 +201,7 @@ if (mysqli_num_rows($result) > 0) { ?>
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
             <a class="invisiblelink"
-               href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?> <?php echo $row->last_name; ?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\">*</font></a>"; ?>
+               href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?> <?php echo $row->last_name; ?></a><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><div class=\"default_highlight\">*</div></a>"; ?>
         </td>
         <td class="main_table_cell_active">
             <a class="invisiblelink" href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
@@ -240,7 +240,7 @@ if (mysqli_num_rows($result) > 0) { ?>
             <tr class="main_table_row_inactive">
             <td class="main_table_cell_inactive">
                 <a class="invisiblelink"
-                   href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?> <?php echo $row->last_name; ?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><font class=\"default_highlight\">*</font></a>"; ?></a>
+                   href="edit/user.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?> <?php echo $row->last_name; ?><?php if ($row->admin == "1") echo "<a title=\"Admin User\"><div class=\"default_highlight\">*</div></a>"; ?></a>
             </td>
             <td class="main_table_cell_inactive">
                 <a class="invisiblelink"

@@ -73,8 +73,8 @@
 
         <td>
 
-            <?php if ($from_main_dw_account_page == 0) { ?><font
-                class="default_highlight"><?php echo $row_dw_account_temp->dw_server_name; ?></font><BR><BR><?php } ?>
+            <?php if ($from_main_dw_account_page == 0) { ?><div
+                class="default_highlight"><?php echo $row_dw_account_temp->dw_server_name; ?></div><BR><BR><?php } ?>
             <table class="main_table" cellpadding="0" cellspacing="0">
                 <tr class="main_table_row_active_no_hover">
                     <td class="main_table_cell_active_top_aligned">

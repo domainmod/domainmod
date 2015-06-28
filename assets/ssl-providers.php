@@ -242,7 +242,7 @@ $has_active = "1"; ?>
         <td class="main_table_cell_active">
             <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?php echo $row->id; ?>"><?php echo
                 $row->name; ?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a title=\"Default
-                SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>
+                SSL Provider\"><div class=\"default_highlight\">*</div></a>"; ?>
         </td>
         <td class="main_table_cell_active"><?php
             $sql_total_count = "SELECT count(*) AS total_count
@@ -343,7 +343,7 @@ $has_active = "1"; ?>
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?php echo $row->id; ?>"><?php echo
                         $row->name; ?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a
-                        title=\"Default SSL Provider\"><font class=\"default_highlight\">*</font></a>"; ?>
+                        title=\"Default SSL Provider\"><div class=\"default_highlight\">*</div></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive"><?php
                     $sql_total_count = "SELECT count(*) AS total_count

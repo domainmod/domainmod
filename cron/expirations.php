@@ -111,7 +111,10 @@ if ($demo_install != '1') {
 
                     if ($row_domains->expiry_date < $timestamp_basic) {
 
-                        $message .= "<font color=\"#CC0000\">" . $row_domains->expiry_date . "</font>&nbsp;&nbsp;<a href=\"" . $row_domains->domain . "\">" . $row_domains->domain . "</a> [<a href=\"" . $full_url . "/edit/domain.php?did=" . $row_domains->id . "\">edit</a>]&nbsp;&nbsp;<font color=\"#CC0000\">*EXPIRED*</font><BR>";
+                        $message .= "<font color=\"#CC0000\">" . $row_domains->expiry_date . "</font>&nbsp;&nbsp;<a
+                        href=\"" . $row_domains->domain . "\">" . $row_domains->domain . "</a> [<a hre
+f=\"" . $full_url . "/edit/domain.php?did=" . $row_domains->id . "\">edit</a>]&nbsp;&nbsp;<font
+color=\"#CC0000\">*EXPIRED*</font><BR>";
 
                     } else {
 
@@ -130,7 +133,10 @@ if ($demo_install != '1') {
 
                     if ($row_ssl->expiry_date < $timestamp_basic) {
 
-                        $message .= "<font color=\"#CC0000\">" . $row_ssl->expiry_date . "</font>&nbsp;&nbsp;" . $row_ssl->name . " (" . $row_ssl->type . ") [<a href=\"" . $full_url . "/edit/ssl-cert.php?sslcid=" . $row_ssl->id . "\">edit</a>]&nbsp;&nbsp;<font color=\"#CC0000\">*EXPIRED*</font><BR>";
+                        $message .= "<font color=\"#CC0000\">" . $row_ssl->expiry_date . "</font>&nbsp;&nbsp;" .
+                            $row_ssl->name . " (" . $row_ssl->type . ") [<a hre
+f=\"" . $full_url . "/edit/ssl-cert.php?sslcid=" . $row_ssl->id . "\">edit</a>]&nbsp;&nbsp;<font
+color=\"#CC0000\">*EXPIRED*</font><BR>";
 
                     } else {
 
@@ -154,7 +160,8 @@ if ($demo_install != '1') {
 
             <table width=\"575\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" bgcolor=\"#FFFFFF\" bordercolor=\"#FFFFFF\">
                 <tr>
-                    <td width=\"100%\"><font color=\"#000000\" size=\"1\" face=\"Verdana, Arial, Helvetica, sans-serif\">";
+                    <td width=\"100%\"><font color=\"#000000\" size=\"1\"
+                    face=\"Verdana, Arial, Helvetica, sans-serif\">";
             $message .= "<BR><hr width=\"100%\" size=\"1\" noshade>";
             $message .= "You've received this email because you're currently subscribed to receive expiration ";
             $message .= "notifications from the $software_title installation located at: <a target=\"_blank\" href=\"" . $full_url . "/\">" . $full_url . "/</a><BR>";

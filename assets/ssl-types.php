@@ -213,8 +213,8 @@ $has_active = "1"; ?>
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
             <a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo $row->type;
-                ?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a title=\"Default SSL Type\"><font
-                class=\"default_highlight\">*</font></a>"; ?>
+                ?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a title=\"Default SSL Type\"><div
+                class=\"default_highlight\">*</div></a>"; ?>
         </td>
         <td class="main_table_cell_active"><?php
             $sql_total_count = "SELECT count(*) AS total_count
@@ -285,7 +285,7 @@ $has_active = "1"; ?>
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo
                         $row->type; ?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a
-                        title=\"Default SSL Type\"><font class=\"default_highlight\">*</font></a>"; ?>
+                        title=\"Default SSL Type\"><div class=\"default_highlight\">*</div></a>"; ?>
                 </td>
                 </tr><?php
 

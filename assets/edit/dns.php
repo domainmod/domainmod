@@ -263,9 +263,9 @@ if ($really_del == "1") {
     <table class="dns_table">
         <tr>
             <td class="dns_table_left">
-                <strong>DNS Server 1</strong><a title="Required Field"><font
+                <strong>DNS Server 1</strong><a title="Required Field"><div
                         class="default_highlight"><strong>*</strong>
-                    </font></a><BR><BR>
+                    </div></a><BR><BR>
                 <input name="new_dns1" type="text" size="28" maxlength="255" value="<?php if ($new_dns1 != "")
                     echo $new_dns1; ?>">
             </td>
@@ -277,9 +277,9 @@ if ($really_del == "1") {
         </tr>
         <tr>
             <td class="dns_table_left">
-                <strong>DNS Server 2</strong><a title="Required Field"><font
+                <strong>DNS Server 2</strong><a title="Required Field"><div
                         class="default_highlight"><strong>*</strong>
-                    </font></a><BR><BR>
+                    </div></a><BR><BR>
                 <input name="new_dns2" type="text" size="28" maxlength="255" value="<?php if ($new_dns2 != "")
                     echo $new_dns2; ?>">
             </td>

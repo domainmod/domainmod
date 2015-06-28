@@ -294,10 +294,14 @@ if ($_SESSION['installation_mode'] == '0') { ?>
         <input name="new_password" type="password" id="new_password" size="20" maxlength="255"><br>
     </div>
     <div class="login_form">
-        <?php if ($demo_install != "1") { ?><BR><font size="1"><a class="invisiblelink" href="reset-password.php">Forgot
-                your Password?</a></font><BR><?php } ?>
         <BR><BR>
         <input type="submit" name="button" value="Manage Your Domains &raquo;">
+        <?php if ($demo_install != "1") { ?>
+
+            <BR><BR><a class="invisiblelink" href="reset-password.php">Forgot your Password?</a><BR>
+
+        <?php } ?>
+
     </div>
     </form><?php
 } ?>

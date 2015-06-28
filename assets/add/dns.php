@@ -157,9 +157,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <table class="dns_table">
         <tr>
             <td class="dns_table_left">
-                <strong>DNS Server 1</strong><a title="Required Field"><font
+                <strong>DNS Server 1</strong><a title="Required Field"><div
                         class="default_highlight"><strong>*</strong>
-                    </font></a><BR><BR>
+                    </div></a><BR><BR>
                 <input name="new_dns1" type="text" size="28" maxlength="255" value="<?php echo $new_dns1; ?>">
             </td>
             <td class="dns_table_right">
@@ -169,9 +169,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </tr>
         <tr>
             <td class="dns_table_left">
-                <strong>DNS Server 2</strong><a title="Required Field"><font
+                <strong>DNS Server 2</strong><a title="Required Field"><div
                         class="default_highlight"><strong>*</strong>
-                    </font></a><BR><BR>
+                    </div></a><BR><BR>
                 <input name="new_dns2" type="text" size="28" maxlength="255" value="<?php echo $new_dns2; ?>">
             </td>
             <td class="dns_table_right">

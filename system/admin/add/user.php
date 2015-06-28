@@ -213,8 +213,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
         name="new_last_name" type="text" size="50" maxlength="50" value="<?php echo $new_last_name; ?>"><BR><BR>
     <strong>Username (30)</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR><BR><input
         name="new_username" type="text" size="20" maxlength="30" value="<?php echo $new_username; ?>"><BR><BR>
-    <strong>Email Address (100)</strong><a title="Required Field"><font
-            class="default_highlight">*</font></a><BR><BR><input
+    <strong>Email Address (100)</strong><a title="Required Field"><div
+            class="default_highlight">*</div></a><BR><BR><input
         name="new_email_address" type="text" size="50" maxlength="100" value="<?php echo $new_email_address; ?>"><BR>
     <BR>
     <strong>Admin Privileges?</strong>&nbsp;

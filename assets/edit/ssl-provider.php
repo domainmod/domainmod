@@ -242,9 +242,9 @@ if ($really_del == "1") {
     <input name="new_ssl_provider" type="text" value="<?php echo htmlentities($new_ssl_provider); ?>" size="50"
            maxlength="100">
     <BR><BR>
-    <strong>SSL Provider's URL (100)</strong><a title="Required Field"><font
+    <strong>SSL Provider's URL (100)</strong><a title="Required Field"><div
             class="default_highlight"><strong>*</strong>
-        </font></a><BR><BR>
+        </div></a><BR><BR>
     <input name="new_url" type="text" value="<?php echo htmlentities($new_url); ?>" size="50" maxlength="100">
     <BR><BR>
     <strong>Notes</strong><BR><BR>

@@ -644,6 +644,7 @@
     }
 
     div.main_table_heading {
+        display: inline;
         font-family: Verdana, Arial, Helvetica, sans-serif;
         font-weight: bold;
         font-size: 8pt;
@@ -651,28 +652,37 @@
     }
 
     div.highlight {
+        display: inline;
         color: #CC0000;
         padding: 0;
     }
 
     div.default_highlight {
+        display: inline;
         font-weight: bold;
         color: #CC0000;
         padding: 0;
     }
 
     div.default_highlight_secondary {
+        display: inline;
         font-weight: bold;
         color: #0040FF;
         padding: 0;
     }
 
     div.reseller_highlight {
+        display: inline;
         font-weight: bold;
         color: #0040FF;
         padding: 0;
     }
-
+    div.dw_build_success {
+        display: inline;
+        font-weight: bold;
+        color: green;
+        padding: 0;
+    }
     a:link {
         font-weight: bold;
         color: #0066FF;

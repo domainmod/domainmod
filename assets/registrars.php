@@ -246,7 +246,7 @@ $has_active = "1"; ?>
         <td class="main_table_cell_active">
             <a class="invisiblelink" href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo $row->rname;
                 ?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default
-                Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>
+                Registrar\"><div class=\"default_highlight\">*</div></a>"; ?>
         </td>
         <td class="main_table_cell_active"><?php
             $sql_total_count = "SELECT count(*) AS total_count
@@ -353,7 +353,7 @@ $has_active = "1"; ?>
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink" href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo
                         $row->rname; ?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a
-                        title=\"Default Registrar\"><font class=\"default_highlight\">*</font></a>"; ?>
+                        title=\"Default Registrar\"><div class=\"default_highlight\">*</div></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive"><?php
                     $sql_total_count = "SELECT count(*) AS total_count

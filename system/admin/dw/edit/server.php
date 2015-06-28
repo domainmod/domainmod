@@ -240,8 +240,8 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="dw_edit_server_form" method="post">
-    <strong>Name (100):</strong><a title="Required Field"><font
-            class="default_highlight"><strong>*</strong></font></a><BR>
+    <strong>Name (100):</strong><a title="Required Field"><div
+            class="default_highlight"><strong>*</strong></div></a><BR>
     <BR>
     Enter the display name for this server.<BR><BR>
     <input name="new_name" type="text" size="50" maxlength="100" value="<?php
@@ -272,8 +272,8 @@ if ($really_del == "1") {
         </option>
     </select>
     <BR><BR>
-    <strong>Port (5):</strong><a title="Required Field"><font
-            class="default_highlight"><strong>*</strong></font></a><BR>
+    <strong>Port (5):</strong><a title="Required Field"><div
+            class="default_highlight"><strong>*</strong></div></a><BR>
     <BR>
     Enter the port that you connect to (usually 2086 or 2087).<BR><BR>
     <input name="new_port" type="text" size="5" maxlength="5" value="<?php

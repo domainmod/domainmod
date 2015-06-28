@@ -1184,11 +1184,11 @@ multiple domains all at once.<BR><BR>
     <?php if ($action != "" && $action != "UCF") { ?>
         <BR><BR>
         <?php if ($action == "AD") { ?>
-            <strong>Domains to add (one per line)</strong><a title="Required Field"><font
-                    class="default_highlight">*</font></a>
+            <strong>Domains to add (one per line)</strong><a title="Required Field"><div
+                    class="default_highlight">*</div></a>
         <?php } else { ?>
-            <strong>Domains to update (one per line)</strong><a title="Required Field"><font
-                    class="default_highlight">*</font></a>
+            <strong>Domains to update (one per line)</strong><a title="Required Field"><div
+                    class="default_highlight">*</div></a>
         <?php } ?>
         <BR><BR>
         <textarea name="new_data" cols="60" rows="5"><?php echo $new_data; ?></textarea>
@@ -1379,7 +1379,7 @@ multiple domains all at once.<BR><BR>
                 FROM categories
                 ORDER BY name";
         $result_cat = mysqli_query($connection, $sql_cat);
-        echo "<strong>New Category</strong><a title=\"Required Field\"><font class=\"default_highlight\">*</font></a><BR><BR>";
+        echo "<strong>New Category</strong><a title=\"Required Field\"><div class=\"default_highlight\">*</div></a><BR><BR>";
         echo "<select name=\"new_pcid\">";
         echo "<option value=\"\"";
         if ($new_pcid == "") echo " selected";
@@ -1401,7 +1401,7 @@ multiple domains all at once.<BR><BR>
                 FROM dns
                 ORDER BY name ASC";
         $result_dns = mysqli_query($connection, $sql_dns);
-        echo "<strong>New DNS Profile</strong><a title=\"Required Field\"><font class=\"default_highlight\">*</font></a><BR><BR>";
+        echo "<strong>New DNS Profile</strong><a title=\"Required Field\"><div class=\"default_highlight\">*</div></a><BR><BR>";
         echo "<select name=\"new_dnsid\">";
         echo "<option value=\"\"";
         if ($new_dnsid == "") echo " selected";
@@ -1423,7 +1423,7 @@ multiple domains all at once.<BR><BR>
                FROM ip_addresses
                ORDER BY name ASC, ip ASC";
         $result_ip = mysqli_query($connection, $sql_ip);
-        echo "<strong>New IP Address</strong><a title=\"Required Field\"><font class=\"default_highlight\">*</font></a><BR><BR>";
+        echo "<strong>New IP Address</strong><a title=\"Required Field\"><div class=\"default_highlight\">*</div></a><BR><BR>";
         echo "<select name=\"new_ipid\">";
         echo "<option value=\"\"";
         if ($new_ipid == "") echo " selected";
@@ -1451,7 +1451,7 @@ multiple domains all at once.<BR><BR>
                    GROUP BY r.name, o.name, ra.username
                    ORDER BY r.name asc, o.name asc, ra.username asc";
         $result_account = mysqli_query($connection, $sql_account);
-        echo "<strong>New Registrar Account</strong><a title=\"Required Field\"><font class=\"default_highlight\">*</font></a><BR><BR>";
+        echo "<strong>New Registrar Account</strong><a title=\"Required Field\"><div class=\"default_highlight\">*</div></a><BR><BR>";
         echo "<select name=\"new_raid\">";
         echo "<option value=\"\"";
         if ($new_raid == "") echo " selected";
@@ -1472,7 +1472,7 @@ multiple domains all at once.<BR><BR>
                  FROM hosting
                  ORDER BY name ASC";
         $result_host = mysqli_query($connection, $sql_host);
-        echo "<strong>New Web Hosting Provider</strong><a title=\"Required Field\"><font class=\"default_highlight\">*</font></a><BR><BR>";
+        echo "<strong>New Web Hosting Provider</strong><a title=\"Required Field\"><div class=\"default_highlight\">*</div></a><BR><BR>";
         echo "<select name=\"new_whid\">";
         echo "<option value=\"\"";
         if ($new_whid == "") echo " selected";

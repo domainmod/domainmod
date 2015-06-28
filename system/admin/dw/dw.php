@@ -295,14 +295,14 @@ if ($no_results_build_info !== 1) { ?>
             if ($row_build_info->build_start_time_overall != "0000-00-00 00:00:00" &&
                 $row_build_info->build_end_time_overall != "0000-00-00 00:00:00") {
 
-                $temp_build_status_overall = "<font color=\"green\"><strong>Successful</strong></font>";
+                $temp_build_status_overall = "<div class=\"dw_build_success\"><strong>Successful</strong></div>";
 
             }
 
             if ($row_build_info->build_start_time_overall != "0000-00-00 00:00:00" &&
                 $row_build_info->has_ever_been_built_overall == 0) {
 
-                $temp_build_status_overall = "<font class=\"default_highlight\">Building...</font>";
+                $temp_build_status_overall = "<div class=\"default_highlight\">Building...</div>";
 
             }
 
@@ -324,12 +324,12 @@ if ($no_results_build_info !== 1) { ?>
                     if (mysqli_num_rows($result_check_builds) == 0) {
 
                         $temp_build_status_overall
-                            = "<font class=\"default_highlight\"><strong>Cleanup...</strong></font>";
+                            = "<div class=\"default_highlight\"><strong>Cleanup...</strong></div>";
 
                     } else {
 
                         $temp_build_status_overall
-                            = "<font class=\"default_highlight\"><strong>Building...</strong></font>";
+                            = "<div class=\"default_highlight\"><strong>Building...</strong></div>";
 
                     }
 
@@ -342,7 +342,7 @@ if ($no_results_build_info !== 1) { ?>
             if ($row_build_info->build_start_time_overall == "0000-00-00 00:00:00" &&
                 $row_build_info->has_ever_been_built_overall == 0) {
 
-                $temp_build_status_overall = "<font class=\"default_highlight\">Never Built</font>";
+                $temp_build_status_overall = "<div class=\"default_highlight\">Never Built</div>";
 
             }
 
@@ -445,14 +445,14 @@ if ($no_results_build_info !== 1) { ?>
 
             if ($row->build_start_time != "0000-00-00 00:00:00" && $row->build_end_time != "0000-00-00 00:00:00") {
 
-                $temp_build_status = "<font color=\"green\"><strong>Successful</strong></font>";
+                $temp_build_status = "<div class=\"dw_build_success\"><strong>Successful</strong></div>";
 
             }
 
             if ($row->build_start_time != "0000-00-00 00:00:00" && $row->build_end_time == "0000-00-00 00:00:00" &&
                 $row->build_status == 0) {
 
-                $temp_build_status = "<font class=\"default_highlight\"><strong>Building...</strong></font>";
+                $temp_build_status = "<div class=\"default_highlight\"><strong>Building...</strong></div>";
 
             }
 
@@ -460,11 +460,11 @@ if ($no_results_build_info !== 1) { ?>
 
                 if ($is_building == 1) {
 
-                    $temp_build_status = "<font class=\"default_highlight\">Pending</font>";
+                    $temp_build_status = "<div class=\"default_highlight\">Pending</div>";
 
                 } else {
 
-                    $temp_build_status = "<font class=\"default_highlight\">Never Built</font>";
+                    $temp_build_status = "<div class=\"default_highlight\">Never Built</div>";
 
                 }
 
@@ -472,13 +472,13 @@ if ($no_results_build_info !== 1) { ?>
 
             if ($row->build_start_time == "0000-00-00 00:00:00" && $row->has_ever_been_built == 1) {
 
-                $temp_build_status = "<font class=\"default_highlight\">Pending</font>";
+                $temp_build_status = "<div class=\"default_highlight\">Pending</div>";
 
             }
 
             if ($row->build_start_time != "0000-00-00 00:00:00" && $row->has_ever_been_built == 0) {
 
-                $temp_build_status = "<font class=\"default_highlight\">Building...</font>";
+                $temp_build_status = "<div class=\"default_highlight\">Building...</div>";
 
             }
 

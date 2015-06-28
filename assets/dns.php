@@ -282,8 +282,8 @@ $has_active = "1"; ?>
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
             <a class="invisiblelink" href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->name;
-                ?></a><?php if ($_SESSION['default_dns'] == $row->id) echo "<a title=\"Default DNS Profile\"><font
-                class=\"default_highlight\">*</font></a>"; ?>
+                ?></a><?php if ($_SESSION['default_dns'] == $row->id) echo "<a title=\"Default DNS Profile\"><div
+                class=\"default_highlight\">*</div></a>"; ?>
         </td>
         <td class="main_table_cell_active">
             <a class="invisiblelink"
@@ -352,7 +352,7 @@ $has_active = "1"; ?>
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink" href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->name;
                         ?></a><?php if ($_SESSION['default_dns'] == $row->id) echo "<a title=\"Default DNS
-                        Profile\"><font class=\"default_highlight\">*</font></a>"; ?>
+                        Profile\"><div class=\"default_highlight\">*</div></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink"
