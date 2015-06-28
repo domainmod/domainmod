@@ -55,6 +55,7 @@ class DwServers
     public function processEachServer($connection, $result)
     {
 
+        $build = new DwBuild();
         $accounts = new DwAccounts();
         $zones = new DwZones();
         $time = new Timestamp();
@@ -70,12 +71,12 @@ class DwServers
             mysqli_query($connection, $sql);
 
             $api_call = $accounts->getApiCall();
-            $api_results = $this->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
+            $api_results = $build->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
                 $row->hash);
             $accounts->insertAccounts($connection, $api_results, $row->id);
 
             $api_call = $zones->getApiCall();
-            $api_results = $this->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
+            $api_results = $build->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
                 $row->hash);
             $zones->insertZones($connection, $api_results, $row->id);
 
@@ -93,7 +94,9 @@ class DwServers
     public function serverFinish($connection, $server_id, $build_start_time)
     {
 
-        list($build_end_time, $total_build_time) = $this->getBuildTime($build_start_time);
+        $build = new DwBuild();
+
+        list($build_end_time, $total_build_time) = $build->getBuildTime($build_start_time);
 
         $sql = "UPDATE dw_servers
                 SET build_status = '1',
