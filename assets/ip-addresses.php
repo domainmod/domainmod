@@ -267,12 +267,20 @@ $has_active = "1"; ?>
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
             <?php //@formatter:off ?>
-            <a class="invisiblelink" href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo $row->name;
-                ?></a><?php
-            if ($_SESSION['default_ip_address_domains'] == $row->id) echo "<a title=\"Default Domain IP
-                Address\"><font class=\"default_highlight\">*</font></a>"; ?><?php
-            if ($_SESSION['default_ip_address_ssl'] == $row->id) echo "<a title=\"Default SSL IP Address\"><font
-                class=\"default_highlight_secondary\">*</font></a>"; ?>
+            <a class="invisiblelink" href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php
+                echo $row->name; ?></a><?php
+
+            if ($_SESSION['default_ip_address_domains'] == $row->id) { ?>
+
+                <a title="Default Domain IP Address"><font class="default_highlight">*</font></a><?php
+
+            }
+
+            if ($_SESSION['default_ip_address_ssl'] == $row->id) { ?>
+
+                <a title="Default SSL IP Address"><div class="default_highlight_secondary">*</div></a><?php
+
+            } ?>
             <?php //@formatter:on ?>
         </td>
         <td class="main_table_cell_active">
@@ -284,9 +292,9 @@ $has_active = "1"; ?>
         </td>
         <td class="main_table_cell_active"><?php
             $sql_total_count = "SELECT count(*) AS total_count
-                                    FROM domains
-                                    WHERE active NOT IN ('0', '10')
-                                      AND ip_id = '" . $row->id . "'";
+                                FROM domains
+                                WHERE active NOT IN ('0', '10')
+                                  AND ip_id = '" . $row->id . "'";
             $result_total_count = mysqli_query($connection, $sql_total_count);
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                 $total_domains = $row_total_count->total_count;
@@ -305,9 +313,9 @@ $has_active = "1"; ?>
         </td>
         <td class="main_table_cell_active"><?php
             $sql_total_count = "SELECT count(*) AS total_count
-                                    FROM ssl_certs
-                                    WHERE active NOT IN ('0')
-                                      AND ip_id = '" . $row->id . "'";
+                                FROM ssl_certs
+                                WHERE active NOT IN ('0')
+                                  AND ip_id = '" . $row->id . "'";
             $result_total_count = mysqli_query($connection, $sql_total_count);
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                 $total_certs = $row_total_count->total_count;
@@ -339,15 +347,15 @@ $has_active = "1"; ?>
         if ($exclude_ip_address_string == "") {
 
             $sql = "SELECT id, name, ip, rdns
-                FROM ip_addresses
-                ORDER BY name ASC, ip ASC";
+                    FROM ip_addresses
+                    ORDER BY name ASC, ip ASC";
 
         } else {
 
             $sql = "SELECT id, name, ip, rdns
-                FROM ip_addresses
-                WHERE id NOT IN (" . $exclude_ip_address_string . ")
-                ORDER BY name ASC, ip ASC";
+                    FROM ip_addresses
+                    WHERE id NOT IN (" . $exclude_ip_address_string . ")
+                    ORDER BY name ASC, ip ASC";
 
         }
 
@@ -379,10 +387,18 @@ $has_active = "1"; ?>
                     <?php //@formatter:off ?>
                     <a class="invisiblelink" href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo
                         $row->name; ?></a><?php
-                    if ($_SESSION['default_ip_address_domains'] == $row->id) echo "<a title=\"Default Domain IP
-                        Address\"><font class=\"default_highlight\">*</font></a>"; ?><?php
-                    if ($_SESSION['default_ip_address_ssl'] == $row->id) echo "<a title=\"Default SSL IP
-                        Address\"><font class=\"default_highlight_secondary\">*</font></a>"; ?>
+
+                    if ($_SESSION['default_ip_address_domains'] == $row->id) { ?>
+
+                        <a title="Default Domain IP Address"><font class="default_highlight">*</font></a><?php
+
+                    }
+
+                    if ($_SESSION['default_ip_address_ssl'] == $row->id) { ?>
+
+                        <a title="Default SSL IP Address"><div class="default_highlight_secondary">*</div></a><?php
+
+                    } ?>
                     <?php //@formatter:on ?>
                 </td>
                 <td class="main_table_cell_inactive">
@@ -410,8 +426,8 @@ $has_active = "1"; ?>
     }
 
     if ($has_active || $has_inactive) { ?>
-        <BR><font class="default_highlight">*</font> = Default Domain IP Address&nbsp;&nbsp;<font
-            class="default_highlight_secondary">*</font> = Default SSL IP Address<?php
+        <BR><font class="default_highlight">*</font> = Default Domain Owner&nbsp;&nbsp;
+        <div class="default_highlight_secondary">*</div> = Default SSL Owner<?php
     }
 
     if (!$has_active && !$has_inactive) { ?>

@@ -659,9 +659,10 @@
         color: #CC0000;
     }
 
-    font.default_highlight_secondary {
+    div.default_highlight_secondary {
         font-weight: bold;
         color: #0040FF;
+        padding: 0;
     }
 
     font.reseller_highlight {
