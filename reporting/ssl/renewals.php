@@ -54,7 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
-    if (!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date) || $new_start_date > $new_end_date) {
+    if (!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date) || $new_start_date >
+        $new_end_date) {
 
         if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
         if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
@@ -71,8 +72,13 @@ $range_string = $reporting->getRangeString($all, 'sslc.expiry_date', $new_start_
 
 $sslfd_columns = $customField->getCustomFieldsSql($connection, 'ssl_cert_fields', 'sslfd');
 
-$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active, sslc.insert_time, sslc.update_time, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name, (sslc.total_cost * cc.conversion) AS converted_renewal_fee, cc.conversion, d.domain, ip.name AS ip_name, ip.ip, ip.rdns, cat.name AS cat_name" . $sslfd_columns . "
-        FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat, ssl_cert_field_data AS sslfd
+$sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslcf.type, sslc.expiry_date, sslc.notes, sslc.active,
+            sslc.insert_time, sslc.update_time, sslpa.username, sslp.name AS ssl_provider_name, o.name AS owner_name,
+            (sslc.total_cost * cc.conversion) AS converted_renewal_fee, cc.conversion, d.domain, ip.name AS ip_name,
+            ip.ip, ip.rdns, cat.name AS cat_name" . $sslfd_columns . "
+        FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f,
+            currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip,
+            categories AS cat, ssl_cert_field_data AS sslfd
         WHERE sslc.account_id = sslpa.id
           AND sslc.type_id = sslcf.id
           AND sslpa.ssl_provider_id = sslp.id
@@ -277,11 +283,11 @@ if ($export_data == "1") {
         echo "value=\"$new_end_date\"";
     } ?>>
     &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-    <?php if ($total_results > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
-                href="renewals.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
-                REPORT</a>]</strong>
-    <?php } ?>
+    <?php if ($total_results > 0) { //@formatter:off ?>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="renewals.php?export_data=1&new_start_date=<?php
+              echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php
+              echo $all; ?>">EXPORT REPORT</a>]</strong>
+    <?php } //@formatter:on ?>
 </form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php if ($total_results > 0) { ?>
@@ -358,8 +364,9 @@ if ($export_data == "1") {
                 <?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
                     <td class="main_table_cell_active">
                         <?php
-                        $temp_amount = $currency->format($row->converted_renewal_fee, $_SESSION['default_currency_symbol'],
-                            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                        $temp_amount = $currency->format($row->converted_renewal_fee,
+                            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                            $_SESSION['default_currency_symbol_space']);
                         echo $temp_amount;
                         ?>
                     </td>
@@ -379,9 +386,8 @@ if ($export_data == "1") {
                 <?php } ?>
                 <?php if ($_SESSION['display_ssl_account'] == "1") { ?>
                     <td class="main_table_cell_active">
-                        <?php echo $row->ssl_provider_name; ?>, <?php echo $row->owner_name; ?>
-                        (<?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?>
-                        )
+                        <?php echo $row->ssl_provider_name; ?>, <?php echo $row->owner_name; ?> (<?php
+                        echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?>)
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_ssl_type'] == "1") { ?>
@@ -408,8 +414,9 @@ if ($export_data == "1") {
         <?php } ?>
     </table>
 <?php } else { ?>
-    <BR>The results that will be shown below will display the same columns as you have on your <a href="ssl-certs.php">SSL
-        Certificates</a> page, but when you export the results you will be given even more information.<BR><BR>
+    <BR>The results that will be shown below will display the same columns as you have on your
+    <a href="ssl-certs.php">SSL Certificates</a> page, but when you export the results you will be given even more
+    information.<BR><BR>
     The full list of fields in the export is:<BR><BR>
     Certificate Status<BR>
     Expiry Date<BR>

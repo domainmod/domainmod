@@ -53,7 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
-    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date > $new_end_date) {
+    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date >
+        $new_end_date) {
 
         if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
         if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
@@ -216,11 +217,11 @@ if ($submission_failed != "1" && $total_rows > 0) {
         echo "value=\"$new_end_date\"";
     } ?>>
     &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-    <?php if ($total_rows > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
-                href="cost-by-owner.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
-                REPORT</a>]</strong>
-    <?php } ?>
+    <?php if ($total_rows > 0) { //@formatter:off ?>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-owner.php?export_data=1&new_start_date=<?php
+              echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php
+              echo $all; ?>">EXPORT REPORT</a>]</strong>
+    <?php } //@formatter:on ?>
 </form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php
@@ -260,11 +261,13 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']); ?>
 
         <tr class="main_table_row_active">
-        <td class="main_table_cell_active"><a class="invisiblelink"
-                                              href="../../ssl-certs.php?oid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink" href="../../ssl-certs.php?oid=<?php echo $row->id; ?>"><?php
+                echo $row->name; ?></a>
         </td>
-        <td class="main_table_cell_active"><a class="invisiblelink"
-                                              href="../../ssl-certs.php?oid=<?php echo $row->id; ?>"><?php echo $row->number_of_certs; ?></a>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink" href="../../ssl-certs.php?oid=<?php echo $row->id; ?>"><?php
+                echo $row->number_of_certs; ?></a>
         </td>
         <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
         <td class="main_table_cell_active"><?php echo $per_cert; ?></td>

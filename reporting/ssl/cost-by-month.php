@@ -53,7 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
-    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date > $new_end_date) {
+    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date >
+        $new_end_date) {
 
         if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The starting date is invalid<BR>";
         if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The ending date is invalid<BR>";
@@ -180,7 +181,8 @@ if ($submission_failed != "1" && $total_rows > 0) {
                                        AND YEAR(sslc.expiry_date) = '" . $row->year . "'
                                        AND MONTH(sslc.expiry_date) = '" . $row->month . "'
                                        " . $range_string . "";
-                $result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
+                $result_monthly_cost
+                    = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
 
                 while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
                     $monthly_cost = $row_monthly_cost->monthly_cost;
@@ -224,7 +226,8 @@ if ($submission_failed != "1" && $total_rows > 0) {
                                       AND sslc.active NOT IN ('0')
                                       AND YEAR(sslc.expiry_date) = '" . $row->year . "'
                                       " . $range_string . "";
-                $result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
+                $result_yearly_cost
+                    = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
 
                 while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
                     $yearly_cost = $row_yearly_cost->yearly_cost;
@@ -278,11 +281,11 @@ if ($submission_failed != "1" && $total_rows > 0) {
         echo "value=\"$new_end_date\"";
     } ?>>
     &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-    <?php if ($total_rows > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
-                href="cost-by-month.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
-                REPORT</a>]</strong>
-    <?php } ?>
+    <?php if ($total_rows > 0) { //@formatter:off ?>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-month.php?export_data=1&new_start_date=<?php
+              echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php
+              echo $all; ?>">EXPORT REPORT</a>]</strong>
+    <?php } //@formatter:on ?>
 </form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php
@@ -331,7 +334,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                                AND YEAR(sslc.expiry_date) = '" . $row->year . "'
                                AND MONTH(sslc.expiry_date) = '" . $row->month . "'
                                  " . $range_string . "";
-            $result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
+            $result_monthly_cost
+                = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
 
             while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
                 $monthly_cost = $row_monthly_cost->monthly_cost;
@@ -377,7 +381,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                                   AND sslc.active NOT IN ('0')
                                   AND YEAR(sslc.expiry_date) = '" . $row->year . "'
                                     " . $range_string . "";
-                $result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
+                $result_yearly_cost
+                    = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
 
                 while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
                     $yearly_cost = $row_yearly_cost->yearly_cost;

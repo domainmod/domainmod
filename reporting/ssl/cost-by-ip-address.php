@@ -53,7 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
-    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date > $new_end_date) {
+    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date >
+        $new_end_date) {
 
         if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
         if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
@@ -70,7 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $reporting = new DomainMOD\Reporting();
 $range_string = $reporting->getRangeString($all, 'sslc.expiry_date', $new_start_date, $new_end_date);
 
-$sql = "SELECT ip.id, ip.name, ip.ip, ip.rdns, SUM(sslc.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_certs
+$sql = "SELECT ip.id, ip.name, ip.ip, ip.rdns, SUM(sslc.total_cost * cc.conversion) AS total_cost,
+            count(*) AS number_of_certs
         FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ip_addresses AS ip
         WHERE sslc.fee_id = f.id
           AND f.currency_id = c.id
@@ -85,7 +87,8 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
-                    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ip_addresses AS ip
+                    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc,
+                        ip_addresses AS ip
                     WHERE sslc.fee_id = f.id
                       AND f.currency_id = c.id
                       AND c.id = cc.currency_id
@@ -220,11 +223,11 @@ if ($submission_failed != "1" && $total_rows > 0) {
         echo "value=\"$new_end_date\"";
     } ?>>
     &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-    <?php if ($total_rows > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
-                href="cost-by-ip-address.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
-                REPORT</a>]</strong>
-    <?php } ?>
+    <?php if ($total_rows > 0) { //@formatter:off ?>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-ip-address.php?export_data=1&new_start_date=<?php
+              echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php
+              echo $all; ?>">EXPORT REPORT</a>]</strong>
+    <?php } //@formatter:on ?>
 </form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php
@@ -274,17 +277,21 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
             $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']); ?>
 
         <tr class="main_table_row_active">
-        <td class="main_table_cell_active"><a class="invisiblelink"
-                                              href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php
+                echo $row->name; ?></a>
         </td>
-        <td class="main_table_cell_active"><a class="invisiblelink"
-                                              href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->ip; ?></a>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php
+                echo $row->ip; ?></a>
         </td>
-        <td class="main_table_cell_active"><a class="invisiblelink"
-                                              href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->rdns; ?></a>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php
+                echo $row->rdns; ?></a>
         </td>
-        <td class="main_table_cell_active"><a class="invisiblelink"
-                                              href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php echo $row->number_of_certs; ?></a>
+        <td class="main_table_cell_active">
+            <a class="invisiblelink" href="../../ssl-certs.php?sslipid=<?php echo $row->id; ?>"><?php
+                echo $row->number_of_certs; ?></a>
         </td>
         <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
         <td class="main_table_cell_active"><?php echo $per_cert; ?></td>

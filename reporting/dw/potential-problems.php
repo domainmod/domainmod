@@ -51,7 +51,8 @@ $sql_accounts_without_a_dns_zone = "SELECT domain
                                     WHERE domain NOT IN (SELECT domain
                                                          FROM dw_dns_zones)
                                     ORDER BY domain";
-$result_accounts_without_a_dns_zone = mysqli_query($connection, $sql_accounts_without_a_dns_zone) or $error->outputOldSqlError($connection);
+$result_accounts_without_a_dns_zone
+    = mysqli_query($connection, $sql_accounts_without_a_dns_zone) or $error->outputOldSqlError($connection);
 $temp_accounts_without_a_dns_zone = mysqli_num_rows($result_accounts_without_a_dns_zone);
 
 $sql_dns_zones_without_an_account = "SELECT domain
@@ -59,14 +60,16 @@ $sql_dns_zones_without_an_account = "SELECT domain
                                      WHERE domain NOT IN (SELECT domain
                                                            FROM dw_accounts)
                                     ORDER BY domain";
-$result_dns_zones_without_an_account = mysqli_query($connection, $sql_dns_zones_without_an_account) or $error->outputOldSqlError($connection);
+$result_dns_zones_without_an_account
+    = mysqli_query($connection, $sql_dns_zones_without_an_account) or $error->outputOldSqlError($connection);
 $temp_dns_zones_without_an_account = mysqli_num_rows($result_dns_zones_without_an_account);
 
 $sql_suspended_accounts = "SELECT domain
                            FROM dw_accounts
                            WHERE suspended = '1'
                            ORDER BY domain";
-$result_suspended_accounts = mysqli_query($connection, $sql_suspended_accounts) or $error->outputOldSqlError($connection);
+$result_suspended_accounts
+    = mysqli_query($connection, $sql_suspended_accounts) or $error->outputOldSqlError($connection);
 $temp_suspended_accounts = mysqli_num_rows($result_suspended_accounts);
 
 if ($export_data == "1") {
@@ -150,11 +153,11 @@ if ($export_data == "1") {
 <?php echo $reporting->showTableTop(); ?>
 <form name="export_dw_form" method="post">
     <a href="potential-problems.php?generate=1">Generate</a>
-    <?php if ($generate == 1) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
-                href="potential-problems.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
-                REPORT</a>]</strong>
-    <?php } ?>
+    <?php if ($generate == 1) { //@formatter:off ?>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="potential-problems.php?export_data=1&new_start_date=<?php
+              echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php
+              echo $all; ?>">EXPORT REPORT</a>]</strong>
+    <?php } //@formatter:on ?>
 </form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php if ($generate == 1) { ?>

@@ -54,7 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
-    if (!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date) || $new_start_date > $new_end_date) {
+    if (!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date) || $new_start_date >
+        $new_end_date) {
 
         if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
         if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
@@ -71,8 +72,14 @@ $range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_dat
 
 $dfd_columns = $customField->getCustomFieldsSql($connection, 'domain_fields', 'dfd');
 
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, (d.total_cost * cc.conversion) AS converted_renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name" . $dfd_columns . "
-        FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time,
+            d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, (d.total_cost *
+            cc.conversion) AS converted_renewal_fee, cc.conversion, cat.name AS category_name,
+            cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns,
+            h.name AS wh_name" . $dfd_columns . "
+        FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c,
+            currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h,
+            domain_field_data AS dfd
         WHERE d.account_id = ra.id
           AND ra.registrar_id = r.id
           AND ra.owner_id = o.id
@@ -295,11 +302,11 @@ if ($export_data == "1") {
         echo "value=\"$new_end_date\"";
     } ?>>
     &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-    <?php if ($total_results > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
-                href="renewals.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
-                REPORT</a>]</strong>
-    <?php } ?>
+    <?php if ($total_results > 0) { //@formatter:off ?>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="renewals.php?export_data=1&new_start_date=<?php
+              echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php
+              echo $all; ?>">EXPORT REPORT</a>]</strong>
+    <?php } //@formatter:on ?>
 </form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php if ($total_results > 0) { ?>
@@ -377,8 +384,9 @@ if ($export_data == "1") {
                 <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
                     <td class="main_table_cell_active">
                         <?php
-                        $temp_amount = $currency->format($row->converted_renewal_fee, $_SESSION['default_currency_symbol'],
-                            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                        $temp_amount = $currency->format($row->converted_renewal_fee,
+                            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
+                            $_SESSION['default_currency_symbol_space']);
                         echo $temp_amount;
                         ?>
                     </td>
@@ -399,8 +407,8 @@ if ($export_data == "1") {
                 <?php if ($_SESSION['display_domain_account'] == "1") { ?>
                     <td class="main_table_cell_active">
                         <?php echo $row->registrar_name; ?>, <?php echo $row->owner_name; ?>
-                        (<?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?>
-                        )
+                        (<?php echo substr($row->username, 0, 15); ?><?php
+                        if (strlen($row->username) >= 16) echo "..."; ?>)
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
@@ -432,7 +440,8 @@ if ($export_data == "1") {
         <?php } ?>
     </table>
 <?php } else { ?>
-    <BR>The results that will be shown below will display the same columns as you have on your <a href="domains.php">Domains</a> page, but when you export the results you will be given even more information.
+    <BR>The results that will be shown below will display the same columns as you have on your
+    <a href="domains.php">Domains</a> page, but when you export the results you will be given even more information.
     <BR><BR>
     The full list of fields in the export is:<BR><BR>
     Domain Status<BR>

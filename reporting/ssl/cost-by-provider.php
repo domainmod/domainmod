@@ -52,7 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
-    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date > $new_end_date) {
+    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date >
+        $new_end_date) {
 
         if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
         if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
@@ -69,8 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $reporting = new DomainMOD\Reporting();
 $range_string = $reporting->getRangeString($all, 'sslc.expiry_date', $new_start_date, $new_end_date);
 
-$sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.id AS ssl_account_id, sslpa.username, SUM(sslc.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_certs
-        FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
+$sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.id AS ssl_account_id, sslpa.username,
+            SUM(sslc.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_certs
+        FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp,
+            ssl_accounts AS sslpa, owners AS o
         WHERE sslc.fee_id = f.id
           AND f.currency_id = c.id
           AND c.id = cc.currency_id
@@ -86,7 +89,8 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
-                    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
+                    FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc,
+                        ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
                     WHERE sslc.fee_id = f.id
                       AND f.currency_id = c.id
                       AND c.id = cc.currency_id
@@ -178,8 +182,11 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
                 $new_provider = $row->provider_name;
 
-                $sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS provider_total, count(*) AS number_of_certs_provider
-                                       FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
+                $sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS provider_total,
+                                           count(*) AS number_of_certs_provider
+                                       FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c,
+                                           currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa,
+                                           owners AS o
                                        WHERE sslc.fee_id = f.id
                                          AND f.currency_id = c.id
                                          AND c.id = cc.currency_id
@@ -260,11 +267,11 @@ if ($submission_failed != "1" && $total_rows > 0) {
         echo "value=\"$new_end_date\"";
     } ?>>
     &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-    <?php if ($total_rows > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
-                href="cost-by-provider.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
-                REPORT</a>]</strong>
-    <?php } ?>
+    <?php if ($total_rows > 0) { //@formatter:off ?>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-provider.php?export_data=1&new_start_date=<?php
+              echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php
+              echo $all; ?>">EXPORT REPORT</a>]</strong>
+    <?php } //@formatter:on ?>
 </form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php
@@ -307,8 +314,10 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
         $new_provider = $row->provider_name;
 
-        $sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS provider_total, count(*) AS number_of_certs_provider
-                               FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc, ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
+        $sql_provider_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS provider_total,
+                                   count(*) AS number_of_certs_provider
+                               FROM ssl_certs AS sslc, ssl_fees AS f, currencies AS c, currency_conversions AS cc,
+                                   ssl_providers AS sslp, ssl_accounts AS sslpa, owners AS o
                                WHERE sslc.fee_id = f.id
                                  AND f.currency_id = c.id
                                  AND c.id = cc.currency_id
@@ -344,17 +353,20 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         if ($new_provider != $last_provider || $new_provider == "") { ?>
 
             <tr class="main_table_row_active">
-            <td class="main_table_cell_active"><a class="invisiblelink"
-                                                  href="../../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo $row->provider_name; ?></a>
+            <td class="main_table_cell_active">
+                <a class="invisiblelink" href="../../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php
+                    echo $row->provider_name; ?></a>
             </td>
-            <td class="main_table_cell_active"><a class="invisiblelink"
-                                                  href="../../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php echo $number_of_certs_provider; ?></a>
+            <td class="main_table_cell_active">
+                <a class="invisiblelink" href="../../ssl-certs.php?sslpid=<?php echo $row->id; ?>"><?php
+                    echo $number_of_certs_provider; ?></a>
             </td>
             <td class="main_table_cell_active"><?php echo $temp_provider_total; ?></td>
             <td class="main_table_cell_active"><?php echo $per_cert_provider; ?></td>
-            <td class="main_table_cell_active"><a class="invisiblelink"
-                                                  href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php echo $row->owner_name; ?>
-                    (<?php echo $row->username; ?>)</a></td>
+            <td class="main_table_cell_active">
+                <a class="invisiblelink" href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php
+                    echo $row->owner_name; ?> (<?php echo $row->username; ?>)</a>
+            </td>
             <td class="main_table_cell_active"><a class="invisiblelink"
                                                   href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php echo $row->number_of_certs; ?></a>
             </td>
@@ -371,11 +383,13 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
             <td class="main_table_cell_active"></td>
             <td class="main_table_cell_active"></td>
             <td class="main_table_cell_active"></td>
-            <td class="main_table_cell_active"><a class="invisiblelink"
-                                                  href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php echo $row->owner_name; ?>
-                    (<?php echo $row->username; ?>)</a></td>
-            <td class="main_table_cell_active"><a class="invisiblelink"
-                                                  href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php echo $row->number_of_certs; ?></a>
+            <td class="main_table_cell_active">
+                <a class="invisiblelink" href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php
+                    echo $row->owner_name; ?> (<?php echo $row->username; ?>)</a>
+            </td>
+            <td class="main_table_cell_active">
+                <a class="invisiblelink" href="../../ssl-certs.php?sslpaid=<?php echo $row->ssl_account_id; ?>"><?php
+                    echo $row->number_of_certs; ?></a>
             </td>
             <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
             <td class="main_table_cell_active"><?php echo $per_cert_account; ?></td>

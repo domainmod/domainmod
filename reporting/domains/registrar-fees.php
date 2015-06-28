@@ -50,7 +50,9 @@ $all = (integer)urlencode($_GET['all']);
 
 if ($all == "1") {
 
-    $sql = "SELECT r.id, r.name AS registrar, f.id AS fee_id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
+    $sql = "SELECT r.id, r.name AS registrar, f.id AS fee_id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee,
+                f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order,
+                c.symbol_space, count(*) AS number_of_fees_total
             FROM registrars AS r, fees AS f, currencies AS c
             WHERE r.id = f.registrar_id
               AND f.currency_id = c.id
@@ -59,7 +61,9 @@ if ($all == "1") {
 
 } else {
 
-    $sql = "SELECT r.id, r.name AS registrar, d.tld, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space, count(*) AS number_of_fees_total
+    $sql = "SELECT r.id, r.name AS registrar, d.tld, f.id AS fee_id, f.initial_fee, f.renewal_fee, f.transfer_fee,
+                f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order,
+                c.symbol_space, count(*) AS number_of_fees_total
             FROM registrars AS r, domains AS d, fees AS f, currencies AS c
             WHERE r.id = d.registrar_id
               AND d.fee_id = f.id
@@ -203,10 +207,10 @@ if ($total_rows > 0) {
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
 <?php echo $reporting->showTableTop(); ?>
 <a href="registrar-fees.php?all=1">View All</a> or <a href="registrar-fees.php?all=0">Active Only</a>
-<?php if ($total_rows > 0) { ?>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="registrar-fees.php?export_data=1&all=<?php echo $all; ?>">EXPORT
-            REPORT</a>]</strong>
-<?php } ?>
+<?php if ($total_rows > 0) { //@formatter:off ?>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="registrar-fees.php?export_data=1&all=<?php
+          echo $all; ?>">EXPORT REPORT</a>]</strong>
+<?php } //@formatter:on ?>
 <?php echo $reporting->showTableBottom(); ?>
 
 <BR><font class="subheadline"><?php echo $page_subtitle; ?></font><BR>
@@ -272,11 +276,13 @@ if ($total_rows > 0) { ?>
             if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
 
                 <tr class="main_table_row_active">
-                    <td class="main_table_cell_active"><a class="invisiblelink"
-                                                          href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id; ?>"><?php echo $row->registrar; ?></a>
+                    <td class="main_table_cell_active">
+                        <a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id;
+                        ?>"><?php echo $row->registrar; ?></a>
                     </td>
-                    <td class="main_table_cell_active"><a class="invisiblelink"
-                                                          href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id; ?>">.<?php echo $row->tld; ?></a>
+                    <td class="main_table_cell_active">
+                        <a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id;
+                        ?>">.<?php echo $row->tld; ?></a>
                     </td>
                     <td class="main_table_cell_active">
                         <?php
@@ -332,7 +338,8 @@ if ($total_rows > 0) { ?>
 
                             } else {
 
-                                echo "<a class=\"invisiblelink\" href=\"../../domains.php?rid=" . $row->id . "&tld=" . $row->tld . "\">" . $row_domain_count->total_domain_count . "</a>";
+                                echo "<a class=\"invisiblelink\" href=\"../../domains.php?rid=" . $row->id . "&tld="
+                                    . $row->tld . "\">" . $row_domain_count->total_domain_count . "</a>";
 
                             }
 
@@ -349,8 +356,9 @@ if ($total_rows > 0) { ?>
 
                 <tr class="main_table_row_active">
                     <td class="main_table_cell_active">&nbsp;</td>
-                    <td class="main_table_cell_active"><a class="invisiblelink"
-                                                          href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id; ?>">.<?php echo $row->tld; ?></a>
+                    <td class="main_table_cell_active">
+                        <a class="invisiblelink" href="../../assets/edit/registrar-fees.php?rid=<?php echo $row->id;
+                        ?>">.<?php echo $row->tld; ?></a>
                     </td>
                     <td class="main_table_cell_active">
                         <?php
@@ -404,7 +412,8 @@ if ($total_rows > 0) { ?>
 
                             } else {
 
-                                echo "<a class=\"invisiblelink\" href=\"../../domains.php?rid=" . $row->id . "&tld=" . $row->tld . "\">" . $row_domain_count->total_domain_count . "</a>";
+                                echo "<a class=\"invisiblelink\" href=\"../../domains.php?rid=" . $row->id . "&tld="
+                                    . $row->tld . "\">" . $row_domain_count->total_domain_count . "</a>";
 
                             }
 

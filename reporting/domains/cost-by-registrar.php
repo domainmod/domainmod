@@ -53,7 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
-    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date > $new_end_date) {
+    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date >
+        $new_end_date) {
 
         if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
         if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
@@ -70,8 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $reporting = new DomainMOD\Reporting();
 $range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_date, $new_end_date);
 
-$sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS registrar_account_id, ra.username, SUM(d.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_domains
-        FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
+$sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS registrar_account_id, ra.username,
+            SUM(d.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_domains
+        FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r,
+            registrar_accounts AS ra, owners AS o
         WHERE d.fee_id = f.id
           AND f.currency_id = c.id
           AND c.id = cc.currency_id
@@ -87,7 +90,8 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_domains_total
-                    FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
+                    FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r,
+                        registrar_accounts AS ra, owners AS o
                     WHERE d.fee_id = f.id
                       AND f.currency_id = c.id
                       AND c.id = cc.currency_id
@@ -179,8 +183,10 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
                 $new_registrar = $row->registrar_name;
 
-                $sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) AS registrar_total, count(*) AS number_of_domains_registrar
-                                        FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
+                $sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) AS registrar_total,
+                                            count(*) AS number_of_domains_registrar
+                                        FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc,
+                                            registrars AS r, registrar_accounts AS ra, owners AS o
                                         WHERE d.fee_id = f.id
                                           AND f.currency_id = c.id
                                           AND c.id = cc.currency_id
@@ -191,7 +197,9 @@ if ($submission_failed != "1" && $total_rows > 0) {
                                           AND cc.user_id = '" . $_SESSION['user_id'] . "'
                                           AND r.id = '" . $row->id . "'
                                           " . $range_string . "";
-                $result_registrar_total = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
+                $result_registrar_total
+                    = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
+
                 while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) {
                     $temp_registrar_total = $row_registrar_total->registrar_total;
                     $number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar;
@@ -261,11 +269,11 @@ if ($submission_failed != "1" && $total_rows > 0) {
         echo "value=\"$new_end_date\"";
     } ?>>
     &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-    <?php if ($total_rows > 0) { ?>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a
-                href="cost-by-registrar.php?export_data=1&new_start_date=<?php echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php echo $all; ?>">EXPORT
-                REPORT</a>]</strong>
-    <?php } ?>
+    <?php if ($total_rows > 0) { //@formatter:off ?>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-registrar.php?export_data=1&new_start_date=<?php
+              echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php
+              echo $all; ?>">EXPORT REPORT</a>]</strong>
+    <?php } //@formatter:on ?>
 </form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php
@@ -309,8 +317,10 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
         $new_registrar = $row->registrar_name;
 
-        $sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) AS registrar_total, count(*) AS number_of_domains_registrar
-                                FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc, registrars AS r, registrar_accounts AS ra, owners AS o
+        $sql_registrar_total = "SELECT SUM(d.total_cost * cc.conversion) AS registrar_total,
+                                    count(*) AS number_of_domains_registrar
+                                FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc,
+                                    registrars AS r, registrar_accounts AS ra, owners AS o
                                 WHERE d.fee_id = f.id
                                   AND f.currency_id = c.id
                                   AND c.id = cc.currency_id
@@ -321,7 +331,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                                   AND cc.user_id = '" . $_SESSION['user_id'] . "'
                                   AND r.id = '" . $row->id . "'
                                   " . $range_string . "";
-        $result_registrar_total = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
+        $result_registrar_total
+            = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
         while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) {
             $temp_registrar_total = $row_registrar_total->registrar_total;
             $number_of_domains_registrar = $row_registrar_total->number_of_domains_registrar;
@@ -346,19 +357,23 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
 
             <tr class="main_table_row_active">
-            <td class="main_table_cell_active"><a class="invisiblelink"
-                                                  href="../../domains.php?rid=<?php echo $row->id; ?>"><?php echo $row->registrar_name; ?></a>
+            <td class="main_table_cell_active">
+                <a class="invisiblelink" href="../../domains.php?rid=<?php echo $row->id; ?>"><?php
+                    echo $row->registrar_name; ?></a>
             </td>
-            <td class="main_table_cell_active"><a class="invisiblelink"
-                                                  href="../../domains.php?rid=<?php echo $row->id; ?>"><?php echo $number_of_domains_registrar; ?></a>
+            <td class="main_table_cell_active">
+                <a class="invisiblelink" href="../../domains.php?rid=<?php echo $row->id; ?>"><?php
+                    echo $number_of_domains_registrar; ?></a>
             </td>
             <td class="main_table_cell_active"><?php echo $temp_registrar_total; ?></td>
             <td class="main_table_cell_active"><?php echo $per_domain_registrar; ?></td>
-            <td class="main_table_cell_active"><a class="invisiblelink"
-                                                  href="../../domains.php?raid=<?php echo $row->registrar_account_id; ?>"><?php echo $row->owner_name; ?>
-                    (<?php echo $row->username; ?>)</a></td>
-            <td class="main_table_cell_active"><a class="invisiblelink"
-                                                  href="../../domains.php?raid=<?php echo $row->registrar_account_id; ?>"><?php echo $row->number_of_domains; ?></a>
+            <td class="main_table_cell_active">
+                <a class="invisiblelink" href="../../domains.php?raid=<?php echo $row->registrar_account_id; ?>"><?php
+                    echo $row->owner_name; ?> (<?php echo $row->username; ?>)</a>
+            </td>
+            <td class="main_table_cell_active">
+                <a class="invisiblelink" href="../../domains.php?raid=<?php
+                echo $row->registrar_account_id; ?>"><?php echo $row->number_of_domains; ?></a>
             </td>
             <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
             <td class="main_table_cell_active"><?php echo $per_domain_account; ?></td>
@@ -373,11 +388,13 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
             <td class="main_table_cell_active"></td>
             <td class="main_table_cell_active"></td>
             <td class="main_table_cell_active"></td>
-            <td class="main_table_cell_active"><a class="invisiblelink"
-                                                  href="../../domains.php?raid=<?php echo $row->registrar_account_id; ?>"><?php echo $row->owner_name; ?>
-                    (<?php echo $row->username; ?>)</a></td>
-            <td class="main_table_cell_active"><a class="invisiblelink"
-                                                  href="../../domains.php?raid=<?php echo $row->registrar_account_id; ?>"><?php echo $row->number_of_domains; ?></a>
+            <td class="main_table_cell_active">
+                <a class="invisiblelink" href="../../domains.php?raid=<?php
+                echo $row->registrar_account_id; ?>"><?php echo $row->owner_name; ?> (<?php echo $row->username; ?>)</a>
+            </td>
+            <td class="main_table_cell_active">
+                <a class="invisiblelink" href="../../domains.php?raid=<?php echo $row->registrar_account_id;
+                ?>"><?php echo $row->number_of_domains; ?></a>
             </td>
             <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
             <td class="main_table_cell_active"><?php echo $per_domain_account; ?></td>
