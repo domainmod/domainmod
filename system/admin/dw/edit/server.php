@@ -26,7 +26,6 @@ include("../../../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$dw = new DomainMOD\DwBuild();
 $error = new DomainMOD\Error();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
@@ -221,7 +220,8 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $dw->updateDwTotalsTable($connection);
+    $dwstats = new DomainMOD\DwStats();
+    $dwstats->updateDwTotalsTable($connection);
 
     $_SESSION['result_message'] = "Server <font class=\"highlight\">" . $new_name . " (" . $new_host . ")</font>
     Deleted<BR>";
