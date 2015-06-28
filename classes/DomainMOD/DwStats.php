@@ -144,7 +144,7 @@ class DwStats
     public function updateTable($connection, $total_dw_servers, $total_dw_accounts, $total_dw_dns_zones, $total_dw_records)
     {
 
-        $time = new DwBuild();
+        $time = new Timestamp();
 
         $sql_insert = "INSERT INTO dw_server_totals
                        (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)

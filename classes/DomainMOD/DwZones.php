@@ -56,7 +56,7 @@ class DwZones
 
             $xml = simplexml_load_string($api_results);
 
-            $time = new DwBuild();
+            $time = new Timestamp();
 
             foreach ($xml->zone as $hit) {
 

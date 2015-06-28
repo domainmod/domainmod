@@ -78,7 +78,7 @@ class DwRecords
 
             $xml = simplexml_load_string($api_results);
 
-            $time = new DwBuild();
+            $time = new Timestamp();
 
             foreach ($xml->result->record as $hit) {
 

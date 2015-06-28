@@ -85,7 +85,7 @@ class DwAccounts
                 $disklimit_formatted = rtrim($hit->disklimit, 'M');
                 $diskused_formatted = rtrim($hit->diskused, 'M');
 
-                $time = new DwBuild();
+                $time = new Timestamp();
 
                 $sql = "INSERT INTO dw_accounts
                         (server_id, domain, ip, `owner`, `user`, email, plan, theme, shell, `partition`, disklimit,
