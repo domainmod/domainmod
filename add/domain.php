@@ -307,13 +307,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_domain_form" method="post">
-    <strong>Domain (255)</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR><BR>
+    <strong>Domain (255)</strong><a title="Required Field">
+        <div class="default_highlight">*</div>
+    </a><BR><BR>
     <input name="new_domain" type="text" size="50" maxlength="255" value="<?php echo $new_domain; ?>">
     <BR><BR>
     <strong>Function (255)</strong><BR><BR>
     <input name="new_function" type="text" size="50" maxlength="255" value="<?php echo $new_function; ?>">
     <BR><BR>
-    <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR>
+    <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field">
+        <div class="default_highlight">*</div>
+    </a><BR>
     <BR>
     <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") {
         echo $new_expiry_date;
@@ -560,7 +564,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->num_rows() > 0) { ?>
 
-            <BR><div class="subheadline">Custom Fields</div><BR><?php
+            <BR>
+            <div class="subheadline">Custom Fields</div><BR><?php
 
             $count = 0;
 

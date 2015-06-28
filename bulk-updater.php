@@ -1184,11 +1184,17 @@ multiple domains all at once.<BR><BR>
     <?php if ($action != "" && $action != "UCF") { ?>
         <BR><BR>
         <?php if ($action == "AD") { ?>
-            <strong>Domains to add (one per line)</strong><a title="Required Field"><div
-                    class="default_highlight">*</div></a>
+            <strong>Domains to add (one per line)</strong><a title="Required Field">
+                <div
+                    class="default_highlight">*
+                </div>
+            </a>
         <?php } else { ?>
-            <strong>Domains to update (one per line)</strong><a title="Required Field"><div
-                    class="default_highlight">*</div></a>
+            <strong>Domains to update (one per line)</strong><a title="Required Field">
+                <div
+                    class="default_highlight">*
+                </div>
+            </a>
         <?php } ?>
         <BR><BR>
         <textarea name="new_data" cols="60" rows="5"><?php echo $new_data; ?></textarea>
@@ -1244,7 +1250,9 @@ multiple domains all at once.<BR><BR>
         <strong>Function (255)</strong><BR><BR>
         <input name="new_function" type="text" size="50" maxlength="255" value="<?php echo $new_function; ?>">
         <BR><BR>
-        <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><div class="default_highlight">*</div></a>
+        <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field">
+            <div class="default_highlight">*</div>
+        </a>
         <BR><BR>
         <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") {
             echo $new_expiry_date;
@@ -1255,10 +1263,10 @@ multiple domains all at once.<BR><BR>
         <strong>Registrar Account</strong><BR><BR>
         <?php
         $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
-                    FROM registrar_accounts AS ra, owners AS o, registrars AS r
-                    WHERE ra.owner_id = o.id
-                      AND ra.registrar_id = r.id
-                    ORDER BY r_name, o_name, ra.username";
+                        FROM registrar_accounts AS ra, owners AS o, registrars AS r
+                        WHERE ra.owner_id = o.id
+                          AND ra.registrar_id = r.id
+                        ORDER BY r_name, o_name, ra.username";
         $result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
         echo "<select name=\"new_raid\">";
         while ($row_account = mysqli_fetch_object($result_account)) { ?>
@@ -1273,8 +1281,8 @@ multiple domains all at once.<BR><BR>
         <strong>DNS Profile</strong><BR><BR>
         <?php
         $sql_dns = "SELECT id, name
-                FROM dns
-                ORDER BY name";
+                    FROM dns
+                    ORDER BY name";
         $result_dns = mysqli_query($connection, $sql_dns) or $error->outputOldSqlError($connection);
         echo "<select name=\"new_dnsid\">";
         while ($row_dns = mysqli_fetch_object($result_dns)) { ?>
@@ -1288,8 +1296,8 @@ multiple domains all at once.<BR><BR>
         <strong>IP Address</strong><BR><BR>
         <?php
         $sql_ip = "SELECT id, name, ip
-               FROM ip_addresses
-               ORDER BY name, ip";
+                   FROM ip_addresses
+                   ORDER BY name, ip";
         $result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
         echo "<select name=\"new_ipid\">";
         while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
@@ -1304,8 +1312,8 @@ multiple domains all at once.<BR><BR>
         <strong>Web Hosting Provider</strong><BR><BR>
         <?php
         $sql_host = "SELECT id, name
-                 FROM hosting
-                 ORDER BY name";
+                     FROM hosting
+                     ORDER BY name";
 
         $result_host = mysqli_query($connection, $sql_host) or $error->outputOldSqlError($connection);
         echo "<select name=\"new_whid\">";
@@ -1320,8 +1328,8 @@ multiple domains all at once.<BR><BR>
         <strong>Category</strong><BR><BR>
         <?php
         $sql_cat = "SELECT id, name
-                FROM categories
-                ORDER BY name";
+                    FROM categories
+                    ORDER BY name";
 
         $result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
         echo "<select name=\"new_pcid\">";
@@ -1376,8 +1384,8 @@ multiple domains all at once.<BR><BR>
 
         <?php
         $sql_cat = "SELECT id, name
-                FROM categories
-                ORDER BY name";
+                    FROM categories
+                    ORDER BY name";
         $result_cat = mysqli_query($connection, $sql_cat);
         echo "<strong>New Category</strong><a title=\"Required Field\"><div class=\"default_highlight\">*</div></a><BR><BR>";
         echo "<select name=\"new_pcid\">";
@@ -1398,8 +1406,8 @@ multiple domains all at once.<BR><BR>
 
         <?php
         $sql_dns = "SELECT id, name
-                FROM dns
-                ORDER BY name ASC";
+                    FROM dns
+                    ORDER BY name ASC";
         $result_dns = mysqli_query($connection, $sql_dns);
         echo "<strong>New DNS Profile</strong><a title=\"Required Field\"><div class=\"default_highlight\">*</div></a><BR><BR>";
         echo "<select name=\"new_dnsid\">";
@@ -1420,8 +1428,8 @@ multiple domains all at once.<BR><BR>
 
         <?php
         $sql_ip = "SELECT id, name, ip
-               FROM ip_addresses
-               ORDER BY name ASC, ip ASC";
+                   FROM ip_addresses
+                   ORDER BY name ASC, ip ASC";
         $result_ip = mysqli_query($connection, $sql_ip);
         echo "<strong>New IP Address</strong><a title=\"Required Field\"><div class=\"default_highlight\">*</div></a><BR><BR>";
         echo "<select name=\"new_ipid\">";
@@ -1441,15 +1449,15 @@ multiple domains all at once.<BR><BR>
     <?php } elseif ($action == "CRA") { ?>
         <?php
         $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS o_name
-                      FROM registrar_accounts AS ra, registrars AS r, owners AS o
-                   WHERE ra.registrar_id = r.id
-                     AND ra.owner_id = o.id
-                     $is_active_string
-                     $oid_string
-                     $rid_string
-                     $tld_string
-                   GROUP BY r.name, o.name, ra.username
-                   ORDER BY r.name asc, o.name asc, ra.username asc";
+                        FROM registrar_accounts AS ra, registrars AS r, owners AS o
+                        WHERE ra.registrar_id = r.id
+                          AND ra.owner_id = o.id
+                          $is_active_string
+                          $oid_string
+                          $rid_string
+                          $tld_string
+                       GROUP BY r.name, o.name, ra.username
+                       ORDER BY r.name asc, o.name asc, ra.username asc";
         $result_account = mysqli_query($connection, $sql_account);
         echo "<strong>New Registrar Account</strong><a title=\"Required Field\"><div class=\"default_highlight\">*</div></a><BR><BR>";
         echo "<select name=\"new_raid\">";
@@ -1469,8 +1477,8 @@ multiple domains all at once.<BR><BR>
     <?php } elseif ($action == "CWH") { ?>
         <?php
         $sql_host = "SELECT id, name
-                 FROM hosting
-                 ORDER BY name ASC";
+                     FROM hosting
+                     ORDER BY name ASC";
         $result_host = mysqli_query($connection, $sql_host);
         echo "<strong>New Web Hosting Provider</strong><a title=\"Required Field\"><div class=\"default_highlight\">*</div></a><BR><BR>";
         echo "<select name=\"new_whid\">";
@@ -1492,7 +1500,9 @@ multiple domains all at once.<BR><BR>
     <?php } elseif ($action == "AN") { ?>
 
     <?php } elseif ($action == "CED") { ?>
-        <strong>New Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><div class="default_highlight">*</div></a>
+        <strong>New Expiry Date (YYYY-MM-DD)</strong><a title="Required Field">
+            <div class="default_highlight">*</div>
+        </a>
         <BR><BR>
         <input name="new_expiry_date" type="text" value="<?php if ($new_expiry_date != "") {
             echo $new_expiry_date;
@@ -1504,9 +1514,9 @@ multiple domains all at once.<BR><BR>
     <?php } elseif ($action == "UCF1") {
 
         $sql = "SELECT df.name, df.field_name, df.type_id, df.description
-            FROM domain_fields AS df, custom_field_types AS cft
-            WHERE df.type_id = cft.id
-              AND df.id = '" . $field_id . "'";
+                FROM domain_fields AS df, custom_field_types AS cft
+                WHERE df.type_id = cft.id
+                  AND df.id = '" . $field_id . "'";
         $result = mysqli_query($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) { ?>
@@ -1530,9 +1540,9 @@ multiple domains all at once.<BR><BR>
     } elseif ($action == "UCF2") {
 
         $sql = "SELECT df.name, df.field_name, df.type_id, df.description
-            FROM domain_fields AS df, custom_field_types AS cft
-            WHERE df.type_id = cft.id
-              AND df.id = '" . $field_id . "'";
+                FROM domain_fields AS df, custom_field_types AS cft
+                WHERE df.type_id = cft.id
+                  AND df.id = '" . $field_id . "'";
         $result = mysqli_query($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) { ?>
@@ -1556,9 +1566,9 @@ multiple domains all at once.<BR><BR>
     } elseif ($action == "UCF3") {
 
         $sql = "SELECT df.name, df.field_name, df.type_id, df.description
-            FROM domain_fields AS df, custom_field_types AS cft
-            WHERE df.type_id = cft.id
-              AND df.id = '" . $field_id . "'";
+                FROM domain_fields AS df, custom_field_types AS cft
+                WHERE df.type_id = cft.id
+                  AND df.id = '" . $field_id . "'";
         $result = mysqli_query($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) { ?>
@@ -1583,7 +1593,9 @@ multiple domains all at once.<BR><BR>
     <?php if ($action != "" && $action != "UCF") { ?>
 
         <?php if ($action == "AN") { ?>
-            <strong>Notes</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR><BR>
+            <strong>Notes</strong><a title="Required Field">
+                <div class="default_highlight">*</div>
+            </a><BR><BR>
         <?php } elseif ($action == "AD") { ?>
             <strong>Notes</strong><BR><BR>
         <?php } elseif ($action == "UCF" || $action == "DD") { ?>
@@ -1601,13 +1613,14 @@ multiple domains all at once.<BR><BR>
 
             <?php
             $sql = "SELECT field_name
-                FROM domain_fields
-                ORDER BY type_id, name";
+                    FROM domain_fields
+                    ORDER BY type_id, name";
             $result = mysqli_query($connection, $sql);
 
             if (mysqli_num_rows($result) > 0) { ?>
 
-                <BR><div class="subheadline">Custom Fields</div><BR><?php
+                <BR>
+                <div class="subheadline">Custom Fields</div><BR><?php
 
                 $count = 0;
 
@@ -1621,9 +1634,9 @@ multiple domains all at once.<BR><BR>
                 foreach ($field_array as $field) {
 
                     $sql = "SELECT df.name, df.field_name, df.type_id, df.description
-                        FROM domain_fields AS df, custom_field_types AS cft
-                        WHERE df.type_id = cft.id
-                          AND df.field_name = '" . $field . "'";
+                            FROM domain_fields AS df, custom_field_types AS cft
+                            WHERE df.type_id = cft.id
+                              AND df.field_name = '" . $field . "'";
                     $result = mysqli_query($connection, $sql);
 
                     while ($row = mysqli_fetch_object($result)) {

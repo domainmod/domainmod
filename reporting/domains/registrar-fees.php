@@ -213,7 +213,10 @@ if ($total_rows > 0) {
 <?php } //@formatter:on ?>
 <?php echo $reporting->showTableBottom(); ?>
 
-<BR><div class="subheadline"><?php echo $page_subtitle; ?></div><BR>
+<BR>
+
+<div class="subheadline"><?php echo $page_subtitle; ?></div>
+<BR>
 
 <?php if ($all == "1") { ?>
     <strong>All Registrar Fees</strong><BR>

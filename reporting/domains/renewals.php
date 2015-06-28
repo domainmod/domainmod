@@ -311,7 +311,8 @@ if ($export_data == "1") {
 </form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php if ($total_results > 0) { ?>
-    <BR><div class="subheadline"><?php echo $page_subtitle; ?></div><BR>
+    <BR>
+    <div class="subheadline"><?php echo $page_subtitle; ?></div><BR>
     <?php if ($all != "1") { ?>
         <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
     <?php } else { ?>

@@ -410,7 +410,8 @@ $has_active = "1"; ?>
     }
 
     if ($has_active || $has_inactive) { ?>
-        <BR><div class="default_highlight">*</div> = Default Domain Owner&nbsp;&nbsp;
+        <BR>
+        <div class="default_highlight">*</div> = Default Domain Owner&nbsp;&nbsp;
         <div class="default_highlight_secondary">*</div> = Default SSL Owner<?php
     }
 

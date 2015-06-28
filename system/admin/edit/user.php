@@ -215,23 +215,32 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_user_form" method="post">
-    <strong>First Name (50)</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR><BR><input
+    <strong>First Name (50)</strong><a title="Required Field">
+        <div class="default_highlight">*</div>
+    </a><BR><BR><input
         name="new_first_name" type="text" size="50" maxlength="50"
         value="<?php if ($new_first_name != "") echo htmlentities($new_first_name); ?>"><BR><BR>
-    <strong>Last Name (50)</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR><BR><input
+    <strong>Last Name (50)</strong><a title="Required Field">
+        <div class="default_highlight">*</div>
+    </a><BR><BR><input
         name="new_last_name" type="text" size="50" maxlength="50"
         value="<?php if ($new_last_name != "") echo htmlentities($new_last_name); ?>"><BR><BR>
     <?php if ($new_username == "admin" || $new_username == "administrator") { ?>
         <strong>Username</strong><BR><BR><?php echo $new_username; ?><BR><BR>
     <?php } else { ?>
-        <strong>Username (30)</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR><BR>
+        <strong>Username (30)</strong><a title="Required Field">
+            <div class="default_highlight">*</div>
+        </a><BR><BR>
         <input name="new_username" type="text" size="20" maxlength="30"
                value="<?php if ($new_username != "") echo htmlentities($new_username); ?>"><BR><BR>
     <?php } ?>
-    <strong>Email Address (100)</strong><a title="Required Field"><div
-            class="default_highlight">*</div></a><BR><BR><input name="new_email_address" type="text" size="50"
-                                                                 maxlength="100"
-                                                                 value="<?php if ($new_email_address != "") echo htmlentities($new_email_address); ?>"><BR><BR>
+    <strong>Email Address (100)</strong><a title="Required Field">
+        <div
+            class="default_highlight">*
+        </div>
+    </a><BR><BR><input name="new_email_address" type="text" size="50"
+                       maxlength="100"
+                       value="<?php if ($new_email_address != "") echo htmlentities($new_email_address); ?>"><BR><BR>
     <?php if ($new_username == "admin" || $new_username == "administrator") { ?>
 
         <strong>Admin Privileges?</strong>&nbsp;&nbsp;Yes

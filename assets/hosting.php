@@ -324,7 +324,8 @@ $has_active = "1"; ?>
     }
 
     if ($has_active || $has_inactive) { ?>
-        <BR><div class="default_highlight">*</div> = Default Web Host<?php
+        <BR>
+        <div class="default_highlight">*</div> = Default Web Host<?php
     }
 
     if (!$has_active && !$has_inactive) { ?>

@@ -55,13 +55,16 @@ intend on adding support for Plesk once I've ironed out all the kinks in the fra
 ridiculous API documentation).<BR><BR>
 If you don't run a server that uses WHM, or you don't want to import your WHM data into <?php echo $software_title; ?>,
 you can ignore this section.<BR><BR>
-<div class="default_highlight">NOTE:</div> Importing your server(s) into the data warehouse will <strong>not</strong>
+
+<div class="default_highlight">NOTE:</div>
+Importing your server(s) into the data warehouse will <strong>not</strong>
 modify any of your other <?php echo $software_title; ?> data. The data warehouse is used for informational purposes
 only, and you will see its data referenced throughout the system where applicable. For example, if a domain you're
 editing has information stored in your data warehouse, the system will automatically match them up and display the
 additional information for you, giving you even more insight into your data.<BR><BR>
 
-<div class="subheadline">Data Structure</div><BR>
+<div class="subheadline">Data Structure</div>
+<BR>
 The following data is currently imported into the data warehouse.<BR><BR>
 <strong>Accounts</strong><BR>
 Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max
@@ -77,7 +80,8 @@ Authoritative Name Server<BR><BR>
 TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW
 Data<BR><BR>
 
-<div class="subheadline">Automating Builds</div><BR>
+<div class="subheadline">Automating Builds</div>
+<BR>
 If you're going to use the data warehouse, it's recommended that you setup a cron job up to execute /cron/dw.php at
 regular intervals in order to automate your builds. There's a lot of work being done in the background during a build,
 and more often than not a web browser will timeout if you try to build through the UI instead of using a cron job,

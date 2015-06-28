@@ -89,7 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_owner_form" method="post">
     <strong>Owner Name (100)</strong>
-    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
+    <a title="Required Field">
+        <div class="default_highlight"><strong>*</strong></div>
+    </a><BR><BR>
     <input name="new_owner" type="text" value="<?php echo $new_owner; ?>" size="50" maxlength="100">
     <BR><BR>
     <strong>Notes</strong><BR><BR>

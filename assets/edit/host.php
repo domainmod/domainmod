@@ -175,12 +175,16 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_host_form" method="post">
     <strong>Web Host Name (100)</strong>
-    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
+    <a title="Required Field">
+        <div class="default_highlight"><strong>*</strong></div>
+    </a><BR><BR>
     <input name="new_host" type="text" value="<?php if ($new_host != "") echo htmlentities($new_host); ?>
 " size="50" maxlength="100">
     <BR><BR>
     <strong>Registrar's URL (100)</strong>
-    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
+    <a title="Required Field">
+        <div class="default_highlight"><strong>*</strong></div>
+    </a><BR><BR>
     <input name="new_url" type="text" value="<?php echo htmlentities($new_url); ?>" size="50" maxlength="100">
     <BR><BR>
     <strong>Notes</strong><BR><BR>

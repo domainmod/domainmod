@@ -1488,8 +1488,11 @@ $total_rows = number_format(mysqli_num_rows($result));
                             echo "ed_d";
                         } else {
                             echo "ed_a";
-                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>"><div
-                                class="main_table_heading">Expiry Date</div></a>
+                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>">
+                            <div
+                                class="main_table_heading">Expiry Date
+                            </div>
+                        </a>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_ssl_fee'] == "1") { ?>
@@ -1498,8 +1501,11 @@ $total_rows = number_format(mysqli_num_rows($result));
                             echo "sf_d";
                         } else {
                             echo "sf_a";
-                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>"><div
-                                class="main_table_heading">Fee</div></a>
+                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>">
+                            <div
+                                class="main_table_heading">Fee
+                            </div>
+                        </a>
                     </td>
                 <?php } ?>
                 <td class="main_table_cell_heading_active">
@@ -1507,8 +1513,11 @@ $total_rows = number_format(mysqli_num_rows($result));
                         echo "sslc_d";
                     } else {
                         echo "sslc_a";
-                    } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>"><div
-                            class="main_table_heading">Host / Label</div></a>
+                    } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>">
+                        <div
+                            class="main_table_heading">Host / Label
+                        </div>
+                    </a>
                 </td>
                 <?php if ($_SESSION['display_ssl_domain'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
@@ -1516,8 +1525,11 @@ $total_rows = number_format(mysqli_num_rows($result));
                             echo "dn_d";
                         } else {
                             echo "dn_a";
-                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>"><div
-                                class="main_table_heading">Domain</div></a>
+                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>">
+                            <div
+                                class="main_table_heading">Domain
+                            </div>
+                        </a>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_ssl_provider'] == "1") { ?>
@@ -1526,8 +1538,11 @@ $total_rows = number_format(mysqli_num_rows($result));
                             echo "sslp_d";
                         } else {
                             echo "sslp_a";
-                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>"><div
-                                class="main_table_heading">SSL Provider</div></a>
+                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>">
+                            <div
+                                class="main_table_heading">SSL Provider
+                            </div>
+                        </a>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_ssl_account'] == "1") { ?>
@@ -1536,8 +1551,11 @@ $total_rows = number_format(mysqli_num_rows($result));
                             echo "sslpa_d";
                         } else {
                             echo "sslpa_a";
-                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>"><div
-                                class="main_table_heading">SSL Account</div></a>
+                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>">
+                            <div
+                                class="main_table_heading">SSL Account
+                            </div>
+                        </a>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_ssl_type'] == "1") { ?>
@@ -1546,8 +1564,11 @@ $total_rows = number_format(mysqli_num_rows($result));
                             echo "sslf_d";
                         } else {
                             echo "sslf_a";
-                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>"><div
-                                class="main_table_heading">Type</div></a>
+                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>">
+                            <div
+                                class="main_table_heading">Type
+                            </div>
+                        </a>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_ssl_ip'] == "1") { ?>
@@ -1556,8 +1577,11 @@ $total_rows = number_format(mysqli_num_rows($result));
                             echo "sslip_d";
                         } else {
                             echo "sslip_a";
-                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>"><div
-                                class="main_table_heading">IP Address</div></a>
+                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>">
+                            <div
+                                class="main_table_heading">IP Address
+                            </div>
+                        </a>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_ssl_category'] == "1") { ?>
@@ -1566,8 +1590,11 @@ $total_rows = number_format(mysqli_num_rows($result));
                             echo "sslpc_d";
                         } else {
                             echo "sslpc_a";
-                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>"><div
-                                class="main_table_heading">Category</div></a>
+                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>">
+                            <div
+                                class="main_table_heading">Category
+                            </div>
+                        </a>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_ssl_owner'] == "1") { ?>
@@ -1576,8 +1603,11 @@ $total_rows = number_format(mysqli_num_rows($result));
                             echo "o_d";
                         } else {
                             echo "o_a";
-                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>"><div
-                                class="main_table_heading">Owner</div></a>
+                        } ?>&from_dropdown=1&search_for=<?php echo $_SESSION['search_for_ssl']; ?>">
+                            <div
+                                class="main_table_heading">Owner
+                            </div>
+                        </a>
                     </td>
                 <?php } ?>
             </tr>

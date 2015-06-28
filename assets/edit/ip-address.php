@@ -177,12 +177,16 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_ip_address_form" method="post">
     <strong>IP Address Name (100)</strong>
-    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
+    <a title="Required Field">
+        <div class="default_highlight"><strong>*</strong></div>
+    </a><BR><BR>
     <input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "")
         echo htmlentities($new_name); ?>">
     <BR><BR>
     <strong>IP Address (100)</strong>
-    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
+    <a title="Required Field">
+        <div class="default_highlight"><strong>*</strong></div>
+    </a><BR><BR>
     <input name="new_ip" type="text" size="50" maxlength="100" value="<?php if ($new_ip != "") echo $new_ip; ?>">
     <BR><BR>
     <strong>rDNS (100)</strong><BR><BR>

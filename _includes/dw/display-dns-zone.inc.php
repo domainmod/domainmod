@@ -74,8 +74,10 @@
 
         <td>
 
-            <?php if ($from_main_dw_dns_zone_page == 0) { ?><div
-                class="default_highlight"><?php echo $row_dw_dns_zone_temp->dw_server_name; ?></div><BR><BR><?php } ?>
+            <?php if ($from_main_dw_dns_zone_page == 0) { ?>
+                <div
+                    class="default_highlight"><?php echo $row_dw_dns_zone_temp->dw_server_name; ?></div><BR>
+                <BR><?php } ?>
             <table class="main_table_no_right_padding" cellpadding="0" cellspacing="0"><?php
 
                 $sql_get_records = "SELECT *

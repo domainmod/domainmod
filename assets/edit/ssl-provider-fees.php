@@ -311,7 +311,8 @@ $sql = "SELECT t.type
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 if (mysqli_num_rows($result) > 0) {
     ?>
-    <BR><a name="missingfees"></a><div class="subheadline">Missing SSL Type Fees</div><BR>
+    <BR><a name="missingfees"></a>
+    <div class="subheadline">Missing SSL Type Fees</div><BR>
     <?php
     $count = 0;
     while ($row = mysqli_fetch_object($result)) {
@@ -343,7 +344,8 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 if (mysqli_num_rows($result) != 0) {
     ?>
 
-    <BR><div class="subheadline">SSL Types Linked to Active SSL Certificates</div><BR>
+    <BR>
+    <div class="subheadline">SSL Types Linked to Active SSL Certificates</div><BR>
 
     <?php
     while ($row = mysqli_fetch_object($result)) {
@@ -444,6 +446,7 @@ if (mysqli_num_rows($result) != 0) {
     <input type="submit" name="button" value="Add This SSL Fee &raquo;">
 </form>
 <BR><BR>
+
 <div class="subheadline">SSL Type Fees</div>
 
 <form name="edit_ssl_provider_fee_form" method="post">

@@ -150,16 +150,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_dns_form" method="post">
-    <strong>Profile Name</strong><a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a>
+    <strong>Profile Name</strong><a title="Required Field">
+        <div class="default_highlight"><strong>*</strong></div>
+    </a>
     <BR><BR>
     <input name="new_name" type="text" size="50" maxlength="255" value="<?php echo $new_name; ?>">
     <BR><BR>
     <table class="dns_table">
         <tr>
             <td class="dns_table_left">
-                <strong>DNS Server 1</strong><a title="Required Field"><div
+                <strong>DNS Server 1</strong><a title="Required Field">
+                    <div
                         class="default_highlight"><strong>*</strong>
-                    </div></a><BR><BR>
+                    </div>
+                </a><BR><BR>
                 <input name="new_dns1" type="text" size="28" maxlength="255" value="<?php echo $new_dns1; ?>">
             </td>
             <td class="dns_table_right">
@@ -169,9 +173,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </tr>
         <tr>
             <td class="dns_table_left">
-                <strong>DNS Server 2</strong><a title="Required Field"><div
+                <strong>DNS Server 2</strong><a title="Required Field">
+                    <div
                         class="default_highlight"><strong>*</strong>
-                    </div></a><BR><BR>
+                    </div>
+                </a><BR><BR>
                 <input name="new_dns2" type="text" size="28" maxlength="255" value="<?php echo $new_dns2; ?>">
             </td>
             <td class="dns_table_right">

@@ -196,7 +196,8 @@ if ($result_build_finished === false || mysqli_num_rows($result_build_finished) 
 
 if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dns_zones !== 1)) { ?>
 
-    <BR><BR><div class="subheadline">View Data</div><BR>
+    <BR><BR>
+    <div class="subheadline">View Data</div><BR>
     <form name="dw_view_data_form" method="post">
     <?php
 
@@ -278,7 +279,8 @@ if ($result_build_info === false || mysqli_num_rows($result_build_info) <= 0) {
 
 if ($no_results_build_info !== 1) { ?>
 
-    <BR><BR><div class="subheadline">Build Information</div>
+    <BR><BR>
+    <div class="subheadline">Build Information</div>
     <table class="main_table" cellpadding="0" cellspacing="0"><?php
 
     if ($temp_build_info == 0) {

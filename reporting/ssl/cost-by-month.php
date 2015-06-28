@@ -292,7 +292,8 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <?php
 if ($submission_failed != "1" && $total_rows > 0) { ?>
 
-    <BR><div class="subheadline"><?php echo $page_subtitle; ?></div><BR>
+    <BR>
+    <div class="subheadline"><?php echo $page_subtitle; ?></div><BR>
     <?php if ($all != "1") { ?>
         <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
     <?php } else { ?>
@@ -303,9 +304,11 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <table class="main_table" cellpadding="0" cellspacing="0">
         <tr class="main_table_row_heading_active">
             <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">Year</div></td>
+                <div class="main_table_heading">Year</div>
+            </td>
             <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">Month</div></td>
+                <div class="main_table_heading">Month</div>
+            </td>
             <td class="main_table_cell_heading_active">
                 <div class="main_table_heading">Cost</div>
             </td>

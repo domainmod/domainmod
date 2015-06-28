@@ -268,12 +268,17 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_ssl_cert_form" method="post">
-    <strong>Host / Label (100)</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR><BR>
+    <strong>Host / Label (100)</strong><a title="Required Field">
+        <div class="default_highlight">*</div>
+    </a><BR><BR>
     <input name="new_name" type="text" size="50" maxlength="100"
            value="<?php if ($new_name != "") echo htmlentities($new_name); ?>">
     <BR><BR>
-    <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><div
-            class="default_highlight">*</div></a><BR><BR>
+    <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field">
+        <div
+            class="default_highlight">*
+        </div>
+    </a><BR><BR>
     <input name="new_expiry_date" type="text" size="10" maxlength="10"
            value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
     <BR><BR>
@@ -392,7 +397,8 @@ if ($really_del == "1") {
 
     if (mysqli_num_rows($result) > 0) { ?>
 
-        <BR><div class="subheadline">Custom Fields</div><BR><?php
+        <BR>
+        <div class="subheadline">Custom Fields</div><BR><?php
 
         $count = 0;
 

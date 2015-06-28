@@ -321,7 +321,8 @@ $sql = "SELECT tld
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 if (mysqli_num_rows($result) > 0) {
     ?>
-    <BR><a name="missingfees"></a><div class="subheadline">Missing TLD Fees</div><BR>
+    <BR><a name="missingfees"></a>
+    <div class="subheadline">Missing TLD Fees</div><BR>
     <?php
     $count = 0;
     while ($row = mysqli_fetch_object($result)) {
@@ -351,7 +352,8 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 
 if (mysqli_num_rows($result) != 0) {
     ?>
-    <BR><div class="subheadline">TLDs Linked to Active Domains</div><BR>
+    <BR>
+    <div class="subheadline">TLDs Linked to Active Domains</div><BR>
     <?php
     while ($row = mysqli_fetch_object($result)) {
 
@@ -438,6 +440,7 @@ if (mysqli_num_rows($result) != 0) {
     <input type="submit" name="button" value="Add This TLD Fee &raquo;">
 </form>
 <BR><BR>
+
 <div class="subheadline">TLD Fees</div>
 
 <form name="edit_registrar_fee_form" method="post">

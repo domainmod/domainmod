@@ -677,12 +677,14 @@
         color: #0040FF;
         padding: 0;
     }
+
     div.dw_build_success {
         display: inline;
         font-weight: bold;
         color: green;
         padding: 0;
     }
+
     a:link {
         font-weight: bold;
         color: #0066FF;

@@ -304,7 +304,8 @@ $has_active = "1"; ?>
     }
 
     if ($has_active || $has_inactive) { ?>
-        <BR><div class="default_highlight">*</div> = Default SSL Type<?php
+        <BR>
+        <div class="default_highlight">*</div> = Default SSL Type<?php
     }
 
     if (!$has_active && !$has_inactive) { ?>

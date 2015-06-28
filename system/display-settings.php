@@ -180,7 +180,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="display_settings_form" method="post">
-    <BR><div class="subheadline">Main Domain Page</div><BR>
+    <BR>
+
+    <div class="subheadline">Main Domain Page</div>
+    <BR>
     <strong>Number of domains per page:</strong> <input name="new_number_of_domains" type="text" size="3" maxlength="5"
                                                         value="<?php if ($new_number_of_domains != "") echo $new_number_of_domains; ?>">
     <BR><BR>
@@ -232,7 +235,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
         </tr>
     </table>
     <BR><BR>
-    <div class="subheadline">Main SSL Certificate Page</div><BR>
+
+    <div class="subheadline">Main SSL Certificate Page</div>
+    <BR>
     <strong>Number of SSL certificates per page:</strong> <input name="new_number_of_ssl_certs" type="text" size="3"
                                                                  maxlength="5"
                                                                  value="<?php if ($new_number_of_ssl_certs != "") echo $new_number_of_ssl_certs; ?>">
@@ -281,11 +286,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
         </tr>
     </table>
     <BR><BR>
-    <div class="subheadline">Asset Management Pages</div><BR>
+
+    <div class="subheadline">Asset Management Pages</div>
+    <BR>
     <strong>Display inactive Assets?</strong> <input type="checkbox" name="new_display_inactive_assets"
                                                      value="1"<?php if ($new_display_inactive_assets == "1") echo " checked"; ?>>
     <BR><BR><BR>
-    <div class="subheadline">Data Warehouse</div><BR>
+
+    <div class="subheadline">Data Warehouse</div>
+    <BR>
     <strong>Display intro page?</strong> <input type="checkbox" name="new_display_dw_intro_page"
                                                 value="1"<?php if ($new_display_dw_intro_page == "1") echo " checked"; ?>>
     <BR><BR><BR>

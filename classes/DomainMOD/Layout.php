@@ -130,20 +130,23 @@ class Layout
 
         <div class="asset-management-block-outer">
             <div class="asset-management-block-left">
-                <div class="subheadline">Domains</div><BR>
+                <div class="subheadline">Domains</div>
+                <BR>
                 <a href="registrars.php">Domain Registrars</a><BR>
                 <a href="registrar-accounts.php">Domain Registrar Accounts</a><BR>
                 <a href="dns.php">DNS Profiles</a><BR>
                 <a href="hosting.php">Web Hosting Providers</a>
             </div>
             <div class="asset-management-block-center">
-                <div class="subheadline">SSL Certificates</div><BR>
+                <div class="subheadline">SSL Certificates</div>
+                <BR>
                 <a href="ssl-providers.php">SSL Providers</a><BR>
                 <a href="ssl-accounts.php">SSL Provider Accounts</a><BR>
                 <a href="ssl-types.php">SSL Certificate Types</a>
             </div>
             <div class="asset-management-block-right">
-                <div class="subheadline">Shared</div><BR>
+                <div class="subheadline">Shared</div>
+                <BR>
                 <a href="account-owners.php">Account Owners</a><BR>
                 <a href="categories.php">Categories</a><BR>
                 <a href="ip-addresses.php">IP Addresses</a>

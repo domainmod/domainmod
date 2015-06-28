@@ -161,7 +161,8 @@ if ($export_data == "1") {
 </form>
 <?php echo $reporting->showTableBottom(); ?>
 <?php if ($generate == 1) { ?>
-    <BR><div class="subheadline"><?php echo $page_subtitle; ?></div><BR>
+    <BR>
+    <div class="subheadline"><?php echo $page_subtitle; ?></div><BR>
 
 <?php } ?>
 <?php

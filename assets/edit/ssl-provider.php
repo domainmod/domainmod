@@ -238,13 +238,17 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_ssl_provider_form" method="post">
     <strong>SSL Provider Name (100)</strong>
-    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
+    <a title="Required Field">
+        <div class="default_highlight"><strong>*</strong></div>
+    </a><BR><BR>
     <input name="new_ssl_provider" type="text" value="<?php echo htmlentities($new_ssl_provider); ?>" size="50"
            maxlength="100">
     <BR><BR>
-    <strong>SSL Provider's URL (100)</strong><a title="Required Field"><div
+    <strong>SSL Provider's URL (100)</strong><a title="Required Field">
+        <div
             class="default_highlight"><strong>*</strong>
-        </div></a><BR><BR>
+        </div>
+    </a><BR><BR>
     <input name="new_url" type="text" value="<?php echo htmlentities($new_url); ?>" size="50" maxlength="100">
     <BR><BR>
     <strong>Notes</strong><BR><BR>

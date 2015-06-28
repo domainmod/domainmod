@@ -297,7 +297,9 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_domain_form" method="post">
-    <strong>Domain (255)</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR><BR>
+    <strong>Domain (255)</strong><a title="Required Field">
+        <div class="default_highlight">*</div>
+    </a><BR><BR>
     <input name="new_domain" type="text" size="50" maxlength="255"
            value="<?php if ($new_domain != "") echo htmlentities($new_domain); ?>">
     <BR><BR>
@@ -305,8 +307,11 @@ if ($really_del == "1") {
     <input name="new_function" type="text" size="50" maxlength="255"
            value="<?php if ($new_function != "") echo htmlentities($new_function); ?>">
     <BR><BR>
-    <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><div
-            class="default_highlight">*</div></a><BR><BR>
+    <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field">
+        <div
+            class="default_highlight">*
+        </div>
+    </a><BR><BR>
     <input name="new_expiry_date" type="text" size="10" maxlength="10"
            value="<?php if ($new_expiry_date != "") echo $new_expiry_date; ?>">
     <BR><BR>
@@ -443,7 +448,8 @@ if ($really_del == "1") {
 
     if (mysqli_num_rows($result) > 0) { ?>
 
-        <BR><div class="subheadline">Custom Fields</div><BR><?php
+        <BR>
+        <div class="subheadline">Custom Fields</div><BR><?php
 
         $count = 0;
 
@@ -559,7 +565,8 @@ if ($result_dns_zones === false || mysqli_num_rows($result_dns_zones) <= 0) {
 
 if ($no_results_accounts !== 1 || $no_results_dns_zones !== 1) { ?>
 
-    <BR><BR><BR><div class="subheadline">Data Warehouse Information for <?php echo $new_domain; ?></div><?php
+    <BR><BR><BR>
+    <div class="subheadline">Data Warehouse Information for <?php echo $new_domain; ?></div><?php
 
 }
 

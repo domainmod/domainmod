@@ -236,7 +236,8 @@ if ($export_data == "1") {
 </head>
 <body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<div class="subheadline"><?php echo $page_subtitle; ?></div><BR><?php
+<div class="subheadline"><?php echo $page_subtitle; ?></div>
+<BR><?php
 
 $totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_account_temp));
 $layout = new DomainMOD\Layout();

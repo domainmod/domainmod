@@ -177,7 +177,9 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_category_form" method="post">
     <strong>Category Name (150)</strong>
-    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
+    <a title="Required Field">
+        <div class="default_highlight"><strong>*</strong></div>
+    </a><BR><BR>
     <input name="new_category" type="text" value="<?php if ($new_category != "") echo htmlentities($new_category); ?>
 " size="50" maxlength="150">
     <BR><BR>
