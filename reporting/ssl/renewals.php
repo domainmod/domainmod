@@ -55,7 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $date = new DomainMOD\Date();
 
     if (!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date) || $new_start_date >
-        $new_end_date) {
+        $new_end_date
+    ) {
 
         if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
         if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
@@ -416,7 +417,7 @@ if ($export_data == "1") {
 <?php } else { ?>
     <BR>The results that will be shown below will display the same columns as you have on your
     <a href="ssl-certs.php">SSL Certificates</a> page, but when you export the results you will be given even more
-    information.<BR><BR>
+                                                 information.<BR><BR>
     The full list of fields in the export is:<BR><BR>
     Certificate Status<BR>
     Expiry Date<BR>

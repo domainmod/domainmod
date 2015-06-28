@@ -54,7 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $date = new DomainMOD\Date();
 
     if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date >
-        $new_end_date) {
+        $new_end_date
+    ) {
 
         if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The starting date is invalid<BR>";
         if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The ending date is invalid<BR>";
