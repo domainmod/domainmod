@@ -1244,7 +1244,7 @@ multiple domains all at once.<BR><BR>
         <strong>Function (255)</strong><BR><BR>
         <input name="new_function" type="text" size="50" maxlength="255" value="<?php echo $new_function; ?>">
         <BR><BR>
-        <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a>
+        <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><div class="default_highlight">*</div></a>
         <BR><BR>
         <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") {
             echo $new_expiry_date;
@@ -1492,7 +1492,7 @@ multiple domains all at once.<BR><BR>
     <?php } elseif ($action == "AN") { ?>
 
     <?php } elseif ($action == "CED") { ?>
-        <strong>New Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font class="default_highlight">*</font></a>
+        <strong>New Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><div class="default_highlight">*</div></a>
         <BR><BR>
         <input name="new_expiry_date" type="text" value="<?php if ($new_expiry_date != "") {
             echo $new_expiry_date;
@@ -1583,7 +1583,7 @@ multiple domains all at once.<BR><BR>
     <?php if ($action != "" && $action != "UCF") { ?>
 
         <?php if ($action == "AN") { ?>
-            <strong>Notes</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+            <strong>Notes</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR><BR>
         <?php } elseif ($action == "AD") { ?>
             <strong>Notes</strong><BR><BR>
         <?php } elseif ($action == "UCF" || $action == "DD") { ?>

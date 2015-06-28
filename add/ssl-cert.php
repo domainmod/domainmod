@@ -261,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_ssl_cert_form" method="post">
-    <strong>Host / Label (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <strong>Host / Label (100)</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR><BR>
     <input name="new_name" type="text" size="50" maxlength="100" value="<?php echo $new_name; ?>">
     <BR><BR>
     <strong>Expiry Date (YYYY-MM-DD)</strong><a title="Required Field"><font

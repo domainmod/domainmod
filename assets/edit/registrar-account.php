@@ -340,7 +340,7 @@ if ($really_del == "1") {
     }
     ?>
     <BR><BR>
-    <strong>Username (100)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <strong>Username (100)</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR><BR>
     <input name="new_username" type="text" size="50" maxlength="100" value="<?php echo htmlentities($new_username); ?>">
     <BR><BR>
     <strong>Password (255)</strong><BR><BR>

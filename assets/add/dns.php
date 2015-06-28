@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_dns_form" method="post">
-    <strong>Profile Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>
+    <strong>Profile Name</strong><a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a>
     <BR><BR>
     <input name="new_name" type="text" size="50" maxlength="255" value="<?php echo $new_name; ?>">
     <BR><BR>

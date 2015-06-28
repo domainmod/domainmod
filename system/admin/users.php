@@ -256,7 +256,7 @@ if (mysqli_num_rows($result) > 0) { ?>
 
     } ?>
 </table>
-<BR><font class="default_highlight">*</font> = Admin Account
+<BR><div class="default_highlight">*</div> = Admin Account
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

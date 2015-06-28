@@ -267,8 +267,8 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_owner_form" method="post">
-    <strong>Owner Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
-        </font></a><BR><BR>
+    <strong>Owner Name (100)</strong>
+    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
     <input name="new_owner" type="text" value="<?php if ($new_owner != "") echo htmlentities($new_owner); ?>
 " size="50" maxlength="100">
     <BR><BR>

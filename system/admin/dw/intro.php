@@ -55,7 +55,7 @@ intend on adding support for Plesk once I've ironed out all the kinks in the fra
 ridiculous API documentation).<BR><BR>
 If you don't run a server that uses WHM, or you don't want to import your WHM data into <?php echo $software_title; ?>,
 you can ignore this section.<BR><BR>
-<font class="default_highlight">NOTE:</font> Importing your server(s) into the data warehouse will <strong>not</strong>
+<div class="default_highlight">NOTE:</div> Importing your server(s) into the data warehouse will <strong>not</strong>
 modify any of your other <?php echo $software_title; ?> data. The data warehouse is used for informational purposes
 only, and you will see its data referenced throughout the system where applicable. For example, if a domain you're
 editing has information stored in your data warehouse, the system will automatically match them up and display the

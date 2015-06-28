@@ -272,7 +272,7 @@ $has_active = "1"; ?>
 
             if ($_SESSION['default_ip_address_domains'] == $row->id) { ?>
 
-                <a title="Default Domain IP Address"><font class="default_highlight">*</font></a><?php
+                <a title="Default Domain IP Address"><div class="default_highlight">*</div></a><?php
 
             }
 
@@ -390,7 +390,7 @@ $has_active = "1"; ?>
 
                     if ($_SESSION['default_ip_address_domains'] == $row->id) { ?>
 
-                        <a title="Default Domain IP Address"><font class="default_highlight">*</font></a><?php
+                        <a title="Default Domain IP Address"><div class="default_highlight">*</div></a><?php
 
                     }
 
@@ -426,7 +426,7 @@ $has_active = "1"; ?>
     }
 
     if ($has_active || $has_inactive) { ?>
-        <BR><font class="default_highlight">*</font> = Default Domain Owner&nbsp;&nbsp;
+        <BR><div class="default_highlight">*</div> = Default Domain Owner&nbsp;&nbsp;
         <div class="default_highlight_secondary">*</div> = Default SSL Owner<?php
     }
 

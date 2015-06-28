@@ -289,13 +289,13 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_segment_form" method="post">
-    <strong>Segment Name (35)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
-        </font></a><BR><BR>
+    <strong>Segment Name (35)</strong>
+    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
     <input name="new_name" type="text" value="<?php if ($new_name != "") echo htmlentities($new_name); ?>" size="25"
            maxlength="35">
     <BR><BR>
-    <strong>Segment Domains (one per line)</strong><a title="Required Field"><font class="default_highlight"><strong>*
-            </strong></font></a><BR><BR>
+    <strong>Segment Domains (one per line)</strong>
+    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
     <textarea name="new_segment" cols="60" rows="5"><?php if ($new_segment != "") echo $new_segment; ?></textarea>
     <BR><BR>
     <strong>Description</strong><BR><BR>

@@ -255,7 +255,7 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_dns_form" method="post">
-    <strong>Profile Name</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong></font></a>
+    <strong>Profile Name</strong><a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a>
     <BR><BR>
     <input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "")
         echo htmlentities($new_name); ?>">

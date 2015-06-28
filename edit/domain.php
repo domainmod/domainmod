@@ -297,7 +297,7 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="edit_domain_form" method="post">
-    <strong>Domain (255)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <strong>Domain (255)</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR><BR>
     <input name="new_domain" type="text" size="50" maxlength="255"
            value="<?php if ($new_domain != "") echo htmlentities($new_domain); ?>">
     <BR><BR>

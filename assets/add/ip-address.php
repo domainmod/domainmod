@@ -96,12 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_ip_address_form" method="post">
-    <strong>IP Address Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
-        </font></a><BR><BR>
+    <strong>IP Address Name (100)</strong>
+    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
     <input name="new_name" type="text" size="50" maxlength="100" value="<?php echo $new_name; ?>">
     <BR><BR>
-    <strong>IP Address (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
-        </font></a><BR><BR>
+    <strong>IP Address (100)</strong>
+    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
     <input name="new_ip" type="text" size="50" maxlength="100" value="<?php echo $new_ip; ?>">
     <BR><BR>
     <strong>rDNS (100)</strong><BR><BR>

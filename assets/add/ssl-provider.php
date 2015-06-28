@@ -100,8 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_ssl_provider_form" method="post">
-    <strong>SSL Provider Name (100)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
-        </font></a><BR><BR>
+    <strong>SSL Provider Name (100)</strong>
+    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
     <input name="new_ssl_provider" type="text" value="<?php echo $new_ssl_provider; ?>" size="50" maxlength="100">
     <BR><BR>
     <strong>SSL Provider's URL (100)</strong><a title="Required Field"><font

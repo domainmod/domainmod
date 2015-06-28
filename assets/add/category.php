@@ -89,8 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_category_form" method="post">
-    <strong>Category Name (150)</strong><a title="Required Field"><font class="default_highlight"><strong>*</strong>
-        </font></a><BR><BR>
+    <strong>Category Name (150)</strong>
+    <a title="Required Field"><div class="default_highlight"><strong>*</strong></div></a><BR><BR>
     <input name="new_category" type="text" value="<?php echo $new_category; ?>" size="50" maxlength="150">
     <BR><BR>
     <strong>Stakeholder (100)</strong><BR><BR>

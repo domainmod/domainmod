@@ -401,7 +401,7 @@ $has_active = 1; ?>
     }
 
     if ($has_active || $has_inactive) { ?>
-        <BR><font class="default_highlight">*</font> = Default Account&nbsp;&nbsp;<font
+        <BR><div class="default_highlight">*</div> = Default Account&nbsp;&nbsp;<font
             class="reseller_highlight">*</font> = Reseller Account<?php
     }
 

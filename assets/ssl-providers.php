@@ -387,7 +387,7 @@ $has_active = "1"; ?>
     }
 
     if ($has_active || $has_inactive) { ?>
-        <BR><font class="default_highlight">*</font> = Default SSL Provider<?php
+        <BR><div class="default_highlight">*</div> = Default SSL Provider<?php
     }
 
     if (!$has_active && !$has_inactive) { ?>

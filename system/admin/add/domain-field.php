@@ -171,15 +171,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 <body onLoad="document.forms[0].elements[0].focus()" ;>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_domain_field_form" method="post">
-    <strong>Display Name (75)</strong><a title="Required Field"><font class="default_highlight">*</font></a><BR><BR>
+    <strong>Display Name (75)</strong><a title="Required Field"><div class="default_highlight">*</div></a><BR><BR>
     <input name="new_name" type="text" size="30" maxlength="75" value="<?php echo $new_name; ?>"><BR><BR>
     <strong>Database Field Name (30)</strong><a title="Required Field"><font
             class="default_highlight">*</font></a><BR><BR>
     The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField).<BR><BR>
-    <font class="default_highlight">WARNING:</font> The Database Field Name cannot be renamed.<BR><BR><input
+    <div class="default_highlight">WARNING:</div> The Database Field Name cannot be renamed.<BR><BR><input
         name="new_field_name" type="text" size="20" maxlength="30" value="<?php echo $new_field_name; ?>"><BR><BR>
     <strong>Data Type</strong><BR><BR>
-    <font class="default_highlight">WARNING:</font> The Data Type cannot be changed.<BR><BR>
+    <div class="default_highlight">WARNING:</div> The Data Type cannot be changed.<BR><BR>
     <?php
     $query = "SELECT id, `name`
           FROM custom_field_types

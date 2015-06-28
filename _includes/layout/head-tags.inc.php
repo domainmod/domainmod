@@ -654,7 +654,7 @@
         color: #CC0000;
     }
 
-    font.default_highlight {
+    div.default_highlight {
         font-weight: bold;
         color: #CC0000;
     }

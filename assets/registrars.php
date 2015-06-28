@@ -398,7 +398,7 @@ $has_active = "1"; ?>
     }
 
     if ($has_active || $has_inactive) { ?>
-        <BR><font class="default_highlight">*</font> = Default Registrar<?php
+        <BR><div class="default_highlight">*</div> = Default Registrar<?php
     }
 
     if (!$has_active && !$has_inactive) { ?>
