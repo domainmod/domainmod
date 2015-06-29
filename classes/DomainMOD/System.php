@@ -53,7 +53,7 @@ class System
     {
 
         $live_version
-            = file_get_contents('https://raw.githubusercontent.com/domainmod/domainmod/master/version-db.txt');
+            = file_get_contents('https://raw.githubusercontent.com/domainmod/domainmod/master/version.txt');
 
         if ($current_version != $live_version && $live_version != '') {
 

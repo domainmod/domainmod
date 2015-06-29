@@ -705,7 +705,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "INSERT INTO `settings`
             (`full_url`, `db_version`, `email_address`, `insert_time`) VALUES
-            ('" . $full_url . "', '" . $software_db_version . "', '" . $temp_system_email . "', '" . $time->time() . "');";
+            ('" . $full_url . "', '" . $software_version . "', '" . $temp_system_email . "', '" . $time->time() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `timezones` (
@@ -756,7 +756,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     while ($row_settings = mysqli_fetch_object($result_settings)) {
 
         $_SESSION['system_full_url'] = $row_settings->full_url;
-        $_SESSION['system_db_version'] = $row_settings->db_version;
+        $_SESSION['system_db_version'] = (float) $row_settings->db_version;
         $_SESSION['system_email_address'] = $row_settings->email_address;
         $_SESSION['system_default_category_domains'] = $row_settings->default_category_domains;
         $_SESSION['system_default_category_ssl'] = $row_settings->default_category_ssl;

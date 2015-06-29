@@ -25,9 +25,9 @@ $system->authCheck();
 $_SESSION['running_login_checks'] = 1;
 
 // Compare database and software versions (to see if a database upgrade is needed)
-if ($_SESSION['system_db_version'] != $software_db_version) {
+if ($_SESSION['system_db_version'] !== $software_version) {
 
-    include(DIR_INC . "update-database.inc.php");
+    include(DIR_INC . "update.inc.php");
     $_SESSION['run_update_includes'] = "1";
 
 } else {

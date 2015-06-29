@@ -23,9 +23,8 @@
 $software_title = 'DomainMOD';
 $software_title_slug = 'domainmod';
 $reporting_section_title = 'Reporting';
-$software_version = '1.0'; // This is currently unused
 $site_width = '96%';
 $site_width_login = '550';
 $code_home_url = 'http://domainmod.org';
-$software_db_version = '2.0057';
+$software_version = (float) 2.0057;
 $_SESSION['web_root'] = $web_root;

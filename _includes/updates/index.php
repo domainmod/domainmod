@@ -1,6 +1,6 @@
 <?php
 /**
- * /cron/checkversion.php
+ * /_includes/updates/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,22 +20,5 @@
  */
 ?>
 <?php
-include("../_includes/init.inc.php");
-
-require_once(DIR_ROOT . "classes/Autoloader.php");
-spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
-
-$system = new DomainMOD\System();
-
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "database.inc.php");
-
-include(DIR_INC . "config-demo.inc.php");
-
-if ($demo_install != '1') {
-
-    $system->checkVersion($connection, $software_version);
-
-}
+header("Location: ../../invalid.php");
+exit;

@@ -57,7 +57,7 @@ if ($q->prepare($query)) {
 
     $q->execute();
     $q->store_result();
-    $q->bind_result($db_version);
+    $q->bind_result($current_version);
     $q->fetch();
     $q->close();
 
@@ -69,7 +69,8 @@ if ($q->prepare($query)) {
 <strong>Web Server:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>
 <strong>PHP:</strong> <?php echo phpversion(); ?><BR>
 <strong>MySQL:</strong> <?php echo mysqli_get_server_info($connection); ?><BR>
-<strong>DomainMOD DB:</strong> <?php echo number_format($db_version, 4); ?><BR>
+<strong>Database Version:</strong> v<?php echo number_format($current_version, 4); ?><BR>
+<strong>Software Version:</strong> v<?php echo number_format($software_version, 4); ?><BR>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>
