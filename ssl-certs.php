@@ -611,7 +611,7 @@ if ($export_data == "1") {
     echo $layout->jumpMenu();
     ?>
 </head>
-<body onLoad="document.forms[0].elements[10].focus()" ;>
+<body onLoad="document.forms[0].elements[10].focus()">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 if ($_SESSION['has_ssl_provider'] != '1') {

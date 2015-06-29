@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()" ;>
+<body onLoad="document.forms[0].elements[0].focus()">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_ip_address_form" method="post">
     <strong>IP Address Name (100)</strong>

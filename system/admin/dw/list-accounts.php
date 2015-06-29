@@ -234,7 +234,7 @@ if ($export_data == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()" ;>
+<body onLoad="document.forms[0].elements[0].focus()">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <div class="subheadline"><?php echo $page_subtitle; ?></div>
 <BR><?php

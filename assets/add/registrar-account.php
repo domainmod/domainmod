@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($username == "") {
+        if ($new_username == "") {
             $_SESSION['result_message'] .= "Please enter a username<BR>";
         }
 
@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[2].focus()" ;>
+<body onLoad="document.forms[0].elements[2].focus()">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="add_account_form" method="post">
     <strong>Owner</strong><BR><BR>

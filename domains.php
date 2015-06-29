@@ -927,7 +927,7 @@ if ($export_data == "1") {
     echo $layout->jumpMenu();
     ?>
 </head>
-<body onLoad="document.forms[0].elements[12].focus()" ;>
+<body onLoad="document.forms[0].elements[12].focus()">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 if ($_SESSION['has_registrar'] != '1') {

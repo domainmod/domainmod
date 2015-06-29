@@ -275,9 +275,9 @@ $new_password = "";
 </head>
 <?php
 if ($new_username == "") { ?>
-<body onLoad="document.forms[0].elements[0].focus()" ;><?php
+<body onLoad="document.forms[0].elements[0].focus()"><?php
 } else { ?>
-<body onLoad="document.forms[0].elements[1].focus()" ;><?php
+<body onLoad="document.forms[0].elements[1].focus()"><?php
 } ?>
 <?php include(DIR_INC . "layout/header-login.inc.php"); ?>
 <?php

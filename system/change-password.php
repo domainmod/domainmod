@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()" ;>
+<body onLoad="document.forms[0].elements[0].focus()">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <form name="change_password_form" method="post">
     <strong>New Password (255)</strong><BR><BR><input type="password" name="new_password" size="20" maxlength="255">
