@@ -103,8 +103,7 @@ $message .= "If you did not request this yourself, it sounds like somebody might
                             gain access ";
 $message .= "to your account. This might be a good time to reset your password again just to be
                             safe. <BR>";
-$message .= "<a target=\"_blank\" href=\"" . $full_url . "/reset-password.php\">" . $full_url .
-    "/reset-password.php</a>";
+$message .= "<a target=\"_blank\" href=\"" . $full_url . "/reset.php\">" . $full_url . "/reset.php</a>";
 $message .= "<BR></font>
                     </td>
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;

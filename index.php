@@ -298,7 +298,7 @@ if ($_SESSION['installation_mode'] == '0') { ?>
         <input type="submit" name="button" value="Manage Your Domains &raquo;">
         <?php if ($demo_install != "1") { ?>
 
-            <BR><BR><a class="invisiblelink" href="reset-password.php">Forgot your Password?</a><BR>
+            <BR><BR><a class="invisiblelink" href="reset.php">Forgot your Password?</a><BR>
 
         <?php } ?>
 
