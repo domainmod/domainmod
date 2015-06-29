@@ -78,7 +78,7 @@
     }
 
     td.main_table_cell_active {
-        vertical-align: middle; /* right here */
+        vertical-align: middle;
         padding-top: 2px;
         padding-right: 26px;
         padding-bottom: 2px;
