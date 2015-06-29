@@ -54,7 +54,7 @@ $software_section = "admin-dw-rebuild";
 <?php
 $result_message = $dw->build($connection);
 
-if ($result_message && $result_message != false && $result_message != '') {
+if ($result_message && $result_message != '') {
 
     echo $result_message;
     echo '<BR><BR>';
