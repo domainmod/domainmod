@@ -2104,15 +2104,15 @@ if ($segid != "") {
     <BR><BR><strong>Matching Domains:</strong> <?php echo $totalrows; ?>
     <?php if ($totalrows_inactive > 0) { ?>
         <BR><BR><strong>Matching But Inactive Domains:</strong> <?php echo number_format($totalrows_inactive); ?> [<a
-            class="invisiblelink" target="_blank" href="segment-results.php?type=inactive&segid=<?php echo $segid; ?>">view</a>]
+            class="invisiblelink" target="_blank" href="results.php?type=inactive&segid=<?php echo $segid; ?>">view</a>]
     <?php } ?>
     <?php if ($totalrows_filtered > 0) { ?>
         <BR><BR><strong>Matching But Filtered Domains:</strong> <?php echo number_format($totalrows_filtered); ?> [<a
-            class="invisiblelink" target="_blank" href="segment-results.php?type=filtered&segid=<?php echo $segid; ?>">view</a>]
+            class="invisiblelink" target="_blank" href="results.php?type=filtered&segid=<?php echo $segid; ?>">view</a>]
     <?php } ?>
     <?php if ($totalrows_missing > 0) { ?>
         <BR><BR><strong>Missing Domains:</strong> <?php echo number_format($totalrows_missing); ?> [<a
-            class="invisiblelink" target="_blank" href="segment-results.php?type=missing&segid=<?php echo $segid; ?>">view</a>]
+            class="invisiblelink" target="_blank" href="results.php?type=missing&segid=<?php echo $segid; ?>">view</a>]
     <?php } ?>
 
 <?php } ?>

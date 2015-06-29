@@ -1,6 +1,6 @@
 <?php
 /**
- * /segment-results.php
+ * /results.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -195,7 +195,7 @@ if ($export_data == "1") {
             } elseif ($row->active == "10") {
                 $domain_status = "SOLD";
             } else {
-                $domain_status = "ERROR -- PROBLEM WITH CODE IN SEGMENT-RESULTS.PHP";
+                $domain_status = "ERROR -- PROBLEM WITH CODE IN RESULTS.PHP";
             }
 
             if ($row->privacy == "1") {
@@ -287,11 +287,11 @@ if ($type == "inactive") {
 ?>
 <?php
 if ($type == "inactive") {
-    echo "[<a href=\"segment-results.php?type=inactive&segid=" . $segid . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
+    echo "[<a href=\"results.php?type=inactive&segid=" . $segid . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
 } elseif ($type == "filtered") {
-    echo "[<a href=\"segment-results.php?type=filtered&segid=" . $segid . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
+    echo "[<a href=\"results.php?type=filtered&segid=" . $segid . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
 } elseif ($type == "missing") {
-    echo "[<a href=\"segment-results.php?type=missing&segid=" . $segid . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
+    echo "[<a href=\"results.php?type=missing&segid=" . $segid . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
 }
 ?>
 <?php
