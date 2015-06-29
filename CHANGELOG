@@ -1,14 +1,14 @@
 DomainMOD Changelog
 ===================
 v3.0.0    2015-06-29   ad5a23efcd6493aca4ae89251c8efefd15b6fc28
-- Unified the database and software versions
+ - Unified the database and software versions
 
 v0.93.0   2015-06-28   694ec880c381c44e6a771efbf9724a390a6e0d21
-- Cleaned up and organized a LOT of code
-- Moved a lot of includes and random code into classes
-- Renamed some files to make things more organized
-- Added a Raw List features for the main Domain & SSL Certificate pages
-- Updated deprecated HTML tags
+ - Cleaned up and organized a LOT of code
+ - Moved a lot of includes and random code into classes
+ - Renamed some files to make things more organized
+ - Added a Raw List features for the main Domain & SSL Certificate pages
+ - Updated deprecated HTML tags
 
 v0.92.2   2015-06-20   49b51e5628052f37ef4346b0dc8d12816e5712b3
  - Fixed pagination bug on Domain & SSL Cert pages
