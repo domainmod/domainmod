@@ -49,13 +49,13 @@ class System
 
     }
 
-    public function checkVersion($connection, $software_version)
+    public function checkVersion($connection, $current_version)
     {
 
         $live_version
             = file_get_contents('https://raw.githubusercontent.com/domainmod/domainmod/master/version-db.txt');
 
-        if ($software_version != $live_version && $live_version != '') {
+        if ($current_version != $live_version && $live_version != '') {
 
             $sql = "UPDATE settings
                     SET upgrade_available = '1'";
