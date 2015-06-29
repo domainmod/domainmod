@@ -46,7 +46,7 @@ $report_name = "domain-registrar-fee-report";
 
 // Form Variables
 $export_data = $_GET['export_data'];
-$all = (integer)urlencode($_GET['all']);
+$all = (integer) urlencode($_GET['all']);
 
 if ($all == "1") {
 
