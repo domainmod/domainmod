@@ -14,6 +14,12 @@ v0.92.2   2015-06-20   49b51e5628052f37ef4346b0dc8d12816e5712b3
  - Fixed pagination bug on Domain & SSL Cert pages
 
 v0.92.1   2015-06-20   41d52903f1b5069cabcbaaa581786f7bcab3a326
+ - Continued cleaning up and refactoring the codebase
+ - Added Scrutinizer CI badges to README file
+ - Updated README formatting
+ - Continued converting database queries to prepared statements
+ - Added utf-8 Content Type meta header tag
+ - Updated the version check crong job
  - Updated bind_param calls to use only variables
 
 v0.92.0   2015-05-11   ab605127c0b1852a0b146b8dcc2025e91844103a
