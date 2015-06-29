@@ -1,6 +1,6 @@
 <?php
 /**
- * /bulk-updater.php
+ * /bulk.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -1067,92 +1067,92 @@ multiple domains all at once.<BR><BR>
 
 <form name="bulk_updater_form" method="post">
     <select name="jumpMenu" id="jumpMenu" onChange="MM_jumpMenu('parent',this,0)">
-        <option value="bulk-updater.php"<?php if ($action == "") {
+        <option value="bulk.php"<?php if ($action == "") {
             echo " selected";
         } ?>>Choose Action
         </option>
-        <option value="bulk-updater.php?action=AD"<?php if ($action == "AD") {
+        <option value="bulk.php?action=AD"<?php if ($action == "AD") {
             echo " selected";
         } ?>>Add Domains
         </option>
-        <option value="bulk-updater.php?action=AN"<?php if ($action == "AN") {
+        <option value="bulk.php?action=AN"<?php if ($action == "AN") {
             echo " selected";
         } ?>>Add A Note
         </option>
-        <option value="bulk-updater.php?action=FR"<?php if ($action == "FR") {
+        <option value="bulk.php?action=FR"<?php if ($action == "FR") {
             echo " selected";
         } ?>>Renew Domains (Update Expiry Date, Mark Active, Add Note)
         </option>
-        <option value="bulk-updater.php?action=R"<?php if ($action == "R") {
+        <option value="bulk.php?action=R"<?php if ($action == "R") {
             echo " selected";
         } ?>>Renew Domains (Update Expiry Date Only)
         </option>
-        <option value="bulk-updater.php?action=A"<?php if ($action == "A") {
+        <option value="bulk.php?action=A"<?php if ($action == "A") {
             echo " selected";
         } ?>>Mark as 'Active'
         </option>
-        <option value="bulk-updater.php?action=T"<?php if ($action == "T") {
+        <option value="bulk.php?action=T"<?php if ($action == "T") {
             echo " selected";
         } ?>>Mark as 'In Transfer'
         </option>
-        <option value="bulk-updater.php?action=PRg"<?php if ($action == "PRg") {
+        <option value="bulk.php?action=PRg"<?php if ($action == "PRg") {
             echo " selected";
         } ?>>Mark as 'Pending (Registration)'
         </option>
-        <option value="bulk-updater.php?action=PRn"<?php if ($action == "PRn") {
+        <option value="bulk.php?action=PRn"<?php if ($action == "PRn") {
             echo " selected";
         } ?>>Mark as 'Pending (Renewal)'
         </option>
-        <option value="bulk-updater.php?action=PO"<?php if ($action == "PO") {
+        <option value="bulk.php?action=PO"<?php if ($action == "PO") {
             echo " selected";
         } ?>>Mark as 'Pending (Other)'
         </option>
-        <option value="bulk-updater.php?action=E"<?php if ($action == "E") {
+        <option value="bulk.php?action=E"<?php if ($action == "E") {
             echo " selected";
         } ?>>Mark as 'Expired'
         </option>
-        <option value="bulk-updater.php?action=S"<?php if ($action == "S") {
+        <option value="bulk.php?action=S"<?php if ($action == "S") {
             echo " selected";
         } ?>>Mark as 'Sold'
         </option>
-        <option value="bulk-updater.php?action=PRVE"<?php if ($action == "PRVE") {
+        <option value="bulk.php?action=PRVE"<?php if ($action == "PRVE") {
             echo " selected";
         } ?>>Mark as Private WHOIS
         </option>
-        <option value="bulk-updater.php?action=PRVD"<?php if ($action == "PRVD") {
+        <option value="bulk.php?action=PRVD"<?php if ($action == "PRVD") {
             echo " selected";
         } ?>>Mark as Public WHOIS
         </option>
-        <option value="bulk-updater.php?action=CPC"<?php if ($action == "CPC") {
+        <option value="bulk.php?action=CPC"<?php if ($action == "CPC") {
             echo " selected";
         } ?>>Change Category
         </option>
-        <option value="bulk-updater.php?action=CDNS"<?php if ($action == "CDNS") {
+        <option value="bulk.php?action=CDNS"<?php if ($action == "CDNS") {
             echo " selected";
         } ?>>Change DNS Profile
         </option>
-        <option value="bulk-updater.php?action=CED"<?php if ($action == "CED") {
+        <option value="bulk.php?action=CED"<?php if ($action == "CED") {
             echo " selected";
         } ?>>Change Expiry Date
         </option>
-        <option value="bulk-updater.php?action=CIP"<?php if ($action == "CIP") {
+        <option value="bulk.php?action=CIP"<?php if ($action == "CIP") {
             echo " selected";
         } ?>>Change IP Address
         </option>
-        <option value="bulk-updater.php?action=CRA"<?php if ($action == "CRA") {
+        <option value="bulk.php?action=CRA"<?php if ($action == "CRA") {
             echo " selected";
         } ?>>Change Registrar Account
         </option>
-        <option value="bulk-updater.php?action=CWH"<?php if ($action == "CWH") {
+        <option value="bulk.php?action=CWH"<?php if ($action == "CWH") {
             echo " selected";
         } ?>>Change Web Hosting Provider
         </option>
         <option
-            value="bulk-updater.php?action=UCF"<?php if ($action == "UCF" || $action == "UCF1" || $action == "UCF2" || $action == "UCF3") {
+            value="bulk.php?action=UCF"<?php if ($action == "UCF" || $action == "UCF1" || $action == "UCF2" || $action == "UCF3") {
             echo " selected";
         } ?>>Update Custom Domain Field
         </option>
-        <option value="bulk-updater.php?action=DD"<?php if ($action == "DD") {
+        <option value="bulk.php?action=DD"<?php if ($action == "DD") {
             echo " selected";
         } ?>>Delete Domains
         </option>
@@ -1161,7 +1161,7 @@ multiple domains all at once.<BR><BR>
     <?php if ($action == "UCF" || $action == "UCF1" || $action == "UCF2" || $action == "UCF3") { ?>
         <BR><BR>
         <select name="jumpMenu" id="jumpMenu2" onChange="MM_jumpMenu('parent',this,0)">
-            <option value="bulk-updater.php?action=UCF"<?php if ($action == "UCF") {
+            <option value="bulk.php?action=UCF"<?php if ($action == "UCF") {
                 echo " selected";
             } ?>>Choose the Custom Field to Edit
             </option>
@@ -1173,7 +1173,7 @@ multiple domains all at once.<BR><BR>
             $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
             while ($row = mysqli_fetch_object($result)) { ?>
 
-                <option value="bulk-updater.php?action=UCF<?php echo $row->type_id; ?>&field_id=<?php echo $row->id; ?>"<?php if ($row->id == $field_id) echo " selected"; ?>><?php echo $row->name; ?>
+                <option value="bulk.php?action=UCF<?php echo $row->type_id; ?>&field_id=<?php echo $row->id; ?>"<?php if ($row->id == $field_id) echo " selected"; ?>><?php echo $row->name; ?>
                 (<?php echo $row->type; ?>)</option><?php
 
             }

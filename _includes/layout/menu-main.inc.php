@@ -22,7 +22,7 @@
     [ <a href="<?php echo $web_root; ?>/domains.php">Domains</a> ]&nbsp;
     [ <a href="<?php echo $web_root; ?>/ssl-certs.php">SSL Certificates</a> ]&nbsp;
     [ <a href="<?php echo $web_root; ?>/segments.php">Segments</a> ]&nbsp;
-    [ <a href="<?php echo $web_root; ?>/bulk-updater.php">Bulk Updater</a> ]&nbsp;
+    [ <a href="<?php echo $web_root; ?>/bulk.php">Bulk Updater</a> ]&nbsp;
     <BR><BR>
     [ <a href="<?php echo $web_root; ?>/assets/">Asset Management</a> ]&nbsp;
     [ <a href="<?php echo $web_root; ?>/reporting/">Reporting</a> ]&nbsp;

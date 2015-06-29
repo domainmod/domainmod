@@ -80,7 +80,7 @@ if ($software_section == "domains") { ?>
 
     } else { ?>
 
-        &raquo;&nbsp;<a href="<?php echo $web_root; ?>/bulk-updater.php">Bulk Updater</a>&nbsp;<?php
+        &raquo;&nbsp;<a href="<?php echo $web_root; ?>/bulk.php">Bulk Updater</a>&nbsp;<?php
 
         if ($action == "AD") { ?>
             &raquo;&nbsp;<strong>Add Domains</strong>&nbsp;<?php
@@ -141,7 +141,7 @@ if ($software_section == "domains") { ?>
                 $error->outputSqlError($conn, "ERROR");
             }
             ?>
-            &raquo;&nbsp;<a href="<?php echo $web_root; ?>/bulk-updater.php?action=UCF">Update Custom Domain Field</a>
+            &raquo;&nbsp;<a href="<?php echo $web_root; ?>/bulk.php?action=UCF">Update Custom Domain Field</a>
                 </strong>&nbsp;&raquo;&nbsp;<strong><?php echo $temp_field_name; ?> (<?php echo $temp_field_type; ?>)
                 </strong>&nbsp;<?php
         } elseif ($action == "AN") { ?>
