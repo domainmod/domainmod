@@ -19,6 +19,7 @@
  *
  */
 ?>
+<?php //@formatter:off  ?>
 <style type="text/css">
     body {
         background-color: #FFFFFF;
@@ -57,3 +58,4 @@
 </style>
 <?php
 include('head-tags-common.inc.php');
+//@formatter:on
