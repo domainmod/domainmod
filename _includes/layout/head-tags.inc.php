@@ -781,4 +781,5 @@
         text-decoration: none;
     }
 </style>
-<?php include('head-tags-common.inc.php'); ?>
+<?php
+include('head-tags-common.inc.php');
