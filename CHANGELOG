@@ -2,6 +2,7 @@ DomainMOD Changelog
 ===================
 v3.0.0    2015-06-29   ad5a23efcd6493aca4ae89251c8efefd15b6fc28
  - Unified the database and software versions
+ - Optimized the database update process
 
 v0.93.0   2015-06-28   694ec880c381c44e6a771efbf9724a390a6e0d21
  - Cleaned up and organized a LOT of code
