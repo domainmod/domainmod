@@ -40,7 +40,12 @@ class Maintenance
     public function deleteUnusedFees($connection, $fee_table, $compare_table)
     {
 
-        $sql = "DELETE FROM " . $fee_table . " WHERE id NOT IN (SELECT fee_id FROM " . $compare_table . ")";
+        $sql = "DELETE FROM " . $fee_table . "
+                WHERE id NOT IN (
+                                 SELECT fee_id
+                                 FROM " . $compare_table . "
+                                 WHERE active NOT IN ('0', '10')
+                                 )";
         mysqli_query($connection, $sql);
 
     }
