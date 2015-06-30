@@ -60,6 +60,8 @@ if ($current_db_version < $software_version) {
 
     }
 
+    $_SESSION['system_db_version'] = $current_db_version;
+
     $_SESSION['system_upgrade_available'] = "0";
 
     $sql = "UPDATE settings
