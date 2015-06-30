@@ -183,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         include(DIR_INC . "login-checks.inc.php");
 
-        if ($_SESSION['system_new_version'] == "1") {
+        if ($_SESSION['system_new_version'] == '1') {
 
             if ($_SESSION['is_admin'] === 1) {
 
