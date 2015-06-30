@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
     $sql = "SELECT id
             FROM users
             WHERE username = '" . $new_username . "'
-              AND password = password('" . $new_password . "')
+              AND `password` = password('" . $new_password . "')
               AND active = '1'";
     $result = mysqli_query($connection, $sql);
 
@@ -183,11 +183,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         include(DIR_INC . "login-checks.inc.php");
 
-        if ($_SESSION['system_upgrade_available'] == "1") {
+        if ($_SESSION['system_new_version'] == "1") {
 
             if ($_SESSION['is_admin'] === 1) {
 
-                $_SESSION['result_message'] .= "A new version of DomainMOD is available. <a target=\"_blank\" href=\"http://domainmod.org/upgrade/\">Click here for upgrade instructions</a>.<BR>";
+                $_SESSION['result_message'] .= "A new version of DomainMOD is available for download. <a target=\"_blank\" href=\"http://domainmod.org/upgrade/\">Click
+here for upgrade instructions</a>.<BR>";
 
             }
 
