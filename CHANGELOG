@@ -1,5 +1,9 @@
 DomainMOD Changelog
 ===================
+v3.0.2    2015-06-30   da9a5bcd7be55c794b78a2ff99a5a1b14fdf8833
+- Modified the version system to use strings
+- Updated system-info.php to use $_SESSION['system_db_version'] instead of querying the database
+
 v3.0.1    2015-06-29   e828b6f748b642192f646f556a3f059b0945b596
 - Optimized the way DomainMOD checks for new versions
 - Deleted the now-redundant checkversion.php cron job
