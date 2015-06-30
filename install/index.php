@@ -676,7 +676,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     $sql = "CREATE TABLE IF NOT EXISTS `settings` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `full_url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'http://',
-                `db_version` FLOAT NOT NULL,
+                `software_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `upgrade_available` INT(1) NOT NULL DEFAULT '0',
                 `email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `default_category_domains` INT(10) NOT NULL DEFAULT '0',
@@ -756,7 +756,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     while ($row_settings = mysqli_fetch_object($result_settings)) {
 
         $_SESSION['system_full_url'] = $row_settings->full_url;
-        $_SESSION['system_db_version'] = (float) $row_settings->db_version;
+        $_SESSION['system_db_version'] = (string) $row_settings->db_version;
         $_SESSION['system_email_address'] = $row_settings->email_address;
         $_SESSION['system_default_category_domains'] = $row_settings->default_category_domains;
         $_SESSION['system_default_category_ssl'] = $row_settings->default_category_ssl;

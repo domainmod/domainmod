@@ -25,12 +25,12 @@ $sql = "SELECT db_version
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 while ($row = mysqli_fetch_object($result)) {
-    $current_db_version = (float) $row->db_version;
+    $current_db_version = (string) $row->db_version;
 }
 
 if ($current_db_version < $software_version) {
 
-    if ($current_db_version >= 1.1 && $current_db_version <= 2.0056) {
+    if ($current_db_version >= '1.1' && $current_db_version <= '2.0056') {
 
         include('updates/1.1-2.0057.inc.php');
 

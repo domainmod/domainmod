@@ -21,7 +21,7 @@
 ?>
 <?php
 // upgrade database from 1.1 to 1.2
-if ($current_db_version === 1.1) {
+if ($current_db_version === '1.1') {
 
     $sql = "ALTER TABLE `ssl_certs`
                 ADD `ip` VARCHAR(50) NOT NULL AFTER `name`";
@@ -32,12 +32,12 @@ if ($current_db_version === 1.1) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.2;
+    $current_db_version = '1.2';
 
 }
 
 // upgrade database from 1.2 to 1.3
-if ($current_db_version === 1.2) {
+if ($current_db_version === '1.2') {
 
     $sql = "CREATE TABLE IF NOT EXISTS `ip_addresses` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -54,12 +54,12 @@ if ($current_db_version === 1.2) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.3;
+    $current_db_version = '1.3';
 
 }
 
 // upgrade database from 1.3 to 1.4
-if ($current_db_version === 1.3) {
+if ($current_db_version === '1.3') {
 
     $sql = "ALTER TABLE `ip_addresses`
                 ADD `notes` LONGTEXT NOT NULL AFTER `ip`";
@@ -70,12 +70,12 @@ if ($current_db_version === 1.3) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.4;
+    $current_db_version = '1.4';
 
 }
 
 // upgrade database from 1.4 to 1.5
-if ($current_db_version === 1.4) {
+if ($current_db_version === '1.4') {
 
     $sql = "ALTER TABLE `domains`
                 ADD `ip_id` INT(10) NOT NULL DEFAULT '0' AFTER `dns_id`";
@@ -86,12 +86,12 @@ if ($current_db_version === 1.4) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.5;
+    $current_db_version = '1.5';
 
 }
 
 // upgrade database from 1.5 to 1.6
-if ($current_db_version === 1.5) {
+if ($current_db_version === '1.5') {
 
     $sql = "ALTER TABLE `domains`
                 CHANGE `ip_id` `ip_id` INT(10) NOT NULL DEFAULT '1'";
@@ -115,15 +115,15 @@ if ($current_db_version === 1.5) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.6;
+    $current_db_version = '1.6';
 
 }
 
 // upgrade database from 1.6 to 1.7
-if ($current_db_version === 1.6) {
+if ($current_db_version === '1.6') {
 
     $sql = "ALTER TABLE `ssl_certs`
-                DROP `ip`;";
+                DROP `ip`";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "UPDATE settings
@@ -131,12 +131,12 @@ if ($current_db_version === 1.6) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.7;
+    $current_db_version = '1.7';
 
 }
 
 // upgrade database from 1.7 to 1.8
-if ($current_db_version === 1.7) {
+if ($current_db_version === '1.7') {
 
     $sql = "ALTER TABLE `ip_addresses`
                 ADD `test_data` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
@@ -147,12 +147,12 @@ if ($current_db_version === 1.7) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.8;
+    $current_db_version = '1.8';
 
 }
 
 // upgrade database from 1.8 to 1.9
-if ($current_db_version === 1.8) {
+if ($current_db_version === '1.8') {
 
     $sql = "ALTER TABLE `settings`
                 ADD `email_address` VARCHAR(255) NOT NULL AFTER `db_version`";
@@ -164,12 +164,12 @@ if ($current_db_version === 1.8) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.9;
+    $current_db_version = '1.9';
 
 }
 
 // upgrade database from 1.9 to 1.91
-if ($current_db_version === 1.9) {
+if ($current_db_version === '1.9') {
 
     $sql = "ALTER TABLE `ip_addresses`
                 ADD `rdns` VARCHAR(255) NOT NULL DEFAULT '-' AFTER `ip`;";
@@ -180,12 +180,12 @@ if ($current_db_version === 1.9) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.91;
+    $current_db_version = '1.91';
 
 }
 
 // upgrade database from 1.91 to 1.92
-if ($current_db_version === 1.91) {
+if ($current_db_version === '1.91') {
 
     $sql = "ALTER TABLE `settings`
                 ADD `type` VARCHAR(50) NOT NULL AFTER `id`";
@@ -202,12 +202,12 @@ if ($current_db_version === 1.91) {
                 WHERE type = 'system'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.92;
+    $current_db_version = '1.92';
 
 }
 
 // upgrade database from 1.92 to 1.93
-if ($current_db_version === 1.92) {
+if ($current_db_version === '1.92') {
 
     $sql = "ALTER TABLE `settings`
                 DROP `type`;";
@@ -218,12 +218,12 @@ if ($current_db_version === 1.92) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.93;
+    $current_db_version = '1.93';
 
 }
 
 // upgrade database from 1.93 to 1.94
-if ($current_db_version === 1.93) {
+if ($current_db_version === '1.93') {
 
     $sql = "ALTER TABLE `settings`
                 ADD `number_of_domains` INT(5) NOT NULL DEFAULT '50' AFTER `email_address`";
@@ -238,12 +238,12 @@ if ($current_db_version === 1.93) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.94;
+    $current_db_version = '1.94';
 
 }
 
 // upgrade database from 1.94 to 1.95
-if ($current_db_version === 1.94) {
+if ($current_db_version === '1.94') {
 
     $sql = "ALTER TABLE `currencies`
                 DROP `default_currency`;";
@@ -258,12 +258,12 @@ if ($current_db_version === 1.94) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.95;
+    $current_db_version = '1.95';
 
 }
 
 // upgrade database from 1.95 to 1.96
-if ($current_db_version === 1.95) {
+if ($current_db_version === '1.95') {
 
     $sql = "ALTER TABLE `currencies`
                 DROP `test_data`;";
@@ -274,12 +274,12 @@ if ($current_db_version === 1.95) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.96;
+    $current_db_version = '1.96';
 
 }
 
 // upgrade database from 1.96 to 1.97
-if ($current_db_version === 1.96) {
+if ($current_db_version === '1.96') {
 
     $sql = "CREATE TABLE IF NOT EXISTS `owners` (
                     `id` INT(5) NOT NULL AUTO_INCREMENT,
@@ -319,12 +319,12 @@ if ($current_db_version === 1.96) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.97;
+    $current_db_version = '1.97';
 
 }
 
 // upgrade database from 1.97 to 1.98
-if ($current_db_version === 1.97) {
+if ($current_db_version === '1.97') {
 
     $sql = "INSERT INTO `categories`
                     (`name`, `owner`, `insert_time`) VALUES
@@ -410,12 +410,12 @@ if ($current_db_version === 1.97) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.98;
+    $current_db_version = '1.98';
 
 }
 
 // upgrade database from 1.98 to 1.99
-if ($current_db_version === 1.98) {
+if ($current_db_version === '1.98') {
 
     $sql = "ALTER TABLE `categories`
                     CHANGE `owner` `stakeholder` VARCHAR(255) NOT NULL;";
@@ -432,12 +432,12 @@ if ($current_db_version === 1.98) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 1.99;
+    $current_db_version = '1.99';
 
 }
 
 // upgrade database from 1.99 to 2.0001
-if ($current_db_version === 1.99) {
+if ($current_db_version === '1.99') {
 
     $sql = "ALTER TABLE `currencies`
                     ADD `default_currency` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
@@ -471,12 +471,12 @@ if ($current_db_version === 1.99) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0001;
+    $current_db_version = '2.0001';
 
 }
 
 // upgrade database from 2.0001 to 2.0002
-if ($current_db_version === 2.0001) {
+if ($current_db_version === '2.0001') {
 
     $sql = "ALTER TABLE `ssl_cert_functions`
                     ADD `default_function` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
@@ -503,12 +503,12 @@ if ($current_db_version === 2.0001) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0002;
+    $current_db_version = '2.0002';
 
 }
 
 // upgrade database from 2.0002 to 2.0003
-if ($current_db_version === 2.0002) {
+if ($current_db_version === '2.0002') {
 
     $sql = "DROP TABLE `ssl_cert_types`;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -526,12 +526,12 @@ if ($current_db_version === 2.0002) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0003;
+    $current_db_version = '2.0003';
 
 }
 
 // upgrade database from 2.0003 to 2.0004
-if ($current_db_version === 2.0003) {
+if ($current_db_version === '2.0003') {
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_types` (
                     `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -566,12 +566,12 @@ if ($current_db_version === 2.0003) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0004;
+    $current_db_version = '2.0004';
 
 }
 
 // upgrade database from 2.0004 to 2.0005
-if ($current_db_version === 2.0004) {
+if ($current_db_version === '2.0004') {
 
     $sql = "ALTER TABLE `ssl_cert_types`
                     ADD `test_data` INT(1) NOT NULL DEFAULT '0' AFTER `active`";
@@ -582,12 +582,12 @@ if ($current_db_version === 2.0004) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0005;
+    $current_db_version = '2.0005';
 
 }
 
 // upgrade database from 2.0005 to 2.0006
-if ($current_db_version === 2.0005) {
+if ($current_db_version === '2.0005') {
 
     $sql = "ALTER TABLE `ip_addresses`
                     ADD `active` INT(1) NOT NULL DEFAULT '1' AFTER `default_ip_address`";
@@ -602,12 +602,12 @@ if ($current_db_version === 2.0005) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0006;
+    $current_db_version = '2.0006';
 
 }
 
 // upgrade database from 2.0006 to 2.0007
-if ($current_db_version === 2.0006) {
+if ($current_db_version === '2.0006') {
 
     $sql = "ALTER TABLE `registrars`
                     ADD `default_registrar` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
@@ -630,12 +630,12 @@ if ($current_db_version === 2.0006) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0007;
+    $current_db_version = '2.0007';
 
 }
 
 // upgrade database from 2.0007 to 2.0008
-if ($current_db_version === 2.0007) {
+if ($current_db_version === '2.0007') {
 
     $sql = "ALTER TABLE `owners`
                     CHANGE `id` `id` INT(10) NOT NULL AUTO_INCREMENT";
@@ -654,12 +654,12 @@ if ($current_db_version === 2.0007) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0008;
+    $current_db_version = '2.0008';
 
 }
 
 // upgrade database from 2.0008 to 2.0009
-if ($current_db_version === 2.0008) {
+if ($current_db_version === '2.0008') {
 
     $sql = "ALTER TABLE `currencies`
                 ADD `test_data` INT(1) NOT NULL DEFAULT '0' AFTER `active`";
@@ -670,12 +670,12 @@ if ($current_db_version === 2.0008) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0009;
+    $current_db_version = '2.0009';
 
 }
 
 // upgrade database from 2.0009 to 2.0010
-if ($current_db_version === 2.0009) {
+if ($current_db_version === '2.0009') {
 
     $sql = "CREATE TABLE IF NOT EXISTS `user_settings` (
                     `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -718,12 +718,12 @@ if ($current_db_version === 2.0009) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.001;
+    $current_db_version = '2.001';
 
 }
 
 // upgrade database from 2.0010 to 2.0011
-if ($current_db_version === 2.001) {
+if ($current_db_version === '2.001') {
 
     $sql = "ALTER TABLE `settings`
                     DROP `number_of_domains`,
@@ -735,12 +735,12 @@ if ($current_db_version === 2.001) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0011;
+    $current_db_version = '2.0011';
 
 }
 
 // upgrade database from 2.0011 to 2.0012
-if ($current_db_version === 2.0011) {
+if ($current_db_version === '2.0011') {
 
     $sql = "ALTER TABLE `user_settings`
                 CHANGE `display_domain_account` `display_domain_account` INT(1) NOT NULL DEFAULT '1'";
@@ -751,12 +751,12 @@ if ($current_db_version === 2.0011) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0012;
+    $current_db_version = '2.0012';
 
 }
 
 // upgrade database from 2.0012 to 2.0013
-if ($current_db_version === 2.0012) {
+if ($current_db_version === '2.0012') {
 
     $sql = "ALTER TABLE `categories`
                 DROP `test_data`;";
@@ -823,12 +823,12 @@ if ($current_db_version === 2.0012) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0013;
+    $current_db_version = '2.0013';
 
 }
 
 // upgrade database from 2.0013 to 2.0014
-if ($current_db_version === 2.0013) {
+if ($current_db_version === '2.0013') {
 
     $sql = "CREATE TABLE IF NOT EXISTS `segment_data` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -845,12 +845,12 @@ if ($current_db_version === 2.0013) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0014;
+    $current_db_version = '2.0014';
 
 }
 
 // upgrade database from 2.0014 to 2.0015
-if ($current_db_version === 2.0014) {
+if ($current_db_version === '2.0014') {
 
     $sql = "ALTER TABLE `user_settings`
                     ADD `display_domain_fee` INT(1) NOT NULL DEFAULT '0' AFTER `display_domain_tld`";
@@ -865,12 +865,12 @@ if ($current_db_version === 2.0014) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0015;
+    $current_db_version = '2.0015';
 
 }
 
 // upgrade database from 2.0015 to 2.0016
-if ($current_db_version === 2.0015) {
+if ($current_db_version === '2.0015') {
 
     $sql = "ALTER TABLE `segment_data`
                     ADD `active` INT(1) NOT NULL DEFAULT '0' AFTER `domain`";
@@ -889,12 +889,12 @@ if ($current_db_version === 2.0015) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0016;
+    $current_db_version = '2.0016';
 
 }
 
 // upgrade database from 2.0016 to 2.0017
-if ($current_db_version === 2.0016) {
+if ($current_db_version === '2.0016') {
 
     $sql = "ALTER TABLE `segment_data`
                     ADD `filtered` INT(1) NOT NULL DEFAULT '0' AFTER `missing`";
@@ -905,12 +905,12 @@ if ($current_db_version === 2.0016) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0017;
+    $current_db_version = '2.0017';
 
 }
 
 // upgrade database from 2.0017 to 2.0018
-if ($current_db_version === 2.0017) {
+if ($current_db_version === '2.0017') {
 
     $sql = "ALTER TABLE `ssl_certs`
                     CHANGE `domain_id` `domain_id` INT(10) NOT NULL DEFAULT '0'";
@@ -921,12 +921,12 @@ if ($current_db_version === 2.0017) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0018;
+    $current_db_version = '2.0018';
 
 }
 
 // upgrade database from 2.0018 to 2.0019
-if ($current_db_version === 2.0018) {
+if ($current_db_version === '2.0018') {
 
     $sql = "ALTER TABLE `ssl_certs`
                     CHANGE `domain_id` `domain_id` INT(10) NOT NULL";
@@ -937,12 +937,12 @@ if ($current_db_version === 2.0018) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0019;
+    $current_db_version = '2.0019';
 
 }
 
 // upgrade database from 2.0019 to 2.0020
-if ($current_db_version === 2.0019) {
+if ($current_db_version === '2.0019') {
 
     $sql = "ALTER TABLE `user_settings`
                     ADD `expiration_emails` INT(1) NOT NULL DEFAULT '1' AFTER `user_id`";
@@ -953,12 +953,12 @@ if ($current_db_version === 2.0019) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0020;
+    $current_db_version = '2.0020';
 
 }
 
 // upgrade database from 2.0020 to 2.0021
-if ($current_db_version === 2.002) {
+if ($current_db_version === '2.002') {
 
     $sql = "ALTER TABLE `settings`
                     ADD `full_url` VARCHAR(100) NOT NULL DEFAULT 'http://' AFTER `id`";
@@ -975,12 +975,12 @@ if ($current_db_version === 2.002) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0021;
+    $current_db_version = '2.0021';
 
 }
 
 // upgrade database from 2.0021 to 2.0022
-if ($current_db_version === 2.0021) {
+if ($current_db_version === '2.0021') {
 
     $sql = "ALTER TABLE `settings`
                     ADD `timezone` VARCHAR(50) NOT NULL DEFAULT 'Canada/Pacific' AFTER `email_address`";
@@ -991,12 +991,12 @@ if ($current_db_version === 2.0021) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0022;
+    $current_db_version = '2.0022';
 
 }
 
 // upgrade database from 2.0022 to 2.0023
-if ($current_db_version === 2.0022) {
+if ($current_db_version === '2.0022') {
 
     $sql = "CREATE TABLE IF NOT EXISTS `timezones` (
                 `id` INT(5) NOT NULL AUTO_INCREMENT,
@@ -1016,12 +1016,12 @@ if ($current_db_version === 2.0022) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0023;
+    $current_db_version = '2.0023';
 
 }
 
 // upgrade database from 2.0023 to 2.0024
-if ($current_db_version === 2.0023) {
+if ($current_db_version === '2.0023') {
 
     $sql = "ALTER TABLE `settings`
                     CHANGE `timezone` `timezone` VARCHAR(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'Canada/Pacific'";
@@ -1032,12 +1032,12 @@ if ($current_db_version === 2.0023) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0024;
+    $current_db_version = '2.0024';
 
 }
 
 // upgrade database from 2.0024 to 2.0025
-if ($current_db_version === 2.0024) {
+if ($current_db_version === '2.0024') {
 
     $sql = "CREATE TABLE IF NOT EXISTS `hosting` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -1095,12 +1095,12 @@ if ($current_db_version === 2.0024) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0025;
+    $current_db_version = '2.0025';
 
 }
 
 // upgrade database from 2.0025 to 2.0026
-if ($current_db_version === 2.0025) {
+if ($current_db_version === '2.0025') {
 
     $sql = "ALTER TABLE `user_settings`
                     ADD `display_domain_host` INT(1) NOT NULL DEFAULT '0' AFTER `display_domain_dns`";
@@ -1111,12 +1111,12 @@ if ($current_db_version === 2.0025) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0026;
+    $current_db_version = '2.0026';
 
 }
 
 // upgrade database from 2.0026 to 2.0027
-if ($current_db_version === 2.0026) {
+if ($current_db_version === '2.0026') {
 
     $sql = "ALTER TABLE `registrar_accounts`
                     ADD `password` VARCHAR(100) NOT NULL AFTER `username`";
@@ -1127,12 +1127,12 @@ if ($current_db_version === 2.0026) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0027;
+    $current_db_version = '2.0027';
 
 }
 
 // upgrade database from 2.0027 to 2.0028
-if ($current_db_version === 2.0027) {
+if ($current_db_version === '2.0027') {
 
     $sql = "ALTER TABLE `ssl_accounts`
                     ADD `password` VARCHAR(100) NOT NULL AFTER `username`";
@@ -1143,12 +1143,12 @@ if ($current_db_version === 2.0027) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0028;
+    $current_db_version = '2.0028';
 
 }
 
 // upgrade database from 2.0028 to 2.0029
-if ($current_db_version === 2.0028) {
+if ($current_db_version === '2.0028') {
 
     $sql = "ALTER TABLE `dns`
                     ADD `ip1` VARCHAR(255) NOT NULL AFTER `dns10`,
@@ -1172,12 +1172,12 @@ if ($current_db_version === 2.0028) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0029;
+    $current_db_version = '2.0029';
 
 }
 
 // upgrade database from 2.0029 to 2.003
-if ($current_db_version === 2.0029) {
+if ($current_db_version === '2.0029') {
 
     $sql = "ALTER TABLE `domains`
                     ADD `notes_fixed_temp` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
@@ -1305,12 +1305,12 @@ if ($current_db_version === 2.0029) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.003;
+    $current_db_version = '2.003';
 
 }
 
 // upgrade database from 2.003 to 2.0031
-if ($current_db_version === 2.003) {
+if ($current_db_version === '2.003') {
 
     $sql = "ALTER TABLE `categories`
                     DROP `active`;";
@@ -1369,12 +1369,12 @@ if ($current_db_version === 2.003) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0031;
+    $current_db_version = '2.0031';
 
 }
 
 // upgrade database from 2.0031 to 2.0032
-if ($current_db_version === 2.0031) {
+if ($current_db_version === '2.0031') {
 
     $sql = "ALTER TABLE `fees`
                 ADD `transfer_fee` FLOAT NOT NULL AFTER `renewal_fee`";
@@ -1397,12 +1397,12 @@ if ($current_db_version === 2.0031) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0032;
+    $current_db_version = '2.0032';
 
 }
 
 // upgrade database from 2.0032 to 2.0033
-if ($current_db_version === 2.0032) {
+if ($current_db_version === '2.0032') {
 
     $sql = "ALTER TABLE `ssl_fees`
                 DROP `transfer_fee`;";
@@ -1413,12 +1413,12 @@ if ($current_db_version === 2.0032) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0033;
+    $current_db_version = '2.0033';
 
 }
 
 // upgrade database from 2.0033 to 2.0034
-if ($current_db_version === 2.0033) {
+if ($current_db_version === '2.0033') {
 
     $sql = "ALTER TABLE `domains`
                 CHANGE `owner_id` `owner_id` INT(10) NOT NULL DEFAULT '1'";
@@ -1473,12 +1473,12 @@ if ($current_db_version === 2.0033) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0034;
+    $current_db_version = '2.0034';
 
 }
 
 // upgrade database from 2.0034 to 2.0035
-if ($current_db_version === 2.0034) {
+if ($current_db_version === '2.0034') {
 
     $sql = "ALTER DATABASE " . $dbname . "
                 CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
@@ -1615,12 +1615,12 @@ if ($current_db_version === 2.0034) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0035;
+    $current_db_version = '2.0035';
 
 }
 
 // upgrade database from 2.0035 to 2.0036
-if ($current_db_version === 2.0035) {
+if ($current_db_version === '2.0035') {
 
     $sql = "DROP TABLE `currency_data`;";
     $result = mysqli_query($connection, $sql);
@@ -1873,12 +1873,12 @@ if ($current_db_version === 2.0035) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0036;
+    $current_db_version = '2.0036';
 
 }
 
 // upgrade database from 2.0036 to 2.0037
-if ($current_db_version === 2.0036) {
+if ($current_db_version === '2.0036') {
 
     $sql = "SELECT currency
                 FROM currencies
@@ -1919,12 +1919,12 @@ if ($current_db_version === 2.0036) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0037;
+    $current_db_version = '2.0037';
 
 }
 
 // upgrade database from 2.0037 to 2.0038
-if ($current_db_version === 2.0037) {
+if ($current_db_version === '2.0037') {
 
     $sql = "ALTER TABLE `user_settings`
                 ADD `default_currency` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER user_id";
@@ -1998,12 +1998,12 @@ if ($current_db_version === 2.0037) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0038;
+    $current_db_version = '2.0038';
 
 }
 
 // upgrade database from 2.0038 to 2.0039
-if ($current_db_version === 2.0038) {
+if ($current_db_version === '2.0038') {
 
 
     $sql = "ALTER TABLE `ssl_certs`
@@ -2042,12 +2042,12 @@ if ($current_db_version === 2.0038) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0039;
+    $current_db_version = '2.0039';
 
 }
 
 // upgrade database from 2.0039 to 2.004
-if ($current_db_version === 2.0039) {
+if ($current_db_version === '2.0039') {
 
     $sql = "ALTER TABLE `user_settings`
                 ADD `default_category` INT(10) NOT NULL DEFAULT '1' AFTER `default_currency`";
@@ -2414,12 +2414,12 @@ if ($current_db_version === 2.0039) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.004;
+    $current_db_version = '2.004';
 
 }
 
 // upgrade database from 2.004 to 2.0041
-if ($current_db_version === 2.004) {
+if ($current_db_version === '2.004') {
 
     $sql = "ALTER TABLE `user_settings`
                 CHANGE `default_category` `default_category_domains` INT(10) NOT NULL DEFAULT '0'";
@@ -2590,12 +2590,12 @@ if ($current_db_version === 2.004) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0041;
+    $current_db_version = '2.0041';
 
 }
 
 // upgrade database from 2.0041 to 2.0042
-if ($current_db_version === 2.0041) {
+if ($current_db_version === '2.0041') {
 
     // This section was made redundant by DB update v2.005
     /*
@@ -2671,12 +2671,12 @@ if ($current_db_version === 2.0041) {
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
     */
 
-    $current_db_version = 2.0042;
+    $current_db_version = '2.0042';
 
 }
 
 // upgrade database from 2.0042 to 2.0043
-if ($current_db_version === 2.0042) {
+if ($current_db_version === '2.0042') {
 
     $sql = "ALTER TABLE `segments`
                 CHANGE `name` `name` VARCHAR(40) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
@@ -2687,12 +2687,12 @@ if ($current_db_version === 2.0042) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0043;
+    $current_db_version = '2.0043';
 
 }
 
 // upgrade database from 2.0043 to 2.0044
-if ($current_db_version === 2.0043) {
+if ($current_db_version === '2.0043') {
 
     $sql = "ALTER TABLE `owners`
                 CHANGE `name` `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
@@ -2779,12 +2779,12 @@ if ($current_db_version === 2.0043) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0044;
+    $current_db_version = '2.0044';
 
 }
 
 // upgrade database from 2.0044 to 2.0045
-if ($current_db_version === 2.0044) {
+if ($current_db_version === '2.0044') {
 
     $sql = "ALTER TABLE `segments`
                 CHANGE `name` `name` VARCHAR(35) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
@@ -2795,12 +2795,12 @@ if ($current_db_version === 2.0044) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0045;
+    $current_db_version = '2.0045';
 
 }
 
 // upgrade database from 2.0045 to 2.0046
-if ($current_db_version === 2.0045) {
+if ($current_db_version === '2.0045') {
 
     // This section was made redundant by DB update v2.005
     /*
@@ -2841,12 +2841,12 @@ if ($current_db_version === 2.0045) {
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
     */
 
-    $current_db_version = 2.0046;
+    $current_db_version = '2.0046';
 
 }
 
 // upgrade database from 2.0046 to 2.0047
-if ($current_db_version === 2.0046) {
+if ($current_db_version === '2.0046') {
 
     $sql = "ALTER TABLE `hosting`
                 ADD `url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER name";
@@ -2857,12 +2857,12 @@ if ($current_db_version === 2.0046) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0047;
+    $current_db_version = '2.0047';
 
 }
 
 // upgrade database from 2.0047 to 2.0048
-if ($current_db_version === 2.0047) {
+if ($current_db_version === '2.0047') {
 
     $sql = "CREATE TABLE IF NOT EXISTS `custom_field_types` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -3001,12 +3001,12 @@ if ($current_db_version === 2.0047) {
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
     */
 
-    $current_db_version = 2.0048;
+    $current_db_version = '2.0048';
 
 }
 
 // upgrade database from 2.0048 to 2.0049
-if ($current_db_version === 2.0048) {
+if ($current_db_version === '2.0048') {
 
     $sql = "CREATE TABLE IF NOT EXISTS `dw_servers` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -3072,12 +3072,12 @@ if ($current_db_version === 2.0048) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0049;
+    $current_db_version = '2.0049';
 
 }
 
 // upgrade database from 2.0049 to 2.005
-if ($current_db_version === 2.0049) {
+if ($current_db_version === '2.0049') {
 
     // This section was made redundant by DB update v2.0051
     /*
@@ -3163,12 +3163,12 @@ if ($current_db_version === 2.0049) {
 
     */
 
-    $current_db_version = 2.005;
+    $current_db_version = '2.005';
 
 }
 
 // upgrade database from 2.005 to 2.0051
-if ($current_db_version === 2.005) {
+if ($current_db_version === '2.005') {
 
     $sql = "DROP TABLE IF EXISTS `updates`;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -3181,12 +3181,12 @@ if ($current_db_version === 2.005) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0051;
+    $current_db_version = '2.0051';
 
 }
 
 // upgrade database from 2.0051 to 2.0052
-if ($current_db_version === 2.0051) {
+if ($current_db_version === '2.0051') {
 
     $sql = "ALTER TABLE `fees`
                 ADD `privacy_fee` FLOAT NOT NULL AFTER `transfer_fee`";
@@ -3197,12 +3197,12 @@ if ($current_db_version === 2.0051) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0052;
+    $current_db_version = '2.0052';
 
 }
 
 // upgrade database from 2.0052 to 2.0053
-if ($current_db_version === 2.0052) {
+if ($current_db_version === '2.0052') {
 
     $sql = "ALTER TABLE `fees`
                 ADD `misc_fee` FLOAT NOT NULL AFTER `privacy_fee`";
@@ -3217,12 +3217,12 @@ if ($current_db_version === 2.0052) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0053;
+    $current_db_version = '2.0053';
 
 }
 
 // upgrade database from 2.0053 to 2.0054
-if ($current_db_version === 2.0053) {
+if ($current_db_version === '2.0053') {
 
     $sql = "ALTER TABLE `domains`
                 ADD `total_cost` FLOAT NOT NULL AFTER `fee_id`";
@@ -3269,12 +3269,12 @@ if ($current_db_version === 2.0053) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0054;
+    $current_db_version = '2.0054';
 
 }
 
 // upgrade database from 2.0054 to 2.0055
-if ($current_db_version === 2.0054) {
+if ($current_db_version === '2.0054') {
 
     $sql = "ALTER TABLE `user_settings`
                     ADD `display_inactive_assets` INT(1) NOT NULL DEFAULT '1' AFTER `display_ssl_fee`";
@@ -3287,12 +3287,12 @@ if ($current_db_version === 2.0054) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0055;
+    $current_db_version = '2.0055';
 
 }
 
 // upgrade database from 2.0055 to 2.0056
-if ($current_db_version === 2.0055) {
+if ($current_db_version === '2.0055') {
 
     $sql = "ALTER TABLE `user_settings`
                     ADD `display_dw_intro_page` INT(1) NOT NULL DEFAULT '1' AFTER `display_inactive_assets`";
@@ -3305,12 +3305,12 @@ if ($current_db_version === 2.0055) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0056;
+    $current_db_version = '2.0056';
 
 }
 
 // upgrade database from 2.0056 to 2.0057
-if ($current_db_version === 2.0056) {
+if ($current_db_version === '2.0056') {
 
     $sql = "ALTER TABLE `settings`
                 ADD `upgrade_available` INT(1) NOT NULL DEFAULT '0' AFTER `db_version`";
@@ -3321,6 +3321,6 @@ if ($current_db_version === 2.0056) {
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $current_db_version = 2.0057;
+    $current_db_version = '2.0057';
 
 }

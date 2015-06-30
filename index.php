@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
         while ($row_settings = mysqli_fetch_object($result_settings)) {
 
             $_SESSION['system_full_url'] = $row_settings->full_url;
-            $_SESSION['system_db_version'] = (float) $row_settings->db_version;
+            $_SESSION['system_db_version'] = (string) $row_settings->db_version;
             $_SESSION['system_upgrade_available'] = $row_settings->upgrade_available;
             $_SESSION['system_email_address'] = $row_settings->email_address;
             $_SESSION['system_default_category_domains'] = $row_settings->default_category_domains;
