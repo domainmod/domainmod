@@ -36,6 +36,9 @@ if ($_SESSION['system_db_version'] !== $software_version) {
 
 }
 
+// Check GitHub to see if a newer version is available
+$system->checkVersion($software_version);
+
 // Check for existing Domain and SSL assets
 $system->checkExistingAssets($connection);
 
