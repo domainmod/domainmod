@@ -30,13 +30,35 @@ while ($row = mysqli_fetch_object($result)) {
 
 if ($current_db_version < $software_version) {
 
-    if ($current_db_version >= '1.1' && $current_db_version <= '2.0056') {
+    if ($current_db_version >= '1.1' && $current_db_version <= '2.0021') {
 
-        include('updates/1.1-2.0057.inc.php');
+        include('updates/1.1-2.0021.inc.php');
 
     }
 
-    include('updates/2.0057-current.inc.php');
+    if ($current_db_version >= '2.0022' && $current_db_version <= '2.0037') {
+
+        include('updates/2.0022-2.0037.inc.php');
+
+    }
+
+    if ($current_db_version >= '2.0038' && $current_db_version <= '2.0047') {
+
+        include('updates/2.0038-2.0047.inc.php');
+
+    }
+
+    if ($current_db_version >= '2.0048' && $current_db_version <= '2.0057') {
+
+        include('updates/2.0048-2.0057.inc.php');
+
+    }
+
+    if ($current_db_version >= '3.0.0') {
+
+        include('updates/3.0.0-current.inc.php');
+
+    }
 
     $_SESSION['system_upgrade_available'] = "0";
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/updates/2.0057-current.inc.php
+ * /_includes/updates/3.0.0-current.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -25,6 +25,7 @@ if ($current_db_version === '3.0.1') {
 
     $sql = "ALTER TABLE `settings`
             ADD `temp_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `full_url`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "UPDATE `settings`
             SET `temp_version` = `db_version`";
