@@ -49,7 +49,7 @@ class System
 
     }
 
-    public function checkVersion($connection, $current_version)
+    public function checkVersion($current_version)
     {
 
         $live_version
@@ -57,19 +57,15 @@ class System
 
         if ($current_version != $live_version && $live_version != '') {
 
-            $sql = "UPDATE settings
-                    SET upgrade_available = '1'";
+            $_SESSION['system_new_version'] = '1';
 
         } else {
 
-            $sql = "UPDATE settings
-                    SET upgrade_available = '0'";
+            $_SESSION['system_new_version'] = '0';
 
         }
 
-        mysqli_query($connection, $sql);
-
-        return true;
+        return;
 
     }
 
