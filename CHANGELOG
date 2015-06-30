@@ -1,5 +1,11 @@
 DomainMOD Changelog
 ===================
+v3.0.1    2015-06-29   e828b6f748b642192f646f556a3f059b0945b596
+- Optimized the way DomainMOD checks for new versions
+- Deleted the now-redundant checkversion.php cron job
+- Optimized the way DomainMOD fixes invalid fees
+- Updated query logic of deleteUnusedFees method
+
 v3.0.0    2015-06-29   ad5a23efcd6493aca4ae89251c8efefd15b6fc28
  - Unified the database and software versions
  - Optimized the database update process
