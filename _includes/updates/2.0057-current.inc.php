@@ -20,3 +20,29 @@
  */
 ?>
 <?php
+// upgrade database from 3.0.1 to 3.0.2
+if ($current_db_version === '3.0.1') {
+
+    $sql = "ALTER TABLE `settings`
+            ADD `temp_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `full_url`";
+
+    $sql = "UPDATE `settings`
+            SET `temp_version` = `db_version`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `settings`
+            DROP `db_version`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `settings`
+            CHANGE `temp_version` `db_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "UPDATE settings
+            SET db_version = '3.0.2',
+                update_time = '" . $time->time() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $current_db_version = '3.0.2';
+
+}
