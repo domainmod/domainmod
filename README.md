@@ -79,10 +79,6 @@ Individual Cron Jobs
 
     Cron job: /cron/fixfees.php
 
-5. The fifth cron job will check to see if there is a newer version of DomainMOD available for download.
-
-    Cron job: /cron/checkversion.php
-
 
 ## Data Warehouse
 
