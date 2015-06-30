@@ -45,6 +45,16 @@ class Maintenance
 
     }
 
+    public function updateAllFees($connection)
+    {
+
+        $this->updateDomainFees($connection);
+        $this->updateSslFees($connection);
+
+        return true;
+
+    }
+
     public function updateDomainFees($connection)
     {
 
