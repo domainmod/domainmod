@@ -28,10 +28,10 @@ class Maintenance
     public function performMaintenance($connection)
     {
 
-        $this->deleteUnusedFees($connection, 'fees', 'domains');
-        $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
-        $this->updateTlds($connection);
-        $this->updateSegments($connection);
+        $_SESSION['result_message'] .= $this->deleteUnusedFees($connection, 'fees', 'domains');
+        $_SESSION['result_message'] .= $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
+        $_SESSION['result_message'] .= $this->updateTlds($connection);
+        $_SESSION['result_message'] .= $this->updateSegments($connection);
         $this->updateAllFees($connection);
 
         $result_message = 'Maintenance Completed<BR>';
@@ -50,6 +50,10 @@ class Maintenance
                                  WHERE active NOT IN ('0', '10')
                                  )";
         mysqli_query($connection, $sql);
+
+        $result_message = 'Deleted Unused Fees<BR>';
+
+        return $result_message;
 
     }
 
@@ -73,7 +77,7 @@ class Maintenance
 
         }
 
-        $result_message = 'TLDs Updated<BR>';
+        $result_message = 'Updated TLDs<BR>';
 
         return $result_message;
 
@@ -100,7 +104,7 @@ class Maintenance
                  WHERE domain NOT IN (SELECT domain FROM domains)";
         mysqli_query($connection, $sql);
 
-        $result_message = 'Segments Updated<BR>';
+        $result_message = 'Updated Segments<BR>';
 
         return $result_message;
 
@@ -177,7 +181,9 @@ class Maintenance
 
         }
 
-        return true;
+        $result_message = 'Updated Domain Fees<BR>';
+
+        return $result_message;
 
     }
 
@@ -229,7 +235,9 @@ class Maintenance
 
         }
 
-        return true;
+        $result_message = 'Updated SSL Fees<BR>';
+
+        return $result_message;
 
     }
 
