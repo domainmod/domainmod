@@ -26,7 +26,9 @@ include("../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
+$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$time = new DomainMOD\Timestamp();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
@@ -34,10 +36,6 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->installCheck($connection, $web_root);
-
-$error = new DomainMOD\Error();
-
-$time = new DomainMOD\Timestamp();
 
 if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . "'"))) {
 
@@ -676,7 +674,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     $sql = "CREATE TABLE IF NOT EXISTS `settings` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `full_url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'http://',
-                `software_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `db_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `upgrade_available` INT(1) NOT NULL DEFAULT '0',
                 `email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `default_category_domains` INT(10) NOT NULL DEFAULT '0',
