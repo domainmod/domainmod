@@ -56,7 +56,7 @@ if ($_SESSION['system_db_version'] !== $software_version && $upgrade_approved !=
 } elseif ($_SESSION['system_db_version'] !== $software_version && $upgrade_approved == '1') {
 
     include(DIR_INC . "update.inc.php");
-    $_SESSION['run_update_includes'] = "1";
+    $_SESSION['is_upgrading'] = '1';
 
 } else {
 
@@ -89,13 +89,13 @@ here for upgrade instructions</a>.<BR>";
 
 }
 
-if ($_SESSION['run_update_includes'] == '1' && $_SESSION['has_domain'] == '1') {
+if ($_SESSION['is_upgrading'] == '1' && $_SESSION['has_domain'] == '1') {
 
     $_SESSION['result_message'] .= $maint->performMaintenance($connection);
 
 }
 
-if ($_SESSION['run_update_includes'] != '1' &&
+if ($_SESSION['is_upgrading'] != '1' &&
     (($last_login_date < $current_date) && $_SESSION['has_domain'] == '1')) {
 
     $_SESSION['result_message'] .= $maint->updateSegments($connection);
@@ -121,7 +121,7 @@ if ($_SESSION['is_new_password'] == 1) {
 
 }
 
-$_SESSION['run_update_includes'] = '';
+unset($_SESSION['is_upgrading']);
 
 if (isset($_SESSION['user_redirect'])) {
 
