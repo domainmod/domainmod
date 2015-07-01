@@ -194,7 +194,14 @@ here for upgrade instructions</a>.<BR>";
 
         }
 
-        if (($_SESSION['run_update_includes'] == "1" || $last_login_date < $current_date) && $_SESSION['has_domain'] == '1') {
+        if ($_SESSION['run_update_includes'] == '1' && $_SESSION['has_domain'] == '1') {
+
+            $_SESSION['result_message'] .= $maint->performMaintenance($connection);
+
+        }
+
+        if ($_SESSION['run_update_includes'] != '1' &&
+            (($last_login_date < $current_date) && $_SESSION['has_domain'] == '1')) {
 
             $_SESSION['result_message'] .= $maint->updateSegments($connection);
             $_SESSION['result_message'] .= $maint->updateTlds($connection);
@@ -219,7 +226,7 @@ here for upgrade instructions</a>.<BR>";
 
         }
 
-        $_SESSION['run_update_includes'] = "";
+        $_SESSION['run_update_includes'] = '';
 
         if (isset($_SESSION['user_redirect'])) {
 
