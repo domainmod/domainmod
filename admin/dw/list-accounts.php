@@ -260,8 +260,10 @@ if (mysqli_num_rows($result) == 0) {
         <input type="hidden" name="numBegin" value="1">
     </form><BR>
 
-    <strong>[<a
-            href="list-accounts.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong>
+    <strong>
+        [<a href="list-accounts.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php
+        echo $search_for; ?>">EXPORT</a>]
+    </strong>
     <BR><BR>
 
     <strong>Number of Accounts:</strong> <?php echo $totalrows; ?><BR><BR>
