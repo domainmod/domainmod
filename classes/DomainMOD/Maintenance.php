@@ -182,6 +182,7 @@ class Maintenance
 
         $sql = "SELECT id, domain
                 FROM domains
+                WHERE active NOT IN ('0', '10')
                 ORDER BY domain ASC";
         $result = mysqli_query($connection, $sql);
 
