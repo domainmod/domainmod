@@ -125,7 +125,7 @@ class Layout
 
     public function assetBlock()
     {
-        ob_start(); ?>
+        ob_start(); //@formatter:off ?>
         <div class="asset-management-block-outer">
             <div class="asset-management-block-left">
                 <div class="subheadline">Domains</div><BR>
@@ -146,8 +146,7 @@ class Layout
                 <a href="categories.php">Categories</a><BR>
                 <a href="ip-addresses.php">IP Addresses</a>
             </div>
-        </div>
-        <div style="clear: both;"></div><?php
+        </div><div style="clear: both;"></div><?php //@formatter:on
 
         return ob_get_clean();
     }

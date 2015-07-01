@@ -72,6 +72,7 @@ class Maintenance
                            WHERE id = '" . $row->id . "'";
             mysqli_query($connection, $sql_update);
         }
+
         return 'Updated TLDs<BR>';
     }
 

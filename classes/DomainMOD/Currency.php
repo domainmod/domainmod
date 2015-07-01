@@ -36,6 +36,7 @@ class Currency
         } else {
             $formatted_output = $symbol . number_format($amount, 2, '.', ',');
         }
+
         return $formatted_output;
     }
 
