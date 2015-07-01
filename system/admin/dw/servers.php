@@ -149,8 +149,8 @@ if (mysqli_num_rows($result) > 0) { ?>
             <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
         </td>
         <td class="main_table_cell_active">
-            <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->protocol; ?>
-                ://<?php echo $row->host; ?></a>
+            <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php
+                echo $row->protocol; ?>://<?php echo $row->host; ?></a>
         </td>
         <td class="main_table_cell_active">
             <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->port; ?></a>
