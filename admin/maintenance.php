@@ -41,5 +41,5 @@ $system->checkAdminUser($_SESSION['is_admin'], $web_root);
 $_SESSION['result_message'] .= $maint->performMaintenance($connection);
 
 // Redirect to Control Panel after performing maintenance
-header("Location: ../index.php");
+header("Location: ../system/index.php");
 exit;

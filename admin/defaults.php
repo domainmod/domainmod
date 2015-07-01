@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $_SESSION['system_default_ssl_type'] = $new_default_ssl_type;
     $_SESSION['system_default_ssl_provider'] = $new_default_ssl_provider;
 
-    header("Location: ../index.php");
+    header("Location: ../system/index.php");
     exit;
 
 }
