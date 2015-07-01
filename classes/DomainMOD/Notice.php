@@ -30,7 +30,7 @@ class Notice
 
         $_SESSION['notice_page_tile'] = "Upgrade Available";
         $_SESSION['notice'] = "<center>Your " . $software_title . " software was recently updated, so we now need to
-            upgrade your database<BR><BR>Please be patient, this may take a minute or so<BR><BR>
+            upgrade your database<BR><BR>Please be patient, this may take a moment<BR><BR>
             <a href='checks.php?u=1'>Click here to upgrade your database</a></center>";
 
         return true;
