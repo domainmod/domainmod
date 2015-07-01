@@ -181,68 +181,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         }
 
-        include(DIR_INC . "login-checks.inc.php");
-
-        if ($_SESSION['system_new_version'] == '1') {
-
-            if ($_SESSION['is_admin'] === 1) {
-
-                $_SESSION['result_message'] .= "A new version of DomainMOD is available for download. <a target=\"_blank\" href=\"http://domainmod.org/upgrade/\">Click
-here for upgrade instructions</a>.<BR>";
-
-            }
-
-        }
-
-        if ($_SESSION['run_update_includes'] == '1' && $_SESSION['has_domain'] == '1') {
-
-            $_SESSION['result_message'] .= $maint->performMaintenance($connection);
-
-        }
-
-        if ($_SESSION['run_update_includes'] != '1' &&
-            (($last_login_date < $current_date) && $_SESSION['has_domain'] == '1')) {
-
-            $_SESSION['result_message'] .= $maint->updateSegments($connection);
-            $_SESSION['result_message'] .= $maint->updateTlds($connection);
-
-        }
-
-        $queryB = new DomainMOD\QueryBuild();
-
-        $sql = $queryB->missingFees('domains');
-        $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
-
-        $queryB = new DomainMOD\QueryBuild();
-
-        $sql = $queryB->missingFees('ssl_certs');
-        $_SESSION['missing_ssl_fees'] = $system->checkForRows($connection, $sql);
-
-        if ($_SESSION['is_new_password'] == 1) {
-
-            $_SESSION['result_message'] .= "Your password should be changed for security purposes<BR>";
-            header("Location: system/change-password.php");
-            exit;
-
-        }
-
-        $_SESSION['run_update_includes'] = '';
-
-        if (isset($_SESSION['user_redirect'])) {
-
-            $temp_redirect = $_SESSION['user_redirect'];
-            unset($_SESSION['user_redirect']);
-
-            header("Location: $temp_redirect");
-            exit;
-
-        } else {
-
-            header("Location: domains.php");
-
-            exit;
-
-        }
+        header("Location: checks.php");
+        exit;
 
     } else {
 
