@@ -27,13 +27,19 @@ class DwDisplay
 
     public function account($connection, $server_id, $domain, $show_sidebar, $show_domain, $show_zone)
     {
+
         $result_account = $this->getAccount($connection, $domain, $server_id);
+
         $result = '';
 
         while ($row = mysqli_fetch_object($result_account)) {
+
             ob_start(); //@formatter:off ?>
+
             <tr class="main_table_row_active_no_hover"><?php
+
             echo $this->sidebar($domain, $server_id, $row->server_name, $show_domain, $show_zone, $show_sidebar); ?>
+
             <td class="main_table_cell_active_top_aligned">
                 <strong>Created:</strong> <?php echo date("Y M jS", $row->unix_startdate); ?><BR>
                 <strong>Contact:</strong> <?php echo $row->email; ?><BR>
@@ -66,12 +72,16 @@ class DwDisplay
             </tr><?php
 
             $result = ob_get_clean(); //@formatter:on
+
         }
+
         return $result;
+
     }
 
     public function getAccount($connection, $domain, $server_id)
     {
+
         $sql = "SELECT a.unix_startdate, a.email, a.ip, a.plan, a.theme, a.`user`, a.`owner`, a.shell, a.`partition`,
                     a.disklimit, a.diskused, a.maxpop, a.maxlst, a.maxaddons, a.maxsub, a.maxsql, a.maxftp, a.maxparked,
                     a.suspended, a.suspendtime, a.suspendreason, s.name AS server_name
@@ -79,12 +89,16 @@ class DwDisplay
                 WHERE a.server_id = s.id
                   AND a.domain = '" . $domain . "'
                   AND a.server_id = '" . $server_id . "'";
+
         return mysqli_query($connection, $sql);
+
     }
 
     public function sidebar($domain, $server_id, $server_name, $show_domain, $show_zone, $show_sidebar)
     {
+
         ob_start(); //@formatter:off
+
         $result = '';
 
         if ($show_sidebar == '1') { ?>
@@ -97,44 +111,55 @@ class DwDisplay
             $result = ob_get_clean();
         }
         return $result; //@formatter:on
-
     }
 
     public function showDomain($domain, $show_domain)
     {
+
         $result = '';
 
         if ($show_domain == '1') {
             $visible_domain = wordwrap($domain, 20, "<BR>", true);
             $result = "<strong>" . $visible_domain . "</strong><BR><BR>";
         }
+
         return $result;
     }
 
     public function showZoneLink($domain, $server_id, $show_zone)
     {
+
         $result = '';
 
         if ($show_zone == '1') {
             $result = "[<a class=\"covert_link\" href=\"list-dns-zones.php?domain=<?php echo $domain
             ?>&server_id=$server_id\">dns zone</a>]";
         }
+
         return $result;
+
     }
 
     public function tableTop()
     {
+
         ob_start(); //@formatter:off ?>
+
         <table class="main_table" cellpadding="0" cellspacing="0"><tr><td><?php
+
         return ob_get_clean(); //@formatter:on
 
     }
 
     public function tableBottom()
     {
+
         ob_start(); //@formatter:off ?>
+
         </td></tr></table><?php
+
         return ob_get_clean(); //@formatter:on
+
     }
 
 }
