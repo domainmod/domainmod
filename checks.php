@@ -78,32 +78,36 @@ $login->setLastLogin($connection, $_SESSION['user_id'], $_SESSION['email_address
 
 $_SESSION['last_login'] = $time->time();
 
-if ($_SESSION['system_new_version'] == '1') {
+if ($_SESSION['version_error'] != '1') {
 
-    if ($_SESSION['is_admin'] === 1) {
+    if ($_SESSION['system_new_version'] == '1') {
 
-        $_SESSION['result_message'] .= "A new version of DomainMOD is available for download. <a target=\"_blank\" href=\"http://domainmod.org/upgrade/\">Click
+        if ($_SESSION['is_admin'] === 1) {
+
+            $_SESSION['result_message'] .= "A new version of DomainMOD is available for download. <a target=\"_blank\" href=\"http://domainmod.org/upgrade/\">Click
 here for upgrade instructions</a>.<BR>";
+
+        }
 
     }
 
-}
+    $queryB = new DomainMOD\QueryBuild();
 
-$queryB = new DomainMOD\QueryBuild();
+    $sql = $queryB->missingFees('domains');
+    $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
-$sql = $queryB->missingFees('domains');
-$_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
+    $queryB = new DomainMOD\QueryBuild();
 
-$queryB = new DomainMOD\QueryBuild();
+    $sql = $queryB->missingFees('ssl_certs');
+    $_SESSION['missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
-$sql = $queryB->missingFees('ssl_certs');
-$_SESSION['missing_ssl_fees'] = $system->checkForRows($connection, $sql);
+    if ($_SESSION['is_new_password'] == 1) {
 
-if ($_SESSION['is_new_password'] == 1) {
+        $_SESSION['result_message'] .= "Your password should be changed for security purposes<BR>";
+        header("Location: system/change-password.php");
+        exit;
 
-    $_SESSION['result_message'] .= "Your password should be changed for security purposes<BR>";
-    header("Location: system/change-password.php");
-    exit;
+    }
 
 }
 

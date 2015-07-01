@@ -72,9 +72,11 @@ if ($current_db_version < $software_version) {
 
 } elseif ($current_db_version > $software_version) {
 
-    $_SESSION['result_message'] .= "Your versions are currently out-of-sync. The software on your server is older than
-        your database version. This should not happen. Please logout and log back in, and if the problem persists
-        please contact your " . $software_title . " administrator<BR>";
+    $_SESSION['result_message'] .= "The upgrade process cannot be completed, as your versions are currently out-of-sync.
+    The software on your server is older than your database version. This should never happen.<BR><BR>Please logout and
+    log back in, and if the problem persists please contact your " . $software_title . " administrator.<BR>";
+
+    $_SESSION['version_error'] = '1';
 
 } else {
 
