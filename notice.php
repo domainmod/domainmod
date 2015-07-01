@@ -26,6 +26,7 @@ include("_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
+$notice = new DomainMOD\Notice();
 $system = new DomainMOD\System();
 
 include(DIR_INC . "head.inc.php");
@@ -37,13 +38,9 @@ $system->authCheck();
 
 $action = $_GET['a'];
 
-if ($action = 'u') { // u = upgrade DomainMOD
+// u = Upgrade DomainMOD Database
+if ($action = 'u') $notice->dbUpgrade($software_title);
 
-    $_SESSION['notice_page_tile'] = "Upgrade Available";
-    $_SESSION['notice'] = "<center>Your " . $software_title . " software was recently updated, so we now need to upgrade
-    your database<BR><BR><a href='checks.php?u=1'>Click here to upgrade your database</a></center>";
-
-}
 $page_title = $_SESSION['notice_page_title'];
 $software_section = "notice";
 ?>
