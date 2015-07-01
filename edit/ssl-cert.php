@@ -87,7 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
-    if ($date->checkDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "" && $new_ip_id != "" && $new_cat_id != "" && $new_domain_id != "0" && $new_account_id != "0" && $new_type_id != "0" && $new_ip_id != "0" && $new_cat_id != "0") {
+    if ($date->checkDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" &&
+        $new_type_id != "" && $new_ip_id != "" && $new_cat_id != "" && $new_domain_id != "0" && $new_account_id != "0"
+        && $new_type_id != "0" && $new_ip_id != "0" && $new_cat_id != "0") {
 
         $sql = "SELECT ssl_provider_id, owner_id
                 FROM ssl_accounts
@@ -201,8 +203,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $sql = "SELECT sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS account_id, sslcf.id AS type_id, ip.id AS ip_id, cat.id AS cat_id
-            FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat
+    $sql = "SELECT sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS account_id,
+                sslcf.id AS type_id, ip.id AS ip_id, cat.id AS cat_id
+            FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_cert_types AS sslcf, ip_addresses AS ip,
+                categories AS cat
             WHERE sslc.account_id = sslpa.id
               AND sslc.type_id = sslcf.id
               AND sslc.ip_id = ip.id
@@ -228,7 +232,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del == "1") {
 
-    $_SESSION['result_message'] = "Are you sure you want to delete this SSL Certificate?<BR><BR><a href=\"ssl-cert.php?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE ACCOUNT</a><BR>";
+    $_SESSION['result_message'] .= "Are you sure you want to delete this SSL Certificate?<BR><BR>
+        <a href=\"ssl-cert.php?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE
+        ACCOUNT</a><BR>";
 
 }
 
@@ -290,9 +296,11 @@ if ($really_del == "1") {
                ORDER BY domain";
     $result_domain = mysqli_query($connection, $sql_domain) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_domain_id\">";
-    while ($row_domain = mysqli_fetch_object($result_domain)) { ?>
+    while ($row_domain = mysqli_fetch_object($result_domain)) { //@formatter:off ?>
 
-        <option value="<?php echo $row_domain->id; ?>"<?php if ($row_domain->id == $new_domain_id) echo " selected"; ?>><?php echo $row_domain->domain; ?></option><?php
+        <option value="<?php echo $row_domain->id; ?>"<?php if ($row_domain->id == $new_domain_id) echo " selected"; ?>>
+            <?php echo $row_domain->domain; ?>
+        </option><?php //@formatter:on
 
     }
     echo "</select>";
@@ -307,10 +315,13 @@ if ($really_del == "1") {
                 ORDER BY sslp_name ASC, o_name ASC, sslpa.username ASC";
     $result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_account_id\">";
-    while ($row_account = mysqli_fetch_object($result_account)) { ?>
+    while ($row_account = mysqli_fetch_object($result_account)) { //@formatter:off ?>
 
-        <option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $new_account_id) echo " selected"; ?>><?php echo $row_account->sslp_name; ?>
-        , <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
+        <option value="<?php echo $row_account->id; ?>"<?php
+            if ($row_account->id == $new_account_id) echo " selected"; ?>>
+            <?php echo $row_account->sslp_name; ?>, <?php echo $row_account->o_name; ?> (<?php
+            echo$row_account->username; ?>)
+        </option><?php //@formatter:on
 
     }
     echo "</select>";
@@ -323,9 +334,11 @@ if ($really_del == "1") {
              ORDER BY type ASC";
     $result_type = mysqli_query($connection, $sql_type) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_type_id\">";
-    while ($row_type = mysqli_fetch_object($result_type)) { ?>
+    while ($row_type = mysqli_fetch_object($result_type)) { //@formatter:off ?>
 
-        <option value="<?php echo $row_type->id; ?>"<?php if ($row_type->id == $new_type_id) echo " selected"; ?>><?php echo $row_type->type; ?></option><?php
+        <option value="<?php echo $row_type->id; ?>"<?php if ($row_type->id == $new_type_id) echo " selected"; ?>>
+            <?php echo $row_type->type; ?>
+        </option><?php //@formatter:on
 
     }
     echo "</select>";
@@ -338,10 +351,11 @@ if ($really_del == "1") {
            ORDER BY name, ip";
     $result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_ip_id\">";
-    while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
+    while ($row_ip = mysqli_fetch_object($result_ip)) { //@formatter:off ?>
 
-        <option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $new_ip_id) echo " selected"; ?>><?php echo $row_ip->name; ?>
-        (<?php echo $row_ip->ip; ?>)</option><?php
+        <option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $new_ip_id) echo " selected"; ?>>
+            <?php echo $row_ip->name; ?> (<?php echo $row_ip->ip; ?>)
+        </option><?php //@formatter:on
 
     }
     echo "</select>";
@@ -354,9 +368,11 @@ if ($really_del == "1") {
             ORDER BY name";
     $result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_cat_id\">";
-    while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
+    while ($row_cat = mysqli_fetch_object($result_cat)) { //@formatter:off ?>
 
-        <option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $new_cat_id) echo " selected"; ?>><?php echo $row_cat->name; ?></option><?php
+        <option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $new_cat_id) echo " selected"; ?>>
+            <?php echo $row_cat->name; ?>
+        </option><?php //@formatter:on
 
     }
     echo "</select>";
@@ -383,9 +399,10 @@ if ($really_del == "1") {
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>Notes</strong><?php if ($new_notes != "") { ?> [<a target="_blank"
-                                                               href="ssl-cert-notes.php?sslcid=<?php echo $sslcid; ?>">view
-        full notes</a>]<?php } ?><BR><BR>
+    <strong>Notes</strong><?php
+    if ($new_notes != "") { ?>
+        [<a target="_blank" href="ssl-cert-notes.php?sslcid=<?php echo $sslcid; ?>">view full notes</a>]<?php
+    } ?><BR><BR>
     <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
     <input type="hidden" name="new_sslcid" value="<?php echo $sslcid; ?>">
     <BR><BR>

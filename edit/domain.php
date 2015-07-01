@@ -91,7 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $date = new DomainMOD\Date();
     $domain = new DomainMOD\Domain();
 
-    if ($date->checkDateFormat($new_expiry_date) && $domain->checkDomainFormat($new_domain) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0") {
+    if ($date->checkDateFormat($new_expiry_date) && $domain->checkDomainFormat($new_domain) && $new_cat_id != "" &&
+        $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" &&
+        $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" &&
+        $new_account_id != "0") {
 
         $tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 
@@ -220,7 +223,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $sql = "SELECT d.domain, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.hosting_id, d.function, d.notes, d.privacy, d.active, ra.id AS account_id
+    $sql = "SELECT d.domain, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.hosting_id, d.function, d.notes, d.privacy,
+                d.active, ra.id AS account_id
             FROM domains AS d, registrar_accounts AS ra
             WHERE d.account_id = ra.id
               AND d.id = '" . $did . "'";
@@ -261,7 +265,8 @@ if ($del == "1") {
 
     } else {
 
-        $_SESSION['result_message'] = "Are you sure you want to delete this Domain?<BR><BR><a href=\"domain.php?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
+        $_SESSION['result_message'] = "Are you sure you want to delete this Domain?<BR><BR><a
+            href=\"domain.php?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
 
     }
 
@@ -326,8 +331,10 @@ if ($really_del == "1") {
     echo "<select name=\"new_account_id\">";
     while ($row_account = mysqli_fetch_object($result_account)) { ?>
 
-        <option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $new_account_id) echo " selected"; ?>><?php echo $row_account->r_name; ?>
-        , <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
+        <option value="<?php echo $row_account->id; ?>"<?php
+            if ($row_account->id == $new_account_id) echo " selected"; ?>><?php
+            echo $row_account->r_name; ?>, <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)
+        </option><?php
 
     }
     echo "</select>";
@@ -342,7 +349,9 @@ if ($really_del == "1") {
     echo "<select name=\"new_dns_id\">";
     while ($row_dns = mysqli_fetch_object($result_dns)) { ?>
 
-        <option value="<?php echo $row_dns->id; ?>"<?php if ($row_dns->id == $new_dns_id) echo " selected"; ?>><?php echo $row_dns->name; ?></option><?php
+        <option value="<?php echo $row_dns->id; ?>"<?php if ($row_dns->id == $new_dns_id) echo " selected"; ?>>
+            <?php echo $row_dns->name; ?>
+        </option><?php
 
     }
     echo "</select>";
@@ -356,10 +365,11 @@ if ($really_del == "1") {
     $result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_ip_id\">";
 
-    while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
+    while ($row_ip = mysqli_fetch_object($result_ip)) { //@formatter:off ?>
 
-        <option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $new_ip_id) echo " selected"; ?>><?php echo $row_ip->name; ?>
-        (<?php echo $row_ip->ip; ?>)</option><?php
+        <option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $new_ip_id) echo " selected"; ?>>
+            <?php echo $row_ip->name; ?> (<?php echo $row_ip->ip; ?>)
+        </option><?php //@formatter:on
 
     }
     echo "</select>";
@@ -368,13 +378,16 @@ if ($really_del == "1") {
     <strong>Web Hosting Provider</strong><BR><BR>
     <?php
     $sql_hosting = "SELECT id, name
-                FROM hosting
-                ORDER BY name ASC";
+                    FROM hosting
+                    ORDER BY name ASC";
     $result_hosting = mysqli_query($connection, $sql_hosting) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_hosting_id\">";
-    while ($row_hosting = mysqli_fetch_object($result_hosting)) { ?>
+    while ($row_hosting = mysqli_fetch_object($result_hosting)) { //@formatter:off ?>
 
-        <option value="<?php echo $row_hosting->id; ?>"<?php if ($row_hosting->id == $new_hosting_id) echo " selected"; ?>><?php echo $row_hosting->name; ?></option><?php
+        <option value="<?php echo $row_hosting->id; ?>"<?php
+            if ($row_hosting->id == $new_hosting_id) echo " selected"; ?>>
+            <?php echo $row_hosting->name; ?>
+        </option><?php //@formatter:on
 
     }
     echo "</select>";
@@ -389,7 +402,9 @@ if ($really_del == "1") {
     echo "<select name=\"new_cat_id\">";
     while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
 
-        <option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $new_cat_id) echo " selected"; ?>><?php echo $row_cat->name; ?></option><?php
+        <option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $new_cat_id) echo " selected"; ?>>
+            <?php echo $row_cat->name; ?>
+        </option><?php
 
     }
     echo "</select>";
@@ -434,9 +449,11 @@ if ($really_del == "1") {
     echo "</select>";
     ?>
     <BR><BR>
-    <strong>Notes</strong><?php if ($new_notes != "") { ?> [<a target="_blank"
-                                                               href="domain-notes.php?did=<?php echo $did; ?>">view full
-        notes</a>]<?php } ?><BR><BR>
+    <strong>Notes</strong><?php
+    if ($new_notes != "") { ?>
+        [<a target="_blank" href="domain-notes.php?did=<?php echo $did; ?>">view full notes</a>]<?php
+    } ?><BR><BR>
+
     <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
     <input type="hidden" name="new_did" value="<?php echo $did; ?>">
     <BR><BR>
@@ -608,7 +625,8 @@ if ($no_results_dns_zones === 1) {
                              WHERE z.server_id = s.id
                                AND z.domain = '" . $new_domain . "'
                              ORDER BY s.name, z.zonefile, z.domain";
-    $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or $error->outputOldSqlError($connection);
+    $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp)
+        or $error->outputOldSqlError($connection);
 
     $from_main_dw_dns_zone_page = 0;
 

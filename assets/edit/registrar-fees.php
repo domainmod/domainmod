@@ -107,17 +107,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['result_message'] .= "The Registrar Fees have been updated<BR>";
 
-        $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
+        $_SESSION['result_message']
+            .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 
     } elseif ($which_form == "add") {
 
-        if ($new_rid == "" || $new_tld == "" || $new_initial_fee == "" || $new_renewal_fee == "" || $new_transfer_fee == "" || $new_currency_id == "" || $new_currency_id == "0") {
+        if ($new_rid == "" || $new_tld == "" || $new_initial_fee == "" || $new_renewal_fee == "" || $new_transfer_fee
+            == "" || $new_currency_id == "" || $new_currency_id == "0") {
 
             if ($new_tld == "") $_SESSION['result_message'] .= "Please enter the TLD<BR>";
             if ($new_initial_fee == "") $_SESSION['result_message'] .= "Please enter the initial fee<BR>";
             if ($new_renewal_fee == "") $_SESSION['result_message'] .= "Please enter the renewal fee<BR>";
             if ($new_transfer_fee == "") $_SESSION['result_message'] .= "Please enter the transfer fee<BR>";
-            if ($new_currency_id == "" || $new_currency_id == "0") $_SESSION['result_message'] .= "There was a problem with the currency you chose<BR>";
+            if ($new_currency_id == "" || $new_currency_id == "0")
+                $_SESSION['result_message'] .= "There was a problem with the currency you chose<BR>";
 
         } else {
 
@@ -179,15 +182,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $rid = $new_rid;
 
-                $_SESSION['result_message'] = "The fee for <div class=\"highlight\">.$new_tld</div> has been updated<BR>";
+                $_SESSION['result_message']
+                    .= "The fee for <div class=\"highlight\">.$new_tld</div> has been updated<BR>";
 
-                $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
+                $_SESSION['result_message']
+                    .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 
             } else {
 
                 $sql = "INSERT INTO fees
-                        (registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id, insert_time) VALUES
-                        ('" . $new_rid . "', '" . mysqli_real_escape_string($connection, $new_tld) . "', '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "', '" . $new_privacy_fee . "', '" . $new_misc_fee . "', '" . $new_currency_id . "', '" . $timestamp . "')";
+                        (registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id,
+                         insert_time)
+                        VALUES
+                        ('" . $new_rid . "', '" . mysqli_real_escape_string($connection, $new_tld) . "',
+                         '" .$new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "',
+                         '" . $new_privacy_fee . "', '" . $new_misc_fee . "', '" . $new_currency_id . "',
+                         '" . $timestamp . "')";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $sql = "SELECT id
@@ -224,14 +234,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       AND d.fee_id = '" . $new_fee_id . "'";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['result_message'] = "The fee for <div class=\"highlight\">.$new_tld</div> has been added<BR>";
+                $_SESSION['result_message']
+                    .= "The fee for <div class=\"highlight\">.$new_tld</div> has been added<BR>";
 
                 $queryB = new DomainMOD\QueryBuild();
 
                 $sql = $queryB->missingFees('domains');
                 $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
-                $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
+                $_SESSION['result_message']
+                    .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 
             }
 
@@ -242,7 +254,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($del == "1") {
-    $_SESSION['result_message'] = "Are you sure you want to delete this Registrar Fee?<BR><BR><a href=\"registrar-fees.php?rid=$rid&tld=$tld&feeid=$feeid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR FEE</a><BR>";
+    $_SESSION['result_message'] .= "Are you sure you want to delete this Registrar Fee?<BR><BR><a
+        href=\"registrar-fees.php?rid=$rid&tld=$tld&feeid=$feeid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR
+        FEE</a><BR>";
 }
 
 if ($really_del == "1") {
@@ -256,7 +270,7 @@ if ($really_del == "1") {
 
     if (mysqli_num_rows($result) == 0) {
 
-        $_SESSION['result_message'] = "The fee you're trying to delete doesn't exist<BR>";
+        $_SESSION['result_message'] .= "The fee you're trying to delete doesn't exist<BR>";
 
         header("Location: registrar-fees.php?rid=$rid");
         exit;
@@ -277,14 +291,15 @@ if ($really_del == "1") {
                   AND tld = '" . $tld . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-        $_SESSION['result_message'] = "The fee for <div class=\"highlight\">.$tld</div> has been deleted<BR>";
+        $_SESSION['result_message'] .= "The fee for <div class=\"highlight\">.$tld</div> has been deleted<BR>";
 
         $queryB = new DomainMOD\QueryBuild();
 
         $sql = $queryB->missingFees('domains');
         $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
-        $_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
+        $_SESSION['result_message']
+            .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
 
         header("Location: registrar-fees.php?rid=$rid");
         exit;
@@ -425,8 +440,9 @@ if (mysqli_num_rows($result) != 0) {
                         <?php
                         } else {
                             ?>
-                            <option
-                                value="<?php echo $row->id; ?>"><?php echo "$row->name ($row->currency $row->symbol)"; ?></option>
+                            <option value="<?php echo $row->id; ?>">
+                                <?php echo "$row->name ($row->currency $row->symbol)"; ?>
+                            </option>
                         <?php
                         }
                     }
@@ -455,11 +471,12 @@ if (mysqli_num_rows($result) != 0) {
             <td class="main_table_cell_heading_active"><strong>Currency</strong></td>
         </tr>
         <?php
-        $sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, c.symbol, c.symbol_order, c.symbol_space
-        FROM fees AS f, currencies AS c
-        WHERE f.currency_id = c.id
-          AND f.registrar_id = '" . $rid . "'
-        ORDER BY f.tld ASC";
+        $sql = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency,
+                    c.symbol, c.symbol_order, c.symbol_space
+                FROM fees AS f, currencies AS c
+                WHERE f.currency_id = c.id
+                  AND f.registrar_id = '" . $rid . "'
+                ORDER BY f.tld ASC";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
         $count = 0;
         while ($row = mysqli_fetch_object($result)) {
@@ -493,25 +510,29 @@ if (mysqli_num_rows($result) != 0) {
                         $sql_currency = "SELECT id, currency, name, symbol
                                  FROM currencies
                                  ORDER BY currency";
-                        $result_currency = mysqli_query($connection, $sql_currency) or $error->outputOldSqlError($connection);
+                        $result_currency = mysqli_query($connection, $sql_currency)
+                            or $error->outputOldSqlError($connection);
+
                         while ($row_currency = mysqli_fetch_object($result_currency)) {
 
                             if ($row_currency->currency == $row->currency) {
                                 ?>
-                                <option value="<?php echo $row_currency->id; ?>"
-                                        selected><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
+                                <option value="<?php echo $row_currency->id; ?>" selected>
+                                    <?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?>
+                                </option>
                             <?php
                             } else {
                                 ?>
-                                <option
-                                    value="<?php echo $row_currency->id; ?>"><?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?></option>
+                                <option value="<?php echo $row_currency->id; ?>">
+                                    <?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?>
+                                </option>
                             <?php
                             }
                         }
                         ?>
                     </select>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink"
-                                                            href="registrar-fees.php?rid=<?php echo $rid; ?>&tld=<?php echo $row->tld; ?>&feeid=<?php echo $row->id; ?>&del=1">delete</a>]
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="registrar-fees.php?rid=<?php
+                    echo $rid; ?>&tld=<?php echo $row->tld; ?>&feeid=<?php echo $row->id; ?>&del=1">delete</a>]
                 </td>
             </tr>
             <?php
