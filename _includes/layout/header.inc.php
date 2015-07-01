@@ -29,7 +29,7 @@
         <div class="header-right"><?php
             if ($_SESSION['is_logged_in'] == 1) { ?>
                 <em>logged in as <strong><?php echo $_SESSION['username']; ?></strong> (<a class="subtlelink"
-                                                                                           href="<?php echo $web_root; ?>/system/update-profile.php"><?php
+                                                                                           href="<?php echo $web_root; ?>/settings/update-profile.php"><?php
                         echo $_SESSION['first_name'] . " "; ?>
                         <?php echo $_SESSION['last_name']; ?></a>)</em>&nbsp;&nbsp;[ <a target="_blank"
                                                                                         href="http://domainmod.org/news/">News</a> ]&nbsp;&nbsp;[

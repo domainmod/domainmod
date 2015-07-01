@@ -299,7 +299,7 @@ $has_active = "1"; ?>
 
     if ($_SESSION['display_inactive_assets'] != "1") { ?>
         <BR><em>Inactive SSL Types are currently not displayed. <a class="invisiblelink"
-                                                                   href="../system/display-settings.php">Click here to
+                                                                   href="../settings/display-settings.php">Click here to
                 display them</a>.</em><BR><?php
     }
 

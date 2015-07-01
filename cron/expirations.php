@@ -167,7 +167,7 @@ if ($demo_install != '1') {
             $message .= "notifications from the $software_title installation located at: <a target=\"_blank\" href=\"" . $full_url . "/\">" . $full_url . "/</a><BR>";
             $message .= "<BR>";
             $message .= "To unsubscribe from these notifications please visit: <BR>";
-            $message .= "<a target=\"_blank\" href=\"" . $full_url . "/system/email-settings.php\">" . $full_url . "/system/email-settings.php</a><BR>";
+            $message .= "<a target=\"_blank\" href=\"" . $full_url . "/settings/email-settings.php\">" . $full_url . "/settings/email-settings.php</a><BR>";
             $message .= "<BR></font>
                     </td>
                 </tr>

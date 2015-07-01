@@ -1,6 +1,6 @@
 <?php
 /**
- * /system/update-conversions.php
+ * /settings/update-domain-fees.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -26,8 +26,8 @@ include("../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$conversion = new DomainMOD\Conversion();
 $error = new DomainMOD\Error();
+$maint = new DomainMOD\Maintenance();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
 $timestamp = $time->time();
@@ -39,7 +39,14 @@ include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
+$maint->updateDomainFees($connection);
+
+$queryB = new DomainMOD\QueryBuild();
+
+$sql = $queryB->missingFees('domains');
+$_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
+
+$_SESSION['result_message'] .= "Domain Fees Updated<BR>";
 
 header("Location: " . $_SERVER['HTTP_REFERER']);
 exit;

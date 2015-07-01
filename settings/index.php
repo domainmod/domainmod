@@ -1,6 +1,6 @@
 <?php
 /**
- * /system/index.php
+ * /settings/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -35,7 +35,7 @@ include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = "Control Panel";
+$page_title = "Settings";
 $software_section = "system";
 ?>
 <?php include(DIR_INC . 'doctype.inc.php'); ?>
