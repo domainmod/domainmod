@@ -28,7 +28,7 @@ class Maintenance
     public function performMaintenance($connection)
     {
 
-        $_SESSION['result_message'] .= $this->deleteUnusedFees($connection, 'fees', 'domains');
+        $this->deleteUnusedFees($connection, 'fees', 'domains');
         $_SESSION['result_message'] .= $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
         $_SESSION['result_message'] .= $this->updateTlds($connection);
         $_SESSION['result_message'] .= $this->updateSegments($connection);
