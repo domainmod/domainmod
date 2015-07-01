@@ -58,7 +58,7 @@ $software_section = "system";
 
 <div class="subheadline">Maintenance Menu</div>
 <BR>
-&raquo; <a href="update-conversion-rates.php">Update Conversion Rates</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a
+&raquo; <a href="update-conversions.php">Update Conversion Rates</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a
     href="update-domain-fees.php">Update Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="update-ssl-fees.php">Update
     SSL Fees</a><BR>
 <?php
