@@ -62,18 +62,19 @@ $software_section = "system";
     href="update-domain-fees.php">Update Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="update-ssl-fees.php">Update
     SSL Fees</a><BR>
 <?php
-if ($_SESSION['is_admin'] === 1) { ?>
+if ($_SESSION['is_admin'] === 1) { //@formatter:off ?>
     <BR><BR>
     <div class="subheadline">Admin Menu</div><BR>
-    &raquo; <a href="<?php echo $web_root; ?>/admin/system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a
-        href="<?php echo $web_root; ?>/admin/defaults.php">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="<?php echo $web_root; ?>/admin/users.php">Users</a><BR>
+    &raquo; <a href="<?php echo $web_root; ?>/admin/system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+    <a href="<?php echo $web_root; ?>/admin/defaults.php">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+    <a href="<?php echo $web_root; ?>/admin/users.php">Users</a><BR>
     <BR>
-    &raquo; <a href="<?php echo $web_root; ?>/admin/domain-fields.php">Custom Domain Fields</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a
-        href="<?php echo $web_root; ?>/admin/ssl-fields.php">Custom SSL Fields</a><BR><BR>
+    &raquo; <a href="<?php echo $web_root; ?>/admin/domain-fields.php">Custom Domain Fields</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+    <a href="<?php echo $web_root; ?>/admin/ssl-fields.php">Custom SSL Fields</a><BR><BR>
     &raquo; <a href="<?php echo $web_root; ?>/admin/maintenance.php">Perform System Maintenance</a><BR><BR>
     &raquo; <a href="<?php echo $web_root; ?>/admin/dw/">Data Warehouse</a><BR><BR>
     &raquo; <a href="<?php echo $web_root; ?>/admin/system-info.php">System Information</a><BR><?php
-} ?>
+} //@formatter:on ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

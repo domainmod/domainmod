@@ -403,11 +403,10 @@ $has_active = "1"; ?>
 
     if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
-    if ($_SESSION['display_inactive_assets'] != "1") { ?>
-        <BR><em>Inactive Categories are currently not displayed. <a class="invisiblelink"
-                                                                    href="../settings/display-settings.php">Click here to
-                display them</a>.</em><BR><?php
-    }
+    if ($_SESSION['display_inactive_assets'] != "1") { //@formatter:off ?>
+        <BR><em>Inactive Categories are currently not displayed.
+        <a class="invisiblelink" href="../settings/display-settings.php">Click here to display them</a>.</em><BR><?php
+    } //@formatter:on
 
     if ($has_active || $has_inactive) { ?>
         <BR>
