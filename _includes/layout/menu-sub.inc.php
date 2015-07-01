@@ -640,7 +640,7 @@ if ($software_section == "domains") { ?>
     <?php if ($domain == "" && $search_for == "") { ?>
     &raquo;&nbsp;<strong>DNS Zones & Records</strong>&nbsp;
 <?php } else { ?>
-        &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/dw/list-dns-zones.php">DNS Zones</a></strong>&nbsp;
+        &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/dw/list-zones.php">DNS Zones</a></strong>&nbsp;
         &raquo;&nbsp;<strong>Search Results</strong>&nbsp;
     <?php }
 

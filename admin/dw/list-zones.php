@@ -1,6 +1,6 @@
 <?php
 /**
- * /admin/dw/list-dns-zones.php
+ * /admin/dw/list-zones.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -306,7 +306,7 @@ if (mysqli_num_rows($result_dw_dns_zone_temp) == 0) {
     </form><BR>
 
     <strong>[<a
-            href="list-dns-zones.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong>
+            href="list-zones.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong>
     <BR><BR><?php
 
     if ($domain != "") {

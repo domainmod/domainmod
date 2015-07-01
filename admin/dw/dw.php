@@ -93,7 +93,7 @@ if ($action != "") {
 
         }
 
-        header("Location: list-dns-zones.php");
+        header("Location: list-zones.php");
         exit;
 
     }

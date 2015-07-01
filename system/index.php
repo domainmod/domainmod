@@ -70,7 +70,7 @@ if ($_SESSION['is_admin'] === 1) { ?>
     <BR>
     &raquo; <a href="admin/domain-fields.php">Custom Domain Fields</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a
         href="admin/ssl-fields.php">Custom SSL Fields</a><BR><BR>
-    &raquo; <a href="admin/perform-maintenance.php">Perform System Maintenance</a><BR><BR>
+    &raquo; <a href="admin/maintenance.php">Perform System Maintenance</a><BR><BR>
     &raquo; <a href="admin/dw/">Data Warehouse</a><BR><BR>
     &raquo; <a href="admin/system-info.php">System Information</a><BR><?php
 } ?>

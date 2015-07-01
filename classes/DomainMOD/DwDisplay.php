@@ -132,7 +132,7 @@ class DwDisplay
         $result = '';
 
         if ($show_zone == '1') {
-            $result = "[<a class=\"covert_link\" href=\"list-dns-zones.php?domain=<?php echo $domain
+            $result = "[<a class=\"covert_link\" href=\"list-zones.php?domain=<?php echo $domain
             ?>&server_id=$server_id\">dns zone</a>]";
         }
 
