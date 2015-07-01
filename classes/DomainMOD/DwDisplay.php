@@ -38,7 +38,8 @@ class DwDisplay
 
             <tr class="main_table_row_active_no_hover"><?php
 
-            echo $this->sidebar($domain, $server_id, $row->server_name, $show_domain, $show_zone, $show_sidebar); ?>
+            echo $this->accountSidebar($domain, $server_id, $row->server_name, $show_domain, $show_zone,
+                $show_sidebar); ?>
 
             <td class="main_table_cell_active_top_aligned">
                 <strong>Created:</strong> <?php echo date("Y M jS", $row->unix_startdate); ?><BR>
@@ -94,7 +95,7 @@ class DwDisplay
 
     }
 
-    public function sidebar($domain, $server_id, $server_name, $show_domain, $show_zone, $show_sidebar)
+    public function accountSidebar($domain, $server_id, $server_name, $show_domain, $show_zone, $show_sidebar)
     {
 
         ob_start(); //@formatter:off
