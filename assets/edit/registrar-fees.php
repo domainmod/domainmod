@@ -483,58 +483,58 @@ if (mysqli_num_rows($result) != 0) {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <tr class="main_table_row_active">
-                <td class="main_table_cell_active">.<?php echo htmlentities($row->tld); ?></td>
-                <td class="main_table_cell_active">
-                    <input type="hidden" name="fee_id[<?php echo $count; ?>]" value="<?php echo $row->id; ?>">
-                    <input name="initial_fee[<?php echo $count; ?>]" type="text"
-                           value="<?php echo $row->initial_fee; ?>" size="4">
-                </td>
-                <td class="main_table_cell_active">
-                    <input name="renewal_fee[<?php echo $count; ?>]" type="text"
-                           value="<?php echo $row->renewal_fee; ?>" size="4">
-                </td>
-                <td class="main_table_cell_active">
-                    <input name="transfer_fee[<?php echo $count; ?>]" type="text"
-                           value="<?php echo $row->transfer_fee; ?>" size="4">
-                </td>
-                <td class="main_table_cell_active">
-                    <input name="privacy_fee[<?php echo $count; ?>]" type="text"
-                           value="<?php echo $row->privacy_fee; ?>" size="4">
-                </td>
-                <td class="main_table_cell_active">
-                    <input name="misc_fee[<?php echo $count; ?>]" type="text" value="<?php echo $row->misc_fee; ?>"
-                           size="4">
-                </td>
-                <td class="main_table_cell_active">
-                    <select name="currency[<?php echo $count; ?>]" id="new_currency">
+            <td class="main_table_cell_active">.<?php echo htmlentities($row->tld); ?></td>
+            <td class="main_table_cell_active">
+                <input type="hidden" name="fee_id[<?php echo $count; ?>]" value="<?php echo $row->id; ?>">
+                <input name="initial_fee[<?php echo $count; ?>]" type="text"
+                       value="<?php echo $row->initial_fee; ?>" size="4">
+            </td>
+            <td class="main_table_cell_active">
+                <input name="renewal_fee[<?php echo $count; ?>]" type="text"
+                       value="<?php echo $row->renewal_fee; ?>" size="4">
+            </td>
+            <td class="main_table_cell_active">
+                <input name="transfer_fee[<?php echo $count; ?>]" type="text"
+                       value="<?php echo $row->transfer_fee; ?>" size="4">
+            </td>
+            <td class="main_table_cell_active">
+                <input name="privacy_fee[<?php echo $count; ?>]" type="text"
+                       value="<?php echo $row->privacy_fee; ?>" size="4">
+            </td>
+            <td class="main_table_cell_active">
+                <input name="misc_fee[<?php echo $count; ?>]" type="text" value="<?php echo $row->misc_fee; ?>"
+                       size="4">
+            </td>
+            <td class="main_table_cell_active">
+                <select name="currency[<?php echo $count; ?>]" id="new_currency">
+                    <?php
+                    $sql_currency = "SELECT id, currency, name, symbol
+                                     FROM currencies
+                                     ORDER BY currency";
+                    $result_currency = mysqli_query($connection, $sql_currency)
+                    or $error->outputOldSqlError($connection);
+
+                    while ($row_currency = mysqli_fetch_object($result_currency)) {
+
+                        if ($row_currency->currency == $row->currency) {
+                            ?>
+                            <option value="<?php echo $row_currency->id; ?>" selected>
+                                <?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?>
+                            </option>
                         <?php
-                        $sql_currency = "SELECT id, currency, name, symbol
-                                         FROM currencies
-                                         ORDER BY currency";
-                        $result_currency = mysqli_query($connection, $sql_currency)
-                        or $error->outputOldSqlError($connection);
-
-                        while ($row_currency = mysqli_fetch_object($result_currency)) {
-
-                            if ($row_currency->currency == $row->currency) {
-                                ?>
-                                <option value="<?php echo $row_currency->id; ?>" selected>
-                                    <?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?>
-                                </option>
-                            <?php
-                            } else {
-                                ?>
-                                <option value="<?php echo $row_currency->id; ?>">
-                                    <?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?>
-                                </option>
-                            <?php
-                            }
+                        } else {
+                            ?>
+                            <option value="<?php echo $row_currency->id; ?>">
+                                <?php echo "$row_currency->name ($row_currency->currency $row_currency->symbol)"; ?>
+                            </option>
+                        <?php
                         }
-                        ?>
-                    </select>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="registrar-fees.php?rid=<?php
-                    echo $rid; ?>&tld=<?php echo $row->tld; ?>&feeid=<?php echo $row->id; ?>&del=1">delete</a>]
-                </td>
+                    }
+                    ?>
+                </select>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="registrar-fees.php?rid=<?php
+                echo $rid; ?>&tld=<?php echo $row->tld; ?>&feeid=<?php echo $row->id; ?>&del=1">delete</a>]
+            </td>
             </tr><?php
 
             $count++;
