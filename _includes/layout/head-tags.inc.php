@@ -238,10 +238,10 @@
         text-align: left;
         font-family: Verdana, sans-serif, Arial;
         font-weight: normal;
-        border-top: 1px #6699CC ridge;
-        border-bottom: 1px #6699CC ridge;
-        border-right: 1px #6699CC ridge;
-        border-left: 1px #6699CC ridge;
+        border-top: 1px #888888 ridge;
+        border-bottom: 1px #888888 ridge;
+        border-right: 1px #888888 ridge;
+        border-left: 1px #888888 ridge;
         padding-top: 0px;
         padding-right: 0px;
         padding-bottom: 0px;
