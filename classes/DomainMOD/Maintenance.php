@@ -30,6 +30,9 @@ class Maintenance
 
         $this->deleteUnusedFees($connection, 'fees', 'domains');
         $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
+        $this->updateTlds($connection);
+        $this->updateSegments($connection);
+        $this->updateAllFees($connection);
 
         $result_message = 'Maintenance Completed<BR>';
 
