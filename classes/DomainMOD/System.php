@@ -148,12 +148,6 @@ class System
 
         if ($_SESSION['is_logged_in'] == 1) {
 
-            if (isset($_SESSION['running_login_checks'])) {
-
-                include(DIR_INC . "login-checks.inc.php");
-
-            }
-
             header("Location: " . $_SESSION['web_root'] . "/domains.php");
             exit;
 
