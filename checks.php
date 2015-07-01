@@ -89,20 +89,6 @@ here for upgrade instructions</a>.<BR>";
 
 }
 
-if ($_SESSION['is_upgrading'] == '1' && $_SESSION['has_domain'] == '1') {
-
-    $_SESSION['result_message'] .= $maint->performMaintenance($connection);
-
-}
-
-if ($_SESSION['is_upgrading'] != '1' &&
-    (($last_login_date < $current_date) && $_SESSION['has_domain'] == '1')) {
-
-    $_SESSION['result_message'] .= $maint->updateSegments($connection);
-    $_SESSION['result_message'] .= $maint->updateTlds($connection);
-
-}
-
 $queryB = new DomainMOD\QueryBuild();
 
 $sql = $queryB->missingFees('domains');
