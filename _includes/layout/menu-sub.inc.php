@@ -538,14 +538,14 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;
     <div class="default_highlight">ADMIN</div>&nbsp;
     &raquo;&nbsp;<strong>Custom Domain Fields</strong>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/add/domain-field.php">Add A Custom Field</a>&nbsp;<?php
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/add/domain-field.php">Add A Custom Field</a>&nbsp;<?php
 
 } elseif ($software_section == "admin-domain-field-add") { ?>
 
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
     &raquo;&nbsp;
     <div class="default_highlight">ADMIN</div>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/domain-fields.php">Custom Domain Fields</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/domain-fields.php">Custom Domain Fields</a>&nbsp;
     &raquo;&nbsp;Adding A Custom Field&nbsp;<?php
 
 } elseif ($software_section == "admin-domain-field-edit") { ?>
@@ -553,7 +553,7 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
     &raquo;&nbsp;
     <div class="default_highlight">ADMIN</div>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/domain-fields.php">Custom Domain Fields</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/domain-fields.php">Custom Domain Fields</a>&nbsp;
     &raquo;&nbsp;Editing A Custom Field&nbsp;<?php
 
 } elseif ($software_section == "admin-ssl-fields") { ?>
@@ -562,14 +562,14 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;
     <div class="default_highlight">ADMIN</div>&nbsp;
     &raquo;&nbsp;<strong>Custom SSL Fields</strong>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/add/ssl-field.php">Add A Custom Field</a>&nbsp;<?php
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/add/ssl-field.php">Add A Custom Field</a>&nbsp;<?php
 
 } elseif ($software_section == "admin-ssl-field-add") { ?>
 
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
     &raquo;&nbsp;
     <div class="default_highlight">ADMIN</div>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/ssl-fields.php">Custom SSL Fields</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/ssl-fields.php">Custom SSL Fields</a>&nbsp;
     &raquo;&nbsp;Adding A Custom Field&nbsp;<?php
 
 } elseif ($software_section == "admin-ssl-field-edit") { ?>
@@ -577,7 +577,7 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
     &raquo;&nbsp;
     <div class="default_highlight">ADMIN</div>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/ssl-fields.php">Custom SSL Fields</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/ssl-fields.php">Custom SSL Fields</a>&nbsp;
     &raquo;&nbsp;Editing A Custom Field&nbsp;<?php
 
 } elseif ($software_section == "admin-system-info") { ?>
@@ -593,14 +593,14 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;
     <div class="default_highlight">ADMIN</div>&nbsp;
     &raquo;&nbsp;<strong>Users</strong>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/add/user.php">Add A New User</a>&nbsp;<?php
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/add/user.php">Add A New User</a>&nbsp;<?php
 
 } elseif ($software_section == "admin-user-add") { ?>
 
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
     &raquo;&nbsp;
     <div class="default_highlight">ADMIN</div>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/users.php">Users</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/users.php">Users</a>&nbsp;
     &raquo;&nbsp;Adding A New User&nbsp;<?php
 
 } elseif ($software_section == "admin-user-edit") { ?>
@@ -608,7 +608,7 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
     &raquo;&nbsp;
     <div class="default_highlight">ADMIN</div>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/users.php">Users</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/users.php">Users</a>&nbsp;
     &raquo;&nbsp;Editing A User&nbsp;<?php
 
 } elseif ($software_section == "admin-dw-main" || $software_section == "admin-dw-intro" || $software_section ==
@@ -624,11 +624,11 @@ if ($software_section == "domains") { ?>
 
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
     &raquo;&nbsp;<div class="default_highlight">ADMIN</div>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/dw/">DW</a>&nbsp;
     <?php if ($domain == "" && $search_for == "") { ?>
     &raquo;&nbsp;<strong>Accounts</strong>&nbsp;
 <?php } else { ?>
-        &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/list-accounts.php">Accounts</a></strong>&nbsp;
+        &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/dw/list-accounts.php">Accounts</a></strong>&nbsp;
         &raquo;&nbsp;<strong>Search Results</strong>&nbsp;
     <?php }
 
@@ -636,11 +636,11 @@ if ($software_section == "domains") { ?>
 
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
     &raquo;&nbsp;<div class="default_highlight">ADMIN</div>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/dw/">DW</a>&nbsp;
     <?php if ($domain == "" && $search_for == "") { ?>
     &raquo;&nbsp;<strong>DNS Zones & Records</strong>&nbsp;
 <?php } else { ?>
-        &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/list-dns-zones.php">DNS Zones</a></strong>&nbsp;
+        &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/dw/list-dns-zones.php">DNS Zones</a></strong>&nbsp;
         &raquo;&nbsp;<strong>Search Results</strong>&nbsp;
     <?php }
 
@@ -649,17 +649,17 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
     &raquo;&nbsp;
     <div class="default_highlight">ADMIN</div>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/dw/">DW</a>&nbsp;
     &raquo;&nbsp;<strong>Servers</strong>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/add/server.php">Add A Server</a>&nbsp;<?php
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/dw/add/server.php">Add A Server</a>&nbsp;<?php
 
 } elseif ($software_section == "admin-dw-manage-servers-add") { ?>
 
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
     &raquo;&nbsp;
     <div class="default_highlight">ADMIN</div>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/servers.php">Servers</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/dw/">DW</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/dw/servers.php">Servers</a>&nbsp;
     &raquo;&nbsp;Adding A Server&nbsp;<?php
 
 } elseif ($software_section == "admin-dw-manage-servers-edit") { ?>
@@ -667,8 +667,8 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/">Control Panel</a>&nbsp;
     &raquo;&nbsp;
     <div class="default_highlight">ADMIN</div>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/">DW</a>&nbsp;
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/system/admin/dw/servers.php">Servers</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/dw/">DW</a>&nbsp;
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/admin/dw/servers.php">Servers</a>&nbsp;
     &raquo;&nbsp;Editing A Server&nbsp;<?php
 
 } elseif ($software_section == "help") { ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * /system/admin/add/domain-field.php
+ * /admin/add/domain-field.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>

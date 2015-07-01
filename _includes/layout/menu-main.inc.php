@@ -27,7 +27,7 @@
     [ <a href="<?php echo $web_root; ?>/assets/">Asset Management</a> ]&nbsp;
     [ <a href="<?php echo $web_root; ?>/reporting/">Reporting</a> ]&nbsp;
 <?php if ($_SESSION['is_admin'] === 1) { ?>
-    [ <a href="<?php echo $web_root; ?>/system/admin/dw/">DW</a> ]&nbsp;&nbsp;
+    [ <a href="<?php echo $web_root; ?>/admin/dw/">DW</a> ]&nbsp;&nbsp;
 <?php } ?>
     [ <a href="<?php echo $web_root; ?>/system/">Control Panel</a> ]&nbsp;
 <?php

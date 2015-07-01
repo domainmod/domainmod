@@ -1,6 +1,6 @@
 <?php
 /**
- * /system/admin/add/index.php
+ * /admin/add/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
