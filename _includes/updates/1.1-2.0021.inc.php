@@ -250,7 +250,7 @@ if ($current_db_version === '1.94') {
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "ALTER TABLE `settings`
-                ADD `default_currency` VARCHAR(5) NOT NULL DEFAULT 'CAD' AFTER `email_address`";
+                ADD `default_currency` VARCHAR(5) NOT NULL DEFAULT 'USD' AFTER `email_address`";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "UPDATE settings

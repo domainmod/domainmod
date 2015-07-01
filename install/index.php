@@ -133,7 +133,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     while ($row = mysqli_fetch_object($result)) {
         $sql_temp = "INSERT INTO user_settings
                      (user_id, default_currency, insert_time) VALUES
-                     ('$row->id', 'CAD', '" . $time->time() . "');";
+                     ('$row->id', 'USD', '" . $time->time() . "');";
         $result_temp = mysqli_query($connection, $sql_temp);
     }
 
