@@ -113,7 +113,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif ($which_form == "add") {
 
         if ($new_rid == "" || $new_tld == "" || $new_initial_fee == "" || $new_renewal_fee == "" || $new_transfer_fee
-            == "" || $new_currency_id == "" || $new_currency_id == "0") {
+            == "" || $new_currency_id == "" || $new_currency_id == "0"
+        ) {
 
             if ($new_tld == "") $_SESSION['result_message'] .= "Please enter the TLD<BR>";
             if ($new_initial_fee == "") $_SESSION['result_message'] .= "Please enter the initial fee<BR>";
@@ -195,7 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                          insert_time)
                         VALUES
                         ('" . $new_rid . "', '" . mysqli_real_escape_string($connection, $new_tld) . "',
-                         '" .$new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "',
+                         '" . $new_initial_fee . "', '" . $new_renewal_fee . "', '" . $new_transfer_fee . "',
                          '" . $new_privacy_fee . "', '" . $new_misc_fee . "', '" . $new_currency_id . "',
                          '" . $timestamp . "')";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -508,10 +509,10 @@ if (mysqli_num_rows($result) != 0) {
                     <select name="currency[<?php echo $count; ?>]" id="new_currency">
                         <?php
                         $sql_currency = "SELECT id, currency, name, symbol
-                                 FROM currencies
-                                 ORDER BY currency";
+                                         FROM currencies
+                                         ORDER BY currency";
                         $result_currency = mysqli_query($connection, $sql_currency)
-                            or $error->outputOldSqlError($connection);
+                        or $error->outputOldSqlError($connection);
 
                         while ($row_currency = mysqli_fetch_object($result_currency)) {
 
@@ -534,9 +535,10 @@ if (mysqli_num_rows($result) != 0) {
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<a class="invisiblelink" href="registrar-fees.php?rid=<?php
                     echo $rid; ?>&tld=<?php echo $row->tld; ?>&feeid=<?php echo $row->id; ?>&del=1">delete</a>]
                 </td>
-            </tr>
-            <?php
+            </tr><?php
+
             $count++;
+
         }
         ?>
     </table>

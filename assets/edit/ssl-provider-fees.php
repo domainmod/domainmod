@@ -100,7 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif ($which_form == "add") {
 
         if ($new_sslpid == "" || $new_type_id == "" || $new_type_id == "0" || $new_initial_fee == "" ||
-            $new_renewal_fee == "" || $new_currency_id == "" || $new_currency_id == "0") {
+            $new_renewal_fee == "" || $new_currency_id == "" || $new_currency_id == "0"
+        ) {
 
             if ($new_initial_fee == "") $_SESSION['result_message'] .= "Please enter the initial fee<BR>";
             if ($new_renewal_fee == "") $_SESSION['result_message'] .= "Please enter the renewal fee<BR>";
@@ -174,7 +175,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
 
                 $sql = "INSERT INTO ssl_fees
-                        (ssl_provider_id, type_id, initial_fee, renewal_fee, misc_fee, currency_id, insert_time) VALUES
+                        (ssl_provider_id, type_id, initial_fee, renewal_fee, misc_fee, currency_id, insert_time)
+                        VALUES
                         ('" . $new_sslpid . "', '" . $new_type_id . "', '" . $new_initial_fee . "',
                          '" . $new_renewal_fee . "', '" . $new_misc_fee . "', '" . $new_currency_id . "',
                          '" . $timestamp . "')";
@@ -305,7 +307,7 @@ if ($really_del == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
-$sql = "SELECT name
+$sql = "SELECT `name`
         FROM ssl_providers
         WHERE id = '" . $sslpid . "'";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -397,8 +399,8 @@ if (mysqli_num_rows($result) != 0) {
                 <select name="new_type_id">
                     <?php
                     $sql = "SELECT id, type
-                        FROM ssl_cert_types
-                        ORDER BY type";
+                            FROM ssl_cert_types
+                            ORDER BY type";
                     $result = mysqli_query($connection, $sql);
                     while ($row = mysqli_fetch_object($result)) {
 
@@ -427,9 +429,9 @@ if (mysqli_num_rows($result) != 0) {
             <td class="main_table_cell_heading_active"><strong>Currency</strong><BR>
                 <select name="new_currency_id" id="new_currency">
                     <?php
-                    $sql = "SELECT id, currency, name, symbol
-                    FROM currencies
-                    ORDER BY currency";
+                    $sql = "SELECT id, currency, `name`, symbol
+                            FROM currencies
+                            ORDER BY currency";
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
                     while ($row = mysqli_fetch_object($result)) {
 
@@ -500,10 +502,10 @@ if (mysqli_num_rows($result) != 0) {
                     <select name="currency[<?php echo $count; ?>]" id="new_currency">
                         <?php
                         $sql_currency = "SELECT id, currency, name, symbol
-                                 FROM currencies
-                                 ORDER BY currency";
+                                         FROM currencies
+                                         ORDER BY currency";
                         $result_currency = mysqli_query($connection, $sql_currency)
-                            or $error->outputOldSqlError($connection);
+                        or $error->outputOldSqlError($connection);
 
                         while ($row_currency = mysqli_fetch_object($result_currency)) {
 

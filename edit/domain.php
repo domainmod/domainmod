@@ -94,7 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($date->checkDateFormat($new_expiry_date) && $domain->checkDomainFormat($new_domain) && $new_cat_id != "" &&
         $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" &&
         $new_cat_id != "0" && $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" &&
-        $new_account_id != "0") {
+        $new_account_id != "0"
+    ) {
 
         $tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 
@@ -329,12 +330,12 @@ if ($really_del == "1") {
                 ORDER BY r_name ASC, o_name ASC, ra.username ASC";
     $result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_account_id\">";
-    while ($row_account = mysqli_fetch_object($result_account)) { ?>
+    while ($row_account = mysqli_fetch_object($result_account)) { //@formatter:off ?>
 
         <option value="<?php echo $row_account->id; ?>"<?php
             if ($row_account->id == $new_account_id) echo " selected"; ?>><?php
             echo $row_account->r_name; ?>, <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)
-        </option><?php
+        </option><?php //@formatter:on
 
     }
     echo "</select>";
@@ -343,15 +344,15 @@ if ($really_del == "1") {
     <strong>DNS Profile</strong><BR><BR>
     <?php
     $sql_dns = "SELECT id, name
-            FROM dns
-            ORDER BY name ASC";
+                FROM dns
+                ORDER BY name ASC";
     $result_dns = mysqli_query($connection, $sql_dns) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_dns_id\">";
-    while ($row_dns = mysqli_fetch_object($result_dns)) { ?>
+    while ($row_dns = mysqli_fetch_object($result_dns)) { //@formatter:off ?>
 
         <option value="<?php echo $row_dns->id; ?>"<?php if ($row_dns->id == $new_dns_id) echo " selected"; ?>>
             <?php echo $row_dns->name; ?>
-        </option><?php
+        </option><?php //@formatter:on
 
     }
     echo "</select>";
@@ -360,8 +361,8 @@ if ($really_del == "1") {
     <strong>IP Address</strong><BR><BR>
     <?php
     $sql_ip = "SELECT id, name, ip
-           FROM ip_addresses
-           ORDER BY name ASC, ip ASC";
+               FROM ip_addresses
+               ORDER BY name ASC, ip ASC";
     $result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_ip_id\">";
 
@@ -396,15 +397,15 @@ if ($really_del == "1") {
     <strong>Category</strong><BR><BR>
     <?php
     $sql_cat = "SELECT id, name
-            FROM categories
-            ORDER BY name ASC";
+                FROM categories
+                ORDER BY name ASC";
     $result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
     echo "<select name=\"new_cat_id\">";
-    while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
+    while ($row_cat = mysqli_fetch_object($result_cat)) { //@formatter:off ?>
 
         <option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $new_cat_id) echo " selected"; ?>>
             <?php echo $row_cat->name; ?>
-        </option><?php
+        </option><?php //@formatter:on
 
     }
     echo "</select>";
@@ -459,8 +460,8 @@ if ($really_del == "1") {
     <BR><BR>
     <?php
     $sql = "SELECT field_name
-        FROM domain_fields
-        ORDER BY type_id, name";
+            FROM domain_fields
+            ORDER BY type_id, name";
     $result = mysqli_query($connection, $sql);
 
     if (mysqli_num_rows($result) > 0) { ?>
@@ -480,9 +481,9 @@ if ($really_del == "1") {
         foreach ($field_array as $field) {
 
             $sql = "SELECT df.name, df.field_name, df.type_id, df.description
-                FROM domain_fields AS df, custom_field_types AS cft
-                WHERE df.type_id = cft.id
-                  AND df.field_name = '" . $field . "'";
+                    FROM domain_fields AS df, custom_field_types AS cft
+                    WHERE df.type_id = cft.id
+                      AND df.field_name = '" . $field . "'";
             $result = mysqli_query($connection, $sql);
 
             while ($row = mysqli_fetch_object($result)) {
@@ -626,7 +627,7 @@ if ($no_results_dns_zones === 1) {
                                AND z.domain = '" . $new_domain . "'
                              ORDER BY s.name, z.zonefile, z.domain";
     $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp)
-        or $error->outputOldSqlError($connection);
+    or $error->outputOldSqlError($connection);
 
     $from_main_dw_dns_zone_page = 0;
 
