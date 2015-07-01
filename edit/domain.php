@@ -576,18 +576,22 @@ if ($no_results_accounts === 1) {
 
 } else { ?>
 
-    <BR><BR><strong>Accounts</strong><?php
+    <BR><BR><div class="default_highlight">Accounts</div><BR><BR><?php
 
-    $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-                            FROM dw_accounts AS a, dw_servers AS s
-                            WHERE a.server_id = s.id
-                              AND a.domain = '" . $new_domain . "'
-                            ORDER BY s.name, a.unix_startdate DESC";
-    $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or $error->outputOldSqlError($connection);
+    $sql = "SELECT s.id
+            FROM dw_accounts AS a, dw_servers AS s
+            WHERE a.server_id = s.id
+              AND a.domain = '" . $new_domain . "'
+            ORDER BY s.name ASC, a.unix_startdate DESC";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $from_main_dw_account_page = 0;
+    $dwdisplay = new DomainMOD\DwDisplay();
 
-    include(DIR_INC . "dw/display-account.inc.php");
+    echo $dwdisplay->tableTop();
+    while ($row = mysqli_fetch_object($result)) {
+        echo $dwdisplay->account($connection, $row->id, $new_domain, '1', '0', '0');
+    }
+    echo $dwdisplay->tableBottom();
 
 }
 

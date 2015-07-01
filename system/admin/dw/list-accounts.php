@@ -63,41 +63,42 @@ $software_section = "admin-dw-list-accounts";
 
 if ($_SESSION['dw_view_all'] == "1") {
 
-    $where_clause = "";
+    $where_clause = " ";
+    $order_clause = " ORDER BY a.unix_startdate DESC, s.name ASC, a.domain ASC";
 
 } else {
 
-    $where_clause = "AND a.server_id = '" . $_SESSION['dw_server_id'] . "'";
+    $where_clause = " AND a.server_id = '" . $_SESSION['dw_server_id'] . "'";
+    $order_clause = " ORDER BY s.name ASC, a.unix_startdate DESC";
 
 }
 
 if ($domain != "") {
 
-    $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-                            FROM dw_accounts AS a, dw_servers AS s
-                            WHERE a.server_id = s.id
-                              AND a.domain = '" . $domain . "'
-                            " . $where_clause . "
-                            ORDER BY s.name, a.unix_startdate DESC";
-
+    $sql = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+            FROM dw_accounts AS a, dw_servers AS s
+            WHERE a.server_id = s.id
+              AND a.domain = '" . $domain . "' .
+              $where_clause .
+            $order_clause";
 } else {
 
     if ($search_for != "") {
 
-        $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-                                FROM dw_accounts AS a, dw_servers AS s
-                                WHERE a.server_id = s.id
-                                  AND a.domain LIKE '%" . $search_for . "%'
-                                  " . $where_clause . "
-                                ORDER BY s.name, a.unix_startdate DESC";
+        $sql = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+                FROM dw_accounts AS a, dw_servers AS s
+                WHERE a.server_id = s.id
+                  AND a.domain LIKE '%" . $search_for . "%'" .
+                  $where_clause .
+                $order_clause;
 
     } else {
 
-        $sql_dw_account_temp = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-                                FROM dw_accounts AS a, dw_servers AS s
-                                WHERE a.server_id = s.id
-                                  " . $where_clause . "
-                                ORDER BY s.name, a.unix_startdate DESC";
+        $sql = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+                FROM dw_accounts AS a, dw_servers AS s
+                WHERE a.server_id = s.id " .
+                  $where_clause .
+                $order_clause;
 
     }
 
@@ -105,7 +106,7 @@ if ($domain != "") {
 
 if ($export_data == "1") {
 
-    $result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dw_account_list', strtotime($time->time()));
@@ -119,8 +120,7 @@ if ($export_data == "1") {
     $export->writeBlankRow($export_file);
 
     $row_contents = array(
-        'Number of Accounts:',
-        number_format(mysqli_num_rows($result_dw_account_temp))
+        'Number of Accounts:', number_format(mysqli_num_rows($result))
     );
     $export->writeRow($export_file, $row_contents);
 
@@ -183,9 +183,9 @@ if ($export_data == "1") {
     );
     $export->writeRow($export_file, $row_contents);
 
-    if (mysqli_num_rows($result_dw_account_temp) > 0) {
+    if (mysqli_num_rows($result) > 0) {
 
-        while ($row_dw_account_temp = mysqli_fetch_object($result_dw_account_temp)) {
+        while ($row_dw_account_temp = mysqli_fetch_object($result)) {
 
             $row_contents = array(
                 $row_dw_account_temp->dw_server_name,
@@ -239,14 +239,14 @@ if ($export_data == "1") {
 <div class="subheadline"><?php echo $page_subtitle; ?></div>
 <BR><?php
 
-$totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_account_temp));
+$totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
 $layout = new DomainMOD\Layout();
 $parameters = array($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
 $navigate = $layout->pageBrowser($parameters);
-$sql_dw_account_temp = $sql_dw_account_temp . $navigate[0];
-$result_dw_account_temp = mysqli_query($connection, $sql_dw_account_temp) or $error->outputOldSqlError($connection);
+$sql = $sql . $navigate[0];
+$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-if (mysqli_num_rows($result_dw_account_temp) == 0) {
+if (mysqli_num_rows($result) == 0) {
 
     echo "Your search returned 0 results.";
 
@@ -267,8 +267,13 @@ if (mysqli_num_rows($result_dw_account_temp) == 0) {
     <strong>Number of Accounts:</strong> <?php echo $totalrows; ?><BR><BR>
     <?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?><BR>
     <?php
-    $from_main_dw_account_page = 1;
-    include(DIR_INC . "dw/display-account.inc.php");
+    $dwdisplay = new DomainMOD\DwDisplay();
+
+    echo $dwdisplay->tableTop();
+    while ($row = mysqli_fetch_object($result)) {
+        echo $dwdisplay->account($connection, $row->server_id, $row->domain, '1', '1', '1');
+    }
+    echo $dwdisplay->tableBottom();
 
 }
 ?>
