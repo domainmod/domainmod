@@ -59,7 +59,6 @@ class Maintenance
 
     public function updateTlds($connection)
     {
-
         $sql = "SELECT id, domain
                 FROM domains
                 WHERE active NOT IN ('0', '10')
@@ -67,20 +66,13 @@ class Maintenance
         $result = mysqli_query($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
-
             $tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $row->domain);
-
             $sql_update = "UPDATE domains
                            SET tld = '" . $tld . "'
                            WHERE id = '" . $row->id . "'";
             mysqli_query($connection, $sql_update);
-
         }
-
-        $result_message = 'Updated TLDs<BR>';
-
-        return $result_message;
-
+        return 'Updated TLDs<BR>';
     }
 
     public function updateSegments($connection)

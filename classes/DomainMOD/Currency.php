@@ -27,27 +27,16 @@ class Currency
 
     public function format($amount, $symbol, $order, $space)
     {
-
         if ($order == "1" && $space == "1") {
-
             $formatted_output = number_format($amount, 2, '.', ',') . " " . $symbol;
-
         } elseif ($order == "1" && $space == "0") {
-
             $formatted_output = number_format($amount, 2, '.', ',') . $symbol;
-
         } elseif ($order == "0" && $space == "1") {
-
             $formatted_output = $symbol . " " . number_format($amount, 2, '.', ',');
-
         } else {
-
             $formatted_output = $symbol . number_format($amount, 2, '.', ',');
-
         }
-
         return $formatted_output;
-
     }
 
 }
