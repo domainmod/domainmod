@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-include("../../../_includes/start-session.inc.php");
-include("../../../_includes/init.inc.php");
+include("../../_includes/start-session.inc.php");
+include("../../_includes/init.inc.php");
 
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
