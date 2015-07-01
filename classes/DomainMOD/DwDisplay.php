@@ -92,28 +92,6 @@ class DwDisplay
 
     }
 
-    public function tableTop()
-    {
-
-        ob_start(); //@formatter:off ?>
-
-        <table class="main_table" cellpadding="0" cellspacing="0"><tr><td><?php
-
-        return ob_get_clean(); //@formatter:on
-
-    }
-
-    public function tableBottom()
-    {
-
-        ob_start(); //@formatter:off ?>
-
-        </td></tr></table><?php
-
-        return ob_get_clean(); //@formatter:on
-
-    }
-
     public function sidebar($domain, $server_id, $server_name, $show_domain, $show_zone)
     {
 
@@ -137,6 +115,28 @@ class DwDisplay
             } ?>
 
         </td><?php
+
+        return ob_get_clean(); //@formatter:on
+
+    }
+
+    public function tableTop()
+    {
+
+        ob_start(); //@formatter:off ?>
+
+        <table class="main_table" cellpadding="0" cellspacing="0"><tr><td><?php
+
+        return ob_get_clean(); //@formatter:on
+
+    }
+
+    public function tableBottom()
+    {
+
+        ob_start(); //@formatter:off ?>
+
+        </td></tr></table><?php
 
         return ob_get_clean(); //@formatter:on
 

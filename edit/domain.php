@@ -576,7 +576,8 @@ if ($no_results_accounts === 1) {
 
 } else { ?>
 
-    <BR><BR><div class="default_highlight">Accounts</div><BR><BR><?php
+    <BR><BR>
+    <div class="default_highlight">Accounts</div><BR><BR><?php
 
     $sql = "SELECT s.id
             FROM dw_accounts AS a, dw_servers AS s

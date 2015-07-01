@@ -73,7 +73,7 @@ if ($_SESSION['dw_view_all'] == "1") {
 
 }
 
-if ($domain != "") {
+if ($domain != "") { //@formatter:off
 
     $sql = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
             FROM dw_accounts AS a, dw_servers AS s
@@ -102,7 +102,7 @@ if ($domain != "") {
 
     }
 
-}
+} //@formatter:on
 
 if ($export_data == "1") {
 
