@@ -661,7 +661,7 @@
     div.default_highlight {
         display: inline;
         font-weight: bold;
-        color: #CC0000;
+        color: #aa0000;
         padding: 0;
     }
 
