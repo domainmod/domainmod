@@ -64,12 +64,12 @@ $software_section = "admin-dw-list-accounts";
 if ($_SESSION['dw_view_all'] == "1") {
 
     $where_clause = " ";
-    $order_clause = " ORDER BY a.unix_startdate DESC, s.name ASC, a.domain ASC";
+    $order_clause = " ORDER BY a.unix_startdate DESC, s.name ASC, a.domain ASC ";
 
 } else {
 
-    $where_clause = " AND a.server_id = '" . $_SESSION['dw_server_id'] . "'";
-    $order_clause = " ORDER BY s.name ASC, a.unix_startdate DESC";
+    $where_clause = " AND a.server_id = '" . $_SESSION['dw_server_id'] . "' ";
+    $order_clause = " ORDER BY s.name ASC, a.unix_startdate DESC ";
 
 }
 
