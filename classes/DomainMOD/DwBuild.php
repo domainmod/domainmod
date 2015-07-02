@@ -60,8 +60,10 @@ class DwBuild
         $zones->createTable($connection);
         $records->createTable($connection);
         $servers->processEachServer($connection, $result);
-        $records->cleanupRecords($connection);
-        $records->reorderRecords($connection);
+
+        $clean = new DwClean();
+        $clean->all($connection);
+
         $result = $servers->get($connection);
         $stats->updateServerStats($connection, $result);
         $stats->updateDwTotalsTable($connection);
