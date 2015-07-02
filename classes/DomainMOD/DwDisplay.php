@@ -38,8 +38,7 @@ class DwDisplay
 
             <tr class="main_table_row_active_no_hover"><?php
 
-            echo $this->accountSidebar($server_id, $row->server_name, $domain, $show_sidebar, $show_heading,
-                $show_url); ?>
+            echo $this->accountSidebar($row->server_name, $domain, $show_sidebar, $show_heading, $show_url); ?>
 
             <td class="main_table_cell_active_top_aligned">
                 <strong>Created:</strong> <?php echo date("Y M jS", $row->unix_startdate); ?><BR>
@@ -95,7 +94,7 @@ class DwDisplay
 
     }
 
-    public function accountSidebar($server_id, $server_name, $domain, $show_sidebar, $show_heading, $show_url)
+    public function accountSidebar($server_name, $domain, $show_sidebar, $show_heading, $show_url)
     {
 
         ob_start(); //@formatter:off
@@ -107,7 +106,7 @@ class DwDisplay
                 echo $this->showHeading($domain, $show_heading);
                 $server_wrapped = wordwrap($server_name, 20, "<BR>", true);
                 echo $server_wrapped . "<BR>";
-                echo $this->showUrl($server_id, $domain, 'zone', 'list-zone.php', $show_url); ?>
+                echo $this->showUrl($domain, 'zone', 'list-zones.php', $show_url); ?>
             </td><?php
 
             $result = ob_get_clean();
@@ -128,14 +127,14 @@ class DwDisplay
         return $result;
     }
 
-    public function showUrl($server_id, $domain, $text, $url, $show_url)
+    public function showUrl($domain, $text, $url, $show_url)
     {
 
         $result = '';
 
         if ($show_url == '1') {
             $result = "[<a class=\"covert_link\"
-                href=\"" . $url . "?domain=" . $domain . "&server_id=" . $server_id . "\">" . $text . "</a>]";
+                href=\"" . $url . "?domain=" . $domain . "\">" . $text . "</a>]";
         }
 
         return $result;
@@ -273,7 +272,7 @@ class DwDisplay
                 $server_name = $this->getServerName($connection, $server_id, $domain);
                 echo $server_name . "<BR>";
 
-                echo $this->showURL($server_id, $domain, 'account', 'list-accounts.php', $show_url); ?>
+                echo $this->showURL($domain, 'account', 'list-accounts.php', $show_url); ?>
             </td><?php
 
             $result = ob_get_clean();
