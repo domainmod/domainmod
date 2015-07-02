@@ -620,18 +620,23 @@ if ($no_results_dns_zones === 1) {
 
 } else { ?>
 
-    <BR><strong>DNS Zones & Records</strong><BR><BR><?php
-    $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-                             FROM dw_dns_zones AS z, dw_servers AS s
-                             WHERE z.server_id = s.id
-                               AND z.domain = '" . $new_domain . "'
-                             ORDER BY s.name, z.zonefile, z.domain";
-    $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp)
+    <BR>
+    <div class="default_highlight">DNS Zones & Records</div><BR><BR><?php
+    $sql = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+            FROM dw_dns_zones AS z, dw_servers AS s
+            WHERE z.server_id = s.id
+              AND z.domain = '" . $new_domain . "'
+            ORDER BY s.name, z.zonefile, z.domain";
+    $result = mysqli_query($connection, $sql)
     or $error->outputOldSqlError($connection);
 
-    $from_main_dw_dns_zone_page = 0;
+    $dwdisplay = new DomainMOD\DwDisplay();
 
-    include(DIR_INC . "dw/display-dns-zone.inc.php");
+    echo $dwdisplay->tableTop();
+    while ($row = mysqli_fetch_object($result)) {
+        echo $dwdisplay->zone($connection, $row->server_id, $row->domain, '1', '1', '0');
+    }
+    echo $dwdisplay->tableBottom();
 
 }
 ?>

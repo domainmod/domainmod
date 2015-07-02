@@ -68,39 +68,39 @@ if ($_SESSION['dw_view_all'] == "1") {
 
 } else {
 
-    $where_clause = "AND z.server_id = '" . $_SESSION['dw_server_id'] . "'";
-    $where_clause_no_join = "AND server_id = '" . $_SESSION['dw_server_id'] . "'";
-    $where_clause_no_join_first_line = "WHERE server_id = '" . $_SESSION['dw_server_id'] . "'";
+    $where_clause = " AND z.server_id = '" . $_SESSION['dw_server_id'] . "' ";
+    $where_clause_no_join = " AND server_id = '" . $_SESSION['dw_server_id'] . "' ";
+    $where_clause_no_join_first_line = " WHERE server_id = '" . $_SESSION['dw_server_id'] . "' ";
 
 }
 
 if ($domain != "") {
 
-    $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-                                 FROM dw_dns_zones AS z, dw_servers AS s
-                                 WHERE z.server_id = s.id
-                                   AND z.domain = '" . $domain . "'
-                                   " . $where_clause . "
-                                 ORDER BY s.name, z.zonefile, z.domain";
+    $sql = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+            FROM dw_dns_zones AS z, dw_servers AS s
+            WHERE z.server_id = s.id
+              AND z.domain = '" . $domain . "'" .
+        $where_clause . "
+            ORDER BY s.name, z.zonefile, z.domain";
 
 } else {
 
     if ($search_for != "") {
 
-        $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-                                 FROM dw_dns_zones AS z, dw_servers AS s
-                                 WHERE z.server_id = s.id
-                                   AND z.domain LIKE '%" . $search_for . "%'
-                                   " . $where_clause . "
-                                 ORDER BY s.name, z.zonefile, z.domain";
+        $sql = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+                FROM dw_dns_zones AS z, dw_servers AS s
+                WHERE z.server_id = s.id
+                  AND z.domain LIKE '%" . $search_for . "%'" .
+            $where_clause . "
+                ORDER BY s.name, z.zonefile, z.domain";
 
     } else {
 
-        $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-                                 FROM dw_dns_zones AS z, dw_servers AS s
-                                 WHERE z.server_id = s.id
-                                   " . $where_clause . "
-                                 ORDER BY s.name, z.zonefile, z.domain";
+        $sql = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+                FROM dw_dns_zones AS z, dw_servers AS s
+                WHERE z.server_id = s.id" .
+            $where_clause . "
+                ORDER BY s.name, z.zonefile, z.domain";
 
     }
 
@@ -108,7 +108,7 @@ if ($domain != "") {
 
 if ($export_data == "1") {
 
-    $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dw_dns_zones', strtotime($time->time()));
@@ -123,46 +123,46 @@ if ($export_data == "1") {
 
     if ($domain != "") {
 
-        $sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
-                                           FROM dw_dns_records
-                                           WHERE domain = '" . $domain . "'
-                                             " . $where_clause_no_join . "";
+        $sql_total_records = "SELECT count(*) AS total_dns_record_count
+                              FROM dw_dns_records
+                              WHERE domain = '" . $domain . "'" .
+            $where_clause_no_join;
 
     } else {
 
         if ($search_for != "") {
 
-            $sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
-                                           FROM dw_dns_records
-                                           WHERE domain LIKE '%" . $search_for . "%'
-                                             " . $where_clause_no_join . "";
+            $sql_total_records = "SELECT count(*) AS total_dns_record_count
+                                  FROM dw_dns_records
+                                  WHERE domain LIKE '%" . $search_for . "%'" .
+                $where_clause_no_join;
 
         } else {
 
-            $sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
-                                           FROM dw_dns_records
-                                             " . $where_clause_no_join_first_line . "";
+            $sql_total_records = "SELECT count(*) AS total_dns_record_count
+                                  FROM dw_dns_records" .
+                $where_clause_no_join_first_line;
 
         }
 
     }
-    $result_total_dns_record_count = mysqli_query($connection, $sql_total_dns_record_count);
+    $result_total_records = mysqli_query($connection, $sql_total_records);
 
-    while ($row_total_dns_record_count = mysqli_fetch_object($result_total_dns_record_count)) {
+    while ($row_total_dns_record_count = mysqli_fetch_object($result_total_records)) {
 
-        $total_dns_record_count_temp = $row_total_dns_record_count->total_dns_record_count;
+        $total_records_temp = $row_total_dns_record_count->total_dns_record_count;
 
     }
 
     $row_contents = array(
         'Number of DNS Zones:',
-        number_format(mysqli_num_rows($result_dw_dns_zone_temp))
+        number_format(mysqli_num_rows($result))
     );
     $export->writeRow($export_file, $row_contents);
 
     $row_contents = array(
         'Number of DNS Records:',
-        number_format($total_dns_record_count_temp)
+        number_format($total_records_temp)
     );
     $export->writeRow($export_file, $row_contents);
 
@@ -221,15 +221,15 @@ if ($export_data == "1") {
     );
     $export->writeRow($export_file, $row_contents);
 
-    if (mysqli_num_rows($result_dw_dns_zone_temp) > 0) {
+    if (mysqli_num_rows($result) > 0) {
 
-        while ($row_dw_dns_zone_temp = mysqli_fetch_object($result_dw_dns_zone_temp)) {
+        while ($row_dw_dns_zone_temp = mysqli_fetch_object($result)) {
 
             $sql_get_records = "SELECT *
                                 FROM dw_dns_records
                                 WHERE server_id = '" . $row_dw_dns_zone_temp->dw_server_id . "'
                                   AND domain = '" . $row_dw_dns_zone_temp->domain . "'
-                                ORDER BY new_order";
+                                ORDER BY new_order ASC";
             $result_get_records = mysqli_query($connection, $sql_get_records);
 
             while ($row_get_records = mysqli_fetch_object($result_get_records)) {
@@ -284,14 +284,14 @@ if ($export_data == "1") {
 <div class="subheadline"><?php echo $page_subtitle; ?></div>
 <BR><?php
 
-$totalrows = mysqli_num_rows(mysqli_query($connection, $sql_dw_dns_zone_temp));
+$totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
 $layout = new DomainMOD\Layout();
 $parameters = array($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
 $navigate = $layout->pageBrowser($parameters);
-$sql_dw_dns_zone_temp = $sql_dw_dns_zone_temp . $navigate[0];
-$result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or $error->outputOldSqlError($connection);
+$sql = $sql . $navigate[0];
+$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-if (mysqli_num_rows($result_dw_dns_zone_temp) == 0) {
+if (mysqli_num_rows($result) == 0) {
 
     echo "Your search returned 0 results.";
 
@@ -311,50 +311,49 @@ if (mysqli_num_rows($result_dw_dns_zone_temp) == 0) {
 
     if ($domain != "") {
 
-        $sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
-                                           FROM dw_dns_records
-                                           WHERE domain = '" . $domain . "'
-                                             " . $where_clause_no_join . "";
+        $sql_total_records = "SELECT count(*) AS total_dns_record_count
+                              FROM dw_dns_records
+                              WHERE domain = '" . $domain . "'" .
+            $where_clause_no_join;
 
     } else {
 
         if ($search_for != "") {
 
-            $sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
-                                           FROM dw_dns_records
-                                           WHERE domain LIKE '%" . $search_for . "%'
-                                             " . $where_clause_no_join . "";
+            $sql_total_records = "SELECT count(*) AS total_dns_record_count
+                                  FROM dw_dns_records
+                                  WHERE domain LIKE '%" . $search_for . "%'" .
+                $where_clause_no_join;
 
         } else {
 
-            $sql_total_dns_record_count = "SELECT count(*) AS total_dns_record_count
-                                           FROM dw_dns_records
-                                             " . $where_clause_no_join_first_line . "";
+            $sql_total_records = "SELECT count(*) AS total_dns_record_count
+                                  FROM dw_dns_records" .
+                $where_clause_no_join_first_line;
 
         }
 
     }
-    $result_total_dns_record_count = mysqli_query($connection, $sql_total_dns_record_count);
+    $result_total_records = mysqli_query($connection, $sql_total_records);
 
-    while ($row_total_dns_record_count = mysqli_fetch_object($result_total_dns_record_count)) {
+    while ($row_total_dns_record_count = mysqli_fetch_object($result_total_records)) {
 
-        $total_dns_record_count_temp = $row_total_dns_record_count->total_dns_record_count;
+        $total_records_temp = $row_total_dns_record_count->total_dns_record_count;
 
     } ?>
 
     <strong>Number of DNS Zones:</strong> <?php echo number_format($totalrows); ?><BR><BR>
 
-    <strong>Number of DNS Records:</strong> <?php echo number_format($total_dns_record_count_temp); ?><BR><BR>
+    <strong>Number of DNS Records:</strong> <?php echo number_format($total_records_temp); ?><BR><BR>
     <?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?><BR><?php
-    // QUERY AT TOP OF PAGE
-    // $sql_dw_dns_zone_temp = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-    //                            FROM dw_dns_zones AS z, dw_servers AS s
-    //                            WHERE z.server_id = s.id
-    //                              AND X
-    //                            ORDER BY s.name, z.zonefile, z.domain";
-    // $result_dw_dns_zone_temp = mysqli_query($connection, $sql_dw_dns_zone_temp) or $error->outputOldSqlError($connection);
-    $from_main_dw_dns_zone_page = 1;
-    include(DIR_INC . "dw/display-dns-zone.inc.php");
+
+    $dwdisplay = new DomainMOD\DwDisplay();
+
+    echo $dwdisplay->tableTop();
+    while ($row = mysqli_fetch_object($result)) {
+        echo $dwdisplay->zone($connection, $row->server_id, $row->domain, '1', '1', '1');
+    }
+    echo $dwdisplay->tableBottom();
 
 }
 ?>
