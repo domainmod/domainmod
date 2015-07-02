@@ -107,38 +107,22 @@ class DwRecords
     public function cleanupRecords($connection)
     {
 
-        $sql = "DELETE FROM dw_dns_records
-                WHERE type = ':RAW'
-                  AND raw = ''";
+        $sql = "DELETE FROM dw_dns_records WHERE type = ':RAW' AND raw = ''";
         mysqli_query($connection, $sql);
 
-        $sql = "UPDATE dw_dns_records
-                SET type = 'COMMENT'
-                WHERE type = ':RAW'";
+        $sql = "UPDATE dw_dns_records SET type = 'COMMENT' WHERE type = ':RAW'";
         mysqli_query($connection, $sql);
 
-        $sql = "UPDATE dw_dns_records
-                SET type = 'ZONE TTL'
-                WHERE type = '\$TTL'";
+        $sql = "UPDATE dw_dns_records SET type = 'ZONE TTL' WHERE type = '\$TTL'";
         mysqli_query($connection, $sql);
 
-        $sql = "UPDATE dw_dns_records
-                SET nlines = '1'
-                WHERE nlines = '0'";
+        $sql = "UPDATE dw_dns_records SET nlines = '1' WHERE nlines = '0'";
         mysqli_query($connection, $sql);
 
-        $sql = "SELECT domain, zonefile
-                FROM dw_dns_zones";
-        $result = mysqli_query($connection, $sql);
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $sql_update = "UPDATE dw_dns_records
-                           SET zonefile = '" . $row->zonefile . "'
-                           WHERE domain = '" . $row->domain . "'";
-            mysqli_query($connection, $sql_update);
-
-        }
+        $sql = "UPDATE dw_dns_records AS r, dw_dns_zones AS z
+                SET r.zonefile = z.zonefile
+                WHERE r.dns_zone_id = z.id";
+        mysqli_query($connection, $sql);
 
         return true;
 
@@ -179,7 +163,7 @@ class DwRecords
         $total_dw_records = '';
 
         $sql_records = "SELECT count(*) AS total_dw_records
-                      FROM `dw_dns_records`";
+                        FROM `dw_dns_records`";
         $result_records = mysqli_query($connection, $sql_records);
 
         while ($row_records = mysqli_fetch_object($result_records)) {
