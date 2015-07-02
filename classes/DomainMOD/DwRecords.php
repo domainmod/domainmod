@@ -23,7 +23,7 @@
 namespace DomainMOD;
 
 class DwRecords
-{
+{ //@formatter:off
 
     public function createTable($connection)
     {
@@ -88,68 +88,15 @@ class DwRecords
                          txtdata, line, nlines, raw, insert_time)
                         VALUES
                         ('" . $server_id . "', '" . $zone_id . "', '" . $domain . "', '" .
-                    $hit->mname . "', '" . $hit->rname . "', '" . $hit->serial . "', '" . $hit->refresh . "', '" .
-                    $hit->retry . "', '" . $hit->expire . "', '" . $hit->minimum . "', '" . $hit->nsdname . "', '"
-                    . $hit->name . "', '" . $hit->ttl . "', '" . $hit->class . "', '" . $hit->type . "', '" .
-                    $hit->address . "', '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference .
-                    "', '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw .
-                    "', '" . $time->time() . "')";
+                         $hit->mname . "', '" . $hit->rname . "', '" . $hit->serial . "', '" . $hit->refresh . "', '" .
+                         $hit->retry . "', '" . $hit->expire . "', '" . $hit->minimum . "', '" . $hit->nsdname . "', '"
+                         . $hit->name . "', '" . $hit->ttl . "', '" . $hit->class . "', '" . $hit->type . "', '" .
+                         $hit->address . "', '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference .
+                         "', '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw .
+                         "', '" . $time->time() . "')";
                 mysqli_query($connection, $sql);
 
             }
-
-        }
-
-        return true;
-
-    }
-
-    public function cleanupRecords($connection)
-    {
-
-        $sql = "DELETE FROM dw_dns_records WHERE type = ':RAW' AND raw = ''";
-        mysqli_query($connection, $sql);
-
-        $sql = "UPDATE dw_dns_records SET type = 'COMMENT' WHERE type = ':RAW'";
-        mysqli_query($connection, $sql);
-
-        $sql = "UPDATE dw_dns_records SET type = 'ZONE TTL' WHERE type = '\$TTL'";
-        mysqli_query($connection, $sql);
-
-        $sql = "UPDATE dw_dns_records SET nlines = '1' WHERE nlines = '0'";
-        mysqli_query($connection, $sql);
-
-        $sql = "UPDATE dw_dns_records AS r, dw_dns_zones AS z
-                SET r.zonefile = z.zonefile
-                WHERE r.dns_zone_id = z.id";
-        mysqli_query($connection, $sql);
-
-        return true;
-
-    }
-
-    public function reorderRecords($connection)
-    {
-
-        $type_order = array();
-        $count = 0;
-        $new_order = 1;
-        $type_order[$count++] = 'COMMENT';
-        $type_order[$count++] = 'ZONE TTL';
-        $type_order[$count++] = 'SOA';
-        $type_order[$count++] = 'NS';
-        $type_order[$count++] = 'MX';
-        $type_order[$count++] = 'A';
-        $type_order[$count++] = 'CNAME';
-        $type_order[$count++] = 'TXT';
-        $type_order[$count++] = 'SRV';
-
-        foreach ($type_order as $key) {
-
-            $sql = "UPDATE dw_dns_records
-                    SET new_order = '" . $new_order++ . "'
-                    WHERE type = '" . $key . "'";
-            mysqli_query($connection, $sql);
 
         }
 
@@ -176,4 +123,4 @@ class DwRecords
 
     }
 
-}
+} //@formatter:on
