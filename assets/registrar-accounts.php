@@ -37,7 +37,7 @@ include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = "Domains Registrar Accounts";
+$page_title = "Domain Registrar Accounts";
 $software_section = "registrar-accounts";
 
 $rid = $_GET['rid'];
@@ -286,19 +286,10 @@ $has_active = 1; ?>
         <td class="main_table_cell_active" valign="top">
             <?php //@formatter:off ?>
             <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo
-                $row->username; ?></a><?php
-
-            if ($_SESSION['default_registrar_account'] == $row->raid) { ?>
-
-                <a title="Default Account"><div class=\"default_highlight\">*</div></a><?php
-
-            }
-
-            if ($row->reseller == "1") { ?>
-
-                <a title="Reseller Account"><div class="reseller_highlight">*</div></a><?php
-
-            } ?>
+                $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a
+                title=\"Default Account\"><div class=\"default_highlight\">*</div></a>"; ?><?php
+            if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><div
+                class=\"reseller_highlight\">*</div></a>"; ?>
             <?php //@formatter:on ?>
         </td>
         <td class="main_table_cell_active">
@@ -381,19 +372,10 @@ $has_active = 1; ?>
                 <td class="main_table_cell_inactive" valign="top">
                     <?php //@formatter:off ?>
                     <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php
-                        echo $row->username; ?></a><?php
-
-                    if ($_SESSION['default_registrar_account'] == $row->raid) { ?>
-
-                        <a title="Default Account"><div class=\"default_highlight\">*</div></a><?php
-
-                    }
-
-                    if ($row->reseller == "1") { ?>
-
-                        <a title="Reseller Account"><div class="reseller_highlight">*</div></a><?php
-
-                    } ?>
+                        echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid)
+                        echo "<a title=\"Default Account\"><div class=\"default_highlight\">*</div></a>";
+                    if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><div
+                        class=\"reseller_highlight\">*</div></a>"; ?>
                     <?php //@formatter:on ?>
                 </td>
                 <td class="main_table_cell_inactive">

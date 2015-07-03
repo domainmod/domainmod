@@ -231,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             //@formatter:off ?>
             <option value="<?php echo $row->currency; ?>"<?php
                 if ($_SESSION['default_currency'] == $row->currency) echo " selected"; ?>><?php
-                echo $row->name; ?>(<?php echo $row->currency; ?> <?php echo $row->symbol; ?>)
+                echo $row->name; ?> (<?php echo $row->currency; ?> <?php echo $row->symbol; ?>)
             </option>
         <?php //@formatter:on
         }

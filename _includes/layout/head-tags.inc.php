@@ -229,6 +229,7 @@
         width: <?php echo $site_width_login; ?>;
         display: table;
         margin: 0 auto;
+        padding-top: 85px;
     }
 
     div.main-outer {
@@ -255,10 +256,10 @@
         text-align: left;
         font-family: Verdana, sans-serif, Arial;
         font-weight: normal;
-        border-top: 1px #6699CC ridge;
-        border-bottom: 1px #6699CC ridge;
-        border-right: 1px #6699CC ridge;
-        border-left: 1px #6699CC ridge;
+        border-top: 1px #888888 ridge;
+        border-bottom: 1px #888888 ridge;
+        border-right: 1px #888888 ridge;
+        border-left: 1px #888888 ridge;
         padding-top: 0px;
         padding-right: 0px;
         padding-bottom: 0px;
@@ -271,10 +272,10 @@
         font-size: 8pt;
         font-weight: normal;
         color: #000000;
-        border-top: 0px #6699CC ridge;
-        border-bottom: 0px #6699CC ridge;
-        border-right: 0px #6699CC ridge;
-        border-left: 0px #6699CC ridge;
+        border-top: 0px #888888 ridge;
+        border-bottom: 0px #888888 ridge;
+        border-right: 0px #888888 ridge;
+        border-left: 0px #888888 ridge;
         padding-top: 12px;
         padding-right: 23px;
         padding-bottom: 23px;
@@ -297,10 +298,10 @@
         font-size: 8pt;
         font-weight: normal;
         color: #000000;
-        border-top: 0px #6699CC ridge;
-        border-bottom: 0px #6699CC ridge;
-        border-right: 0px #6699CC ridge;
-        border-left: 0px #6699CC ridge;
+        border-top: 0px #888888 ridge;
+        border-bottom: 0px #888888 ridge;
+        border-right: 0px #888888 ridge;
+        border-left: 0px #888888 ridge;
         padding-top: 7px;
         padding-right: 0px;
         padding-bottom: 5px;
@@ -316,10 +317,10 @@
         font-size: 8pt;
         font-weight: normal;
         color: #000000;
-        border-top: 0px #6699CC ridge;
-        border-bottom: 0px #6699CC ridge;
-        border-right: 0px #6699CC ridge;
-        border-left: 0px #6699CC ridge;
+        border-top: 0px #888888 ridge;
+        border-bottom: 0px #888888 ridge;
+        border-right: 0px #888888 ridge;
+        border-left: 0px #888888 ridge;
         padding-top: 33px;
         padding-right: 8px;
         padding-bottom: 8px;
@@ -333,10 +334,10 @@
         font-size: 8pt;
         font-weight: normal;
         color: #000000;
-        border-top: 0px #6699CC ridge;
-        border-bottom: 0px #6699CC ridge;
-        border-right: 0px #6699CC ridge;
-        border-left: 0px #6699CC ridge;
+        border-top: 0px #888888 ridge;
+        border-bottom: 0px #888888 ridge;
+        border-right: 0px #888888 ridge;
+        border-left: 0px #888888 ridge;
         padding-top: 33px;
         padding-right: 0px;
         padding-bottom: 8px;
@@ -350,10 +351,10 @@
         font-size: 8pt;
         font-weight: normal;
         color: #000000;
-        border-top: 0px #6699CC ridge;
-        border-bottom: 0px #6699CC ridge;
-        border-right: 0px #6699CC ridge;
-        border-left: 0px #6699CC ridge;
+        border-top: 0px #888888 ridge;
+        border-bottom: 0px #888888 ridge;
+        border-right: 0px #888888 ridge;
+        border-left: 0px #888888 ridge;
         padding-top: 15px;
         padding-right: 0px;
         padding-bottom: 0px;
@@ -408,10 +409,10 @@
         font-weight: bold;
         text-align: center;
         vertical-align: middle;
-        border-top: 1px #6699CC ridge;
-        border-bottom: 1px #6699CC ridge;
-        border-right: 1px #6699CC ridge;
-        border-left: 1px #6699CC ridge;
+        border-top: 1px #888888 ridge;
+        border-bottom: 1px #888888 ridge;
+        border-right: 1px #888888 ridge;
+        border-left: 1px #888888 ridge;
         color: #000000;
         background-color: #E0E0E0;
         padding-top: 21px;
@@ -490,10 +491,10 @@
 
     div.search-block-outer {
         float: left;
-        border-top: 1px #6699CC ridge;
-        border-bottom: 1px #6699CC ridge;
-        border-right: 1px #6699CC ridge;
-        border-left: 1px #6699CC ridge;
+        border-top: 1px #888888 ridge;
+        border-bottom: 1px #888888 ridge;
+        border-right: 1px #888888 ridge;
+        border-left: 1px #888888 ridge;
         padding-top: 20px;
         padding-right: 20px;
         padding-bottom: 20px;
@@ -547,10 +548,10 @@
     div.export-inner {
         text-align: left;
         vertical-align: middle;
-        border-top: 1px #6699CC ridge;
-        border-bottom: 1px #6699CC ridge;
-        border-right: 1px #6699CC ridge;
-        border-left: 1px #6699CC ridge;
+        border-top: 1px #888888 ridge;
+        border-bottom: 1px #888888 ridge;
+        border-right: 1px #888888 ridge;
+        border-left: 1px #888888 ridge;
         font-family: Verdana, sans-serif, Arial;
         font-weight: normal;
         font-size: 8pt;
@@ -600,10 +601,10 @@
         font-size: 8pt;
         font-weight: normal;
         color: #000000;
-        border-top: 0px #6699CC ridge;
-        border-bottom: 0px #6699CC ridge;
-        border-right: 0px #6699CC ridge;
-        border-left: 0px #6699CC ridge;
+        border-top: 0px #888888 ridge;
+        border-bottom: 0px #888888 ridge;
+        border-right: 0px #888888 ridge;
+        border-left: 0px #888888 ridge;
         padding-top: 10px;
         padding-right: 8px;
         padding-bottom: 10px;
@@ -617,10 +618,10 @@
         font-size: 8pt;
         font-weight: normal;
         color: #000000;
-        border-top: 0px #6699CC ridge;
-        border-bottom: 0px #6699CC ridge;
-        border-right: 0px #6699CC ridge;
-        border-left: 0px #6699CC ridge;
+        border-top: 0px #888888 ridge;
+        border-bottom: 0px #888888 ridge;
+        border-right: 0px #888888 ridge;
+        border-left: 0px #888888 ridge;
         padding-top: 10px;
         padding-right: 0px;
         padding-bottom: 10px;

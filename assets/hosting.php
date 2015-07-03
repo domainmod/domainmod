@@ -220,10 +220,10 @@ $has_active = "1"; ?>
         } ?>
 
         <tr class="main_table_row_active">
-        <td class="main_table_cell_active">
-            <a class="invisiblelink" href="edit/host.php?whid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
-            <?php if ($_SESSION['default_host'] == $row->id) echo "<a title=\"Default Web Host\"><div
-                class=\"default_highlight\">*</div></a>"; ?>
+        <td class="main_table_cell_active"><?php //@formatter:off ?>
+            <a class="invisiblelink" href="edit/host.php?whid=<?php echo $row->id; ?>"><?php echo $row->name;
+                ?></a><?php if ($_SESSION['default_host'] == $row->id) echo "<a title=\"Default Web Host\"><div
+                class=\"default_highlight\">*</div></a>"; //@formatter:on ?>
         </td>
         <td class="main_table_cell_active"><?php
             $sql_total_count = "SELECT count(*) AS total_count

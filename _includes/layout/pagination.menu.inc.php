@@ -37,10 +37,10 @@
                 $export_filename = "ssl-certs.php";
 
             }
-            //@formatter:off ?>&nbsp;&nbsp;
+            //@formatter:off ?>&nbsp;
             [<a href="<?php echo $export_filename . "?" . $_SERVER['QUERY_STRING'];
-                ?>&export_data=1">export results</a>]&nbsp;[<a target="_blank" href="<?php echo $web_root;
-                ?>/raw.php">raw list</a>]&nbsp;[<a href="settings/display.php">display settings</a>]
+                ?>&export_data=1">export results</a>]&nbsp;&nbsp;[<a target="_blank" href="<?php echo $web_root;
+                ?>/raw.php">raw list</a>]&nbsp;&nbsp;[<a href="settings/display.php">display settings</a>]
             <?php //@formatter:on
 
         } ?>

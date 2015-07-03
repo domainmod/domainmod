@@ -262,19 +262,10 @@ $has_active = "1"; ?>
         <td class="main_table_cell_active">
             <?php //@formatter:off ?>
             <a class="invisiblelink" href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php
-                echo $row->name; ?></a><?php
-
-            if ($_SESSION['default_category_domains'] == $row->id) { ?>
-
-                <a title="Default Domain Category"><div class="default_highlight">*</div></a><?php
-
-            }
-
-            if ($_SESSION['default_category_ssl'] == $row->id) { ?>
-
-                <a title="Default SSL Category"><div class="default_highlight_secondary">*</div></a><?php
-
-            } ?>
+                echo $row->name; ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a
+                title=\"Default Domain Category\"><div class=\"default_highlight\">*</div></a>";
+            if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><div
+                class=\"default_highlight_secondary\">*</div></a>"; ?>
             <?php //@formatter:on ?>
         </td>
         <td class="main_table_cell_active">
@@ -374,19 +365,10 @@ $has_active = "1"; ?>
                 <td class="main_table_cell_inactive">
                     <?php //@formatter:off ?>
                     <a class="invisiblelink" href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo
-                        $row->name; ?></a><?php
-
-                    if ($_SESSION['default_category_domains'] == $row->id) { ?>
-
-                        <a title="Default Domain Category"><div class="default_highlight">*</div></a><?php
-
-                    }
-
-                    if ($_SESSION['default_category_ssl'] == $row->id) { ?>
-
-                        <a title="Default SSL Category"><div class="default_highlight_secondary">*</div></a><?php
-
-                    } ?>
+                        $row->name; ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a
+                        title=\"Default Domain Category\"><div class=\"default_highlight\">*</div></a>";
+                    if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><div
+                        class=\"default_highlight_secondary\">*</div></a>"; ?>
                     <?php //@formatter:on ?>
                 </td>
                 <td class="main_table_cell_inactive">

@@ -291,19 +291,10 @@ $has_active = 1; ?>
         <td class="main_table_cell_active">
             <?php //@formatter:off ?>
             <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php
-                echo $row->username; ?></a><?php
-
-            if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) { ?>
-
-                <a title="Default Account"><div class=\"default_highlight\">*</div></a><?php
-
-            }
-
-            if ($row->reseller == "1") { ?>
-
-                <a title="Reseller Account"><div class="reseller_highlight">*</div></a><?php
-
-            } ?>
+                echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid)
+                echo "<a title=\"Default Account\"><div class=\"default_highlight\">*</div></a>"; ?><?php
+            if ($row->reseller == "1")
+                echo "<a title=\"Reseller Account\"><div class=\"reseller_highlight\">*</div></a>"; ?>
             <?php //@formatter:on ?>
         </td>
         <td class="main_table_cell_active">
@@ -389,19 +380,10 @@ $has_active = 1; ?>
                 <td class="main_table_cell_inactive">
                     <?php //@formatter:off ?>
                     <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid;
-                        ?>"><?php echo $row->username; ?></a><?php
-
-                    if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid) { ?>
-
-                        <a title="Default Account"><div class=\"default_highlight\">*</div></a><?php
-
-                    }
-
-                    if ($row->reseller == "1") { ?>
-
-                        <a title="Reseller Account"><div class="reseller_highlight">*</div></a><?php
-
-                    } ?>
+                        ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] ==
+                        $row->sslpaid) echo "<a title=\"Default Account\"><div class=\"default_highlight\">*</div></a>";
+                    if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><div
+                        class=\"reseller_highlight\">*</div></a>"; ?>
                     <?php //@formatter:on ?>
                 </td>
                 <td class="main_table_cell_inactive">
