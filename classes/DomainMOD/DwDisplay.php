@@ -165,7 +165,7 @@ class DwDisplay
             <td class="main_table_cell_active_top_aligned" width="130"><?php
                 $zone = $this->getZonefile($connection, $server_id, $domain);
                 echo $this->showHeading($zone, $show_heading);
-                $server_name = $this->getServerName($connection, $server_id, $domain);
+                $server_name = $this->getServerName($connection, $server_id);
                 echo $server_name . "<BR>";
                 echo $this->showURL($domain, 'account', 'list-accounts.php', $show_url); ?>
             </td><?php
@@ -186,7 +186,7 @@ class DwDisplay
         return $zonefile;
     } 
 
-    public function getServerName($connection, $server_id, $domain)
+    public function getServerName($connection, $server_id)
     { 
         $server_name = '';
         $sql = "SELECT `name`

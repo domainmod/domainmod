@@ -256,7 +256,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q_df->close();
 
-                    $_SESSION['result_message'] = "Domain <div class=\"highlight\">$new_domain</div> Added<BR>";
+                    $_SESSION['result_message'] = "Domain <div class=\"highlight\">" . $new_domain . "</div> Added<BR>";
 
                     $_SESSION['result_message'] .= $maint->updateSegments($connection);
 
@@ -273,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } else {
 
-                $_SESSION['result_message'] .= "The domain you entered is already in $software_title<BR>";
+                $_SESSION['result_message'] .= "The domain you entered is already in " . $software_title . "<BR>";
 
             }
 
