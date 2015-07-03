@@ -1,5 +1,13 @@
 DomainMOD Changelog
 ===================
+v3.0.3    2015-07-02   6d85e7b6d9e78b435ab73f85868230f9fb374fe7
+- Completely re-wrote how the Data Warehouse processes and displays data
+- Added a system notice feature to display important information
+- Updated maintenance tasks system-wide to make things run smoother
+- Optimized the database upgrade process to make it faster
+- Cleaned up and rearranged some of the source code file locations
+- Renamed 'Control Panel' to 'Settings'
+
 v3.0.2    2015-06-30   da9a5bcd7be55c794b78a2ff99a5a1b14fdf8833
 - Modified the version system to use strings
 - Updated system-info.php to use $_SESSION['system_db_version'] instead of querying the database
