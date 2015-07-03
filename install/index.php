@@ -703,7 +703,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "INSERT INTO `settings`
             (`full_url`, `db_version`, `email_address`, `insert_time`) VALUES
-            ('" . $full_url . "', '" . $software_version . "', '" . $temp_system_email . "', '" . $time->time() . "');";
+            ('" . $full_url . "', '" . $db_version . "', '" . $temp_system_email . "', '" . $time->time() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `timezones` (

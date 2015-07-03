@@ -48,12 +48,12 @@ $_SESSION['running_login_checks'] = 1;
  *
  * If If the database and software versions are different and the user HAS approved the upgrade, perform the upgrade
  */
-if ($_SESSION['system_db_version'] !== $software_version && $upgrade_approved != '1') {
+if ($_SESSION['system_db_version'] !== $db_version && $upgrade_approved != '1') {
 
     header("Location: notice.php?a=u");
     exit;
 
-} elseif ($_SESSION['system_db_version'] !== $software_version && $upgrade_approved == '1') {
+} elseif ($_SESSION['system_db_version'] !== $db_version && $upgrade_approved == '1') {
 
     include(DIR_INC . "update.inc.php");
     $_SESSION['is_upgrading'] = '1';
