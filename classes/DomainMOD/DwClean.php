@@ -172,9 +172,10 @@ class DwClean
         foreach ($type_order as $key) {
 
             $sql = "UPDATE dw_dns_records
-                    SET new_order = '" . $new_order++ . "'
+                    SET new_order = '" . $new_order . "'
                     WHERE type = '" . $key . "'";
             mysqli_query($connection, $sql);
+            $new_order++;
 
         }
 
