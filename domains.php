@@ -19,7 +19,7 @@
  *
  */
 ?>
-<?php
+<?php //@formatter:off
 include("_includes/start-session.inc.php");
 include("_includes/init.inc.php");
 
@@ -2130,7 +2130,6 @@ if ($segid != "") {
             <tr class="main_table_row_heading_active">
                 <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
-                        <?php //@formatter:off ?>
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php
                         echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid;
                         ?>&raid=<?php echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld;
@@ -2142,12 +2141,10 @@ if ($segid != "") {
                             echo "ed_a";
                         }
                         ?>&from_dropdown=1"><div class="main_table_heading">Expiry Date</div></a>
-                        <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
-                        <?php //@formatter:off ?>
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php
                         echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid;
                         ?>&raid=<?php echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld;
@@ -2159,11 +2156,9 @@ if ($segid != "") {
                             echo "df_a";
                         }
                         ?>&from_dropdown=1"><div class="main_table_heading">Fee</div></a>
-                        <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
                 <td class="main_table_cell_heading_active">
-                    <?php //@formatter:off ?>
                     <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                     ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
                     echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php
@@ -2173,11 +2168,9 @@ if ($segid != "") {
                     } else {
                         echo "dn_a";
                     } ?>&from_dropdown=1"><div class="main_table_heading">Domain Name</div></a>
-                    <?php //@formatter:on ?>
                 </td>
                 <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
-                        <?php //@formatter:off ?>
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
                         echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo
@@ -2187,12 +2180,10 @@ if ($segid != "") {
                         } else {
                             echo "tld_a";
                         } ?>&from_dropdown=1"><div class="main_table_heading">TLD</div></a>
-                        <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
-                        <?php //@formatter:off ?>
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
                         echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php
@@ -2202,12 +2193,10 @@ if ($segid != "") {
                         } else {
                             echo "r_a";
                         } ?>&from_dropdown=1"><div class="main_table_heading">Registrar</div></a>
-                        <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_domain_account'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
-                        <?php //@formatter:off ?>
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
                         echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php
@@ -2217,12 +2206,10 @@ if ($segid != "") {
                         } else {
                             echo "ra_a";
                         } ?>&from_dropdown=1"><div class="main_table_heading">Registrar Account</div></a>
-                        <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
-                        <?php //@formatter:off ?>
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
                         echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php
@@ -2232,12 +2219,10 @@ if ($segid != "") {
                         } else {
                             echo "dns_a";
                         } ?>&from_dropdown=1"><div class="main_table_heading">DNS Profile</div></a>
-                        <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
-                        <?php //@formatter:off ?>
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
                         echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo
@@ -2247,12 +2232,10 @@ if ($segid != "") {
                         } else {
                             echo "ip_a";
                         } ?>&from_dropdown=1"><div class="main_table_heading">IP Address</div></a>
-                        <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_domain_host'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
-                        <?php //@formatter:off ?>
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
                         echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php
@@ -2262,12 +2245,10 @@ if ($segid != "") {
                         } else {
                             echo "wh_a";
                         } ?>&from_dropdown=1"><div class="main_table_heading">Web Host</div></a>
-                        <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_domain_category'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
-                        <?php //@formatter:off ?>
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
                         echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php
@@ -2277,12 +2258,10 @@ if ($segid != "") {
                         } else {
                             echo "pc_a";
                         } ?>&from_dropdown=1"><div class="main_table_heading">Category</div></a>
-                        <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
                 <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
-                        <?php //@formatter:off ?>
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
                         echo $raid; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php
@@ -2292,7 +2271,6 @@ if ($segid != "") {
                         } else {
                             echo "o_a";
                         } ?>&from_dropdown=1"><div class="main_table_heading">Owner</div></a>
-                        <?php //@formatter:on ?>
                     </td>
                 <?php } ?>
             </tr>
@@ -2404,6 +2382,6 @@ if ($segid != "") {
 <?php } else { ?>
     <BR><BR>Your search returned zero results.
 <?php } ?>
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php");  //@formatter:on ?>
 </body>
 </html>
