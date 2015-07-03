@@ -23,8 +23,8 @@
 namespace DomainMOD;
 
 class DwClean
-{ //@formatter:off
-
+{
+//@formatter:off
     public function all($connection)
     {
         $this->prep($connection);

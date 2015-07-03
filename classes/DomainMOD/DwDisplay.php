@@ -23,8 +23,8 @@
 namespace DomainMOD;
 
 class DwDisplay
-{ //@formatter:off
-
+{
+//@formatter:off
     public function account($connection, $server_id, $domain, $show_sidebar, $show_heading, $show_url)
     { 
         $result_account = $this->getAccount($connection, $server_id, $domain);

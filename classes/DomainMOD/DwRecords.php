@@ -23,8 +23,8 @@
 namespace DomainMOD;
 
 class DwRecords
-{ //@formatter:off
-
+{
+//@formatter:off
     public function createTable($connection)
     {
 
