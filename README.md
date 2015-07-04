@@ -71,10 +71,6 @@ Individual Cron Jobs
 
     Cron job: /cron/dw.php
 
-4. The forth cron job will fix various domain fee related issues.
-
-    Cron job: /cron/fixfees.php
-
 
 ## Data Warehouse
 
