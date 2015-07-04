@@ -47,7 +47,6 @@ class Maintenance
                 WHERE id NOT IN (
                                  SELECT fee_id
                                  FROM " . $compare_table . "
-                                 WHERE active NOT IN ('0', '10')
                                  )";
         mysqli_query($connection, $sql);
 
