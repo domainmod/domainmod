@@ -56,22 +56,23 @@ class Maintenance
 
     }
 
+    public function getTld($domain)
+    {
+        return preg_replace("/^((.*?)\.)(.*)$/", "\\3", $domain);
+    }
+
     public function updateTlds($connection)
     {
-        $sql = "SELECT id, domain
-                FROM domains
-                WHERE active NOT IN ('0', '10')
-                ORDER BY domain ASC";
+        $sql = "SELECT id, domain FROM domains";
         $result = mysqli_query($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
-            $tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $row->domain);
+            $tld = $this->getTld($row->domain);
             $sql_update = "UPDATE domains
                            SET tld = '" . $tld . "'
                            WHERE id = '" . $row->id . "'";
             mysqli_query($connection, $sql_update);
         }
-
         return 'Updated TLDs<BR>';
     }
 
@@ -120,8 +121,7 @@ class Maintenance
 
         $sql = "UPDATE domains
                 SET fee_fixed = '0',
-                    fee_id = '0'
-                WHERE active NOT IN ('0', '10')";
+                    fee_id = '0'";
         mysqli_query($connection, $sql);
 
         $sql = "UPDATE fees
@@ -140,8 +140,7 @@ class Maintenance
                      SET fee_id = '" . $row->id . "'
                      WHERE registrar_id = '" . $row->registrar_id . "'
                        AND tld = '" . $row->tld . "'
-                       AND fee_fixed = '0'
-                       AND active NOT IN ('0', '10')";
+                       AND fee_fixed = '0'";
             mysqli_query($connection, $sql2);
 
             $sql2 = "UPDATE domains d
@@ -150,8 +149,7 @@ class Maintenance
                          d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
                      WHERE d.registrar_id = '" . $row->registrar_id . "'
                        AND d.tld = '" . $row->tld . "'
-                       AND d.privacy = '1'
-                       AND d.active NOT IN ('0', '10')";
+                       AND d.privacy = '1'";
             mysqli_query($connection, $sql2);
 
             $sql2 = "UPDATE domains d
@@ -160,8 +158,7 @@ class Maintenance
                          d.total_cost = f.renewal_fee + f.misc_fee
                      WHERE d.registrar_id = '" . $row->registrar_id . "'
                        AND d.tld = '" . $row->tld . "'
-                       AND d.privacy = '0'
-                       AND d.active NOT IN ('0', '10')";
+                       AND d.privacy = '0'";
             mysqli_query($connection, $sql2);
 
             $sql2 = "UPDATE fees
@@ -214,8 +211,7 @@ class Maintenance
                      SET sslc.fee_fixed = '1',
                          sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
                      WHERE sslc.ssl_provider_id = '" . $row->ssl_provider_id . "'
-                       AND sslc.type_id = '" . $row->type_id . "'
-                       AND sslc.active NOT IN ('0', '10')";
+                       AND sslc.type_id = '" . $row->type_id . "'";
             mysqli_query($connection, $sql2);
 
             $sql2 = "UPDATE ssl_fees
