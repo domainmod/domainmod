@@ -63,10 +63,6 @@ To run all current and future cron jobs, simply execute this one cron job instea
 
 Individual Cron Jobs
 
-1. The first cron job will update the conversion rates for all active currencies.
-
-    Cron job: /cron/currencies.php
-
 2. The second cron job will send out an email reminder about Domains and SSL Certificates that are coming up for renewal (to all active, subscribed users).
 
     Cron job: /cron/expirations.php
