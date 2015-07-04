@@ -52,7 +52,15 @@ $software_section = "admin-dw-rebuild";
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <div class="subheadline"><?php echo $page_subtitle; ?></div>
 <?php
-$result_message = $dw->build($connection);
+if ($demo_install !== '1') {
+
+    $result_message = $dw->build($connection);
+
+} else {
+
+    $result_message = "Data Warehouse Rebuilt.";
+
+}
 
 if ($result_message !== false) {
 
