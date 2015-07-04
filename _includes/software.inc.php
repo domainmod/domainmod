@@ -21,7 +21,6 @@
 ?>
 <?php
 $software_title = 'DomainMOD';
-$software_title_slug = 'domainmod';
 $reporting_section_title = 'Reporting';
 $site_width = '96%';
 $site_width_login = '550';
