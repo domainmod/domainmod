@@ -24,7 +24,7 @@
     [ <a href="<?php echo $web_root; ?>/segments.php">Segments</a> ]&nbsp;
     [ <a href="<?php echo $web_root; ?>/bulk.php">Bulk Updater</a> ]&nbsp;
     <BR><BR>
-    [ <a href="<?php echo $web_root; ?>/assets/">Assets</a> ]&nbsp;
+    [ <a href="<?php echo $web_root; ?>/assets/">Asset Management</a> ]&nbsp;
     [ <a href="<?php echo $web_root; ?>/reporting/">Reporting</a> ]&nbsp;
 <?php if ($_SESSION['is_admin'] === 1) { ?>
     [ <a href="<?php echo $web_root; ?>/admin/dw/">Data Warehouse</a> ]&nbsp;
