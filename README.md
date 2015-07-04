@@ -63,11 +63,11 @@ To run all current and future cron jobs, simply execute this one cron job instea
 
 Individual Cron Jobs
 
-2. The second cron job will send out an email reminder about Domains and SSL Certificates that are coming up for renewal (to all active, subscribed users).
+1. The second cron job will send out an email reminder about Domains and SSL Certificates that are coming up for renewal (to all active, subscribed users).
 
     Cron job: /cron/expirations.php
 
-3. The third cron job will rebuild your Data Warehouse. If you're going to use the Data Warehouse it's highly recommended that you set this cron job up to automate your builds. There's a lot of work being done in the background during a build, and more often than not a web browser will timeout if you try to build through the UI instead of using the cron job, leading to incomplete and missing information in your Data Warehouse.
+2. The third cron job will rebuild your Data Warehouse. If you're going to use the Data Warehouse it's highly recommended that you set this cron job up to automate your builds. There's a lot of work being done in the background during a build, and more often than not a web browser will timeout if you try to build through the UI instead of using the cron job, leading to incomplete and missing information in your Data Warehouse.
 
     Cron job: /cron/dw.php
 
