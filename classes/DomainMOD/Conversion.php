@@ -62,14 +62,12 @@ class Conversion
                     FROM currencies AS c, fees AS f, domains AS d
                     WHERE c.id = f.currency_id
                       AND f.id = d.fee_id
-                      AND d.active NOT IN ('0', '10')
                     GROUP BY c.currency
                     UNION
                     SELECT c.id, c.currency
                     FROM currencies AS c, ssl_fees AS f, ssl_certs AS sslc
                     WHERE c.id = f.currency_id
                       AND f.id = sslc.fee_id
-                      AND sslc.active NOT IN ('0')
                     GROUP BY c.currency
                 ) AS temp
                 GROUP BY currency";
