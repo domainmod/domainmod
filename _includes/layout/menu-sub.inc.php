@@ -518,6 +518,13 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/settings/">Settings</a>&nbsp;
     &raquo;&nbsp;<strong>Change Password</strong>&nbsp;<?php
 
+} elseif ($software_section == "admin-system-task-scheduler") { ?>
+
+    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/settings/">Settings</a>&nbsp;
+    &raquo;&nbsp;
+    <div class="default_highlight">ADMIN</div>&nbsp;
+    &raquo;&nbsp;<strong>Task Scheduler</strong>&nbsp;<?php
+
 } elseif ($software_section == "admin-system-settings") { ?>
 
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/settings/">Settings</a>&nbsp;
