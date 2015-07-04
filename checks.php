@@ -84,9 +84,7 @@ if ($_SESSION['version_error'] != '1') {
 
         if ($_SESSION['is_admin'] === 1) {
 
-            $_SESSION['result_message'] .= "A new version of DomainMOD is available for download.
-                <a target=\"_blank\" href=\"http://domainmod.org/upgrade/\">Click here for upgrade instructions</a>.
-                <BR>";
+            $_SESSION['result_message'] .= $system->getUpgradeMessage();
 
         }
 
