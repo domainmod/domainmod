@@ -128,7 +128,11 @@ class Scheduler
 
     public function getDateOutput($next_run)
     {
-        if ($next_run == '0000-00-00 00:00:00') return 'n/a'; else return $next_run;
+        if ($next_run == '0000-00-00 00:00:00') {
+            return 'n/a';
+        } else {
+            return $next_run;
+        }
     }
 
     public function hourSelect($hour)
