@@ -72,6 +72,12 @@ class System
 
     }
 
+    public function getUpgradeMessage()
+    {
+        return "A new version of DomainMOD is available for download. <a target=\"_blank\"
+                href=\"http://domainmod.org/upgrade/\">Click here for upgrade instructions</a>.<BR>";
+    }
+
     public function pageTitle($software_title, $page_title)
     {
 
