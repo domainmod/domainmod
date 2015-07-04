@@ -115,7 +115,7 @@ class DwDisplay
         $result = '';
         
         if ($show_url == '1') {
-            $result = "[<a class=\"covert_link\"
+            $result = "[<a class=\"invisiblelink\"
                 href=\"" . $url . "?domain=" . $domain . "\">" . $text . "</a>]";
         }
         return $result;
