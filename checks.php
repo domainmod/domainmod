@@ -65,7 +65,7 @@ if ($_SESSION['system_db_version'] !== $db_version && $upgrade_approved != '1') 
 }
 
 // Check GitHub to see if a newer version is available
-$system->checkVersion($software_version);
+$system->checkVersion($connection, $software_version);
 
 // Check for existing Domain and SSL assets
 $system->checkExistingAssets($connection);
@@ -80,7 +80,7 @@ $_SESSION['last_login'] = $time->time();
 
 if ($_SESSION['version_error'] != '1') {
 
-    if ($_SESSION['system_new_version'] == '1') {
+    if ($_SESSION['system_upgrade_available'] == '1') {
 
         if ($_SESSION['is_admin'] === 1) {
 

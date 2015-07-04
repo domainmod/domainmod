@@ -62,10 +62,9 @@ if ($current_db_version < $db_version) {
 
     $_SESSION['system_db_version'] = $current_db_version;
 
-    $_SESSION['system_upgrade_available'] = "0";
+    $_SESSION['system_upgrade_available'] = '0';
 
-    $sql = "UPDATE settings
-            SET upgrade_available = '0'";
+    $sql = "UPDATE settings SET upgrade_available = '0'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $_SESSION['result_message'] .= "Your Database Has Been Updated<BR>";
