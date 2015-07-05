@@ -54,7 +54,7 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-The Task Scheduler allows you to run various system tasks at a specified time, which help keep your <?php echo
+The Task Scheduler allows you to run various system tasks at a specified time, which helps keep your <?php echo
 $software_title; ?> installation up-to-date and running smoothly, as well as notify you of important information,
 such as sending an email to let you know of upcoming Domain & SSL Certificate expirations.<BR>
 <BR>
