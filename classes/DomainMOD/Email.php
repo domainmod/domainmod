@@ -116,7 +116,7 @@ class Email
                         WHERE active NOT IN ('0', '10')
                           AND expiry_date <= '" . $date . "'
                         ORDER BY expiry_date, domain";
-        $domains_expiring = $system->checkForRows($connection, $sql_domains);
+        $domains_expiring = $system->checkForRowsResult($connection, $sql_domains);
 
         $sql_ssl = "SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
                     FROM ssl_certs AS sslc, ssl_cert_types AS sslt
@@ -124,7 +124,7 @@ class Email
                       AND sslc.active NOT IN ('0')
                       AND sslc.expiry_date <= '" . $date . "'
                     ORDER BY sslc.expiry_date, sslc.name";
-        $ssl_expiring = $system->checkForRows($connection, $sql_ssl);
+        $ssl_expiring = $system->checkForRowsResult($connection, $sql_ssl);
 
         if ($domains_expiring != '0' || $ssl_expiring != '0') {
             return array($domains_expiring, $ssl_expiring);
