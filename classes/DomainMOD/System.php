@@ -123,6 +123,16 @@ class System
     {
         $result = mysqli_query($connection, $sql);
         if (mysqli_num_rows($result) >= 1) {
+            return '1';
+        } else {
+            return '0';
+        }
+    }
+
+    public function checkForRowsResult($connection, $sql)
+    {
+        $result = mysqli_query($connection, $sql);
+        if (mysqli_num_rows($result) >= 1) {
             return $result;
         } else {
             return '0';
