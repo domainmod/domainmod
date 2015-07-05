@@ -1,6 +1,6 @@
 <?php
 /**
- * /admin/defaults.php
+ * /admin/defaults/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/init.inc.php");
+include("../../_includes/start-session.inc.php");
+include("../../_includes/init.inc.php");
 
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $_SESSION['system_default_ssl_type'] = $new_default_ssl_type;
     $_SESSION['system_default_ssl_provider'] = $new_default_ssl_provider;
 
-    header("Location: ../settings/index.php");
+    header("Location: ../index.php");
     exit;
 
 }

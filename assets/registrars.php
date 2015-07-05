@@ -393,7 +393,7 @@ $has_active = "1"; ?>
 
     if ($_SESSION['display_inactive_assets'] != "1") { //@formatter:off ?>
         <BR><em>Inactive Registrars are currently not displayed. <a class="invisiblelink"
-            href="../settings/display.php">Click here to display them</a>.</em><BR><?php
+            href="../settings/display/">Click here to display them</a>.</em><BR><?php
     } //@formatter:on
 
     if ($has_active || $has_inactive) { ?>

@@ -370,7 +370,7 @@ $has_active = "1"; ?>
 
     if ($_SESSION['display_inactive_assets'] != "1") { ?>
         <BR><em>Inactive Profiles are currently not displayed. <a class="invisiblelink"
-            href="../settings/display.php">Click here to display them</a>.</em><BR><?php
+            href="../settings/display/">Click here to display them</a>.</em><BR><?php
     }
 
     if ($has_active || $has_inactive) { ?>

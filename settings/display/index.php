@@ -1,6 +1,6 @@
 <?php
 /**
- * /settings/display.php
+ * /settings/display/index.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (C) 2010-2015 Greg Chetcuti <greg@chetcuti.com>
@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/init.inc.php");
+include("../../_includes/start-session.inc.php");
+include("../../_includes/init.inc.php");
 
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
     $_SESSION['display_inactive_assets'] = $new_display_inactive_assets;
     $_SESSION['display_dw_intro_page'] = $new_display_dw_intro_page;
 
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit;
 
 } else {

@@ -50,9 +50,9 @@ $software_section = "system";
 
 <div class="subheadline">User Menu</div>
 <BR>
-&raquo; <a href="display.php">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="email/">Email
-    Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="defaults.php">User Defaults</a><BR><BR>
-&raquo; <a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="password.php">Change
+&raquo; <a href="display/">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="email/">Email
+    Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="defaults/">User Defaults</a><BR><BR>
+&raquo; <a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="password/">Change
     Password</a><BR>
 <BR><BR>
 
@@ -66,14 +66,14 @@ if ($_SESSION['is_admin'] === 1) { //@formatter:off ?>
     <BR><BR>
     <div class="subheadline">Admin Menu</div><BR>
     &raquo; <a href="<?php echo $web_root; ?>/admin/system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;
-    <a href="<?php echo $web_root; ?>/admin/defaults.php">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+    <a href="<?php echo $web_root; ?>/admin/defaults/">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;
     <a href="<?php echo $web_root; ?>/admin/users.php">Users</a><BR>
     <BR>
     &raquo; <a href="<?php echo $web_root; ?>/admin/domain-fields.php">Custom Domain Fields</a>&nbsp;&nbsp;/&nbsp;&nbsp;
     <a href="<?php echo $web_root; ?>/admin/ssl-fields.php">Custom SSL Fields</a><BR><BR>
     &raquo; <a href="<?php echo $web_root; ?>/admin/scheduler/">Task Scheduler</a><BR><BR>
     &raquo; <a href="<?php echo $web_root; ?>/admin/dw/">Data Warehouse</a><BR><BR>
-    &raquo; <a href="<?php echo $web_root; ?>/admin/system-info.php">System Information</a><BR><?php
+    &raquo; <a href="<?php echo $web_root; ?>/admin/info/">System Information</a><BR><?php
 } //@formatter:on ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

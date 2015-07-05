@@ -103,7 +103,7 @@ if ($_SESSION['version_error'] != '1') {
     if ($_SESSION['is_new_password'] == 1) {
 
         $_SESSION['result_message'] .= "Your password should be changed for security purposes<BR>";
-        header("Location: settings/password.php");
+        header("Location: settings/password/");
         exit;
 
     }

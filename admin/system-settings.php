@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
     $_SESSION['result_message'] .= "The System Settings were updated<BR>";
 
-    header("Location: ../settings/index.php");
+    header("Location: index.php");
     exit;
 
 } else {
