@@ -26,6 +26,8 @@ include("../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
+require DIR_ROOT . 'vendor/autoload.php';
+
 $error = new DomainMOD\Error();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Timestamp();
@@ -745,6 +747,41 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
             `update_time` DATETIME NOT NULL,
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "CREATE TABLE IF NOT EXISTS `scheduler` (
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `slug` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `description` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `interval` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Daily',
+                `expression` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0 0 * * * *',
+                `last_run` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `last_duration` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+                `next_run` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `sort_order` INT(4) NOT NULL DEFAULT '1',
+                `is_running` INT(1) NOT NULL DEFAULT '0',
+                `active` INT(1) NOT NULL DEFAULT '1',
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                PRIMARY KEY  (`id`)
+             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "INSERT INTO scheduler
+            (`name`, description, slug, sort_order, is_running, active, insert_time)
+             VALUES
+            ('Send Expiration Email', 'Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations." . "<" . "BR>" . "<" . "BR>Users can subscribe via " . "<" . "a href=\'../../settings/email.php\'>Email Settings" . "<" . "/a>." . "<" . "BR>" . "<" . "BR>Administrators can set the FROM email address and the number of days in the future to display in the email via " . "<" . "a href=\'../system-settings.php\'>System Settings" . "<" . "/a>.', 'expiration-email', '20', '0', '1', '2015-07-02 18:06:03'),
+            ('Update Conversion Rates', 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date." . "<" . "BR>" . "<" . "BR>Users can set their default currency via " . "<" . "a href=\'../../settings/defaults.php\'>User Defaults" . "<" . "/a>." . "<" . "BR>" . "<" . "BR>Administrators can set the default system currency via " . "<" . "a href=\'../defaults.php\'>System Defaults" . "<" . "/a>.', 'update-conversion-rates', '40', '0', '1', '2015-07-02 18:06:03'),
+            ('System Cleanup', '" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running quickly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>TLDs:" . "<" . "/em> Makes sure that the TLD entries recorded in the database are accurate.', 'cleanup', '60', '0', '1', '2015-07-02 18:06:03'),
+            ('Check For New Version', 'Checks to see if there is a newer version of DomainMOD available to download." . "<" . "BR>" . "<" . "BR>You can view your current version on the " . "<" . "a href=\'../system-info.php\'>System Information" . "<" . "/a> page.', 'check-new-version', '80', '0', '1', '2015-07-02 18:06:01')";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $cron = \Cron\CronExpression::factory('0 0 * * * *');
+    $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
+
+    $sql = "UPDATE scheduler
+            SET next_run = '" . $next_run . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql_settings = "SELECT *
