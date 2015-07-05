@@ -27,37 +27,34 @@ class Timestamp
 
     public function time()
     {
-
-        return date("Y-m-d H:i:s", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));
-
+        return gmdate('Y-m-d H:i:s', mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));
     }
 
     public function timeLong()
     {
-
-        return date("l, F jS", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));
-
+        return gmdate('l, F jS', mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));
     }
 
     public function timeBasic()
     {
-
-        return date("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));
-
+        return gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));
     }
 
     public function timeBasicPlusDays($days)
     {
-
-        return date("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d") + $days, date("Y")));
-
+        return gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d") + $days, date("Y")));
     }
 
     public function timeBasicPlusYears($years)
     {
+        return gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y") + $years));
+    }
 
-        return date("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y") + $years));
-
+    public function toUserTimezone($input_time, $format = 'Y-m-d H:i:s')
+    {
+        $date = new \DateTime($input_time, new \DateTimeZone('UTC'));
+        $date->setTimezone(new \DateTimeZone($_SESSION['default_timezone']));
+        return $date->format($format);
     }
 
 }
