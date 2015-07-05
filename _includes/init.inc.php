@@ -22,3 +22,4 @@
 <?php
 define('DIR_ROOT', dirname(dirname(__FILE__)) . '/');
 define('DIR_INC', DIR_ROOT . '_includes/');
+date_default_timezone_set('UTC');
