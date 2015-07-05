@@ -72,7 +72,6 @@ if ($_SESSION['is_admin'] === 1) { //@formatter:off ?>
     &raquo; <a href="<?php echo $web_root; ?>/admin/domain-fields.php">Custom Domain Fields</a>&nbsp;&nbsp;/&nbsp;&nbsp;
     <a href="<?php echo $web_root; ?>/admin/ssl-fields.php">Custom SSL Fields</a><BR><BR>
     &raquo; <a href="<?php echo $web_root; ?>/admin/scheduler/">Task Scheduler</a><BR><BR>
-    &raquo; <a href="<?php echo $web_root; ?>/admin/maintenance.php">Perform System Maintenance</a><BR><BR>
     &raquo; <a href="<?php echo $web_root; ?>/admin/dw/">Data Warehouse</a><BR><BR>
     &raquo; <a href="<?php echo $web_root; ?>/admin/system-info.php">System Information</a><BR><?php
 } //@formatter:on ?>
