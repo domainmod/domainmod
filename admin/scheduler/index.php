@@ -54,17 +54,15 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 </head>
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-The Task Scheduler allows you to run various system tasks at a specified time, which helps keep your <?php echo
-$software_title; ?> installation up-to-date and running smoothly, as well as notify you of important information,
-such as sending an email to let you know of upcoming Domain & SSL Certificate expirations.<BR>
+The Task Scheduler allows you to run various system jobs at specified times, which helps keep your <?php
+echo $software_title; ?> installation up-to-date and running smoothly, as well as notifies you of important information,
+such as emailing you to let you know about upcoming Domain & SSL Certificate expirations.<BR>
 <BR>
-In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file cron.php,
-which is located in the root folder of your <?php echo $software_title; ?> installation. This file should be executed
-every 5 minutes, and once it's setup the tasks below will start to run.<BR>
+In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file
+<strong>cron.php</strong>, which is located in the root folder of your <?php echo $software_title; ?> installation.
+This file should be executed <em>every 10 minutes</em>, and once it's setup the Task Scheduler will be live.<BR>
 <BR>
-Using the Task Scheduler is optional but <em>highly</em> recommended. Depending on how much data you have in <?php
-echo $software_title; ?>, running the below jobs manually can take a while and may cause your web browser to timeout. In
-the case of a very large installation running cron.php may be required.
+Using the Task Scheduler is optional, but <em>highly</em> recommended.
 <BR><BR>
 <?php
 $dwdisplay = new DomainMOD\DwDisplay();
