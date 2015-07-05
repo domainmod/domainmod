@@ -45,6 +45,7 @@ if ($demo_install != '1') {
     $sql = "SELECT id, `name`, slug, expression, active
             FROM scheduler
             WHERE active = '1'
+              AND is_running = '0'
               AND next_run <= '" . $timestamp . "'";
     $result = mysqli_query($connection, $sql);
 
