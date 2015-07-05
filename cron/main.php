@@ -27,6 +27,5 @@ include(DIR_INC . "config-demo.inc.php");
 if ($demo_install != '1') {
 
     include("dw.php");
-    include("expirations.php");
 
 }
