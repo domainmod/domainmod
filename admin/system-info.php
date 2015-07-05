@@ -52,8 +52,8 @@ $software_section = "admin-system-info";
 <strong>Web Server:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>
 <strong>PHP:</strong> <?php echo phpversion(); ?><BR>
 <strong>MySQL:</strong> <?php echo mysqli_get_server_info($connection); ?><BR>
-<strong>Database Version:</strong> v<?php echo $_SESSION['system_db_version']; ?><BR>
-<strong>Software Version:</strong> v<?php echo $software_version; ?><BR>
+<strong><?php echo $software_title; ?>:</strong> <?php echo $software_version; ?> (<em><?php echo
+$_SESSION['system_db_version']; ?></em>)<BR>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>
