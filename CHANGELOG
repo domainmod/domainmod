@@ -1,5 +1,14 @@
 DomainMOD Changelog
 ===================
+v3.0.4    2015-07-04
+- Added a Task Scheduler for scheduling system jobs
+- Added Composer support files for vendor autoloading
+- Added PHP Cron Expression Parser library to process Task Scheduler dates and times
+- Integrated cron jobs into the Task Scheduler and merged all cron jobs into a single file
+- Updated maintenance tasks to cover more data
+- Renamed and changed the location of various files
+- Code cleanup and cosmetic changes
+
 v3.0.3    2015-07-02   6d85e7b6d9e78b435ab73f85868230f9fb374fe7
 - Completely re-wrote how the Data Warehouse processes and displays data
 - Added a system notice feature to display important information
