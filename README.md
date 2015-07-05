@@ -40,6 +40,16 @@ If you used git to retrieve the source code in the previous step, just change to
 If you have any problems during installation please see the Support section.
 
 
+## Cron Job Installation (Highly Recommended)
+DomainMOD includes a Task Scheduler that allows you to run various system jobs at specified times, which helps keep your DomainMOD installation up-to-date and running smoothly, as well as notifies you of important information, such as emailing you to let you know about upcoming Domain & SSL Certificate expirations.
+
+The Task Scheduler is very powerful, and it enables features that you otherwise wouldn't be able to use, but in order for it to function you need to schedule the below cron/scheduled job to run on your web server. Once this file is setup to run, the Task Scheduler will be live.
+
+NOTE: This file should be executed every 10 minutes.
+
+    Filename: /cron.php
+
+
 ## Upgrading
 WARNING: Before upgrading, it is strongly recommended that you make a backup of your DomainMOD installation directory and database. If something goes wrong during the upgrade there may be no recovering, and having a backup of your installation directory and database will allow you to easily restore your previous installation.
 
@@ -52,24 +62,6 @@ WARNING: Before upgrading, it is strongly recommended that you make a backup of 
         git pull  
     
     That's it! Upgrading with git is very easy, which is one of the reasons it's my recommended method for obtaining the DomainMOD source code.  
-
-
-## Cron Job Installation (Optional)
-DomainMOD includes multiple cron jobs to help keep things running smoothly. Although the cron jobs are optional, it's highly recommended that you use them, and that you trigger them to run overnight while you're asleep. This will ensure that DomainMOD has the freshest data possible when you start your day.
-
-To run all current and future cron jobs, simply execute this one cron job instead of the others below:
-
-    /cron/main.php
-
-Individual Cron Jobs
-
-1. The second cron job will send out an email reminder about Domains and SSL Certificates that are coming up for renewal (to all active, subscribed users).
-
-    Cron job: /cron/expirations.php
-
-2. The third cron job will rebuild your Data Warehouse. If you're going to use the Data Warehouse it's highly recommended that you set this cron job up to automate your builds. There's a lot of work being done in the background during a build, and more often than not a web browser will timeout if you try to build through the UI instead of using the cron job, leading to incomplete and missing information in your Data Warehouse.
-
-    Cron job: /cron/dw.php
 
 
 ## Data Warehouse
