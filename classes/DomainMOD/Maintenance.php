@@ -32,7 +32,7 @@ class Maintenance
         $_SESSION['result_message'] .= $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
         $_SESSION['result_message'] .= $this->updateTlds($connection);
         $_SESSION['result_message'] .= $this->updateSegments($connection);
-        $this->updateAllFees($connection);
+        $_SESSION['result_message'] .= $this->updateAllFees($connection);
 
         $result_message = 'Maintenance Completed<BR>';
 
@@ -109,7 +109,7 @@ class Maintenance
         $this->updateDomainFees($connection);
         $this->updateSslFees($connection);
 
-        return true;
+        return 'Updated Fees<BR>';
 
     }
 

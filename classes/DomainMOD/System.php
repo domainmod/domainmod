@@ -61,14 +61,16 @@ class System
             mysqli_query($connection, $sql);
 
             $_SESSION['system_upgrade_available'] = '1';
+            $message = $this->getUpgradeMessage();
 
         } else {
 
             $_SESSION['system_upgrade_available'] = '0';
+            $message = "No Upgrade Available";
 
         }
 
-        return;
+        return $message;
 
     }
 

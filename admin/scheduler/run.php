@@ -73,7 +73,7 @@ if ($demo_install != '1') {
             $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 
-            $_SESSION['result_message'] .= "System Cleanup Performed";
+            $_SESSION['result_message'] = "System Cleanup Performed";
 
         } elseif ($row->slug == 'expiration-email') {
 
@@ -107,7 +107,7 @@ if ($demo_install != '1') {
             $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 
-            $_SESSION['result_message'] .= $system->getUpgradeMessage();
+            $_SESSION['result_message'] .= "No Upgrade Available";
 
         }
 
