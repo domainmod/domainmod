@@ -25,6 +25,48 @@ namespace DomainMOD;
 class Email
 {
 
+    public function showDomains($result_domains, $full_url, $timestamp_basic)
+    {
+        ob_start();
+        if ($result_domains != '0') { ?>
+            <strong><u>Domains</u></strong><BR><?php
+            while ($row_domains = mysqli_fetch_object($result_domains)) {
+                if ($row_domains->expiry_date < $timestamp_basic) { ?>
+                    <font color="#CC0000"><?php echo $row_domains->expiry_date; ?></font>&nbsp;&nbsp;<a
+                            href="<?php echo $full_url; ?>/edit/domain.php?did=<?php echo $row_domains->id;
+                    ?>"><?php echo $row_domains->domain; ?></a>&nbsp;&nbsp;<font
+                        color="#CC0000">*EXPIRED*</font><BR><?php
+                } else { ?>
+                    <?php echo $row_domains->expiry_date; ?>&nbsp;&nbsp;<a href="<?php echo $full_url;
+                    ?>/edit/domain.php?did=<?php echo $row_domains->id; ?>"><?php echo $row_domains->domain;
+                        ?></a><BR><?php
+                }
+            }
+        }
+        return ob_get_clean();
+    }
+
+    public function showSsl($result_ssl, $full_url, $timestamp_basic)
+    {
+        ob_start();
+        if ($result_ssl != '0') { ?>
+            <BR><strong><u>SSL Certificates</u></strong><BR><?php
+            while ($row_ssl = mysqli_fetch_object($result_ssl)) {
+                if ($row_ssl->expiry_date < $timestamp_basic) { ?>
+                    <font color="#CC0000"><?php echo $row_ssl->expiry_date; ?></font>&nbsp;&nbsp;<a
+                    href="<?php echo $full_url; ?>/edit/ssl-cert.php?sslcid=<?php echo $row_ssl->id;
+                    ?>"><?php echo $row_ssl->name; ?> (<?php echo $row_ssl->type; ?>)</a>&nbsp;&nbsp;<font
+                    color="#CC0000">*EXPIRED*</font><BR><?php
+                } else { ?>
+                    <?php echo $row_ssl->expiry_date; ?>&nbsp;&nbsp;<a href="<?php echo $full_url;
+                    ?>/edit/ssl-cert.php?sslcid=<?php echo $row_ssl->id; ?>"><?php echo $row_ssl->name; ?>
+                        (<?php echo $row_ssl->type; ?>)</a><BR><?php
+                }
+            }
+        }
+        return ob_get_clean();
+    }
+
     public function sendExpirations($connection, $software_title)
     {
         $time = new Timestamp();
@@ -39,34 +81,8 @@ class Email
         while ($row_recipients = mysqli_fetch_object($send_to)) {
             $message = '';
             $message .= $this->messageTop($software_title, $full_url, $subject, $number_of_days);
-
-            if ($result_domains != '0') {
-                $message .= "<strong><u>Domains</u></strong><BR>";
-                while ($row_domains = mysqli_fetch_object($result_domains)) {
-                    if ($row_domains->expiry_date < $timestamp_basic) {
-                        $message .= "<font color=\"#CC0000\">" . $row_domains->expiry_date . "</font>&nbsp;&nbsp;<a
-                            href=\"" . $full_url . "/edit/domain.php?did=" . $row_domains->id . "\">" .
-                            $row_domains->domain . "</a>&nbsp;&nbsp;<font color=\"#CC0000\">*EXPIRED*</font><BR>";
-                    } else {
-                        $message .= $row_domains->expiry_date . "&nbsp;&nbsp;<a href=\"" . $full_url .
-                            "/edit/domain.php?did=" . $row_domains->id . "\">" . $row_domains->domain . "</a><BR>";
-                    }
-                }
-            }
-            if ($result_ssl != '0') {
-                $message .= "<BR><strong><u>SSL Certificates</u></strong><BR>";
-                while ($row_ssl = mysqli_fetch_object($result_ssl)) {
-                    if ($row_ssl->expiry_date < $timestamp_basic) {
-                        $message .= "<font color=\"#CC0000\">" . $row_ssl->expiry_date . "</font>&nbsp;&nbsp;<a
-                            href=\"" . $full_url . "/edit/ssl-cert.php?sslcid=" . $row_ssl->id . "\">" . $row_ssl->name
-                            . " (" . $row_ssl->type . ")</a>&nbsp;&nbsp;<font color=\"#CC0000\">*EXPIRED*</font><BR>";
-                    } else {
-                        $message .= "" . $row_ssl->expiry_date . "&nbsp;&nbsp;<a href=\"" . $full_url .
-                            "/edit/ssl-cert.php?sslcid=" . $row_ssl->id . "\">" . $row_ssl->name . " (" .
-                            $row_ssl->type . ")</a><BR>";
-                    }
-                }
-            }
+            $message .= $this->showDomains($result_domains, $full_url, $timestamp_basic);
+            $message .= $this->showSsl($result_ssl, $full_url, $timestamp_basic);
             $message .= $this->messageBottom($software_title, $full_url);
             $full_to = "\"$row_recipients->first_name $row_recipients->last_name\" <$row_recipients->email_address>";
             mail($full_to, $subject, $message, $headers, "-f $from_address");
@@ -78,6 +94,9 @@ class Email
     {
         $sql = "SELECT full_url, email_address, expiration_email_days FROM settings";
         $result = mysqli_query($connection, $sql);
+        $url = '';
+        $email = '';
+        $days = '';
         while ($row = mysqli_fetch_object($result)) {
             $url = $row->full_url;
             $email = $row->email_address;
