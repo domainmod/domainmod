@@ -56,11 +56,6 @@ class Maintenance
 
     }
 
-    public function getTld($domain)
-    {
-        return preg_replace("/^((.*?)\.)(.*)$/", "\\3", $domain);
-    }
-
     public function updateTlds($connection)
     {
         $sql = "SELECT id, domain FROM domains";
@@ -74,6 +69,11 @@ class Maintenance
             mysqli_query($connection, $sql_update);
         }
         return 'Updated TLDs<BR>';
+    }
+
+    public function getTld($domain)
+    {
+        return preg_replace("/^((.*?)\.)(.*)$/", "\\3", $domain);
     }
 
     public function updateSegments($connection)
