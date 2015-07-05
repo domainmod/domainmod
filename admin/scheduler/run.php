@@ -75,8 +75,9 @@ while ($row = mysqli_fetch_object($result)) {
 
     } elseif ($row->slug == 'expiration-email') {
 
+        $email = new DomainMOD\Email();
         $schedule->isRunning($connection, $row->id);
-        $test->sendExpirations($connection, $software_title);
+        $email->sendExpirations($connection, $software_title);
         $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
         $schedule->isFinished($connection, $row->id);
 
