@@ -46,68 +46,76 @@ $system->checkAdminUser($_SESSION['is_admin'], $web_root);
 
 $id = $_GET['id'];
 
-$sql = "SELECT id, slug, expression, next_run, active
-        FROM scheduler
-        WHERE id = '" . $id . "'";
-$result = mysqli_query($connection, $sql);
+if ($demo_install != '1') {
 
-while ($row = mysqli_fetch_object($result)) {
+    $sql = "SELECT id, slug, expression, next_run, active
+            FROM scheduler
+            WHERE id = '" . $id . "'";
+    $result = mysqli_query($connection, $sql);
 
-    if ($row->active == '1') {
+    while ($row = mysqli_fetch_object($result)) {
 
-        $cron = \Cron\CronExpression::factory($row->expression);
-        $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
+        if ($row->active == '1') {
 
-    } else {
+            $cron = \Cron\CronExpression::factory($row->expression);
+            $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
-        $next_run = '0000-00-00 00:00:00';
+        } else {
 
-    }
+            $next_run = '0000-00-00 00:00:00';
 
-    if ($row->slug == 'cleanup') {
-
-        $schedule->isRunning($connection, $row->id);
-        $maint->performCleanup($connection);
-        $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
-        $schedule->isFinished($connection, $row->id);
-
-        $_SESSION['result_message'] .= "System Cleanup Performed";
-
-    } elseif ($row->slug == 'expiration-email') {
-
-        $email = new DomainMOD\Email();
-        $schedule->isRunning($connection, $row->id);
-        $email->sendExpirations($connection, $software_title);
-        $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
-        $schedule->isFinished($connection, $row->id);
-
-        $_SESSION['result_message'] .= "Expiration Email Sent";
-
-    } elseif ($row->slug == 'update-conversion-rates') {
-
-        $schedule->isRunning($connection, $row->id);
-        $sql_currency = "SELECT user_id, default_currency
-                         FROM user_settings";
-        $result_currency = mysqli_query($connection, $sql_currency);
-
-        while ($row_currency = mysqli_fetch_object($result_currency)) {
-            $conversion->updateRates($connection, $row_currency->default_currency, $row_currency->user_id);
         }
-        $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
-        $schedule->isFinished($connection, $row->id);
 
-        $_SESSION['result_message'] .= "Conversion Rates Updated";
+        if ($row->slug == 'cleanup') {
 
-    } elseif ($row->slug == 'check-new-version') {
+            $schedule->isRunning($connection, $row->id);
+            $maint->performCleanup($connection);
+            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
+            $schedule->isFinished($connection, $row->id);
 
-        $schedule->isRunning($connection, $row->id);
-        $system->checkVersion($connection, $software_version);
-        $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
-        $schedule->isFinished($connection, $row->id);
+            $_SESSION['result_message'] .= "System Cleanup Performed";
 
-        $_SESSION['result_message'] .= $system->getUpgradeMessage();
+        } elseif ($row->slug == 'expiration-email') {
+
+            $email = new DomainMOD\Email();
+            $schedule->isRunning($connection, $row->id);
+            $email->sendExpirations($connection, $software_title);
+            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
+            $schedule->isFinished($connection, $row->id);
+
+            $_SESSION['result_message'] .= "Expiration Email Sent";
+
+        } elseif ($row->slug == 'update-conversion-rates') {
+
+            $schedule->isRunning($connection, $row->id);
+            $sql_currency = "SELECT user_id, default_currency
+                             FROM user_settings";
+            $result_currency = mysqli_query($connection, $sql_currency);
+
+            while ($row_currency = mysqli_fetch_object($result_currency)) {
+                $conversion->updateRates($connection, $row_currency->default_currency, $row_currency->user_id);
+            }
+            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
+            $schedule->isFinished($connection, $row->id);
+
+            $_SESSION['result_message'] .= "Conversion Rates Updated";
+
+        } elseif ($row->slug == 'check-new-version') {
+
+            $schedule->isRunning($connection, $row->id);
+            $system->checkVersion($connection, $software_version);
+            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
+            $schedule->isFinished($connection, $row->id);
+
+            $_SESSION['result_message'] .= $system->getUpgradeMessage();
+
+        }
 
     }
+
+} else {
+
+    $_SESSION['result_message'] .= "Task Run";
 
 }
 
