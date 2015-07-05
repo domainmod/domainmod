@@ -38,7 +38,7 @@ $system->authCheck();
 $system->checkAdminUser($_SESSION['is_admin'], $web_root);
 
 // Perform System Maintenance
-$_SESSION['result_message'] .= $maint->performMaintenance($connection);
+$_SESSION['result_message'] .= $maint->performCleanup($connection);
 
 // Redirect to Settings after performing maintenance
 header("Location: ../settings/index.php");

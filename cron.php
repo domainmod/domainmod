@@ -60,7 +60,7 @@ if ($demo_install != '1') {
         if ($row->slug == 'cleanup') {
 
             $schedule->isRunning($connection, $row->id);
-            $maint->performMaintenance($connection);
+            $maint->performCleanup($connection);
             $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 

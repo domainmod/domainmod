@@ -25,7 +25,7 @@ namespace DomainMOD;
 class Maintenance
 {
 
-    public function performMaintenance($connection)
+    public function performCleanup($connection)
     {
 
         $this->deleteUnusedFees($connection, 'fees', 'domains');
