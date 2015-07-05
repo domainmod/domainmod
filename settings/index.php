@@ -50,7 +50,7 @@ $software_section = "system";
 
 <div class="subheadline">User Menu</div>
 <BR>
-&raquo; <a href="display.php">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="email.php">Email
+&raquo; <a href="display.php">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="email/">Email
     Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="defaults.php">User Defaults</a><BR><BR>
 &raquo; <a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="password.php">Change
     Password</a><BR>
