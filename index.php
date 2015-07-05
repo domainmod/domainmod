@@ -80,8 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
     if ($login_succeeded == '1') {
 
-        $current_date = date("Y-m-d", strtotime($time->timeBasic()));
-
         $result = $login->getUserInfo($connection, $new_username, $new_password);
 
         while ($row = mysqli_fetch_object($result)) {
@@ -95,7 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
             $_SESSION['number_of_logins'] = $row->number_of_logins;
             if ($row->admin == 1) $_SESSION['is_admin'] = 1;
             $_SESSION['is_logged_in'] = 1;
-            $last_login_date = date("Y-m-d", strtotime($row->last_login));
 
         }
 
