@@ -113,9 +113,9 @@ if ($export_data == "1") {
                 $row->default_currency,
                 $row->default_timezone,
                 $row->number_of_logins,
-                $row->last_login,
-                $row->insert_time,
-                $row->update_time
+                $time->toUserTimezone($row->last_login),
+                $time->toUserTimezone($row->insert_time),
+                $time->toUserTimezone($row->update_time)
             );
             $export->writeRow($export_file, $row_contents);
 
@@ -154,9 +154,9 @@ if ($export_data == "1") {
                 $row->default_currency,
                 $row->default_timezone,
                 $row->number_of_logins,
-                $row->last_login,
-                $row->insert_time,
-                $row->update_time
+                $time->toUserTimezone($row->last_login),
+                $time->toUserTimezone($row->insert_time),
+                $time->toUserTimezone($row->update_time)
             );
             $export->writeRow($export_file, $row_contents);
 

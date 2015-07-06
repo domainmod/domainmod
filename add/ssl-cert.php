@@ -274,7 +274,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <input name="new_expiry_date" type="text" size="10" maxlength="10" value="<?php if ($new_expiry_date != "") {
         echo $new_expiry_date;
     } else {
-        echo $timestamp_basic_plus_one_year;
+        echo $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
     } ?>">
     <BR><BR>
     <strong>Domain</strong><BR><BR>

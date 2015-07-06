@@ -91,9 +91,9 @@ if ($export_data == "1") {
                 $row->dw_accounts,
                 $row->dw_dns_zones,
                 $row->dw_dns_records,
-                $row->build_end_time,
-                $row->insert_time,
-                $row->update_time
+                $time->toUserTimezone($row->build_end_time),
+                $time->toUserTimezone($row->insert_time),
+                $time->toUserTimezone($row->update_time)
             );
             $export->writeRow($export_file, $row_contents);
 
@@ -167,7 +167,7 @@ if (mysqli_num_rows($result) > 0) { ?>
         <td class="main_table_cell_active">
             <?php if ($row->update_time == "0000-00-00 00:00:00") $row->update_time = "-"; ?>
             <a class="invisiblelink"
-               href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->update_time; ?></a>
+               href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $time->toUserTimezone($row->update_time); ?></a>
         </td>
         </tr><?php
 

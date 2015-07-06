@@ -236,8 +236,8 @@ if ($export_data == "1") {
         $row_contents[$count++] = $row->cat_name;
         $row_contents[$count++] = $row->owner_name;
         $row_contents[$count++] = $row->notes;
-        $row_contents[$count++] = $row->insert_time;
-        $row_contents[$count++] = $row->update_time;
+        $row_contents[$count++] = $time->toUserTimezone($row->insert_time);
+        $row_contents[$count++] = $time->toUserTimezone($row->update_time);
         $row_contents[$count++] = '';
 
         $sslfd_columns_array = $customField->getCustomFields($connection, 'ssl_cert_fields');
@@ -273,13 +273,13 @@ if ($export_data == "1") {
 <form name="export_ssl_certs_form" method="post">
     <a href="renewals.php?all=1">View All</a> or Expiring Between
     <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") {
-        echo "value=\"" . $time->timeBasic() . "\"";
+        echo "value=\"" . $time->toUserTimezone($time->timeBasic()) . "\"";
     } else {
         echo "value=\"$new_start_date\"";
     } ?>>
     and
     <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") {
-        echo "value=\"" . $time->timeBasic() . "\"";
+        echo "value=\"" . $time->toUserTimezone($time->timeBasic()) . "\"";
     } else {
         echo "value=\"$new_end_date\"";
     } ?>>

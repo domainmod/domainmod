@@ -72,6 +72,7 @@ class Scheduler
 
     public function show($connection, $id)
     {
+        $time = new Timestamp();
         $row = mysqli_fetch_object($this->getTask($connection, $id));
         $hour = explode(" ", $row->expression);
         ob_start(); ?>
@@ -83,16 +84,28 @@ class Scheduler
         <td class='main_table_cell_active_top_aligned'>
             <strong>Runs:</strong> <?php echo $row->interval; ?><BR>
             <strong>Status:</strong> <?php echo $this->createActive($row->active, $row->id); ?><BR>
-            <?php $last_run = $this->getDateOutput($row->last_run); ?>
-            <strong>Last Run:</strong> <?php echo $last_run; ?><?php echo $row->last_duration; ?><BR>
-            <?php $next_run = $this->getDateOutput($row->next_run); ?>
+            <?php ?>
+            <?php if ($row->last_run != '0000-00-00 00:00:00') {
+                $last_run = $time->toUserTimezone($this->getDateOutput($row->last_run));
+            } else {
+                $last_run = 'n/a';
+
+            }?>
+            <strong>Last Run:</strong> <?php echo $last_run; ?><?php echo $row->last_duration; ?><BR><?php
+            if ($row->next_run != '0000-00-00 00:00:00') {
+                $next_run = $time->toUserTimezone($this->getDateOutput($row->next_run));
+                $hour = date('H', strtotime($next_run));
+            } else {
+                $next_run = 'n/a';
+
+            }?>
             <strong>Next Run:</strong> <?php echo $next_run; ?>
             <BR><BR>
             <?php if ($row->active == '1') { ?>
                 <form name="edit_task_form" method="post" action="<?php echo $_SESSION['web_root'];
                 ?>/admin/scheduler/update.php">
                     <select name="new_hour">
-                        <?php echo $this->hourSelect($hour[1]); ?>
+                        <?php echo $this->hourSelect($hour); ?>
                     </select>
                     <input type="hidden" name="a" value="u">
                     <input type="hidden" name="id" value="<?php echo $id; ?>">&nbsp;&nbsp;
@@ -137,8 +150,8 @@ class Scheduler
 
     public function hourSelect($hour)
     {
-        $hours = array('0'  => '00:00', '1' => '01:00', '2' => '02:00', '3' => '03:00', '4' => '04:00', '5' => '05:00',
-                       '6'  => '06:00', '7' => '07:00', '8' => '08:00', '9' => '09:00', '10' => '10:00',
+        $hours = array('00' => '00:00', '01' => '01:00', '02' => '02:00', '03' => '03:00', '04' => '04:00', '05' => '05:00',
+                       '06' => '06:00', '07' => '07:00', '08' => '08:00', '09' => '09:00', '10' => '10:00',
                        '11' => '11:00', '12' => '12:00', '13' => '13:00', '14' => '14:00', '15' => '15:00',
                        '16' => '16:00', '17' => '17:00', '18' => '18:00', '19' => '19:00', '20' => '20:00',
                        '21' => '21:00', '22' => '22:00', '23' => '23:00');

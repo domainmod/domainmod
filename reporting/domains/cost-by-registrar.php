@@ -259,13 +259,13 @@ if ($submission_failed != "1" && $total_rows > 0) {
 <form name="export_domains_form" method="post">
     <a href="cost-by-registrar.php?all=1">View All</a> or Expiring Between
     <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") {
-        echo "value=\"" . $time->timeBasic() . "\"";
+        echo "value=\"" . $time->toUserTimezone($time->timeBasic()) . "\"";
     } else {
         echo "value=\"$new_start_date\"";
     } ?>>
     and
     <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") {
-        echo "value=\"" . $time->timeBasic() . "\"";
+        echo "value=\"" . $time->toUserTimezone($time->timeBasic()) . "\"";
     } else {
         echo "value=\"$new_end_date\"";
     } ?>>

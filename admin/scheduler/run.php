@@ -84,8 +84,6 @@ if ($demo_install != '1') {
             $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 
-            $_SESSION['result_message'] .= "Expiration Email Sent";
-
         } elseif ($row->slug == 'update-conversion-rates') {
 
             $schedule->isRunning($connection, $row->id);

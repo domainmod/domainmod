@@ -216,7 +216,7 @@ if ($export_data == "1") {
                 $row_dw_account_temp->MAX_EMAIL_PER_HOUR,
                 $row_dw_account_temp->MAX_DEFER_FAIL_PERCENTAGE,
                 $row_dw_account_temp->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION,
-                $row_dw_account_temp->insert_time
+                $time->toUserTimezone($row_dw_account_temp->insert_time)
             );
             $export->writeRow($export_file, $row_contents);
 

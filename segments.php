@@ -182,8 +182,8 @@ if ($export_data == "1") {
                 $row_contents[$count++] = $row->number_of_domains;
             }
             $row_contents[$count++] = $row->notes;
-            $row_contents[$count++] = $row->insert_time;
-            $row_contents[$count++] = $row->update_time;
+            $row_contents[$count++] = $time->toUserTimezone($row->insert_time);
+            $row_contents[$count++] = $time->toUserTimezone($row->update_time);
             $export->writeRow($export_file, $row_contents);
 
         }

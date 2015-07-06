@@ -355,7 +355,7 @@ if ($no_results_build_info !== 1) { ?>
             } else {
 
                 $temp_build_start_time_overall
-                    = date("M jS @ g:i:sa", strtotime($row_build_info->build_start_time_overall));
+                    = $time->toUserTimezone($row_build_info->build_start_time_overall, 'M jS @ g:i:sa');
 
             }
 
@@ -365,8 +365,7 @@ if ($no_results_build_info !== 1) { ?>
 
             } else {
 
-                $temp_build_end_time_overall
-                    = date("M jS @ g:i:sa", strtotime($row_build_info->build_end_time_overall));
+                $temp_build_end_time_overall = $time->toUserTimezone($row_build_info->build_end_time_overall, 'M jS @ g:i:sa');
 
             }
 
@@ -490,7 +489,7 @@ if ($no_results_build_info !== 1) { ?>
 
             } else {
 
-                $temp_build_start_time = date("M jS @ g:i:sa", strtotime($row->build_start_time));
+                $temp_build_start_time = $time->toUserTimezone($row->build_start_time, 'M jS @ g:i:sa');
 
             }
 
@@ -500,7 +499,7 @@ if ($no_results_build_info !== 1) { ?>
 
             } else {
 
-                $temp_build_end_time = date("M jS @ g:i:sa", strtotime($row->build_end_time));
+                $temp_build_end_time = $time->toUserTimezone($row->build_end_time, 'M jS @ g:i:sa');
 
             }
 

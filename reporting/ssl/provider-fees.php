@@ -172,8 +172,8 @@ if ($total_rows > 0) {
 
                 }
 
-                $row_contents[$count++] = $row->insert_time;
-                $row_contents[$count++] = $row->update_time;
+                $row_contents[$count++] = $time->toUserTimezone($row->insert_time);
+                $row_contents[$count++] = $time->toUserTimezone($row->update_time);
                 $export->writeRow($export_file, $row_contents);
 
                 $last_ssl_provider = $row->ssl_provider;
@@ -261,7 +261,7 @@ if ($total_rows > 0) { ?>
             if ($row->update_time == "0000-00-00 00:00:00") {
                 $row->update_time = $row->insert_time;
             }
-            $last_updated = date('Y-m-d', strtotime($row->update_time));
+            $last_updated = $time->toUserTimezone(date('Y-m-d', strtotime($row->update_time)));
 
             if ($new_ssl_provider != $last_ssl_provider || $new_ssl_provider == "") { ?>
 

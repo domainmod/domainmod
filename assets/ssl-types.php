@@ -111,8 +111,8 @@ if ($export_data == "1") {
                 number_format($active_certs),
                 $is_default,
                 $row->notes,
-                $row->insert_time,
-                $row->update_time
+                $time->toUserTimezone($row->insert_time),
+                $time->toUserTimezone($row->update_time)
             );
             $export->writeRow($export_file, $row_contents);
 
@@ -163,8 +163,8 @@ if ($export_data == "1") {
                 '0',
                 $is_default,
                 $row->notes,
-                $row->insert_time,
-                $row->update_time
+                $time->toUserTimezone($row->insert_time),
+                $time->toUserTimezone($row->update_time)
             );
             $export->writeRow($export_file, $row_contents);
 

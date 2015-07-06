@@ -893,8 +893,8 @@ if ($export_data == "1") {
         $row_contents[$count++] = $row->stakeholder;
         $row_contents[$count++] = $row->owner_name;
         $row_contents[$count++] = $row->notes;
-        $row_contents[$count++] = $row->insert_time;
-        $row_contents[$count++] = $row->update_time;
+        $row_contents[$count++] = $time->toUserTimezone($row->insert_time);
+        $row_contents[$count++] = $time->toUserTimezone($row->update_time);
         $row_contents[$count++] = '';
 
         $dfd_columns_array = $customField->getCustomFields($connection, 'domain_fields');

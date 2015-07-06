@@ -259,7 +259,7 @@ if ($export_data == "1") {
                     $row_get_records->line,
                     $row_get_records->nlines,
                     $row_get_records->raw,
-                    $row_get_records->insert_time
+                    $time->toUserTimezone($row_get_records->insert_time)
                 );
                 $export->writeRow($export_file, $row_contents);
 

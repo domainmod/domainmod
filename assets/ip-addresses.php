@@ -142,8 +142,8 @@ if ($export_data == "1") {
                 $is_default_domains,
                 $is_default_ssl,
                 $row->notes,
-                $row->insert_time,
-                $row->update_time
+                $time->toUserTimezone($row->insert_time),
+                $time->toUserTimezone($row->update_time)
             );
             $export->writeRow($export_file, $row_contents);
 
@@ -208,8 +208,8 @@ if ($export_data == "1") {
                 $is_default_domains,
                 $is_default_ssl,
                 $row->notes,
-                $row->insert_time,
-                $row->update_time
+                $time->toUserTimezone($row->insert_time),
+                $time->toUserTimezone($row->update_time)
             );
             $export->writeRow($export_file, $row_contents);
 

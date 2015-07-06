@@ -42,18 +42,13 @@ class Maintenance
 
     public function deleteUnusedFees($connection, $fee_table, $compare_table)
     {
-
         $sql = "DELETE FROM " . $fee_table . "
                 WHERE id NOT IN (
                                  SELECT fee_id
                                  FROM " . $compare_table . "
                                  )";
         mysqli_query($connection, $sql);
-
-        $result_message = 'Deleted Unused Fees<BR>';
-
-        return $result_message;
-
+        return true;
     }
 
     public function updateTlds($connection)
@@ -68,7 +63,7 @@ class Maintenance
                            WHERE id = '" . $row->id . "'";
             mysqli_query($connection, $sql_update);
         }
-        return 'Updated TLDs<BR>';
+        return true;
     }
 
     public function getTld($domain)
@@ -97,9 +92,7 @@ class Maintenance
                  WHERE domain NOT IN (SELECT domain FROM domains)";
         mysqli_query($connection, $sql);
 
-        $result_message = 'Updated Segments<BR>';
-
-        return $result_message;
+        return true;
 
     }
 
@@ -109,7 +102,7 @@ class Maintenance
         $this->updateDomainFees($connection);
         $this->updateSslFees($connection);
 
-        return 'Updated Fees<BR>';
+        return true;
 
     }
 
@@ -170,9 +163,7 @@ class Maintenance
 
         }
 
-        $result_message = 'Updated Domain Fees<BR>';
-
-        return $result_message;
+        return true;
 
     }
 
@@ -223,9 +214,7 @@ class Maintenance
 
         }
 
-        $result_message = 'Updated SSL Fees<BR>';
-
-        return $result_message;
+        return true;
 
     }
 

@@ -81,8 +81,8 @@ if ($export_data == "1") {
                 $row->type,
                 $row->description,
                 $row->notes,
-                $row->insert_time,
-                $row->update_time
+                $time->toUserTimezone($row->insert_time),
+                $time->toUserTimezone($row->update_time)
             );
             $export->writeRow($export_file, $row_contents);
 
@@ -153,7 +153,7 @@ if (mysqli_num_rows($result) > 0) { ?>
         </td>
         <td class="main_table_cell_active">
             <a class="invisiblelink"
-               href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $row->insert_time; ?></a>
+               href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $time->toUserTimezone($row->insert_time); ?></a>
         </td>
         <td class="main_table_cell_active">
             <?php
@@ -168,7 +168,7 @@ if (mysqli_num_rows($result) > 0) { ?>
             }
             ?>
             <a class="invisiblelink"
-               href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $temp_update_time; ?></a>
+               href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $time->toUserTimezone($temp_update_time); ?></a>
         </td>
         </tr><?php
     }

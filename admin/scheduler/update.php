@@ -47,22 +47,14 @@ $new_hour = $_REQUEST['new_hour'];
 
 if ($a == 'u') {
 
-    $sql = "SELECT expression FROM scheduler WHERE id = '" . $id . "'";
-    $result = mysqli_query($connection, $sql);
-
-    while ($row = mysqli_fetch_object($result)) {
-        $pieces = explode(" ", $row->expression);
-        $pieces[1] = $new_hour;
-        $full_expression
-            = $pieces[0] . ' ' . $pieces[1] . ' ' . $pieces[2] . ' ' . $pieces[3] . ' ' . $pieces[4] . ' ' . $pieces[5];
-    }
-
-    $cron = \Cron\CronExpression::factory($full_expression);
-    $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
+    $new_time = date('Y-m-d H:i:s', mktime($new_hour, '00', '00', date("m"), date("d"), date("Y")));
+    $new_time_utc = $time->toUtcTimezone($new_time);
+    $hour = date("G", strtotime($new_time_utc));
+    $full_expression = '0 ' . $hour . ' * * * *';
 
     $sql = "UPDATE scheduler
             SET expression = '" . $full_expression . "',
-                next_run = '" . $next_run . "'
+                next_run = '" . $new_time_utc . "'
             WHERE id = '" . $id . "'";
     mysqli_query($connection, $sql);
 
