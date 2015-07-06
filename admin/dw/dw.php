@@ -27,6 +27,7 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
+$time = new DomainMOD\Timestamp();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
@@ -355,7 +356,7 @@ if ($no_results_build_info !== 1) { ?>
             } else {
 
                 $temp_build_start_time_overall
-                    = $time->toUserTimezone($row_build_info->build_start_time_overall, 'M jS @ g:i:sa');
+                    = $time->toUserTimezone($row_build_info->build_start_time_overall, 'M jS @ g:i:sa'); // right here
 
             }
 
