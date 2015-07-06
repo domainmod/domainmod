@@ -223,6 +223,7 @@
         width: <?php echo $site_width; ?>;
         display: table;
         margin: 0 auto;
+        padding-top: 5px;
     }
 
     div.main-container-login {
@@ -243,7 +244,7 @@
         border-bottom: 1px #888888 ridge;
         border-right: 1px #888888 ridge;
         border-left: 1px #888888 ridge;
-        padding-top: 0px;
+        padding-top: 6px;
         padding-right: 0px;
         padding-bottom: 0px;
         padding-left: 0px;
@@ -302,9 +303,9 @@
         border-bottom: 0px #888888 ridge;
         border-right: 0px #888888 ridge;
         border-left: 0px #888888 ridge;
-        padding-top: 7px;
+        padding-top: 13px;
         padding-right: 0px;
-        padding-bottom: 5px;
+        padding-bottom: 8px;
         padding-left: 25px;
     }
 
@@ -321,9 +322,9 @@
         border-bottom: 0px #888888 ridge;
         border-right: 0px #888888 ridge;
         border-left: 0px #888888 ridge;
-        padding-top: 33px;
+        padding-top: 23px;
         padding-right: 8px;
-        padding-bottom: 8px;
+        padding-bottom: 0px;
         padding-left: 0px;
     }
 
