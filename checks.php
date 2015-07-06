@@ -78,8 +78,6 @@ unset($_SESSION['installation_mode']);
 
 $login->setLastLogin($connection, $_SESSION['user_id'], $_SESSION['email_address']);
 
-$_SESSION['last_login'] = $time->time();
-
 if ($_SESSION['version_error'] != '1') {
 
     if ($_SESSION['system_upgrade_available'] == '1') {
