@@ -66,11 +66,11 @@ WARNING: Before upgrading, it is strongly recommended that you make a backup of 
 
 ## Data Warehouse
 
-DomainMOD has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also intend on adding support for Plesk once I've ironed out all the kinks in the framework.
+DomainMOD has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also plan to add support for Plesk once I've ironed out all the kinks in the framework and figured out Plesk's API, and hopefully one day you'll be able to import any web server into the Data Warehouse, regardless of whether or not it uses a control panel.
 
-If you don't run a web server that uses WHM, or you don't want to import your WHM data into DomainMOD, you can ignore this section.
+If your web server doesn't run WHM/cPanel, or you don't want to import your web server data into DomainMOD, you can ignore this section.
 
-NOTE: Importing your web server(s) into the Data Warehouse will not modify any of your DomainMOD data, nor will it modify any of your web server data. The Data Warehouse is used for informational purposes only, and you will see its data referenced throughout DomainMOD where applicable. For example, if a domain you're editing has information stored in your Data Warehouse, the system will automatically match them up and display the additional information for you, giving you even more insight into your data. You can also view, export, and run reports against the information in your Data Warehouse.
+NOTE: Importing your web server(s) into the Data Warehouse will not modify any of your other DomainMOD data, nor any of the data on your server.
 
 ### Supported Data
 The following WHM sections are currently supported, but my end goal is to have every piece of WHM information that can be retrieved via the API stored in the Data Warehouse. In the future I plan on adding support for as many types of web servers as possible.  
