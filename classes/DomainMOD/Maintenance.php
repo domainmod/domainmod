@@ -113,8 +113,7 @@ class Maintenance
         $timestamp = $time->time();
 
         $sql = "UPDATE domains
-                SET fee_fixed = '0',
-                    fee_id = '0'";
+                SET fee_fixed = '0'";
         mysqli_query($connection, $sql);
 
         $sql = "UPDATE fees
@@ -174,8 +173,7 @@ class Maintenance
         $timestamp = $time->time();
 
         $sql = "UPDATE ssl_certs
-                SET fee_fixed = '0',
-                    fee_id = '0'";
+                SET fee_fixed = '0'";
         mysqli_query($connection, $sql);
 
         $sql = "UPDATE ssl_fees
