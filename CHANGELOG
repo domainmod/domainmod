@@ -1,5 +1,8 @@
 DomainMOD Changelog
 ===================
+v3.0.5    2015-07-06
+- Added support for user-based time zones
+
 v3.0.4    2015-07-04
 - Added a Task Scheduler for scheduling system jobs
 - Added Composer support files for vendor autoloading
