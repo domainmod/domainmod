@@ -976,7 +976,7 @@ if ($segid != "") {
                 $result_segment = mysqli_query($connection, $sql_segment);
 
                 echo "<select name=\"segid\" onChange=\"MM_jumpMenu('parent',this,0)\">";
-                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Segment Filter - ALL</option>";
+                echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\">Segment Filter - OFF</option>";
                 while ($row_segment = mysqli_fetch_object($result_segment)) {
                     echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&segid=$row_segment->id&tld=$tld&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\"";
                     if ($row_segment->id == $segid) echo " selected";
