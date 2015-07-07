@@ -26,15 +26,17 @@
         <div class="header-left">
             <a href="<?php echo $web_root . "/domains.php\"><img border=\"0\" src=\"" . $web_root; ?>/images/logo.png"></a>
         </div>
-        <div class="header-right">
-            <em>Currency: <a class="invisiblelink" href="<?php echo $web_root; ?>/settings/defaults/"><?php echo $_SESSION['default_currency']; ?></a>&nbsp;&nbsp;Time Zone: <a class="invisiblelink" href="<?php echo $web_root; ?>/settings/defaults/"><?php echo $_SESSION['default_timezone']; ?></a></em>
+        <div class="header-right"><?php //@formatter:off ?>
+            <em>Currency: <a class="invisiblelink" href="<?php echo $web_root; ?>/settings/defaults/"><?php
+                    echo $_SESSION['default_currency']; ?></a>&nbsp;&nbsp;Time Zone: <a class="invisiblelink"
+                    href="<?php echo $web_root; ?>/settings/defaults/"><?php
+                    echo $_SESSION['default_timezone']; ?></a></em>
             <BR>
             <em>logged in as <?php echo $_SESSION['username']; ?> (<a
                     class="subtlelink" href="<?php echo $web_root; ?>/settings/update-profile.php"><?php
-                    echo $_SESSION['first_name'] . " "; ?>
-
-                    <?php echo $_SESSION['last_name']; ?></a>)</em>
+                    echo $_SESSION['first_name'] . " "; ?> <?php echo $_SESSION['last_name']; ?></a>)</em>
             <BR><BR>
+            <?php //@formatter:on ?>
         </div>
     </div>
     <div class="main-outer">
