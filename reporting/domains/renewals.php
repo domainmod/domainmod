@@ -292,13 +292,13 @@ if ($export_data == "1") {
 <form name="export_domains_form" method="post">
     <a href="renewals.php?all=1">View All</a> or Expiring Between
     <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") {
-        echo "value=\"" . $time->toUserTimezone($time->timeBasic()) . "\"";
+        echo "value=\"" . $time->toUserTimezone($time->timeBasic(), 'Y-m-d') . "\"";
     } else {
         echo "value=\"$new_start_date\"";
     } ?>>
     and
     <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") {
-        echo "value=\"" . $time->toUserTimezone($time->timeBasic()) . "\"";
+        echo "value=\"" . $time->toUserTimezone($time->timeBasic(), 'Y-m-d') . "\"";
     } else {
         echo "value=\"$new_end_date\"";
     } ?>>
