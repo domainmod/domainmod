@@ -89,6 +89,7 @@ class Email
             return array($domains_expiring, $ssl_expiring);
         } else {
             $_SESSION['result_message'] .= 'No Upcoming Expirations<BR>';
+            if ($from_cron == '1') exit;
             return false;
         }
     }
