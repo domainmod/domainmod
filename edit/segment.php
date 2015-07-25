@@ -178,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $_SESSION['s_result_message'] = "Segment <div class=\"highlight\">$new_name</div> Updated<BR>";
 
-            $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+            $maint->updateSegments($connection);
 
             header("Location: ../segments.php");
             exit;

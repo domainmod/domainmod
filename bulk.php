@@ -181,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_result_message'] = "Domains Renewed<BR>";
 
-                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+                $maint->updateSegments($connection);
 
             } elseif ($action == "AD") {
 
@@ -312,7 +312,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $sql = $queryB->missingFees('domains');
                     $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
-                    $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+                    $maint->updateSegments($connection);
 
                     $_SESSION['s_result_message'] .= $maint->updateTlds($connection);
 
@@ -364,7 +364,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+                $maint->updateSegments($connection);
 
                 $_SESSION['s_result_message'] = "Domains Fully Renewed<BR>";
 
@@ -657,7 +657,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_result_message'] = "Domains (and associated SSL Certificates) Deleted<BR>";
 
-                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+                $maint->updateSegments($connection);
 
             } elseif ($action == "E") {
 
@@ -681,7 +681,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_result_message'] = "Domains marked as expired<BR>";
 
-                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+                $maint->updateSegments($connection);
 
             } elseif ($action == "S") {
 
@@ -705,7 +705,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_result_message'] = "Domains marked as sold<BR>";
 
-                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+                $maint->updateSegments($connection);
 
             } elseif ($action == "A") {
 
@@ -729,7 +729,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_result_message'] = "Domains marked as active<BR>";
 
-                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+                $maint->updateSegments($connection);
 
             } elseif ($action == "T") {
 
@@ -753,7 +753,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_result_message'] = "Domains marked as 'In Transfer'<BR>";
 
-                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+                $maint->updateSegments($connection);
 
             } elseif ($action == "PRg") {
 
@@ -777,7 +777,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_result_message'] = "Domains marked as 'Pending (Registration)'<BR>";
 
-                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+                $maint->updateSegments($connection);
 
             } elseif ($action == "PRn") {
 
@@ -801,7 +801,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_result_message'] = "Domains marked as 'Pending (Renewal)'<BR>";
 
-                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+                $maint->updateSegments($connection);
 
             } elseif ($action == "PO") {
 
@@ -825,7 +825,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_result_message'] = "Domains marked as 'Pending (Other)'<BR>";
 
-                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+                $maint->updateSegments($connection);
 
             } elseif ($action == "PRVE") {
 
@@ -864,7 +864,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_result_message'] = "Domains marked as 'Private WHOIS'<BR>";
 
-                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+                $maint->updateSegments($connection);
 
             } elseif ($action == "PRVD") {
 

@@ -285,7 +285,7 @@ if ($really_del == "1") {
 
     $_SESSION['s_result_message'] = "Domain <div class=\"highlight\">$new_domain</div> Deleted<BR>";
 
-    $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+    $maint->updateSegments($connection);
 
     $system->checkExistingAssets($connection);
 

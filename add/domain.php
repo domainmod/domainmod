@@ -258,7 +258,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $_SESSION['s_result_message'] = "Domain <div class=\"highlight\">" . $new_domain . "</div> Added<BR>";
 
-                    $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
+                    $maint->updateSegments($connection);
 
                     $queryB = new DomainMOD\QueryBuild();
 
