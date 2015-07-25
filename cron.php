@@ -67,7 +67,7 @@ if ($demo_install != '1') {
 
             $email = new DomainMOD\Email();
             $schedule->isRunning($connection, $row->id);
-            $email->sendExpirations($connection, $software_title);
+            $email->sendExpirations($connection, $software_title, '1');
             $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 

@@ -25,13 +25,13 @@ namespace DomainMOD;
 class Email
 {
 
-    public function sendExpirations($connection, $software_title)
+    public function sendExpirations($connection, $software_title, $from_cron)
     {
         $time = new Timestamp();
         $timestamp_basic = $time->timeBasic();
         $timestamp_long = $time->timeLong();
         list($full_url, $from_address, $number_of_days) = $this->getSettings($connection);
-        list($result_domains, $result_ssl) = $this->checkExpiring($connection, $number_of_days);
+        list($result_domains, $result_ssl) = $this->checkExpiring($connection, $number_of_days, $from_cron);
         $send_to = $this->getRecipients($connection);
         $subject = "Upcoming Expirations - " . $timestamp_long;
         $headers = $this->getHeaders($software_title, $from_address);
@@ -63,7 +63,7 @@ class Email
         return array($url, $email, $days);
     }
 
-    public function checkExpiring($connection, $days)
+    public function checkExpiring($connection, $days, $from_cron)
     {
         $system = new System();
         $time = new Timestamp();
