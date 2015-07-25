@@ -163,12 +163,12 @@ if (mysqli_num_rows($result) > 0) { ?>
 
             } else {
 
-                $temp_update_time = $row->update_time;
+                $temp_update_time = $time->toUserTimezone($row->update_time);
 
             }
             ?>
             <a class="invisiblelink"
-               href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $time->toUserTimezone($temp_update_time); ?></a>
+               href="edit/domain-field.php?cdfid=<?php echo $row->id; ?>"><?php echo $temp_update_time; ?></a>
         </td>
         </tr><?php
     }
