@@ -314,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $maint->updateSegments($connection);
 
-                    $_SESSION['s_result_message'] .= $maint->updateTlds($connection);
+                    $maint->updateTlds($connection);
 
                 }
 
