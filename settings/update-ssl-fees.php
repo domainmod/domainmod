@@ -44,9 +44,9 @@ $maint->updateSslFees($connection);
 $queryB = new DomainMOD\QueryBuild();
 
 $sql = $queryB->missingFees('ssl_certs');
-$_SESSION['missing_ssl_fees'] = $system->checkForRows($connection, $sql);
+$_SESSION['s_missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
-$_SESSION['result_message'] .= "SSL Fees Updated<BR>";
+$_SESSION['s_result_message'] .= "SSL Fees Updated<BR>";
 
 header("Location: " . $_SERVER['HTTP_REFERER']);
 exit;

@@ -41,7 +41,7 @@ $action = $_GET['a'];
 // u = Upgrade DomainMOD Database
 if ($action = 'u') $notice->dbUpgrade($software_title);
 
-$page_title = $_SESSION['notice_page_title'];
+$page_title = $_SESSION['s_notice_page_title'];
 $software_section = "notice";
 ?>
 <?php include(DIR_INC . 'doctype.inc.php'); ?>
@@ -53,7 +53,7 @@ $software_section = "notice";
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
-echo $_SESSION['notice'];
+echo $_SESSION['s_notice'];
 ?><BR><BR>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

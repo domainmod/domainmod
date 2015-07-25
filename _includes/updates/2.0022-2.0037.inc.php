@@ -678,12 +678,12 @@ if ($current_db_version === '2.0035') {
     $result = mysqli_query($connection, $sql);
 
     $sql = "UPDATE settings
-                SET default_currency = '" . $_SESSION['default_currency'] . "',
+                SET default_currency = '" . $_SESSION['s_default_currency'] . "',
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql);
 
     $sql = "UPDATE user_settings
-                SET default_currency = '" . $_SESSION['default_currency'] . "',
+                SET default_currency = '" . $_SESSION['s_default_currency'] . "',
                     update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql);
 
@@ -917,18 +917,18 @@ if ($current_db_version === '2.0036') {
                 SET default_currency = '" . $temp_currency . "'";
     $result = mysqli_query($connection, $sql);
 
-    $_SESSION['default_currency'] = $temp_currency;
+    $_SESSION['s_default_currency'] = $temp_currency;
 
     $sql = "SELECT name, symbol, symbol_order, symbol_space
                 FROM currencies
-                WHERE currency = '" . $_SESSION['default_currency'] . "'";
+                WHERE currency = '" . $_SESSION['s_default_currency'] . "'";
     $result = mysqli_query($connection, $sql);
 
     while ($row = mysqli_fetch_object($result)) {
-        $_SESSION['default_currency_name'] = $row->name;
-        $_SESSION['default_currency_symbol'] = $row->symbol;
-        $_SESSION['default_currency_symbol_order'] = $row->symbol_order;
-        $_SESSION['default_currency_symbol_space'] = $row->symbol_space;
+        $_SESSION['s_default_currency_name'] = $row->name;
+        $_SESSION['s_default_currency_symbol'] = $row->symbol;
+        $_SESSION['s_default_currency_symbol_order'] = $row->symbol_order;
+        $_SESSION['s_default_currency_symbol_space'] = $row->symbol_space;
     }
 
     $sql = "ALTER TABLE `currencies`
@@ -960,20 +960,20 @@ if ($current_db_version === '2.0037') {
     $result = mysqli_query($connection, $sql);
     while ($row = mysqli_fetch_object($result)) {
         $temp_default_currency = $row->default_currency;
-        $_SESSION['default_currency'] = $row->default_currency;
+        $_SESSION['s_default_currency'] = $row->default_currency;
     }
 
     $sql = "SELECT name, symbol, symbol_order, symbol_space
                 FROM currencies
-                WHERE currency = '" . $_SESSION['default_currency'] . "'";
+                WHERE currency = '" . $_SESSION['s_default_currency'] . "'";
     $result = mysqli_query($connection, $sql);
 
     while ($row = mysqli_fetch_object($result)) {
 
-        $_SESSION['default_currency_name'] = $row->name;
-        $_SESSION['default_currency_symbol'] = $row->symbol;
-        $_SESSION['default_currency_symbol_order'] = $row->symbol_order;
-        $_SESSION['default_currency_symbol_space'] = $row->symbol_space;
+        $_SESSION['s_default_currency_name'] = $row->name;
+        $_SESSION['s_default_currency_symbol'] = $row->symbol;
+        $_SESSION['s_default_currency_symbol_order'] = $row->symbol_order;
+        $_SESSION['s_default_currency_symbol_space'] = $row->symbol_space;
 
     }
 

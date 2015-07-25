@@ -42,7 +42,7 @@ $system->authCheck();
 
 $upgrade_approved = $_GET['u'];
 
-$_SESSION['running_login_checks'] = 1;
+$_SESSION['s_running_login_checks'] = 1;
 
 /*
  * If the database and software versions are different and the user hasn't already approved the upgrade, send them to
@@ -50,19 +50,19 @@ $_SESSION['running_login_checks'] = 1;
  *
  * If If the database and software versions are different and the user HAS approved the upgrade, perform the upgrade
  */
-if ($_SESSION['system_db_version'] !== $db_version && $upgrade_approved != '1') {
+if ($_SESSION['s_system_db_version'] !== $db_version && $upgrade_approved != '1') {
 
     header("Location: notice.php?a=u");
     exit;
 
-} elseif ($_SESSION['system_db_version'] !== $db_version && $upgrade_approved == '1') {
+} elseif ($_SESSION['s_system_db_version'] !== $db_version && $upgrade_approved == '1') {
 
     include(DIR_INC . "update.inc.php");
-    $_SESSION['is_upgrading'] = '1';
+    $_SESSION['s_is_upgrading'] = '1';
 
 } else {
 
-    $_SESSION['needs_database_upgrade'] = "0";
+    $_SESSION['s_needs_database_upgrade'] = "0";
 
 }
 
@@ -72,19 +72,19 @@ $system->checkVersion($connection, $software_version);
 // Check for existing Domain and SSL assets
 $system->checkExistingAssets($connection);
 
-unset($_SESSION['running_login_checks']);
+unset($_SESSION['s_running_login_checks']);
 
-unset($_SESSION['installation_mode']);
+unset($_SESSION['s_installation_mode']);
 
-$login->setLastLogin($connection, $_SESSION['user_id'], $_SESSION['email_address']);
+$login->setLastLogin($connection, $_SESSION['s_user_id'], $_SESSION['s_email_address']);
 
-if ($_SESSION['version_error'] != '1') {
+if ($_SESSION['s_version_error'] != '1') {
 
-    if ($_SESSION['system_upgrade_available'] == '1') {
+    if ($_SESSION['s_system_upgrade_available'] == '1') {
 
-        if ($_SESSION['is_admin'] === 1) {
+        if ($_SESSION['s_is_admin'] === 1) {
 
-            $_SESSION['result_message'] .= $system->getUpgradeMessage();
+            $_SESSION['s_result_message'] .= $system->getUpgradeMessage();
 
         }
 
@@ -93,16 +93,16 @@ if ($_SESSION['version_error'] != '1') {
     $queryB = new DomainMOD\QueryBuild();
 
     $sql = $queryB->missingFees('domains');
-    $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
+    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
     $queryB = new DomainMOD\QueryBuild();
 
     $sql = $queryB->missingFees('ssl_certs');
-    $_SESSION['missing_ssl_fees'] = $system->checkForRows($connection, $sql);
+    $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
-    if ($_SESSION['is_new_password'] == 1) {
+    if ($_SESSION['s_is_new_password'] == 1) {
 
-        $_SESSION['result_message'] .= "Your password should be changed for security purposes<BR>";
+        $_SESSION['s_result_message'] .= "Your password should be changed for security purposes<BR>";
         header("Location: settings/password/");
         exit;
 
@@ -110,12 +110,12 @@ if ($_SESSION['version_error'] != '1') {
 
 }
 
-unset($_SESSION['is_upgrading']);
+unset($_SESSION['s_is_upgrading']);
 
-if (isset($_SESSION['user_redirect'])) {
+if (isset($_SESSION['s_user_redirect'])) {
 
-    $temp_redirect = $_SESSION['user_redirect'];
-    unset($_SESSION['user_redirect']);
+    $temp_redirect = $_SESSION['s_user_redirect'];
+    unset($_SESSION['s_user_redirect']);
 
     header("Location: $temp_redirect");
     exit;

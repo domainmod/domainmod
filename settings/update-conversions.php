@@ -39,7 +39,7 @@ include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$_SESSION['result_message'] .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
+$_SESSION['s_result_message'] .= $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
 header("Location: " . $_SERVER['HTTP_REFERER']);
 exit;

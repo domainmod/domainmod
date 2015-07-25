@@ -111,7 +111,7 @@ if ($export_data == "1") {
                 $total_certs = $row_total_count->total_count;
             }
 
-            if ($row->id == $_SESSION['default_category_domains']) {
+            if ($row->id == $_SESSION['s_default_category_domains']) {
 
                 $is_default_domains = "1";
 
@@ -121,7 +121,7 @@ if ($export_data == "1") {
 
             }
 
-            if ($row->id == $_SESSION['default_category_ssl']) {
+            if ($row->id == $_SESSION['s_default_category_ssl']) {
 
                 $is_default_ssl = "1";
 
@@ -176,7 +176,7 @@ if ($export_data == "1") {
 
         while ($row = mysqli_fetch_object($result)) {
 
-            if ($row->id == $_SESSION['default_category_domains']) {
+            if ($row->id == $_SESSION['s_default_category_domains']) {
 
                 $is_default_domains = "1";
 
@@ -186,7 +186,7 @@ if ($export_data == "1") {
 
             }
 
-            if ($row->id == $_SESSION['default_category_ssl']) {
+            if ($row->id == $_SESSION['s_default_category_ssl']) {
 
                 $is_default_ssl = "1";
 
@@ -262,9 +262,9 @@ $has_active = "1"; ?>
         <td class="main_table_cell_active">
             <?php //@formatter:off ?>
             <a class="invisiblelink" href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php
-                echo $row->name; ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a
+                echo $row->name; ?></a><?php if ($_SESSION['s_default_category_domains'] == $row->id) echo "<a
                 title=\"Default Domain Category\"><div class=\"default_highlight\">*</div></a>";
-            if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><div
+            if ($_SESSION['s_default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><div
                 class=\"default_highlight_secondary\">*</div></a>"; ?>
             <?php //@formatter:on ?>
         </td>
@@ -322,7 +322,7 @@ $has_active = "1"; ?>
 
     }
 
-    if ($_SESSION['display_inactive_assets'] == "1") {
+    if ($_SESSION['s_display_inactive_assets'] == "1") {
 
         $exclude_category_string = substr($exclude_category_string_raw, 0, -2);
 
@@ -365,9 +365,9 @@ $has_active = "1"; ?>
                 <td class="main_table_cell_inactive">
                     <?php //@formatter:off ?>
                     <a class="invisiblelink" href="edit/category.php?pcid=<?php echo $row->id; ?>"><?php echo
-                        $row->name; ?></a><?php if ($_SESSION['default_category_domains'] == $row->id) echo "<a
+                        $row->name; ?></a><?php if ($_SESSION['s_default_category_domains'] == $row->id) echo "<a
                         title=\"Default Domain Category\"><div class=\"default_highlight\">*</div></a>";
-                    if ($_SESSION['default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><div
+                    if ($_SESSION['s_default_category_ssl'] == $row->id) echo "<a title=\"Default SSL Category\"><div
                         class=\"default_highlight_secondary\">*</div></a>"; ?>
                     <?php //@formatter:on ?>
                 </td>
@@ -385,7 +385,7 @@ $has_active = "1"; ?>
 
     if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
-    if ($_SESSION['display_inactive_assets'] != "1") { //@formatter:off ?>
+    if ($_SESSION['s_display_inactive_assets'] != "1") { //@formatter:off ?>
         <BR><em>Inactive Categories are currently not displayed.
         <a class="invisiblelink" href="../settings/display/">Click here to display them</a>.</em><BR><?php
     } //@formatter:on

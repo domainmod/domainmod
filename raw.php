@@ -35,12 +35,12 @@ include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-if ($_SESSION['raw_list_type'] == 'domains') {
+if ($_SESSION['s_raw_list_type'] == 'domains') {
 
     $page_title = "Domains (Raw List)";
     $software_section = "domains";
 
-} elseif ($_SESSION['raw_list_type'] == 'ssl-certs') {
+} elseif ($_SESSION['s_raw_list_type'] == 'ssl-certs') {
 
     $page_title = "SSL Certificates (Raw List)";
     $software_section = "ssl-certs";
@@ -55,9 +55,9 @@ if ($_SESSION['raw_list_type'] == 'domains') {
 </head>
 <body>
 <?php
-$result = mysqli_query($connection, $_SESSION['raw_list_query']);
+$result = mysqli_query($connection, $_SESSION['s_raw_list_query']);
 
-if ($_SESSION['raw_list_type'] == 'domains') {
+if ($_SESSION['s_raw_list_type'] == 'domains') {
 
     while ($row = mysqli_fetch_object($result)) {
 
@@ -65,7 +65,7 @@ if ($_SESSION['raw_list_type'] == 'domains') {
 
     }
 
-} elseif ($_SESSION['raw_list_type'] == 'ssl-certs') {
+} elseif ($_SESSION['s_raw_list_type'] == 'ssl-certs') {
 
     while ($row = mysqli_fetch_object($result)) {
 

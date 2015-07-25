@@ -45,10 +45,10 @@ class System
         if ($current_version < $live_version && $live_version != '') {
             $sql = "UPDATE settings SET upgrade_available = '1'";
             mysqli_query($connection, $sql);
-            $_SESSION['system_upgrade_available'] = '1';
+            $_SESSION['s_system_upgrade_available'] = '1';
             $message = $this->getUpgradeMessage();
         } else {
-            $_SESSION['system_upgrade_available'] = '0';
+            $_SESSION['s_system_upgrade_available'] = '0';
             $message = "No Upgrade Available";
         }
         return $message;
@@ -80,17 +80,17 @@ class System
         $queryB = new QueryBuild();
 
         $sql = $queryB->singleAsset('registrars');
-        $_SESSION['has_registrar'] = $this->checkForRows($connection, $sql);
+        $_SESSION['s_has_registrar'] = $this->checkForRows($connection, $sql);
         $sql = $queryB->singleAsset('registrar_accounts');
-        $_SESSION['has_registrar_account'] = $this->checkForRows($connection, $sql);
+        $_SESSION['s_has_registrar_account'] = $this->checkForRows($connection, $sql);
         $sql = $queryB->singleAsset('domains');
-        $_SESSION['has_domain'] = $this->checkForRows($connection, $sql);
+        $_SESSION['s_has_domain'] = $this->checkForRows($connection, $sql);
         $sql = $queryB->singleAsset('ssl_providers');
-        $_SESSION['has_ssl_provider'] = $this->checkForRows($connection, $sql);
+        $_SESSION['s_has_ssl_provider'] = $this->checkForRows($connection, $sql);
         $sql = $queryB->singleAsset('ssl_accounts');
-        $_SESSION['has_ssl_account'] = $this->checkForRows($connection, $sql);
+        $_SESSION['s_has_ssl_account'] = $this->checkForRows($connection, $sql);
         $sql = $queryB->singleAsset('ssl_certs');
-        $_SESSION['has_ssl_cert'] = $this->checkForRows($connection, $sql);
+        $_SESSION['s_has_ssl_cert'] = $this->checkForRows($connection, $sql);
         return true;
     }
 
@@ -108,18 +108,18 @@ class System
 
     public function authCheck()
     {
-        if ($_SESSION['is_logged_in'] != 1) {
-            $_SESSION['user_redirect'] = $_SERVER["REQUEST_URI"];
-            $_SESSION['result_message'] = "You must be logged in to access this area<BR>";
-            header("Location: " . $_SESSION['web_root'] . "/");
+        if ($_SESSION['s_is_logged_in'] != 1) {
+            $_SESSION['s_user_redirect'] = $_SERVER["REQUEST_URI"];
+            $_SESSION['s_result_message'] = "You must be logged in to access this area<BR>";
+            header("Location: " . $_SESSION['s_web_root'] . "/");
             exit;
         }
     }
 
     public function loginCheck()
     {
-        if ($_SESSION['is_logged_in'] == 1) {
-            header("Location: " . $_SESSION['web_root'] . "/domains.php");
+        if ($_SESSION['s_is_logged_in'] == 1) {
+            header("Location: " . $_SESSION['s_web_root'] . "/domains.php");
             exit;
         }
     }

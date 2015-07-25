@@ -60,11 +60,11 @@ $new_default_ssl_provider = $_POST['new_default_ssl_provider'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $_SESSION['result_message'] .= "Your Defaults were updated<BR>";
+    $_SESSION['s_result_message'] .= "Your Defaults were updated<BR>";
 
     $sql = "SELECT *
             FROM user_settings
-            WHERE user_id = '" . $_SESSION['user_id'] . "'";
+            WHERE user_id = '" . $_SESSION['s_user_id'] . "'";
     $result = mysqli_query($connection, $sql);
     while ($row = mysqli_fetch_object($result)) {
 
@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $sql_new_currency = "SELECT id
                              FROM currency_conversions
-                             WHERE user_id = '" . $_SESSION['user_id'] . "'
+                             WHERE user_id = '" . $_SESSION['s_user_id'] . "'
                                AND currency_id = '" . $temp_new_currency_id . "'";
         $result_new_currency = mysqli_query($connection, $sql_new_currency);
 
@@ -107,15 +107,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             //@formatter:off
             $sql_insert_currency = "INSERT INTO currency_conversions
                                     (currency_id, user_id, conversion, insert_time, update_time) VALUES
-                                    ('" . $temp_new_currency_id . "', '" . $_SESSION['user_id'] . "', '1', '" .
+                                    ('" . $temp_new_currency_id . "', '" . $_SESSION['s_user_id'] . "', '1', '" .
                                      $timestamp . "', '" . $timestamp . "')";
             $result_insert_currency = mysqli_query($connection, $sql_insert_currency);
             //@formatter:on
 
         }
 
-        $_SESSION['result_message']
-            .= $conversion->updateRates($connection, $new_default_currency, $_SESSION['user_id']);
+        $_SESSION['s_result_message']
+            .= $conversion->updateRates($connection, $new_default_currency, $_SESSION['s_user_id']);
 
     }
 
@@ -136,24 +136,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 default_ssl_type = '$new_default_ssl_type',
                 default_ssl_provider = '$new_default_ssl_provider',
                 update_time = '$timestamp'
-            WHERE user_id = '" . $_SESSION['user_id'] . "'";
+            WHERE user_id = '" . $_SESSION['s_user_id'] . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $_SESSION['default_currency'] = $new_default_currency;
-    $_SESSION['default_timezone'] = $new_default_timezone;
-    $_SESSION['default_category_domains'] = $new_default_category_domains;
-    $_SESSION['default_category_ssl'] = $new_default_category_ssl;
-    $_SESSION['default_dns'] = $new_default_dns;
-    $_SESSION['default_host'] = $new_default_host;
-    $_SESSION['default_ip_address_domains'] = $new_default_ip_address_domains;
-    $_SESSION['default_ip_address_ssl'] = $new_default_ip_address_ssl;
-    $_SESSION['default_owner_domains'] = $new_default_owner_domains;
-    $_SESSION['default_owner_ssl'] = $new_default_owner_ssl;
-    $_SESSION['default_registrar'] = $new_default_registrar;
-    $_SESSION['default_registrar_account'] = $new_default_registrar_account;
-    $_SESSION['default_ssl_provider_account'] = $new_default_ssl_provider_account;
-    $_SESSION['default_ssl_type'] = $new_default_ssl_type;
-    $_SESSION['default_ssl_provider'] = $new_default_ssl_provider;
+    $_SESSION['s_default_currency'] = $new_default_currency;
+    $_SESSION['s_default_timezone'] = $new_default_timezone;
+    $_SESSION['s_default_category_domains'] = $new_default_category_domains;
+    $_SESSION['s_default_category_ssl'] = $new_default_category_ssl;
+    $_SESSION['s_default_dns'] = $new_default_dns;
+    $_SESSION['s_default_host'] = $new_default_host;
+    $_SESSION['s_default_ip_address_domains'] = $new_default_ip_address_domains;
+    $_SESSION['s_default_ip_address_ssl'] = $new_default_ip_address_ssl;
+    $_SESSION['s_default_owner_domains'] = $new_default_owner_domains;
+    $_SESSION['s_default_owner_ssl'] = $new_default_owner_ssl;
+    $_SESSION['s_default_registrar'] = $new_default_registrar;
+    $_SESSION['s_default_registrar_account'] = $new_default_registrar_account;
+    $_SESSION['s_default_ssl_provider_account'] = $new_default_ssl_provider_account;
+    $_SESSION['s_default_ssl_type'] = $new_default_ssl_type;
+    $_SESSION['s_default_ssl_provider'] = $new_default_ssl_provider;
 
     $sql_currencies = "SELECT name, symbol, symbol_order, symbol_space
                        FROM currencies
@@ -161,10 +161,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result_currencies = mysqli_query($connection, $sql_currencies);
 
     while ($row_currencies = mysqli_fetch_object($result_currencies)) {
-        $_SESSION['default_currency_name'] = $row_currencies->name;
-        $_SESSION['default_currency_symbol'] = $row_currencies->symbol;
-        $_SESSION['default_currency_symbol_order'] = $row_currencies->symbol_order;
-        $_SESSION['default_currency_symbol_space'] = $row_currencies->symbol_space;
+        $_SESSION['s_default_currency_name'] = $row_currencies->name;
+        $_SESSION['s_default_currency_symbol'] = $row_currencies->symbol;
+        $_SESSION['s_default_currency_symbol_order'] = $row_currencies->symbol_order;
+        $_SESSION['s_default_currency_symbol_space'] = $row_currencies->symbol_space;
     }
 
     header("Location: ../index.php");
@@ -181,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $sql = "SELECT *
                 FROM user_settings
-                WHERE user_id = '" . $_SESSION['user_id'] . "'";
+                WHERE user_id = '" . $_SESSION['s_user_id'] . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         while ($row = mysqli_fetch_object($result)) {
@@ -230,7 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->currency; ?>"<?php
-                if ($_SESSION['default_currency'] == $row->currency) echo " selected"; ?>><?php
+                if ($_SESSION['s_default_currency'] == $row->currency) echo " selected"; ?>><?php
                 echo $row->name; ?> (<?php echo $row->currency; ?> <?php echo $row->symbol; ?>)
             </option>
         <?php //@formatter:on
@@ -248,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->timezone; ?>"<?php
-                if ($_SESSION['default_timezone'] == $row->timezone) echo " selected"; ?>><?php
+                if ($_SESSION['s_default_timezone'] == $row->timezone) echo " selected"; ?>><?php
                 echo $row->timezone; ?>
             </option>
         <?php //@formatter:on
@@ -269,7 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->id; ?>"<?php
-                if ($_SESSION['default_registrar'] == $row->id) echo "selected"; ?>><?php
+                if ($_SESSION['s_default_registrar'] == $row->id) echo "selected"; ?>><?php
                 echo $row->name; ?>
             </option>
         <?php //@formatter:on
@@ -289,7 +289,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->id; ?>"<?php
-                if ($_SESSION['default_registrar_account'] == $row->id) echo" selected"; ?>><?php
+                if ($_SESSION['s_default_registrar_account'] == $row->id) echo" selected"; ?>><?php
                 echo $row->r_name; ?> :: <?php echo $row->o_name; ?> :: <?php echo $row->username; ?>
             </option>
         <?php //@formatter:on
@@ -307,7 +307,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->id; ?>"<?php
-                if ($_SESSION['default_dns'] == $row->id) echo " selected"; ?>><?php
+                if ($_SESSION['s_default_dns'] == $row->id) echo " selected"; ?>><?php
                 echo $row->name; ?>
             </option>
         <?php //@formatter:on
@@ -325,7 +325,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->id; ?>"<?php
-                if ($_SESSION['default_host'] == $row->id) echo " selected"; ?>><?php
+                if ($_SESSION['s_default_host'] == $row->id) echo " selected"; ?>><?php
                 echo $row->name; ?>
             </option>
         <?php //@formatter:on
@@ -343,7 +343,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->id; ?>"<?php
-                if ($_SESSION['default_ip_address_domains'] == $row->id) echo " selected"; ?>><?php
+                if ($_SESSION['s_default_ip_address_domains'] == $row->id) echo " selected"; ?>><?php
                 echo $row->name; ?> (<?php echo $row->ip; ?>)
             </option>
         <?php //@formatter:on
@@ -361,7 +361,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->id; ?>"<?php
-                if ($_SESSION['default_category_domains'] == $row->id) echo " selected"; ?>><?php
+                if ($_SESSION['s_default_category_domains'] == $row->id) echo " selected"; ?>><?php
                 echo $row->name; ?>
             </option>
         <?php //@formatter:on
@@ -379,7 +379,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->id; ?>"<?php
-                if ($_SESSION['default_owner_domains'] == $row->id) echo " selected"; ?>><?php
+                if ($_SESSION['s_default_owner_domains'] == $row->id) echo " selected"; ?>><?php
                 echo $row->name; ?>
             </option>
         <?php //@formatter:on
@@ -400,7 +400,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->id; ?>"<?php
-                if ($_SESSION['default_ssl_provider'] == $row->id) echo " selected"; ?>><?php
+                if ($_SESSION['s_default_ssl_provider'] == $row->id) echo " selected"; ?>><?php
                 echo $row->name; ?>
             </option>
         <?php //@formatter:on
@@ -420,7 +420,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->id; ?>"<?php
-                if ($_SESSION['default_ssl_provider_account'] == $row->id) echo " selected"; ?>><?php
+                if ($_SESSION['s_default_ssl_provider_account'] == $row->id) echo " selected"; ?>><?php
                 echo $row->p_name; ?> :: <?php echo $row->o_name; ?> :: <?php echo $row->username; ?>
             </option>
         <?php //@formatter:on
@@ -438,7 +438,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->id; ?>"<?php
-                if ($_SESSION['default_ssl_type'] == $row->id) echo " selected"; ?>><?php
+                if ($_SESSION['s_default_ssl_type'] == $row->id) echo " selected"; ?>><?php
                 echo $row->type; ?>
             </option>
         <?php //@formatter:on
@@ -456,7 +456,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->id; ?>"<?php
-                if ($_SESSION['default_ip_address_ssl'] == $row->id) echo " selected"; ?>><?php
+                if ($_SESSION['s_default_ip_address_ssl'] == $row->id) echo " selected"; ?>><?php
                 echo $row->name; ?> (<?php echo $row->ip; ?>)
             </option>
         <?php //@formatter:on
@@ -474,7 +474,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->id; ?>"<?php
-                if ($_SESSION['default_category_ssl'] == $row->id) echo " selected"; ?>><?php
+                if ($_SESSION['s_default_category_ssl'] == $row->id) echo " selected"; ?>><?php
                 echo $row->name; ?>
             </option>
         <?php //@formatter:on
@@ -492,7 +492,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             //@formatter:off ?>
             <option value="<?php echo $row->id; ?>"<?php
-                if ($_SESSION['default_owner_ssl'] == $row->id) echo " selected"; ?>><?php
+                if ($_SESSION['s_default_owner_ssl'] == $row->id) echo " selected"; ?>><?php
                 echo $row->name; ?>
             </option>
         <?php //@formatter:on

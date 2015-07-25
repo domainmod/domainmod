@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
     if ($q->prepare($query)) {
 
-        $q->bind_param('is', $_SESSION['user_id'], $_SESSION['email_address']);
+        $q->bind_param('is', $_SESSION['s_user_id'], $_SESSION['s_email_address']);
         $q->execute();
         $q->store_result();
 
@@ -74,8 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
                 $timestamp = $time->time();
 
-                $q_update->bind_param('ssis', $new_password, $timestamp, $_SESSION['user_id'],
-                    $_SESSION['email_address']);
+                $q_update->bind_param('ssis', $new_password, $timestamp, $_SESSION['s_user_id'],
+                    $_SESSION['s_email_address']);
                 $q_update->execute();
                 $q_update->close();
 
@@ -83,15 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
                 $error->outputSqlError($conn, "ERROR");
             }
 
-            $_SESSION['result_message'] .= "Your password has been changed<BR>";
+            $_SESSION['s_result_message'] .= "Your password has been changed<BR>";
 
             header("Location: ../index.php");
             exit;
 
         } else {
 
-            $_SESSION['result_message'] .= "Your password could not be updated<BR>";
-            $_SESSION['result_message'] .= "If the problem persists please contact your administrator<BR>";
+            $_SESSION['s_result_message'] .= "Your password could not be updated<BR>";
+            $_SESSION['s_result_message'] .= "If the problem persists please contact your administrator<BR>";
 
         }
 
@@ -107,11 +107,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
         if ($new_password == "" && $new_password_confirmation == "") {
 
-            $_SESSION['result_message'] .= "Your passwords were left blank<BR>";
+            $_SESSION['s_result_message'] .= "Your passwords were left blank<BR>";
 
         } else {
 
-            $_SESSION['result_message'] .= "Your passwords didn't match<BR>";
+            $_SESSION['s_result_message'] .= "Your passwords didn't match<BR>";
 
         }
 

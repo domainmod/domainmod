@@ -75,15 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $sslpid = $new_sslpid;
 
-        $_SESSION['result_message'] = "SSL Provider <div class=\"highlight\">$new_ssl_provider</div> Updated<BR>";
+        $_SESSION['s_result_message'] = "SSL Provider <div class=\"highlight\">$new_ssl_provider</div> Updated<BR>";
 
         header("Location: ../ssl-providers.php");
         exit;
 
     } else {
 
-        if ($new_ssl_provider == "") $_SESSION['result_message'] .= "Please enter the SSL provider's name<BR>";
-        if ($new_url == "") $_SESSION['result_message'] .= "Please enter the SSL provider's URL<BR>";
+        if ($new_ssl_provider == "") $_SESSION['s_result_message'] .= "Please enter the SSL provider's name<BR>";
+        if ($new_url == "") $_SESSION['s_result_message'] .= "Please enter the SSL provider's URL<BR>";
 
     }
 
@@ -161,14 +161,14 @@ if ($del == "1") {
 
     if ($existing_ssl_provider_accounts > 0 || $existing_ssl_certs > 0) {
 
-        if ($existing_ssl_provider_accounts > 0) $_SESSION['result_message'] .= "This SSL Provider has Accounts
+        if ($existing_ssl_provider_accounts > 0) $_SESSION['s_result_message'] .= "This SSL Provider has Accounts
             associated with it and cannot be deleted<BR>";
-        if ($existing_ssl_certs > 0) $_SESSION['result_message'] .= "This SSL Provider has SSL Certificates associated
+        if ($existing_ssl_certs > 0) $_SESSION['s_result_message'] .= "This SSL Provider has SSL Certificates associated
             with it and cannot be deleted<BR>";
 
     } else {
 
-        $_SESSION['result_message'] = "Are you sure you want to delete this SSL Provider?<BR><BR><a
+        $_SESSION['s_result_message'] = "Are you sure you want to delete this SSL Provider?<BR><BR><a
             href=\"ssl-provider.php?sslpid=$sslpid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER</a><BR>";
 
     }
@@ -219,7 +219,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "SSL Provider <div class=\"highlight\">$new_ssl_provider</div> Deleted<BR>";
+    $_SESSION['s_result_message'] = "SSL Provider <div class=\"highlight\">$new_ssl_provider</div> Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 

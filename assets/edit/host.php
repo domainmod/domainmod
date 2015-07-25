@@ -75,15 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $whid = $new_whid;
 
-        $_SESSION['result_message'] = "Web Host <div class=\"highlight\">$new_host</div> Updated<BR>";
+        $_SESSION['s_result_message'] = "Web Host <div class=\"highlight\">$new_host</div> Updated<BR>";
 
         header("Location: ../hosting.php");
         exit;
 
     } else {
 
-        if ($new_host == "") $_SESSION['result_message'] .= "Please enter the web host's name<BR>";
-        if ($new_url == "") $_SESSION['result_message'] .= "Please enter the web host's URL<BR>";
+        if ($new_host == "") $_SESSION['s_result_message'] .= "Please enter the web host's name<BR>";
+        if ($new_url == "") $_SESSION['s_result_message'] .= "Please enter the web host's URL<BR>";
 
     }
 
@@ -125,11 +125,11 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['result_message'] = "This Web Host has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_result_message'] = "This Web Host has domains associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['result_message'] = "Are you sure you want to delete this Web Host?<BR><BR><a
+            $_SESSION['s_result_message'] = "Are you sure you want to delete this Web Host?<BR><BR><a
                 href=\"host.php?whid=$whid&really_del=1\">YES, REALLY DELETE THIS WEB HOST</a><BR>";
 
         }
@@ -158,7 +158,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "Web Host <div class=\"highlight\">$new_host</div> Deleted<BR>";
+    $_SESSION['s_result_message'] = "Web Host <div class=\"highlight\">$new_host</div> Deleted<BR>";
 
     header("Location: ../hosting.php");
     exit;

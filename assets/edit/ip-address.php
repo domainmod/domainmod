@@ -77,15 +77,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $ipid = $new_ipid;
 
-        $_SESSION['result_message'] = "IP Address <div class=\"highlight\">$new_name ($new_ip)</div> Updated<BR>";
+        $_SESSION['s_result_message'] = "IP Address <div class=\"highlight\">$new_name ($new_ip)</div> Updated<BR>";
 
         header("Location: ../ip-addresses.php");
         exit;
 
     } else {
 
-        if ($new_name == "") $_SESSION['result_message'] .= "Please enter a name for the IP Address<BR>";
-        if ($new_ip == "") $_SESSION['result_message'] .= "Please enter the IP Address<BR>";
+        if ($new_name == "") $_SESSION['s_result_message'] .= "Please enter a name for the IP Address<BR>";
+        if ($new_ip == "") $_SESSION['s_result_message'] .= "Please enter the IP Address<BR>";
 
     }
 
@@ -127,11 +127,11 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['result_message'] = "This IP Address has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_result_message'] = "This IP Address has domains associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['result_message'] = "Are you sure you want to delete this IP Address?<BR><BR><a
+            $_SESSION['s_result_message'] = "Are you sure you want to delete this IP Address?<BR><BR><a
                 href=\"ip-address.php?ipid=$ipid&really_del=1\">YES, REALLY DELETE THIS IP ADDRESS</a><BR>";
 
         }
@@ -160,7 +160,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "IP Address <div class=\"highlight\">$new_name ($new_ip)</div> Deleted<BR>";
+    $_SESSION['s_result_message'] = "IP Address <div class=\"highlight\">$new_name ($new_ip)</div> Deleted<BR>";
 
     header("Location: ../ip-addresses.php");
     exit;

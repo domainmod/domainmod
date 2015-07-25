@@ -62,7 +62,7 @@ $software_section = "system";
     href="update-domain-fees.php">Update Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="update-ssl-fees.php">Update
     SSL Fees</a><BR>
 <?php
-if ($_SESSION['is_admin'] === 1) { //@formatter:off ?>
+if ($_SESSION['s_is_admin'] === 1) { //@formatter:off ?>
     <BR><BR>
     <div class="subheadline">Admin Menu</div><BR>
     &raquo; <a href="<?php echo $web_root; ?>/admin/system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;

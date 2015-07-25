@@ -29,10 +29,10 @@ class Maintenance
     {
 
         $this->deleteUnusedFees($connection, 'fees', 'domains');
-        $_SESSION['result_message'] .= $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
-        $_SESSION['result_message'] .= $this->updateTlds($connection);
-        $_SESSION['result_message'] .= $this->updateSegments($connection);
-        $_SESSION['result_message'] .= $this->updateAllFees($connection);
+        $_SESSION['s_result_message'] .= $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
+        $_SESSION['s_result_message'] .= $this->updateTlds($connection);
+        $_SESSION['s_result_message'] .= $this->updateSegments($connection);
+        $_SESSION['s_result_message'] .= $this->updateAllFees($connection);
 
         $result_message = 'Maintenance Completed<BR>';
 

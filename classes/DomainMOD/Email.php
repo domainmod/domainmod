@@ -85,10 +85,10 @@ class Email
         $ssl_expiring = $system->checkForRowsResult($connection, $sql_ssl);
 
         if ($domains_expiring != '0' || $ssl_expiring != '0') {
-            $_SESSION['result_message'] .= 'Expiration Email Sent<BR>';
+            $_SESSION['s_result_message'] .= 'Expiration Email Sent<BR>';
             return array($domains_expiring, $ssl_expiring);
         } else {
-            $_SESSION['result_message'] .= 'No Upcoming Expirations<BR>';
+            $_SESSION['s_result_message'] .= 'No Upcoming Expirations<BR>';
             if ($from_cron == '1') exit;
             return false;
         }
@@ -104,7 +104,7 @@ class Email
         $result_recipients = mysqli_query($connection, $sql_recipients);
 
         if (mysqli_num_rows($result_recipients) <= 0) {
-            $_SESSION['result_message'] .= 'No Users Are Subscribed<BR>';
+            $_SESSION['s_result_message'] .= 'No Users Are Subscribed<BR>';
             return false;
         }
         return $result_recipients;

@@ -56,9 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_end_date
     ) {
 
-        if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
-        if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
-        if ($new_start_date > $new_end_date) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
+        if (!$date->checkDateFormat($new_start_date)) $_SESSION['s_result_message'] .= "The start date is invalid<BR>";
+        if (!$date->checkDateFormat($new_end_date)) $_SESSION['s_result_message'] .= "The end date is invalid<BR>";
+        if ($new_start_date > $new_end_date) $_SESSION['s_result_message'] .= "The end date proceeds the start date<BR>";
 
         $submission_failed = "1";
 
@@ -82,7 +82,7 @@ $sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.
           AND sslc.account_id = sslpa.id
           AND sslc.owner_id = o.id
           AND sslc.active NOT IN ('0')
-          AND cc.user_id = '" . $_SESSION['user_id'] . "'
+          AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
           " . $range_string . "
         GROUP BY sslp.name, o.name, sslpa.username
         ORDER BY sslp.name, o.name, sslpa.username";
@@ -99,7 +99,7 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, 
                       AND sslc.account_id = sslpa.id
                       AND sslc.owner_id = o.id
                       AND sslc.active NOT IN ('0')
-                      AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                       " . $range_string . "";
 $result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
@@ -107,8 +107,8 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $number_of_certs_total = $row_grand_total->number_of_certs_total;
 }
 
-$grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbol'],
-    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+$grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
+    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
 if ($submission_failed != "1" && $total_rows > 0) {
 
@@ -150,7 +150,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
         $row_contents = array(
             'Total Cost:',
             $grand_total,
-            $_SESSION['default_currency']
+            $_SESSION['s_default_currency']
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -195,7 +195,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
                                          AND sslc.account_id = sslpa.id
                                          AND sslc.owner_id = o.id
                                          AND sslc.active NOT IN ('0')
-                                         AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                                         AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                          AND sslp.id = '" . $row->id . "'
                                          " . $range_string . "";
                 $result_provider_total = mysqli_query($connection, $sql_provider_total) or $error->outputOldSqlError($connection);
@@ -206,19 +206,19 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
                 $per_cert_account = $row->total_cost / $row->number_of_certs;
 
-                $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
-                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                $row->total_cost = $currency->format($row->total_cost, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-                $per_cert_account = $currency->format($per_cert_account, $_SESSION['default_currency_symbol'],
-                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                $per_cert_account = $currency->format($per_cert_account, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
                 $per_cert_provider = $temp_provider_total / $number_of_certs_provider;
 
-                $temp_provider_total = $currency->format($temp_provider_total, $_SESSION['default_currency_symbol'],
-                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                $temp_provider_total = $currency->format($temp_provider_total, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-                $per_cert_provider = $currency->format($per_cert_provider, $_SESSION['default_currency_symbol'],
-                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                $per_cert_provider = $currency->format($per_cert_provider, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
                 $row_contents = array(
                     $row->provider_name,
@@ -286,7 +286,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <?php } else { ?>
         <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
-    <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
+    <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?><BR><BR>
     <strong>Number of SSL Certs:</strong> <?php echo $number_of_certs_total; ?><BR>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
@@ -335,7 +335,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                                  AND sslc.account_id = sslpa.id
                                  AND sslc.owner_id = o.id
                                  AND sslc.active NOT IN ('0')
-                                 AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                                 AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                  AND sslp.id = '" . $row->id . "'
                                  " . $range_string . "";
         $result_provider_total = mysqli_query($connection, $sql_provider_total) or $error->outputOldSqlError($connection);
@@ -346,19 +346,19 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
         $per_cert_account = $row->total_cost / $row->number_of_certs;
 
-        $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $row->total_cost = $currency->format($row->total_cost, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-        $per_cert_account = $currency->format($per_cert_account, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $per_cert_account = $currency->format($per_cert_account, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
         $per_cert_provider = $temp_provider_total / $number_of_certs_provider;
 
-        $temp_provider_total = $currency->format($temp_provider_total, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $temp_provider_total = $currency->format($temp_provider_total, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-        $per_cert_provider = $currency->format($per_cert_provider, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $per_cert_provider = $currency->format($per_cert_provider, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
         if ($new_provider != $last_provider || $new_provider == "") { ?>
 

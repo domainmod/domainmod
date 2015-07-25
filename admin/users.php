@@ -36,14 +36,14 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $page_title = $software_title . " Users";
 $software_section = "admin-user-list";
 
 $export_data = $_GET['export_data'];
 
-if ($_SESSION['username'] == "admin") {
+if ($_SESSION['s_username'] == "admin") {
 
     $sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.number_of_logins, u.last_login, u.insert_time, u.update_time, us.default_timezone, us.default_currency
             FROM users AS u, user_settings AS us

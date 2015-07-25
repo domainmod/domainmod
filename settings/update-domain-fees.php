@@ -44,9 +44,9 @@ $maint->updateDomainFees($connection);
 $queryB = new DomainMOD\QueryBuild();
 
 $sql = $queryB->missingFees('domains');
-$_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
+$_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
-$_SESSION['result_message'] .= "Domain Fees Updated<BR>";
+$_SESSION['s_result_message'] .= "Domain Fees Updated<BR>";
 
 header("Location: " . $_SERVER['HTTP_REFERER']);
 exit;

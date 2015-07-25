@@ -36,7 +36,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $page_title = "Editing A Server";
 $software_section = "admin-dw-manage-servers-edit";
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $dwsid = $new_dwsid;
 
-        $_SESSION['result_message'] = "Server <div class=\"highlight\">" . $new_name . " (" . $new_host . ")</div>
+        $_SESSION['s_result_message'] = "Server <div class=\"highlight\">" . $new_name . " (" . $new_host . ")</div>
         Updated<BR>";
 
         header("Location: ../servers.php");
@@ -96,22 +96,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_name == "") {
-            $_SESSION['result_message'] .= "Please enter a display name for the server<BR>";
+            $_SESSION['s_result_message'] .= "Please enter a display name for the server<BR>";
         }
         if ($new_host == "") {
-            $_SESSION['result_message'] .= "Please enter the hostname<BR>";
+            $_SESSION['s_result_message'] .= "Please enter the hostname<BR>";
         }
         if ($new_protocol == "") {
-            $_SESSION['result_message'] .= "Please enter the protocol<BR>";
+            $_SESSION['s_result_message'] .= "Please enter the protocol<BR>";
         }
         if ($new_port == "") {
-            $_SESSION['result_message'] .= "Please enter the port<BR>";
+            $_SESSION['s_result_message'] .= "Please enter the port<BR>";
         }
         if ($new_username == "") {
-            $_SESSION['result_message'] .= "Please enter the username<BR>";
+            $_SESSION['s_result_message'] .= "Please enter the username<BR>";
         }
         if ($new_hash == "") {
-            $_SESSION['result_message'] .= "Please enter the hash<BR>";
+            $_SESSION['s_result_message'] .= "Please enter the hash<BR>";
         }
 
     }
@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 if ($del == "1") {
 
-    $_SESSION['result_message'] = "Are you sure you want to delete this Server?<BR><BR><a
+    $_SESSION['s_result_message'] = "Are you sure you want to delete this Server?<BR><BR><a
     href=\"server.php?dwsid=$dwsid&really_del=1\">YES, REALLY DELETE THIS SERVER</a><BR>";
 
 }
@@ -223,7 +223,7 @@ if ($really_del == "1") {
     $dwstats = new DomainMOD\DwStats();
     $dwstats->updateDwTotalsTable($connection);
 
-    $_SESSION['result_message'] = "Server <div class=\"highlight\">" . $new_name . " (" . $new_host . ")</div>
+    $_SESSION['s_result_message'] = "Server <div class=\"highlight\">" . $new_name . " (" . $new_host . ")</div>
     Deleted<BR>";
 
     header("Location: ../servers.php");

@@ -36,7 +36,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $page_title = "Editing A User";
 $software_section = "admin-user-edit";
@@ -65,9 +65,9 @@ $result = mysqli_query($connection, $sql);
 
 while ($row = mysqli_fetch_object($result)) {
 
-    if ($row->username == "admin" && $_SESSION['username'] != "admin") {
+    if ($row->username == "admin" && $_SESSION['s_username'] != "admin") {
 
-        $_SESSION['result_message'] .= "You're trying to edit an invalid user<BR>";
+        $_SESSION['s_result_message'] .= "You're trying to edit an invalid user<BR>";
 
         header("Location: ../users.php");
         exit;
@@ -124,13 +124,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             WHERE id = '" . $new_uid . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $_SESSION['result_message'] .= "User <div class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</div> Updated<BR>";
+    $_SESSION['s_result_message'] .= "User <div class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</div> Updated<BR>";
 
-    if ($_SESSION['username'] == $new_username) {
+    if ($_SESSION['s_username'] == $new_username) {
 
-        $_SESSION['first_name'] = $new_first_name;
-        $_SESSION['last_name'] = $new_last_name;
-        $_SESSION['email_address'] = $new_email_address;
+        $_SESSION['s_first_name'] = $new_first_name;
+        $_SESSION['s_last_name'] = $new_last_name;
+        $_SESSION['s_email_address'] = $new_email_address;
 
     }
 
@@ -141,10 +141,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($invalid_username == 1 || $new_username == "") $_SESSION['result_message'] .= "You have entered an invalid username<BR>";
-        if ($new_first_name == "") $_SESSION['result_message'] .= "Enter the user's first name<BR>";
-        if ($new_last_name == "") $_SESSION['result_message'] .= "Enter the user's last name<BR>";
-        if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the user's email address<BR>";
+        if ($invalid_username == 1 || $new_username == "") $_SESSION['s_result_message'] .= "You have entered an invalid username<BR>";
+        if ($new_first_name == "") $_SESSION['s_result_message'] .= "Enter the user's first name<BR>";
+        if ($new_last_name == "") $_SESSION['s_result_message'] .= "Enter the user's last name<BR>";
+        if ($new_email_address == "") $_SESSION['s_result_message'] .= "Enter the user's email address<BR>";
 
     } else {
 
@@ -168,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 }
 if ($del == "1") {
 
-    $_SESSION['result_message'] = "Are you sure you want to delete this User?<BR><BR><a href=\"user.php?uid=" . $uid . "&really_del=1\">YES, REALLY DELETE THIS USER</a><BR>";
+    $_SESSION['s_result_message'] = "Are you sure you want to delete this User?<BR><BR><a href=\"user.php?uid=" . $uid . "&really_del=1\">YES, REALLY DELETE THIS USER</a><BR>";
 
 }
 
@@ -182,10 +182,10 @@ if ($really_del == "1") {
         $temp_uid = $row->id;
     }
 
-    if ($uid == $temp_uid || $uid == $_SESSION['user_id']) {
+    if ($uid == $temp_uid || $uid == $_SESSION['s_user_id']) {
 
-        if ($uid == $temp_uid) $_SESSION['result_message'] = "The user <div class=\"highlight\">admin</div> cannot be deleted<BR>";
-        if ($uid == $_SESSION['user_id']) $_SESSION['result_message'] = "You can't delete yourself<BR>";
+        if ($uid == $temp_uid) $_SESSION['s_result_message'] = "The user <div class=\"highlight\">admin</div> cannot be deleted<BR>";
+        if ($uid == $_SESSION['s_user_id']) $_SESSION['s_result_message'] = "You can't delete yourself<BR>";
 
     } else {
 
@@ -197,7 +197,7 @@ if ($really_del == "1") {
                 WHERE id = '" . $uid . "'";
         $result = mysqli_query($connection, $sql);
 
-        $_SESSION['result_message'] = "User <div class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</div> Deleted<BR>";
+        $_SESSION['s_result_message'] = "User <div class=\"highlight\">" . $new_first_name . " " . $new_last_name . " (" . $new_username . ")</div> Deleted<BR>";
 
         header("Location: ../users.php");
         exit;

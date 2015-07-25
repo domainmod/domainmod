@@ -109,10 +109,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "Registrar Account <div class=\"highlight\">" . $new_username . " (" .
+        $_SESSION['s_result_message'] = "Registrar Account <div class=\"highlight\">" . $new_username . " (" .
             $temp_registrar . ", " . $temp_owner . ")</div> Added<BR>";
 
-        if ($_SESSION['has_registrar_account'] != '1') {
+        if ($_SESSION['s_has_registrar_account'] != '1') {
 
             $system->checkExistingAssets($connection);
 
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_username == "") {
-            $_SESSION['result_message'] .= "Please enter a username<BR>";
+            $_SESSION['s_result_message'] .= "Please enter a username<BR>";
         }
 
     }
@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         while ($q->fetch()) {
 
-            if ($id == $_SESSION['default_owner_domains']) {
+            if ($id == $_SESSION['s_default_owner_domains']) {
 
                 echo "<option value=\"" . $id . "\" selected>" . $name . "</option>";
 
@@ -199,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         while ($q->fetch()) {
 
-            if ($id == $_SESSION['default_registrar']) {
+            if ($id == $_SESSION['s_default_registrar']) {
 
                 echo "<option value=\"" . $id . "\" selected>" . $name . "</option>";
 

@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "DNS Profile <div class=\"highlight\">" . $new_name . "</div> Added<BR>";
+        $_SESSION['s_result_message'] = "DNS Profile <div class=\"highlight\">" . $new_name . "</div> Added<BR>";
 
         header("Location: ../dns.php");
         exit;
@@ -131,10 +131,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_name == "") {
-            $_SESSION['result_message'] .= "Please enter a name for the DNS profile<BR>";
+            $_SESSION['s_result_message'] .= "Please enter a name for the DNS profile<BR>";
         }
         if ($new_dns1 == "" || $new_dns2 == "") {
-            $_SESSION['result_message'] .= "Please enter at least two DNS servers<BR>";
+            $_SESSION['s_result_message'] .= "Please enter at least two DNS servers<BR>";
         }
 
     }

@@ -74,14 +74,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $ssltid = $new_ssltid;
 
-        $_SESSION['result_message'] = "SSL Type <div class=\"highlight\">$new_type</div> Updated<BR>";
+        $_SESSION['s_result_message'] = "SSL Type <div class=\"highlight\">$new_type</div> Updated<BR>";
 
         header("Location: ../ssl-types.php");
         exit;
 
     } else {
 
-        $_SESSION['result_message'] = "Please enter the Type name<BR>";
+        $_SESSION['s_result_message'] = "Please enter the Type name<BR>";
 
     }
 
@@ -122,11 +122,11 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['result_message'] = "This Type has SSL certificates associated with it and cannot be deleted<BR>";
+            $_SESSION['s_result_message'] = "This Type has SSL certificates associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['result_message'] = "Are you sure you want to delete this SSL Type?<BR><BR><a
+            $_SESSION['s_result_message'] = "Are you sure you want to delete this SSL Type?<BR><BR><a
                 href=\"ssl-type.php?ssltid=$ssltid&really_del=1\">YES, REALLY DELETE THIS TYPE</a><BR>";
 
         }
@@ -155,7 +155,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "SSL Type <div class=\"highlight\">$new_type</div> Deleted<BR>";
+    $_SESSION['s_result_message'] = "SSL Type <div class=\"highlight\">$new_type</div> Deleted<BR>";
 
     header("Location: ../ssl-types.php");
     exit;

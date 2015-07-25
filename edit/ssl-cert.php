@@ -181,12 +181,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $sslcid = $new_sslcid;
 
-        $_SESSION['result_message'] = "SSL Certificate <div class=\"highlight\">$new_name</div> Updated<BR>";
+        $_SESSION['s_result_message'] = "SSL Certificate <div class=\"highlight\">$new_name</div> Updated<BR>";
 
         $queryB = new DomainMOD\QueryBuild();
 
         $sql = $queryB->missingFees('ssl_certs');
-        $_SESSION['missing_ssl_fees'] = $system->checkForRows($connection, $sql);
+        $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
         header("Location: ssl-cert.php?sslcid=$sslcid");
         exit;
@@ -194,10 +194,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_name == "") {
-            $_SESSION['result_message'] .= "Enter the SSL certificate name<BR>";
+            $_SESSION['s_result_message'] .= "Enter the SSL certificate name<BR>";
         }
         if (!$date->checkDateFormat($new_expiry_date)) {
-            $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>";
+            $_SESSION['s_result_message'] .= "The expiry date you entered is invalid<BR>";
         }
 
     }
@@ -233,7 +233,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del == "1") {
 
-    $_SESSION['result_message'] .= "Are you sure you want to delete this SSL Certificate?<BR><BR>
+    $_SESSION['s_result_message'] .= "Are you sure you want to delete this SSL Certificate?<BR><BR>
         <a href=\"ssl-cert.php?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE
         ACCOUNT</a><BR>";
 
@@ -253,7 +253,7 @@ if ($really_del == "1") {
         $temp_type = $row->type;
     }
 
-    $_SESSION['result_message'] = "SSL Certificate <div class=\"highlight\">$new_name ($temp_type)</div> Deleted<BR>";
+    $_SESSION['s_result_message'] = "SSL Certificate <div class=\"highlight\">$new_name ($temp_type)</div> Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 

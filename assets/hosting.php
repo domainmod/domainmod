@@ -96,7 +96,7 @@ if ($export_data == "1") {
                 $active_domains = $row_total_count->total_count;
             }
 
-            if ($row->id == $_SESSION['default_host']) {
+            if ($row->id == $_SESSION['s_default_host']) {
 
                 $is_default = "1";
 
@@ -149,7 +149,7 @@ if ($export_data == "1") {
 
         while ($row = mysqli_fetch_object($result)) {
 
-            if ($row->id == $_SESSION['default_host']) {
+            if ($row->id == $_SESSION['s_default_host']) {
 
                 $is_default = "1";
 
@@ -222,7 +222,7 @@ $has_active = "1"; ?>
         <tr class="main_table_row_active">
         <td class="main_table_cell_active"><?php //@formatter:off ?>
             <a class="invisiblelink" href="edit/host.php?whid=<?php echo $row->id; ?>"><?php echo $row->name;
-                ?></a><?php if ($_SESSION['default_host'] == $row->id) echo "<a title=\"Default Web Host\"><div
+                ?></a><?php if ($_SESSION['s_default_host'] == $row->id) echo "<a title=\"Default Web Host\"><div
                 class=\"default_highlight\">*</div></a>"; //@formatter:on ?>
         </td>
         <td class="main_table_cell_active"><?php
@@ -257,7 +257,7 @@ $has_active = "1"; ?>
 
     }
 
-    if ($_SESSION['display_inactive_assets'] == "1") {
+    if ($_SESSION['s_display_inactive_assets'] == "1") {
 
         $exclude_web_host_string = substr($exclude_web_host_string_raw, 0, -2);
 
@@ -301,7 +301,7 @@ $has_active = "1"; ?>
                 <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink" href="edit/host.php?whid=<?php echo $row->id; ?>"><?php
-                        echo $row->name; ?></a><?php if ($_SESSION['default_host'] == "1") echo "<a
+                        echo $row->name; ?></a><?php if ($_SESSION['s_default_host'] == "1") echo "<a
                         title=\"Default Web Host\"><div class=\"default_highlight\">*</div></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive">
@@ -318,7 +318,7 @@ $has_active = "1"; ?>
     if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
     //@formatter:off
-    if ($_SESSION['display_inactive_assets'] != "1") { ?>
+    if ($_SESSION['s_display_inactive_assets'] != "1") { ?>
         <BR><em>Inactive Hosts are currently not displayed. <a class="invisiblelink"
             href="../settings/display/">Click here to display them</a>.</em><BR><?php
     } //@formatter:on

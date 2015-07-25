@@ -37,7 +37,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $page_title = "Rebuilding Data Warehouse...";
 $software_section = "admin-dw-rebuild";

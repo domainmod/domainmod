@@ -127,7 +127,7 @@ if ($export_data == "1") {
                 $total_cert_count = $row_cert_count->total_cert_count;
             }
 
-            if ($row->sslpaid == $_SESSION['default_ssl_provider_account']) {
+            if ($row->sslpaid == $_SESSION['s_default_ssl_provider_account']) {
 
                 $is_default = "1";
 
@@ -199,7 +199,7 @@ if ($export_data == "1") {
 
         while ($row = mysqli_fetch_object($result)) {
 
-            if ($row->sslpaid == $_SESSION['default_ssl_provider_account']) {
+            if ($row->sslpaid == $_SESSION['s_default_ssl_provider_account']) {
 
                 $is_default = "1";
 
@@ -291,7 +291,7 @@ $has_active = 1; ?>
         <td class="main_table_cell_active">
             <?php //@formatter:off ?>
             <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php
-                echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] == $row->sslpaid)
+                echo $row->username; ?></a><?php if ($_SESSION['s_default_ssl_provider_account'] == $row->sslpaid)
                 echo "<a title=\"Default Account\"><div class=\"default_highlight\">*</div></a>"; ?><?php
             if ($row->reseller == "1")
                 echo "<a title=\"Reseller Account\"><div class=\"reseller_highlight\">*</div></a>"; ?>
@@ -322,7 +322,7 @@ $has_active = 1; ?>
 
     }
 
-    if ($_SESSION['display_inactive_assets'] == "1") {
+    if ($_SESSION['s_display_inactive_assets'] == "1") {
 
         $exclude_account_string = substr($exclude_account_string_raw, 0, -2);
 
@@ -380,7 +380,7 @@ $has_active = 1; ?>
                 <td class="main_table_cell_inactive">
                     <?php //@formatter:off ?>
                     <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid;
-                        ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['default_ssl_provider_account'] ==
+                        ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['s_default_ssl_provider_account'] ==
                         $row->sslpaid) echo "<a title=\"Default Account\"><div class=\"default_highlight\">*</div></a>";
                     if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><div
                         class=\"reseller_highlight\">*</div></a>"; ?>
@@ -403,7 +403,7 @@ $has_active = 1; ?>
 
     if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
-    if ($_SESSION['display_inactive_assets'] != "1") { //@formatter:off ?>
+    if ($_SESSION['s_display_inactive_assets'] != "1") { //@formatter:off ?>
         <BR><em>Inactive Accounts are currently not displayed. <a class="invisiblelink"
             href="../settings/display/">Click here to display them</a>.</em><BR><?php
     } //@formatter:on

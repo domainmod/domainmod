@@ -153,16 +153,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $dnsid = $new_dnsid;
 
-        $_SESSION['result_message'] = "DNS Profile <div class=\"highlight\">$new_name</div> Updated<BR>";
+        $_SESSION['s_result_message'] = "DNS Profile <div class=\"highlight\">$new_name</div> Updated<BR>";
 
         header("Location: ../dns.php");
         exit;
 
     } else {
 
-        if ($new_name == "") $_SESSION['result_message'] .= "Please enter a name for the DNS profile<BR>";
-        if ($new_dns1 == "") $_SESSION['result_message'] .= "Please enter the first DNS server<BR>";
-        if ($new_dns2 == "") $_SESSION['result_message'] .= "Please enter the second DNS server<BR>";
+        if ($new_name == "") $_SESSION['s_result_message'] .= "Please enter a name for the DNS profile<BR>";
+        if ($new_dns1 == "") $_SESSION['s_result_message'] .= "Please enter the first DNS server<BR>";
+        if ($new_dns2 == "") $_SESSION['s_result_message'] .= "Please enter the second DNS server<BR>";
 
     }
 
@@ -206,11 +206,11 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['result_message'] = "This DNS Profile has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_result_message'] = "This DNS Profile has domains associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['result_message'] = "Are you sure you want to delete this DNS Profile?<BR><BR><a
+            $_SESSION['s_result_message'] = "Are you sure you want to delete this DNS Profile?<BR><BR><a
                 href=\"dns.php?dnsid=$dnsid&really_del=1\">YES, REALLY DELETE THIS DNS PROFILE</a><BR>";
 
         }
@@ -239,7 +239,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "DNS Profile <div class=\"highlight\">$new_name</div> Deleted<BR>";
+    $_SESSION['s_result_message'] = "DNS Profile <div class=\"highlight\">$new_name</div> Deleted<BR>";
 
     header("Location: ../dns.php");
     exit;

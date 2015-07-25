@@ -75,15 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $rid = $new_rid;
 
-        $_SESSION['result_message'] = "Registrar <div class=\"highlight\">$new_registrar</div> Updated<BR>";
+        $_SESSION['s_result_message'] = "Registrar <div class=\"highlight\">$new_registrar</div> Updated<BR>";
 
         header("Location: ../registrars.php");
         exit;
 
     } else {
 
-        if ($new_registrar == "") $_SESSION['result_message'] .= "Please enter the registrar name<BR>";
-        if ($new_url == "") $_SESSION['result_message'] .= "Please enter the registrar's URL<BR>";
+        if ($new_registrar == "") $_SESSION['s_result_message'] .= "Please enter the registrar name<BR>";
+        if ($new_url == "") $_SESSION['s_result_message'] .= "Please enter the registrar's URL<BR>";
 
     }
 
@@ -161,14 +161,14 @@ if ($del == "1") {
 
     if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
 
-        if ($existing_registrar_accounts > 0) $_SESSION['result_message'] .= "This Registrar has Registrar Accounts
+        if ($existing_registrar_accounts > 0) $_SESSION['s_result_message'] .= "This Registrar has Registrar Accounts
             associated with it and cannot be deleted<BR>";
-        if ($existing_domains > 0) $_SESSION['result_message'] .= "This Registrar has domains associated with it and
+        if ($existing_domains > 0) $_SESSION['s_result_message'] .= "This Registrar has domains associated with it and
             cannot be deleted<BR>";
 
     } else {
 
-        $_SESSION['result_message'] = "Are you sure you want to delete this Registrar?<BR><BR><a
+        $_SESSION['s_result_message'] = "Are you sure you want to delete this Registrar?<BR><BR><a
             href=\"registrar.php?rid=$rid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
 
     }
@@ -219,7 +219,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "Registrar <div class=\"highlight\">$new_registrar</div> Deleted<BR>";
+    $_SESSION['s_result_message'] = "Registrar <div class=\"highlight\">$new_registrar</div> Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 

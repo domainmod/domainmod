@@ -53,13 +53,13 @@ class Timestamp
     public function toUserTimezone($input_time, $format = 'Y-m-d H:i:s')
     {
         $date = new \DateTime($input_time, new \DateTimeZone('UTC'));
-        $date->setTimezone(new \DateTimeZone($_SESSION['default_timezone']));
+        $date->setTimezone(new \DateTimeZone($_SESSION['s_default_timezone']));
         return $date->format($format);
     }
 
     public function toUtcTimezone($input_time, $format = 'Y-m-d H:i:s')
     {
-        $date = new \DateTime($input_time, new \DateTimeZone($_SESSION['default_timezone']));
+        $date = new \DateTime($input_time, new \DateTimeZone($_SESSION['s_default_timezone']));
         $date->setTimezone(new \DateTimeZone('UTC'));
         return $date->format($format);
     }

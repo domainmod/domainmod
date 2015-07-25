@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "Registrar Account <div class=\"highlight\">$new_username ($temp_registrar,
+        $_SESSION['s_result_message'] = "Registrar Account <div class=\"highlight\">$new_username ($temp_registrar,
             $temp_owner)</div> Updated<BR>";
 
         header("Location: ../registrar-accounts.php");
@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($username == "") {
-            $_SESSION['result_message'] .= "Please enter the username<BR>";
+            $_SESSION['s_result_message'] .= "Please enter the username<BR>";
         }
 
     }
@@ -192,12 +192,12 @@ if ($del == "1") {
 
         if ($existing_domains > 0) {
 
-            $_SESSION['result_message'] = "This Registrar Account has domains associated with it and cannot be deleted
+            $_SESSION['s_result_message'] = "This Registrar Account has domains associated with it and cannot be deleted
                 <BR>";
 
         } else {
 
-            $_SESSION['result_message'] = "Are you sure you want to delete this Registrar Account?<BR><BR><a
+            $_SESSION['s_result_message'] = "Are you sure you want to delete this Registrar Account?<BR><BR><a
                 href=\"registrar-account.php?raid=$raid&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR
                 ACCOUNT</a><BR>";
 
@@ -247,7 +247,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "Registrar Account <div class=\"highlight\">$temp_username ($temp_registrar_name,
+    $_SESSION['s_result_message'] = "Registrar Account <div class=\"highlight\">$temp_username ($temp_registrar_name,
         $temp_owner_name)</div> Deleted<BR>";
 
     $system->checkExistingAssets($connection);

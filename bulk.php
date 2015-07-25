@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_data == "") {
 
-        $_SESSION['result_message'] = "Please enter the list of domains to apply the action to<BR>";
+        $_SESSION['s_result_message'] = "Please enter the list of domains to apply the action to<BR>";
 
     } else {
 
@@ -114,26 +114,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($invalid_count == 1) {
 
-                    $_SESSION['result_message'] = "There is " . number_format($invalid_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
+                    $_SESSION['s_result_message'] = "There is " . number_format($invalid_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
 
                 } else {
 
-                    $_SESSION['result_message'] = "There are " . number_format($invalid_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
+                    $_SESSION['s_result_message'] = "There are " . number_format($invalid_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
 
                     if (($invalid_count - $invalid_to_display) == 1) {
 
-                        $_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_count - $invalid_to_display) . " other<BR>";
+                        $_SESSION['s_result_message'] .= "<BR>Plus " . number_format($invalid_count - $invalid_to_display) . " other<BR>";
 
                     } elseif (($invalid_count - $invalid_to_display) > 1) {
 
-                        $_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_count - $invalid_to_display) . " others<BR>";
+                        $_SESSION['s_result_message'] .= "<BR>Plus " . number_format($invalid_count - $invalid_to_display) . " others<BR>";
                     }
 
                 }
 
             } else {
 
-                $_SESSION['result_message'] = "Please enter the list of domains to apply the action to<BR>";
+                $_SESSION['s_result_message'] = "Please enter the list of domains to apply the action to<BR>";
 
             }
             $submission_failed = 1;
@@ -179,9 +179,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['result_message'] = "Domains Renewed<BR>";
+                $_SESSION['s_result_message'] = "Domains Renewed<BR>";
 
-                $_SESSION['result_message'] .= $maint->updateSegments($connection);
+                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
             } elseif ($action == "AD") {
 
@@ -189,12 +189,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if (!$date->checkDateFormat($new_expiry_date) || $new_pcid == "" || $new_dnsid == "" || $new_ipid == "" || $new_whid == "" || $new_raid == "" || $new_pcid == "0" || $new_dnsid == "0" || $new_ipid == "0" || $new_whid == "0" || $new_raid == "0") {
 
-                    if (!$date->checkDateFormat($new_expiry_date)) $_SESSION['result_message'] .= "You have entered an invalid expiry date<BR>";
-                    if ($new_pcid == "" || $new_pcid == "0") $_SESSION['result_message'] .= "Please choose the new Category<BR>";
-                    if ($new_dnsid == "" || $new_dnsid == "0") $_SESSION['result_message'] .= "Please choose the new DNS Profile<BR>";
-                    if ($new_ipid == "" || $new_ipid == "0") $_SESSION['result_message'] .= "Please choose the new IP Address<BR>";
-                    if ($new_whid == "" || $new_whid == "0") $_SESSION['result_message'] .= "Please choose the new Web Hosting Provider<BR>";
-                    if ($new_raid == "" || $new_raid == "0") $_SESSION['result_message'] .= "Please choose the new Registrar Account<BR>";
+                    if (!$date->checkDateFormat($new_expiry_date)) $_SESSION['s_result_message'] .= "You have entered an invalid expiry date<BR>";
+                    if ($new_pcid == "" || $new_pcid == "0") $_SESSION['s_result_message'] .= "Please choose the new Category<BR>";
+                    if ($new_dnsid == "" || $new_dnsid == "0") $_SESSION['s_result_message'] .= "Please choose the new DNS Profile<BR>";
+                    if ($new_ipid == "" || $new_ipid == "0") $_SESSION['s_result_message'] .= "Please choose the new IP Address<BR>";
+                    if ($new_whid == "" || $new_whid == "0") $_SESSION['s_result_message'] .= "Please choose the new Web Hosting Provider<BR>";
+                    if ($new_raid == "" || $new_raid == "0") $_SESSION['s_result_message'] .= "Please choose the new Registrar Account<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -305,16 +305,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         // finish cycling through domains here
                     }
 
-                    $_SESSION['result_message'] = "Domains Added<BR>";
+                    $_SESSION['s_result_message'] = "Domains Added<BR>";
 
                     $queryB = new DomainMOD\QueryBuild();
 
                     $sql = $queryB->missingFees('domains');
-                    $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
+                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
-                    $_SESSION['result_message'] .= $maint->updateSegments($connection);
+                    $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
-                    $_SESSION['result_message'] .= $maint->updateTlds($connection);
+                    $_SESSION['s_result_message'] .= $maint->updateTlds($connection);
 
                 }
 
@@ -364,15 +364,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['result_message'] .= $maint->updateSegments($connection);
+                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
-                $_SESSION['result_message'] = "Domains Fully Renewed<BR>";
+                $_SESSION['s_result_message'] = "Domains Fully Renewed<BR>";
 
             } elseif ($action == "CPC") {
 
                 if ($new_pcid == "" || $new_pcid == 0) {
 
-                    $_SESSION['result_message'] = "Please choose the new Category<BR>";
+                    $_SESSION['s_result_message'] = "Please choose the new Category<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -395,7 +395,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                    $_SESSION['result_message'] = "Category Changed<BR>";
+                    $_SESSION['s_result_message'] = "Category Changed<BR>";
 
                 }
 
@@ -403,7 +403,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_dnsid == "" || $new_dnsid == 0) {
 
-                    $_SESSION['result_message'] = "Please choose the new DNS Profile<BR>";
+                    $_SESSION['s_result_message'] = "Please choose the new DNS Profile<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -426,14 +426,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                    $_SESSION['result_message'] = "DNS Profile Changed<BR>";
+                    $_SESSION['s_result_message'] = "DNS Profile Changed<BR>";
                 }
 
             } elseif ($action == "CIP") {
 
                 if ($new_ipid == "" || $new_ipid == 0) {
 
-                    $_SESSION['result_message'] = "Please choose the new IP Address<BR>";
+                    $_SESSION['s_result_message'] = "Please choose the new IP Address<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -456,7 +456,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                    $_SESSION['result_message'] = "IP Address Changed<BR>";
+                    $_SESSION['s_result_message'] = "IP Address Changed<BR>";
 
                 }
 
@@ -464,7 +464,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes == "") {
 
-                    $_SESSION['result_message'] = "Please enter the new Note<BR>";
+                    $_SESSION['s_result_message'] = "Please enter the new Note<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -475,7 +475,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                    WHERE domain IN (" . $new_data_formatted . ")";
                     $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
 
-                    $_SESSION['result_message'] = "Note Added<BR>";
+                    $_SESSION['s_result_message'] = "Note Added<BR>";
 
                 }
 
@@ -483,7 +483,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_raid == "" || $new_raid == 0) {
 
-                    $_SESSION['result_message'] = "Please choose the new Registrar Account<BR>";
+                    $_SESSION['s_result_message'] = "Please choose the new Registrar Account<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -563,12 +563,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               AND d.domain IN (" . $new_data_formatted . ")";
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                    $_SESSION['result_message'] = "Registrar Account Changed<BR>";
+                    $_SESSION['s_result_message'] = "Registrar Account Changed<BR>";
 
                     $queryB = new DomainMOD\QueryBuild();
 
                     $sql = $queryB->missingFees('domains');
-                    $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
+                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
                 }
 
@@ -576,7 +576,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_whid == "" || $new_whid == 0) {
 
-                    $_SESSION['result_message'] = "Please choose the new Web Hosting Provider<BR>";
+                    $_SESSION['s_result_message'] = "Please choose the new Web Hosting Provider<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -599,7 +599,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                    $_SESSION['result_message'] = "Web Hosting Provider Changed<BR>";
+                    $_SESSION['s_result_message'] = "Web Hosting Provider Changed<BR>";
 
                 }
 
@@ -655,9 +655,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['result_message'] = "Domains (and associated SSL Certificates) Deleted<BR>";
+                $_SESSION['s_result_message'] = "Domains (and associated SSL Certificates) Deleted<BR>";
 
-                $_SESSION['result_message'] .= $maint->updateSegments($connection);
+                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
             } elseif ($action == "E") {
 
@@ -679,9 +679,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['result_message'] = "Domains marked as expired<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as expired<BR>";
 
-                $_SESSION['result_message'] .= $maint->updateSegments($connection);
+                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
             } elseif ($action == "S") {
 
@@ -703,9 +703,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['result_message'] = "Domains marked as sold<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as sold<BR>";
 
-                $_SESSION['result_message'] .= $maint->updateSegments($connection);
+                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
             } elseif ($action == "A") {
 
@@ -727,9 +727,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['result_message'] = "Domains marked as active<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as active<BR>";
 
-                $_SESSION['result_message'] .= $maint->updateSegments($connection);
+                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
             } elseif ($action == "T") {
 
@@ -751,9 +751,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['result_message'] = "Domains marked as 'In Transfer'<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as 'In Transfer'<BR>";
 
-                $_SESSION['result_message'] .= $maint->updateSegments($connection);
+                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
             } elseif ($action == "PRg") {
 
@@ -775,9 +775,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['result_message'] = "Domains marked as 'Pending (Registration)'<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as 'Pending (Registration)'<BR>";
 
-                $_SESSION['result_message'] .= $maint->updateSegments($connection);
+                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
             } elseif ($action == "PRn") {
 
@@ -799,9 +799,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['result_message'] = "Domains marked as 'Pending (Renewal)'<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as 'Pending (Renewal)'<BR>";
 
-                $_SESSION['result_message'] .= $maint->updateSegments($connection);
+                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
             } elseif ($action == "PO") {
 
@@ -823,9 +823,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['result_message'] = "Domains marked as 'Pending (Other)'<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as 'Pending (Other)'<BR>";
 
-                $_SESSION['result_message'] .= $maint->updateSegments($connection);
+                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
             } elseif ($action == "PRVE") {
 
@@ -862,9 +862,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['result_message'] = "Domains marked as 'Private WHOIS'<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as 'Private WHOIS'<BR>";
 
-                $_SESSION['result_message'] .= $maint->updateSegments($connection);
+                $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
             } elseif ($action == "PRVD") {
 
@@ -901,13 +901,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['result_message'] = "Domains marked as 'Public WHOIS'<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as 'Public WHOIS'<BR>";
 
             } elseif ($action == "CED") {
 
                 if (!$date->checkDateFormat($new_expiry_date)) {
 
-                    $_SESSION['result_message'] = "The expiry date you entered is invalid<BR>";
+                    $_SESSION['s_result_message'] = "The expiry date you entered is invalid<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -930,7 +930,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                    $_SESSION['result_message'] = "Expiry Date Updated<BR>";
+                    $_SESSION['s_result_message'] = "Expiry Date Updated<BR>";
 
                 }
 
@@ -979,7 +979,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['result_message'] = "Custom Field <div class=\"highlight\">" . $name_array[0] . "</div> Updated<BR>";
+                $_SESSION['s_result_message'] = "Custom Field <div class=\"highlight\">" . $name_array[0] . "</div> Updated<BR>";
 
             }
 
@@ -1271,7 +1271,7 @@ multiple domains all at once.<BR><BR>
         echo "<select name=\"new_raid\">";
         while ($row_account = mysqli_fetch_object($result_account)) { ?>
 
-            <option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $_SESSION['default_registrar_account']) echo " selected"; ?>><?php echo $row_account->r_name; ?>
+            <option value="<?php echo $row_account->id; ?>"<?php if ($row_account->id == $_SESSION['s_default_registrar_account']) echo " selected"; ?>><?php echo $row_account->r_name; ?>
             , <?php echo $row_account->o_name; ?> (<?php echo $row_account->username; ?>)</option><?php
 
         }
@@ -1287,7 +1287,7 @@ multiple domains all at once.<BR><BR>
         echo "<select name=\"new_dnsid\">";
         while ($row_dns = mysqli_fetch_object($result_dns)) { ?>
 
-            <option value="<?php echo $row_dns->id; ?>"<?php if ($row_dns->id == $_SESSION['default_dns']) echo " selected"; ?>><?php echo $row_dns->name; ?></option><?php
+            <option value="<?php echo $row_dns->id; ?>"<?php if ($row_dns->id == $_SESSION['s_default_dns']) echo " selected"; ?>><?php echo $row_dns->name; ?></option><?php
 
         }
         echo "</select>";
@@ -1302,7 +1302,7 @@ multiple domains all at once.<BR><BR>
         echo "<select name=\"new_ipid\">";
         while ($row_ip = mysqli_fetch_object($result_ip)) { ?>
 
-            <option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $_SESSION['default_ip_address_domains']) echo " selected"; ?>><?php echo $row_ip->name; ?>
+            <option value="<?php echo $row_ip->id; ?>"<?php if ($row_ip->id == $_SESSION['s_default_ip_address_domains']) echo " selected"; ?>><?php echo $row_ip->name; ?>
             (<?php echo $row_ip->ip; ?>)</option><?php
 
         }
@@ -1319,7 +1319,7 @@ multiple domains all at once.<BR><BR>
         echo "<select name=\"new_whid\">";
         while ($row_host = mysqli_fetch_object($result_host)) { ?>
 
-            <option value="<?php echo $row_host->id; ?>"<?php if ($row_host->id == $_SESSION['default_host']) echo " selected"; ?>><?php echo $row_host->name; ?></option><?php
+            <option value="<?php echo $row_host->id; ?>"<?php if ($row_host->id == $_SESSION['s_default_host']) echo " selected"; ?>><?php echo $row_host->name; ?></option><?php
 
         }
         echo "</select>";
@@ -1335,7 +1335,7 @@ multiple domains all at once.<BR><BR>
         echo "<select name=\"new_pcid\">";
         while ($row_cat = mysqli_fetch_object($result_cat)) { ?>
 
-            <option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $_SESSION['default_category_domains']) echo " selected"; ?>><?php echo $row_cat->name; ?></option><?php
+            <option value="<?php echo $row_cat->id; ?>"<?php if ($row_cat->id == $_SESSION['s_default_category_domains']) echo " selected"; ?>><?php echo $row_cat->name; ?></option><?php
 
         }
         echo "</select>";
@@ -1395,7 +1395,7 @@ multiple domains all at once.<BR><BR>
         echo "$choose_text Category</option>";
         while ($row_cat = mysqli_fetch_object($result_cat)) {
             echo "<option value=\"$row_cat->id\"";
-            if ($row_cat->id == $_SESSION['default_category_domains']) echo " selected";
+            if ($row_cat->id == $_SESSION['s_default_category_domains']) echo " selected";
             echo ">";
             echo "$row_cat->name</option>";
         }
@@ -1417,7 +1417,7 @@ multiple domains all at once.<BR><BR>
         echo "$choose_text DNS Profile</option>";
         while ($row_dns = mysqli_fetch_object($result_dns)) {
             echo "<option value=\"$row_dns->id\"";
-            if ($row_dns->id == $_SESSION['default_dns']) echo " selected";
+            if ($row_dns->id == $_SESSION['s_default_dns']) echo " selected";
             echo ">";
             echo "$row_dns->name</option>";
         }
@@ -1439,7 +1439,7 @@ multiple domains all at once.<BR><BR>
         echo "$choose_text IP Address</option>";
         while ($row_ip = mysqli_fetch_object($result_ip)) {
             echo "<option value=\"$row_ip->id\"";
-            if ($row_ip->id == $_SESSION['default_ip_address_domains']) echo " selected";
+            if ($row_ip->id == $_SESSION['s_default_ip_address_domains']) echo " selected";
             echo ">";
             echo "$row_ip->name ($row_ip->ip)</option>";
         }
@@ -1467,7 +1467,7 @@ multiple domains all at once.<BR><BR>
         echo "$choose_text Registrar Account</option>";
         while ($row_account = mysqli_fetch_object($result_account)) {
             echo "<option value=\"$row_account->ra_id\"";
-            if ($row_account->ra_id == $_SESSION['default_registrar_account']) echo " selected";
+            if ($row_account->ra_id == $_SESSION['s_default_registrar_account']) echo " selected";
             echo ">";
             echo "$row_account->r_name, $row_account->o_name ($row_account->username)</option>";
         }
@@ -1488,7 +1488,7 @@ multiple domains all at once.<BR><BR>
         echo "$choose_text Web Hosting Provider</option>";
         while ($row_host = mysqli_fetch_object($result_host)) {
             echo "<option value=\"$row_host->id\"";
-            if ($row_host->id == $_SESSION['default_host']) echo " selected";
+            if ($row_host->id == $_SESSION['s_default_host']) echo " selected";
             echo ">";
             echo "$row_host->name</option>";
         }

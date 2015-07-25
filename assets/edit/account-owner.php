@@ -76,14 +76,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $oid = $new_oid;
 
-        $_SESSION['result_message'] = "Owner <div class=\"highlight\">$new_owner</div> Updated<BR>";
+        $_SESSION['s_result_message'] = "Owner <div class=\"highlight\">$new_owner</div> Updated<BR>";
 
         header("Location: ../account-owners.php");
         exit;
 
     } else {
 
-        $_SESSION['result_message'] = "Please enter the owner's name<BR>";
+        $_SESSION['s_result_message'] = "Please enter the owner's name<BR>";
 
     }
 
@@ -209,26 +209,26 @@ if ($del == "1") {
     ) {
 
         if ($existing_registrar_accounts > 0) {
-            $_SESSION['result_message'] .= "This Owner has registrar accounts associated with it and cannot be
+            $_SESSION['s_result_message'] .= "This Owner has registrar accounts associated with it and cannot be
                 deleted<BR>";
         }
 
         if ($existing_domains > 0) {
-            $_SESSION['result_message'] .= "This Owner has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_result_message'] .= "This Owner has domains associated with it and cannot be deleted<BR>";
         }
 
         if ($existing_ssl_accounts > 0) {
-            $_SESSION['result_message'] .= "This Owner has SSL accounts associated with it and cannot be deleted<BR>";
+            $_SESSION['s_result_message'] .= "This Owner has SSL accounts associated with it and cannot be deleted<BR>";
         }
 
         if ($existing_ssl_certs > 0) {
-            $_SESSION['result_message'] .= "This Owner has SSL certificates associated with it and cannot be
+            $_SESSION['s_result_message'] .= "This Owner has SSL certificates associated with it and cannot be
                 deleted<BR>";
         }
 
     } else {
 
-        $_SESSION['result_message'] = "Are you sure you want to delete this Owner?<BR><BR><a
+        $_SESSION['s_result_message'] = "Are you sure you want to delete this Owner?<BR><BR><a
             href=\"account-owner.php?oid=$oid&really_del=1\">YES, REALLY DELETE THIS OWNER</a><BR>";
 
     }
@@ -251,7 +251,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "Owner <div class=\"highlight\">$new_owner</div> Deleted<BR>";
+    $_SESSION['s_result_message'] = "Owner <div class=\"highlight\">$new_owner</div> Deleted<BR>";
 
     header("Location: ../account-owners.php");
     exit;

@@ -35,7 +35,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $id = $_GET['id'];
 $action = $_GET['action'];
@@ -47,7 +47,7 @@ if ($action != "") {
 
         if ($view_all == '1') {
 
-            $_SESSION['dw_view_all'] = 1;
+            $_SESSION['s_dw_view_all'] = 1;
 
         } else {
 
@@ -58,10 +58,10 @@ if ($action != "") {
 
             while ($row = mysqli_fetch_object($result)) {
 
-                $_SESSION['dw_view_all'] = "";
-                $_SESSION['dw_server_id'] = $id;
-                $_SESSION['dw_server_name'] = $row->name;
-                $_SESSION['dw_server_host'] = $row->host;
+                $_SESSION['s_dw_view_all'] = "";
+                $_SESSION['s_dw_server_id'] = $id;
+                $_SESSION['s_dw_server_name'] = $row->name;
+                $_SESSION['s_dw_server_host'] = $row->host;
 
             }
 
@@ -74,7 +74,7 @@ if ($action != "") {
 
         if ($view_all == '1') {
 
-            $_SESSION['dw_view_all'] = 1;
+            $_SESSION['s_dw_view_all'] = 1;
 
         } else {
 
@@ -85,10 +85,10 @@ if ($action != "") {
 
             while ($row = mysqli_fetch_object($result)) {
 
-                $_SESSION['dw_view_all'] = "";
-                $_SESSION['dw_server_id'] = $id;
-                $_SESSION['dw_server_name'] = $row->name;
-                $_SESSION['dw_server_host'] = $row->host;
+                $_SESSION['s_dw_view_all'] = "";
+                $_SESSION['s_dw_server_id'] = $id;
+                $_SESSION['s_dw_server_name'] = $row->name;
+                $_SESSION['s_dw_server_host'] = $row->host;
 
             }
 

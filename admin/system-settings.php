@@ -36,7 +36,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $page_title = "System Settings";
 $software_section = "admin-system-settings";
@@ -69,11 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['system_full_url'] = $new_full_url;
-    $_SESSION['system_email_address'] = $new_email_address;
-    $_SESSION['system_expiration_email_days'] = $new_expiration_email_days;
+    $_SESSION['s_system_full_url'] = $new_full_url;
+    $_SESSION['s_system_email_address'] = $new_email_address;
+    $_SESSION['s_system_expiration_email_days'] = $new_expiration_email_days;
 
-    $_SESSION['result_message'] .= "The System Settings were updated<BR>";
+    $_SESSION['s_result_message'] .= "The System Settings were updated<BR>";
 
     header("Location: index.php");
     exit;
@@ -82,10 +82,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the system email address<BR>";
-        if ($new_full_url == "") $_SESSION['result_message'] .= "Enter the full URL of your " . $software_title .
+        if ($new_email_address == "") $_SESSION['s_result_message'] .= "Enter the system email address<BR>";
+        if ($new_full_url == "") $_SESSION['s_result_message'] .= "Enter the full URL of your " . $software_title .
             " installation<BR>";
-        if ($new_expiration_email_days == "") $_SESSION['result_message'] .= "Enter the number of days to display in
+        if ($new_expiration_email_days == "") $_SESSION['s_result_message'] .= "Enter the number of days to display in
             expiration emails<BR>";
 
     } else {

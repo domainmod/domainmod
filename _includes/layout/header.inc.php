@@ -28,13 +28,13 @@
         </div>
         <div class="header-right"><?php //@formatter:off ?>
             <em>Currency: <a class="invisiblelink" href="<?php echo $web_root; ?>/settings/defaults/"><?php
-                    echo $_SESSION['default_currency']; ?></a>&nbsp;&nbsp;Time Zone: <a class="invisiblelink"
+                    echo $_SESSION['s_default_currency']; ?></a>&nbsp;&nbsp;Time Zone: <a class="invisiblelink"
                     href="<?php echo $web_root; ?>/settings/defaults/"><?php
-                    echo $_SESSION['default_timezone']; ?></a></em>
+                    echo $_SESSION['s_default_timezone']; ?></a></em>
             <BR>
-            <em>logged in as <?php echo $_SESSION['username']; ?> (<a
+            <em>logged in as <?php echo $_SESSION['s_username']; ?> (<a
                     class="subtlelink" href="<?php echo $web_root; ?>/settings/update-profile.php"><?php
-                    echo $_SESSION['first_name'] . " "; ?> <?php echo $_SESSION['last_name']; ?></a>)</em>
+                    echo $_SESSION['s_first_name'] . " "; ?> <?php echo $_SESSION['s_last_name']; ?></a>)</em>
             <BR><BR>
             <?php //@formatter:on ?>
         </div>
@@ -42,13 +42,13 @@
     <div class="main-outer">
     <div>
         <div class="main-menu"><?php
-            if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['running_login_checks'] != 1) { ?>
+            if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['s_running_login_checks'] != 1) { ?>
                 <?php include(DIR_INC . "layout/menu-main.inc.php"); ?><BR><?php
             } ?>
         </div>
         <div class="update_box_header">
             <?php
-            if ($_SESSION['is_logged_in'] == 1) { ?>
+            if ($_SESSION['s_is_logged_in'] == 1) { ?>
                 [ <a target="_blank"
                      href="http://domainmod.org/news/">News</a> ]&nbsp;&nbsp;[
                 <a target="_blank"
@@ -59,7 +59,7 @@
         <div style="clear: both;"></div>
     </div>
     <div class="main-inner"><?php
-if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['running_login_checks'] != 1) { ?>
+if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['s_running_login_checks'] != 1) { ?>
     <hr width="100%" size="1" noshade><BR><?php
 } ?>
     <div class="headline"><?php echo $page_title; ?></div>
@@ -68,9 +68,9 @@ if ($software_section != "login" && $software_section != "installation" && $soft
 include(DIR_INC . "layout/table-maintenance.inc.php");
 ?>
 <?php
-if ($_SESSION['result_message'] != "") {
+if ($_SESSION['s_result_message'] != "") {
 
-    echo $system->showResultMessage($_SESSION['result_message']);
-    unset($_SESSION['result_message']);
+    echo $system->showResultMessage($_SESSION['s_result_message']);
+    unset($_SESSION['s_result_message']);
 
 }

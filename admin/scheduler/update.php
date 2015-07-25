@@ -39,7 +39,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $a = $_REQUEST['a'];
 $id = $_REQUEST['id'];
@@ -84,7 +84,7 @@ if ($a == 'u') {
 }
 mysqli_query($connection, $sql);
 
-$_SESSION['result_message'] = $message;
+$_SESSION['s_result_message'] = $message;
 
 header("Location: index.php");
 exit;

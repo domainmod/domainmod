@@ -90,8 +90,8 @@ if ($current_db_version === '2.0039') {
                            SET default_category = '" . $row->id . "'";
         $result_update = mysqli_query($connection, $sql_update);
 
-        $_SESSION['default_category'] = $row->id;
-        $_SESSION['system_default_category'] = $row->id;
+        $_SESSION['s_default_category'] = $row->id;
+        $_SESSION['s_system_default_category'] = $row->id;
 
     }
 
@@ -122,8 +122,8 @@ if ($current_db_version === '2.0039') {
                            SET default_dns = '" . $row->id . "'";
         $result_update = mysqli_query($connection, $sql_update);
 
-        $_SESSION['default_dns'] = $row->id;
-        $_SESSION['system_default_dns'] = $row->id;
+        $_SESSION['s_default_dns'] = $row->id;
+        $_SESSION['s_system_default_dns'] = $row->id;
 
     }
 
@@ -154,8 +154,8 @@ if ($current_db_version === '2.0039') {
                            SET default_host = '" . $row->id . "'";
         $result_update = mysqli_query($connection, $sql_update);
 
-        $_SESSION['default_host'] = $row->id;
-        $_SESSION['system_default_host'] = $row->id;
+        $_SESSION['s_default_host'] = $row->id;
+        $_SESSION['s_system_default_host'] = $row->id;
 
     }
 
@@ -186,8 +186,8 @@ if ($current_db_version === '2.0039') {
                            SET default_ip_address = '" . $row->id . "'";
         $result_update = mysqli_query($connection, $sql_update);
 
-        $_SESSION['default_ip_address'] = $row->id;
-        $_SESSION['system_default_ip_address'] = $row->id;
+        $_SESSION['s_default_ip_address'] = $row->id;
+        $_SESSION['s_system_default_ip_address'] = $row->id;
 
     }
 
@@ -218,8 +218,8 @@ if ($current_db_version === '2.0039') {
                            SET default_owner = '" . $row->id . "'";
         $result_update = mysqli_query($connection, $sql_update);
 
-        $_SESSION['default_owner'] = $row->id;
-        $_SESSION['system_default_owner'] = $row->id;
+        $_SESSION['s_default_owner'] = $row->id;
+        $_SESSION['s_system_default_owner'] = $row->id;
 
     }
 
@@ -250,8 +250,8 @@ if ($current_db_version === '2.0039') {
                            SET default_registrar = '" . $row->id . "'";
         $result_update = mysqli_query($connection, $sql_update);
 
-        $_SESSION['default_registrar'] = $row->id;
-        $_SESSION['system_default_registrar'] = $row->id;
+        $_SESSION['s_default_registrar'] = $row->id;
+        $_SESSION['s_system_default_registrar'] = $row->id;
 
     }
 
@@ -282,8 +282,8 @@ if ($current_db_version === '2.0039') {
                            SET default_registrar_account = '" . $row->id . "'";
         $result_update = mysqli_query($connection, $sql_update);
 
-        $_SESSION['default_registrar_account'] = $row->id;
-        $_SESSION['system_default_registrar_account'] = $row->id;
+        $_SESSION['s_default_registrar_account'] = $row->id;
+        $_SESSION['s_system_default_registrar_account'] = $row->id;
 
     }
 
@@ -314,8 +314,8 @@ if ($current_db_version === '2.0039') {
                            SET default_ssl_provider_account = '" . $row->id . "'";
         $result_update = mysqli_query($connection, $sql_update);
 
-        $_SESSION['default_ssl_provider_account'] = $row->id;
-        $_SESSION['system_default_ssl_provider_account'] = $row->id;
+        $_SESSION['s_default_ssl_provider_account'] = $row->id;
+        $_SESSION['s_system_default_ssl_provider_account'] = $row->id;
 
     }
 
@@ -346,8 +346,8 @@ if ($current_db_version === '2.0039') {
                            SET default_ssl_type = '" . $row->id . "'";
         $result_update = mysqli_query($connection, $sql_update);
 
-        $_SESSION['default_ssl_type'] = $row->id;
-        $_SESSION['system_default_ssl_type'] = $row->id;
+        $_SESSION['s_default_ssl_type'] = $row->id;
+        $_SESSION['s_system_default_ssl_type'] = $row->id;
 
     }
 
@@ -378,8 +378,8 @@ if ($current_db_version === '2.0039') {
                            SET default_ssl_provider = '" . $row->id . "'";
         $result_update = mysqli_query($connection, $sql_update);
 
-        $_SESSION['default_ssl_provider'] = $row->id;
-        $_SESSION['system_default_ssl_provider'] = $row->id;
+        $_SESSION['s_default_ssl_provider'] = $row->id;
+        $_SESSION['s_system_default_ssl_provider'] = $row->id;
 
     }
 
@@ -416,8 +416,8 @@ if ($current_db_version === '2.0039') {
                 SET default_timezone = '" . $temp_default_system_timezone . "'";
     $result = mysqli_query($connection, $sql);
 
-    $_SESSION['default_timezone'] = $temp_default_system_timezone;
-    $_SESSION['system_default_timezone'] = $temp_default_system_timezone;
+    $_SESSION['s_default_timezone'] = $temp_default_system_timezone;
+    $_SESSION['s_system_default_timezone'] = $temp_default_system_timezone;
 
     $sql = "ALTER TABLE `settings`
                 DROP `default_currency`;";
@@ -480,7 +480,7 @@ if ($current_db_version === '2.004') {
 
     $sql = "SELECT default_category_domains, default_ip_address_domains, default_owner_domains
                 FROM user_settings
-                WHERE user_id = '" . $_SESSION['user_id'] . "'";
+                WHERE user_id = '" . $_SESSION['s_user_id'] . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     while ($row = mysqli_fetch_object($result)) {
@@ -491,12 +491,12 @@ if ($current_db_version === '2.004') {
 
     }
 
-    $_SESSION['default_category_domains'] = $default_category_domains;
-    $_SESSION['default_category_ssl'] = $default_category_domains;
-    $_SESSION['default_ip_address_domains'] = $default_ip_address_domains;
-    $_SESSION['default_ip_address_ssl'] = $default_ip_address_domains;
-    $_SESSION['default_owner_domains'] = $default_owner_domains;
-    $_SESSION['default_owner_ssl'] = $default_owner_domains;
+    $_SESSION['s_default_category_domains'] = $default_category_domains;
+    $_SESSION['s_default_category_ssl'] = $default_category_domains;
+    $_SESSION['s_default_ip_address_domains'] = $default_ip_address_domains;
+    $_SESSION['s_default_ip_address_ssl'] = $default_ip_address_domains;
+    $_SESSION['s_default_owner_domains'] = $default_owner_domains;
+    $_SESSION['s_default_owner_ssl'] = $default_owner_domains;
 
     $sql = "ALTER TABLE `settings`
                 CHANGE `default_category` `default_category_domains` INT(10) NOT NULL DEFAULT '0'";
@@ -540,12 +540,12 @@ if ($current_db_version === '2.004') {
                     default_owner_ssl = '" . $default_owner_domains . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $_SESSION['system_default_category_domains'] = $default_category_domains;
-    $_SESSION['system_default_category_ssl'] = $default_category_domains;
-    $_SESSION['system_default_ip_address_domains'] = $default_ip_address_domains;
-    $_SESSION['system_default_ip_address_ssl'] = $default_ip_address_domains;
-    $_SESSION['system_default_owner_domains'] = $default_owner_domains;
-    $_SESSION['system_default_owner_ssl'] = $default_owner_domains;
+    $_SESSION['s_system_default_category_domains'] = $default_category_domains;
+    $_SESSION['s_system_default_category_ssl'] = $default_category_domains;
+    $_SESSION['s_system_default_ip_address_domains'] = $default_ip_address_domains;
+    $_SESSION['s_system_default_ip_address_ssl'] = $default_ip_address_domains;
+    $_SESSION['s_system_default_owner_domains'] = $default_owner_domains;
+    $_SESSION['s_system_default_owner_ssl'] = $default_owner_domains;
 
     $sql = "ALTER TABLE `settings`
                 CHANGE `default_dns` `default_dns` INT(10) NOT NULL DEFAULT '0'";
@@ -681,7 +681,7 @@ if ($current_db_version === '2.0041') {
 
     }
 
-    $_SESSION['are_there_updates'] = "1";
+    $_SESSION['s_are_there_updates'] = "1";
 
     $sql = "UPDATE settings
             SET db_version = '2.0042',
@@ -851,7 +851,7 @@ if ($current_db_version === '2.0045') {
 
     }
 
-    $_SESSION['are_there_updates'] = "1";
+    $_SESSION['s_are_there_updates'] = "1";
 
     $sql = "UPDATE settings
             SET db_version = '2.0046',
@@ -1011,7 +1011,7 @@ if ($current_db_version === '2.0047') {
 
     }
 
-    $_SESSION['are_there_updates'] = "1";
+    $_SESSION['s_are_there_updates'] = "1";
 
     $sql = "UPDATE settings
             SET db_version = '2.0048',

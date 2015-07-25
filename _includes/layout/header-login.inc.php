@@ -34,9 +34,9 @@
 include(DIR_INC . "layout/table-maintenance.inc.php");
 ?>
 <?php
-if ($_SESSION['result_message'] != "") {
+if ($_SESSION['s_result_message'] != "") {
 
-    echo $system->showResultMessage($_SESSION['result_message']);
-    unset($_SESSION['result_message']);
+    echo $system->showResultMessage($_SESSION['s_result_message']);
+    unset($_SESSION['s_result_message']);
 
 }

@@ -73,37 +73,37 @@ if ($export_data != "1") {
 
         if ($search_for != "") {
 
-            $_SESSION['search_for'] = $search_for;
+            $_SESSION['s_search_for'] = $search_for;
 
         } elseif ($numBegin != "") {
 
-            // $_SESSION['search_for'] = $_SESSION['search_for'];
+            // $_SESSION['s_search_for'] = $_SESSION['s_search_for'];
 
         } else {
 
-            $_SESSION['search_for'] = "";
+            $_SESSION['s_search_for'] = "";
 
         }
 
         if ($quick_search != "") {
 
-            $_SESSION['quick_search'] = $quick_search;
+            $_SESSION['s_quick_search'] = $quick_search;
 
         } elseif ($numBegin != "") {
 
-            // $_SESSION['quick_search'] = $_SESSION['quick_search'];
+            // $_SESSION['s_quick_search'] = $_SESSION['s_quick_search'];
 
         } else {
 
-            $_SESSION['quick_search'] = "";
+            $_SESSION['s_quick_search'] = "";
 
         }
 
     }
 
 }
-if ($_SESSION['search_for'] == "Search Term") $_SESSION['search_for'] = "";
-if ($result_limit == "") $result_limit = $_SESSION['number_of_domains'];
+if ($_SESSION['s_search_for'] == "Search Term") $_SESSION['s_search_for'] = "";
+if ($result_limit == "") $result_limit = $_SESSION['s_number_of_domains'];
 
 if ($is_active == "") $is_active = "LIVE";
 
@@ -155,12 +155,12 @@ if ($segid != "") {
     $segid_string = "";
 }
 
-if ($_SESSION['quick_search'] != "") {
+if ($_SESSION['s_quick_search'] != "") {
 
     $format = new DomainMOD\Format();
-    $_SESSION['quick_search'] = $format->stripSpacing($_SESSION['quick_search']);
+    $_SESSION['s_quick_search'] = $format->stripSpacing($_SESSION['s_quick_search']);
 
-    $lines = explode("\r\n", $_SESSION['quick_search']);
+    $lines = explode("\r\n", $_SESSION['s_quick_search']);
 
     $domain = new DomainMOD\Domain();
 
@@ -170,35 +170,35 @@ if ($_SESSION['quick_search'] != "") {
 
         if ($invalid_count == 1) {
 
-            $_SESSION['result_message'] = "There is " . number_format($invalid_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
+            $_SESSION['s_result_message'] = "There is " . number_format($invalid_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
 
         } else {
 
-            $_SESSION['result_message'] = "There are " . number_format($invalid_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
+            $_SESSION['s_result_message'] = "There are " . number_format($invalid_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
 
             if (($invalid_count - $invalid_to_display) == 1) {
 
-                $_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_count - $invalid_to_display) . " other<BR>";
+                $_SESSION['s_result_message'] .= "<BR>Plus " . number_format($invalid_count - $invalid_to_display) . " other<BR>";
 
             } elseif (($invalid_count - $invalid_to_display) > 1) {
 
-                $_SESSION['result_message'] .= "<BR>Plus " . number_format($invalid_count - $invalid_to_display) . " others<BR>";
+                $_SESSION['s_result_message'] .= "<BR>Plus " . number_format($invalid_count - $invalid_to_display) . " others<BR>";
             }
 
         }
 
     } else {
 
-        $lines = explode("\r\n", $_SESSION['quick_search']);
+        $lines = explode("\r\n", $_SESSION['s_quick_search']);
         $quick_search_number_of_domains = count($lines);
 
-        $quick_search_new_segment_formatted = "'" . $_SESSION['quick_search'] . "'";
+        $quick_search_new_segment_formatted = "'" . $_SESSION['s_quick_search'] . "'";
         $quick_search_new_segment_formatted = preg_replace("/\r\n/", "','", $quick_search_new_segment_formatted);
         $quick_search_new_segment_formatted = str_replace(" ", "", $quick_search_new_segment_formatted);
         $quick_search_new_segment_formatted = trim($quick_search_new_segment_formatted);
-        $_SESSION['quick_search'] = $quick_search_new_segment_formatted;
+        $_SESSION['s_quick_search'] = $quick_search_new_segment_formatted;
 
-        $segid_string .= ' AND d.domain IN (' . $_SESSION['quick_search'] . ')';
+        $segid_string .= ' AND d.domain IN (' . $_SESSION['s_quick_search'] . ')';
 
     }
 
@@ -244,8 +244,8 @@ if ($tld != "") {
 } else {
     $tld_string = "";
 }
-if ($_SESSION['search_for'] != "") {
-    $search_string = " AND d.domain LIKE '%" . $_SESSION['search_for'] . "%' ";
+if ($_SESSION['s_search_for'] != "") {
+    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%' ";
 } else {
     $search_string = "";
 }
@@ -315,7 +315,7 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d
           AND f.currency_id = c.id
           AND c.id = cc.currency_id
           AND d.id = dfd.domain_id
-          AND cc.user_id = '" . $_SESSION['user_id'] . "'
+          AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
           $is_active_string
           $segid_string
           $pcid_string
@@ -329,8 +329,8 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d
           $search_string
           $quick_search_string
           $sort_by_string";
-$_SESSION['raw_list_type'] = 'domains';
-$_SESSION['raw_list_query'] = $sql;
+$_SESSION['s_raw_list_type'] = 'domains';
+$_SESSION['s_raw_list_query'] = $sql;
 
 $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total
                     FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h
@@ -344,7 +344,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total
                       AND d.hosting_id = h.id
                       AND f.currency_id = c.id
                       AND c.id = cc.currency_id
-                      AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                       $is_active_string
                       $segid_string
                       $pcid_string
@@ -364,8 +364,8 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $grand_total = $row_grand_total->grand_total;
 }
 
-$grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbol'],
-    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+$grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
+    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
 if ($segid != "") {
 
@@ -402,7 +402,7 @@ if ($segid != "") {
                           SET filtered = '1'
                           WHERE active = '1'
                             AND segment_id = '$segid'
-                            AND domain NOT IN (" . $_SESSION['quick_search'] . ")";
+                            AND domain NOT IN (" . $_SESSION['s_quick_search'] . ")";
     $result_filter_update = mysqli_query($connection, $sql_filter_update);
 
 }
@@ -425,7 +425,7 @@ if ($export_data == "1") {
         $row_contents = array(
             'Total Cost:',
             $grand_total,
-            $_SESSION['default_currency']
+            $_SESSION['s_default_currency']
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -442,7 +442,7 @@ if ($export_data == "1") {
         $row_contents = array(
             'Total Cost:',
             $grand_total,
-            $_SESSION['default_currency']
+            $_SESSION['s_default_currency']
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -563,19 +563,19 @@ if ($export_data == "1") {
     $row_contents = array('[Search Filters]');
     $export->writeRow($export_file, $row_contents);
 
-    if ($_SESSION['search_for'] != "") {
+    if ($_SESSION['s_search_for'] != "") {
 
         $row_contents = array(
             'Keyword Search:',
-            $_SESSION['search_for']
+            $_SESSION['s_search_for']
         );
         $export->writeRow($export_file, $row_contents);
 
     }
 
-    if ($_SESSION['quick_search'] != "") {
+    if ($_SESSION['s_quick_search'] != "") {
 
-        $formatted_quick_search = str_replace("'", "", $_SESSION['quick_search']);
+        $formatted_quick_search = str_replace("'", "", $_SESSION['s_quick_search']);
         $formatted_quick_search = str_replace(",", ", ", $formatted_quick_search);
 
         $row_contents = array(
@@ -848,23 +848,23 @@ if ($export_data == "1") {
             $privacy_status = "Public";
         }
 
-        $export_initial_fee = $currency->format($temp_initial_fee, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $export_initial_fee = $currency->format($temp_initial_fee, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-        $export_renewal_fee = $currency->format($temp_renewal_fee, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $export_renewal_fee = $currency->format($temp_renewal_fee, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-        $export_transfer_fee = $currency->format($temp_transfer_fee, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $export_transfer_fee = $currency->format($temp_transfer_fee, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-        $export_privacy_fee = $currency->format($temp_privacy_fee, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $export_privacy_fee = $currency->format($temp_privacy_fee, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-        $export_misc_fee = $currency->format($temp_misc_fee, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $export_misc_fee = $currency->format($temp_misc_fee, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-        $export_total_cost = $currency->format($temp_total_cost, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $export_total_cost = $currency->format($temp_total_cost, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
         unset($row_contents);
         $count = 0;
@@ -930,17 +930,17 @@ if ($export_data == "1") {
 <body onLoad="document.forms[0].elements[12].focus()">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
-if ($_SESSION['has_registrar'] != '1') {
+if ($_SESSION['s_has_registrar'] != '1') {
     echo "<strong><div class=\"highlight\">0</div></strong> Domain Registrars found. Please <a href=\"assets/add/registrar.php\">click here</a> to add one.<BR><BR>";
     exit;
 }
 
-if ($_SESSION['has_registrar_account'] != '1' && $_SESSION['has_registrar'] == '1') {
+if ($_SESSION['s_has_registrar_account'] != '1' && $_SESSION['s_has_registrar'] == '1') {
     echo "<strong><div class=\"highlight\">0</div></strong> Domain Registrar Accounts found. Please <a href=\"assets/add/registrar-account.php\">click here</a> to add one.<BR><BR>";
     exit;
 }
 
-if ($_SESSION['has_domain'] != '1' && $_SESSION['has_registrar'] == '1' && $_SESSION['has_registrar_account'] == '1') {
+if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
     echo "<strong><div class=\"highlight\">0</div></strong> Domains found. Please <a href=\"add/domain.php\">click here</a> to add one.<BR><BR>";
     exit;
 }
@@ -1055,13 +1055,13 @@ if ($segid != "") {
                 } else {
                     $tld_string = "";
                 }
-                if ($_SESSION['search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['search_for'] . "%'";
+                if ($_SESSION['s_search_for'] != "") {
+                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
                 } else {
                     $search_string = "";
                 }
-                if ($_SESSION['quick_search'] != "") {
-                    $quick_search_string = " AND d.domain IN (" . $_SESSION['quick_search'] . ") ";
+                if ($_SESSION['s_quick_search'] != "") {
+                    $quick_search_string = " AND d.domain IN (" . $_SESSION['s_quick_search'] . ") ";
                 } else {
                     $quick_search_string = "";
                 }
@@ -1168,13 +1168,13 @@ if ($segid != "") {
                 } else {
                     $tld_string = "";
                 }
-                if ($_SESSION['search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['search_for'] . "%'";
+                if ($_SESSION['s_search_for'] != "") {
+                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
                 } else {
                     $search_string = "";
                 }
-                if ($_SESSION['quick_search'] != "") {
-                    $quick_search_string = " AND d.domain IN (" . $_SESSION['quick_search'] . ") ";
+                if ($_SESSION['s_quick_search'] != "") {
+                    $quick_search_string = " AND d.domain IN (" . $_SESSION['s_quick_search'] . ") ";
                 } else {
                     $quick_search_string = "";
                 }
@@ -1283,13 +1283,13 @@ if ($segid != "") {
                 } else {
                     $tld_string = "";
                 }
-                if ($_SESSION['search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['search_for'] . "%'";
+                if ($_SESSION['s_search_for'] != "") {
+                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
                 } else {
                     $search_string = "";
                 }
-                if ($_SESSION['quick_search'] != "") {
-                    $quick_search_string = " AND d.domain IN (" . $_SESSION['quick_search'] . ") ";
+                if ($_SESSION['s_quick_search'] != "") {
+                    $quick_search_string = " AND d.domain IN (" . $_SESSION['s_quick_search'] . ") ";
                 } else {
                     $quick_search_string = "";
                 }
@@ -1396,13 +1396,13 @@ if ($segid != "") {
                 } else {
                     $tld_string = "";
                 }
-                if ($_SESSION['search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['search_for'] . "%'";
+                if ($_SESSION['s_search_for'] != "") {
+                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
                 } else {
                     $search_string = "";
                 }
-                if ($_SESSION['quick_search'] != "") {
-                    $quick_search_string = " AND d.domain IN (" . $_SESSION['quick_search'] . ") ";
+                if ($_SESSION['s_quick_search'] != "") {
+                    $quick_search_string = " AND d.domain IN (" . $_SESSION['s_quick_search'] . ") ";
                 } else {
                     $quick_search_string = "";
                 }
@@ -1509,13 +1509,13 @@ if ($segid != "") {
                 } else {
                     $tld_string = "";
                 }
-                if ($_SESSION['search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['search_for'] . "%'";
+                if ($_SESSION['s_search_for'] != "") {
+                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
                 } else {
                     $search_string = "";
                 }
-                if ($_SESSION['quick_search'] != "") {
-                    $quick_search_string = " AND d.domain IN (" . $_SESSION['quick_search'] . ") ";
+                if ($_SESSION['s_quick_search'] != "") {
+                    $quick_search_string = " AND d.domain IN (" . $_SESSION['s_quick_search'] . ") ";
                 } else {
                     $quick_search_string = "";
                 }
@@ -1622,13 +1622,13 @@ if ($segid != "") {
                 } else {
                     $tld_string = "";
                 }
-                if ($_SESSION['search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['search_for'] . "%'";
+                if ($_SESSION['s_search_for'] != "") {
+                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
                 } else {
                     $search_string = "";
                 }
-                if ($_SESSION['quick_search'] != "") {
-                    $quick_search_string = " AND d.domain IN (" . $_SESSION['quick_search'] . ") ";
+                if ($_SESSION['s_quick_search'] != "") {
+                    $quick_search_string = " AND d.domain IN (" . $_SESSION['s_quick_search'] . ") ";
                 } else {
                     $quick_search_string = "";
                 }
@@ -1735,13 +1735,13 @@ if ($segid != "") {
                 } else {
                     $tld_string = "";
                 }
-                if ($_SESSION['search_for'] != "") {
-                    $search_string = " AND d.domain LIKE '%" . $_SESSION['search_for'] . "%'";
+                if ($_SESSION['s_search_for'] != "") {
+                    $search_string = " AND d.domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
                 } else {
                     $search_string = "";
                 }
-                if ($_SESSION['quick_search'] != "") {
-                    $quick_search_string = " AND d.domain IN (" . $_SESSION['quick_search'] . ") ";
+                if ($_SESSION['s_quick_search'] != "") {
+                    $quick_search_string = " AND d.domain IN (" . $_SESSION['s_quick_search'] . ") ";
                 } else {
                     $quick_search_string = "";
                 }
@@ -1848,13 +1848,13 @@ if ($segid != "") {
                 } else {
                     $raid_string = "";
                 }
-                if ($_SESSION['search_for'] != "") {
-                    $search_string = " AND domain LIKE '%" . $_SESSION['search_for'] . "%'";
+                if ($_SESSION['s_search_for'] != "") {
+                    $search_string = " AND domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
                 } else {
                     $search_string = "";
                 }
-                if ($_SESSION['quick_search'] != "") {
-                    $quick_search_string = " AND domain IN (" . $_SESSION['quick_search'] . ") ";
+                if ($_SESSION['s_quick_search'] != "") {
+                    $quick_search_string = " AND domain IN (" . $_SESSION['s_quick_search'] . ") ";
                 } else {
                     $quick_search_string = "";
                 }
@@ -1934,13 +1934,13 @@ if ($segid != "") {
                 } else {
                     $tld_string = "";
                 }
-                if ($_SESSION['search_for'] != "") {
-                    $search_string = " AND domain LIKE '%" . $_SESSION['search_for'] . "%'";
+                if ($_SESSION['s_search_for'] != "") {
+                    $search_string = " AND domain LIKE '%" . $_SESSION['s_search_for'] . "%'";
                 } else {
                     $search_string = "";
                 }
-                if ($_SESSION['quick_search'] != "") {
-                    $quick_search_string = " AND domain IN (" . $_SESSION['quick_search'] . ") ";
+                if ($_SESSION['s_quick_search'] != "") {
+                    $quick_search_string = " AND domain IN (" . $_SESSION['s_quick_search'] . ") ";
                 } else {
                     $quick_search_string = "";
                 }
@@ -2005,11 +2005,11 @@ if ($segid != "") {
                 // NUMBER OF DOMAINS TO DISPLAY
                 echo "<select name=\"result_limit\" onChange=\"MM_jumpMenu('parent',this,0)\">";
 
-                if ($_SESSION['number_of_domains'] != "10" && $_SESSION['number_of_domains'] != "50" && $_SESSION['number_of_domains'] != "100" && $_SESSION['number_of_domains'] != "500" && $_SESSION['number_of_domains'] != "1000" && $_SESSION['number_of_domains'] != "1000000") {
-                    echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=" . $_SESSION['number_of_domains'] . "&sort_by=$sort_by&from_dropdown=1\"";
-                    if ($result_limit == $_SESSION['number_of_domains']) echo " selected";
+                if ($_SESSION['s_number_of_domains'] != "10" && $_SESSION['s_number_of_domains'] != "50" && $_SESSION['s_number_of_domains'] != "100" && $_SESSION['s_number_of_domains'] != "500" && $_SESSION['s_number_of_domains'] != "1000" && $_SESSION['s_number_of_domains'] != "1000000") {
+                    echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=" . $_SESSION['s_number_of_domains'] . "&sort_by=$sort_by&from_dropdown=1\"";
+                    if ($result_limit == $_SESSION['s_number_of_domains']) echo " selected";
                     echo ">";
-                    echo "" . $_SESSION['number_of_domains'] . "</option>";
+                    echo "" . $_SESSION['s_number_of_domains'] . "</option>";
                 }
 
                 echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&tld=$tld&segid=$segid&is_active=$is_active&result_limit=10&sort_by=$sort_by&from_dropdown=1\"";
@@ -2043,15 +2043,15 @@ if ($segid != "") {
             </div>
             <div class="search-block-right">
                 <strong>Keyword Search:</strong><BR><BR>
-                <input name="search_for" type="text" value="<?php echo $_SESSION['search_for']; ?>" size="20">&nbsp;&nbsp;<input
+                <input name="search_for" type="text" value="<?php echo $_SESSION['s_search_for']; ?>" size="20">&nbsp;&nbsp;<input
                     type="submit" name="button" value="Search &raquo;">&nbsp;&nbsp;<BR><BR>
                 <?php
-                $_SESSION['quick_search'] = preg_replace("/', '/", "\r\n", $_SESSION['quick_search']);
-                $_SESSION['quick_search'] = preg_replace("/','/", "\r\n", $_SESSION['quick_search']);
-                $_SESSION['quick_search'] = preg_replace("/'/", "", $_SESSION['quick_search']);
+                $_SESSION['s_quick_search'] = preg_replace("/', '/", "\r\n", $_SESSION['s_quick_search']);
+                $_SESSION['s_quick_search'] = preg_replace("/','/", "\r\n", $_SESSION['s_quick_search']);
+                $_SESSION['s_quick_search'] = preg_replace("/'/", "", $_SESSION['s_quick_search']);
                 ?>
                 <BR><strong>Domain Search (one domain per line):</strong><BR><BR>
-                <textarea name="quick_search" cols="30" rows="11"><?php echo $_SESSION['quick_search']; ?></textarea>&nbsp;&nbsp;
+                <textarea name="quick_search" cols="30" rows="11"><?php echo $_SESSION['s_quick_search']; ?></textarea>&nbsp;&nbsp;
                 <BR>
                 <BR>
                 <input type="hidden" name="pcid" value="<?php echo $pcid; ?>">
@@ -2118,17 +2118,17 @@ if ($segid != "") {
 <?php } ?>
 <?php if (mysqli_num_rows($result) > 0) { ?>
     <?php if ($segid != "") { ?>
-        <BR><BR><strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?>
+        <BR><BR><strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?>
         <BR><BR>
     <?php } else { ?>
-        <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
+        <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?><BR><BR>
         <strong>Number of Domains:</strong> <?php echo number_format($totalrows); ?><BR><BR>
     <?php } ?>
     <?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?>
     <?php if ($totalrows != '0') { ?>
         <table class="main_table" cellpadding="0" cellspacing="0">
             <tr class="main_table_row_heading_active">
-                <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_expiry_date'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php
                         echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid;
@@ -2143,7 +2143,7 @@ if ($segid != "") {
                         ?>&from_dropdown=1"><div class="main_table_heading">Expiry Date</div></a>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_fee'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php
                         echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid;
@@ -2169,7 +2169,7 @@ if ($segid != "") {
                         echo "dn_a";
                     } ?>&from_dropdown=1"><div class="main_table_heading">Domain Name</div></a>
                 </td>
-                <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_tld'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2182,7 +2182,7 @@ if ($segid != "") {
                         } ?>&from_dropdown=1"><div class="main_table_heading">TLD</div></a>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_registrar'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2195,7 +2195,7 @@ if ($segid != "") {
                         } ?>&from_dropdown=1"><div class="main_table_heading">Registrar</div></a>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_account'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_account'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2208,7 +2208,7 @@ if ($segid != "") {
                         } ?>&from_dropdown=1"><div class="main_table_heading">Registrar Account</div></a>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_dns'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2221,7 +2221,7 @@ if ($segid != "") {
                         } ?>&from_dropdown=1"><div class="main_table_heading">DNS Profile</div></a>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_ip'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2234,7 +2234,7 @@ if ($segid != "") {
                         } ?>&from_dropdown=1"><div class="main_table_heading">IP Address</div></a>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_host'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_host'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2247,7 +2247,7 @@ if ($segid != "") {
                         } ?>&from_dropdown=1"><div class="main_table_heading">Web Host</div></a>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_category'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_category'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2260,7 +2260,7 @@ if ($segid != "") {
                         } ?>&from_dropdown=1"><div class="main_table_heading">Category</div></a>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_owner'] == "1") { ?>
                     <td class="main_table_cell_heading_active">
                         <a href="domains.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
                         ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
@@ -2276,21 +2276,21 @@ if ($segid != "") {
             </tr>
             <?php while ($row = mysqli_fetch_object($result)) { ?>
                 <tr class="main_table_row_active">
-                    <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
+                    <?php if ($_SESSION['s_display_domain_expiry_date'] == "1") { ?>
                         <td class="main_table_cell_active">
                             <a class="invisiblelink"
                                href="edit/domain.php?did=<?php echo $row->id; ?>"><?php echo $row->expiry_date; ?></a>
                         </td>
                     <?php } ?>
-                    <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
+                    <?php if ($_SESSION['s_display_domain_fee'] == "1") { ?>
                         <td class="main_table_cell_active">
                             <a class="invisiblelink"
                                href="assets/edit/registrar-fees.php?rid=<?php echo $row->r_id; ?>">
                                 <?php
                                 $converted_total_cost = $row->total_cost * $row->conversion;
                                 $temp_output_amount = $currency->format($converted_total_cost,
-                                    $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                                    $_SESSION['default_currency_symbol_space']);
+                                    $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
+                                    $_SESSION['s_default_currency_symbol_space']);
                                 echo $temp_output_amount;
                                 ?>
                             </a>
@@ -2320,19 +2320,19 @@ if ($segid != "") {
                             target="_blank" class="invisiblelink"
                             href="http://who.is/whois/<?php echo $row->domain; ?>">w</a>]
                     </td>
-                    <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
+                    <?php if ($_SESSION['s_display_domain_tld'] == "1") { ?>
                         <td class="main_table_cell_active">
                             <a class="invisiblelink"
                                href="edit/domain.php?did=<?php echo $row->id; ?>">.<?php echo $row->tld; ?></a>
                         </td>
                     <?php } ?>
-                    <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
+                    <?php if ($_SESSION['s_display_domain_registrar'] == "1") { ?>
                         <td class="main_table_cell_active">
                             <a class="invisiblelink"
                                href="assets/edit/registrar.php?rid=<?php echo $row->r_id; ?>"><?php echo $row->registrar_name; ?></a>
                         </td>
                     <?php } ?>
-                    <?php if ($_SESSION['display_domain_account'] == "1") { ?>
+                    <?php if ($_SESSION['s_display_domain_account'] == "1") { ?>
                         <td class="main_table_cell_active">
                             <a class="invisiblelink"
                                href="assets/edit/registrar.php?rid=<?php echo $row->r_id; ?>"><?php echo $row->registrar_name; ?></a>,
@@ -2342,32 +2342,32 @@ if ($segid != "") {
                                 href="assets/edit/registrar-account.php?raid=<?php echo $row->ra_id; ?>"><?php echo substr($row->username, 0, 15); ?><?php if (strlen($row->username) >= 16) echo "..."; ?></a>)
                         </td>
                     <?php } ?>
-                    <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
+                    <?php if ($_SESSION['s_display_domain_dns'] == "1") { ?>
                         <td class="main_table_cell_active">
                             <a class="invisiblelink"
                                href="assets/edit/dns.php?dnsid=<?php echo $row->dnsid; ?>"><?php echo $row->dns_name; ?></a>
                         </td>
                     <?php } ?>
-                    <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
+                    <?php if ($_SESSION['s_display_domain_ip'] == "1") { ?>
                         <td class="main_table_cell_active">
                             <a class="invisiblelink"
                                href="assets/edit/ip-address.php?ipid=<?php echo $row->ipid; ?>"><?php echo $row->ip_name; ?>
                                 (<?php echo $row->ip; ?>)</a>
                         </td>
                     <?php } ?>
-                    <?php if ($_SESSION['display_domain_host'] == "1") { ?>
+                    <?php if ($_SESSION['s_display_domain_host'] == "1") { ?>
                         <td class="main_table_cell_active">
                             <a class="invisiblelink"
                                href="assets/edit/host.php?whid=<?php echo $row->whid; ?>"><?php echo $row->wh_name; ?></a>
                         </td>
                     <?php } ?>
-                    <?php if ($_SESSION['display_domain_category'] == "1") { ?>
+                    <?php if ($_SESSION['s_display_domain_category'] == "1") { ?>
                         <td class="main_table_cell_active">
                             <a class="invisiblelink"
                                href="assets/edit/category.php?pcid=<?php echo $row->pcid; ?>"><?php echo $row->category_name; ?></a>
                         </td>
                     <?php } ?>
-                    <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
+                    <?php if ($_SESSION['s_display_domain_owner'] == "1") { ?>
                         <td class="main_table_cell_active">
                             <a class="invisiblelink"
                                href="assets/edit/account-owner.php?oid=<?php echo $row->o_id; ?>"><?php echo $row->owner_name; ?></a>

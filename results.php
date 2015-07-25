@@ -67,7 +67,7 @@ if ($type == "inactive") {
               AND d.dns_id = dns.id
               AND d.ip_id = ip.id
               AND d.hosting_id = h.id
-              AND cc.user_id = '" . $_SESSION['user_id'] . "'
+              AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
               AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = '$segid' AND inactive = '1' ORDER BY domain)
             ORDER BY d.domain asc";
 
@@ -86,7 +86,7 @@ if ($type == "inactive") {
               AND d.dns_id = dns.id
               AND d.ip_id = ip.id
               AND d.hosting_id = h.id
-              AND cc.user_id = '" . $_SESSION['user_id'] . "'
+              AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
               AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = '$segid' AND filtered = '1' ORDER BY domain)
             ORDER BY d.domain asc";
 
@@ -209,12 +209,12 @@ if ($export_data == "1") {
             }
 
             $export_initial_fee = $currency->format($temp_initial_fee,
-                $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                $_SESSION['default_currency_symbol_space']);
+                $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
+                $_SESSION['s_default_currency_symbol_space']);
 
             $export_renewal_fee = $currency->format($temp_renewal_fee,
-                $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                $_SESSION['default_currency_symbol_space']);
+                $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
+                $_SESSION['s_default_currency_symbol_space']);
 
             $row_contents = array(
                 $domain_status,

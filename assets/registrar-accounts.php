@@ -122,7 +122,7 @@ if ($export_data == "1") {
                 $total_domain_count = $row_domain_count->total_domain_count;
             }
 
-            if ($row->raid == $_SESSION['default_registrar_account']) {
+            if ($row->raid == $_SESSION['s_default_registrar_account']) {
 
                 $is_default = "1";
 
@@ -194,7 +194,7 @@ if ($export_data == "1") {
 
         while ($row = mysqli_fetch_object($result)) {
 
-            if ($row->raid == $_SESSION['default_registrar_account']) {
+            if ($row->raid == $_SESSION['s_default_registrar_account']) {
 
                 $is_default = "1";
 
@@ -286,7 +286,7 @@ $has_active = 1; ?>
         <td class="main_table_cell_active" valign="top">
             <?php //@formatter:off ?>
             <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php echo
-                $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid) echo "<a
+                $row->username; ?></a><?php if ($_SESSION['s_default_registrar_account'] == $row->raid) echo "<a
                 title=\"Default Account\"><div class=\"default_highlight\">*</div></a>"; ?><?php
             if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><div
                 class=\"reseller_highlight\">*</div></a>"; ?>
@@ -316,7 +316,7 @@ $has_active = 1; ?>
 
     }
 
-    if ($_SESSION['display_inactive_assets'] == "1") {
+    if ($_SESSION['s_display_inactive_assets'] == "1") {
 
         $exclude_account_string = substr($exclude_account_string_raw, 0, -2);
 
@@ -372,7 +372,7 @@ $has_active = 1; ?>
                 <td class="main_table_cell_inactive" valign="top">
                     <?php //@formatter:off ?>
                     <a class="invisiblelink" href="edit/registrar-account.php?raid=<?php echo $row->raid; ?>"><?php
-                        echo $row->username; ?></a><?php if ($_SESSION['default_registrar_account'] == $row->raid)
+                        echo $row->username; ?></a><?php if ($_SESSION['s_default_registrar_account'] == $row->raid)
                         echo "<a title=\"Default Account\"><div class=\"default_highlight\">*</div></a>";
                     if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><div
                         class=\"reseller_highlight\">*</div></a>"; ?>
@@ -393,7 +393,7 @@ $has_active = 1; ?>
     if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
     //@formatter:off
-    if ($_SESSION['display_inactive_assets'] != "1") { ?>
+    if ($_SESSION['s_display_inactive_assets'] != "1") { ?>
         <BR><em>Inactive Accounts are currently not displayed. <a class="invisiblelink"
             href="../settings/display/">Click here to display them</a>.</em><BR><?php
     } //@formatter:on

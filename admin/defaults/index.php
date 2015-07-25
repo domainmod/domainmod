@@ -36,7 +36,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $page_title = "System Defaults";
 $software_section = "admin-system-defaults";
@@ -58,7 +58,7 @@ $new_default_ssl_provider = $_POST['new_default_ssl_provider'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $_SESSION['result_message'] .= "The System Defaults were updated<BR>";
+    $_SESSION['s_result_message'] .= "The System Defaults were updated<BR>";
 
     $sql = "UPDATE settings
             SET default_category_domains = '$new_default_category_domains',
@@ -77,19 +77,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 update_time = '" . $time->time() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $_SESSION['system_default_category_domains'] = $new_default_category_domains;
-    $_SESSION['system_default_category_ssl'] = $new_default_category_ssl;
-    $_SESSION['system_default_dns'] = $new_default_dns;
-    $_SESSION['system_default_host'] = $new_default_host;
-    $_SESSION['system_default_ip_address_domains'] = $new_default_ip_address_domains;
-    $_SESSION['system_default_ip_address_ssl'] = $new_default_ip_address_ssl;
-    $_SESSION['system_default_owner_domains'] = $new_default_owner_domains;
-    $_SESSION['system_default_owner_ssl'] = $new_default_owner_ssl;
-    $_SESSION['system_default_registrar'] = $new_default_registrar;
-    $_SESSION['system_default_registrar_account'] = $new_default_registrar_account;
-    $_SESSION['system_default_ssl_provider_account'] = $new_default_ssl_provider_account;
-    $_SESSION['system_default_ssl_type'] = $new_default_ssl_type;
-    $_SESSION['system_default_ssl_provider'] = $new_default_ssl_provider;
+    $_SESSION['s_system_default_category_domains'] = $new_default_category_domains;
+    $_SESSION['s_system_default_category_ssl'] = $new_default_category_ssl;
+    $_SESSION['s_system_default_dns'] = $new_default_dns;
+    $_SESSION['s_system_default_host'] = $new_default_host;
+    $_SESSION['s_system_default_ip_address_domains'] = $new_default_ip_address_domains;
+    $_SESSION['s_system_default_ip_address_ssl'] = $new_default_ip_address_ssl;
+    $_SESSION['s_system_default_owner_domains'] = $new_default_owner_domains;
+    $_SESSION['s_system_default_owner_ssl'] = $new_default_owner_ssl;
+    $_SESSION['s_system_default_registrar'] = $new_default_registrar;
+    $_SESSION['s_system_default_registrar_account'] = $new_default_registrar_account;
+    $_SESSION['s_system_default_ssl_provider_account'] = $new_default_ssl_provider_account;
+    $_SESSION['s_system_default_ssl_type'] = $new_default_ssl_type;
+    $_SESSION['s_system_default_ssl_provider'] = $new_default_ssl_provider;
 
     header("Location: ../index.php");
     exit;
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <option
-                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_registrar'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['s_system_default_registrar'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
         <?php
         }
         ?>
@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <option
-                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_registrar_account'] == $row->id) echo " selected"; ?>><?php echo $row->r_name; ?>
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['s_system_default_registrar_account'] == $row->id) echo " selected"; ?>><?php echo $row->r_name; ?>
                 :: <?php echo $row->o_name; ?> :: <?php echo $row->username; ?></option>
         <?php
         }
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <option
-                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_dns'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['s_system_default_dns'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
         <?php
         }
         ?>
@@ -170,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <option
-                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_host'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['s_system_default_host'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
         <?php
         }
         ?>
@@ -186,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <option
-                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ip_address_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?>
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['s_system_default_ip_address_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?>
                 (<?php echo $row->ip; ?>)
             </option>
         <?php
@@ -204,7 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <option
-                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_category_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['s_system_default_category_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
         <?php
         }
         ?>
@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <option
-                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_owner_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['s_system_default_owner_domains'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
         <?php
         }
         ?>
@@ -239,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <option
-                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_provider'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['s_system_default_ssl_provider'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
         <?php
         }
         ?>
@@ -257,7 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <option
-                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_provider_account'] == $row->id) echo " selected"; ?>><?php echo $row->p_name; ?>
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['s_system_default_ssl_provider_account'] == $row->id) echo " selected"; ?>><?php echo $row->p_name; ?>
                 :: <?php echo $row->o_name; ?> :: <?php echo $row->username; ?></option>
         <?php
         }
@@ -274,7 +274,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <option
-                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ssl_type'] == $row->id) echo " selected"; ?>><?php echo $row->type; ?></option>
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['s_system_default_ssl_type'] == $row->id) echo " selected"; ?>><?php echo $row->type; ?></option>
         <?php
         }
         ?>
@@ -290,7 +290,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <option
-                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_ip_address_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?>
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['s_system_default_ip_address_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?>
                 (<?php echo $row->ip; ?>)
             </option>
         <?php
@@ -308,7 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <option
-                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_category_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['s_system_default_category_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
         <?php
         }
         ?>
@@ -324,7 +324,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         while ($row = mysqli_fetch_object($result)) {
             ?>
             <option
-                value="<?php echo $row->id; ?>"<?php if ($_SESSION['system_default_owner_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
+                value="<?php echo $row->id; ?>"<?php if ($_SESSION['s_system_default_owner_ssl'] == $row->id) echo " selected"; ?>><?php echo $row->name; ?></option>
         <?php
         }
         ?>

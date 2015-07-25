@@ -199,14 +199,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $did = $new_did;
 
-        $_SESSION['result_message'] = "Domain <div class=\"highlight\">$new_domain</div> Updated<BR>";
+        $_SESSION['s_result_message'] = "Domain <div class=\"highlight\">$new_domain</div> Updated<BR>";
 
         $maint->updateSegments($connection);
 
         $queryB = new DomainMOD\QueryBuild();
 
         $sql = $queryB->missingFees('domains');
-        $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
+        $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
         header("Location: domain.php?did=$did");
         exit;
@@ -214,10 +214,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if (!$domain->checkDomainFormat($new_domain)) {
-            $_SESSION['result_message'] .= "The domain format is incorrect<BR>";
+            $_SESSION['s_result_message'] .= "The domain format is incorrect<BR>";
         }
         if (!$date->checkDateFormat($new_expiry_date)) {
-            $_SESSION['result_message'] .= "The expiry date you entered is invalid<BR>";
+            $_SESSION['s_result_message'] .= "The expiry date you entered is invalid<BR>";
         }
 
     }
@@ -262,11 +262,11 @@ if ($del == "1") {
 
     if ($existing_ssl_certs > 0) {
 
-        $_SESSION['result_message'] = "This Domain has SSL Certificates associated with it and cannot be deleted<BR>";
+        $_SESSION['s_result_message'] = "This Domain has SSL Certificates associated with it and cannot be deleted<BR>";
 
     } else {
 
-        $_SESSION['result_message'] = "Are you sure you want to delete this Domain?<BR><BR><a
+        $_SESSION['s_result_message'] = "Are you sure you want to delete this Domain?<BR><BR><a
             href=\"domain.php?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
 
     }
@@ -283,9 +283,9 @@ if ($really_del == "1") {
             WHERE domain_id = '" . $did . "'";
     $result = mysqli_query($connection, $sql);
 
-    $_SESSION['result_message'] = "Domain <div class=\"highlight\">$new_domain</div> Deleted<BR>";
+    $_SESSION['s_result_message'] = "Domain <div class=\"highlight\">$new_domain</div> Deleted<BR>";
 
-    $_SESSION['result_message'] .= $maint->updateSegments($connection);
+    $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
     $system->checkExistingAssets($connection);
 

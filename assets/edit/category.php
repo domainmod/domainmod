@@ -78,14 +78,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $pcid = $new_pcid;
 
-        $_SESSION['result_message'] = "Category <div class=\"highlight\">$new_category</div> Updated<BR>";
+        $_SESSION['s_result_message'] = "Category <div class=\"highlight\">$new_category</div> Updated<BR>";
 
         header("Location: ../categories.php");
         exit;
 
     } else {
 
-        $_SESSION['result_message'] = "Please enter the category name<BR>";
+        $_SESSION['s_result_message'] = "Please enter the category name<BR>";
 
     }
 
@@ -127,11 +127,11 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['result_message'] = "This Category has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_result_message'] = "This Category has domains associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['result_message'] = "Are you sure you want to delete this Category?<BR><BR><a
+            $_SESSION['s_result_message'] = "Are you sure you want to delete this Category?<BR><BR><a
                 href=\"category.php?pcid=" . $pcid . "&really_del=1\">YES, REALLY DELETE THIS CATEGORY</a><BR>";
 
         }
@@ -160,7 +160,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "Category <div class=\"highlight\">$new_category</div> Deleted<BR>";
+    $_SESSION['s_result_message'] = "Category <div class=\"highlight\">$new_category</div> Deleted<BR>";
 
     header("Location: ../categories.php");
     exit;

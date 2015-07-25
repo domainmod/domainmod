@@ -105,7 +105,7 @@ if ($export_data == "1") {
                 $total_domains = $row_domain_count->total_count;
             }
 
-            if ($row->rid == $_SESSION['default_registrar']) {
+            if ($row->rid == $_SESSION['s_default_registrar']) {
 
                 $is_default = "1";
 
@@ -171,7 +171,7 @@ if ($export_data == "1") {
                 $total_accounts = $row_total_count->total_count;
             }
 
-            if ($row->rid == $_SESSION['default_registrar']) {
+            if ($row->rid == $_SESSION['s_default_registrar']) {
 
                 $is_default = "1";
 
@@ -245,7 +245,7 @@ $has_active = "1"; ?>
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
             <a class="invisiblelink" href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo $row->rname;
-                ?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a title=\"Default
+                ?></a><?php if ($_SESSION['s_default_registrar'] == $row->rid) echo "<a title=\"Default
                 Registrar\"><div class=\"default_highlight\">*</div></a>"; ?>
         </td>
         <td class="main_table_cell_active"><?php
@@ -303,7 +303,7 @@ $has_active = "1"; ?>
 
     }
 
-    if ($_SESSION['display_inactive_assets'] == "1") {
+    if ($_SESSION['s_display_inactive_assets'] == "1") {
 
         $exclude_registrar_string = substr($exclude_registrar_string_raw, 0, -2);
 
@@ -352,7 +352,7 @@ $has_active = "1"; ?>
                 <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink" href="edit/registrar.php?rid=<?php echo $row->rid; ?>"><?php echo
-                        $row->rname; ?></a><?php if ($_SESSION['default_registrar'] == $row->rid) echo "<a
+                        $row->rname; ?></a><?php if ($_SESSION['s_default_registrar'] == $row->rid) echo "<a
                         title=\"Default Registrar\"><div class=\"default_highlight\">*</div></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive"><?php
@@ -391,7 +391,7 @@ $has_active = "1"; ?>
 
     if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
-    if ($_SESSION['display_inactive_assets'] != "1") { //@formatter:off ?>
+    if ($_SESSION['s_display_inactive_assets'] != "1") { //@formatter:off ?>
         <BR><em>Inactive Registrars are currently not displayed. <a class="invisiblelink"
             href="../settings/display/">Click here to display them</a>.</em><BR><?php
     } //@formatter:on

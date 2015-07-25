@@ -67,14 +67,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "Category <div class=\"highlight\">" . $new_category . "</div> Added<BR>";
+        $_SESSION['s_result_message'] = "Category <div class=\"highlight\">" . $new_category . "</div> Added<BR>";
 
         header("Location: ../categories.php");
         exit;
 
     } else {
 
-        $_SESSION['result_message'] .= "Please enter the category name<BR>";
+        $_SESSION['s_result_message'] .= "Please enter the category name<BR>";
 
     }
 

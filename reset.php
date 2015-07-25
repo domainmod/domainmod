@@ -67,7 +67,7 @@ if ($new_username != "") {
 
             include(DIR_INC . "email/send-new-password.inc.php");
 
-            $_SESSION['result_message'] .= "Your new password has been emailed to you<BR>";
+            $_SESSION['s_result_message'] .= "Your new password has been emailed to you<BR>";
 
             header("Location: index.php");
             exit;
@@ -76,7 +76,7 @@ if ($new_username != "") {
 
     } else {
 
-        $_SESSION['result_message'] .= "You have entered an invalid username<BR>";
+        $_SESSION['s_result_message'] .= "You have entered an invalid username<BR>";
 
     }
 
@@ -85,7 +85,7 @@ if ($new_username != "") {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_username == "") {
-            $_SESSION['result_message'] .= "Enter your username<BR>";
+            $_SESSION['s_result_message'] .= "Enter your username<BR>";
         }
     }
 

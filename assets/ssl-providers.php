@@ -105,7 +105,7 @@ if ($export_data == "1") {
                 $total_certs = $row_cert_count->total_count;
             }
 
-            if ($row->id == $_SESSION['default_ssl_provider']) {
+            if ($row->id == $_SESSION['s_default_ssl_provider']) {
 
                 $is_default = "1";
 
@@ -167,7 +167,7 @@ if ($export_data == "1") {
                 $total_accounts = $row_total_count->total_count;
             }
 
-            if ($row->id == $_SESSION['default_ssl_provider']) {
+            if ($row->id == $_SESSION['s_default_ssl_provider']) {
 
                 $is_default = "1";
 
@@ -241,7 +241,7 @@ $has_active = "1"; ?>
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
             <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?php echo $row->id; ?>"><?php echo
-                $row->name; ?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a title=\"Default
+                $row->name; ?></a><?php if ($_SESSION['s_default_ssl_provider'] == $row->id) echo "<a title=\"Default
                 SSL Provider\"><div class=\"default_highlight\">*</div></a>"; ?>
         </td>
         <td class="main_table_cell_active"><?php
@@ -297,7 +297,7 @@ $has_active = "1"; ?>
 
     }
 
-    if ($_SESSION['display_inactive_assets'] == "1") {
+    if ($_SESSION['s_display_inactive_assets'] == "1") {
 
         $exclude_ssl_provider_string = substr($exclude_ssl_provider_string_raw, 0, -2);
 
@@ -342,7 +342,7 @@ $has_active = "1"; ?>
                 <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink" href="edit/ssl-provider.php?sslpid=<?php echo $row->id; ?>"><?php echo
-                        $row->name; ?></a><?php if ($_SESSION['default_ssl_provider'] == $row->id) echo "<a
+                        $row->name; ?></a><?php if ($_SESSION['s_default_ssl_provider'] == $row->id) echo "<a
                         title=\"Default SSL Provider\"><div class=\"default_highlight\">*</div></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive"><?php
@@ -380,7 +380,7 @@ $has_active = "1"; ?>
 
     if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
-    if ($_SESSION['display_inactive_assets'] != "1") {  //@formatter:off ?>
+    if ($_SESSION['s_display_inactive_assets'] != "1") {  //@formatter:off ?>
         <BR><em>Inactive Providers are currently not displayed. <a class="invisiblelink"
             href="../settings/display/">Click here to display them</a>.</em><BR><?php
     } //@formatter:on

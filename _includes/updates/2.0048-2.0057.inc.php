@@ -79,7 +79,7 @@ if ($current_db_version === '2.0048') {
 
     }
 
-    $_SESSION['are_there_updates'] = "1";
+    $_SESSION['s_are_there_updates'] = "1";
     */
 
     $sql = "UPDATE settings
@@ -169,7 +169,7 @@ if ($current_db_version === '2.0049') {
 
     }
 
-    $_SESSION['are_there_updates'] = "1";
+    $_SESSION['s_are_there_updates'] = "1";
 
     $sql = "UPDATE settings
             SET db_version = '2.005',
@@ -295,7 +295,7 @@ if ($current_db_version === '2.0054') {
                     ADD `display_inactive_assets` INT(1) NOT NULL DEFAULT '1' AFTER `display_ssl_fee`";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $_SESSION['display_inactive_assets'] = "1";
+    $_SESSION['s_display_inactive_assets'] = "1";
 
     $sql = "UPDATE settings
                 SET db_version = '2.0055',
@@ -313,7 +313,7 @@ if ($current_db_version === '2.0055') {
                     ADD `display_dw_intro_page` INT(1) NOT NULL DEFAULT '1' AFTER `display_inactive_assets`";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $_SESSION['display_dw_intro_page'] = "1";
+    $_SESSION['s_display_dw_intro_page'] = "1";
 
     $sql = "UPDATE settings
                 SET db_version = '2.0056',

@@ -66,14 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "SSL Type <div class=\"highlight\">$new_type</div> Added<BR>";
+        $_SESSION['s_result_message'] = "SSL Type <div class=\"highlight\">$new_type</div> Added<BR>";
 
         header("Location: ../ssl-types.php");
         exit;
 
     } else {
 
-        $_SESSION['result_message'] .= "Please enter the SSL Type<BR>";
+        $_SESSION['s_result_message'] .= "Please enter the SSL Type<BR>";
 
     }
 

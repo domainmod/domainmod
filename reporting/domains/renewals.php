@@ -58,9 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_end_date
     ) {
 
-        if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
-        if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
-        if ($new_start_date > $new_end_date) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
+        if (!$date->checkDateFormat($new_start_date)) $_SESSION['s_result_message'] .= "The start date is invalid<BR>";
+        if (!$date->checkDateFormat($new_end_date)) $_SESSION['s_result_message'] .= "The end date is invalid<BR>";
+        if ($new_start_date > $new_end_date) $_SESSION['s_result_message'] .= "The end date proceeds the start date<BR>";
 
     }
 
@@ -93,7 +93,7 @@ $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.priv
           AND d.ip_id = ip.id
           AND d.hosting_id = h.id
           AND d.id = dfd.domain_id
-          AND cc.user_id = '" . $_SESSION['user_id'] . "'
+          AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
           AND d.active NOT IN ('0', '10')
           " . $range_string . "
         ORDER BY d.expiry_date asc, d.domain";
@@ -106,8 +106,8 @@ while ($row_cost = mysqli_fetch_object($result_cost)) {
     $temp_total_cost = $temp_total_cost + $row_cost->converted_renewal_fee;
 }
 
-$total_cost = $currency->format($temp_total_cost, $_SESSION['default_currency_symbol'],
-    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+$total_cost = $currency->format($temp_total_cost, $_SESSION['s_default_currency_symbol'],
+    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
 if ($export_data == "1") {
 
@@ -147,7 +147,7 @@ if ($export_data == "1") {
     $row_contents = array(
         'Total Cost:',
         $total_cost,
-        $_SESSION['default_currency']
+        $_SESSION['s_default_currency']
     );
     $export->writeRow($export_file, $row_contents);
 
@@ -229,8 +229,8 @@ if ($export_data == "1") {
             $privacy_status = "Public";
         }
 
-        $export_renewal_fee = $currency->format($row->converted_renewal_fee, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $export_renewal_fee = $currency->format($row->converted_renewal_fee, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
         unset($row_contents);
         $count = 0;
@@ -318,16 +318,16 @@ if ($export_data == "1") {
     <?php } else { ?>
         <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
-    <strong>Total Cost:</strong> <?php echo $total_cost; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
+    <strong>Total Cost:</strong> <?php echo $total_cost; ?> <?php echo $_SESSION['s_default_currency']; ?><BR><BR>
     <strong>Number of Domains:</strong> <?php echo number_format($total_results); ?><BR>
     <table class="main_table" cellpadding="0" cellspacing="0">
         <tr class="main_table_row_heading_active">
-            <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
+            <?php if ($_SESSION['s_display_domain_expiry_date'] == "1") { ?>
                 <td class="main_table_cell_heading_active">
                     <div class="main_table_heading">Expiry Date</div>
                 </td>
             <?php } ?>
-            <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
+            <?php if ($_SESSION['s_display_domain_fee'] == "1") { ?>
                 <td class="main_table_cell_heading_active">
                     <div class="main_table_heading">Fee</div>
                 </td>
@@ -335,42 +335,42 @@ if ($export_data == "1") {
             <td class="main_table_cell_heading_active">
                 <div class="main_table_heading">Domain Name</div>
             </td>
-            <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
+            <?php if ($_SESSION['s_display_domain_tld'] == "1") { ?>
                 <td class="main_table_cell_heading_active">
                     <div class="main_table_heading">TLD</div>
                 </td>
             <?php } ?>
-            <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
+            <?php if ($_SESSION['s_display_domain_registrar'] == "1") { ?>
                 <td class="main_table_cell_heading_active">
                     <div class="main_table_heading">Registrar</div>
                 </td>
             <?php } ?>
-            <?php if ($_SESSION['display_domain_account'] == "1") { ?>
+            <?php if ($_SESSION['s_display_domain_account'] == "1") { ?>
                 <td class="main_table_cell_heading_active">
                     <div class="main_table_heading">Registrar Account</div>
                 </td>
             <?php } ?>
-            <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
+            <?php if ($_SESSION['s_display_domain_dns'] == "1") { ?>
                 <td class="main_table_cell_heading_active">
                     <div class="main_table_heading">DNS Profile</div>
                 </td>
             <?php } ?>
-            <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
+            <?php if ($_SESSION['s_display_domain_ip'] == "1") { ?>
                 <td class="main_table_cell_heading_active">
                     <div class="main_table_heading">IP Address</div>
                 </td>
             <?php } ?>
-            <?php if ($_SESSION['display_domain_host'] == "1") { ?>
+            <?php if ($_SESSION['s_display_domain_host'] == "1") { ?>
                 <td class="main_table_cell_heading_active">
                     <div class="main_table_heading">Web Host</div>
                 </td>
             <?php } ?>
-            <?php if ($_SESSION['display_domain_category'] == "1") { ?>
+            <?php if ($_SESSION['s_display_domain_category'] == "1") { ?>
                 <td class="main_table_cell_heading_active">
                     <div class="main_table_heading">Category</div>
                 </td>
             <?php } ?>
-            <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
+            <?php if ($_SESSION['s_display_domain_owner'] == "1") { ?>
                 <td class="main_table_cell_heading_active">
                     <div class="main_table_heading">Owner</div>
                 </td>
@@ -378,17 +378,17 @@ if ($export_data == "1") {
         </tr>
         <?php while ($row = mysqli_fetch_object($result)) { ?>
             <tr class="main_table_row_active">
-                <?php if ($_SESSION['display_domain_expiry_date'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_expiry_date'] == "1") { ?>
                     <td class="main_table_cell_active">
                         <?php echo $row->expiry_date; ?>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_fee'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_fee'] == "1") { ?>
                     <td class="main_table_cell_active">
                         <?php
                         $temp_amount = $currency->format($row->converted_renewal_fee,
-                            $_SESSION['default_currency_symbol'], $_SESSION['default_currency_symbol_order'],
-                            $_SESSION['default_currency_symbol_space']);
+                            $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
+                            $_SESSION['s_default_currency_symbol_space']);
                         echo $temp_amount;
                         ?>
                     </td>
@@ -396,44 +396,44 @@ if ($export_data == "1") {
                 <td class="main_table_cell_active">
                     <?php echo $row->domain; ?>
                 </td>
-                <?php if ($_SESSION['display_domain_tld'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_tld'] == "1") { ?>
                     <td class="main_table_cell_active">
                         .<?php echo $row->tld; ?>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_registrar'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_registrar'] == "1") { ?>
                     <td class="main_table_cell_active">
                         <?php echo $row->registrar_name; ?>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_account'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_account'] == "1") { ?>
                     <td class="main_table_cell_active">
                         <?php echo $row->registrar_name; ?>, <?php echo $row->owner_name; ?>
                         (<?php echo substr($row->username, 0, 15); ?><?php
                         if (strlen($row->username) >= 16) echo "..."; ?>)
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_dns'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_dns'] == "1") { ?>
                     <td class="main_table_cell_active">
                         <?php echo $row->dns_profile; ?>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_ip'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_ip'] == "1") { ?>
                     <td class="main_table_cell_active">
                         <?php echo $row->name; ?> (<?php echo $row->ip; ?>)
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_host'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_host'] == "1") { ?>
                     <td class="main_table_cell_active">
                         <?php echo $row->wh_name; ?>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_category'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_category'] == "1") { ?>
                     <td class="main_table_cell_active">
                         <?php echo $row->category_name; ?>
                     </td>
                 <?php } ?>
-                <?php if ($_SESSION['display_domain_owner'] == "1") { ?>
+                <?php if ($_SESSION['s_display_domain_owner'] == "1") { ?>
                     <td class="main_table_cell_active">
                         <?php echo $row->owner_name; ?>
                     </td>

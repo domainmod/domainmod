@@ -36,7 +36,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $domain = $_GET['domain'];
 $search_for = $_REQUEST['search_for'];
@@ -50,27 +50,27 @@ $num = $_REQUEST['num'];
 if ($search_for != "") $domain = "";
 
 $page_title = "Data Warehouse";
-if ($_SESSION['dw_view_all'] == "1") {
+if ($_SESSION['s_dw_view_all'] == "1") {
 
     $page_subtitle = "Listing All DNS Zones & Records";
 
 } else {
 
-    $page_subtitle = 'Listing DNS Zones & Records on ' . $_SESSION['dw_server_name'] . ' (' . $_SESSION['dw_server_host'] . ')';
+    $page_subtitle = 'Listing DNS Zones & Records on ' . $_SESSION['s_dw_server_name'] . ' (' . $_SESSION['s_dw_server_host'] . ')';
 
 }
 $software_section = "admin-dw-list-dns-zones";
 
-if ($_SESSION['dw_view_all'] == "1") {
+if ($_SESSION['s_dw_view_all'] == "1") {
 
     $where_clause = "";
     $where_clause_no_join = "";
 
 } else {
 
-    $where_clause = " AND z.server_id = '" . $_SESSION['dw_server_id'] . "' ";
-    $where_clause_no_join = " AND server_id = '" . $_SESSION['dw_server_id'] . "' ";
-    $where_clause_no_join_first_line = " WHERE server_id = '" . $_SESSION['dw_server_id'] . "' ";
+    $where_clause = " AND z.server_id = '" . $_SESSION['s_dw_server_id'] . "' ";
+    $where_clause_no_join = " AND server_id = '" . $_SESSION['s_dw_server_id'] . "' ";
+    $where_clause_no_join_first_line = " WHERE server_id = '" . $_SESSION['s_dw_server_id'] . "' ";
 
 }
 

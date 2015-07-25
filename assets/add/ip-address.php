@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "IP Address <div class=\"highlight\">" . $new_name . " (" . $new_ip . ")</div>
+        $_SESSION['s_result_message'] = "IP Address <div class=\"highlight\">" . $new_name . " (" . $new_ip . ")</div>
             Added<BR>";
 
         header("Location: ../ip-addresses.php");
@@ -77,10 +77,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_name == '') {
-            $_SESSION['result_message'] .= "Please enter a name for the IP address<BR>";
+            $_SESSION['s_result_message'] .= "Please enter a name for the IP address<BR>";
         }
         if ($new_ip == '') {
-            $_SESSION['result_message'] .= "Please enter the IP address<BR>";
+            $_SESSION['s_result_message'] .= "Please enter the IP address<BR>";
         }
 
     }

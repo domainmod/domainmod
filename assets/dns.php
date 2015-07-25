@@ -117,7 +117,7 @@ if ($export_data == "1") {
                 $total_dns_count = $row_total_count->total_count;
             }
 
-            if ($row->id == $_SESSION['default_dns']) {
+            if ($row->id == $_SESSION['s_default_dns']) {
 
                 $is_default = "1";
 
@@ -192,7 +192,7 @@ if ($export_data == "1") {
 
         while ($row = mysqli_fetch_object($result)) {
 
-            if ($row->id == $_SESSION['default_dns']) {
+            if ($row->id == $_SESSION['s_default_dns']) {
 
                 $is_default = "1";
 
@@ -282,7 +282,7 @@ $has_active = "1"; ?>
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
             <a class="invisiblelink" href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->name;
-                ?></a><?php if ($_SESSION['default_dns'] == $row->id) echo "<a title=\"Default DNS Profile\"><div
+                ?></a><?php if ($_SESSION['s_default_dns'] == $row->id) echo "<a title=\"Default DNS Profile\"><div
                 class=\"default_highlight\">*</div></a>"; ?>
         </td>
         <td class="main_table_cell_active">
@@ -309,7 +309,7 @@ $has_active = "1"; ?>
 
     }
 
-    if ($_SESSION['display_inactive_assets'] == "1") {
+    if ($_SESSION['s_display_inactive_assets'] == "1") {
 
         $exclude_dns_string = substr($exclude_dns_string_raw, 0, -2);
 
@@ -351,7 +351,7 @@ $has_active = "1"; ?>
                 <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink" href="edit/dns.php?dnsid=<?php echo $row->id; ?>"><?php echo $row->name;
-                        ?></a><?php if ($_SESSION['default_dns'] == $row->id) echo "<a title=\"Default DNS
+                        ?></a><?php if ($_SESSION['s_default_dns'] == $row->id) echo "<a title=\"Default DNS
                         Profile\"><div class=\"default_highlight\">*</div></a>"; ?>
                 </td>
                 <td class="main_table_cell_inactive">
@@ -369,7 +369,7 @@ $has_active = "1"; ?>
     if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
     //@formatter:off
-    if ($_SESSION['display_inactive_assets'] != "1") { ?>
+    if ($_SESSION['s_display_inactive_assets'] != "1") { ?>
         <BR><em>Inactive Profiles are currently not displayed. <a class="invisiblelink"
             href="../settings/display/">Click here to display them</a>.</em><BR><?php
     } //@formatter:on

@@ -67,15 +67,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "Web Host <div class=\"highlight\">" . $new_host . "</div> Added<BR>";
+        $_SESSION['s_result_message'] = "Web Host <div class=\"highlight\">" . $new_host . "</div> Added<BR>";
 
         header("Location: ../hosting.php");
         exit;
 
     } else {
 
-        if ($new_host == "") $_SESSION['result_message'] .= "Please enter the web host name<BR>";
-        if ($new_url == "") $_SESSION['result_message'] .= "Please enter the web host's URL<BR>";
+        if ($new_host == "") $_SESSION['s_result_message'] .= "Please enter the web host name<BR>";
+        if ($new_url == "") $_SESSION['s_result_message'] .= "Please enter the web host's URL<BR>";
 
     }
 

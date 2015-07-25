@@ -109,10 +109,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "SSL Account <div class=\"highlight\">$new_username (" . $temp_ssl_provider .
+        $_SESSION['s_result_message'] = "SSL Account <div class=\"highlight\">$new_username (" . $temp_ssl_provider .
             ", " . $temp_owner . ")</div> Added<BR>";
 
-        if ($_SESSION['has_ssl_account'] != '1') {
+        if ($_SESSION['s_has_ssl_account'] != '1') {
 
             $system->checkExistingAssets($connection);
 
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_username == "") {
-            $_SESSION['result_message'] .= "Please enter a username<BR>";
+            $_SESSION['s_result_message'] .= "Please enter a username<BR>";
         }
 
     }
@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         while ($q->fetch()) {
 
-            if ($id == $_SESSION['default_owner_ssl']) {
+            if ($id == $_SESSION['s_default_owner_ssl']) {
 
                 echo "<option value=\"" . $id . "\" selected>" . $name . "</option>";
 
@@ -198,7 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         while ($q->fetch()) {
 
-            if ($id == $_SESSION['default_ssl_provider']) {
+            if ($id == $_SESSION['s_default_ssl_provider']) {
 
                 echo "<option value=\"" . $id . "\" selected>" . $name . "</option>";
 

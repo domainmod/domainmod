@@ -38,7 +38,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $page_title = "Adding A New User";
 $software_section = "admin-user-add";
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
     if ($existing_username == 1) {
 
-        $_SESSION['result_message'] .= "You have entered an invalid username<BR>";
+        $_SESSION['s_result_message'] .= "You have entered an invalid username<BR>";
 
     } else {
 
@@ -148,19 +148,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
             $q->bind_param('iiiiiiiiiiiiiii',
                 $temp_user_id,
-                $_SESSION['system_default_category_domains'],
-                $_SESSION['system_default_category_ssl'],
-                $_SESSION['system_default_dns'],
-                $_SESSION['system_default_host'],
-                $_SESSION['system_default_ip_address_domains'],
-                $_SESSION['system_default_ip_address_ssl'],
-                $_SESSION['system_default_owner_domains'],
-                $_SESSION['system_default_owner_ssl'],
-                $_SESSION['system_default_registrar'],
-                $_SESSION['system_default_registrar_account'],
-                $_SESSION['system_default_ssl_provider'],
-                $_SESSION['system_default_ssl_provider_account'],
-                $_SESSION['system_default_ssl_type'],
+                $_SESSION['s_system_default_category_domains'],
+                $_SESSION['s_system_default_category_ssl'],
+                $_SESSION['s_system_default_dns'],
+                $_SESSION['s_system_default_host'],
+                $_SESSION['s_system_default_ip_address_domains'],
+                $_SESSION['s_system_default_ip_address_ssl'],
+                $_SESSION['s_system_default_owner_domains'],
+                $_SESSION['s_system_default_owner_ssl'],
+                $_SESSION['s_system_default_registrar'],
+                $_SESSION['s_system_default_registrar_account'],
+                $_SESSION['s_system_default_ssl_provider'],
+                $_SESSION['s_system_default_ssl_provider_account'],
+                $_SESSION['s_system_default_ssl_type'],
                 $timestamp);
             $q->execute();
             $q->close();
@@ -170,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
         }
 
         //@formatter:off
-        $_SESSION['result_message']
+        $_SESSION['s_result_message']
             .= "User <div class=\"highlight\">" . $new_first_name . " " . $new_last_name .
             " (" . $new_username . " / " . $new_password .")</div> Added
             <BR><BR>You can either manually email the above credentials to the user, or you can
@@ -178,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $software_title . " email them for you<BR><BR>";
         //@formatter:on
 
-        $_SESSION['result_message'] .= $conversion->updateRates($connection, 'USD', $temp_user_id);
+        $_SESSION['s_result_message'] .= $conversion->updateRates($connection, 'USD', $temp_user_id);
 
         header("Location: ../users.php");
         exit;
@@ -189,10 +189,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_first_name == "") $_SESSION['result_message'] .= "Enter the new user's first name<BR>";
-        if ($new_last_name == "") $_SESSION['result_message'] .= "Enter the new user's last name<BR>";
-        if ($new_username == "") $_SESSION['result_message'] .= "Enter the new user's username<BR>";
-        if ($new_email_address == "") $_SESSION['result_message'] .= "Enter the new user's email address<BR>";
+        if ($new_first_name == "") $_SESSION['s_result_message'] .= "Enter the new user's first name<BR>";
+        if ($new_last_name == "") $_SESSION['s_result_message'] .= "Enter the new user's last name<BR>";
+        if ($new_username == "") $_SESSION['s_result_message'] .= "Enter the new user's username<BR>";
+        if ($new_email_address == "") $_SESSION['s_result_message'] .= "Enter the new user's email address<BR>";
 
     }
 

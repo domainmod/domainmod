@@ -36,7 +36,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $page_title = "Editing A Custom Domain Field";
 $software_section = "admin-domain-field-edit";
@@ -60,7 +60,7 @@ $result = mysqli_query($connection, $sql);
 
 if (mysqli_num_rows($result) == 0) {
 
-    $_SESSION['result_message'] .= "You're trying to edit an invalid Custom Domain Field<BR>";
+    $_SESSION['s_result_message'] .= "You're trying to edit an invalid Custom Domain Field<BR>";
 
     header("Location: ../domain-fields.php");
     exit;
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
         $temp_field_name = $row->field_name;
     }
 
-    $_SESSION['result_message'] .= "Custom Domain Field <div class=\"highlight\">" . $new_name . " (" . $temp_field_name . ")</div> Updated<BR>";
+    $_SESSION['s_result_message'] .= "Custom Domain Field <div class=\"highlight\">" . $new_name . " (" . $temp_field_name . ")</div> Updated<BR>";
 
     header("Location: ../domain-fields.php");
     exit;
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_name == "") $_SESSION['result_message'] .= "Enter the display name<BR>";
+        if ($new_name == "") $_SESSION['s_result_message'] .= "Enter the display name<BR>";
 
     } else {
 
@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
 
 if ($del == "1") {
 
-    $_SESSION['result_message'] = "Are you sure you want to delete this Custom Domain Field?<BR><BR><a href=\"domain-field.php?cdfid=" . $cdfid . "&really_del=1\">YES, REALLY DELETE THIS CUSTOM DOMAIN FIELD</a><BR>";
+    $_SESSION['s_result_message'] = "Are you sure you want to delete this Custom Domain Field?<BR><BR><a href=\"domain-field.php?cdfid=" . $cdfid . "&really_del=1\">YES, REALLY DELETE THIS CUSTOM DOMAIN FIELD</a><BR>";
 
 }
 
@@ -129,7 +129,7 @@ if ($really_del == "1") {
 
     if ($cdfid == "") {
 
-        $_SESSION['result_message'] = "The Custom Domain Field cannot be deleted<BR>";
+        $_SESSION['s_result_message'] = "The Custom Domain Field cannot be deleted<BR>";
 
     } else {
 
@@ -150,7 +150,7 @@ if ($really_del == "1") {
                 WHERE id = '" . $cdfid . "'";
         $result = mysqli_query($connection, $sql);
 
-        $_SESSION['result_message'] = "Custom Domain Field <div class=\"highlight\">" . $temp_name . " (" . $temp_field_name . ")</div> Deleted<BR>";
+        $_SESSION['s_result_message'] = "Custom Domain Field <div class=\"highlight\">" . $temp_name . " (" . $temp_field_name . ")</div> Deleted<BR>";
 
         header("Location: ../domain-fields.php");
         exit;

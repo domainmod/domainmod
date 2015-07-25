@@ -256,14 +256,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q_df->close();
 
-                    $_SESSION['result_message'] = "Domain <div class=\"highlight\">" . $new_domain . "</div> Added<BR>";
+                    $_SESSION['s_result_message'] = "Domain <div class=\"highlight\">" . $new_domain . "</div> Added<BR>";
 
-                    $_SESSION['result_message'] .= $maint->updateSegments($connection);
+                    $_SESSION['s_result_message'] .= $maint->updateSegments($connection);
 
                     $queryB = new DomainMOD\QueryBuild();
 
                     $sql = $queryB->missingFees('domains');
-                    $_SESSION['missing_domain_fees'] = $system->checkForRows($connection, $sql);
+                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
 
                     $system->checkExistingAssets($connection);
 
@@ -273,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } else {
 
-                $_SESSION['result_message'] .= "The domain you entered is already in " . $software_title . "<BR>";
+                $_SESSION['s_result_message'] .= "The domain you entered is already in " . $software_title . "<BR>";
 
             }
 
@@ -286,11 +286,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if (!$domain->checkDomainFormat($new_domain)) {
-            $_SESSION['result_message'] .= "The domain format is
+            $_SESSION['s_result_message'] .= "The domain format is
             incorrect<BR>";
         }
         if (!$date->checkDateFormat($new_expiry_date)) {
-            $_SESSION['result_message'] .= "The expiry date you entered is
+            $_SESSION['s_result_message'] .= "The expiry date you entered is
             invalid<BR>";
         }
 
@@ -348,7 +348,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $to_compare = $_SESSION['default_registrar_account'];
+            $to_compare = $_SESSION['s_default_registrar_account'];
 
         }
 
@@ -382,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        $to_compare = $_SESSION['default_dns'];
+        $to_compare = $_SESSION['s_default_dns'];
 
     }
 
@@ -428,7 +428,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $to_compare = $_SESSION['default_ip_address_domains'];
+            $to_compare = $_SESSION['s_default_ip_address_domains'];
 
         }
 
@@ -468,7 +468,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $to_compare = $_SESSION['default_host'];
+            $to_compare = $_SESSION['s_default_host'];
 
         }
 
@@ -509,7 +509,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $to_compare = $_SESSION['default_category_domains'];
+            $to_compare = $_SESSION['s_default_category_domains'];
 
         }
 

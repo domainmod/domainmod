@@ -57,9 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_end_date
     ) {
 
-        if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
-        if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
-        if ($new_start_date > $new_end_date) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
+        if (!$date->checkDateFormat($new_start_date)) $_SESSION['s_result_message'] .= "The start date is invalid<BR>";
+        if (!$date->checkDateFormat($new_end_date)) $_SESSION['s_result_message'] .= "The end date is invalid<BR>";
+        if ($new_start_date > $new_end_date) $_SESSION['s_result_message'] .= "The end date proceeds the start date<BR>";
 
         $submission_failed = "1";
 
@@ -88,7 +88,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, cou
                     WHERE d.fee_id = f.id
                       AND f.currency_id = c.id
                       AND c.id = cc.currency_id
-                      AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                       AND d.active NOT IN ('0', '10')
                       " . $range_string . "";
 $result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
@@ -98,8 +98,8 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $number_of_domains_total = $row_grand_total->number_of_domains_total;
 }
 
-$grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbol'],
-    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+$grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
+    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
 if ($submission_failed != "1" && $total_rows > 0) {
 
@@ -141,7 +141,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
         $row_contents = array(
             'Total Cost:',
             $grand_total,
-            $_SESSION['default_currency']
+            $_SESSION['s_default_currency']
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -176,7 +176,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
                                  WHERE d.fee_id = f.id
                                    AND f.currency_id = c.id
                                    AND c.id = cc.currency_id
-                                   AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                                   AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                    AND d.active NOT IN ('0', '10')
                                    AND YEAR(d.expiry_date) = '" . $row->year . "'
                                    AND MONTH(d.expiry_date) = '" . $row->month . "'
@@ -188,8 +188,8 @@ if ($submission_failed != "1" && $total_rows > 0) {
                 $monthly_cost = $row_monthly_cost->monthly_cost;
             }
 
-            $monthly_cost = $currency->format($monthly_cost, $_SESSION['default_currency_symbol'],
-                $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+            $monthly_cost = $currency->format($monthly_cost, $_SESSION['s_default_currency_symbol'],
+                $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
             if ($row->month == "1") {
                 $display_month = "January";
@@ -222,7 +222,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
                                 WHERE d.fee_id = f.id
                                   AND f.currency_id = c.id
                                   AND c.id = cc.currency_id
-                                  AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                                  AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                   AND d.active NOT IN ('0', '10')
                                   AND YEAR(d.expiry_date) = '" . $row->year . "'
                                   " . $range_string . "";
@@ -232,8 +232,8 @@ if ($submission_failed != "1" && $total_rows > 0) {
                 $yearly_cost = $row_yearly_cost->yearly_cost;
             }
 
-            $yearly_cost = $currency->format($yearly_cost, $_SESSION['default_currency_symbol'],
-                $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+            $yearly_cost = $currency->format($yearly_cost, $_SESSION['s_default_currency_symbol'],
+                $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
             $row_contents = array(
                 $row->year,
@@ -296,7 +296,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
     <?php } else { ?>
         <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
-    <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
+    <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?><BR><BR>
     <strong>Number of Domains:</strong> <?php echo $number_of_domains_total; ?><BR>
     <table class="main_table" cellpadding="0" cellspacing="0">
         <tr class="main_table_row_heading_active">
@@ -329,7 +329,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                              WHERE d.fee_id = f.id
                                AND f.currency_id = c.id
                                AND c.id = cc.currency_id
-                               AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                               AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                AND d.active NOT IN ('0', '10')
                                AND YEAR(d.expiry_date) = '" . $row->year . "'
                                AND MONTH(d.expiry_date) = '" . $row->month . "'
@@ -341,8 +341,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                 $monthly_cost = $row_monthly_cost->monthly_cost;
             }
 
-            $monthly_cost = $currency->format($monthly_cost, $_SESSION['default_currency_symbol'],
-                $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+            $monthly_cost = $currency->format($monthly_cost, $_SESSION['s_default_currency_symbol'],
+                $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
             if ($row->month == "1") {
                 $display_month = "January";
@@ -377,7 +377,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                                 WHERE d.fee_id = f.id
                                   AND f.currency_id = c.id
                                   AND c.id = cc.currency_id
-                                  AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                                  AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                   AND d.active NOT IN ('0', '10')
                                   AND YEAR(d.expiry_date) = '" . $row->year . "'
                                   " . $range_string . "";
@@ -388,8 +388,8 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                     $yearly_cost = $row_yearly_cost->yearly_cost;
                 }
 
-                $yearly_cost = $currency->format($yearly_cost, $_SESSION['default_currency_symbol'],
-                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                $yearly_cost = $currency->format($yearly_cost, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
                 ?>
 
                 <tr class="main_table_row_active">

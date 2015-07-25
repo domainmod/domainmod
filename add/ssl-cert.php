@@ -229,22 +229,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "SSL Certificate <div class=\"highlight\">$new_name</div> Added<BR>";
+        $_SESSION['s_result_message'] = "SSL Certificate <div class=\"highlight\">$new_name</div> Added<BR>";
 
         $queryB = new DomainMOD\QueryBuild();
 
         $sql = $queryB->missingFees('ssl_certs');
-        $_SESSION['missing_ssl_fees'] = $system->checkForRows($connection, $sql);
+        $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
         $system->checkExistingAssets($connection);
 
     } else {
 
         if ($new_name == "") {
-            $_SESSION['result_message'] .= "Enter a name for the SSL certificate<BR>";
+            $_SESSION['s_result_message'] .= "Enter a name for the SSL certificate<BR>";
         }
         if (!$date->checkDateFormat($new_expiry_date)) {
-            $_SESSION['result_message'] .= "The expiry date you entered is
+            $_SESSION['s_result_message'] .= "The expiry date you entered is
             invalid<BR>";
         }
 
@@ -330,7 +330,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $to_compare = $_SESSION['default_ssl_provider_account'];
+            $to_compare = $_SESSION['s_default_ssl_provider_account'];
 
         }
 
@@ -370,7 +370,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $to_compare = $_SESSION['default_ssl_type'];
+            $to_compare = $_SESSION['s_default_ssl_type'];
 
         }
 
@@ -411,7 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $to_compare = $_SESSION['default_ip_address_ssl'];
+            $to_compare = $_SESSION['s_default_ip_address_ssl'];
 
         }
 
@@ -452,7 +452,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $to_compare = $_SESSION['default_category_ssl'];
+            $to_compare = $_SESSION['s_default_category_ssl'];
 
         }
 

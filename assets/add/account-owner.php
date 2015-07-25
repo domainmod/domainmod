@@ -66,14 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "Owner <div class=\"highlight\">" . $new_owner . "</div> Added<BR>";
+        $_SESSION['s_result_message'] = "Owner <div class=\"highlight\">" . $new_owner . "</div> Added<BR>";
 
         header("Location: ../account-owners.php");
         exit;
 
     } else {
 
-        $_SESSION['result_message'] .= "Please enter the owner's name<BR>";
+        $_SESSION['s_result_message'] .= "Please enter the owner's name<BR>";
 
     }
 

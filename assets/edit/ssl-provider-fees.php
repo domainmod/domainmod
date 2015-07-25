@@ -91,11 +91,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         }
 
-        $_SESSION['result_message']
+        $_SESSION['s_result_message']
             .= "The SSL Provider Fees have been updated<BR>";
 
-        $_SESSION['result_message']
-            .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
+        $_SESSION['s_result_message']
+            .= $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
     } elseif ($which_form == "add") {
 
@@ -103,12 +103,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $new_renewal_fee == "" || $new_currency_id == "" || $new_currency_id == "0"
         ) {
 
-            if ($new_initial_fee == "") $_SESSION['result_message'] .= "Please enter the initial fee<BR>";
-            if ($new_renewal_fee == "") $_SESSION['result_message'] .= "Please enter the renewal fee<BR>";
+            if ($new_initial_fee == "") $_SESSION['s_result_message'] .= "Please enter the initial fee<BR>";
+            if ($new_renewal_fee == "") $_SESSION['s_result_message'] .= "Please enter the renewal fee<BR>";
             if ($new_type_id == "" || $new_type_id == "0")
-                $_SESSION['result_message'] .= "There was a problem with the SSL Type you chose<BR>";
+                $_SESSION['s_result_message'] .= "There was a problem with the SSL Type you chose<BR>";
             if ($new_currency_id == "" || $new_currency_id == "0")
-                $_SESSION['result_message'] .= "There was a problem with the currency you chose<BR>";
+                $_SESSION['s_result_message'] .= "There was a problem with the currency you chose<BR>";
 
         } else {
 
@@ -166,11 +166,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $sslpid = $new_sslpid;
 
-                $_SESSION['result_message']
+                $_SESSION['s_result_message']
                     .= "The fee for <div class=\"highlight\">$temp_type</div> has been updated<BR>";
 
-                $_SESSION['result_message']
-                    .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
+                $_SESSION['s_result_message']
+                    .= $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
             } else {
 
@@ -217,16 +217,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     WHERE sslc.fee_id = '" . $new_fee_id . "'";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['result_message'] .= "The fee for <div class=\"highlight\">$temp_type</div> has been
+                $_SESSION['s_result_message'] .= "The fee for <div class=\"highlight\">$temp_type</div> has been
                 added<BR>";
 
                 $queryB = new DomainMOD\QueryBuild();
 
                 $sql = $queryB->missingFees('ssl_certs');
-                $_SESSION['missing_ssl_fees'] = $system->checkForRows($connection, $sql);
+                $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
-                $_SESSION['result_message']
-                    .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
+                $_SESSION['s_result_message']
+                    .= $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
             }
 
@@ -237,7 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($del == "1") {
-    $_SESSION['result_message'] .= "Are you sure you want to delete this SSL Provider Fee?<BR><BR><a
+    $_SESSION['s_result_message'] .= "Are you sure you want to delete this SSL Provider Fee?<BR><BR><a
         href=\"ssl-provider-fees.php?sslpid=$sslpid&ssltid=$ssltid&sslfeeid=$sslfeeid&really_del=1\">YES, REALLY DELETE
         THIS SSL PROVIDER FEE</a><BR>";
 }
@@ -252,7 +252,7 @@ if ($really_del == "1") {
 
     if (mysqli_num_rows($result) == 0) {
 
-        $_SESSION['result_message'] .= "The fee you're trying to delete doesn't exist<BR>";
+        $_SESSION['s_result_message'] .= "The fee you're trying to delete doesn't exist<BR>";
 
         header("Location: ssl-provider-fees.php?sslpid=$new_sslpid");
         exit;
@@ -281,15 +281,15 @@ if ($really_del == "1") {
             $temp_type = $row->type;
         }
 
-        $_SESSION['result_message'] .= "The fee for <div class=\"highlight\">$temp_type</div> has been deleted<BR>";
+        $_SESSION['s_result_message'] .= "The fee for <div class=\"highlight\">$temp_type</div> has been deleted<BR>";
 
         $queryB = new DomainMOD\QueryBuild();
 
         $sql = $queryB->missingFees('ssl_certs');
-        $_SESSION['missing_ssl_fees'] = $system->checkForRows($connection, $sql);
+        $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
-        $_SESSION['result_message']
-            .= $conversion->updateRates($connection, $_SESSION['default_currency'], $_SESSION['user_id']);
+        $_SESSION['s_result_message']
+            .= $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
         header("Location: ssl-provider-fees.php?sslpid=$sslpid");
         exit;
@@ -435,7 +435,7 @@ if (mysqli_num_rows($result) != 0) {
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
                     while ($row = mysqli_fetch_object($result)) {
 
-                        if ($row->currency == $_SESSION['default_currency']) {
+                        if ($row->currency == $_SESSION['s_default_currency']) {
                             ?>
                             <option value="<?php echo $row->id; ?>" selected>
                                 <?php echo "$row->name ($row->currency $row->symbol)"; ?>

@@ -57,9 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_end_date
     ) {
 
-        if (!$date->checkDateFormat($new_start_date)) $_SESSION['result_message'] .= "The start date is invalid<BR>";
-        if (!$date->checkDateFormat($new_end_date)) $_SESSION['result_message'] .= "The end date is invalid<BR>";
-        if ($new_start_date > $new_end_date) $_SESSION['result_message'] .= "The end date proceeds the start date<BR>";
+        if (!$date->checkDateFormat($new_start_date)) $_SESSION['s_result_message'] .= "The start date is invalid<BR>";
+        if (!$date->checkDateFormat($new_end_date)) $_SESSION['s_result_message'] .= "The end date is invalid<BR>";
+        if ($new_start_date > $new_end_date) $_SESSION['s_result_message'] .= "The end date proceeds the start date<BR>";
 
         $submission_failed = "1";
 
@@ -83,7 +83,7 @@ $sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS re
           AND d.account_id = ra.id
           AND d.owner_id = o.id
           AND d.active NOT IN ('0', '10')
-          AND cc.user_id = '" . $_SESSION['user_id'] . "'
+          AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
           " . $range_string . "
         GROUP BY r.name, o.name, ra.username
         ORDER BY r.name, o.name, ra.username";
@@ -100,7 +100,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, cou
                       AND d.account_id = ra.id
                       AND d.owner_id = o.id
                       AND d.active NOT IN ('0', '10')
-                      AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                       " . $range_string . "";
 $result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
@@ -108,8 +108,8 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $number_of_domains_total = $row_grand_total->number_of_domains_total;
 }
 
-$grand_total = $currency->format($grand_total, $_SESSION['default_currency_symbol'],
-    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+$grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
+    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
 if ($submission_failed != "1" && $total_rows > 0) {
 
@@ -151,7 +151,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
         $row_contents = array(
             'Total Cost:',
             $grand_total,
-            $_SESSION['default_currency']
+            $_SESSION['s_default_currency']
         );
         $export->writeRow($export_file, $row_contents);
 
@@ -195,7 +195,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
                                           AND d.account_id = ra.id
                                           AND d.owner_id = o.id
                                           AND d.active NOT IN ('0', '10')
-                                          AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                                          AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                           AND r.id = '" . $row->id . "'
                                           " . $range_string . "";
                 $result_registrar_total
@@ -208,19 +208,19 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
                 $per_domain_account = $row->total_cost / $row->number_of_domains;
 
-                $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
-                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                $row->total_cost = $currency->format($row->total_cost, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-                $per_domain_account = $currency->format($per_domain_account, $_SESSION['default_currency_symbol'],
-                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                $per_domain_account = $currency->format($per_domain_account, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
                 $per_domain_registrar = $temp_registrar_total / $number_of_domains_registrar;
 
-                $temp_registrar_total = $currency->format($temp_registrar_total, $_SESSION['default_currency_symbol'],
-                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                $temp_registrar_total = $currency->format($temp_registrar_total, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-                $per_domain_registrar = $currency->format($per_domain_registrar, $_SESSION['default_currency_symbol'],
-                    $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+                $per_domain_registrar = $currency->format($per_domain_registrar, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
                 $row_contents = array(
                     $row->registrar_name,
@@ -289,7 +289,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
         <strong>Date Range:</strong> ALL<BR><BR>
     <?php } ?>
 
-    <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['default_currency']; ?><BR><BR>
+    <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?><BR><BR>
     <strong>Number of Domains:</strong> <?php echo $number_of_domains_total; ?><BR>
     <table class="main_table" cellpadding="0" cellspacing="0">
     <tr class="main_table_row_heading_active">
@@ -338,7 +338,7 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
                                   AND d.account_id = ra.id
                                   AND d.owner_id = o.id
                                   AND d.active NOT IN ('0', '10')
-                                  AND cc.user_id = '" . $_SESSION['user_id'] . "'
+                                  AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                   AND r.id = '" . $row->id . "'
                                   " . $range_string . "";
         $result_registrar_total
@@ -350,19 +350,19 @@ if ($submission_failed != "1" && $total_rows > 0) { ?>
 
         $per_domain_account = $row->total_cost / $row->number_of_domains;
 
-        $row->total_cost = $currency->format($row->total_cost, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $row->total_cost = $currency->format($row->total_cost, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-        $per_domain_account = $currency->format($per_domain_account, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $per_domain_account = $currency->format($per_domain_account, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
         $per_domain_registrar = $temp_registrar_total / $number_of_domains_registrar;
 
-        $temp_registrar_total = $currency->format($temp_registrar_total, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $temp_registrar_total = $currency->format($temp_registrar_total, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-        $per_domain_registrar = $currency->format($per_domain_registrar, $_SESSION['default_currency_symbol'],
-            $_SESSION['default_currency_symbol_order'], $_SESSION['default_currency_symbol_space']);
+        $per_domain_registrar = $currency->format($per_domain_registrar, $_SESSION['s_default_currency_symbol'],
+            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
         if ($new_registrar != $last_registrar || $new_registrar == "") { ?>
 

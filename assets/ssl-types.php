@@ -95,7 +95,7 @@ if ($export_data == "1") {
                 $active_certs = $row_total_count->total_count;
             }
 
-            if ($row->id == $_SESSION['default_ssl_type']) {
+            if ($row->id == $_SESSION['s_default_ssl_type']) {
 
                 $is_default = "1";
 
@@ -147,7 +147,7 @@ if ($export_data == "1") {
 
         while ($row = mysqli_fetch_object($result)) {
 
-            if ($row->id == $_SESSION['default_ssl_type']) {
+            if ($row->id == $_SESSION['s_default_ssl_type']) {
 
                 $is_default = "1";
 
@@ -213,7 +213,7 @@ $has_active = "1"; ?>
         <tr class="main_table_row_active">
         <td class="main_table_cell_active">
             <a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo $row->type;
-                ?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a title=\"Default SSL Type\"><div
+                ?></a><?php if ($_SESSION['s_default_ssl_type'] == $row->id) echo "<a title=\"Default SSL Type\"><div
                 class=\"default_highlight\">*</div></a>"; ?>
         </td>
         <td class="main_table_cell_active"><?php
@@ -245,7 +245,7 @@ $has_active = "1"; ?>
 
     }
 
-    if ($_SESSION['display_inactive_assets'] == "1") {
+    if ($_SESSION['s_display_inactive_assets'] == "1") {
 
         $exclude_ssl_type_string = substr($exclude_ssl_type_string_raw, 0, -2);
 
@@ -284,7 +284,7 @@ $has_active = "1"; ?>
                 <tr class="main_table_row_inactive">
                 <td class="main_table_cell_inactive">
                     <a class="invisiblelink" href="edit/ssl-type.php?ssltid=<?php echo $row->id; ?>"><?php echo
-                        $row->type; ?></a><?php if ($_SESSION['default_ssl_type'] == $row->id) echo "<a
+                        $row->type; ?></a><?php if ($_SESSION['s_default_ssl_type'] == $row->id) echo "<a
                         title=\"Default SSL Type\"><div class=\"default_highlight\">*</div></a>"; ?>
                 </td>
                 </tr><?php
@@ -297,7 +297,7 @@ $has_active = "1"; ?>
 
     if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
-    if ($_SESSION['display_inactive_assets'] != "1") { //@formatter:off ?>
+    if ($_SESSION['s_display_inactive_assets'] != "1") { //@formatter:off ?>
         <BR><em>Inactive SSL Types are currently not displayed. <a class="invisiblelink"
             href="../settings/display/">Click here to display them</a>.</em><BR><?php
     } //@formatter:on

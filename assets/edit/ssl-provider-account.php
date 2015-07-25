@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "SSL Account <div class=\"highlight\">$new_username ($temp_ssl_provider,
+        $_SESSION['s_result_message'] = "SSL Account <div class=\"highlight\">$new_username ($temp_ssl_provider,
             $temp_owner)</div> Updated<BR>";
 
         header("Location: ../ssl-accounts.php");
@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($username == "") {
-            $_SESSION['result_message'] .= "Please enter a username<BR>";
+            $_SESSION['s_result_message'] .= "Please enter a username<BR>";
         }
 
     }
@@ -184,12 +184,12 @@ if ($del == "1") {
 
     if ($existing_ssl_certs > 0) {
 
-        $_SESSION['result_message'] = "This SSL Account has SSL certificates associated with it and cannot be
+        $_SESSION['s_result_message'] = "This SSL Account has SSL certificates associated with it and cannot be
         deleted<BR>";
 
     } else {
 
-        $_SESSION['result_message'] = "Are you sure you want to delete this SSL Account?<BR><BR><a
+        $_SESSION['s_result_message'] = "Are you sure you want to delete this SSL Account?<BR><BR><a
             href=\"ssl-provider-account.php?sslpaid=$sslpaid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER
             ACCOUNT</a><BR>";
 
@@ -233,7 +233,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['result_message'] = "SSL Account <div class=\"highlight\">$temp_username ($temp_ssl_provider_name,
+    $_SESSION['s_result_message'] = "SSL Account <div class=\"highlight\">$temp_username ($temp_ssl_provider_name,
         $temp_owner_name)</div> Deleted<BR>";
 
     $system->checkExistingAssets($connection);

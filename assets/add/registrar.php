@@ -67,9 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "Registrar <div class=\"highlight\">" . $new_registrar . "</div> Added<BR>";
+        $_SESSION['s_result_message'] = "Registrar <div class=\"highlight\">" . $new_registrar . "</div> Added<BR>";
 
-        if ($_SESSION['has_registrar'] != '1') {
+        if ($_SESSION['s_has_registrar'] != '1') {
 
             $system->checkExistingAssets($connection);
 
@@ -84,8 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_registrar == "") $_SESSION['result_message'] .= "Please enter the registrar name<BR>";
-        if ($new_url == "") $_SESSION['result_message'] .= "Please enter the registrar's URL<BR>";
+        if ($new_registrar == "") $_SESSION['s_result_message'] .= "Please enter the registrar name<BR>";
+        if ($new_url == "") $_SESSION['s_result_message'] .= "Please enter the registrar's URL<BR>";
 
     }
 

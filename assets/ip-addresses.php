@@ -112,7 +112,7 @@ if ($export_data == "1") {
                 $total_certs = $row_total_count->total_count;
             }
 
-            if ($row->id == $_SESSION['default_ip_address_domains']) {
+            if ($row->id == $_SESSION['s_default_ip_address_domains']) {
 
                 $is_default_domains = "1";
 
@@ -122,7 +122,7 @@ if ($export_data == "1") {
 
             }
 
-            if ($row->id == $_SESSION['default_ip_address_ssl']) {
+            if ($row->id == $_SESSION['s_default_ip_address_ssl']) {
 
                 $is_default_ssl = "1";
 
@@ -178,7 +178,7 @@ if ($export_data == "1") {
 
         while ($row = mysqli_fetch_object($result)) {
 
-            if ($row->id == $_SESSION['default_ip_address_domains']) {
+            if ($row->id == $_SESSION['s_default_ip_address_domains']) {
 
                 $is_default_domains = "1";
 
@@ -188,7 +188,7 @@ if ($export_data == "1") {
 
             }
 
-            if ($row->id == $_SESSION['default_ip_address_ssl']) {
+            if ($row->id == $_SESSION['s_default_ip_address_ssl']) {
 
                 $is_default_ssl = "1";
 
@@ -268,9 +268,9 @@ $has_active = "1"; ?>
         <td class="main_table_cell_active">
             <?php //@formatter:off ?>
             <a class="invisiblelink" href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php
-                echo $row->name; ?></a><?php if ($_SESSION['default_ip_address_domains'] == $row->id) echo "<a
+                echo $row->name; ?></a><?php if ($_SESSION['s_default_ip_address_domains'] == $row->id) echo "<a
                 title=\"Default Domain IP Address\"><div class=\"default_highlight\">*</div></a>";
-            if ($_SESSION['default_ip_address_ssl'] == $row->id) echo "<a title=\"Default SSL IP Address\"><div
+            if ($_SESSION['s_default_ip_address_ssl'] == $row->id) echo "<a title=\"Default SSL IP Address\"><div
                 class=\"default_highlight_secondary\">*</div></a>"; ?>
             <?php //@formatter:on ?>
         </td>
@@ -331,7 +331,7 @@ $has_active = "1"; ?>
 
     }
 
-    if ($_SESSION['display_inactive_assets'] == "1") {
+    if ($_SESSION['s_display_inactive_assets'] == "1") {
 
         $exclude_ip_address_string = substr($exclude_ip_address_string_raw, 0, -2);
 
@@ -377,9 +377,9 @@ $has_active = "1"; ?>
                 <td class="main_table_cell_inactive">
                     <?php //@formatter:off ?>
                     <a class="invisiblelink" href="edit/ip-address.php?ipid=<?php echo $row->id; ?>"><?php echo
-                        $row->name; ?></a><?php if ($_SESSION['default_ip_address_domains'] == $row->id) echo "<a
+                        $row->name; ?></a><?php if ($_SESSION['s_default_ip_address_domains'] == $row->id) echo "<a
                         title=\"Default Domain IP Address\"><div class=\"default_highlight\">*</div></a>";
-                    if ($_SESSION['default_ip_address_ssl'] == $row->id) echo "<a title=\"Default SSL IP Address\"><div
+                    if ($_SESSION['s_default_ip_address_ssl'] == $row->id) echo "<a title=\"Default SSL IP Address\"><div
                         class=\"default_highlight_secondary\">*</div></a>"; ?>
                     <?php //@formatter:on ?>
                 </td>
@@ -402,7 +402,7 @@ $has_active = "1"; ?>
     if ($has_active == "1" || $has_inactive == "1") echo "</table>";
 
     //@formatter:off
-    if ($_SESSION['display_inactive_assets'] != "1") { ?>
+    if ($_SESSION['s_display_inactive_assets'] != "1") { ?>
         <BR><em>Inactive IP Addresses are currently not displayed. <a class="invisiblelink"
             href="../settings/display/">Click here to display them</a>.</em><BR><?php
     } //@formatter:on

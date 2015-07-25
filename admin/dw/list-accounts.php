@@ -36,7 +36,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $domain = $_GET['domain'];
 $search_for = $_REQUEST['search_for'];
@@ -50,25 +50,25 @@ $num = $_REQUEST['num'];
 if ($search_for != "") $domain = "";
 
 $page_title = "Data Warehouse";
-if ($_SESSION['dw_view_all'] == "1") {
+if ($_SESSION['s_dw_view_all'] == "1") {
 
     $page_subtitle = "Listing All Accounts";
 
 } else {
 
-    $page_subtitle = 'Listing Accounts on ' . $_SESSION['dw_server_name'] . ' (' . $_SESSION['dw_server_host'] . ')';
+    $page_subtitle = 'Listing Accounts on ' . $_SESSION['s_dw_server_name'] . ' (' . $_SESSION['s_dw_server_host'] . ')';
 
 }
 $software_section = "admin-dw-list-accounts";
 
-if ($_SESSION['dw_view_all'] == "1") {
+if ($_SESSION['s_dw_view_all'] == "1") {
 
     $where_clause = " ";
     $order_clause = " ORDER BY a.unix_startdate DESC, s.name ASC, a.domain ASC ";
 
 } else {
 
-    $where_clause = " AND a.server_id = '" . $_SESSION['dw_server_id'] . "' ";
+    $where_clause = " AND a.server_id = '" . $_SESSION['s_dw_server_id'] . "' ";
     $order_clause = " ORDER BY s.name ASC, a.unix_startdate DESC ";
 
 }

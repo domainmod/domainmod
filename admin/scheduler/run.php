@@ -43,7 +43,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $id = $_GET['id'];
 
@@ -74,7 +74,7 @@ if ($demo_install != '1') {
             $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 
-            $_SESSION['result_message'] = "System Cleanup Performed";
+            $_SESSION['s_result_message'] = "System Cleanup Performed";
 
         } elseif ($row->slug == 'expiration-email') {
 
@@ -97,7 +97,7 @@ if ($demo_install != '1') {
             $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 
-            $_SESSION['result_message'] .= "Conversion Rates Updated";
+            $_SESSION['s_result_message'] .= "Conversion Rates Updated";
 
         } elseif ($row->slug == 'check-new-version') {
 
@@ -106,7 +106,7 @@ if ($demo_install != '1') {
             $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 
-            $_SESSION['result_message'] .= "No Upgrade Available";
+            $_SESSION['s_result_message'] .= "No Upgrade Available";
 
         }
 
@@ -116,11 +116,11 @@ if ($demo_install != '1') {
 
     if ($demo_install == '1') {
 
-        $_SESSION['result_message'] .= "Tasks Disabled in Demo Mode";
+        $_SESSION['s_result_message'] .= "Tasks Disabled in Demo Mode";
 
     } else {
 
-        $_SESSION['result_message'] .= "Task Run";
+        $_SESSION['s_result_message'] .= "Task Run";
 
     }
 

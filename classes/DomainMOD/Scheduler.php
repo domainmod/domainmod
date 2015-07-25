@@ -102,7 +102,7 @@ class Scheduler
             <strong>Next Run:</strong> <?php echo $next_run; ?>
             <BR><BR>
             <?php if ($row->active == '1') { ?>
-                <form name="edit_task_form" method="post" action="<?php echo $_SESSION['web_root'];
+                <form name="edit_task_form" method="post" action="<?php echo $_SESSION['s_web_root'];
                 ?>/admin/scheduler/update.php">
                     <select name="new_hour">
                         <?php echo $this->hourSelect($hour); ?>

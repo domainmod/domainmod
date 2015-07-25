@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $timestamp = $time->time();
 
-        $q->bind_param('ssi', $new_expiration_email, $timestamp, $_SESSION['user_id']);
+        $q->bind_param('ssi', $new_expiration_email, $timestamp, $_SESSION['s_user_id']);
         $q->execute();
         $q->close();
 
@@ -62,9 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['expiration_email'] = $new_expiration_email;
+    $_SESSION['s_expiration_email'] = $new_expiration_email;
 
-    $_SESSION['result_message'] .= "Your Email Settings were updated<BR>";
+    $_SESSION['s_result_message'] .= "Your Email Settings were updated<BR>";
 
     header("Location: index.php");
     exit;
@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($q->prepare($query)) {
 
-        $q->bind_param('i', $_SESSION['user_id']);
+        $q->bind_param('i', $_SESSION['s_user_id']);
         $q->execute();
         $q->store_result();
         $q->bind_result($new_expiration_email);

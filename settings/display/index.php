@@ -67,7 +67,7 @@ $new_display_dw_intro_page = $_POST['new_display_dw_intro_page'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new_number_of_ssl_certs != "") {
 
-    $_SESSION['result_message'] .= "Your Display Settings were updated<BR>";
+    $_SESSION['s_result_message'] .= "Your Display Settings were updated<BR>";
 
     $sql = "UPDATE user_settings
             SET number_of_domains = '" . $new_number_of_domains . "',
@@ -94,33 +94,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
                 display_dw_intro_page = '" . $new_display_dw_intro_page . "',
                 number_of_ssl_certs = '" . $new_number_of_ssl_certs . "',
                 update_time = '" . $time->time() . "'
-            WHERE user_id = '" . $_SESSION['user_id'] . "'";
+            WHERE user_id = '" . $_SESSION['s_user_id'] . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $_SESSION['number_of_domains'] = $new_number_of_domains;
-    $_SESSION['number_of_ssl_certs'] = $new_number_of_ssl_certs;
-    $_SESSION['display_domain_owner'] = $new_display_domain_owner;
-    $_SESSION['display_domain_registrar'] = $new_display_domain_registrar;
-    $_SESSION['display_domain_account'] = $new_display_domain_account;
-    $_SESSION['display_domain_category'] = $new_display_domain_category;
-    $_SESSION['display_domain_expiry_date'] = $new_display_domain_expiry_date;
-    $_SESSION['display_domain_dns'] = $new_display_domain_dns;
-    $_SESSION['display_domain_host'] = $new_display_domain_host;
-    $_SESSION['display_domain_ip'] = $new_display_domain_ip;
-    $_SESSION['display_domain_host'] = $new_display_domain_host;
-    $_SESSION['display_domain_tld'] = $new_display_domain_tld;
-    $_SESSION['display_domain_fee'] = $new_display_domain_fee;
-    $_SESSION['display_ssl_owner'] = $new_display_ssl_owner;
-    $_SESSION['display_ssl_provider'] = $new_display_ssl_provider;
-    $_SESSION['display_ssl_account'] = $new_display_ssl_account;
-    $_SESSION['display_ssl_domain'] = $new_display_ssl_domain;
-    $_SESSION['display_ssl_type'] = $new_display_ssl_type;
-    $_SESSION['display_ssl_ip'] = $new_display_ssl_ip;
-    $_SESSION['display_ssl_category'] = $new_display_ssl_category;
-    $_SESSION['display_ssl_expiry_date'] = $new_display_ssl_expiry_date;
-    $_SESSION['display_ssl_fee'] = $new_display_ssl_fee;
-    $_SESSION['display_inactive_assets'] = $new_display_inactive_assets;
-    $_SESSION['display_dw_intro_page'] = $new_display_dw_intro_page;
+    $_SESSION['s_number_of_domains'] = $new_number_of_domains;
+    $_SESSION['s_number_of_ssl_certs'] = $new_number_of_ssl_certs;
+    $_SESSION['s_display_domain_owner'] = $new_display_domain_owner;
+    $_SESSION['s_display_domain_registrar'] = $new_display_domain_registrar;
+    $_SESSION['s_display_domain_account'] = $new_display_domain_account;
+    $_SESSION['s_display_domain_category'] = $new_display_domain_category;
+    $_SESSION['s_display_domain_expiry_date'] = $new_display_domain_expiry_date;
+    $_SESSION['s_display_domain_dns'] = $new_display_domain_dns;
+    $_SESSION['s_display_domain_host'] = $new_display_domain_host;
+    $_SESSION['s_display_domain_ip'] = $new_display_domain_ip;
+    $_SESSION['s_display_domain_host'] = $new_display_domain_host;
+    $_SESSION['s_display_domain_tld'] = $new_display_domain_tld;
+    $_SESSION['s_display_domain_fee'] = $new_display_domain_fee;
+    $_SESSION['s_display_ssl_owner'] = $new_display_ssl_owner;
+    $_SESSION['s_display_ssl_provider'] = $new_display_ssl_provider;
+    $_SESSION['s_display_ssl_account'] = $new_display_ssl_account;
+    $_SESSION['s_display_ssl_domain'] = $new_display_ssl_domain;
+    $_SESSION['s_display_ssl_type'] = $new_display_ssl_type;
+    $_SESSION['s_display_ssl_ip'] = $new_display_ssl_ip;
+    $_SESSION['s_display_ssl_category'] = $new_display_ssl_category;
+    $_SESSION['s_display_ssl_expiry_date'] = $new_display_ssl_expiry_date;
+    $_SESSION['s_display_ssl_fee'] = $new_display_ssl_fee;
+    $_SESSION['s_display_inactive_assets'] = $new_display_inactive_assets;
+    $_SESSION['s_display_dw_intro_page'] = $new_display_dw_intro_page;
 
     header("Location: ../index.php");
     exit;
@@ -130,14 +130,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_number_of_domains == "") $_SESSION['result_message'] .= "Enter the default number of domains to display<BR>";
-        if ($new_number_of_ssl_certs == "") $_SESSION['result_message'] .= "Enter the default number of SSL certficates to display<BR>";
+        if ($new_number_of_domains == "") $_SESSION['s_result_message'] .= "Enter the default number of domains to display<BR>";
+        if ($new_number_of_ssl_certs == "") $_SESSION['s_result_message'] .= "Enter the default number of SSL certficates to display<BR>";
 
     } else {
 
         $sql = "SELECT *
                 FROM user_settings
-                WHERE user_id = '" . $_SESSION['user_id'] . "'";
+                WHERE user_id = '" . $_SESSION['s_user_id'] . "'";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         while ($row = mysqli_fetch_object($result)) {

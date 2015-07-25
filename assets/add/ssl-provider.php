@@ -67,9 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['result_message'] = "SSL Provider <div class=\"highlight\">$new_ssl_provider</div> Added<BR>";
+        $_SESSION['s_result_message'] = "SSL Provider <div class=\"highlight\">$new_ssl_provider</div> Added<BR>";
 
-        if ($_SESSION['has_ssl_provider'] != '1') {
+        if ($_SESSION['s_has_ssl_provider'] != '1') {
 
             $system->checkExistingAssets($connection);
 
@@ -84,8 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_ssl_provider == "") $_SESSION['result_message'] .= "Please enter the SSL provider's name<BR>";
-        if ($new_url == "") $_SESSION['result_message'] .= "Please enter the SSL provider's URL<BR>";
+        if ($new_ssl_provider == "") $_SESSION['s_result_message'] .= "Please enter the SSL provider's name<BR>";
+        if ($new_url == "") $_SESSION['s_result_message'] .= "Please enter the SSL provider's URL<BR>";
 
     }
 

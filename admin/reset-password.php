@@ -36,7 +36,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $page_title = "Reset Password";
 $software_section = "system";
@@ -87,13 +87,13 @@ if ($new_username != "") {
 
                 if ($display == "1") {
 
-                    $_SESSION['result_message'] .= "The new password for " . $username . " is " . $new_password .
+                    $_SESSION['s_result_message'] .= "The new password for " . $username . " is " . $new_password .
                         "<BR>";
 
                 } else {
 
                     include(DIR_INC . "email/send-new-password.inc.php");
-                    $_SESSION['result_message'] .= "The password has been reset and emailed to the account holder<BR>";
+                    $_SESSION['s_result_message'] .= "The password has been reset and emailed to the account holder<BR>";
 
                 }
 
@@ -104,7 +104,7 @@ if ($new_username != "") {
 
         } else {
 
-            $_SESSION['result_message'] .= "You have entered an invalid username<BR>";
+            $_SESSION['s_result_message'] .= "You have entered an invalid username<BR>";
 
             header("Location: users.php");
             exit;
@@ -121,7 +121,7 @@ if ($new_username != "") {
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-        if ($new_username == "") $_SESSION['result_message'] .= "Enter the username<BR>";
+        if ($new_username == "") $_SESSION['s_result_message'] .= "Enter the username<BR>";
 
         header("Location: users.php");
         exit;

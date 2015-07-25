@@ -36,7 +36,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-$system->checkAdminUser($_SESSION['is_admin'], $web_root);
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $page_title = "Adding A Custom SSL Field";
 $software_section = "admin-ssl-field-add";
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['result_message'] .= "The Database Field Name you entered already exists<BR>";
+            $_SESSION['s_result_message'] .= "The Database Field Name you entered already exists<BR>";
 
         } else {
 
@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 
             }
 
-            $_SESSION['result_message'] .= "Custom SSL Field <div class=\"highlight\">" . $new_name . " (" .
+            $_SESSION['s_result_message'] .= "Custom SSL Field <div class=\"highlight\">" . $new_name . " (" .
                 $new_field_name . ")</div> Added<BR>";
 
             header("Location: ../ssl-fields.php");
@@ -156,8 +156,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "" && $new_field_name !
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_name == "") $_SESSION['result_message'] .= "Enter the display name<BR>";
-        if (!$custom_field->checkFieldFormat($new_field_name)) $_SESSION['result_message'] .= "The Database Field Name
+        if ($new_name == "") $_SESSION['s_result_message'] .= "Enter the display name<BR>";
+        if (!$custom_field->checkFieldFormat($new_field_name)) $_SESSION['s_result_message'] .= "The Database Field Name
             format is incorrect<BR>";
 
     }
