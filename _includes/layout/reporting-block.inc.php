@@ -37,39 +37,39 @@ echo $layout->jumpMenu();
                         Click to select a Domain Report
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-category.php"<?php if ($report_name == "domain-cost-by-category-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-category.php?all=1"<?php if ($report_name == "domain-cost-by-category-report") echo " selected" ?>>
                         Cost by Category
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-dns.php"<?php if ($report_name == "domain-cost-by-dns-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-dns.php?all=1"<?php if ($report_name == "domain-cost-by-dns-report") echo " selected" ?>>
                         Cost by DNS Profile
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-ip-address.php"<?php if ($report_name == "domain-cost-by-ip-address-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-ip-address.php?all=1"<?php if ($report_name == "domain-cost-by-ip-address-report") echo " selected" ?>>
                         Cost by IP Address
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-month.php"<?php if ($report_name == "domain-cost-by-month-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-month.php?all=1"<?php if ($report_name == "domain-cost-by-month-report") echo " selected" ?>>
                         Cost by Month
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-owner.php"<?php if ($report_name == "domain-cost-by-owner-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-owner.php?all=1"<?php if ($report_name == "domain-cost-by-owner-report") echo " selected" ?>>
                         Cost by Owner
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-registrar.php"<?php if ($report_name == "domain-cost-by-registrar-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-registrar.php?all=1"<?php if ($report_name == "domain-cost-by-registrar-report") echo " selected" ?>>
                         Cost by Registrar
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-tld.php"<?php if ($report_name == "domain-cost-by-tld-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-tld.php?all=1"<?php if ($report_name == "domain-cost-by-tld-report") echo " selected" ?>>
                         Cost by TLD
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-host.php"<?php if ($report_name == "domain-cost-by-host-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/domains/cost-by-host.php?all=1"<?php if ($report_name == "domain-cost-by-host-report") echo " selected" ?>>
                         Cost by Web Host
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/domains/registrar-fees.php"<?php if ($report_name == "domain-registrar-fee-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/domains/registrar-fees.php?all=0"<?php if ($report_name == "domain-registrar-fee-report") echo " selected" ?>>
                         Registrar Fees
                     </option>
                     <option
@@ -90,35 +90,35 @@ echo $layout->jumpMenu();
                         Click to select an SSL Report
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-category.php"<?php if ($report_name == "ssl-cost-by-category-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-category.php?all=1"<?php if ($report_name == "ssl-cost-by-category-report") echo " selected" ?>>
                         Cost by Category
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-domain.php"<?php if ($report_name == "ssl-cost-by-domain-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-domain.php?all=1"<?php if ($report_name == "ssl-cost-by-domain-report") echo " selected" ?>>
                         Cost by Domain
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-ip-address.php"<?php if ($report_name == "ssl-cost-by-ip-address-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-ip-address.php?all=1"<?php if ($report_name == "ssl-cost-by-ip-address-report") echo " selected" ?>>
                         Cost by IP Address
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-month.php"<?php if ($report_name == "ssl-cost-by-month-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-month.php?all=1"<?php if ($report_name == "ssl-cost-by-month-report") echo " selected" ?>>
                         Cost by Month
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-owner.php"<?php if ($report_name == "ssl-cost-by-owner-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-owner.php?all=1"<?php if ($report_name == "ssl-cost-by-owner-report") echo " selected" ?>>
                         Cost by Owner
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-provider.php"<?php if ($report_name == "ssl-cost-by-provider-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-provider.php?all=1"<?php if ($report_name == "ssl-cost-by-provider-report") echo " selected" ?>>
                         Cost by Provider
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-type.php"<?php if ($report_name == "ssl-cost-by-type-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/ssl/cost-by-type.php?all=1"<?php if ($report_name == "ssl-cost-by-type-report") echo " selected" ?>>
                         Cost by Type
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/ssl/provider-fees.php"<?php if ($report_name == "ssl-provider-fee-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/ssl/provider-fees.php?all=0"<?php if ($report_name == "ssl-provider-fee-report") echo " selected" ?>>
                         Provider Fees
                     </option>
                     <option
@@ -139,7 +139,7 @@ echo $layout->jumpMenu();
                         Click to select a DW Report
                     </option>
                     <option
-                        value="<?php echo $web_root; ?>/reporting/dw/potential-problems.php"<?php if ($report_name == "dw-potential-problems-report") echo " selected" ?>>
+                        value="<?php echo $web_root; ?>/reporting/dw/potential-problems.php?generate=1"<?php if ($report_name == "dw-potential-problems-report") echo " selected" ?>>
                         Potential Problems
                     </option>
                 </select>
