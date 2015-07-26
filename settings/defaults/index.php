@@ -238,7 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ?>
     </select>
     <BR><BR>
-    <strong>Default Timezone</strong><BR><BR>
+    <strong>Default Time Zone</strong><BR><BR>
     <select name="new_default_timezone">
         <?php
         $sql = "SELECT timezone
