@@ -150,111 +150,118 @@ if ($export_data == "1") {
 <body>
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
-<?php echo $reporting->showTableTop(); ?>
-<form name="export_dw_form" method="post">
-    <a href="potential-problems.php?generate=1">Generate</a>
-    <?php if ($generate == 1) { //@formatter:off ?>
+<?php if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account != 0 || $temp_suspended_accounts != 0) { ?>
+    <?php echo $reporting->showTableTop(); ?>
+    <form name="export_dw_form" method="post">
+        <a href="potential-problems.php?generate=1">Generate</a>
+        <?php if ($generate == 1) { //@formatter:off ?>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="potential-problems.php?export_data=1&new_start_date=<?php
               echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php
               echo $all; ?>">EXPORT REPORT</a>]</strong>
     <?php } //@formatter:on ?>
-</form>
-<?php echo $reporting->showTableBottom(); ?>
-<?php if ($generate == 1) { ?>
-    <BR>
-    <div class="subheadline"><?php echo $page_subtitle; ?></div><BR>
+    </form>
+    <?php echo $reporting->showTableBottom(); ?>
+    <BR><?php
+} ?>
+<div class="subheadline"><?php echo $page_subtitle; ?></div>
+<BR><?php
 
-<?php } ?>
-<?php
-if ($generate == 1) {
+if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account != 0 || $temp_suspended_accounts != 0) {
 
-    if ($temp_accounts_without_a_dns_zone == 0) {
+    if ($generate == 1) {
 
-        $accounts_without_a_dns_zone_flag = 1;
+        if ($temp_accounts_without_a_dns_zone == 0) {
 
-    } else { ?>
+            $accounts_without_a_dns_zone_flag = 1;
 
-        <strong>Accounts without a DNS Zone (<?php echo $temp_accounts_without_a_dns_zone; ?>)</strong><BR><?php
+        } else { ?>
 
-        while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
+            <strong>Accounts without a DNS Zone (<?php echo $temp_accounts_without_a_dns_zone; ?>)</strong><BR><?php
 
-            $account_list_raw .= $row_accounts_without_a_dns_zone->domain . ", ";
+            while ($row_accounts_without_a_dns_zone = mysqli_fetch_object($result_accounts_without_a_dns_zone)) {
+
+                $account_list_raw .= $row_accounts_without_a_dns_zone->domain . ", ";
+
+            }
+
+            $account_list = substr($account_list_raw, 0, -2);
+
+            if ($account_list != "") {
+
+                echo $account_list;
+
+            } else {
+
+                echo "n/a";
+
+            }
+
+            echo "<BR><BR>";
 
         }
 
-        $account_list = substr($account_list_raw, 0, -2);
+        if ($temp_dns_zones_without_an_account == 0) {
 
-        if ($account_list != "") {
+            $dns_zones_without_an_account_flag = 1;
 
-            echo $account_list;
+        } else { ?>
 
-        } else {
+            <strong>DNS Zones without an Account (<?php echo $temp_dns_zones_without_an_account; ?>)</strong><BR><?php
 
-            echo "n/a";
+            while ($row_dns_zones_without_an_account = mysqli_fetch_object($result_dns_zones_without_an_account)) {
+
+                $zone_list_raw .= $row_dns_zones_without_an_account->domain . ", ";
+
+            }
+
+            $zone_list = substr($zone_list_raw, 0, -2);
+
+            if ($zone_list != "") {
+
+                echo $zone_list;
+
+            } else {
+
+                echo "n/a";
+
+            }
+
+            echo "<BR><BR>";
 
         }
 
-        echo "<BR><BR>";
+        if ($temp_suspended_accounts == 0) {
 
+            $suspended_accounts_flag = 1;
+
+        } else { ?>
+
+            <strong>Suspended Accounts (<?php echo $temp_suspended_accounts; ?>)</strong><BR><?php
+
+            while ($row_suspended_accounts = mysqli_fetch_object($result_suspended_accounts)) {
+
+                $suspended_list_raw .= $row_suspended_accounts->domain . ", ";
+
+            }
+
+            $suspended_list = substr($suspended_list_raw, 0, -2);
+
+            if ($suspended_list != "") {
+
+                echo $suspended_list;
+
+            } else {
+
+                echo "n/a";
+
+            }
+
+        }
     }
 
-    if ($temp_dns_zones_without_an_account == 0) {
+} else {
 
-        $dns_zones_without_an_account_flag = 1;
-
-    } else { ?>
-
-        <strong>DNS Zones without an Account (<?php echo $temp_dns_zones_without_an_account; ?>)</strong><BR><?php
-
-        while ($row_dns_zones_without_an_account = mysqli_fetch_object($result_dns_zones_without_an_account)) {
-
-            $zone_list_raw .= $row_dns_zones_without_an_account->domain . ", ";
-
-        }
-
-        $zone_list = substr($zone_list_raw, 0, -2);
-
-        if ($zone_list != "") {
-
-            echo $zone_list;
-
-        } else {
-
-            echo "n/a";
-
-        }
-
-        echo "<BR><BR>";
-
-    }
-
-    if ($temp_suspended_accounts == 0) {
-
-        $suspended_accounts_flag = 1;
-
-    } else { ?>
-
-        <strong>Suspended Accounts (<?php echo $temp_suspended_accounts; ?>)</strong><BR><?php
-
-        while ($row_suspended_accounts = mysqli_fetch_object($result_suspended_accounts)) {
-
-            $suspended_list_raw .= $row_suspended_accounts->domain . ", ";
-
-        }
-
-        $suspended_list = substr($suspended_list_raw, 0, -2);
-
-        if ($suspended_list != "") {
-
-            echo $suspended_list;
-
-        } else {
-
-            echo "n/a";
-
-        }
-
-    }
+    echo "Nothing to report.";
 
 } ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
