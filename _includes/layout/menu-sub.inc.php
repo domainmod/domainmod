@@ -203,11 +203,6 @@ if ($software_section == "domains") { ?>
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
     &raquo;&nbsp;<strong>Domain Registrar Fee Report</strong>&nbsp;<?php
 
-} elseif ($software_section == "reporting-domain-renewal-report") { ?>
-
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
-    &raquo;&nbsp;<strong>Domain Renewal Report</strong>&nbsp;<?php
-
 } elseif ($software_section == "reporting-ssl-cost-by-category-report") { ?>
 
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
@@ -247,11 +242,6 @@ if ($software_section == "domains") { ?>
 
     &raquo;&nbsp;<a href="<?php echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
     &raquo;&nbsp;<strong>SSL Provider Fee Report</strong>&nbsp;<?php
-
-} elseif ($software_section == "reporting-ssl-renewal-report") { ?>
-
-    &raquo;&nbsp;<a href="<?php echo $web_root; ?>/reporting/">Reporting</a>&nbsp;
-    &raquo;&nbsp;<strong>SSL Certificate Renewal Report</strong>&nbsp;<?php
 
 } elseif ($software_section == "reporting-dw-potential-problems-report") { ?>
 

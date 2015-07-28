@@ -72,10 +72,6 @@ echo $layout->jumpMenu();
                         value="<?php echo $web_root; ?>/reporting/domains/registrar-fees.php?all=0"<?php if ($report_name == "domain-registrar-fee-report") echo " selected" ?>>
                         Registrar Fees
                     </option>
-                    <option
-                        value="<?php echo $web_root; ?>/reporting/domains/renewals.php"<?php if ($report_name == "domain-renewal-report") echo " selected" ?>>
-                        Renewals
-                    </option>
                 </select>
             </form>
         </div>
@@ -120,10 +116,6 @@ echo $layout->jumpMenu();
                     <option
                         value="<?php echo $web_root; ?>/reporting/ssl/provider-fees.php?all=0"<?php if ($report_name == "ssl-provider-fee-report") echo " selected" ?>>
                         Provider Fees
-                    </option>
-                    <option
-                        value="<?php echo $web_root; ?>/reporting/ssl/renewals.php"<?php if ($report_name == "ssl-renewal-report") echo " selected" ?>>
-                        Renewals
                     </option>
                 </select>
             </form>
