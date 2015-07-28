@@ -1,5 +1,8 @@
-DomainMOD Changelog
+DomainMOD CHANGELOG
 ===================
+v3.0.6    2015-07-27
+- Added an Expiry Date filter to Domain & SSL Certificate searches
+
 v3.0.5    2015-07-06
 - Added support for user-based time zones
 
