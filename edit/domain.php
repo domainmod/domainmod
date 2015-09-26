@@ -176,24 +176,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ORDER BY name";
         $result = mysqli_query($connection, $sql);
 
-        $count = 0;
+        if (mysqli_num_rows($result) > 0) {
 
-        while ($row = mysqli_fetch_object($result)) {
+            $count = 0;
 
-            $field_array[$count] = $row->field_name;
-            $count++;
+            while ($row = mysqli_fetch_object($result)) {
 
-        }
+                $field_array[$count] = $row->field_name;
+                $count++;
 
-        foreach ($field_array as $field) {
+            }
 
-            $full_field = "new_" . $field;
+            foreach ($field_array as $field) {
 
-            $sql = "UPDATE domain_field_data
+                $full_field = "new_" . $field;
+
+                $sql = "UPDATE domain_field_data
                     SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "',
                         update_time = '" . $timestamp . "'
                     WHERE domain_id = '" . $new_did . "'";
-            $result = mysqli_query($connection, $sql);
+                $result = mysqli_query($connection, $sql);
+
+            }
 
         }
 
