@@ -1966,7 +1966,7 @@ if ($segid != "") {
                     echo "<option value=\"domains.php?pcid=$pcid&oid=$oid&dnsid=$dnsid&ipid=$ipid&whid=$whid&rid=$rid&raid=$raid&start_date=$start_date&end_date=$end_date&tld=$row_tld->tld&segid=$segid&is_active=$is_active&result_limit=$result_limit&sort_by=$sort_by&from_dropdown=1\"";
                     if ($row_tld->tld == $tld) echo " selected";
                     echo ">";
-                    echo ".$row_tld->tld</option>";
+                    echo "$row_tld->tld</option>";
                 }
                 echo "</select>";
                 ?>
