@@ -335,10 +335,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $q = $conn->stmt_init();
 
     if ($q->prepare($query)) {
+
         $q->execute();
         $q->store_result();
         $q->bind_result($ra_id, $ra_username, $o_name, $r_name);
-        $q->fetch();
 
         echo "<select name=\"new_account_id\">";
 
@@ -354,9 +354,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         while ($q->fetch()) { ?>
 
-        <option value="<?php echo $ra_id; ?>"<?php if ($ra_id == $to_compare) echo " selected"; ?>>
-            <?php echo $r_name; ?>, <?php echo $o_name; ?> (<?php echo $ra_username;
-            ?>)</option><?php
+        <option value="<?php echo $ra_id; ?>"<?php if ($ra_id == $to_compare) echo " selected"; ?>><?php
+            echo $r_name; ?>, <?php echo $o_name; ?> (<?php echo $ra_username; ?>)</option><?php
 
         }
 
