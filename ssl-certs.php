@@ -1455,6 +1455,11 @@ $total_rows = number_format(mysqli_num_rows($result));
                 } else {
                     $range_string = "";
                 }
+                if ($_SESSION['s_search_for_ssl'] != "") {
+                    $search_string = " AND (sslc.name LIKE '%" . $_SESSION['s_search_for_ssl'] . "%' OR d.domain LIKE '%" . $_SESSION['s_search_for_ssl'] . "%')";
+                } else {
+                    $search_string = "";
+                }
 
                 $sql_active = "SELECT active, count(*) AS total_count
                FROM ssl_certs
@@ -1467,6 +1472,7 @@ $total_rows = number_format(mysqli_num_rows($result));
                  $sslipid_string
                  $sslpcid_string
                  $range_string
+                 $search_string
                GROUP BY active
                ORDER BY active asc";
                 $result_active = mysqli_query($connection, $sql_active);
