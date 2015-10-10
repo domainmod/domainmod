@@ -1,5 +1,11 @@
 DomainMOD CHANGELOG
 ===================
+v3.0.7    2015-10-10
+- Check for custom field data
+- Update redirect URL after updating System Settings
+- Remove extra $q->fetch call
+- Fix the password email logic
+
 v3.0.6    2015-07-27
 - Added an Expiry Date filter to Domain & SSL Certificate searches
 
