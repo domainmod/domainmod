@@ -1240,6 +1240,7 @@ if ($segid != "") {
                                   $ipid_string
                                   $whid_string
                                   $rid_string
+                                  $range_string
                                   $tld_string
                                   $search_string
                                   $quick_search_string
