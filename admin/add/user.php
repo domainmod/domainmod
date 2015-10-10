@@ -19,7 +19,7 @@
  *
  */
 ?>
-<?php
+<?php //@formatter:off
 include("../../_includes/start-session.inc.php");
 include("../../_includes/init.inc.php");
 
@@ -52,8 +52,7 @@ $new_admin = $_POST['new_admin'];
 $new_active = $_POST['new_active'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_name != "" && $new_username != ""
-    && $new_email_address != ""
-) {
+    && $new_email_address != "") {
 
     $query = "SELECT username
               FROM users
@@ -241,5 +240,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
     <input type="submit" name="button" value="Add New User &raquo;">
 </form>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
+<?php //@formatter:on ?>
 </body>
 </html>
