@@ -65,6 +65,9 @@ if ($new_username != "") {
                              AND email_address = '$row->email_address'";
             $result_update = mysqli_query($connection, $sql_update);
 
+            $username = $row->username;
+            $email_address = $row->email_address;
+
             include(DIR_INC . "email/send-new-password.inc.php");
 
             $_SESSION['s_result_message'] .= "Your new password has been emailed to you<BR>";

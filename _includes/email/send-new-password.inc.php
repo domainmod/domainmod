@@ -36,7 +36,7 @@ if ($q_settings->prepare($query_settings)) {
     $error->outputSqlError($conn, "ERROR");
 }
 
-$to = $row->email_address;
+$to = $email_address;
 $from_name = $software_title;
 
 $subject = "Your " . $software_title . " Password has been Reset";
@@ -67,13 +67,13 @@ $message .= "<a title=\"" . $software_title . "\" href=\"" . $full_url . "/\"><i
     $software_title . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
 $message .= "Your password has been reset and you can find it below. The next ";
 $message .= "time you login you should change your password to something that ";
-$message .= "will be easier for you to remember, but still hard for someone ";
+$message .= "will be easy for you to remember, but still hard for someone ";
 $message .= "else to guess.<BR>";
 $message .= "<BR>";
 $message .= "URL: <a title=\"DomainMOD\" target=\"_blank\" href=\"" . $full_url . "/\">" .
     $full_url . "/</a><BR>";
 $message .= "<BR>";
-$message .= "Your Username: $row->username<BR>";
+$message .= "Your Username: $username<BR>";
 $message .= "Your New Password: $new_password<BR>";
 $message .= "<BR>";
 $message .= "Best Regards,<BR>";
