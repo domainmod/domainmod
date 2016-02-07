@@ -39,7 +39,7 @@ class Scheduler
 
     public function updateTime($connection, $id, $timestamp, $next_run, $active)
     {
-        $time = new Timestamp();
+        $time = new Time();
         $current_time = $time->time();
         $duration = $this->getTimeDifference($timestamp, $current_time);
         if ($active == '1') {
@@ -72,7 +72,7 @@ class Scheduler
 
     public function show($connection, $id)
     {
-        $time = new Timestamp();
+        $time = new Time();
         $row = mysqli_fetch_object($this->getTask($connection, $id));
         $hour = explode(" ", $row->expression);
         ob_start(); ?>

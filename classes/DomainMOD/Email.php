@@ -27,7 +27,7 @@ class Email
 
     public function sendExpirations($connection, $software_title, $from_cron)
     {
-        $time = new Timestamp();
+        $time = new Time();
         $timestamp_basic = $time->timeBasic();
         $timestamp_long = $time->timeLong();
         list($full_url, $from_address, $number_of_days) = $this->getSettings($connection);
@@ -66,7 +66,7 @@ class Email
     public function checkExpiring($connection, $days, $from_cron)
     {
         $system = new System();
-        $time = new Timestamp();
+        $time = new Time();
         $date = $time->timeBasicPlusDays($days);
 
         $sql_domains = "SELECT id, expiry_date, domain

@@ -31,7 +31,7 @@ require DIR_ROOT . 'vendor/autoload.php';
 $conversion = new DomainMOD\Conversion();
 $maint = new DomainMOD\Maintenance();
 $schedule = new DomainMOD\Scheduler();
-$time = new DomainMOD\Timestamp();
+$time = new DomainMOD\Time();
 $timestamp = $time->time();
 
 include(DIR_INC . "head.inc.php");

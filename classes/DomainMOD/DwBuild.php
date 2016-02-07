@@ -33,7 +33,7 @@ class DwBuild
         $records = new DwRecords();
         $servers = new DwServers();
         $stats = new DwStats();
-        $time = new Timestamp();
+        $time = new Time();
 
         $result = $servers->get($connection);
         if ($servers->checkForHosts($result) == '0')
@@ -113,7 +113,7 @@ class DwBuild
     public function getBuildTime($build_start_time)
     {
 
-        $time = new Timestamp();
+        $time = new Time();
 
         $build_end_time = $time->time();
 

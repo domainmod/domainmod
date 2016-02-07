@@ -28,7 +28,7 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
 $system = new DomainMOD\System();
-$time = new DomainMOD\Timestamp();
+$time = new DomainMOD\Time();
 $timestamp = $time->time();
 $timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
 

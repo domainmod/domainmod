@@ -1,6 +1,6 @@
 <?php
 /**
- * /classes/DomainMOD/Timestamp.php
+ * /classes/DomainMOD/Time.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2016 Greg Chetcuti <greg@chetcuti.com>
@@ -22,7 +22,7 @@
 <?php
 namespace DomainMOD;
 
-class Timestamp
+class Time
 {
 
     public function time()

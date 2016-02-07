@@ -29,7 +29,7 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 $error = new DomainMOD\Error();
 $login = new DomainMOD\Login();
 $system = new DomainMOD\System();
-$time = new DomainMOD\Timestamp();
+$time = new DomainMOD\Time();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");

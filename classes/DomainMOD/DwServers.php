@@ -58,7 +58,7 @@ class DwServers
         $build = new DwBuild();
         $accounts = new DwAccounts();
         $zones = new DwZones();
-        $time = new Timestamp();
+        $time = new Time();
 
         while ($row = mysqli_fetch_object($result)) {
 

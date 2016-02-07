@@ -91,7 +91,7 @@ class Login
     public function setLastLogin($connection, $user_id, $email_address)
     {
 
-        $time = new Timestamp();
+        $time = new Time();
         $timestamp = $time->time();
 
         $sql = "UPDATE users

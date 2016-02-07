@@ -109,7 +109,7 @@ class Maintenance
     public function updateDomainFees($connection)
     {
 
-        $time = new Timestamp();
+        $time = new Time();
         $timestamp = $time->time();
 
         $sql = "UPDATE domains
@@ -169,7 +169,7 @@ class Maintenance
     public function updateSslFees($connection)
     {
 
-        $time = new Timestamp();
+        $time = new Time();
         $timestamp = $time->time();
 
         $sql = "UPDATE ssl_certs

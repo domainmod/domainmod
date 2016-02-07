@@ -33,7 +33,7 @@ $error = new DomainMOD\Error();
 $maint = new DomainMOD\Maintenance();
 $schedule = new DomainMOD\Scheduler();
 $system = new DomainMOD\System();
-$time = new DomainMOD\Timestamp();
+$time = new DomainMOD\Time();
 $timestamp = $time->time();
 
 include(DIR_INC . "head.inc.php");

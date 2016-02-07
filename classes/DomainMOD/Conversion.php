@@ -101,7 +101,7 @@ class Conversion
     public function updateConversionRate($connection, $conversion_rate, $is_existing, $currency_id, $user_id)
     {
 
-        $time = new Timestamp();
+        $time = new Time();
         $timestamp = $time->time();
 
         if ($is_existing == '1') {

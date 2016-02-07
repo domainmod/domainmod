@@ -27,7 +27,7 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
-$time = new DomainMOD\Timestamp();
+$time = new DomainMOD\Time();
 $system = new DomainMOD\System();
 $timestamp = $time->time();
 
