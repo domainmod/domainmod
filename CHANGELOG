@@ -1,18 +1,18 @@
 DomainMOD CHANGELOG
 ===================
 v3.0.8    2016-02-08
-- Add Auto Renew field to Domains
-- Synchronize software and database versions
-- Rename Timestamp class to Time class
-- Add search string to SSL status dropdown
-- Fix Registrar Account dropdown list bug
-- Remove leading period from TLD dropdown list
+- Added Auto Renew field to Domains
+- Synchronized software and database versions
+- Renamed Timestamp class to Time class
+- Added search string to SSL status dropdown
+- Fixed Registrar Account dropdown list bug
+- Removed leading period from TLD dropdown list
 
 v3.0.7    2015-10-10
 - Check for custom field data
-- Update redirect URL after updating System Settings
-- Remove extra $q->fetch call
-- Fix the password email logic
+- Updated redirect URL after updating System Settings
+- Removed extra $q->fetch call
+- Fixed the password email logic
 
 v3.0.6    2015-07-27
 - Added an Expiry Date filter to Domain & SSL Certificate searches
