@@ -94,3 +94,19 @@ if ($current_db_version === '3.0.2') {
     $current_db_version = '3.0.4';
 
 }
+
+// upgrade database from 3.0.4 to 3.0.8
+if ($current_db_version === '3.0.4') {
+
+    $sql = "ALTER TABLE `domains`
+            ADD `autorenew` TINYINT(1) NOT NULL DEFAULT '0' AFTER `notes`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "UPDATE settings
+            SET db_version = '3.0.8',
+                update_time = '" . $time->time() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $current_db_version = '3.0.8';
+
+}

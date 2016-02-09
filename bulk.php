@@ -56,6 +56,7 @@ $new_dnsid = $_POST['new_dnsid'];
 $new_ipid = $_POST['new_ipid'];
 $new_whid = $_POST['new_whid'];
 $new_raid = $_POST['new_raid'];
+$new_autorenew = $_POST['new_autorenew'];
 $new_privacy = $_POST['new_privacy'];
 $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
@@ -254,8 +255,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         }
 
                         $sql = "INSERT INTO domains
-                                (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, total_cost, dns_id, ip_id, hosting_id, function, notes, privacy, active, fee_fixed, insert_time) VALUES
-                                ('" . $temp_owner_id . "', '" . $temp_registrar_id . "', '" . $new_raid . "', '" . mysqli_real_escape_string($connection, $new_domain) . "', '" . $new_tld . "', '" . $new_expiry_date . "', '" . $new_pcid . "', '" . $temp_fee_id . "', '" . $new_total_cost . "', '" . $new_dnsid . "', '" . $new_ipid . "', '" . $new_whid . "', '" . mysqli_real_escape_string($connection, $new_function) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_privacy . "', '" . $new_active . "', '" . $temp_fee_fixed . "', '" . $timestamp . "')";
+                                (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, total_cost, dns_id, ip_id, hosting_id, `function`, notes, autorenew, privacy, active, fee_fixed, insert_time) VALUES
+                                ('" . $temp_owner_id . "', '" . $temp_registrar_id . "', '" . $new_raid . "', '" . mysqli_real_escape_string($connection, $new_domain) . "', '" . $new_tld . "', '" . $new_expiry_date . "', '" . $new_pcid . "', '" . $temp_fee_id . "', '" . $new_total_cost . "', '" . $new_dnsid . "', '" . $new_ipid . "', '" . $new_whid . "', '" . mysqli_real_escape_string($connection, $new_function) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_autorenew . "', '" . $new_privacy . "', '" . $new_active . "', '" . $temp_fee_fixed . "', '" . $timestamp . "')";
                         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
                         $temp_fee_id = 0;
 
@@ -751,7 +752,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['s_result_message'] = "Domains marked as 'In Transfer'<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as In Transfer<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -775,7 +776,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['s_result_message'] = "Domains marked as 'Pending (Registration)'<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as Pending (Registration)<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -799,7 +800,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['s_result_message'] = "Domains marked as 'Pending (Renewal)'<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as Pending (Renewal)<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -823,9 +824,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                $_SESSION['s_result_message'] = "Domains marked as 'Pending (Other)'<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as Pending (Other)<BR>";
 
                 $maint->updateSegments($connection);
+
+            } elseif ($action == "AURNE") {
+
+                if ($new_notes != "") {
+
+                    $sql = "UPDATE domains
+                            SET autorenew = '1',
+                                notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
+                                update_time = '" . $timestamp . "'
+                            WHERE domain IN (" . $new_data_formatted . ")";
+
+                } else {
+
+                    $sql = "UPDATE domains
+                            SET autorenew = '1',
+                                update_time = '" . $timestamp . "'
+                            WHERE domain IN (" . $new_data_formatted . ")";
+
+                }
+                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+                $_SESSION['s_result_message'] = "Domains marked as Auto Renewal<BR>";
+
+                $maint->updateSegments($connection);
+
+            } elseif ($action == "AURND") {
+
+                if ($new_notes != "") {
+
+                    $sql = "UPDATE domains
+                            SET autorenew = '0',
+                                notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
+                                update_time = '" . $timestamp . "'
+                            WHERE domain IN (" . $new_data_formatted . ")";
+
+                } else {
+
+                    $sql = "UPDATE domains
+                            SET autorenew = '0',
+                                update_time = '" . $timestamp . "'
+                            WHERE domain IN (" . $new_data_formatted . ")";
+
+                }
+                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+                $_SESSION['s_result_message'] = "Domains marked as Manual Renewal<BR>";
 
             } elseif ($action == "PRVE") {
 
@@ -862,7 +909,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_result_message'] = "Domains marked as 'Private WHOIS'<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as Private WHOIS<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -901,7 +948,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_result_message'] = "Domains marked as 'Public WHOIS'<BR>";
+                $_SESSION['s_result_message'] = "Domains marked as Public WHOIS<BR>";
 
             } elseif ($action == "CED") {
 
@@ -1027,17 +1074,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php } elseif ($action == "A") { ?>
             <BR><strong>The following domains were marked as active:</strong><BR>
         <?php } elseif ($action == "T") { ?>
-            <BR><strong>The following domains were marked as 'In Transfer':</strong><BR>
+            <BR><strong>The following domains were marked as In Transfer:</strong><BR>
         <?php } elseif ($action == "PRg") { ?>
-            <BR><strong>The following domains were marked as 'Pending (Registration)':</strong><BR>
+            <BR><strong>The following domains were marked as Pending (Registration):</strong><BR>
         <?php } elseif ($action == "PRn") { ?>
-            <BR><strong>The following domains were marked as 'Pending (Renewal)':</strong><BR>
+            <BR><strong>The following domains were marked as Pending (Renewal):</strong><BR>
         <?php } elseif ($action == "PO") { ?>
-            <BR><strong>The following domains were marked as 'Pending (Other)':</strong><BR>
+            <BR><strong>The following domains were marked as Pending (Other):</strong><BR>
+        <?php } elseif ($action == "AURNE") { ?>
+            <BR><strong>The following domains were marked as Auto Renewal:</strong><BR>
+        <?php } elseif ($action == "AURND") { ?>
+            <BR><strong>The following domains were marked as Manual Renewal:</strong><BR>
         <?php } elseif ($action == "PRVE") { ?>
-            <BR><strong>The following domains were marked as 'Private WHOIS':</strong><BR>
+            <BR><strong>The following domains were marked as Private WHOIS:</strong><BR>
         <?php } elseif ($action == "PRVD") { ?>
-            <BR><strong>The following domains were marked as 'Public WHOIS':</strong><BR>
+            <BR><strong>The following domains were marked as Public WHOIS:</strong><BR>
         <?php } elseif ($action == "CED") { ?>
             <BR><strong>The expiry date was updated for the following domains:</strong><BR>
         <?php } elseif ($action == "CPC") { ?>
@@ -1089,31 +1140,39 @@ multiple domains all at once.<BR><BR>
         </option>
         <option value="bulk.php?action=A"<?php if ($action == "A") {
             echo " selected";
-        } ?>>Mark as 'Active'
+        } ?>>Mark as Active
         </option>
         <option value="bulk.php?action=T"<?php if ($action == "T") {
             echo " selected";
-        } ?>>Mark as 'In Transfer'
+        } ?>>Mark as In Transfer
         </option>
         <option value="bulk.php?action=PRg"<?php if ($action == "PRg") {
             echo " selected";
-        } ?>>Mark as 'Pending (Registration)'
+        } ?>>Mark as Pending (Registration)
         </option>
         <option value="bulk.php?action=PRn"<?php if ($action == "PRn") {
             echo " selected";
-        } ?>>Mark as 'Pending (Renewal)'
+        } ?>>Mark as Pending (Renewal)
         </option>
         <option value="bulk.php?action=PO"<?php if ($action == "PO") {
             echo " selected";
-        } ?>>Mark as 'Pending (Other)'
+        } ?>>Mark as Pending (Other)
         </option>
         <option value="bulk.php?action=E"<?php if ($action == "E") {
             echo " selected";
-        } ?>>Mark as 'Expired'
+        } ?>>Mark as Expired
         </option>
         <option value="bulk.php?action=S"<?php if ($action == "S") {
             echo " selected";
-        } ?>>Mark as 'Sold'
+        } ?>>Mark as Sold
+        </option>
+        <option value="bulk.php?action=AURNE"<?php if ($action == "AURNE") {
+            echo " selected";
+        } ?>>Mark as Auto Renewal
+        </option>
+        <option value="bulk.php?action=AURND"<?php if ($action == "AURND") {
+            echo " selected";
+        } ?>>Mark as Manual Renewal
         </option>
         <option value="bulk.php?action=PRVE"<?php if ($action == "PRVE") {
             echo " selected";
@@ -1365,6 +1424,18 @@ multiple domains all at once.<BR><BR>
         echo "<option value=\"10\"";
         if ($new_active == "10") echo " selected";
         echo ">Sold</option>";
+        echo "</select>";
+        ?>
+        <BR><BR>
+        <strong>Auto Renewal?</strong><BR><BR>
+        <?php
+        echo "<select name=\"new_autorenew\">";
+        echo "<option value=\"0\"";
+        if ($new_autorenew == "0") echo " selected";
+        echo ">No</option>";
+        echo "<option value=\"1\"";
+        if ($new_autorenew == "1") echo " selected";
+        echo ">Yes</option>";
         echo "</select>";
         ?>
         <BR><BR>

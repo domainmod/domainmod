@@ -55,6 +55,7 @@ $new_dns_id = $_POST['new_dns_id'];
 $new_ip_id = $_POST['new_ip_id'];
 $new_hosting_id = $_POST['new_hosting_id'];
 $new_account_id = $_POST['new_account_id'];
+$new_autorenew = $_POST['new_autorenew'];
 $new_privacy = $_POST['new_privacy'];
 $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
@@ -162,8 +163,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                            hosting_id = '" . $new_hosting_id . "',
                            fee_id = '" . $temp_fee_id . "',
                            total_cost = '" . $new_total_cost . "',
-                           function = '" . mysqli_real_escape_string($connection, $new_function) . "',
+                           `function` = '" . mysqli_real_escape_string($connection, $new_function) . "',
                            notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
+                           autorenew = '" . $new_autorenew . "',
                            privacy = '" . $new_privacy . "',
                            active = '" . $new_active . "',
                            fee_fixed = '" . $temp_fee_fixed . "',
@@ -228,8 +230,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $sql = "SELECT d.domain, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.hosting_id, d.function, d.notes, d.privacy,
-                d.active, ra.id AS account_id
+    $sql = "SELECT d.domain, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.hosting_id, d.function, d.notes, d.autorenew,
+                d.privacy, d.active, ra.id AS account_id
             FROM domains AS d, registrar_accounts AS ra
             WHERE d.account_id = ra.id
               AND d.id = '" . $did . "'";
@@ -245,6 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_hosting_id = $row->hosting_id;
         $new_function = $row->function;
         $new_notes = $row->notes;
+        $new_autorenew = $row->autorenew;
         $new_privacy = $row->privacy;
         $new_active = $row->active;
         $new_account_id = $row->account_id;
@@ -439,6 +442,18 @@ if ($really_del == "1") {
     echo "<option value=\"10\"";
     if ($new_active == "10") echo " selected";
     echo ">Sold</option>";
+    echo "</select>";
+    ?>
+    <BR><BR>
+    <strong>Auto Renewal?</strong><BR><BR>
+    <?php
+    echo "<select name=\"new_autorenew\">";
+    echo "<option value=\"0\"";
+    if ($new_autorenew == "0") echo " selected";
+    echo ">No</option>";
+    echo "<option value=\"1\"";
+    if ($new_autorenew == "1") echo " selected";
+    echo ">Yes</option>";
     echo "</select>";
     ?>
     <BR><BR>

@@ -430,6 +430,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `hosting_id` INT(10) NOT NULL DEFAULT '1',
                 `function` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `autorenew` TINYINT(1) NOT NULL DEFAULT '0',
                 `privacy` INT(1) NOT NULL DEFAULT '0',
                 `active` INT(2) NOT NULL DEFAULT '1',
                 `fee_fixed` INT(1) NOT NULL,

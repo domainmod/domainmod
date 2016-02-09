@@ -89,19 +89,23 @@ if ($software_section == "domains") { ?>
         } elseif ($action == "R") { ?>
             &raquo;&nbsp;<strong>Renew Domains (Update Expiry Date Only)</strong>&nbsp;<?php
         } elseif ($action == "A") { ?>
-            &raquo;&nbsp;<strong>Mark as 'Active'</strong>&nbsp;<?php
+            &raquo;&nbsp;<strong>Mark as Active</strong>&nbsp;<?php
         } elseif ($action == "T") { ?>
-            &raquo;&nbsp;<strong>Mark as 'In Transfer'</strong>&nbsp;<?php
+            &raquo;&nbsp;<strong>Mark as In Transfer</strong>&nbsp;<?php
         } elseif ($action == "PRg") { ?>
-            &raquo;&nbsp;<strong>Mark as 'Pending (Registration)'</strong>&nbsp;<?php
+            &raquo;&nbsp;<strong>Mark as Pending (Registration)</strong>&nbsp;<?php
         } elseif ($action == "PRn") { ?>
-            &raquo;&nbsp;<strong>Mark as 'Pending (Renewal)'</strong>&nbsp;<?php
+            &raquo;&nbsp;<strong>Mark as Pending (Renewal)</strong>&nbsp;<?php
         } elseif ($action == "PO") { ?>
-            &raquo;&nbsp;<strong>Mark as 'Pending (Other)'</strong>&nbsp;<?php
+            &raquo;&nbsp;<strong>Mark as Pending (Other)</strong>&nbsp;<?php
         } elseif ($action == "E") { ?>
-            &raquo;&nbsp;<strong>Mark as 'Expired'</strong>&nbsp;<?php
+            &raquo;&nbsp;<strong>Mark as Expired</strong>&nbsp;<?php
         } elseif ($action == "S") { ?>
-            &raquo;&nbsp;<strong>Mark as 'Sold'</strong>&nbsp;<?php
+            &raquo;&nbsp;<strong>Mark as Sold</strong>&nbsp;<?php
+        } elseif ($action == "AURNE") { ?>
+            &raquo;&nbsp;<strong>Mark as Auto Renewal</strong>&nbsp;<?php
+        } elseif ($action == "AURND") { ?>
+            &raquo;&nbsp;<strong>Mark as Manual Renewal</strong>&nbsp;<?php
         } elseif ($action == "PRVE") { ?>
             &raquo;&nbsp;<strong>Mark as Private WHOIS</strong>&nbsp;<?php
         } elseif ($action == "PRVD") { ?>

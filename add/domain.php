@@ -52,6 +52,7 @@ $new_dns_id = $_POST['new_dns_id'];
 $new_ip_id = $_POST['new_ip_id'];
 $new_hosting_id = $_POST['new_hosting_id'];
 $new_account_id = $_POST['new_account_id'];
+$new_autorenew = $_POST['new_autorenew'];
 $new_privacy = $_POST['new_privacy'];
 $new_active = $_POST['new_active'];
 $new_notes = $_POST['new_notes'];
@@ -173,16 +174,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $query_d = "INSERT INTO domains
                             (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
-                             hosting_id, fee_id, total_cost, `function`, notes, privacy, active, insert_time)
+                             hosting_id, fee_id, total_cost, `function`, notes, autorenew, privacy, active, insert_time)
                             VALUES
-                            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $q_d = $conn->stmt_init();
 
                 if ($q_d->prepare($query_d)) {
 
-                    $q_d->bind_param('iiisssiiiiidssiis', $new_owner_id, $new_registrar_id, $new_account_id,
+                    $q_d->bind_param('iiisssiiiiidssiiis', $new_owner_id, $new_registrar_id, $new_account_id,
                         $new_domain, $tld, $new_expiry_date, $new_cat_id, $new_dns_id, $new_ip_id, $new_hosting_id,
-                        $new_fee_id, $new_total_cost, $new_function, $new_notes, $new_privacy, $new_active, $timestamp);
+                        $new_fee_id, $new_total_cost, $new_function, $new_notes, $new_autorenew, $new_privacy,
+                        $new_active, $timestamp);
                     $q_d->execute();
 
                     $temp_domain_id = $q_d->insert_id;
@@ -539,6 +541,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <option value="4"<?php if ($new_active == "4") echo " selected"; ?>>Pending (Other)</option>
         <option value="0"<?php if ($new_active == "0") echo " selected"; ?>>Expired</option>
         <option value="10"<?php if ($new_active == "10") echo " selected"; ?>>Sold</option>
+    </select>
+    <BR><BR>
+    <strong>Auto Renewal?</strong><BR><BR>
+    <select name="new_autorenew">
+        <option value="0"<?php if ($new_autorenew == "0") echo " selected"; ?>>No</option>
+        <option value="1"<?php if ($new_autorenew == "1") echo " selected"; ?>>Yes</option>
     </select>
     <BR><BR>
     <strong>Privacy Enabled?</strong><BR><BR>

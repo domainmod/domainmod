@@ -328,7 +328,7 @@ if ($sort_by == "ed_a") {
 
 $dfd_columns = $customField->getCustomFieldsSql($connection, 'domain_fields', 'dfd');
 
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name" . $dfd_columns . "
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name" . $dfd_columns . "
         FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
         WHERE d.account_id = ra.id
           AND ra.registrar_id = r.id
@@ -819,6 +819,7 @@ if ($export_data == "1") {
     $row_contents[$count++] = "Domain";
     $row_contents[$count++] = "TLD";
     $row_contents[$count++] = "Function";
+    $row_contents[$count++] = "Renewal Status";
     $row_contents[$count++] = "WHOIS Status";
     $row_contents[$count++] = "Registrar";
     $row_contents[$count++] = "Registrar Account";
@@ -880,6 +881,12 @@ if ($export_data == "1") {
             $domain_status = "ERROR -- PROBLEM WITH CODE IN DOMAINS.PHP";
         }
 
+        if ($row->autorenew == "1") {
+            $autorenew_status = "Auto Renewal";
+        } elseif ($row->autorenew == "0") {
+            $autorenew_status = "Manual Renewal";
+        }
+
         if ($row->privacy == "1") {
             $privacy_status = "Private";
         } elseif ($row->privacy == "0") {
@@ -918,6 +925,7 @@ if ($export_data == "1") {
         $row_contents[$count++] = $row->domain;
         $row_contents[$count++] = '.' . $row->tld;
         $row_contents[$count++] = $row->function;
+        $row_contents[$count++] = $autorenew_status;
         $row_contents[$count++] = $privacy_status;
         $row_contents[$count++] = $row->registrar_name;
         $row_contents[$count++] = $row->registrar_name . ', ' . $row->owner_name . '(' . $row->username . ')';

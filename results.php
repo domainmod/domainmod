@@ -54,7 +54,7 @@ $software_section = "segments";
 
 if ($type == "inactive") {
 
-    $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+    $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
             FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
             WHERE d.account_id = ra.id
               AND ra.registrar_id = r.id
@@ -73,7 +73,7 @@ if ($type == "inactive") {
 
 } elseif ($type == "filtered") {
 
-    $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+    $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
             FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
             WHERE d.account_id = ra.id
               AND ra.registrar_id = r.id
@@ -145,6 +145,7 @@ if ($export_data == "1") {
             'Renewal Fee',
             'Domain',
             'TLD',
+            'Renewal Status',
             'WHOIS Status',
             'Registrar',
             'Username',
@@ -198,6 +199,16 @@ if ($export_data == "1") {
                 $domain_status = "ERROR -- PROBLEM WITH CODE IN RESULTS.PHP";
             }
 
+            if ($row->autorenew == "1") {
+
+                $autorenew_status = "Auto Renewal";
+
+            } elseif ($row->autorenew == "0") {
+
+                $autorenew_status = "Manual Renewal";
+
+            }
+
             if ($row->privacy == "1") {
 
                 $privacy_status = "Private";
@@ -223,6 +234,7 @@ if ($export_data == "1") {
                 $export_renewal_fee,
                 $row->domain,
                 '.' . $row->tld,
+                $autorenew_status,
                 $privacy_status,
                 $row->registrar_name,
                 $row->username,
@@ -278,11 +290,11 @@ while ($row_name = mysqli_fetch_object($result_name)) {
 
 <?php
 if ($type == "inactive") {
-    echo "The below domains are in the segment <strong><div class=\"highlight\">" . $segment_name . "</div></strong>, and they are stored in your  " . $software_title . " database, but they are currently marked as inactive.<BR><BR>";
+    echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, and they are stored in your  " . $software_title . " database, but they are currently marked as inactive.<BR><BR>";
 } elseif ($type == "filtered") {
-    echo "The below domains are in the segment <strong><div class=\"highlight\">" . $segment_name . "</div></strong>, and they are stored in your  " . $software_title . " database, but they were filtered out based on your search criteria.<BR><BR>";
+    echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, and they are stored in your  " . $software_title . " database, but they were filtered out based on your search criteria.<BR><BR>";
 } elseif ($type == "missing") {
-    echo "The below domains are in the segment <strong><div class=\"highlight\">" . $segment_name . "</div></strong>, but they are not in your " . $software_title . " database.<BR><BR>";
+    echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, but they are not in your " . $software_title . " database.<BR><BR>";
 }
 ?>
 <?php
