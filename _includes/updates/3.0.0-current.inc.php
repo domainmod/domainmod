@@ -110,3 +110,15 @@ if ($current_db_version === '3.0.4') {
     $current_db_version = '3.0.8';
 
 }
+
+// upgrade database from 3.0.8 to 3.0.9
+if ($current_db_version === '3.0.8') {
+
+    $sql = "UPDATE settings
+            SET db_version = '3.0.9',
+                update_time = '" . $time->time() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $current_db_version = '3.0.9';
+
+}
