@@ -42,6 +42,10 @@ include(DIR_INC . "database.inc.php");
 
 if ($demo_install != '1') {
 
+    $sql = "UPDATE scheduler
+            SET is_running = '0'";
+    $result = mysqli_query($connection, $sql);
+
     $sql = "SELECT id, `name`, slug, expression, active
             FROM scheduler
             WHERE active = '1'
