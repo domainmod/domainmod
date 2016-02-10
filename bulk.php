@@ -870,21 +870,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes != "") {
 
-                    $sql = "UPDATE domains
-                            SET autorenew = '1',
-                                notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET autorenew = '1',
+                                  notes = CONCAT(?, '\r\n\r\n', notes),
+                                  update_time = ?
+                              WHERE domain IN (?)";
+                    $q = $conn->stmt_init();
+
+                    if ($q->prepare($query)) {
+
+                        $q->bind_param('sss', $new_notes, $timestamp, $new_data_formatted);
+                        $q->execute();
+                        $q->close();
+
+                    } else $error->outputSqlError($conn, "ERROR");
 
                 } else {
 
-                    $sql = "UPDATE domains
-                            SET autorenew = '1',
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET autorenew = '1',
+                                  update_time = ?
+                              WHERE domain IN (?)";
+                    $q = $conn->stmt_init();
+
+                    if ($q->prepare($query)) {
+
+                        $q->bind_param('ss', $timestamp, $new_data_formatted);
+                        $q->execute();
+                        $q->close();
+
+                    } else $error->outputSqlError($conn, "ERROR");
 
                 }
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $_SESSION['s_result_message'] = "Domains marked as Auto Renewal<BR>";
 
@@ -894,21 +911,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes != "") {
 
-                    $sql = "UPDATE domains
-                            SET autorenew = '0',
-                                notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET autorenew = '0',
+                                  notes = CONCAT(?, '\r\n\r\n', notes),
+                                  update_time = ?
+                              WHERE domain IN (?)";
+                    $q = $conn->stmt_init();
+
+                    if ($q->prepare($query)) {
+
+                        $q->bind_param('sss', $new_notes, $timestamp, $new_data_formatted);
+                        $q->execute();
+                        $q->close();
+
+                    } else $error->outputSqlError($conn, "ERROR");
 
                 } else {
 
-                    $sql = "UPDATE domains
-                            SET autorenew = '0',
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET autorenew = '0',
+                                  update_time = ?
+                              WHERE domain IN (?)";
+                    $q = $conn->stmt_init();
+
+                    if ($q->prepare($query)) {
+
+                        $q->bind_param('ss', $timestamp, $new_data_formatted);
+                        $q->execute();
+                        $q->close();
+
+                    } else $error->outputSqlError($conn, "ERROR");
 
                 }
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $_SESSION['s_result_message'] = "Domains marked as Manual Renewal<BR>";
 
