@@ -1,1 +1,3 @@
-# .scrutinizer.yml
+filter:
+    excluded_paths:
+        - vendor/*
