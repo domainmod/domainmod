@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
-            $timestamp = $time->time();
+            $timestamp = $time->stamp();
 
             $q->bind_param('ssssi', $new_host, $new_url, $new_notes, $timestamp, $new_whid);
             $q->execute();

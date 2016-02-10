@@ -25,7 +25,7 @@ namespace DomainMOD;
 class Time
 {
 
-    public function time()
+    public function stamp()
     {
         return gmdate('Y-m-d H:i:s', mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y")));
     }

@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
                 display_inactive_assets = '" . $new_display_inactive_assets . "',
                 display_dw_intro_page = '" . $new_display_dw_intro_page . "',
                 number_of_ssl_certs = '" . $new_number_of_ssl_certs . "',
-                update_time = '" . $time->time() . "'
+                update_time = '" . $time->stamp() . "'
             WHERE user_id = '" . $_SESSION['s_user_id'] . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 

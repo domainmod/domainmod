@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
-            $timestamp = $time->time();
+            $timestamp = $time->stamp();
 
             $q->bind_param('ssssssssssssssssssssssss', $new_name, $new_dns1, $new_dns2, $new_dns3, $new_dns4, $new_dns5,
                 $new_dns6, $new_dns7, $new_dns8, $new_dns9, $new_dns10, $new_ip1, $new_ip2, $new_ip3, $new_ip4,

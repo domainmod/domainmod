@@ -110,7 +110,7 @@ class Maintenance
     {
 
         $time = new Time();
-        $timestamp = $time->time();
+        $timestamp = $time->stamp();
 
         $sql = "UPDATE domains
                 SET fee_fixed = '0'";
@@ -170,7 +170,7 @@ class Maintenance
     {
 
         $time = new Time();
-        $timestamp = $time->time();
+        $timestamp = $time->stamp();
 
         $sql = "UPDATE ssl_certs
                 SET fee_fixed = '0'";

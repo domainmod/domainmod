@@ -63,7 +63,7 @@ class DwZones
                 $sql = "INSERT INTO dw_dns_zones
                         (server_id, domain, zonefile, insert_time)
                         VALUES
-                        ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->zonefile . "', '" . $time->time()
+                        ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->zonefile . "', '" . $time->stamp()
                     . "')";
                 mysqli_query($connection, $sql);
 

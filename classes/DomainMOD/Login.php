@@ -92,7 +92,7 @@ class Login
     {
 
         $time = new Time();
-        $timestamp = $time->time();
+        $timestamp = $time->stamp();
 
         $sql = "UPDATE users
                 SET last_login = '" . $timestamp . "',

@@ -77,7 +77,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "INSERT INTO `users`
             (`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `insert_time`) VALUES
-            ('Domain', 'Administrator', 'admin', 'admin@domainmod.org', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '" . $time->time() . "');";
+            ('Domain', 'Administrator', 'admin', 'admin@domainmod.org', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `user_settings` (
@@ -135,7 +135,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     while ($row = mysqli_fetch_object($result)) {
         $sql_temp = "INSERT INTO user_settings
                      (user_id, default_currency, insert_time) VALUES
-                     ('$row->id', 'USD', '" . $time->time() . "');";
+                     ('$row->id', 'USD', '" . $time->stamp() . "');";
         $result_temp = mysqli_query($connection, $sql_temp);
     }
 
@@ -152,7 +152,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "INSERT INTO `categories`
             (`name`, `stakeholder`, `insert_time`) VALUES
-            ('[no category]', '[no stakeholder]', '" . $time->time() . "');";
+            ('[no category]', '[no stakeholder]', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `hosting` (
@@ -168,7 +168,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "INSERT INTO `hosting`
             (`name`, `insert_time`) VALUES
-            ('[no hosting]', '" . $time->time() . "');";
+            ('[no hosting]', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `owners` (
@@ -184,7 +184,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "INSERT INTO `owners`
             (`name`, `insert_time`) VALUES
-            ('[no owner]', '" . $time->time() . "');";
+            ('[no owner]', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `currencies` (
@@ -203,172 +203,172 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "INSERT INTO currencies
             (`name`, currency, symbol, insert_time) VALUES
-            ('Albania Lek', 'ALL', 'Lek', '" . $time->time() . "'),
-            ('Afghanistan Afghani', 'AFN', '؋', '" . $time->time() . "'),
-            ('Argentina Peso', 'ARS', '$', '" . $time->time() . "'),
-            ('Aruba Guilder', 'AWG', 'ƒ', '" . $time->time() . "'),
-            ('Australia Dollar', 'AUD', '$', '" . $time->time() . "'),
-            ('Azerbaijan New Manat', 'AZN', '" . 'ман' . "', '" . $time->time() . "'),
-            ('Bahamas Dollar', 'BSD', '$', '" . $time->time() . "'),
-            ('Barbados Dollar', 'BBD', '$', '" . $time->time() . "'),
-            ('Belarus Ruble', 'BYR', 'p.', '" . $time->time() . "'),
-            ('Belize Dollar', 'BZD', 'BZ$', '" . $time->time() . "'),
-            ('Bermuda Dollar', 'BMD', '$', '" . $time->time() . "'),
-            ('Bolivia Boliviano', 'BOB', '\$b', '" . $time->time() . "'),
-            ('Bosnia and Herzegovina Convertible Marka', 'BAM', 'KM', '" . $time->time() . "'),
-            ('Botswana Pula', 'BWP', 'P', '" . $time->time() . "'),
-            ('Bulgaria Lev', 'BGN', 'лв', '" . $time->time() . "'),
-            ('Brazil Real', 'BRL', 'R$', '" . $time->time() . "'),
-            ('Brunei Darussalam Dollar', 'BND', '$', '" . $time->time() . "'),
-            ('Cambodia Riel', 'KHR', '៛', '" . $time->time() . "'),
-            ('Canada Dollar', 'CAD', '$', '" . $time->time() . "'),
-            ('Cayman Islands Dollar', 'KYD', '$', '" . $time->time() . "'),
-            ('Chile Peso', 'CLP', '$', '" . $time->time() . "'),
-            ('China Yuan Renminbi', 'CNY', '¥', '" . $time->time() . "'),
-            ('Colombia Peso', 'COP', '$', '" . $time->time() . "'),
-            ('Costa Rica Colon', 'CRC', '₡', '" . $time->time() . "'),
-            ('Croatia Kuna', 'HRK', 'kn', '" . $time->time() . "'),
-            ('Cuba Peso', 'CUP', '₱', '" . $time->time() . "'),
-            ('Czech Republic Koruna', 'CZK', 'Kč', '" . $time->time() . "'),
-            ('Denmark Krone', 'DKK', 'kr', '" . $time->time() . "'),
-            ('Dominican Republic Peso', 'DOP', 'RD$', '" . $time->time() . "'),
-            ('East Caribbean Dollar', 'XCD', '$', '" . $time->time() . "'),
-            ('Egypt Pound', 'EGP', '£', '" . $time->time() . "'),
-            ('El Salvador Colon', 'SVC', '$', '" . $time->time() . "'),
-            ('Estonia Kroon', 'EEK', 'kr', '" . $time->time() . "'),
-            ('Euro Member Countries', 'EUR', '€', '" . $time->time() . "'),
-            ('Falkland Islands (Malvinas) Pound', 'FKP', '£', '" . $time->time() . "'),
-            ('Fiji Dollar', 'FJD', '$', '" . $time->time() . "'),
-            ('Ghana Cedis', 'GHC', '¢', '" . $time->time() . "'),
-            ('Gibraltar Pound', 'GIP', '£', '" . $time->time() . "'),
-            ('Guatemala Quetzal', 'GTQ', 'Q', '" . $time->time() . "'),
-            ('Guernsey Pound', 'GGP', '£', '" . $time->time() . "'),
-            ('Guyana Dollar', 'GYD', '$', '" . $time->time() . "'),
-            ('Honduras Lempira', 'HNL', 'L', '" . $time->time() . "'),
-            ('Hong Kong Dollar', 'HKD', '$', '" . $time->time() . "'),
-            ('Hungary Forint', 'HUF', 'Ft', '" . $time->time() . "'),
-            ('Iceland Krona', 'ISK', 'kr', '" . $time->time() . "'),
-            ('India Rupee', 'INR', 'Rs', '" . $time->time() . "'),
-            ('Indonesia Rupiah', 'IDR', 'Rp', '" . $time->time() . "'),
-            ('Iran Rial', 'IRR', '﷼', '" . $time->time() . "'),
-            ('Isle of Man Pound', 'IMP', '£', '" . $time->time() . "'),
-            ('Israel Shekel', 'ILS', '₪', '" . $time->time() . "'),
-            ('Jamaica Dollar', 'JMD', 'J$', '" . $time->time() . "'),
-            ('Japan Yen', 'JPY', '¥', '" . $time->time() . "'),
-            ('Jersey Pound', 'JEP', '£', '" . $time->time() . "'),
-            ('Kazakhstan Tenge', 'KZT', 'лв', '" . $time->time() . "'),
-            ('Korea (North) Won', 'KPW', '₩', '" . $time->time() . "'),
-            ('Korea (South) Won', 'KRW', '₩', '" . $time->time() . "'),
-            ('Kyrgyzstan Som', 'KGS', 'лв', '" . $time->time() . "'),
-            ('Laos Kip', 'LAK', '₭', '" . $time->time() . "'),
-            ('Latvia Lat', 'LVL', 'Ls', '" . $time->time() . "'),
-            ('Lebanon Pound', 'LBP', '£', '" . $time->time() . "'),
-            ('Liberia Dollar', 'LRD', '$', '" . $time->time() . "'),
-            ('Lithuania Litas', 'LTL', 'Lt', '" . $time->time() . "'),
-            ('Macedonia Denar', 'MKD', 'ден', '" . $time->time() . "'),
-            ('Malaysia Ringgit', 'RM', 'RM', '" . $time->time() . "'),
-            ('Mauritius Rupee', 'MUR', '₨', '" . $time->time() . "'),
-            ('Mexico Peso', 'MXN', '$', '" . $time->time() . "'),
-            ('Mongolia Tughrik', 'MNT', '₮', '" . $time->time() . "'),
-            ('Mozambique Metical', 'MZN', 'MT', '" . $time->time() . "'),
-            ('Namibia Dollar', 'NAD', '$', '" . $time->time() . "'),
-            ('Nepal Rupee', 'NPR', '₨', '" . $time->time() . "'),
-            ('Netherlands Antilles Guilder', 'ANG', 'ƒ', '" . $time->time() . "'),
-            ('New Zealand Dollar', 'NZD', '$', '" . $time->time() . "'),
-            ('Nicaragua Cordoba', 'NIO', 'C$', '" . $time->time() . "'),
-            ('Nigeria Naira', 'NGN', '₦', '" . $time->time() . "'),
-            ('Norway Krone', 'NOK', 'kr', '" . $time->time() . "'),
-            ('Oman Rial', 'OMR', '﷼', '" . $time->time() . "'),
-            ('Pakistan Rupee', 'PKR', '₨', '" . $time->time() . "'),
-            ('Panama Balboa', 'PAB', 'B/.', '" . $time->time() . "'),
-            ('Paraguay Guarani', 'PYG', 'Gs', '" . $time->time() . "'),
-            ('Peru Nuevo Sol', 'PEN', 'S/.', '" . $time->time() . "'),
-            ('Philippines Peso', 'PHP', '₱', '" . $time->time() . "'),
-            ('Poland Zloty', 'PLN', 'zł', '" . $time->time() . "'),
-            ('Qatar Riyal', 'QAR', '﷼', '" . $time->time() . "'),
-            ('Romania New Leu', 'RON', 'lei', '" . $time->time() . "'),
-            ('Russia Ruble', 'RUB', 'руб', '" . $time->time() . "'),
-            ('Saint Helena Pound', 'SHP', '£', '" . $time->time() . "'),
-            ('Saudi Arabia Riyal', 'SAR', '﷼', '" . $time->time() . "'),
-            ('Serbia Dinar', 'RSD', 'Дин.', '" . $time->time() . "'),
-            ('Seychelles Rupee', 'SCR', '₨', '" . $time->time() . "'),
-            ('Singapore Dollar', 'SGD', '$', '" . $time->time() . "'),
-            ('Solomon Islands Dollar', 'SBD', '$', '" . $time->time() . "'),
-            ('Somalia Shilling', 'SOS', 'S', '" . $time->time() . "'),
-            ('South Africa Rand', 'ZAR', 'R', '" . $time->time() . "'),
-            ('Sri Lanka Rupee', 'LKR', '₨', '" . $time->time() . "'),
-            ('Sweden Krona', 'SEK', 'kr', '" . $time->time() . "'),
-            ('Switzerland Franc', 'CHF', 'CHF', '" . $time->time() . "'),
-            ('Suriname Dollar', 'SRD', '$', '" . $time->time() . "'),
-            ('Syria Pound', 'SYP', '£', '" . $time->time() . "'),
-            ('Taiwan New Dollar', 'TWD', 'NT$', '" . $time->time() . "'),
-            ('Thailand Baht', 'THB', '฿', '" . $time->time() . "'),
-            ('Trinidad and Tobago Dollar', 'TTD', 'TT$', '" . $time->time() . "'),
-            ('Turkey Lira', 'TRY', '₤', '" . $time->time() . "'),
-            ('Tuvalu Dollar', 'TVD', '$', '" . $time->time() . "'),
-            ('Ukraine Hryvna', 'UAH', '₴', '" . $time->time() . "'),
-            ('United Kingdom Pound', 'GBP', '£', '" . $time->time() . "'),
-            ('United States Dollar', 'USD', '$', '" . $time->time() . "'),
-            ('Uruguay Peso', 'UYU', '\$U', '" . $time->time() . "'),
-            ('Uzbekistan Som', 'UZS', 'лв', '" . $time->time() . "'),
-            ('Venezuela Bolivar', 'VEF', 'Bs', '" . $time->time() . "'),
-            ('Viet Nam Dong', 'VND', '₫', '" . $time->time() . "'),
-            ('Yemen Rial', 'YER', '﷼', '" . $time->time() . "'),
-            ('Zimbabwe Dollar', 'ZWD', 'Z$', '" . $time->time() . "'),
-            ('Emirati Dirham', 'AED', 'د.إ', '" . $time->time() . "'),
-            ('Malaysian Ringgit', 'MYR', 'RM', '" . $time->time() . "'),
-            ('Kuwaiti Dinar', 'KWD', 'ك', '" . $time->time() . "'),
-            ('Moroccan Dirham', 'MAD', 'م.', '" . $time->time() . "'),
-            ('Iraqi Dinar', 'IQD', 'د.ع', '" . $time->time() . "'),
-            ('Bangladeshi Taka', 'BDT', 'Tk', '" . $time->time() . "'),
-            ('Bahraini Dinar', 'BHD', 'BD', '" . $time->time() . "'),
-            ('Kenyan Shilling', 'KES', 'KSh', '" . $time->time() . "'),
-            ('CFA Franc', 'XOF', 'CFA', '" . $time->time() . "'),
-            ('Jordanian Dinar', 'JOD', 'JD', '" . $time->time() . "'),
-            ('Tunisian Dinar', 'TND', 'د.ت', '" . $time->time() . "'),
-            ('Ghanaian Cedi', 'GHS', 'GH¢', '" . $time->time() . "'),
-            ('Central African CFA Franc BEAC', 'XAF', 'FCFA', '" . $time->time() . "'),
-            ('Algerian Dinar', 'DZD', 'دج', '" . $time->time() . "'),
-            ('CFP Franc', 'XPF', 'F', '" . $time->time() . "'),
-            ('Ugandan Shilling', 'UGX', 'USh', '" . $time->time() . "'),
-            ('Tanzanian Shilling', 'TZS', 'TZS', '" . $time->time() . "'),
-            ('Ethiopian Birr', 'ETB', 'Br', '" . $time->time() . "'),
-            ('Georgian Lari', 'GEL', 'GEL', '" . $time->time() . "'),
-            ('Cuban Convertible Peso', 'CUC', 'CUC$', '" . $time->time() . "'),
-            ('Burmese Kyat', 'MMK', 'K', '" . $time->time() . "'),
-            ('Libyan Dinar', 'LYD', 'LD', '" . $time->time() . "'),
-            ('Zambian Kwacha', 'ZMK', 'ZK', '" . $time->time() . "'),
-            ('Zambian Kwacha', 'ZMW', 'ZK', '" . $time->time() . "'),
-            ('Macau Pataca', 'MOP', 'MOP$', '" . $time->time() . "'),
-            ('Armenian Dram', 'AMD', 'AMD', '" . $time->time() . "'),
-            ('Angolan Kwanza', 'AOA', 'Kz', '" . $time->time() . "'),
-            ('Papua New Guinean Kina', 'PGK', 'K', '" . $time->time() . "'),
-            ('Malagasy Ariary', 'MGA', 'Ar', '" . $time->time() . "'),
-            ('Ni-Vanuatu Vatu', 'VUV', 'VT', '" . $time->time() . "'),
-            ('Sudanese Pound', 'SDG', 'SDG', '" . $time->time() . "'),
-            ('Malawian Kwacha', 'MWK', 'MK', '" . $time->time() . "'),
-            ('Rwandan Franc', 'RWF', 'FRw', '" . $time->time() . "'),
-            ('Gambian Dalasi', 'GMD', 'D', '" . $time->time() . "'),
-            ('Maldivian Rufiyaa', 'MVR', 'Rf', '" . $time->time() . "'),
-            ('Congolese Franc', 'CDF', 'FC', '" . $time->time() . "'),
-            ('Djiboutian Franc', 'DJF', 'Fdj', '" . $time->time() . "'),
-            ('Haitian Gourde', 'HTG', 'G', '" . $time->time() . "'),
-            ('Samoan Tala', 'WST', '$', '" . $time->time() . "'),
-            ('Guinean Franc', 'GNF', 'FG', '" . $time->time() . "'),
-            ('Cape Verdean Escudo', 'CVE', '$', '" . $time->time() . "'),
-            ('Tongan Pa\'anga', 'TOP', 'T$', '" . $time->time() . "'),
-            ('Moldovan Leu', 'MDL', 'MDL', '" . $time->time() . "'),
-            ('Sierra Leonean Leone', 'SLL', 'Le', '" . $time->time() . "'),
-            ('Burundian Franc', 'BIF', 'FBu', '" . $time->time() . "'),
-            ('Mauritanian Ouguiya', 'MRO', 'UM', '" . $time->time() . "'),
-            ('Bhutanese Ngultrum', 'BTN', 'Nu.', '" . $time->time() . "'),
-            ('Swazi Lilangeni', 'SZL', 'SZL', '" . $time->time() . "'),
-            ('Tajikistani Somoni', 'TJS', 'TJS', '" . $time->time() . "'),
-            ('Turkmenistani Manat', 'TMT', 'm', '" . $time->time() . "'),
-            ('Basotho Loti', 'LSL', 'LSL', '" . $time->time() . "'),
-            ('Comoran Franc', 'KMF', 'CF', '" . $time->time() . "'),
-            ('Sao Tomean Dobra', 'STD', 'STD', '" . $time->time() . "'),
-            ('Seborgan Luigino', 'SPL', 'SPL', '" . $time->time() . "')";
+            ('Albania Lek', 'ALL', 'Lek', '" . $time->stamp() . "'),
+            ('Afghanistan Afghani', 'AFN', '؋', '" . $time->stamp() . "'),
+            ('Argentina Peso', 'ARS', '$', '" . $time->stamp() . "'),
+            ('Aruba Guilder', 'AWG', 'ƒ', '" . $time->stamp() . "'),
+            ('Australia Dollar', 'AUD', '$', '" . $time->stamp() . "'),
+            ('Azerbaijan New Manat', 'AZN', '" . 'ман' . "', '" . $time->stamp() . "'),
+            ('Bahamas Dollar', 'BSD', '$', '" . $time->stamp() . "'),
+            ('Barbados Dollar', 'BBD', '$', '" . $time->stamp() . "'),
+            ('Belarus Ruble', 'BYR', 'p.', '" . $time->stamp() . "'),
+            ('Belize Dollar', 'BZD', 'BZ$', '" . $time->stamp() . "'),
+            ('Bermuda Dollar', 'BMD', '$', '" . $time->stamp() . "'),
+            ('Bolivia Boliviano', 'BOB', '\$b', '" . $time->stamp() . "'),
+            ('Bosnia and Herzegovina Convertible Marka', 'BAM', 'KM', '" . $time->stamp() . "'),
+            ('Botswana Pula', 'BWP', 'P', '" . $time->stamp() . "'),
+            ('Bulgaria Lev', 'BGN', 'лв', '" . $time->stamp() . "'),
+            ('Brazil Real', 'BRL', 'R$', '" . $time->stamp() . "'),
+            ('Brunei Darussalam Dollar', 'BND', '$', '" . $time->stamp() . "'),
+            ('Cambodia Riel', 'KHR', '៛', '" . $time->stamp() . "'),
+            ('Canada Dollar', 'CAD', '$', '" . $time->stamp() . "'),
+            ('Cayman Islands Dollar', 'KYD', '$', '" . $time->stamp() . "'),
+            ('Chile Peso', 'CLP', '$', '" . $time->stamp() . "'),
+            ('China Yuan Renminbi', 'CNY', '¥', '" . $time->stamp() . "'),
+            ('Colombia Peso', 'COP', '$', '" . $time->stamp() . "'),
+            ('Costa Rica Colon', 'CRC', '₡', '" . $time->stamp() . "'),
+            ('Croatia Kuna', 'HRK', 'kn', '" . $time->stamp() . "'),
+            ('Cuba Peso', 'CUP', '₱', '" . $time->stamp() . "'),
+            ('Czech Republic Koruna', 'CZK', 'Kč', '" . $time->stamp() . "'),
+            ('Denmark Krone', 'DKK', 'kr', '" . $time->stamp() . "'),
+            ('Dominican Republic Peso', 'DOP', 'RD$', '" . $time->stamp() . "'),
+            ('East Caribbean Dollar', 'XCD', '$', '" . $time->stamp() . "'),
+            ('Egypt Pound', 'EGP', '£', '" . $time->stamp() . "'),
+            ('El Salvador Colon', 'SVC', '$', '" . $time->stamp() . "'),
+            ('Estonia Kroon', 'EEK', 'kr', '" . $time->stamp() . "'),
+            ('Euro Member Countries', 'EUR', '€', '" . $time->stamp() . "'),
+            ('Falkland Islands (Malvinas) Pound', 'FKP', '£', '" . $time->stamp() . "'),
+            ('Fiji Dollar', 'FJD', '$', '" . $time->stamp() . "'),
+            ('Ghana Cedis', 'GHC', '¢', '" . $time->stamp() . "'),
+            ('Gibraltar Pound', 'GIP', '£', '" . $time->stamp() . "'),
+            ('Guatemala Quetzal', 'GTQ', 'Q', '" . $time->stamp() . "'),
+            ('Guernsey Pound', 'GGP', '£', '" . $time->stamp() . "'),
+            ('Guyana Dollar', 'GYD', '$', '" . $time->stamp() . "'),
+            ('Honduras Lempira', 'HNL', 'L', '" . $time->stamp() . "'),
+            ('Hong Kong Dollar', 'HKD', '$', '" . $time->stamp() . "'),
+            ('Hungary Forint', 'HUF', 'Ft', '" . $time->stamp() . "'),
+            ('Iceland Krona', 'ISK', 'kr', '" . $time->stamp() . "'),
+            ('India Rupee', 'INR', 'Rs', '" . $time->stamp() . "'),
+            ('Indonesia Rupiah', 'IDR', 'Rp', '" . $time->stamp() . "'),
+            ('Iran Rial', 'IRR', '﷼', '" . $time->stamp() . "'),
+            ('Isle of Man Pound', 'IMP', '£', '" . $time->stamp() . "'),
+            ('Israel Shekel', 'ILS', '₪', '" . $time->stamp() . "'),
+            ('Jamaica Dollar', 'JMD', 'J$', '" . $time->stamp() . "'),
+            ('Japan Yen', 'JPY', '¥', '" . $time->stamp() . "'),
+            ('Jersey Pound', 'JEP', '£', '" . $time->stamp() . "'),
+            ('Kazakhstan Tenge', 'KZT', 'лв', '" . $time->stamp() . "'),
+            ('Korea (North) Won', 'KPW', '₩', '" . $time->stamp() . "'),
+            ('Korea (South) Won', 'KRW', '₩', '" . $time->stamp() . "'),
+            ('Kyrgyzstan Som', 'KGS', 'лв', '" . $time->stamp() . "'),
+            ('Laos Kip', 'LAK', '₭', '" . $time->stamp() . "'),
+            ('Latvia Lat', 'LVL', 'Ls', '" . $time->stamp() . "'),
+            ('Lebanon Pound', 'LBP', '£', '" . $time->stamp() . "'),
+            ('Liberia Dollar', 'LRD', '$', '" . $time->stamp() . "'),
+            ('Lithuania Litas', 'LTL', 'Lt', '" . $time->stamp() . "'),
+            ('Macedonia Denar', 'MKD', 'ден', '" . $time->stamp() . "'),
+            ('Malaysia Ringgit', 'RM', 'RM', '" . $time->stamp() . "'),
+            ('Mauritius Rupee', 'MUR', '₨', '" . $time->stamp() . "'),
+            ('Mexico Peso', 'MXN', '$', '" . $time->stamp() . "'),
+            ('Mongolia Tughrik', 'MNT', '₮', '" . $time->stamp() . "'),
+            ('Mozambique Metical', 'MZN', 'MT', '" . $time->stamp() . "'),
+            ('Namibia Dollar', 'NAD', '$', '" . $time->stamp() . "'),
+            ('Nepal Rupee', 'NPR', '₨', '" . $time->stamp() . "'),
+            ('Netherlands Antilles Guilder', 'ANG', 'ƒ', '" . $time->stamp() . "'),
+            ('New Zealand Dollar', 'NZD', '$', '" . $time->stamp() . "'),
+            ('Nicaragua Cordoba', 'NIO', 'C$', '" . $time->stamp() . "'),
+            ('Nigeria Naira', 'NGN', '₦', '" . $time->stamp() . "'),
+            ('Norway Krone', 'NOK', 'kr', '" . $time->stamp() . "'),
+            ('Oman Rial', 'OMR', '﷼', '" . $time->stamp() . "'),
+            ('Pakistan Rupee', 'PKR', '₨', '" . $time->stamp() . "'),
+            ('Panama Balboa', 'PAB', 'B/.', '" . $time->stamp() . "'),
+            ('Paraguay Guarani', 'PYG', 'Gs', '" . $time->stamp() . "'),
+            ('Peru Nuevo Sol', 'PEN', 'S/.', '" . $time->stamp() . "'),
+            ('Philippines Peso', 'PHP', '₱', '" . $time->stamp() . "'),
+            ('Poland Zloty', 'PLN', 'zł', '" . $time->stamp() . "'),
+            ('Qatar Riyal', 'QAR', '﷼', '" . $time->stamp() . "'),
+            ('Romania New Leu', 'RON', 'lei', '" . $time->stamp() . "'),
+            ('Russia Ruble', 'RUB', 'руб', '" . $time->stamp() . "'),
+            ('Saint Helena Pound', 'SHP', '£', '" . $time->stamp() . "'),
+            ('Saudi Arabia Riyal', 'SAR', '﷼', '" . $time->stamp() . "'),
+            ('Serbia Dinar', 'RSD', 'Дин.', '" . $time->stamp() . "'),
+            ('Seychelles Rupee', 'SCR', '₨', '" . $time->stamp() . "'),
+            ('Singapore Dollar', 'SGD', '$', '" . $time->stamp() . "'),
+            ('Solomon Islands Dollar', 'SBD', '$', '" . $time->stamp() . "'),
+            ('Somalia Shilling', 'SOS', 'S', '" . $time->stamp() . "'),
+            ('South Africa Rand', 'ZAR', 'R', '" . $time->stamp() . "'),
+            ('Sri Lanka Rupee', 'LKR', '₨', '" . $time->stamp() . "'),
+            ('Sweden Krona', 'SEK', 'kr', '" . $time->stamp() . "'),
+            ('Switzerland Franc', 'CHF', 'CHF', '" . $time->stamp() . "'),
+            ('Suriname Dollar', 'SRD', '$', '" . $time->stamp() . "'),
+            ('Syria Pound', 'SYP', '£', '" . $time->stamp() . "'),
+            ('Taiwan New Dollar', 'TWD', 'NT$', '" . $time->stamp() . "'),
+            ('Thailand Baht', 'THB', '฿', '" . $time->stamp() . "'),
+            ('Trinidad and Tobago Dollar', 'TTD', 'TT$', '" . $time->stamp() . "'),
+            ('Turkey Lira', 'TRY', '₤', '" . $time->stamp() . "'),
+            ('Tuvalu Dollar', 'TVD', '$', '" . $time->stamp() . "'),
+            ('Ukraine Hryvna', 'UAH', '₴', '" . $time->stamp() . "'),
+            ('United Kingdom Pound', 'GBP', '£', '" . $time->stamp() . "'),
+            ('United States Dollar', 'USD', '$', '" . $time->stamp() . "'),
+            ('Uruguay Peso', 'UYU', '\$U', '" . $time->stamp() . "'),
+            ('Uzbekistan Som', 'UZS', 'лв', '" . $time->stamp() . "'),
+            ('Venezuela Bolivar', 'VEF', 'Bs', '" . $time->stamp() . "'),
+            ('Viet Nam Dong', 'VND', '₫', '" . $time->stamp() . "'),
+            ('Yemen Rial', 'YER', '﷼', '" . $time->stamp() . "'),
+            ('Zimbabwe Dollar', 'ZWD', 'Z$', '" . $time->stamp() . "'),
+            ('Emirati Dirham', 'AED', 'د.إ', '" . $time->stamp() . "'),
+            ('Malaysian Ringgit', 'MYR', 'RM', '" . $time->stamp() . "'),
+            ('Kuwaiti Dinar', 'KWD', 'ك', '" . $time->stamp() . "'),
+            ('Moroccan Dirham', 'MAD', 'م.', '" . $time->stamp() . "'),
+            ('Iraqi Dinar', 'IQD', 'د.ع', '" . $time->stamp() . "'),
+            ('Bangladeshi Taka', 'BDT', 'Tk', '" . $time->stamp() . "'),
+            ('Bahraini Dinar', 'BHD', 'BD', '" . $time->stamp() . "'),
+            ('Kenyan Shilling', 'KES', 'KSh', '" . $time->stamp() . "'),
+            ('CFA Franc', 'XOF', 'CFA', '" . $time->stamp() . "'),
+            ('Jordanian Dinar', 'JOD', 'JD', '" . $time->stamp() . "'),
+            ('Tunisian Dinar', 'TND', 'د.ت', '" . $time->stamp() . "'),
+            ('Ghanaian Cedi', 'GHS', 'GH¢', '" . $time->stamp() . "'),
+            ('Central African CFA Franc BEAC', 'XAF', 'FCFA', '" . $time->stamp() . "'),
+            ('Algerian Dinar', 'DZD', 'دج', '" . $time->stamp() . "'),
+            ('CFP Franc', 'XPF', 'F', '" . $time->stamp() . "'),
+            ('Ugandan Shilling', 'UGX', 'USh', '" . $time->stamp() . "'),
+            ('Tanzanian Shilling', 'TZS', 'TZS', '" . $time->stamp() . "'),
+            ('Ethiopian Birr', 'ETB', 'Br', '" . $time->stamp() . "'),
+            ('Georgian Lari', 'GEL', 'GEL', '" . $time->stamp() . "'),
+            ('Cuban Convertible Peso', 'CUC', 'CUC$', '" . $time->stamp() . "'),
+            ('Burmese Kyat', 'MMK', 'K', '" . $time->stamp() . "'),
+            ('Libyan Dinar', 'LYD', 'LD', '" . $time->stamp() . "'),
+            ('Zambian Kwacha', 'ZMK', 'ZK', '" . $time->stamp() . "'),
+            ('Zambian Kwacha', 'ZMW', 'ZK', '" . $time->stamp() . "'),
+            ('Macau Pataca', 'MOP', 'MOP$', '" . $time->stamp() . "'),
+            ('Armenian Dram', 'AMD', 'AMD', '" . $time->stamp() . "'),
+            ('Angolan Kwanza', 'AOA', 'Kz', '" . $time->stamp() . "'),
+            ('Papua New Guinean Kina', 'PGK', 'K', '" . $time->stamp() . "'),
+            ('Malagasy Ariary', 'MGA', 'Ar', '" . $time->stamp() . "'),
+            ('Ni-Vanuatu Vatu', 'VUV', 'VT', '" . $time->stamp() . "'),
+            ('Sudanese Pound', 'SDG', 'SDG', '" . $time->stamp() . "'),
+            ('Malawian Kwacha', 'MWK', 'MK', '" . $time->stamp() . "'),
+            ('Rwandan Franc', 'RWF', 'FRw', '" . $time->stamp() . "'),
+            ('Gambian Dalasi', 'GMD', 'D', '" . $time->stamp() . "'),
+            ('Maldivian Rufiyaa', 'MVR', 'Rf', '" . $time->stamp() . "'),
+            ('Congolese Franc', 'CDF', 'FC', '" . $time->stamp() . "'),
+            ('Djiboutian Franc', 'DJF', 'Fdj', '" . $time->stamp() . "'),
+            ('Haitian Gourde', 'HTG', 'G', '" . $time->stamp() . "'),
+            ('Samoan Tala', 'WST', '$', '" . $time->stamp() . "'),
+            ('Guinean Franc', 'GNF', 'FG', '" . $time->stamp() . "'),
+            ('Cape Verdean Escudo', 'CVE', '$', '" . $time->stamp() . "'),
+            ('Tongan Pa\'anga', 'TOP', 'T$', '" . $time->stamp() . "'),
+            ('Moldovan Leu', 'MDL', 'MDL', '" . $time->stamp() . "'),
+            ('Sierra Leonean Leone', 'SLL', 'Le', '" . $time->stamp() . "'),
+            ('Burundian Franc', 'BIF', 'FBu', '" . $time->stamp() . "'),
+            ('Mauritanian Ouguiya', 'MRO', 'UM', '" . $time->stamp() . "'),
+            ('Bhutanese Ngultrum', 'BTN', 'Nu.', '" . $time->stamp() . "'),
+            ('Swazi Lilangeni', 'SZL', 'SZL', '" . $time->stamp() . "'),
+            ('Tajikistani Somoni', 'TJS', 'TJS', '" . $time->stamp() . "'),
+            ('Turkmenistani Manat', 'TMT', 'm', '" . $time->stamp() . "'),
+            ('Basotho Loti', 'LSL', 'LSL', '" . $time->stamp() . "'),
+            ('Comoran Franc', 'KMF', 'CF', '" . $time->stamp() . "'),
+            ('Sao Tomean Dobra', 'STD', 'STD', '" . $time->stamp() . "'),
+            ('Seborgan Luigino', 'SPL', 'SPL', '" . $time->stamp() . "')";
     $result = mysqli_query($connection, $sql);
 
     $sql = "CREATE TABLE IF NOT EXISTS `currency_conversions` (
@@ -452,9 +452,9 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "INSERT INTO custom_field_types
             (id, `name`, insert_time) VALUES
-            (1, 'Check Box', '" . $time->time() . "'),
-            (2, 'Text', '" . $time->time() . "'),
-            (3, 'Text Area', '" . $time->time() . "')";
+            (1, 'Check Box', '" . $time->stamp() . "'),
+            (2, 'Text', '" . $time->stamp() . "'),
+            (3, 'Text Area', '" . $time->stamp() . "')";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_fields` (
@@ -513,10 +513,10 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "INSERT INTO `ssl_cert_types`
             (`id`, `type`, `insert_time`) VALUES
-            (1, 'Web Server SSL/TLS Certificate', '" . $time->time() . "'),
-            (2, 'S/MIME and Authentication Certificate', '" . $time->time() . "'),
-            (3, 'Object Code Signing Certificate', '" . $time->time() . "'),
-            (4, 'Digital ID', '" . $time->time() . "');";
+            (1, 'Web Server SSL/TLS Certificate', '" . $time->stamp() . "'),
+            (2, 'S/MIME and Authentication Certificate', '" . $time->stamp() . "'),
+            (3, 'Object Code Signing Certificate', '" . $time->stamp() . "'),
+            (4, 'Digital ID', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_fields` (
@@ -574,7 +574,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "INSERT INTO `dns`
             (`name`, `dns1`, `dns2`, `number_of_servers`, `insert_time`) VALUES
-            ('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '" . $time->time() . "');";
+            ('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `registrars` (
@@ -671,7 +671,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "INSERT INTO `ip_addresses`
             (`id`, `name`, `ip`, `rdns`, `insert_time`) VALUES
-            ('1', '[no ip address]', '-', '-', '" . $time->time() . "');";
+            ('1', '[no ip address]', '-', '-', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `settings` (
@@ -706,7 +706,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "INSERT INTO `settings`
             (`full_url`, `db_version`, `email_address`, `insert_time`) VALUES
-            ('" . $full_url . "', '" . $software_version . "', '" . $temp_system_email . "', '" . $time->time() . "');";
+            ('" . $full_url . "', '" . $software_version . "', '" . $temp_system_email . "', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `timezones` (
@@ -719,7 +719,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "INSERT INTO `timezones`
             (`timezone`, `insert_time`) VALUES
-            ('Africa/Abidjan', '" . $time->time() . "'), ('Africa/Accra', '" . $time->time() . "'), ('Africa/Addis_Ababa', '" . $time->time() . "'), ('Africa/Algiers', '" . $time->time() . "'), ('Africa/Asmara', '" . $time->time() . "'), ('Africa/Asmera', '" . $time->time() . "'), ('Africa/Bamako', '" . $time->time() . "'), ('Africa/Bangui', '" . $time->time() . "'), ('Africa/Banjul', '" . $time->time() . "'), ('Africa/Bissau', '" . $time->time() . "'), ('Africa/Blantyre', '" . $time->time() . "'), ('Africa/Brazzaville', '" . $time->time() . "'), ('Africa/Bujumbura', '" . $time->time() . "'), ('Africa/Cairo', '" . $time->time() . "'), ('Africa/Casablanca', '" . $time->time() . "'), ('Africa/Ceuta', '" . $time->time() . "'), ('Africa/Conakry', '" . $time->time() . "'), ('Africa/Dakar', '" . $time->time() . "'), ('Africa/Dar_es_Salaam', '" . $time->time() . "'), ('Africa/Djibouti', '" . $time->time() . "'), ('Africa/Douala', '" . $time->time() . "'), ('Africa/El_Aaiun', '" . $time->time() . "'), ('Africa/Freetown', '" . $time->time() . "'), ('Africa/Gaborone', '" . $time->time() . "'), ('Africa/Harare', '" . $time->time() . "'), ('Africa/Johannesburg', '" . $time->time() . "'), ('Africa/Juba', '" . $time->time() . "'), ('Africa/Kampala', '" . $time->time() . "'), ('Africa/Khartoum', '" . $time->time() . "'), ('Africa/Kigali', '" . $time->time() . "'), ('Africa/Kinshasa', '" . $time->time() . "'), ('Africa/Lagos', '" . $time->time() . "'), ('Africa/Libreville', '" . $time->time() . "'), ('Africa/Lome', '" . $time->time() . "'), ('Africa/Luanda', '" . $time->time() . "'), ('Africa/Lubumbashi', '" . $time->time() . "'), ('Africa/Lusaka', '" . $time->time() . "'), ('Africa/Malabo', '" . $time->time() . "'), ('Africa/Maputo', '" . $time->time() . "'), ('Africa/Maseru', '" . $time->time() . "'), ('Africa/Mbabane', '" . $time->time() . "'), ('Africa/Mogadishu', '" . $time->time() . "'), ('Africa/Monrovia', '" . $time->time() . "'), ('Africa/Nairobi', '" . $time->time() . "'), ('Africa/Ndjamena', '" . $time->time() . "'), ('Africa/Niamey', '" . $time->time() . "'), ('Africa/Nouakchott', '" . $time->time() . "'), ('Africa/Ouagadougou', '" . $time->time() . "'), ('Africa/Porto-Novo', '" . $time->time() . "'), ('Africa/Sao_Tome', '" . $time->time() . "'), ('Africa/Timbuktu', '" . $time->time() . "'), ('Africa/Tripoli', '" . $time->time() . "'), ('Africa/Tunis', '" . $time->time() . "'), ('Africa/Windhoek', '" . $time->time() . "'), ('America/Adak', '" . $time->time() . "'), ('America/Anchorage', '" . $time->time() . "'), ('America/Anguilla', '" . $time->time() . "'), ('America/Antigua', '" . $time->time() . "'), ('America/Araguaina', '" . $time->time() . "'), ('America/Argentina/Buenos_Aires', '" . $time->time() . "'), ('America/Argentina/Catamarca', '" . $time->time() . "'), ('America/Argentina/ComodRivadavia', '" . $time->time() . "'), ('America/Argentina/Cordoba', '" . $time->time() . "'), ('America/Argentina/Jujuy', '" . $time->time() . "'), ('America/Argentina/La_Rioja', '" . $time->time() . "'), ('America/Argentina/Mendoza', '" . $time->time() . "'), ('America/Argentina/Rio_Gallegos', '" . $time->time() . "'), ('America/Argentina/Salta', '" . $time->time() . "'), ('America/Argentina/San_Juan', '" . $time->time() . "'), ('America/Argentina/San_Luis', '" . $time->time() . "'), ('America/Argentina/Tucuman', '" . $time->time() . "'), ('America/Argentina/Ushuaia', '" . $time->time() . "'), ('America/Aruba', '" . $time->time() . "'), ('America/Asuncion', '" . $time->time() . "'), ('America/Atikokan', '" . $time->time() . "'), ('America/Atka', '" . $time->time() . "'), ('America/Bahia', '" . $time->time() . "'), ('America/Bahia_Banderas', '" . $time->time() . "'), ('America/Barbados', '" . $time->time() . "'), ('America/Belem', '" . $time->time() . "'), ('America/Belize', '" . $time->time() . "'), ('America/Blanc-Sablon', '" . $time->time() . "'), ('America/Boa_Vista', '" . $time->time() . "'), ('America/Bogota', '" . $time->time() . "'), ('America/Boise', '" . $time->time() . "'), ('America/Buenos_Aires', '" . $time->time() . "'), ('America/Cambridge_Bay', '" . $time->time() . "'), ('America/Campo_Grande', '" . $time->time() . "'), ('America/Cancun', '" . $time->time() . "'), ('America/Caracas', '" . $time->time() . "'), ('America/Catamarca', '" . $time->time() . "'), ('America/Cayenne', '" . $time->time() . "'), ('America/Cayman', '" . $time->time() . "'), ('America/Chicago', '" . $time->time() . "'), ('America/Chihuahua', '" . $time->time() . "'), ('America/Coral_Harbour', '" . $time->time() . "'), ('America/Cordoba', '" . $time->time() . "'), ('America/Costa_Rica', '" . $time->time() . "'), ('America/Creston', '" . $time->time() . "'), ('America/Cuiaba', '" . $time->time() . "'), ('America/Curacao', '" . $time->time() . "'), ('America/Danmarkshavn', '" . $time->time() . "'), ('America/Dawson', '" . $time->time() . "'), ('America/Dawson_Creek', '" . $time->time() . "'), ('America/Denver', '" . $time->time() . "'), ('America/Detroit', '" . $time->time() . "'), ('America/Dominica', '" . $time->time() . "'), ('America/Edmonton', '" . $time->time() . "'), ('America/Eirunepe', '" . $time->time() . "'), ('America/El_Salvador', '" . $time->time() . "'), ('America/Ensenada', '" . $time->time() . "'), ('America/Fort_Wayne', '" . $time->time() . "'), ('America/Fortaleza', '" . $time->time() . "'), ('America/Glace_Bay', '" . $time->time() . "'), ('America/Godthab', '" . $time->time() . "'), ('America/Goose_Bay', '" . $time->time() . "'), ('America/Grand_Turk', '" . $time->time() . "'), ('America/Grenada', '" . $time->time() . "'), ('America/Guadeloupe', '" . $time->time() . "'), ('America/Guatemala', '" . $time->time() . "'), ('America/Guayaquil', '" . $time->time() . "'), ('America/Guyana', '" . $time->time() . "'), ('America/Halifax', '" . $time->time() . "'), ('America/Havana', '" . $time->time() . "'), ('America/Hermosillo', '" . $time->time() . "'), ('America/Indiana/Indianapolis', '" . $time->time() . "'), ('America/Indiana/Knox', '" . $time->time() . "'), ('America/Indiana/Marengo', '" . $time->time() . "'), ('America/Indiana/Petersburg', '" . $time->time() . "'), ('America/Indiana/Tell_City', '" . $time->time() . "'), ('America/Indiana/Vevay', '" . $time->time() . "'), ('America/Indiana/Vincennes', '" . $time->time() . "'), ('America/Indiana/Winamac', '" . $time->time() . "'), ('America/Indianapolis', '" . $time->time() . "'), ('America/Inuvik', '" . $time->time() . "'), ('America/Iqaluit', '" . $time->time() . "'), ('America/Jamaica', '" . $time->time() . "'), ('America/Jujuy', '" . $time->time() . "'), ('America/Juneau', '" . $time->time() . "'), ('America/Kentucky/Louisville', '" . $time->time() . "'), ('America/Kentucky/Monticello', '" . $time->time() . "'), ('America/Knox_IN', '" . $time->time() . "'), ('America/Kralendijk', '" . $time->time() . "'), ('America/La_Paz', '" . $time->time() . "'), ('America/Lima', '" . $time->time() . "'), ('America/Los_Angeles', '" . $time->time() . "'), ('America/Louisville', '" . $time->time() . "'), ('America/Lower_Princes', '" . $time->time() . "'), ('America/Maceio', '" . $time->time() . "'), ('America/Managua', '" . $time->time() . "'), ('America/Manaus', '" . $time->time() . "'), ('America/Marigot', '" . $time->time() . "'), ('America/Martinique', '" . $time->time() . "'), ('America/Matamoros', '" . $time->time() . "'), ('America/Mazatlan', '" . $time->time() . "'), ('America/Mendoza', '" . $time->time() . "'), ('America/Menominee', '" . $time->time() . "'), ('America/Merida', '" . $time->time() . "'), ('America/Metlakatla', '" . $time->time() . "'), ('America/Mexico_City', '" . $time->time() . "'), ('America/Miquelon', '" . $time->time() . "'), ('America/Moncton', '" . $time->time() . "'), ('America/Monterrey', '" . $time->time() . "'), ('America/Montevideo', '" . $time->time() . "'), ('America/Montreal', '" . $time->time() . "'), ('America/Montserrat', '" . $time->time() . "'), ('America/Nassau', '" . $time->time() . "'), ('America/New_York', '" . $time->time() . "'), ('America/Nipigon', '" . $time->time() . "'), ('America/Nome', '" . $time->time() . "'), ('America/Noronha', '" . $time->time() . "'), ('America/North_Dakota/Beulah', '" . $time->time() . "'), ('America/North_Dakota/Center', '" . $time->time() . "'), ('America/North_Dakota/New_Salem', '" . $time->time() . "'), ('America/Ojinaga', '" . $time->time() . "'), ('America/Panama', '" . $time->time() . "'), ('America/Pangnirtung', '" . $time->time() . "'), ('America/Paramaribo', '" . $time->time() . "'), ('America/Phoenix', '" . $time->time() . "'), ('America/Port-au-Prince', '" . $time->time() . "'), ('America/Port_of_Spain', '" . $time->time() . "'), ('America/Porto_Acre', '" . $time->time() . "'), ('America/Porto_Velho', '" . $time->time() . "'), ('America/Puerto_Rico', '" . $time->time() . "'), ('America/Rainy_River', '" . $time->time() . "'), ('America/Rankin_Inlet', '" . $time->time() . "'), ('America/Recife', '" . $time->time() . "'), ('America/Regina', '" . $time->time() . "'), ('America/Resolute', '" . $time->time() . "'), ('America/Rio_Branco', '" . $time->time() . "'), ('America/Rosario', '" . $time->time() . "'), ('America/Santa_Isabel', '" . $time->time() . "'), ('America/Santarem', '" . $time->time() . "'), ('America/Santiago', '" . $time->time() . "'), ('America/Santo_Domingo', '" . $time->time() . "'), ('America/Sao_Paulo', '" . $time->time() . "'), ('America/Scoresbysund', '" . $time->time() . "'), ('America/Shiprock', '" . $time->time() . "'), ('America/Sitka', '" . $time->time() . "'), ('America/St_Barthelemy', '" . $time->time() . "'), ('America/St_Johns', '" . $time->time() . "'), ('America/St_Kitts', '" . $time->time() . "'), ('America/St_Lucia', '" . $time->time() . "'), ('America/St_Thomas', '" . $time->time() . "'), ('America/St_Vincent', '" . $time->time() . "'), ('America/Swift_Current', '" . $time->time() . "'), ('America/Tegucigalpa', '" . $time->time() . "'), ('America/Thule', '" . $time->time() . "'), ('America/Thunder_Bay', '" . $time->time() . "'), ('America/Tijuana', '" . $time->time() . "'), ('America/Toronto', '" . $time->time() . "'), ('America/Tortola', '" . $time->time() . "'), ('America/Vancouver', '" . $time->time() . "'), ('America/Virgin', '" . $time->time() . "'), ('America/Whitehorse', '" . $time->time() . "'), ('America/Winnipeg', '" . $time->time() . "'), ('America/Yakutat', '" . $time->time() . "'), ('America/Yellowknife', '" . $time->time() . "'), ('Antarctica/Casey', '" . $time->time() . "'), ('Antarctica/Davis', '" . $time->time() . "'), ('Antarctica/DumontDUrville', '" . $time->time() . "'), ('Antarctica/Macquarie', '" . $time->time() . "'), ('Antarctica/Mawson', '" . $time->time() . "'), ('Antarctica/McMurdo', '" . $time->time() . "'), ('Antarctica/Palmer', '" . $time->time() . "'), ('Antarctica/Rothera', '" . $time->time() . "'), ('Antarctica/South_Pole', '" . $time->time() . "'), ('Antarctica/Syowa', '" . $time->time() . "'), ('Antarctica/Vostok', '" . $time->time() . "'), ('Arctic/Longyearbyen', '" . $time->time() . "'), ('Asia/Aden', '" . $time->time() . "'), ('Asia/Almaty', '" . $time->time() . "'), ('Asia/Amman', '" . $time->time() . "'), ('Asia/Anadyr', '" . $time->time() . "'), ('Asia/Aqtau', '" . $time->time() . "'), ('Asia/Aqtobe', '" . $time->time() . "'), ('Asia/Ashgabat', '" . $time->time() . "'), ('Asia/Ashkhabad', '" . $time->time() . "'), ('Asia/Baghdad', '" . $time->time() . "'), ('Asia/Bahrain', '" . $time->time() . "'), ('Asia/Baku', '" . $time->time() . "'), ('Asia/Bangkok', '" . $time->time() . "'), ('Asia/Beirut', '" . $time->time() . "'), ('Asia/Bishkek', '" . $time->time() . "'), ('Asia/Brunei', '" . $time->time() . "'), ('Asia/Calcutta', '" . $time->time() . "'), ('Asia/Choibalsan', '" . $time->time() . "'), ('Asia/Chongqing', '" . $time->time() . "'), ('Asia/Chungking', '" . $time->time() . "'), ('Asia/Colombo', '" . $time->time() . "'), ('Asia/Dacca', '" . $time->time() . "'), ('Asia/Damascus', '" . $time->time() . "'), ('Asia/Dhaka', '" . $time->time() . "'), ('Asia/Dili', '" . $time->time() . "'), ('Asia/Dubai', '" . $time->time() . "'), ('Asia/Dushanbe', '" . $time->time() . "'), ('Asia/Gaza', '" . $time->time() . "'), ('Asia/Harbin', '" . $time->time() . "'), ('Asia/Hebron', '" . $time->time() . "'), ('Asia/Ho_Chi_Minh', '" . $time->time() . "'), ('Asia/Hong_Kong', '" . $time->time() . "'), ('Asia/Hovd', '" . $time->time() . "'), ('Asia/Irkutsk', '" . $time->time() . "'), ('Asia/Istanbul', '" . $time->time() . "'), ('Asia/Jakarta', '" . $time->time() . "'), ('Asia/Jayapura', '" . $time->time() . "'), ('Asia/Jerusalem', '" . $time->time() . "'), ('Asia/Kabul', '" . $time->time() . "'), ('Asia/Kamchatka', '" . $time->time() . "'), ('Asia/Karachi', '" . $time->time() . "'), ('Asia/Kashgar', '" . $time->time() . "'), ('Asia/Kathmandu', '" . $time->time() . "'), ('Asia/Katmandu', '" . $time->time() . "'), ('Asia/Khandyga', '" . $time->time() . "'), ('Asia/Kolkata', '" . $time->time() . "'), ('Asia/Krasnoyarsk', '" . $time->time() . "'), ('Asia/Kuala_Lumpur', '" . $time->time() . "'), ('Asia/Kuching', '" . $time->time() . "'), ('Asia/Kuwait', '" . $time->time() . "'), ('Asia/Macao', '" . $time->time() . "'), ('Asia/Macau', '" . $time->time() . "'), ('Asia/Magadan', '" . $time->time() . "'), ('Asia/Makassar', '" . $time->time() . "'), ('Asia/Manila', '" . $time->time() . "'), ('Asia/Muscat', '" . $time->time() . "'), ('Asia/Nicosia', '" . $time->time() . "'), ('Asia/Novokuznetsk', '" . $time->time() . "'), ('Asia/Novosibirsk', '" . $time->time() . "'), ('Asia/Omsk', '" . $time->time() . "'), ('Asia/Oral', '" . $time->time() . "'), ('Asia/Phnom_Penh', '" . $time->time() . "'), ('Asia/Pontianak', '" . $time->time() . "'), ('Asia/Pyongyang', '" . $time->time() . "'), ('Asia/Qatar', '" . $time->time() . "'), ('Asia/Qyzylorda', '" . $time->time() . "'), ('Asia/Rangoon', '" . $time->time() . "'), ('Asia/Riyadh', '" . $time->time() . "'), ('Asia/Saigon', '" . $time->time() . "'), ('Asia/Sakhalin', '" . $time->time() . "'), ('Asia/Samarkand', '" . $time->time() . "'), ('Asia/Seoul', '" . $time->time() . "'), ('Asia/Shanghai', '" . $time->time() . "'), ('Asia/Singapore', '" . $time->time() . "'), ('Asia/Taipei', '" . $time->time() . "'), ('Asia/Tashkent', '" . $time->time() . "'), ('Asia/Tbilisi', '" . $time->time() . "'), ('Asia/Tehran', '" . $time->time() . "'), ('Asia/Tel_Aviv', '" . $time->time() . "'), ('Asia/Thimbu', '" . $time->time() . "'), ('Asia/Thimphu', '" . $time->time() . "'), ('Asia/Tokyo', '" . $time->time() . "'), ('Asia/Ujung_Pandang', '" . $time->time() . "'), ('Asia/Ulaanbaatar', '" . $time->time() . "'), ('Asia/Ulan_Bator', '" . $time->time() . "'), ('Asia/Urumqi', '" . $time->time() . "'), ('Asia/Ust-Nera', '" . $time->time() . "'), ('Asia/Vientiane', '" . $time->time() . "'), ('Asia/Vladivostok', '" . $time->time() . "'), ('Asia/Yakutsk', '" . $time->time() . "'), ('Asia/Yekaterinburg', '" . $time->time() . "'), ('Asia/Yerevan', '" . $time->time() . "'), ('Atlantic/Azores', '" . $time->time() . "'), ('Atlantic/Bermuda', '" . $time->time() . "'), ('Atlantic/Canary', '" . $time->time() . "'), ('Atlantic/Cape_Verde', '" . $time->time() . "'), ('Atlantic/Faeroe', '" . $time->time() . "'), ('Atlantic/Faroe', '" . $time->time() . "'), ('Atlantic/Jan_Mayen', '" . $time->time() . "'), ('Atlantic/Madeira', '" . $time->time() . "'), ('Atlantic/Reykjavik', '" . $time->time() . "'), ('Atlantic/South_Georgia', '" . $time->time() . "'), ('Atlantic/St_Helena', '" . $time->time() . "'), ('Atlantic/Stanley', '" . $time->time() . "'), ('Australia/ACT', '" . $time->time() . "'), ('Australia/Adelaide', '" . $time->time() . "'), ('Australia/Brisbane', '" . $time->time() . "'), ('Australia/Broken_Hill', '" . $time->time() . "'), ('Australia/Canberra', '" . $time->time() . "'), ('Australia/Currie', '" . $time->time() . "'), ('Australia/Darwin', '" . $time->time() . "'), ('Australia/Eucla', '" . $time->time() . "'), ('Australia/Hobart', '" . $time->time() . "'), ('Australia/LHI', '" . $time->time() . "'), ('Australia/Lindeman', '" . $time->time() . "'), ('Australia/Lord_Howe', '" . $time->time() . "'), ('Australia/Melbourne', '" . $time->time() . "'), ('Australia/North', '" . $time->time() . "'), ('Australia/NSW', '" . $time->time() . "'), ('Australia/Perth', '" . $time->time() . "'), ('Australia/Queensland', '" . $time->time() . "'), ('Australia/South', '" . $time->time() . "'), ('Australia/Sydney', '" . $time->time() . "'), ('Australia/Tasmania', '" . $time->time() . "'), ('Australia/Victoria', '" . $time->time() . "'), ('Australia/West', '" . $time->time() . "'), ('Australia/Yancowinna', '" . $time->time() . "'), ('Brazil/Acre', '" . $time->time() . "'), ('Brazil/DeNoronha', '" . $time->time() . "'), ('Brazil/East', '" . $time->time() . "'), ('Brazil/West', '" . $time->time() . "'), ('Canada/Atlantic', '" . $time->time() . "'), ('Canada/Central', '" . $time->time() . "'), ('Canada/East-Saskatchewan', '" . $time->time() . "'), ('Canada/Eastern', '" . $time->time() . "'), ('Canada/Mountain', '" . $time->time() . "'), ('Canada/Newfoundland', '" . $time->time() . "'), ('Canada/Pacific', '" . $time->time() . "'), ('Canada/Saskatchewan', '" . $time->time() . "'), ('Canada/Yukon', '" . $time->time() . "'), ('Chile/Continental', '" . $time->time() . "'), ('Chile/EasterIsland', '" . $time->time() . "'), ('Cuba', '" . $time->time() . "'), ('Egypt', '" . $time->time() . "'), ('Eire', '" . $time->time() . "'), ('Europe/Amsterdam', '" . $time->time() . "'), ('Europe/Andorra', '" . $time->time() . "'), ('Europe/Athens', '" . $time->time() . "'), ('Europe/Belfast', '" . $time->time() . "'), ('Europe/Belgrade', '" . $time->time() . "'), ('Europe/Berlin', '" . $time->time() . "'), ('Europe/Bratislava', '" . $time->time() . "'), ('Europe/Brussels', '" . $time->time() . "'), ('Europe/Bucharest', '" . $time->time() . "'), ('Europe/Budapest', '" . $time->time() . "'), ('Europe/Busingen', '" . $time->time() . "'), ('Europe/Chisinau', '" . $time->time() . "'), ('Europe/Copenhagen', '" . $time->time() . "'), ('Europe/Dublin', '" . $time->time() . "'), ('Europe/Gibraltar', '" . $time->time() . "'), ('Europe/Guernsey', '" . $time->time() . "'), ('Europe/Helsinki', '" . $time->time() . "'), ('Europe/Isle_of_Man', '" . $time->time() . "'), ('Europe/Istanbul', '" . $time->time() . "'), ('Europe/Jersey', '" . $time->time() . "'), ('Europe/Kaliningrad', '" . $time->time() . "'), ('Europe/Kiev', '" . $time->time() . "'), ('Europe/Lisbon', '" . $time->time() . "'), ('Europe/Ljubljana', '" . $time->time() . "'), ('Europe/London', '" . $time->time() . "'), ('Europe/Luxembourg', '" . $time->time() . "'), ('Europe/Madrid', '" . $time->time() . "'), ('Europe/Malta', '" . $time->time() . "'), ('Europe/Mariehamn', '" . $time->time() . "'), ('Europe/Minsk', '" . $time->time() . "'), ('Europe/Monaco', '" . $time->time() . "'), ('Europe/Moscow', '" . $time->time() . "'), ('Europe/Nicosia', '" . $time->time() . "'), ('Europe/Oslo', '" . $time->time() . "'), ('Europe/Paris', '" . $time->time() . "'), ('Europe/Podgorica', '" . $time->time() . "'), ('Europe/Prague', '" . $time->time() . "'), ('Europe/Riga', '" . $time->time() . "'), ('Europe/Rome', '" . $time->time() . "'), ('Europe/Samara', '" . $time->time() . "'), ('Europe/San_Marino', '" . $time->time() . "'), ('Europe/Sarajevo', '" . $time->time() . "'), ('Europe/Simferopol', '" . $time->time() . "'), ('Europe/Skopje', '" . $time->time() . "'), ('Europe/Sofia', '" . $time->time() . "'), ('Europe/Stockholm', '" . $time->time() . "'), ('Europe/Tallinn', '" . $time->time() . "'), ('Europe/Tirane', '" . $time->time() . "'), ('Europe/Tiraspol', '" . $time->time() . "'), ('Europe/Uzhgorod', '" . $time->time() . "'), ('Europe/Vaduz', '" . $time->time() . "'), ('Europe/Vatican', '" . $time->time() . "'), ('Europe/Vienna', '" . $time->time() . "'), ('Europe/Vilnius', '" . $time->time() . "'), ('Europe/Volgograd', '" . $time->time() . "'), ('Europe/Warsaw', '" . $time->time() . "'), ('Europe/Zagreb', '" . $time->time() . "'), ('Europe/Zaporozhye', '" . $time->time() . "'), ('Europe/Zurich', '" . $time->time() . "'), ('Greenwich', '" . $time->time() . "'), ('Hongkong', '" . $time->time() . "'), ('Iceland', '" . $time->time() . "'), ('Indian/Antananarivo', '" . $time->time() . "'), ('Indian/Chagos', '" . $time->time() . "'), ('Indian/Christmas', '" . $time->time() . "'), ('Indian/Cocos', '" . $time->time() . "'), ('Indian/Comoro', '" . $time->time() . "'), ('Indian/Kerguelen', '" . $time->time() . "'), ('Indian/Mahe', '" . $time->time() . "'), ('Indian/Maldives', '" . $time->time() . "'), ('Indian/Mauritius', '" . $time->time() . "'), ('Indian/Mayotte', '" . $time->time() . "'), ('Indian/Reunion', '" . $time->time() . "'), ('Iran', '" . $time->time() . "'), ('Israel', '" . $time->time() . "'), ('Jamaica', '" . $time->time() . "'), ('Japan', '" . $time->time() . "'), ('Kwajalein', '" . $time->time() . "'), ('Libya', '" . $time->time() . "'), ('Mexico/BajaNorte', '" . $time->time() . "'), ('Mexico/BajaSur', '" . $time->time() . "'), ('Mexico/General', '" . $time->time() . "'), ('Pacific/Apia', '" . $time->time() . "'), ('Pacific/Auckland', '" . $time->time() . "'), ('Pacific/Chatham', '" . $time->time() . "'), ('Pacific/Chuuk', '" . $time->time() . "'), ('Pacific/Easter', '" . $time->time() . "'), ('Pacific/Efate', '" . $time->time() . "'), ('Pacific/Enderbury', '" . $time->time() . "'), ('Pacific/Fakaofo', '" . $time->time() . "'), ('Pacific/Fiji', '" . $time->time() . "'), ('Pacific/Funafuti', '" . $time->time() . "'), ('Pacific/Galapagos', '" . $time->time() . "'), ('Pacific/Gambier', '" . $time->time() . "'), ('Pacific/Guadalcanal', '" . $time->time() . "'), ('Pacific/Guam', '" . $time->time() . "'), ('Pacific/Honolulu', '" . $time->time() . "'), ('Pacific/Johnston', '" . $time->time() . "'), ('Pacific/Kiritimati', '" . $time->time() . "'), ('Pacific/Kosrae', '" . $time->time() . "'), ('Pacific/Kwajalein', '" . $time->time() . "'), ('Pacific/Majuro', '" . $time->time() . "'), ('Pacific/Marquesas', '" . $time->time() . "'), ('Pacific/Midway', '" . $time->time() . "'), ('Pacific/Nauru', '" . $time->time() . "'), ('Pacific/Niue', '" . $time->time() . "'), ('Pacific/Norfolk', '" . $time->time() . "'), ('Pacific/Noumea', '" . $time->time() . "'), ('Pacific/Pago_Pago', '" . $time->time() . "'), ('Pacific/Palau', '" . $time->time() . "'), ('Pacific/Pitcairn', '" . $time->time() . "'), ('Pacific/Pohnpei', '" . $time->time() . "'), ('Pacific/Ponape', '" . $time->time() . "'), ('Pacific/Port_Moresby', '" . $time->time() . "'), ('Pacific/Rarotonga', '" . $time->time() . "'), ('Pacific/Saipan', '" . $time->time() . "'), ('Pacific/Samoa', '" . $time->time() . "'), ('Pacific/Tahiti', '" . $time->time() . "'), ('Pacific/Tarawa', '" . $time->time() . "'), ('Pacific/Tongatapu', '" . $time->time() . "'), ('Pacific/Truk', '" . $time->time() . "'), ('Pacific/Wake', '" . $time->time() . "'), ('Pacific/Wallis', '" . $time->time() . "'), ('Pacific/Yap', '" . $time->time() . "'), ('Poland', '" . $time->time() . "'), ('Portugal', '" . $time->time() . "'), ('Singapore', '" . $time->time() . "'), ('Turkey', '" . $time->time() . "'), ('US/Alaska', '" . $time->time() . "'), ('US/Aleutian', '" . $time->time() . "'), ('US/Arizona', '" . $time->time() . "'), ('US/Central', '" . $time->time() . "'), ('US/East-Indiana', '" . $time->time() . "'), ('US/Eastern', '" . $time->time() . "'), ('US/Hawaii', '" . $time->time() . "'), ('US/Indiana-Starke', '" . $time->time() . "'), ('US/Michigan', '" . $time->time() . "'), ('US/Mountain', '" . $time->time() . "'), ('US/Pacific', '" . $time->time() . "'), ('US/Pacific-New', '" . $time->time() . "'), ('US/Samoa', '" . $time->time() . "'), ('Zulu', '" . $time->time() . "');";
+            ('Africa/Abidjan', '" . $time->stamp() . "'), ('Africa/Accra', '" . $time->stamp() . "'), ('Africa/Addis_Ababa', '" . $time->stamp() . "'), ('Africa/Algiers', '" . $time->stamp() . "'), ('Africa/Asmara', '" . $time->stamp() . "'), ('Africa/Asmera', '" . $time->stamp() . "'), ('Africa/Bamako', '" . $time->stamp() . "'), ('Africa/Bangui', '" . $time->stamp() . "'), ('Africa/Banjul', '" . $time->stamp() . "'), ('Africa/Bissau', '" . $time->stamp() . "'), ('Africa/Blantyre', '" . $time->stamp() . "'), ('Africa/Brazzaville', '" . $time->stamp() . "'), ('Africa/Bujumbura', '" . $time->stamp() . "'), ('Africa/Cairo', '" . $time->stamp() . "'), ('Africa/Casablanca', '" . $time->stamp() . "'), ('Africa/Ceuta', '" . $time->stamp() . "'), ('Africa/Conakry', '" . $time->stamp() . "'), ('Africa/Dakar', '" . $time->stamp() . "'), ('Africa/Dar_es_Salaam', '" . $time->stamp() . "'), ('Africa/Djibouti', '" . $time->stamp() . "'), ('Africa/Douala', '" . $time->stamp() . "'), ('Africa/El_Aaiun', '" . $time->stamp() . "'), ('Africa/Freetown', '" . $time->stamp() . "'), ('Africa/Gaborone', '" . $time->stamp() . "'), ('Africa/Harare', '" . $time->stamp() . "'), ('Africa/Johannesburg', '" . $time->stamp() . "'), ('Africa/Juba', '" . $time->stamp() . "'), ('Africa/Kampala', '" . $time->stamp() . "'), ('Africa/Khartoum', '" . $time->stamp() . "'), ('Africa/Kigali', '" . $time->stamp() . "'), ('Africa/Kinshasa', '" . $time->stamp() . "'), ('Africa/Lagos', '" . $time->stamp() . "'), ('Africa/Libreville', '" . $time->stamp() . "'), ('Africa/Lome', '" . $time->stamp() . "'), ('Africa/Luanda', '" . $time->stamp() . "'), ('Africa/Lubumbashi', '" . $time->stamp() . "'), ('Africa/Lusaka', '" . $time->stamp() . "'), ('Africa/Malabo', '" . $time->stamp() . "'), ('Africa/Maputo', '" . $time->stamp() . "'), ('Africa/Maseru', '" . $time->stamp() . "'), ('Africa/Mbabane', '" . $time->stamp() . "'), ('Africa/Mogadishu', '" . $time->stamp() . "'), ('Africa/Monrovia', '" . $time->stamp() . "'), ('Africa/Nairobi', '" . $time->stamp() . "'), ('Africa/Ndjamena', '" . $time->stamp() . "'), ('Africa/Niamey', '" . $time->stamp() . "'), ('Africa/Nouakchott', '" . $time->stamp() . "'), ('Africa/Ouagadougou', '" . $time->stamp() . "'), ('Africa/Porto-Novo', '" . $time->stamp() . "'), ('Africa/Sao_Tome', '" . $time->stamp() . "'), ('Africa/Timbuktu', '" . $time->stamp() . "'), ('Africa/Tripoli', '" . $time->stamp() . "'), ('Africa/Tunis', '" . $time->stamp() . "'), ('Africa/Windhoek', '" . $time->stamp() . "'), ('America/Adak', '" . $time->stamp() . "'), ('America/Anchorage', '" . $time->stamp() . "'), ('America/Anguilla', '" . $time->stamp() . "'), ('America/Antigua', '" . $time->stamp() . "'), ('America/Araguaina', '" . $time->stamp() . "'), ('America/Argentina/Buenos_Aires', '" . $time->stamp() . "'), ('America/Argentina/Catamarca', '" . $time->stamp() . "'), ('America/Argentina/ComodRivadavia', '" . $time->stamp() . "'), ('America/Argentina/Cordoba', '" . $time->stamp() . "'), ('America/Argentina/Jujuy', '" . $time->stamp() . "'), ('America/Argentina/La_Rioja', '" . $time->stamp() . "'), ('America/Argentina/Mendoza', '" . $time->stamp() . "'), ('America/Argentina/Rio_Gallegos', '" . $time->stamp() . "'), ('America/Argentina/Salta', '" . $time->stamp() . "'), ('America/Argentina/San_Juan', '" . $time->stamp() . "'), ('America/Argentina/San_Luis', '" . $time->stamp() . "'), ('America/Argentina/Tucuman', '" . $time->stamp() . "'), ('America/Argentina/Ushuaia', '" . $time->stamp() . "'), ('America/Aruba', '" . $time->stamp() . "'), ('America/Asuncion', '" . $time->stamp() . "'), ('America/Atikokan', '" . $time->stamp() . "'), ('America/Atka', '" . $time->stamp() . "'), ('America/Bahia', '" . $time->stamp() . "'), ('America/Bahia_Banderas', '" . $time->stamp() . "'), ('America/Barbados', '" . $time->stamp() . "'), ('America/Belem', '" . $time->stamp() . "'), ('America/Belize', '" . $time->stamp() . "'), ('America/Blanc-Sablon', '" . $time->stamp() . "'), ('America/Boa_Vista', '" . $time->stamp() . "'), ('America/Bogota', '" . $time->stamp() . "'), ('America/Boise', '" . $time->stamp() . "'), ('America/Buenos_Aires', '" . $time->stamp() . "'), ('America/Cambridge_Bay', '" . $time->stamp() . "'), ('America/Campo_Grande', '" . $time->stamp() . "'), ('America/Cancun', '" . $time->stamp() . "'), ('America/Caracas', '" . $time->stamp() . "'), ('America/Catamarca', '" . $time->stamp() . "'), ('America/Cayenne', '" . $time->stamp() . "'), ('America/Cayman', '" . $time->stamp() . "'), ('America/Chicago', '" . $time->stamp() . "'), ('America/Chihuahua', '" . $time->stamp() . "'), ('America/Coral_Harbour', '" . $time->stamp() . "'), ('America/Cordoba', '" . $time->stamp() . "'), ('America/Costa_Rica', '" . $time->stamp() . "'), ('America/Creston', '" . $time->stamp() . "'), ('America/Cuiaba', '" . $time->stamp() . "'), ('America/Curacao', '" . $time->stamp() . "'), ('America/Danmarkshavn', '" . $time->stamp() . "'), ('America/Dawson', '" . $time->stamp() . "'), ('America/Dawson_Creek', '" . $time->stamp() . "'), ('America/Denver', '" . $time->stamp() . "'), ('America/Detroit', '" . $time->stamp() . "'), ('America/Dominica', '" . $time->stamp() . "'), ('America/Edmonton', '" . $time->stamp() . "'), ('America/Eirunepe', '" . $time->stamp() . "'), ('America/El_Salvador', '" . $time->stamp() . "'), ('America/Ensenada', '" . $time->stamp() . "'), ('America/Fort_Wayne', '" . $time->stamp() . "'), ('America/Fortaleza', '" . $time->stamp() . "'), ('America/Glace_Bay', '" . $time->stamp() . "'), ('America/Godthab', '" . $time->stamp() . "'), ('America/Goose_Bay', '" . $time->stamp() . "'), ('America/Grand_Turk', '" . $time->stamp() . "'), ('America/Grenada', '" . $time->stamp() . "'), ('America/Guadeloupe', '" . $time->stamp() . "'), ('America/Guatemala', '" . $time->stamp() . "'), ('America/Guayaquil', '" . $time->stamp() . "'), ('America/Guyana', '" . $time->stamp() . "'), ('America/Halifax', '" . $time->stamp() . "'), ('America/Havana', '" . $time->stamp() . "'), ('America/Hermosillo', '" . $time->stamp() . "'), ('America/Indiana/Indianapolis', '" . $time->stamp() . "'), ('America/Indiana/Knox', '" . $time->stamp() . "'), ('America/Indiana/Marengo', '" . $time->stamp() . "'), ('America/Indiana/Petersburg', '" . $time->stamp() . "'), ('America/Indiana/Tell_City', '" . $time->stamp() . "'), ('America/Indiana/Vevay', '" . $time->stamp() . "'), ('America/Indiana/Vincennes', '" . $time->stamp() . "'), ('America/Indiana/Winamac', '" . $time->stamp() . "'), ('America/Indianapolis', '" . $time->stamp() . "'), ('America/Inuvik', '" . $time->stamp() . "'), ('America/Iqaluit', '" . $time->stamp() . "'), ('America/Jamaica', '" . $time->stamp() . "'), ('America/Jujuy', '" . $time->stamp() . "'), ('America/Juneau', '" . $time->stamp() . "'), ('America/Kentucky/Louisville', '" . $time->stamp() . "'), ('America/Kentucky/Monticello', '" . $time->stamp() . "'), ('America/Knox_IN', '" . $time->stamp() . "'), ('America/Kralendijk', '" . $time->stamp() . "'), ('America/La_Paz', '" . $time->stamp() . "'), ('America/Lima', '" . $time->stamp() . "'), ('America/Los_Angeles', '" . $time->stamp() . "'), ('America/Louisville', '" . $time->stamp() . "'), ('America/Lower_Princes', '" . $time->stamp() . "'), ('America/Maceio', '" . $time->stamp() . "'), ('America/Managua', '" . $time->stamp() . "'), ('America/Manaus', '" . $time->stamp() . "'), ('America/Marigot', '" . $time->stamp() . "'), ('America/Martinique', '" . $time->stamp() . "'), ('America/Matamoros', '" . $time->stamp() . "'), ('America/Mazatlan', '" . $time->stamp() . "'), ('America/Mendoza', '" . $time->stamp() . "'), ('America/Menominee', '" . $time->stamp() . "'), ('America/Merida', '" . $time->stamp() . "'), ('America/Metlakatla', '" . $time->stamp() . "'), ('America/Mexico_City', '" . $time->stamp() . "'), ('America/Miquelon', '" . $time->stamp() . "'), ('America/Moncton', '" . $time->stamp() . "'), ('America/Monterrey', '" . $time->stamp() . "'), ('America/Montevideo', '" . $time->stamp() . "'), ('America/Montreal', '" . $time->stamp() . "'), ('America/Montserrat', '" . $time->stamp() . "'), ('America/Nassau', '" . $time->stamp() . "'), ('America/New_York', '" . $time->stamp() . "'), ('America/Nipigon', '" . $time->stamp() . "'), ('America/Nome', '" . $time->stamp() . "'), ('America/Noronha', '" . $time->stamp() . "'), ('America/North_Dakota/Beulah', '" . $time->stamp() . "'), ('America/North_Dakota/Center', '" . $time->stamp() . "'), ('America/North_Dakota/New_Salem', '" . $time->stamp() . "'), ('America/Ojinaga', '" . $time->stamp() . "'), ('America/Panama', '" . $time->stamp() . "'), ('America/Pangnirtung', '" . $time->stamp() . "'), ('America/Paramaribo', '" . $time->stamp() . "'), ('America/Phoenix', '" . $time->stamp() . "'), ('America/Port-au-Prince', '" . $time->stamp() . "'), ('America/Port_of_Spain', '" . $time->stamp() . "'), ('America/Porto_Acre', '" . $time->stamp() . "'), ('America/Porto_Velho', '" . $time->stamp() . "'), ('America/Puerto_Rico', '" . $time->stamp() . "'), ('America/Rainy_River', '" . $time->stamp() . "'), ('America/Rankin_Inlet', '" . $time->stamp() . "'), ('America/Recife', '" . $time->stamp() . "'), ('America/Regina', '" . $time->stamp() . "'), ('America/Resolute', '" . $time->stamp() . "'), ('America/Rio_Branco', '" . $time->stamp() . "'), ('America/Rosario', '" . $time->stamp() . "'), ('America/Santa_Isabel', '" . $time->stamp() . "'), ('America/Santarem', '" . $time->stamp() . "'), ('America/Santiago', '" . $time->stamp() . "'), ('America/Santo_Domingo', '" . $time->stamp() . "'), ('America/Sao_Paulo', '" . $time->stamp() . "'), ('America/Scoresbysund', '" . $time->stamp() . "'), ('America/Shiprock', '" . $time->stamp() . "'), ('America/Sitka', '" . $time->stamp() . "'), ('America/St_Barthelemy', '" . $time->stamp() . "'), ('America/St_Johns', '" . $time->stamp() . "'), ('America/St_Kitts', '" . $time->stamp() . "'), ('America/St_Lucia', '" . $time->stamp() . "'), ('America/St_Thomas', '" . $time->stamp() . "'), ('America/St_Vincent', '" . $time->stamp() . "'), ('America/Swift_Current', '" . $time->stamp() . "'), ('America/Tegucigalpa', '" . $time->stamp() . "'), ('America/Thule', '" . $time->stamp() . "'), ('America/Thunder_Bay', '" . $time->stamp() . "'), ('America/Tijuana', '" . $time->stamp() . "'), ('America/Toronto', '" . $time->stamp() . "'), ('America/Tortola', '" . $time->stamp() . "'), ('America/Vancouver', '" . $time->stamp() . "'), ('America/Virgin', '" . $time->stamp() . "'), ('America/Whitehorse', '" . $time->stamp() . "'), ('America/Winnipeg', '" . $time->stamp() . "'), ('America/Yakutat', '" . $time->stamp() . "'), ('America/Yellowknife', '" . $time->stamp() . "'), ('Antarctica/Casey', '" . $time->stamp() . "'), ('Antarctica/Davis', '" . $time->stamp() . "'), ('Antarctica/DumontDUrville', '" . $time->stamp() . "'), ('Antarctica/Macquarie', '" . $time->stamp() . "'), ('Antarctica/Mawson', '" . $time->stamp() . "'), ('Antarctica/McMurdo', '" . $time->stamp() . "'), ('Antarctica/Palmer', '" . $time->stamp() . "'), ('Antarctica/Rothera', '" . $time->stamp() . "'), ('Antarctica/South_Pole', '" . $time->stamp() . "'), ('Antarctica/Syowa', '" . $time->stamp() . "'), ('Antarctica/Vostok', '" . $time->stamp() . "'), ('Arctic/Longyearbyen', '" . $time->stamp() . "'), ('Asia/Aden', '" . $time->stamp() . "'), ('Asia/Almaty', '" . $time->stamp() . "'), ('Asia/Amman', '" . $time->stamp() . "'), ('Asia/Anadyr', '" . $time->stamp() . "'), ('Asia/Aqtau', '" . $time->stamp() . "'), ('Asia/Aqtobe', '" . $time->stamp() . "'), ('Asia/Ashgabat', '" . $time->stamp() . "'), ('Asia/Ashkhabad', '" . $time->stamp() . "'), ('Asia/Baghdad', '" . $time->stamp() . "'), ('Asia/Bahrain', '" . $time->stamp() . "'), ('Asia/Baku', '" . $time->stamp() . "'), ('Asia/Bangkok', '" . $time->stamp() . "'), ('Asia/Beirut', '" . $time->stamp() . "'), ('Asia/Bishkek', '" . $time->stamp() . "'), ('Asia/Brunei', '" . $time->stamp() . "'), ('Asia/Calcutta', '" . $time->stamp() . "'), ('Asia/Choibalsan', '" . $time->stamp() . "'), ('Asia/Chongqing', '" . $time->stamp() . "'), ('Asia/Chungking', '" . $time->stamp() . "'), ('Asia/Colombo', '" . $time->stamp() . "'), ('Asia/Dacca', '" . $time->stamp() . "'), ('Asia/Damascus', '" . $time->stamp() . "'), ('Asia/Dhaka', '" . $time->stamp() . "'), ('Asia/Dili', '" . $time->stamp() . "'), ('Asia/Dubai', '" . $time->stamp() . "'), ('Asia/Dushanbe', '" . $time->stamp() . "'), ('Asia/Gaza', '" . $time->stamp() . "'), ('Asia/Harbin', '" . $time->stamp() . "'), ('Asia/Hebron', '" . $time->stamp() . "'), ('Asia/Ho_Chi_Minh', '" . $time->stamp() . "'), ('Asia/Hong_Kong', '" . $time->stamp() . "'), ('Asia/Hovd', '" . $time->stamp() . "'), ('Asia/Irkutsk', '" . $time->stamp() . "'), ('Asia/Istanbul', '" . $time->stamp() . "'), ('Asia/Jakarta', '" . $time->stamp() . "'), ('Asia/Jayapura', '" . $time->stamp() . "'), ('Asia/Jerusalem', '" . $time->stamp() . "'), ('Asia/Kabul', '" . $time->stamp() . "'), ('Asia/Kamchatka', '" . $time->stamp() . "'), ('Asia/Karachi', '" . $time->stamp() . "'), ('Asia/Kashgar', '" . $time->stamp() . "'), ('Asia/Kathmandu', '" . $time->stamp() . "'), ('Asia/Katmandu', '" . $time->stamp() . "'), ('Asia/Khandyga', '" . $time->stamp() . "'), ('Asia/Kolkata', '" . $time->stamp() . "'), ('Asia/Krasnoyarsk', '" . $time->stamp() . "'), ('Asia/Kuala_Lumpur', '" . $time->stamp() . "'), ('Asia/Kuching', '" . $time->stamp() . "'), ('Asia/Kuwait', '" . $time->stamp() . "'), ('Asia/Macao', '" . $time->stamp() . "'), ('Asia/Macau', '" . $time->stamp() . "'), ('Asia/Magadan', '" . $time->stamp() . "'), ('Asia/Makassar', '" . $time->stamp() . "'), ('Asia/Manila', '" . $time->stamp() . "'), ('Asia/Muscat', '" . $time->stamp() . "'), ('Asia/Nicosia', '" . $time->stamp() . "'), ('Asia/Novokuznetsk', '" . $time->stamp() . "'), ('Asia/Novosibirsk', '" . $time->stamp() . "'), ('Asia/Omsk', '" . $time->stamp() . "'), ('Asia/Oral', '" . $time->stamp() . "'), ('Asia/Phnom_Penh', '" . $time->stamp() . "'), ('Asia/Pontianak', '" . $time->stamp() . "'), ('Asia/Pyongyang', '" . $time->stamp() . "'), ('Asia/Qatar', '" . $time->stamp() . "'), ('Asia/Qyzylorda', '" . $time->stamp() . "'), ('Asia/Rangoon', '" . $time->stamp() . "'), ('Asia/Riyadh', '" . $time->stamp() . "'), ('Asia/Saigon', '" . $time->stamp() . "'), ('Asia/Sakhalin', '" . $time->stamp() . "'), ('Asia/Samarkand', '" . $time->stamp() . "'), ('Asia/Seoul', '" . $time->stamp() . "'), ('Asia/Shanghai', '" . $time->stamp() . "'), ('Asia/Singapore', '" . $time->stamp() . "'), ('Asia/Taipei', '" . $time->stamp() . "'), ('Asia/Tashkent', '" . $time->stamp() . "'), ('Asia/Tbilisi', '" . $time->stamp() . "'), ('Asia/Tehran', '" . $time->stamp() . "'), ('Asia/Tel_Aviv', '" . $time->stamp() . "'), ('Asia/Thimbu', '" . $time->stamp() . "'), ('Asia/Thimphu', '" . $time->stamp() . "'), ('Asia/Tokyo', '" . $time->stamp() . "'), ('Asia/Ujung_Pandang', '" . $time->stamp() . "'), ('Asia/Ulaanbaatar', '" . $time->stamp() . "'), ('Asia/Ulan_Bator', '" . $time->stamp() . "'), ('Asia/Urumqi', '" . $time->stamp() . "'), ('Asia/Ust-Nera', '" . $time->stamp() . "'), ('Asia/Vientiane', '" . $time->stamp() . "'), ('Asia/Vladivostok', '" . $time->stamp() . "'), ('Asia/Yakutsk', '" . $time->stamp() . "'), ('Asia/Yekaterinburg', '" . $time->stamp() . "'), ('Asia/Yerevan', '" . $time->stamp() . "'), ('Atlantic/Azores', '" . $time->stamp() . "'), ('Atlantic/Bermuda', '" . $time->stamp() . "'), ('Atlantic/Canary', '" . $time->stamp() . "'), ('Atlantic/Cape_Verde', '" . $time->stamp() . "'), ('Atlantic/Faeroe', '" . $time->stamp() . "'), ('Atlantic/Faroe', '" . $time->stamp() . "'), ('Atlantic/Jan_Mayen', '" . $time->stamp() . "'), ('Atlantic/Madeira', '" . $time->stamp() . "'), ('Atlantic/Reykjavik', '" . $time->stamp() . "'), ('Atlantic/South_Georgia', '" . $time->stamp() . "'), ('Atlantic/St_Helena', '" . $time->stamp() . "'), ('Atlantic/Stanley', '" . $time->stamp() . "'), ('Australia/ACT', '" . $time->stamp() . "'), ('Australia/Adelaide', '" . $time->stamp() . "'), ('Australia/Brisbane', '" . $time->stamp() . "'), ('Australia/Broken_Hill', '" . $time->stamp() . "'), ('Australia/Canberra', '" . $time->stamp() . "'), ('Australia/Currie', '" . $time->stamp() . "'), ('Australia/Darwin', '" . $time->stamp() . "'), ('Australia/Eucla', '" . $time->stamp() . "'), ('Australia/Hobart', '" . $time->stamp() . "'), ('Australia/LHI', '" . $time->stamp() . "'), ('Australia/Lindeman', '" . $time->stamp() . "'), ('Australia/Lord_Howe', '" . $time->stamp() . "'), ('Australia/Melbourne', '" . $time->stamp() . "'), ('Australia/North', '" . $time->stamp() . "'), ('Australia/NSW', '" . $time->stamp() . "'), ('Australia/Perth', '" . $time->stamp() . "'), ('Australia/Queensland', '" . $time->stamp() . "'), ('Australia/South', '" . $time->stamp() . "'), ('Australia/Sydney', '" . $time->stamp() . "'), ('Australia/Tasmania', '" . $time->stamp() . "'), ('Australia/Victoria', '" . $time->stamp() . "'), ('Australia/West', '" . $time->stamp() . "'), ('Australia/Yancowinna', '" . $time->stamp() . "'), ('Brazil/Acre', '" . $time->stamp() . "'), ('Brazil/DeNoronha', '" . $time->stamp() . "'), ('Brazil/East', '" . $time->stamp() . "'), ('Brazil/West', '" . $time->stamp() . "'), ('Canada/Atlantic', '" . $time->stamp() . "'), ('Canada/Central', '" . $time->stamp() . "'), ('Canada/East-Saskatchewan', '" . $time->stamp() . "'), ('Canada/Eastern', '" . $time->stamp() . "'), ('Canada/Mountain', '" . $time->stamp() . "'), ('Canada/Newfoundland', '" . $time->stamp() . "'), ('Canada/Pacific', '" . $time->stamp() . "'), ('Canada/Saskatchewan', '" . $time->stamp() . "'), ('Canada/Yukon', '" . $time->stamp() . "'), ('Chile/Continental', '" . $time->stamp() . "'), ('Chile/EasterIsland', '" . $time->stamp() . "'), ('Cuba', '" . $time->stamp() . "'), ('Egypt', '" . $time->stamp() . "'), ('Eire', '" . $time->stamp() . "'), ('Europe/Amsterdam', '" . $time->stamp() . "'), ('Europe/Andorra', '" . $time->stamp() . "'), ('Europe/Athens', '" . $time->stamp() . "'), ('Europe/Belfast', '" . $time->stamp() . "'), ('Europe/Belgrade', '" . $time->stamp() . "'), ('Europe/Berlin', '" . $time->stamp() . "'), ('Europe/Bratislava', '" . $time->stamp() . "'), ('Europe/Brussels', '" . $time->stamp() . "'), ('Europe/Bucharest', '" . $time->stamp() . "'), ('Europe/Budapest', '" . $time->stamp() . "'), ('Europe/Busingen', '" . $time->stamp() . "'), ('Europe/Chisinau', '" . $time->stamp() . "'), ('Europe/Copenhagen', '" . $time->stamp() . "'), ('Europe/Dublin', '" . $time->stamp() . "'), ('Europe/Gibraltar', '" . $time->stamp() . "'), ('Europe/Guernsey', '" . $time->stamp() . "'), ('Europe/Helsinki', '" . $time->stamp() . "'), ('Europe/Isle_of_Man', '" . $time->stamp() . "'), ('Europe/Istanbul', '" . $time->stamp() . "'), ('Europe/Jersey', '" . $time->stamp() . "'), ('Europe/Kaliningrad', '" . $time->stamp() . "'), ('Europe/Kiev', '" . $time->stamp() . "'), ('Europe/Lisbon', '" . $time->stamp() . "'), ('Europe/Ljubljana', '" . $time->stamp() . "'), ('Europe/London', '" . $time->stamp() . "'), ('Europe/Luxembourg', '" . $time->stamp() . "'), ('Europe/Madrid', '" . $time->stamp() . "'), ('Europe/Malta', '" . $time->stamp() . "'), ('Europe/Mariehamn', '" . $time->stamp() . "'), ('Europe/Minsk', '" . $time->stamp() . "'), ('Europe/Monaco', '" . $time->stamp() . "'), ('Europe/Moscow', '" . $time->stamp() . "'), ('Europe/Nicosia', '" . $time->stamp() . "'), ('Europe/Oslo', '" . $time->stamp() . "'), ('Europe/Paris', '" . $time->stamp() . "'), ('Europe/Podgorica', '" . $time->stamp() . "'), ('Europe/Prague', '" . $time->stamp() . "'), ('Europe/Riga', '" . $time->stamp() . "'), ('Europe/Rome', '" . $time->stamp() . "'), ('Europe/Samara', '" . $time->stamp() . "'), ('Europe/San_Marino', '" . $time->stamp() . "'), ('Europe/Sarajevo', '" . $time->stamp() . "'), ('Europe/Simferopol', '" . $time->stamp() . "'), ('Europe/Skopje', '" . $time->stamp() . "'), ('Europe/Sofia', '" . $time->stamp() . "'), ('Europe/Stockholm', '" . $time->stamp() . "'), ('Europe/Tallinn', '" . $time->stamp() . "'), ('Europe/Tirane', '" . $time->stamp() . "'), ('Europe/Tiraspol', '" . $time->stamp() . "'), ('Europe/Uzhgorod', '" . $time->stamp() . "'), ('Europe/Vaduz', '" . $time->stamp() . "'), ('Europe/Vatican', '" . $time->stamp() . "'), ('Europe/Vienna', '" . $time->stamp() . "'), ('Europe/Vilnius', '" . $time->stamp() . "'), ('Europe/Volgograd', '" . $time->stamp() . "'), ('Europe/Warsaw', '" . $time->stamp() . "'), ('Europe/Zagreb', '" . $time->stamp() . "'), ('Europe/Zaporozhye', '" . $time->stamp() . "'), ('Europe/Zurich', '" . $time->stamp() . "'), ('Greenwich', '" . $time->stamp() . "'), ('Hongkong', '" . $time->stamp() . "'), ('Iceland', '" . $time->stamp() . "'), ('Indian/Antananarivo', '" . $time->stamp() . "'), ('Indian/Chagos', '" . $time->stamp() . "'), ('Indian/Christmas', '" . $time->stamp() . "'), ('Indian/Cocos', '" . $time->stamp() . "'), ('Indian/Comoro', '" . $time->stamp() . "'), ('Indian/Kerguelen', '" . $time->stamp() . "'), ('Indian/Mahe', '" . $time->stamp() . "'), ('Indian/Maldives', '" . $time->stamp() . "'), ('Indian/Mauritius', '" . $time->stamp() . "'), ('Indian/Mayotte', '" . $time->stamp() . "'), ('Indian/Reunion', '" . $time->stamp() . "'), ('Iran', '" . $time->stamp() . "'), ('Israel', '" . $time->stamp() . "'), ('Jamaica', '" . $time->stamp() . "'), ('Japan', '" . $time->stamp() . "'), ('Kwajalein', '" . $time->stamp() . "'), ('Libya', '" . $time->stamp() . "'), ('Mexico/BajaNorte', '" . $time->stamp() . "'), ('Mexico/BajaSur', '" . $time->stamp() . "'), ('Mexico/General', '" . $time->stamp() . "'), ('Pacific/Apia', '" . $time->stamp() . "'), ('Pacific/Auckland', '" . $time->stamp() . "'), ('Pacific/Chatham', '" . $time->stamp() . "'), ('Pacific/Chuuk', '" . $time->stamp() . "'), ('Pacific/Easter', '" . $time->stamp() . "'), ('Pacific/Efate', '" . $time->stamp() . "'), ('Pacific/Enderbury', '" . $time->stamp() . "'), ('Pacific/Fakaofo', '" . $time->stamp() . "'), ('Pacific/Fiji', '" . $time->stamp() . "'), ('Pacific/Funafuti', '" . $time->stamp() . "'), ('Pacific/Galapagos', '" . $time->stamp() . "'), ('Pacific/Gambier', '" . $time->stamp() . "'), ('Pacific/Guadalcanal', '" . $time->stamp() . "'), ('Pacific/Guam', '" . $time->stamp() . "'), ('Pacific/Honolulu', '" . $time->stamp() . "'), ('Pacific/Johnston', '" . $time->stamp() . "'), ('Pacific/Kiritimati', '" . $time->stamp() . "'), ('Pacific/Kosrae', '" . $time->stamp() . "'), ('Pacific/Kwajalein', '" . $time->stamp() . "'), ('Pacific/Majuro', '" . $time->stamp() . "'), ('Pacific/Marquesas', '" . $time->stamp() . "'), ('Pacific/Midway', '" . $time->stamp() . "'), ('Pacific/Nauru', '" . $time->stamp() . "'), ('Pacific/Niue', '" . $time->stamp() . "'), ('Pacific/Norfolk', '" . $time->stamp() . "'), ('Pacific/Noumea', '" . $time->stamp() . "'), ('Pacific/Pago_Pago', '" . $time->stamp() . "'), ('Pacific/Palau', '" . $time->stamp() . "'), ('Pacific/Pitcairn', '" . $time->stamp() . "'), ('Pacific/Pohnpei', '" . $time->stamp() . "'), ('Pacific/Ponape', '" . $time->stamp() . "'), ('Pacific/Port_Moresby', '" . $time->stamp() . "'), ('Pacific/Rarotonga', '" . $time->stamp() . "'), ('Pacific/Saipan', '" . $time->stamp() . "'), ('Pacific/Samoa', '" . $time->stamp() . "'), ('Pacific/Tahiti', '" . $time->stamp() . "'), ('Pacific/Tarawa', '" . $time->stamp() . "'), ('Pacific/Tongatapu', '" . $time->stamp() . "'), ('Pacific/Truk', '" . $time->stamp() . "'), ('Pacific/Wake', '" . $time->stamp() . "'), ('Pacific/Wallis', '" . $time->stamp() . "'), ('Pacific/Yap', '" . $time->stamp() . "'), ('Poland', '" . $time->stamp() . "'), ('Portugal', '" . $time->stamp() . "'), ('Singapore', '" . $time->stamp() . "'), ('Turkey', '" . $time->stamp() . "'), ('US/Alaska', '" . $time->stamp() . "'), ('US/Aleutian', '" . $time->stamp() . "'), ('US/Arizona', '" . $time->stamp() . "'), ('US/Central', '" . $time->stamp() . "'), ('US/East-Indiana', '" . $time->stamp() . "'), ('US/Eastern', '" . $time->stamp() . "'), ('US/Hawaii', '" . $time->stamp() . "'), ('US/Indiana-Starke', '" . $time->stamp() . "'), ('US/Michigan', '" . $time->stamp() . "'), ('US/Mountain', '" . $time->stamp() . "'), ('US/Pacific', '" . $time->stamp() . "'), ('US/Pacific-New', '" . $time->stamp() . "'), ('US/Samoa', '" . $time->stamp() . "'), ('Zulu', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `dw_servers` (
@@ -772,10 +772,10 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     $sql = "INSERT INTO scheduler
             (`name`, description, slug, sort_order, is_running, active, insert_time)
              VALUES
-            ('Send Expiration Email', 'Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations." . "<" . "BR>" . "<" . "BR>Users can subscribe via " . "<" . "a href=\'../../settings/email.php\'>Email Settings" . "<" . "/a>." . "<" . "BR>" . "<" . "BR>Administrators can set the FROM email address and the number of days in the future to display in the email via " . "<" . "a href=\'../system-settings.php\'>System Settings" . "<" . "/a>.', 'expiration-email', '20', '0', '1', '" . $time->time() . "'),
-            ('Update Conversion Rates', 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date." . "<" . "BR>" . "<" . "BR>Users can set their default currency via " . "<" . "a href=\'../../settings/defaults.php\'>User Defaults" . "<" . "/a>." . "<" . "BR>" . "<" . "BR>Administrators can set the default system currency via " . "<" . "a href=\'../defaults.php\'>System Defaults" . "<" . "/a>.', 'update-conversion-rates', '40', '0', '1', '" . $time->time() . "'),
-            ('System Cleanup', '" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running quickly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>TLDs:" . "<" . "/em> Makes sure that the TLD entries recorded in the database are accurate.', 'cleanup', '60', '0', '1', '" . $time->time() . "'),
-            ('Check For New Version', 'Checks to see if there is a newer version of DomainMOD available to download." . "<" . "BR>" . "<" . "BR>You can view your current version on the " . "<" . "a href=\'../system-info.php\'>System Information" . "<" . "/a> page.', 'check-new-version', '80', '0', '1', '" . $time->time() . "')";
+            ('Send Expiration Email', 'Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations." . "<" . "BR>" . "<" . "BR>Users can subscribe via " . "<" . "a href=\'../../settings/email.php\'>Email Settings" . "<" . "/a>." . "<" . "BR>" . "<" . "BR>Administrators can set the FROM email address and the number of days in the future to display in the email via " . "<" . "a href=\'../system-settings.php\'>System Settings" . "<" . "/a>.', 'expiration-email', '20', '0', '1', '" . $time->stamp() . "'),
+            ('Update Conversion Rates', 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date." . "<" . "BR>" . "<" . "BR>Users can set their default currency via " . "<" . "a href=\'../../settings/defaults.php\'>User Defaults" . "<" . "/a>." . "<" . "BR>" . "<" . "BR>Administrators can set the default system currency via " . "<" . "a href=\'../defaults.php\'>System Defaults" . "<" . "/a>.', 'update-conversion-rates', '40', '0', '1', '" . $time->stamp() . "'),
+            ('System Cleanup', '" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running quickly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>TLDs:" . "<" . "/em> Makes sure that the TLD entries recorded in the database are accurate.', 'cleanup', '60', '0', '1', '" . $time->stamp() . "'),
+            ('Check For New Version', 'Checks to see if there is a newer version of DomainMOD available to download." . "<" . "BR>" . "<" . "BR>You can view your current version on the " . "<" . "a href=\'../system-info.php\'>System Information" . "<" . "/a> page.', 'check-new-version', '80', '0', '1', '" . $time->stamp() . "')";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $cron = \Cron\CronExpression::factory('0 7 * * * *');

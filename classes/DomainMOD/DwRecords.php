@@ -96,7 +96,7 @@ class DwRecords
                          . $hit->name . "', '" . $hit->ttl . "', '" . $hit->class . "', '" . $hit->type . "', '" .
                          $hit->address . "', '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference .
                          "', '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw .
-                         "', '" . $time->time() . "')";
+                         "', '" . $time->stamp() . "')";
                 mysqli_query($connection, $sql);
 
             }

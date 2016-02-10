@@ -75,7 +75,7 @@ if ($new_username != "") {
 
                 if ($q->prepare($query)) {
 
-                    $timestamp = $time->time();
+                    $timestamp = $time->stamp();
 
                     $q->bind_param('ssss', $new_password, $timestamp, $username, $email_address);
                     $q->execute();

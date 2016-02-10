@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 default_ssl_provider_account = '$new_default_ssl_provider_account',
                 default_ssl_type = '$new_default_ssl_type',
                 default_ssl_provider = '$new_default_ssl_provider',
-                update_time = '" . $time->time() . "'";
+                update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $_SESSION['s_system_default_category_domains'] = $new_default_category_domains;

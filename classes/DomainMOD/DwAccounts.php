@@ -101,7 +101,7 @@ class DwAccounts
                     . "', '" . $hit->maxsub . "', '" . $hit->startdate . "', '" . $hit->unix_startdate
                     . "', '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime
                     . "', '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "', '"
-                    . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . $time->time() . "')";
+                    . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . $time->stamp() . "')";
                 mysqli_query($connection, $sql);
 
             }

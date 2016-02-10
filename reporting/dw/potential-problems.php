@@ -76,7 +76,7 @@ if ($export_data == "1") {
 
     $export = new DomainMOD\Export();
 
-    $export_file = $export->openFile('dw_potential_problems_report', strtotime($time->time()));
+    $export_file = $export->openFile('dw_potential_problems_report', strtotime($time->stamp()));
 
     $row_contents = array($page_subtitle);
     $export->writeRow($export_file, $row_contents);

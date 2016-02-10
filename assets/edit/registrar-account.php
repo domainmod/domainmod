@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
-            $timestamp = $time->time();
+            $timestamp = $time->stamp();
 
             $q->bind_param('iisssisi', $new_owner_id, $new_registrar_id, $new_username, $new_password, $new_notes,
                 $new_reseller, $timestamp, $new_raid);

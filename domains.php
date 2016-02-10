@@ -441,7 +441,7 @@ if ($export_data == "1") {
     $total_rows = number_format(mysqli_num_rows($result));
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile('domain_results', strtotime($time->time()));
+    $export_file = $export->openFile('domain_results', strtotime($time->stamp()));
 
     $row_contents = array('Domain Search Results Export');
     $export->writeRow($export_file, $row_contents);

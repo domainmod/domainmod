@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($q->prepare($query)) {
 
-        $timestamp = $time->time();
+        $timestamp = $time->stamp();
 
         $q->bind_param('ssi', $new_expiration_email, $timestamp, $_SESSION['s_user_id']);
         $q->execute();

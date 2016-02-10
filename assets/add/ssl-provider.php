@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($q->prepare($query)) {
 
-            $timestamp = $time->time();
+            $timestamp = $time->stamp();
 
             $q->bind_param('ssss', $new_ssl_provider, $new_url, $new_notes, $timestamp);
             $q->execute();

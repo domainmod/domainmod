@@ -40,7 +40,7 @@ class DwBuild
             return false;
         $this->dropDwTables($connection);
 
-        $build_start_time_o = $time->time();
+        $build_start_time_o = $time->stamp();
 
         $sql = "UPDATE dw_servers
                 SET build_status_overall = '0',
@@ -115,7 +115,7 @@ class DwBuild
 
         $time = new Time();
 
-        $build_end_time = $time->time();
+        $build_end_time = $time->stamp();
 
         $total_build_time = (strtotime($build_end_time) - strtotime($build_start_time));
 

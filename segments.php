@@ -112,7 +112,7 @@ if ($export_data == "1") {
     }
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile("$base_filename", strtotime($time->time()));
+    $export_file = $export->openFile("$base_filename", strtotime($time->stamp()));
 
     if ($segid != "") {
 

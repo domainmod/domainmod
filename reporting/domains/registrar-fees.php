@@ -87,11 +87,11 @@ if ($total_rows > 0) {
 
         if ($all == "1") {
 
-            $export_file = $export->openFile('registrar_fee_report_all', strtotime($time->time()));
+            $export_file = $export->openFile('registrar_fee_report_all', strtotime($time->stamp()));
 
         } else {
 
-            $export_file = $export->openFile('registrar_fee_report_active', strtotime($time->time()));
+            $export_file = $export->openFile('registrar_fee_report_active', strtotime($time->stamp()));
 
         }
 

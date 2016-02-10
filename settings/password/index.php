@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
             if ($q_update->prepare($query_update)) {
 
-                $timestamp = $time->time();
+                $timestamp = $time->stamp();
 
                 $q_update->bind_param('ssis', $new_password, $timestamp, $_SESSION['s_user_id'],
                     $_SESSION['s_email_address']);

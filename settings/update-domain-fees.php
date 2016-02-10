@@ -30,7 +30,7 @@ $error = new DomainMOD\Error();
 $maint = new DomainMOD\Maintenance();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Time();
-$timestamp = $time->time();
+$timestamp = $time->stamp();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");

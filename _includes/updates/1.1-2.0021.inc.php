@@ -29,7 +29,7 @@ if ($current_db_version === '1.1') {
 
     $sql = "UPDATE settings
                 SET db_version = '1.2',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.2';
@@ -51,7 +51,7 @@ if ($current_db_version === '1.2') {
 
     $sql = "UPDATE settings
                 SET db_version = '1.3',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.3';
@@ -67,7 +67,7 @@ if ($current_db_version === '1.3') {
 
     $sql = "UPDATE settings
                 SET db_version = '1.4',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.4';
@@ -83,7 +83,7 @@ if ($current_db_version === '1.4') {
 
     $sql = "UPDATE settings
                 SET db_version = '1.5',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.5';
@@ -99,7 +99,7 @@ if ($current_db_version === '1.5') {
 
     $sql = "UPDATE `domains`
                 SET ip_id = '1',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "TRUNCATE `ip_addresses`";
@@ -107,12 +107,12 @@ if ($current_db_version === '1.5') {
 
     $sql = "INSERT INTO `ip_addresses`
                 (`id`, `name`, `ip`, `insert_time`) VALUES
-                ('1', '[no ip address]', '-', '" . $time->time() . "')";
+                ('1', '[no ip address]', '-', '" . $time->stamp() . "')";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "UPDATE settings
                 SET db_version = '1.6',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.6';
@@ -128,7 +128,7 @@ if ($current_db_version === '1.6') {
 
     $sql = "UPDATE settings
                 SET db_version = '1.7',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.7';
@@ -144,7 +144,7 @@ if ($current_db_version === '1.7') {
 
     $sql = "UPDATE settings
                 SET db_version = '1.8',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.8';
@@ -161,7 +161,7 @@ if ($current_db_version === '1.8') {
     $sql = "UPDATE settings
                 SET db_version = '1.9',
                     email_address = 'greg@chetcuti.com',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.9';
@@ -177,7 +177,7 @@ if ($current_db_version === '1.9') {
 
     $sql = "UPDATE settings
                 SET db_version = '1.91',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.91';
@@ -193,12 +193,12 @@ if ($current_db_version === '1.91') {
 
     $sql = "UPDATE settings
                 SET type =  'system',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "UPDATE settings
                 SET db_version = '1.92',
-                    update_time = '" . $time->time() . "'
+                    update_time = '" . $time->stamp() . "'
                 WHERE type = 'system'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -215,7 +215,7 @@ if ($current_db_version === '1.92') {
 
     $sql = "UPDATE settings
                 SET db_version = '1.93',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.93';
@@ -235,7 +235,7 @@ if ($current_db_version === '1.93') {
 
     $sql = "UPDATE settings
                 SET db_version = '1.94',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.94';
@@ -255,7 +255,7 @@ if ($current_db_version === '1.94') {
 
     $sql = "UPDATE settings
                 SET db_version = '1.95',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.95';
@@ -271,7 +271,7 @@ if ($current_db_version === '1.95') {
 
     $sql = "UPDATE settings
                 SET db_version = '1.96',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.96';
@@ -316,7 +316,7 @@ if ($current_db_version === '1.96') {
 
     $sql = "UPDATE settings
                 SET db_version = '1.97',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.97';
@@ -328,7 +328,7 @@ if ($current_db_version === '1.97') {
 
     $sql = "INSERT INTO `categories`
                     (`name`, `owner`, `insert_time`) VALUES
-                    ('[no category]', '[no stakeholder]', '" . $time->time() . "');";
+                    ('[no category]', '[no stakeholder]', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "SELECT id
@@ -339,7 +339,7 @@ if ($current_db_version === '1.97') {
     if (mysqli_num_rows($result) == 0) {
         $sql_update = "UPDATE categories
                            SET default_category = '1',
-                                  update_time = '" . $time->time() . "'
+                                  update_time = '" . $time->stamp() . "'
                            WHERE name = '[no category]'";
         $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
     }
@@ -350,7 +350,7 @@ if ($current_db_version === '1.97') {
 
     $sql = "INSERT INTO `dns`
                     (`name`, `dns1`, `dns2`, `number_of_servers`, `insert_time`) VALUES
-                    ('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '" . $time->time() . "');";
+                    ('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "SELECT id
@@ -361,7 +361,7 @@ if ($current_db_version === '1.97') {
     if (mysqli_num_rows($result) == 0) {
         $sql_update = "UPDATE dns
                            SET default_dns = '1',
-                                  update_time = '" . $time->time() . "'
+                                  update_time = '" . $time->stamp() . "'
                            WHERE name = '[no dns]'";
         $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
     }
@@ -372,7 +372,7 @@ if ($current_db_version === '1.97') {
 
     $sql = "INSERT INTO `owners`
                     (`name`, `insert_time`) VALUES
-                    ('[no owner]', '" . $time->time() . "');";
+                    ('[no owner]', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "SELECT id
@@ -383,7 +383,7 @@ if ($current_db_version === '1.97') {
     if (mysqli_num_rows($result) == 0) {
         $sql_update = "UPDATE owners
                            SET default_owner = '1',
-                                  update_time = '" . $time->time() . "'
+                                  update_time = '" . $time->stamp() . "'
                            WHERE name = '[no owner]'";
         $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
     }
@@ -400,14 +400,14 @@ if ($current_db_version === '1.97') {
     if (mysqli_num_rows($result) == 0) {
         $sql_update = "UPDATE ip_addresses
                            SET default_ip_address = '1',
-                                  update_time = '" . $time->time() . "'
+                                  update_time = '" . $time->stamp() . "'
                            WHERE name = '[no ip address]'";
         $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
     }
 
     $sql = "UPDATE settings
                 SET db_version = '1.98',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.98';
@@ -423,13 +423,13 @@ if ($current_db_version === '1.98') {
 
     $sql = "UPDATE `categories`
                     SET `stakeholder` = '[no stakeholder]',
-                        `update_time` = '" . $time->time() . "'
+                        `update_time` = '" . $time->stamp() . "'
                 WHERE `stakeholder` = '[no category owner]';";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "UPDATE settings
                 SET db_version = '1.99',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '1.99';
@@ -453,12 +453,12 @@ if ($current_db_version === '1.99') {
 
     $sql = "UPDATE currencies
                 SET default_currency = '0',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "UPDATE currencies
                 SET default_currency = '1',
-                    update_time = '" . $time->time() . "'
+                    update_time = '" . $time->stamp() . "'
                 WHERE currency = '" . $default_currency . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -468,7 +468,7 @@ if ($current_db_version === '1.99') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0001',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0001';
@@ -488,19 +488,19 @@ if ($current_db_version === '2.0001') {
 
     $sql = "UPDATE ssl_cert_functions
                 SET default_function = '1',
-                    update_time = '" . $time->time() . "'
+                    update_time = '" . $time->stamp() . "'
                 WHERE function = 'Web Server SSL/TLS Certificate'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "UPDATE ssl_cert_types
                 SET default_type = '1',
-                    update_time = '" . $time->time() . "'
+                    update_time = '" . $time->stamp() . "'
                 WHERE type = 'Wildcard'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "UPDATE settings
                 SET db_version = '2.0002',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0002';
@@ -523,7 +523,7 @@ if ($current_db_version === '2.0002') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0003',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0003';
@@ -563,7 +563,7 @@ if ($current_db_version === '2.0003') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0004',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0004';
@@ -579,7 +579,7 @@ if ($current_db_version === '2.0004') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0005',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0005';
@@ -599,7 +599,7 @@ if ($current_db_version === '2.0005') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0006',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0006';
@@ -627,7 +627,7 @@ if ($current_db_version === '2.0006') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0007',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0007';
@@ -651,7 +651,7 @@ if ($current_db_version === '2.0007') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0008',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0008';
@@ -667,7 +667,7 @@ if ($current_db_version === '2.0008') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0009',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0009';
@@ -709,13 +709,13 @@ if ($current_db_version === '2.0009') {
     while ($row = mysqli_fetch_object($result)) {
         $sql_temp = "INSERT INTO user_settings
                          (user_id, insert_time) VALUES
-                         ('" . $row->id . "', '" . $time->time() . "');";
+                         ('" . $row->id . "', '" . $time->stamp() . "');";
         $result_temp = mysqli_query($connection, $sql_temp) or $error->outputOldSqlError($connection);
     }
 
     $sql = "UPDATE settings
                 SET db_version = '2.001',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.001';
@@ -732,7 +732,7 @@ if ($current_db_version === '2.001') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0011',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0011';
@@ -748,7 +748,7 @@ if ($current_db_version === '2.0011') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0012',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0012';
@@ -820,7 +820,7 @@ if ($current_db_version === '2.0012') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0013',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0013';
@@ -842,7 +842,7 @@ if ($current_db_version === '2.0013') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0014',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0014';
@@ -862,7 +862,7 @@ if ($current_db_version === '2.0014') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0015',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0015';
@@ -886,7 +886,7 @@ if ($current_db_version === '2.0015') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0016',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0016';
@@ -902,7 +902,7 @@ if ($current_db_version === '2.0016') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0017',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0017';
@@ -918,7 +918,7 @@ if ($current_db_version === '2.0017') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0018',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0018';
@@ -934,7 +934,7 @@ if ($current_db_version === '2.0018') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0019',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0019';
@@ -950,7 +950,7 @@ if ($current_db_version === '2.0019') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0020',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0020';
@@ -972,7 +972,7 @@ if ($current_db_version === '2.002') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0021',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0021';
@@ -988,7 +988,7 @@ if ($current_db_version === '2.0021') {
 
     $sql = "UPDATE settings
                 SET db_version = '2.0022',
-                    update_time = '" . $time->time() . "'";
+                    update_time = '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '2.0022';

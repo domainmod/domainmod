@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
     if ($q->prepare($query)) {
 
-        $timestamp = $time->time();
+        $timestamp = $time->stamp();
 
         $q->bind_param('ssis', $new_full_url, $new_email_address, $new_expiration_email_days, $timestamp);
         $q->execute();

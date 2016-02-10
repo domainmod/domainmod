@@ -31,7 +31,7 @@ $error = new DomainMOD\Error();
 $maint = new DomainMOD\Maintenance();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Time();
-$timestamp = $time->time();
+$timestamp = $time->stamp();
 $timestamp_basic = $time->timeBasic();
 $timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
 

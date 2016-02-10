@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_fir
 
             if ($q_u->prepare($query_u)) {
 
-                $timestamp = $time->time();
+                $timestamp = $time->stamp();
 
                 $q_u->bind_param('ssssis', $new_first_name, $new_last_name, $new_email_address, $timestamp,
                     $_SESSION['s_user_id'], $_SESSION['s_email_address']);

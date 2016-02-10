@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                 email_address = '" . mysqli_real_escape_string($connection, $new_email_address) . "',
                 admin = '" . $new_is_admin . "',
                 active = '" . $new_is_active . "',
-                update_time = '" . $time->time() . "'
+                update_time = '" . $time->stamp() . "'
             WHERE id = '" . $new_uid . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 

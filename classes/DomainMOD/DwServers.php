@@ -62,7 +62,7 @@ class DwServers
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $build_start_time = $time->time();
+            $build_start_time = $time->stamp();
 
             $sql = "UPDATE dw_servers
                     SET build_start_time = '" . $build_start_time . "',

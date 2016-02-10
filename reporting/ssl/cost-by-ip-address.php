@@ -116,7 +116,7 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
         if ($all == "1") {
 
-            $export_file = $export->openFile('ssl_cost_by_ip_address_report_all', strtotime($time->time()));
+            $export_file = $export->openFile('ssl_cost_by_ip_address_report_all', strtotime($time->stamp()));
 
         } else {
 

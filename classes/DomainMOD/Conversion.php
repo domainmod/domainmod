@@ -102,7 +102,7 @@ class Conversion
     {
 
         $time = new Time();
-        $timestamp = $time->time();
+        $timestamp = $time->stamp();
 
         if ($is_existing == '1') {
 

@@ -40,7 +40,7 @@ class Scheduler
     public function updateTime($connection, $id, $timestamp, $next_run, $active)
     {
         $time = new Time();
-        $current_time = $time->time();
+        $current_time = $time->stamp();
         $duration = $this->getTimeDifference($timestamp, $current_time);
         if ($active == '1') {
             $sql_update = "UPDATE scheduler

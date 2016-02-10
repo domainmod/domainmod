@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != "") {
             SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
                 description = '" . mysqli_real_escape_string($connection, $new_description) . "',
                 notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-                update_time = '" . $time->time() . "'
+                update_time = '" . $time->stamp() . "'
             WHERE id = '" . $new_csfid . "'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 

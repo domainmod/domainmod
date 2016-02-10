@@ -32,7 +32,7 @@ $conversion = new DomainMOD\Conversion();
 $maint = new DomainMOD\Maintenance();
 $schedule = new DomainMOD\Scheduler();
 $time = new DomainMOD\Time();
-$timestamp = $time->time();
+$timestamp = $time->stamp();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
