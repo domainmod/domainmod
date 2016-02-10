@@ -254,29 +254,67 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $new_total_cost = $row->total_cost;
                         }
 
-                        $sql = "INSERT INTO domains
-                                (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id, total_cost, dns_id, ip_id, hosting_id, `function`, notes, autorenew, privacy, active, fee_fixed, insert_time) VALUES
-                                ('" . $temp_owner_id . "', '" . $temp_registrar_id . "', '" . $new_raid . "', '" . mysqli_real_escape_string($connection, $new_domain) . "', '" . $new_tld . "', '" . $new_expiry_date . "', '" . $new_pcid . "', '" . $temp_fee_id . "', '" . $new_total_cost . "', '" . $new_dnsid . "', '" . $new_ipid . "', '" . $new_whid . "', '" . mysqli_real_escape_string($connection, $new_function) . "', '" . mysqli_real_escape_string($connection, $new_notes) . "', '" . $new_autorenew . "', '" . $new_privacy . "', '" . $new_active . "', '" . $temp_fee_fixed . "', '" . $timestamp . "')";
-                        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                        $query = "INSERT INTO domains
+                                  (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id,
+                                   total_cost, dns_id, ip_id, hosting_id, `function`, notes, autorenew, privacy,
+                                   active, fee_fixed, insert_time)
+                                  VALUES
+                                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        $q = $conn->stmt_init();
+
+                        if ($q->prepare($query)) {
+
+                            $q->bind_param('iiisssiisiiissiiiis', $temp_owner_id, $temp_registrar_id, $new_raid,
+                                $new_domain, $new_tld, $new_expiry_date, $new_pcid, $temp_fee_id, $new_total_cost,
+                                $new_dnsid, $new_ipid, $new_whid, $new_function, $new_notes, $new_autorenew,
+                                $new_privacy, $new_active, $temp_fee_fixed, $timestamp);
+                            $q->execute();
+                            $q->close();
+
+                        } else $error->outputSqlError($conn, "ERROR");
+
                         $temp_fee_id = 0;
 
-                        $sql = "SELECT id
-                                FROM domains
-                                WHERE domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'
-                                  AND insert_time = '" . $timestamp . "'";
-                        $result = mysqli_query($connection, $sql);
-                        while ($row = mysqli_fetch_object($result)) {
-                            $temp_domain_id = $row->id;
-                        }
+                        $query = "SELECT id
+                                  FROM domains
+                                  WHERE domain = ?
+                                    AND insert_time = ?";
+                        $q = $conn->stmt_init();
 
-                        $sql = "INSERT INTO domain_field_data
-                                (domain_id, insert_time) VALUES
-                                ('" . $temp_domain_id . "', '" . $timestamp . "')";
-                        $result = mysqli_query($connection, $sql);
+                        if ($q->prepare($query)) {
+
+                            $q->bind_param('ss', $new_domain, $timestamp);
+                            $q->execute();
+                            $q->store_result();
+                            $q->bind_result($id);
+
+                            while ($q->fetch()) {
+
+                                $temp_domain_id = $id;
+
+                            }
+
+                            $q->close();
+
+                        } else $error->outputSqlError($conn, "ERROR");
+
+                        $query = "INSERT INTO domain_field_data
+                                  (domain_id, insert_time)
+                                  VALUES
+                                  (?, ?)";
+                        $q = $conn->stmt_init();
+
+                        if ($q->prepare($query)) {
+
+                            $q->bind_param('is', $temp_domain_id, $timestamp);
+                            $q->execute();
+                            $q->close();
+
+                        } else $error->outputSqlError($conn, "ERROR");
 
                         $sql = "SELECT field_name
                                 FROM domain_fields
-                                ORDER BY name";
+                                ORDER BY `name`";
                         $result = mysqli_query($connection, $sql);
 
                         if (mysqli_num_rows($result) > 0) {

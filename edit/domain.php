@@ -150,28 +150,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $new_total_cost = $row->total_cost;
         }
 
-        $sql_update = "UPDATE domains
-                       SET owner_id = '" . $new_owner_id . "',
-                           registrar_id = '" . $new_registrar_id . "',
-                           account_id = '" . $new_account_id . "',
-                           domain = '" . mysqli_real_escape_string($connection, $new_domain) . "',
-                           tld = '" . $tld . "',
-                           expiry_date = '" . $new_expiry_date . "',
-                           cat_id = '" . $new_cat_id . "',
-                           dns_id = '" . $new_dns_id . "',
-                           ip_id = '" . $new_ip_id . "',
-                           hosting_id = '" . $new_hosting_id . "',
-                           fee_id = '" . $temp_fee_id . "',
-                           total_cost = '" . $new_total_cost . "',
-                           `function` = '" . mysqli_real_escape_string($connection, $new_function) . "',
-                           notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-                           autorenew = '" . $new_autorenew . "',
-                           privacy = '" . $new_privacy . "',
-                           active = '" . $new_active . "',
-                           fee_fixed = '" . $temp_fee_fixed . "',
-                           update_time = '" . $timestamp . "'
-                       WHERE id = '" . $new_did . "'";
-        $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
+        $query = "UPDATE domains
+                  SET owner_id = ?,
+                      registrar_id = ?,
+                      account_id = ?,
+                      domain = ?,
+                      tld = ?,
+                      expiry_date = ?,
+                      cat_id = ?,
+                      dns_id = ?,
+                      ip_id = ?,
+                      hosting_id = ?,
+                      fee_id = ?,
+                      total_cost = ?,
+                      `function` = ?,
+                      notes = ?,
+                      autorenew = ?,
+                      privacy = ?,
+                      active = ?,
+                      fee_fixed = ?,
+                      update_time = ?
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('iiisssiiiiisssiiiisi', $new_owner_id, $new_registrar_id, $new_account_id, $new_domain, $tld,
+                $new_expiry_date, $new_cat_id, $new_dns_id, $new_ip_id, $new_hosting_id, $temp_fee_id, $new_total_cost,
+                $new_function, $new_notes, $new_autorenew, $new_privacy, $new_active, $temp_fee_fixed, $timestamp,
+                $new_did);
+            $q->execute();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
         $sql = "SELECT field_name
                 FROM domain_fields
