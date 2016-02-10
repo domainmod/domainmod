@@ -103,11 +103,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        $lines = explode("\r\n", $new_data);
+        $domain_list = explode("\r\n", $new_data);
 
         $domain = new DomainMOD\Domain();
 
-        list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($lines);
+        list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($domain_list);
 
         if ($new_data == "" || $invalid_domains == 1) {
 
@@ -143,8 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $new_data_formatted = "'" . $new_data;
             $new_data_formatted = $new_data_formatted . "'";
+            $new_data_formatted = $new_data;
             $new_data_formatted = preg_replace("/\r\n/", "','", $new_data_formatted);
-            $new_data_formatted = str_replace(" ", "", $new_data_formatted);
+            $new_data_formatted = str_replace(" ", "", $new_data);
             $new_data_formatted = trim($new_data_formatted);
 
             if ($action == "R") {
@@ -156,9 +157,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 while ($row = mysqli_fetch_object($result)) {
 
-                    $lines = explode("-", $row->expiry_date);
-                    $old_expiry = $lines[0] . "-" . $lines[1] . "-" . $lines[2];
-                    $new_expiry = $lines[0] + $new_renewal_years . "-" . $lines[1] . "-" . $lines[2];
+                    $expiry_pieces = explode("-", $row->expiry_date);
+                    $old_expiry = $expiry_pieces[0] . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
+                    $new_expiry = $expiry_pieces[0] + $new_renewal_years . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
 
                     if ($new_notes != "") {
 
@@ -209,12 +210,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $temp_registrar_id = $row->registrar_id;
                     }
 
-                    $lines = explode("\r\n", $new_data);
+                    $domain_list = explode("\r\n", $new_data);
 
-                    reset($lines);
+                    reset($domain_list);
 
                     // cycle through domains here
-                    while (list($key, $new_domain) = each($lines)) {
+                    while (list($key, $new_domain) = each($domain_list)) {
 
                         $new_tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 
@@ -366,9 +367,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 while ($row = mysqli_fetch_object($result)) {
 
-                    $lines = explode("-", $row->expiry_date);
-                    $old_expiry = $lines[0] . "-" . $lines[1] . "-" . $lines[2];
-                    $new_expiry = $lines[0] + $new_renewal_years . "-" . $lines[1] . "-" . $lines[2];
+                    $expiry_pieces = explode("-", $row->expiry_date);
+                    $old_expiry = $expiry_pieces[0] . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
+                    $new_expiry = $expiry_pieces[0] + $new_renewal_years . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
 
                     if ($new_renewal_years == "1") {
                         $renewal_years_string = $new_renewal_years . " Year";
@@ -874,32 +875,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET autorenew = '1',
                                   notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
-                              WHERE domain IN (?)";
+                              WHERE domain = ?";
                     $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
 
-                    if ($q->prepare($query)) {
+                    foreach ($domain_list AS $each_domain) {
 
-                        $q->bind_param('sss', $new_notes, $timestamp, $new_data_formatted);
+                        $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
-                        $q->close();
 
-                    } else $error->outputSqlError($conn, "ERROR");
+                    }
 
                 } else {
 
                     $query = "UPDATE domains
                               SET autorenew = '1',
                                   update_time = ?
-                              WHERE domain IN (?)";
+                              WHERE domain = ?";
                     $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
 
-                    if ($q->prepare($query)) {
+                    foreach ($domain_list AS $each_domain) {
 
-                        $q->bind_param('ss', $timestamp, $new_data_formatted);
+                        $q->bind_param('ss', $timestamp, $each_domain);
                         $q->execute();
-                        $q->close();
 
-                    } else $error->outputSqlError($conn, "ERROR");
+                    }
 
                 }
 
@@ -915,32 +916,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET autorenew = '0',
                                   notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
-                              WHERE domain IN (?)";
+                              WHERE domain = ?";
                     $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
 
-                    if ($q->prepare($query)) {
+                    foreach ($domain_list AS $each_domain) {
 
-                        $q->bind_param('sss', $new_notes, $timestamp, $new_data_formatted);
+                        $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
-                        $q->close();
 
-                    } else $error->outputSqlError($conn, "ERROR");
+                    }
 
                 } else {
 
                     $query = "UPDATE domains
                               SET autorenew = '0',
                                   update_time = ?
-                              WHERE domain IN (?)";
+                              WHERE domain = ?";
                     $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
 
-                    if ($q->prepare($query)) {
+                    foreach ($domain_list AS $each_domain) {
 
-                        $q->bind_param('ss', $timestamp, $new_data_formatted);
+                        $q->bind_param('ss', $timestamp, $each_domain);
                         $q->execute();
-                        $q->close();
 
-                    } else $error->outputSqlError($conn, "ERROR");
+                    }
 
                 }
 
