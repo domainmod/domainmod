@@ -224,6 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 WHERE registrar_id = '" . $temp_registrar_id . "'
                                   AND tld = '" . $new_tld . "'";
                         $result = mysqli_query($connection, $sql);
+
                         while ($row = mysqli_fetch_object($result)) {
                             $temp_fee_id = $row->id;
                         }
@@ -246,9 +247,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         }
 
                         $sql = "SELECT id, (" . $fee_string . ") AS total_cost
-                        FROM fees
-                        WHERE registrar_id = '" . $temp_registrar_id . "'
-                          AND tld = '" . $new_tld . "'";
+                                FROM fees
+                                WHERE registrar_id = '" . $temp_registrar_id . "'
+                                  AND tld = '" . $new_tld . "'";
                         $result = mysqli_query($connection, $sql);
 
                         while ($row = mysqli_fetch_object($result)) {
@@ -419,21 +420,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     if ($new_notes != "") {
 
-                        $sql = "UPDATE domains
-                                SET cat_id = '" . $new_pcid . "',
-                                    notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                    update_time = '" . $timestamp . "'
-                                WHERE domain IN (" . $new_data_formatted . ")";
+                        $query = "UPDATE domains
+                                  SET cat_id  = ?,
+                                      notes = CONCAT(?, '\r\n\r\n', notes),
+                                      update_time = ?
+                                  WHERE domain = ?";
+                        $q = $conn->stmt_init();
+                        $stmt = $q->prepare($query);
+
+                        foreach ($domain_list AS $each_domain) {
+
+                            $q->bind_param('isss', $new_pcid, $new_notes, $timestamp, $each_domain);
+                            $q->execute();
+
+                        }
 
                     } else {
 
-                        $sql = "UPDATE domains
-                                SET cat_id = '" . $new_pcid . "',
-                                    update_time = '" . $timestamp . "'
-                                WHERE domain IN (" . $new_data_formatted . ")";
+                        $query = "UPDATE domains
+                                  SET cat_id  = ?,
+                                      update_time = ?
+                                  WHERE domain = ?";
+                        $q = $conn->stmt_init();
+                        $stmt = $q->prepare($query);
+
+                        foreach ($domain_list AS $each_domain) {
+
+                            $q->bind_param('iss', $new_pcid, $timestamp, $each_domain);
+                            $q->execute();
+
+                        }
 
                     }
-                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $_SESSION['s_result_message'] = "Category Changed<BR>";
 
@@ -450,21 +468,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     if ($new_notes != "") {
 
-                        $sql = "UPDATE domains
-                                SET dns_id = '" . $new_dnsid . "',
-                                    notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                    update_time = '" . $timestamp . "'
-                                WHERE domain IN (" . $new_data_formatted . ")";
+                        $query = "UPDATE domains
+                                  SET dns_id  = ?,
+                                      notes = CONCAT(?, '\r\n\r\n', notes),
+                                      update_time = ?
+                                  WHERE domain = ?";
+                        $q = $conn->stmt_init();
+                        $stmt = $q->prepare($query);
+
+                        foreach ($domain_list AS $each_domain) {
+
+                            $q->bind_param('isss', $new_dnsid, $new_notes, $timestamp, $each_domain);
+                            $q->execute();
+
+                        }
 
                     } else {
 
-                        $sql = "UPDATE domains
-                                SET dns_id = '" . $new_dnsid . "',
-                                    update_time = '" . $timestamp . "'
-                                WHERE domain IN (" . $new_data_formatted . ")";
+                        $query = "UPDATE domains
+                                  SET dns_id  = ?,
+                                      update_time = ?
+                                  WHERE domain = ?";
+                        $q = $conn->stmt_init();
+                        $stmt = $q->prepare($query);
+
+                        foreach ($domain_list AS $each_domain) {
+
+                            $q->bind_param('iss', $new_dnsid, $timestamp, $each_domain);
+                            $q->execute();
+
+                        }
 
                     }
-                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $_SESSION['s_result_message'] = "DNS Profile Changed<BR>";
                 }
@@ -480,21 +515,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     if ($new_notes != "") {
 
-                        $sql = "UPDATE domains
-                                SET ip_id = '" . $new_ipid . "',
-                                    notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                    update_time = '" . $timestamp . "'
-                                WHERE domain IN (" . $new_data_formatted . ")";
+                        $query = "UPDATE domains
+                                  SET ip_id  = ?,
+                                      notes = CONCAT(?, '\r\n\r\n', notes),
+                                      update_time = ?
+                                  WHERE domain = ?";
+                        $q = $conn->stmt_init();
+                        $stmt = $q->prepare($query);
+
+                        foreach ($domain_list AS $each_domain) {
+
+                            $q->bind_param('isss', $new_ipid, $new_notes, $timestamp, $each_domain);
+                            $q->execute();
+
+                        }
 
                     } else {
 
-                        $sql = "UPDATE domains
-                                SET ip_id = '" . $new_ipid . "',
-                                    update_time = '" . $timestamp . "'
-                                WHERE domain IN (" . $new_data_formatted . ")";
+                        $query = "UPDATE domains
+                                  SET ip_id  = ?,
+                                      update_time = ?
+                                  WHERE domain = ?";
+                        $q = $conn->stmt_init();
+                        $stmt = $q->prepare($query);
+
+                        foreach ($domain_list AS $each_domain) {
+
+                            $q->bind_param('iss', $new_ipid, $timestamp, $each_domain);
+                            $q->execute();
+
+                        }
 
                     }
-                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $_SESSION['s_result_message'] = "IP Address Changed<BR>";
 
@@ -509,11 +561,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    $sql_update = "UPDATE domains
-                                   SET notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                          update_time = '" . $timestamp . "'
-                                   WHERE domain IN (" . $new_data_formatted . ")";
-                    $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
+                    $query = "UPDATE domains
+                              SET notes = CONCAT(?, '\r\n\r\n', notes),
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                     $_SESSION['s_result_message'] = "Note Added<BR>";
 
@@ -528,45 +588,78 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    $sql = "SELECT ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS r_name, o.id AS o_id, o.name AS o_name
-                            FROM registrar_accounts AS ra, registrars AS r, owners AS o
-                            WHERE ra.registrar_id = r.id
-                              AND ra.owner_id = o.id
-                              AND ra.id = '" . $new_raid . "'
-                            GROUP BY r.name, o.name, ra.username
-                            ORDER BY r.name ASC, o.name ASC, ra.username ASC";
-                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                    $query = "SELECT ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS r_name, o.id AS o_id,
+                                  o.name AS o_name
+                              FROM registrar_accounts AS ra, registrars AS r, owners AS o
+                              WHERE ra.registrar_id = r.id
+                                AND ra.owner_id = o.id
+                                AND ra.id = ?
+                              GROUP BY r.name, o.name, ra.username
+                              ORDER BY r.name ASC, o.name ASC, ra.username ASC";
+                    $q = $conn->stmt_init();
 
-                    while ($row = mysqli_fetch_object($result)) {
-                        $new_owner_id = $row->o_id;
-                        $new_registrar_id = $row->r_id;
-                        $new_registrar_account_id = $row->ra_id;
-                        $new_owner_name = $row->o_name;
-                        $new_registrar_name = $row->r_name;
-                        $new_username = $row->username;
-                    }
+                    if ($q->prepare($query)) {
+
+                        $q->bind_param('i', $new_raid);
+                        $q->execute();
+                        $q->store_result();
+                        $q->bind_result($ra_id, $username, $r_id, $r_name, $o_id, $o_name);
+
+                        while ($q->fetch()) {
+
+                            $new_registrar_account_id = $ra_id;
+                            $new_username = $username;
+                            $new_registrar_id = $r_id;
+                            $new_registrar_name = $r_name;
+                            $new_owner_id = $o_id;
+                            $new_owner_name = $o_name;
+
+                        }
+
+                        $q->close();
+
+                    } else $error->outputSqlError($conn, "ERROR");
 
                     if ($new_notes != "") {
 
-                        $sql = "UPDATE domains
-                                SET owner_id = '" . $new_owner_id . "',
-                                    registrar_id = '" . $new_registrar_id . "',
-                                    account_id = '" . $new_registrar_account_id . "',
-                                    notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                    update_time = '" . $timestamp . "'
-                                WHERE domain IN (" . $new_data_formatted . ")";
+                        $query = "UPDATE domains
+                                  SET owner_id = ?,
+                                      registrar_id = ?,
+                                      account_id = ?,
+                                      notes = CONCAT(?, '\r\n\r\n', notes),
+                                      update_time = '" . $timestamp . "'
+                                  WHERE domain = ?";
+                        $q = $conn->stmt_init();
+                        $stmt = $q->prepare($query);
+
+                        foreach ($domain_list AS $each_domain) {
+
+                            $q->bind_param('iiisss', $new_owner_id, $new_registrar_id, $new_registrar_account_id,
+                                $new_notes, $timestamp, $each_domain);
+                            $q->execute();
+
+                        }
 
                     } else {
 
-                        $sql = "UPDATE domains
-                                SET owner_id = '" . $new_owner_id . "',
-                                    registrar_id = '" . $new_registrar_id . "',
-                                    account_id = '" . $new_registrar_account_id . "',
-                                    update_time = '" . $timestamp . "'
-                                WHERE domain IN (" . $new_data_formatted . ")";
+                        $query = "UPDATE domains
+                                  SET owner_id = ?,
+                                      registrar_id = ?,
+                                      account_id = ?,
+                                      update_time = '" . $timestamp . "'
+                                  WHERE domain = ?";
+                        $q = $conn->stmt_init();
+                        $stmt = $q->prepare($query);
+
+                        foreach ($domain_list AS $each_domain) {
+
+                            $q->bind_param('iiiss', $new_owner_id, $new_registrar_id, $new_registrar_account_id,
+                                $timestamp, $each_domain);
+                            $q->execute();
+
+                        }
 
                     }
-                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $sql = "UPDATE domains
                             SET fee_id = '0', total_cost = '0'
@@ -623,21 +716,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     if ($new_notes != "") {
 
-                        $sql = "UPDATE domains
-                                SET hosting_id = '" . $new_whid . "',
-                                    notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                    update_time = '" . $timestamp . "'
-                                WHERE domain IN (" . $new_data_formatted . ")";
+                        $query = "UPDATE domains
+                                  SET hosting_id  = ?,
+                                      notes = CONCAT(?, '\r\n\r\n', notes),
+                                      update_time = ?
+                                  WHERE domain = ?";
+                        $q = $conn->stmt_init();
+                        $stmt = $q->prepare($query);
+
+                        foreach ($domain_list AS $each_domain) {
+
+                            $q->bind_param('isss', $new_whid, $new_notes, $timestamp, $each_domain);
+                            $q->execute();
+
+                        }
 
                     } else {
 
-                        $sql = "UPDATE domains
-                                SET hosting_id = '" . $new_whid . "',
-                                    update_time = '" . $timestamp . "'
-                                WHERE domain IN (" . $new_data_formatted . ")";
+                        $query = "UPDATE domains
+                                  SET hosting_id  = ?,
+                                      update_time = ?
+                                  WHERE domain = ?";
+                        $q = $conn->stmt_init();
+                        $stmt = $q->prepare($query);
+
+                        foreach ($domain_list AS $each_domain) {
+
+                            $q->bind_param('iss', $new_whid, $timestamp, $each_domain);
+                            $q->execute();
+
+                        }
 
                     }
-                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $_SESSION['s_result_message'] = "Web Hosting Provider Changed<BR>";
 
@@ -703,21 +813,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes != "") {
 
-                    $sql = "UPDATE domains
-                            SET active = '0',
-                                notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET active = '0',
+                                  notes = CONCAT(?, '\r\n\r\n', notes),
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 } else {
 
-                    $sql = "UPDATE domains
-                            SET active = '0',
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET active = '0',
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('ss', $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 }
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $_SESSION['s_result_message'] = "Domains marked as expired<BR>";
 
@@ -727,21 +854,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes != "") {
 
-                    $sql = "UPDATE domains
-                            SET active = '10',
-                                notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET active = '10',
+                                  notes = CONCAT(?, '\r\n\r\n', notes),
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 } else {
 
-                    $sql = "UPDATE domains
-                            SET active = '10',
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET active = '10',
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('ss', $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 }
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $_SESSION['s_result_message'] = "Domains marked as sold<BR>";
 
@@ -751,21 +895,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes != "") {
 
-                    $sql = "UPDATE domains
-                            SET active = '1',
-                                notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET active = '1',
+                                  notes = CONCAT(?, '\r\n\r\n', notes),
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 } else {
 
-                    $sql = "UPDATE domains
-                            SET active = '1',
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET active = '1',
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('ss', $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 }
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $_SESSION['s_result_message'] = "Domains marked as active<BR>";
 
@@ -775,21 +936,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes != "") {
 
-                    $sql = "UPDATE domains
-                            SET active = '2',
-                                notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET active = '2',
+                                  notes = CONCAT(?, '\r\n\r\n', notes),
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 } else {
 
-                    $sql = "UPDATE domains
-                            SET active = '2',
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN ($new_data_formatted)";
+                    $query = "UPDATE domains
+                              SET active = '2',
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('ss', $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 }
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $_SESSION['s_result_message'] = "Domains marked as In Transfer<BR>";
 
@@ -799,21 +977,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes != "") {
 
-                    $sql = "UPDATE domains
-                            SET active = '5',
-                                notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET active = '5',
+                                  notes = CONCAT(?, '\r\n\r\n', notes),
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 } else {
 
-                    $sql = "UPDATE domains
-                            SET active = '5',
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET active = '5',
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('ss', $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 }
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $_SESSION['s_result_message'] = "Domains marked as Pending (Registration)<BR>";
 
@@ -823,21 +1018,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes != "") {
 
-                    $sql = "UPDATE domains
-                            SET active = '3',
-                                notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET active = '3',
+                                  notes = CONCAT(?, '\r\n\r\n', notes),
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 } else {
 
-                    $sql = "UPDATE domains
-                            SET active = '3',
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET active = '3',
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('ss', $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 }
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $_SESSION['s_result_message'] = "Domains marked as Pending (Renewal)<BR>";
 
@@ -847,21 +1059,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes != "") {
 
-                    $sql = "UPDATE domains
-                            SET active = '4',
-                                notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET active = '4',
+                                  notes = CONCAT(?, '\r\n\r\n', notes),
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 } else {
 
-                    $sql = "UPDATE domains
-                            SET active = '4',
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET active = '4',
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('ss', $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 }
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $_SESSION['s_result_message'] = "Domains marked as Pending (Other)<BR>";
 
@@ -951,21 +1180,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes != "") {
 
-                    $sql = "UPDATE domains
-                            SET privacy = '1',
-                                notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET privacy = '1',
+                                  notes = CONCAT(?, '\r\n\r\n', notes),
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 } else {
 
-                    $sql = "UPDATE domains
-                            SET privacy = '1',
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET privacy = '1',
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('ss', $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 }
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $sql = "SELECT d.id, (f.renewal_fee + f.privacy_fee + f.misc_fee) AS total_cost
                             FROM domains AS d, fees AS f
@@ -990,21 +1236,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes != "") {
 
-                    $sql = "UPDATE domains
-                            SET privacy = '0',
-                                notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET privacy = '0',
+                                  notes = CONCAT(?, '\r\n\r\n', notes),
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 } else {
 
-                    $sql = "UPDATE domains
-                            SET privacy = '0',
-                                update_time = '" . $timestamp . "'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                    $query = "UPDATE domains
+                              SET privacy = '0',
+                                  update_time = ?
+                              WHERE domain = ?";
+                    $q = $conn->stmt_init();
+                    $stmt = $q->prepare($query);
+
+                    foreach ($domain_list AS $each_domain) {
+
+                        $q->bind_param('ss', $timestamp, $each_domain);
+                        $q->execute();
+
+                    }
 
                 }
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 $sql = "SELECT d.id, (f.renewal_fee + f.misc_fee) AS total_cost
                             FROM domains AS d, fees AS f
@@ -1034,21 +1297,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     if ($new_notes != "") {
 
-                        $sql = "UPDATE domains
-                                SET expiry_date = '" . $new_expiry_date . "',
-                                    notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                    update_time = '" . $timestamp . "'
-                                WHERE domain IN (" . $new_data_formatted . ")";
+                        $query = "UPDATE domains
+                                  SET expiry_date = ?,
+                                      notes = CONCAT(?, '\r\n\r\n', notes),
+                                      update_time = ?
+                                  WHERE domain = ?";
+                        $q = $conn->stmt_init();
+                        $stmt = $q->prepare($query);
+
+                        foreach ($domain_list AS $each_domain) {
+
+                            $q->bind_param('ssss', $new_expiry_date, $new_notes, $timestamp, $each_domain);
+                            $q->execute();
+
+                        }
 
                     } else {
 
-                        $sql = "UPDATE domains
-                                SET expiry_date = '" . $new_expiry_date . "',
-                                    update_time = '" . $timestamp . "'
-                                WHERE domain IN (" . $new_data_formatted . ")";
+                        $query = "UPDATE domains
+                                  SET expiry_date = ?,
+                                      update_time = ?
+                                  WHERE domain = ?";
+                        $q = $conn->stmt_init();
+                        $stmt = $q->prepare($query);
+
+                        foreach ($domain_list AS $each_domain) {
+
+                            $q->bind_param('sss', $new_expiry_date, $timestamp, $each_domain);
+                            $q->execute();
+
+                        }
 
                     }
-                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $_SESSION['s_result_message'] = "Expiry Date Updated<BR>";
 
