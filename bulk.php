@@ -31,6 +31,8 @@ $error = new DomainMOD\Error();
 $maint = new DomainMOD\Maintenance();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Time();
+$bulk = new DomainMOD\Bulk();
+
 $timestamp = $time->stamp();
 $timestamp_basic = $time->timeBasic();
 $timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
@@ -148,38 +150,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $new_data_formatted = str_replace(" ", "", $new_data);
             $new_data_formatted = trim($new_data_formatted);
 
-            if ($action == "R") {
+            if ($action == "RENEW") {
 
-                $sql = "SELECT domain, expiry_date
-                        FROM domains
-                        WHERE domain IN (" . $new_data_formatted . ")";
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-                while ($row = mysqli_fetch_object($result)) {
-
-                    $expiry_pieces = explode("-", $row->expiry_date);
-                    $old_expiry = $expiry_pieces[0] . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
-                    $new_expiry = $expiry_pieces[0] + $new_renewal_years . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
-
-                    if ($new_notes != "") {
-
-                        $sql_update = "UPDATE domains
-                                       SET expiry_date = '" . $new_expiry . "',
-                                              notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
-                                           update_time = '" . $timestamp . "'
-                                       WHERE domain = '" . $row->domain . "'";
-
-                    } else {
-
-                        $sql_update = "UPDATE domains
-                                       SET expiry_date = '" . $new_expiry . "',
-                                              update_time = '" . $timestamp . "'
-                                       WHERE domain = '" . $row->domain . "'";
-
-                    }
-                    $result_update = mysqli_query($connection, $sql_update);
-
-                }
+                $bulk->renewDomains($conn, $domain_list, $new_renewal_years, $new_notes);
 
                 $_SESSION['s_result_message'] = "Domains Renewed<BR>";
 
@@ -1410,7 +1383,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <?php if ($action == "AD") { ?>
             <BR><strong>The following domains were added:</strong><BR>
-        <?php } elseif ($action == "R") { ?>
+        <?php } elseif ($action == "RENEW") { ?>
             <BR><strong>The following domains were renewed for <?php echo $new_renewal_years; ?>
                 year<?php if ($new_renewal_years > 1) {
                     echo "s";
@@ -1487,7 +1460,7 @@ multiple domains all at once.<BR><BR>
             echo " selected";
         } ?>>Renew Domains (Update Expiry Date, Mark Active, Add Note)
         </option>
-        <option value="bulk.php?action=R"<?php if ($action == "R") {
+        <option value="bulk.php?action=RENEW"<?php if ($action == "RENEW") {
             echo " selected";
         } ?>>Renew Domains (Update Expiry Date Only)
         </option>
@@ -1613,7 +1586,7 @@ multiple domains all at once.<BR><BR>
         <BR><BR>
     <?php } ?>
 
-    <?php if ($action == "R" || $action == "FR") { ?>
+    <?php if ($action == "RENEW" || $action == "FR") { ?>
         <strong>Renew For</strong>
         <select name="new_renewal_years">
             <option value="1"<?php if ($new_renewal_years == "1") {
