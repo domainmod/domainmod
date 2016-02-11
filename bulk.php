@@ -192,15 +192,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $new_tld = preg_replace("/^((.*?)\.)(.*)$/", "\\3", $new_domain);
 
-                        $sql = "SELECT id
-                                FROM fees
-                                WHERE registrar_id = '" . $temp_registrar_id . "'
-                                  AND tld = '" . $new_tld . "'";
-                        $result = mysqli_query($connection, $sql);
+                        $query = "SELECT id
+                                  FROM fees
+                                  WHERE registrar_id = ?
+                                    AND tld = ?";
+                        $q = $conn->stmt_init();
 
-                        while ($row = mysqli_fetch_object($result)) {
-                            $temp_fee_id = $row->id;
-                        }
+                        if ($q->prepare($query)) {
+
+                            $q->bind_param('is', $temp_registrar_id, $new_tld);
+                            $q->execute();
+                            $q->store_result();
+                            $q->bind_result($id);
+
+                            while ($q->fetch()) {
+
+                                $temp_fee_id = $id;
+
+                            }
+
+                            $q->close();
+
+                        } else $error->outputSqlError($conn, "ERROR");
 
                         if ($temp_fee_id == '0' || $temp_fee_id == "") {
                             $temp_fee_fixed = 0;
