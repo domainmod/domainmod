@@ -35,7 +35,7 @@ class Domain
 
         while (list($key, $domain) = each($lines)) {
 
-            if (!$this->checkDomainFormat($domain)) {
+            if (!$this->checkFormat($domain)) {
 
                 if ($invalid_count < $invalid_to_display) {
 
@@ -54,7 +54,7 @@ class Domain
 
     }
 
-    public function checkDomainFormat($input_domain)
+    public function checkFormat($input_domain)
     {
 
         /*
@@ -71,6 +71,67 @@ class Domain
 
         return $input_domain;
 
+    }
+
+    public function renew($conn, $domain, $renewal_years, $notes)
+    {
+        $expiry_date = $this->getExpiry($conn, $domain);
+        $new_expiry = $this->getNewExpiry($expiry_date, $renewal_years);
+        $this->writeNewExpiry($conn, $domain, $new_expiry, $notes);
+    }
+
+    public function getExpiry($conn, $domain)
+    {
+        $query = "SELECT expiry_date
+                  FROM domains
+                  WHERE domain = ?";
+        $q = $conn->stmt_init();
+        $q->prepare($query);
+        $q->bind_param('s', $domain);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($expiry);
+        while ($q->fetch()) { $expiry_date = $expiry; }
+        $q->close();
+        return $expiry_date;
+    }
+
+    public function getNewExpiry($expiry_date, $renewal_years)
+    {
+        $expiry_pieces = explode("-", $expiry_date);
+        return $expiry_pieces[0] + $renewal_years . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
+    }
+
+    public function writeNewExpiry($conn, $domain, $new_expiry, $notes)
+    {
+        $time = new Time();
+        $timestamp = $time->stamp();
+
+        if ($notes != '') {
+
+            $query = "UPDATE domains
+                      SET expiry_date = ?,
+                          notes = CONCAT(?, '\r\n\r\n', notes),
+                          update_time = ?
+                      WHERE domain = ?";
+            $q = $conn->stmt_init();
+            $q->prepare($query);
+            $q->bind_param('ssss', $new_expiry, $notes, $timestamp, $domain);
+
+        } else {
+
+            $query = "UPDATE domains
+                      SET expiry_date = ?,
+                          update_time = ?
+                      WHERE domain = ?";
+            $q = $conn->stmt_init();
+            $q->prepare($query);
+            $q->bind_param('sss', $new_expiry, $timestamp, $domain);
+
+        }
+
+        $q->execute();
+        $q->close();
     }
 
 }

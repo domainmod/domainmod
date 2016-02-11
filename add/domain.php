@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $date = new DomainMOD\Date();
     $domain = new DomainMOD\Domain();
 
-    if ($date->checkDateFormat($new_expiry_date) && $domain->checkDomainFormat($new_domain) && $new_cat_id != "" &&
+    if ($date->checkDateFormat($new_expiry_date) && $domain->checkFormat($new_domain) && $new_cat_id != "" &&
         $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" &&
         $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0"
     ) {
@@ -287,7 +287,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if (!$domain->checkDomainFormat($new_domain)) {
+        if (!$domain->checkFormat($new_domain)) {
             $_SESSION['s_result_message'] .= "The domain format is
             incorrect<BR>";
         }

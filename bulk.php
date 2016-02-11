@@ -31,7 +31,7 @@ $error = new DomainMOD\Error();
 $maint = new DomainMOD\Maintenance();
 $system = new DomainMOD\System();
 $time = new DomainMOD\Time();
-$bulk = new DomainMOD\Bulk();
+$domain = new DomainMOD\Domain();
 
 $timestamp = $time->stamp();
 $timestamp_basic = $time->timeBasic();
@@ -107,8 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $domain_list = explode("\r\n", $new_data);
 
-        $domain = new DomainMOD\Domain();
-
         list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($domain_list);
 
         if ($new_data == "" || $invalid_domains == 1) {
@@ -154,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 foreach ($domain_list AS $each_domain) {
 
-                    $bulk->renewDomain($conn, $each_domain, $new_renewal_years, $new_notes);
+                    $domain->renew($conn, $each_domain, $new_renewal_years, $new_notes);
 
                 }
 
