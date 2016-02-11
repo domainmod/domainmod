@@ -25,15 +25,11 @@ namespace DomainMOD;
 class Bulk
 {
 
-    public function renewDomains($conn, $domain_list, $renewal_years, $notes)
+    public function renewDomain($conn, $domain, $renewal_years, $notes)
     {
-        foreach ($domain_list AS $each_domain) {
-
-            $expiry_date = $this->getDomainExpiry($conn, $each_domain);
-            $new_expiry = $this->getNewDomainExpiry($expiry_date, $renewal_years);
-            $this->writeNewDomainExpiry($conn, $each_domain, $new_expiry, $notes);
-
-        }
+        $expiry_date = $this->getDomainExpiry($conn, $domain);
+        $new_expiry = $this->getNewDomainExpiry($expiry_date, $renewal_years);
+        $this->writeNewDomainExpiry($conn, $domain, $new_expiry, $notes);
     }
 
     public function getDomainExpiry($conn, $domain)

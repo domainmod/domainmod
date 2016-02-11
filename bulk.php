@@ -152,7 +152,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($action == "RENEW") {
 
-                $bulk->renewDomains($conn, $domain_list, $new_renewal_years, $new_notes);
+                foreach ($domain_list AS $each_domain) {
+
+                    $bulk->renewDomain($conn, $each_domain, $new_renewal_years, $new_notes);
+
+                }
 
                 $_SESSION['s_result_message'] = "Domains Renewed<BR>";
 
@@ -232,15 +236,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         }
 
-                        $sql = "SELECT id, (" . $fee_string . ") AS total_cost
-                                FROM fees
-                                WHERE registrar_id = '" . $temp_registrar_id . "'
-                                  AND tld = '" . $new_tld . "'";
-                        $result = mysqli_query($connection, $sql);
+                        $query = "SELECT id, (" . $fee_string . ") AS total_cost
+                                  FROM fees
+                                  WHERE registrar_id = ?
+                                    AND tld = ?";
+                        $q = $conn->stmt_init();
 
-                        while ($row = mysqli_fetch_object($result)) {
-                            $new_total_cost = $row->total_cost;
-                        }
+                        if ($q->prepare($query)) {
+
+                            $q->bind_param('is', $temp_registrar_id, $new_tld);
+                            $q->execute();
+                            $q->store_result();
+                            $q->bind_result($cost);
+
+                            while ($q->fetch()) {
+
+                                $new_total_cost = $cost;
+
+                            }
+
+                            $q->close();
+
+                        } else $error->outputSqlError($conn, "ERROR");
 
                         $query = "INSERT INTO domains
                                   (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id,
