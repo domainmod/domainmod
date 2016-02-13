@@ -181,7 +181,7 @@ if ($really_del == "1") {
     <input name="new_host" type="text" value="<?php if ($new_host != "") echo htmlentities($new_host); ?>
 " size="50" maxlength="100">
     <BR><BR>
-    <strong>Registrar's URL (100)</strong>
+    <strong>Web Host's URL (100)</strong>
     <a title="Required Field">
         <div class="default_highlight"><strong>*</strong></div>
     </a><BR><BR>
