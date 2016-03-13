@@ -26,40 +26,27 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/dw-list-zones.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $domain = $_GET['domain'];
-$search_for = $_REQUEST['search_for'];
 $export_data = $_GET['export_data'];
 
 // Search Navigation Variables
 $numBegin = $_REQUEST['numBegin'];
 $begin = $_REQUEST['begin'];
 $num = $_REQUEST['num'];
-
-if ($search_for != "") $domain = "";
-
-$page_title = "Data Warehouse";
-if ($_SESSION['s_dw_view_all'] == "1") {
-
-    $page_subtitle = "Listing All DNS Zones & Records";
-
-} else {
-
-    $page_subtitle = 'Listing DNS Zones & Records on ' . $_SESSION['s_dw_server_name'] . ' (' . $_SESSION['s_dw_server_host'] . ')';
-
-}
-$software_section = "admin-dw-list-dns-zones";
 
 if ($_SESSION['s_dw_view_all'] == "1") {
 
@@ -85,24 +72,11 @@ if ($domain != "") {
 
 } else {
 
-    if ($search_for != "") {
-
-        $sql = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-                FROM dw_dns_zones AS z, dw_servers AS s
-                WHERE z.server_id = s.id
-                  AND z.domain LIKE '%" . $search_for . "%'" .
+    $sql = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+            FROM dw_dns_zones AS z, dw_servers AS s
+            WHERE z.server_id = s.id" .
             $where_clause . "
-                ORDER BY s.name, z.zonefile, z.domain";
-
-    } else {
-
-        $sql = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-                FROM dw_dns_zones AS z, dw_servers AS s
-                WHERE z.server_id = s.id" .
-            $where_clause . "
-                ORDER BY s.name, z.zonefile, z.domain";
-
-    }
+            ORDER BY s.name, z.zonefile, z.domain";
 
 }
 
@@ -116,9 +90,6 @@ if ($export_data == "1") {
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
 
-    $row_contents = array($page_subtitle);
-    $export->writeRow($export_file, $row_contents);
-
     $export->writeBlankRow($export_file);
 
     if ($domain != "") {
@@ -130,20 +101,9 @@ if ($export_data == "1") {
 
     } else {
 
-        if ($search_for != "") {
-
-            $sql_total_records = "SELECT count(*) AS total_dns_record_count
-                                  FROM dw_dns_records
-                                  WHERE domain LIKE '%" . $search_for . "%'" .
-                $where_clause_no_join;
-
-        } else {
-
-            $sql_total_records = "SELECT count(*) AS total_dns_record_count
-                                  FROM dw_dns_records" .
-                $where_clause_no_join_first_line;
-
-        }
+        $sql_total_records = "SELECT count(*) AS total_dns_record_count
+                              FROM dw_dns_records" .
+                              $where_clause_no_join_first_line;
 
     }
     $result_total_records = mysqli_query($connection, $sql_total_records);
@@ -167,18 +127,6 @@ if ($export_data == "1") {
     $export->writeRow($export_file, $row_contents);
 
     $export->writeBlankRow($export_file);
-
-    if ($search_for != "") {
-
-        $row_contents = array(
-            'Keyword Search:',
-            "\"" . $search_for . "\""
-        );
-        $export->writeRow($export_file, $row_contents);
-
-        $export->writeBlankRow($export_file);
-
-    }
 
     if ($domain != "") {
 
@@ -279,16 +227,9 @@ if ($export_data == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()">
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<div class="subheadline"><?php echo $page_subtitle; ?></div>
-<BR><?php
-
-$totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
-$layout = new DomainMOD\Layout();
-$parameters = array($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
-$navigate = $layout->pageBrowser($parameters);
-$sql = $sql . $navigate[0];
+<?php
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 if (mysqli_num_rows($result) == 0) {
@@ -297,67 +238,38 @@ if (mysqli_num_rows($result) == 0) {
 
 } else { ?>
 
-    <form name="form1" method="post">
-        <input type="text" name="search_for" size="17" value="<?php echo $search_for; ?>">&nbsp;
-        <input type="submit" name="button" value="Search &raquo;">
-        <input type="hidden" name="begin" value="0">
-        <input type="hidden" name="num" value="1">
-        <input type="hidden" name="numBegin" value="1">
-    </form><BR>
+    <a href="list-zones.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-    <strong>[<a
-            href="list-zones.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php echo $search_for; ?>">EXPORT</a>]</strong>
-    <BR><BR><?php
+    $dwdisplay = new DomainMOD\DwDisplay(); ?>
 
-    if ($domain != "") {
+    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        <thead>
+        <tr>
+            <th width="20px"></th>
+            <th>Zone</th>
+            <th>Data</th>
+        </tr>
+        </thead>
+        <tbody><?php
 
-        $sql_total_records = "SELECT count(*) AS total_dns_record_count
-                              FROM dw_dns_records
-                              WHERE domain = '" . $domain . "'" .
-            $where_clause_no_join;
+        while ($row = mysqli_fetch_object($result)) { ?>
 
-    } else {
+            <tr>
+                <td></td>
+                <td>
+                    <?php echo $dwdisplay->zoneSidebar($connection, $row->server_id, $row->domain, '1', '1'); ?>
+                </td>
+                <td>
+                    <?php echo $dwdisplay->zone($connection, $row->server_id, $row->domain); ?>
+                </td>
+            </tr><?php
 
-        if ($search_for != "") {
+        } ?>
 
-            $sql_total_records = "SELECT count(*) AS total_dns_record_count
-                                  FROM dw_dns_records
-                                  WHERE domain LIKE '%" . $search_for . "%'" .
-                $where_clause_no_join;
+        </tbody>
+    </table><?php
 
-        } else {
-
-            $sql_total_records = "SELECT count(*) AS total_dns_record_count
-                                  FROM dw_dns_records" .
-                $where_clause_no_join_first_line;
-
-        }
-
-    }
-    $result_total_records = mysqli_query($connection, $sql_total_records);
-
-    while ($row_total_dns_record_count = mysqli_fetch_object($result_total_records)) {
-
-        $total_records_temp = $row_total_dns_record_count->total_dns_record_count;
-
-    } ?>
-
-    <strong>Number of DNS Zones:</strong> <?php echo number_format($totalrows); ?><BR><BR>
-
-    <strong>Number of DNS Records:</strong> <?php echo number_format($total_records_temp); ?><BR><BR>
-    <?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?><BR><?php
-
-    $dwdisplay = new DomainMOD\DwDisplay();
-
-    echo $dwdisplay->tableTop();
-    while ($row = mysqli_fetch_object($result)) {
-        echo $dwdisplay->zone($connection, $row->server_id, $row->domain, '1', '1', '1');
-    }
-    echo $dwdisplay->tableBottom();
-
-}
-?>
-<?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?>
+} ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

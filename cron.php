@@ -28,8 +28,10 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 require DIR_ROOT . 'vendor/autoload.php';
 
-$conversion = new DomainMOD\Conversion();
+$system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $maint = new DomainMOD\Maintenance();
+$conversion = new DomainMOD\Conversion();
 $schedule = new DomainMOD\Scheduler();
 $time = new DomainMOD\Time();
 $timestamp = $time->stamp();
@@ -37,7 +39,6 @@ $timestamp = $time->stamp();
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "config-demo.inc.php");
-include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 if ($demo_install != '1') {
@@ -52,8 +53,6 @@ if ($demo_install != '1') {
               AND is_running = '0'
               AND next_run <= '" . $timestamp . "'";
     $result = mysqli_query($connection, $sql);
-
-    $system = new DomainMOD\System();
 
     while ($row = mysqli_fetch_object($result)) {
 
@@ -94,6 +93,14 @@ if ($demo_install != '1') {
 
             $schedule->isRunning($connection, $row->id);
             $system->checkVersion($connection, $software_version);
+            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
+            $schedule->isFinished($connection, $row->id);
+
+        } elseif ($row->slug == 'data-warehouse-build') {
+
+            $dw = new DomainMOD\DwBuild();
+            $schedule->isRunning($connection, $row->id);
+            $dw->build($connection);
             $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 

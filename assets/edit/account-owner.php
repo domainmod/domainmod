@@ -26,27 +26,24 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-edit-owner.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = "Editing An Account Owner";
-$software_section = "account-owners-edit";
-
-// 'Delete Owner' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 $oid = $_GET['oid'];
 
-// Form Variables
 $new_owner = $_POST['new_owner'];
 $new_notes = $_POST['new_notes'];
 $new_oid = $_POST['new_oid'];
@@ -76,14 +73,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $oid = $new_oid;
 
-        $_SESSION['s_result_message'] = "Owner <div class=\"highlight\">$new_owner</div> Updated<BR>";
+        $_SESSION['s_message_success'] = "Owner " . $new_owner . " Updated<BR>";
 
         header("Location: ../account-owners.php");
         exit;
 
     } else {
 
-        $_SESSION['s_result_message'] = "Please enter the owner's name<BR>";
+        $_SESSION['s_message_danger'] = "Enter the owner's name<BR>";
 
     }
 
@@ -209,26 +206,25 @@ if ($del == "1") {
     ) {
 
         if ($existing_registrar_accounts > 0) {
-            $_SESSION['s_result_message'] .= "This Owner has registrar accounts associated with it and cannot be
+            $_SESSION['s_message_danger'] .= "This Owner has registrar accounts associated with it and cannot be
                 deleted<BR>";
         }
 
         if ($existing_domains > 0) {
-            $_SESSION['s_result_message'] .= "This Owner has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] .= "This Owner has domains associated with it and cannot be deleted<BR>";
         }
 
         if ($existing_ssl_accounts > 0) {
-            $_SESSION['s_result_message'] .= "This Owner has SSL accounts associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] .= "This Owner has SSL accounts associated with it and cannot be deleted<BR>";
         }
 
         if ($existing_ssl_certs > 0) {
-            $_SESSION['s_result_message'] .= "This Owner has SSL certificates associated with it and cannot be
-                deleted<BR>";
+            $_SESSION['s_message_danger'] .= "This Owner has SSL certificates associated with it and cannot be deleted<BR>";
         }
 
     } else {
 
-        $_SESSION['s_result_message'] = "Are you sure you want to delete this Owner?<BR><BR><a
+        $_SESSION['s_message_danger'] = "Are you sure you want to delete this Owner?<BR><BR><a
             href=\"account-owner.php?oid=$oid&really_del=1\">YES, REALLY DELETE THIS OWNER</a><BR>";
 
     }
@@ -251,7 +247,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_result_message'] = "Owner <div class=\"highlight\">$new_owner</div> Deleted<BR>";
+    $_SESSION['s_message_success'] = "Owner " . $new_owner . " Deleted<BR>";
 
     header("Location: ../account-owners.php");
     exit;
@@ -264,23 +260,17 @@ if ($really_del == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="edit_owner_form" method="post">
-    <strong>Owner Name (100)</strong>
-    <a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a><BR><BR>
-    <input name="new_owner" type="text" value="<?php if ($new_owner != "") echo htmlentities($new_owner); ?>
-" size="50" maxlength="100">
-    <BR><BR>
-    <strong>Notes</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-    <input type="hidden" name="new_oid" value="<?php echo $oid; ?>">
-    <BR><BR>
-    <input type="submit" name="button" value="Update This Account Owner &raquo;">
-</form>
-<BR><BR><a href="account-owner.php?oid=<?php echo $oid; ?>&del=1">DELETE THIS OWNER</a>
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_owner', 'Owner Name (100)', '', $new_owner, '100', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputHidden('new_oid', $oid);
+echo $form->showSubmitButton('Save', '', '');
+echo $form->showFormBottom('');
+?>
+<BR><a href="account-owner.php?oid=<?php echo $oid; ?>&del=1">DELETE THIS OWNER</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

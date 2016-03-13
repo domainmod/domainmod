@@ -18,14 +18,13 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class DwDisplay
 {
-//@formatter:off
-    public function account($connection, $server_id, $domain, $show_sidebar, $show_heading, $show_url)
+
+    public function account($connection, $server_id, $domain, $show_heading, $show_url)
     { 
         $result_account = $this->getAccount($connection, $server_id, $domain);
         $result = '';
@@ -33,9 +32,8 @@ class DwDisplay
         while ($row = mysqli_fetch_object($result_account)) {
 
             ob_start();  ?>
-            <tr class="main_table_row_active_no_hover"><?php
-            echo $this->accountSidebar($row->server_name, $domain, $show_sidebar, $show_heading, $show_url); ?>
-            <td class="main_table_cell_active_top_aligned">
+
+            <td align="left" valign="top">
                 <strong>Created:</strong> <?php echo date("Y M jS", $row->unix_startdate); ?><BR>
                 <strong>Contact:</strong> <?php echo $row->email; ?><BR>
                 <strong>IP Address:</strong> <?php echo $row->ip; ?><BR>
@@ -43,14 +41,14 @@ class DwDisplay
                 <strong>cPanel Theme:</strong> <?php echo $row->theme; ?><BR>
                 <strong>User, Owner:</strong> <?php echo $row->user; ?>, <?php echo $row->owner; ?>
             </td>
-            <td class="main_table_cell_active_top_aligned">
+            <td align="left" valign="top">
                 <strong>Shell:</strong> <?php echo $row->shell; ?><BR>
                 <strong>Home:</strong> /<?php echo $row->partition; ?> /<?php echo $row->user; ?><BR>
                 <strong>HD Quota:</strong> <?php echo $row->disklimit; ?>
                 <?php if ($row->disklimit != "unlimited") echo " MB"; ?><BR>
                 <strong>HD Used:</strong> <?php echo number_format($row->diskused); ?> MB
             </td>
-            <td class="main_table_cell_active_top_aligned">
+            <td align="left" valign="top">
                 <strong>POP:</strong> <?php echo $row->maxpop; ?><BR>
                 <strong>Lists:</strong> <?php echo $row->maxlst; ?><BR>
                 <strong>Addons:</strong> <?php echo $row->maxaddons; ?><BR>
@@ -59,13 +57,13 @@ class DwDisplay
                 <strong>FTP:</strong> <?php echo $row->maxftp; ?><BR>
                 <strong>Parked:</strong> <?php echo $row->maxparked; ?><BR><BR>
             </td>
-            <td class="main_table_cell_active_top_aligned">
+            <td align="left" valign="top">
                 <strong>Suspended?</strong> <?php echo $row->suspended; ?><BR>
                 <strong>When?</strong> <?php echo $row->suspendtime; ?><BR>
                 <strong>Why?</strong> <?php echo $row->suspendreason; ?>
-            </td>
-            </tr><?php
-            $result = ob_get_clean(); 
+            </td><?php
+
+            $result = ob_get_clean();
         }
         return $result;
     } 
@@ -82,20 +80,15 @@ class DwDisplay
         return mysqli_query($connection, $sql);
     }
 
-    public function accountSidebar($server_name, $domain, $show_sidebar, $show_heading, $show_url)
+    public function accountSidebar($server_name, $domain, $show_heading, $show_url)
     { 
         ob_start();
         $result = '';
-
-        if ($show_sidebar == '1') { ?>
-            <td class="main_table_cell_active_top_aligned"><?php
-                echo $this->showHeading($domain, $show_heading);
-                $server_wrapped = wordwrap($server_name, 20, "<BR>", true);
-                echo $server_wrapped . "<BR>";
-                echo $this->showUrl($domain, 'zone', 'list-zones.php', $show_url); ?>
-            </td><?php
-            $result = ob_get_clean();
-        }
+        echo $this->showHeading($domain, $show_heading);
+        $server_wrapped = wordwrap($server_name, 20, "<BR>", true);
+        echo $server_wrapped . "<BR>";
+        echo $this->showUrl($domain, 'zone', 'list-zones.php', $show_url);
+        $result = ob_get_clean();
         return $result;
     } 
 
@@ -115,62 +108,58 @@ class DwDisplay
         $result = '';
         
         if ($show_url == '1') {
-            $result = "[<a class=\"invisiblelink\"
-                href=\"" . $url . "?domain=" . $domain . "\">" . $text . "</a>]";
+            $result = "[<a href=\"" . $url . "?domain=" . $domain . "\">" . $text . "</a>]";
         }
         return $result;
     } 
 
-    public function zone($connection, $server_id, $domain, $show_sidebar, $show_heading, $show_url)
+    public function zone($connection, $server_id, $domain)
     { 
-        ob_start(); ?>
-
-        <table class="main_table" cellpadding="0" cellspacing="0">
-        <tr class="main_table_row_active_no_hover"><?php
-
-        echo $this->zoneSidebar($connection, $server_id, $domain, $show_sidebar, $show_heading, $show_url);
+        ob_start();
 
         $result_zone = $this->getZone($connection, $server_id, $domain);
 
         while ($row_zone = mysqli_fetch_object($result_zone)) {
-            $result_records = $this->getRecords($connection, $row_zone->zone_id); ?>
-            <td>
-                <table class="main_table_no_right_padding" cellpadding="0" cellspacing="0"><?php
 
-                    while ($row = mysqli_fetch_object($result_records)) { ?>
-                        <tr class="main_table_row_active_no_right_padding">
-                        <td class="main_table_cell_active_top_aligned_no_right_padding" width="70" align="right"
-                            valign="top"><?php echo $row->formatted_type; ?></td>
-                        <td class="main_table_cell_active_top_aligned_no_right_padding" width="46" align="center"><?php
-                            echo $row->formatted_line; ?></td>
-                        <td class="main_table_cell_active_top_aligned_no_right_padding"><?php
-                            echo $row->formatted_output; ?></td>
-                        </tr><?php
-                    } ?>
-                </table><BR><BR>
-            </td>
-        </tr>
-        </table><?php
+            $result_records = $this->getRecords($connection, $row_zone->zone_id); ?>
+
+            <table><?php
+
+                while ($row = mysqli_fetch_object($result_records)) { ?>
+
+                    <tr>
+                        <td align="right" valign="top">
+                            <?php echo $row->formatted_type; ?>
+                        </td>
+                        <td align="center" valign="top"><?php
+                            echo $row->formatted_line; ?>
+                        </td>
+                        <td align="left" valign="top"><?php
+                            echo $row->formatted_output; ?>
+                        </td>
+                    </tr><?php
+
+                } ?>
+
+            </table><?php
+
         }
         $result = ob_get_clean();
         return $result;
     } 
 
-    public function zoneSidebar($connection, $server_id, $domain, $show_sidebar, $show_heading, $show_url)
+    public function zoneSidebar($connection, $server_id, $domain, $show_heading, $show_url)
     { 
         ob_start();
         $result = '';
 
-        if ($show_sidebar == '1') { ?>
-            <td class="main_table_cell_active_top_aligned" width="130"><?php
-                $zone = $this->getZonefile($connection, $server_id, $domain);
-                echo $this->showHeading($zone, $show_heading);
-                $server_name = $this->getServerName($connection, $server_id);
-                echo $server_name . "<BR>";
-                echo $this->showURL($domain, 'account', 'list-accounts.php', $show_url); ?>
-            </td><?php
-            $result = ob_get_clean();
-        }
+        $zone = $this->getZonefile($connection, $server_id, $domain);
+        echo $this->showHeading($zone, $show_heading);
+        $server_name = $this->getServerName($connection, $server_id);
+        echo $server_name . "<BR>";
+        echo $this->showURL($domain, 'account', 'list-accounts.php', $show_url);
+        $result = ob_get_clean();
+
         return $result;
     } 
 
@@ -210,26 +199,12 @@ class DwDisplay
     public function getRecords($connection, $zone_id)
     {
         $sql = "SELECT address, cname, `exchange`, expire, line, minimum, mname, `name`, nsdname, preference, raw,
-                    refresh, retry, rname, `serial`, ttl, txtdata, type, formatted_type, formatted_line,
+                    refresh, retry, rname, `serial`, ttl, txtdata, type, formatted_line, formatted_type,
                     formatted_output
                 FROM dw_dns_records
                 WHERE dns_zone_id = '" . $zone_id . "'
                 ORDER BY new_order";
         return mysqli_query($connection, $sql);
     }
-
-    public function tableTop()
-    { 
-        ob_start(); ?>
-        <table class="main_table" cellpadding="0" cellspacing="0" border="0"><tr><?php
-        return ob_get_clean();
-    } 
-
-    public function tableBottom()
-    { 
-        ob_start(); ?>
-        </tr></table><?php
-        return ob_get_clean();
-    }  
 
 } //@formatter:on

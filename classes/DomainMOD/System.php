@@ -18,26 +18,25 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class System
 {
 
     public function installCheck($connection, $web_root)
-    { //@formatter:off
+    {
         $full_install_path = DIR_ROOT . "install/";
         if (is_dir($full_install_path) &&
             !mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_servers` . "'"))) {
             $installation_mode = 1;
-            $result_message = "<a href=\"" . $web_root . "/install/\">Click here to install</a><BR>";
+            $result_message = "DomainMOD is not yet installed<BR><BR><a href=\"" . $web_root . "/install/\">Click here to start the installation</a><BR>";
         } else {
             $installation_mode = 0;
             $result_message = '';
         }
         return array($installation_mode, $result_message);
-    } //@formatter:on
+    }
 
     public function checkVersion($connection, $current_version)
     {
@@ -70,11 +69,6 @@ class System
         return $software_title . " :: " . $page_title;
     }
 
-    public function pageTitleSub($software_title, $page_title, $page_subtitle)
-    {
-        return $software_title . " :: " . $page_title . " :: " . $page_subtitle;
-    }
-
     public function checkExistingAssets($connection)
     {
         $queryB = new QueryBuild();
@@ -95,22 +89,22 @@ class System
     }
 
     public function checkForRows($connection, $sql)
-    { //@formatter:off
+    {
         $result = mysqli_query($connection, $sql);
         if (mysqli_num_rows($result) >= 1) { return '1'; } else { return '0'; }
-    } //@formatter:on
+    }
 
     public function checkForRowsResult($connection, $sql)
-    { //@formatter:off
+    {
         $result = mysqli_query($connection, $sql);
         if (mysqli_num_rows($result) >= 1) { return $result; } else { return '0'; }
-    } //@formatter:on
+    }
 
     public function authCheck()
     {
         if ($_SESSION['s_is_logged_in'] != 1) {
             $_SESSION['s_user_redirect'] = $_SERVER["REQUEST_URI"];
-            $_SESSION['s_result_message'] = "You must be logged in to access this area<BR>";
+            $_SESSION['s_message_danger'] = "You must be logged in to access this area<BR>";
             header("Location: " . $_SESSION['s_web_root'] . "/");
             exit;
         }
@@ -119,7 +113,7 @@ class System
     public function loginCheck()
     {
         if ($_SESSION['s_is_logged_in'] == 1) {
-            header("Location: " . $_SESSION['s_web_root'] . "/domains.php");
+            header("Location: " . $_SESSION['s_web_root'] . "/dashboard/");
             exit;
         }
     }
@@ -132,15 +126,40 @@ class System
         }
     }
 
-    public function showResultMessage($result_message)
-    { //@formatter:off
+    public function showMessageSuccess($result_message)
+    {
         ob_start(); ?>
-        <div class="result_message_outer">
-            <div class="result_message_inner">
-                <?php echo $result_message; ?>
-            </div>
+        <BR>
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <h4><i class="icon fa fa-check"></i> Success!</h4>
+            <?php echo $result_message; ?>
         </div><?php
         return ob_get_clean();
-    } //@formatter:on
+    }
 
-}
+    public function showMessageDanger($result_message)
+    {
+        ob_start(); ?>
+        <BR>
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <h4><i class="icon fa fa-exclamation-triangle"></i> Alert!</h4>
+            <?php echo $result_message; ?>
+        </div><?php
+        return ob_get_clean();
+    }
+
+    public function showMaintenanceTable($result_message)
+    {
+        ob_start(); ?>
+        <BR>
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <h4><i class="icon fa fa-exclamation-triangle"></i> Alert!</h4>
+            <?php echo $result_message; ?>
+        </div><?php
+        return ob_get_clean();
+    }
+
+} //@formatter:on

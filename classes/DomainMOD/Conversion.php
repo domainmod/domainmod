@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Conversion
@@ -47,7 +46,7 @@ class Conversion
 
         }
 
-        $result_message = 'Conversion Rates Updated<BR>';
+        $result_message = 'Conversion Rates updated<BR>';
 
         return $result_message;
 
@@ -126,4 +125,4 @@ class Conversion
 
     }
 
-}
+} //@formatter:on

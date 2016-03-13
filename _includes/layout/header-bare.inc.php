@@ -19,4 +19,6 @@
  *
  */
 ?>
-    <a href="<?php echo $web_root . "/domains.php\"><img border=\"0\" src=\"" . $web_root . "/images/logo.png\"></a><BR><BR>";
+<BR><BR>
+<div style="text-align: <?php echo $page_align; ?>;">
+    <BR><a href="<?php echo $web_root . "/dashboard/\"><img border=\"0\" src=\"" . $web_root . "/images/logo-lg.png\"></a><BR><BR>"; ?>

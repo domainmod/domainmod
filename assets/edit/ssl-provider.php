@@ -26,19 +26,18 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-edit-ssl-provider.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-
-$page_title = "Editing An SSL Provider";
-$software_section = "ssl-providers-edit";
 
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
@@ -51,7 +50,7 @@ $new_sslpid = $_POST['new_sslpid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_ssl_provider != "" && $new_url != "") {
+    if ($new_ssl_provider != "") {
 
         $query = "UPDATE ssl_providers
                   SET `name` = ?,
@@ -75,15 +74,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $sslpid = $new_sslpid;
 
-        $_SESSION['s_result_message'] = "SSL Provider <div class=\"highlight\">$new_ssl_provider</div> Updated<BR>";
+        $_SESSION['s_message_success'] = "SSL Provider " . $new_ssl_provider . " Updated<BR>";
 
         header("Location: ../ssl-providers.php");
         exit;
 
     } else {
 
-        if ($new_ssl_provider == "") $_SESSION['s_result_message'] .= "Please enter the SSL provider's name<BR>";
-        if ($new_url == "") $_SESSION['s_result_message'] .= "Please enter the SSL provider's URL<BR>";
+        if ($new_ssl_provider == "") $_SESSION['s_message_danger'] .= "Enter the SSL provider's name<BR>";
 
     }
 
@@ -161,14 +159,14 @@ if ($del == "1") {
 
     if ($existing_ssl_provider_accounts > 0 || $existing_ssl_certs > 0) {
 
-        if ($existing_ssl_provider_accounts > 0) $_SESSION['s_result_message'] .= "This SSL Provider has Accounts
+        if ($existing_ssl_provider_accounts > 0) $_SESSION['s_message_danger'] .= "This SSL Provider has Accounts
             associated with it and cannot be deleted<BR>";
-        if ($existing_ssl_certs > 0) $_SESSION['s_result_message'] .= "This SSL Provider has SSL Certificates associated
+        if ($existing_ssl_certs > 0) $_SESSION['s_message_danger'] .= "This SSL Provider has SSL Certificates associated
             with it and cannot be deleted<BR>";
 
     } else {
 
-        $_SESSION['s_result_message'] = "Are you sure you want to delete this SSL Provider?<BR><BR><a
+        $_SESSION['s_message_danger'] = "Are you sure you want to delete this SSL Provider?<BR><BR><a
             href=\"ssl-provider.php?sslpid=$sslpid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER</a><BR>";
 
     }
@@ -219,7 +217,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_result_message'] = "SSL Provider <div class=\"highlight\">$new_ssl_provider</div> Deleted<BR>";
+    $_SESSION['s_message_success'] = "SSL Provider " . $new_ssl_provider . " Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 
@@ -234,30 +232,17 @@ if ($really_del == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="edit_ssl_provider_form" method="post">
-    <strong>SSL Provider Name (100)</strong>
-    <a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a><BR><BR>
-    <input name="new_ssl_provider" type="text" value="<?php echo htmlentities($new_ssl_provider); ?>" size="50"
-           maxlength="100">
-    <BR><BR>
-    <strong>SSL Provider's URL (100)</strong><a title="Required Field">
-        <div
-            class="default_highlight"><strong>*</strong>
-        </div>
-    </a><BR><BR>
-    <input name="new_url" type="text" value="<?php echo htmlentities($new_url); ?>" size="50" maxlength="100">
-    <BR><BR>
-    <strong>Notes</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-    <input type="hidden" name="new_sslpid" value="<?php echo $sslpid; ?>">
-    <BR><BR>
-    <input type="submit" name="button" value="Update This SSL Provider &raquo;">
-</form>
-<BR><BR><a href="ssl-provider-fees.php?sslpid=<?php echo $sslpid; ?>">EDIT THIS SSL PROVIDER'S FEES</a><BR>
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_ssl_provider', 'SSL Provider Name (100)', '', $new_ssl_provider, '100', '', '', '');
+echo $form->showInputText('new_url', 'SSL Provider\'s URL', '', $new_url, '100', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputHidden('new_sslpid', $sslpid);
+echo $form->showSubmitButton('Save', '', '');
+echo $form->showFormBottom('');
+?>
 <BR><a href="ssl-provider.php?sslpid=<?php echo $sslpid; ?>&del=1">DELETE THIS SSL PROVIDER</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

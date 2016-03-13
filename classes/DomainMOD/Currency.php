@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Currency
@@ -40,4 +39,4 @@ class Currency
         return $formatted_output;
     }
 
-}
+} //@formatter:on

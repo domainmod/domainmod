@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Format
@@ -34,4 +33,15 @@ class Format
 
     }
 
-}
+    public function replaceBreaks($input_notes)
+    {
+
+        $output_notes = trim($input_notes);
+        $output_notes = str_replace("\n\n", "<BR><BR>", $output_notes);
+        $output_notes = str_replace("\n", "<BR>", $output_notes);
+
+        return $output_notes;
+
+    }
+
+} //@formatter:on

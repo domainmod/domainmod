@@ -26,27 +26,24 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-edit-category.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = "Editing A Category";
-$software_section = "categories-edit";
-
-// 'Delete Category' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 $pcid = $_GET['pcid'];
 
-// Form Variables
 $new_category = $_REQUEST['new_category'];
 $new_stakeholder = $_REQUEST['new_stakeholder'];
 $new_notes = $_REQUEST['new_notes'];
@@ -78,14 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $pcid = $new_pcid;
 
-        $_SESSION['s_result_message'] = "Category <div class=\"highlight\">$new_category</div> Updated<BR>";
+        $_SESSION['s_message_success'] = "Category " . $new_category . " Updated<BR>";
 
         header("Location: ../categories.php");
         exit;
 
     } else {
 
-        $_SESSION['s_result_message'] = "Please enter the category name<BR>";
+        $_SESSION['s_message_danger'] = "Enter the category name<BR>";
 
     }
 
@@ -127,11 +124,11 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['s_result_message'] = "This Category has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] = "This Category has domains associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['s_result_message'] = "Are you sure you want to delete this Category?<BR><BR><a
+            $_SESSION['s_message_danger'] = "Are you sure you want to delete this Category?<BR><BR><a
                 href=\"category.php?pcid=" . $pcid . "&really_del=1\">YES, REALLY DELETE THIS CATEGORY</a><BR>";
 
         }
@@ -160,7 +157,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_result_message'] = "Category <div class=\"highlight\">$new_category</div> Deleted<BR>";
+    $_SESSION['s_message_success'] = "Category " . $new_category . " Deleted<BR>";
 
     header("Location: ../categories.php");
     exit;
@@ -173,27 +170,18 @@ if ($really_del == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="edit_category_form" method="post">
-    <strong>Category Name (150)</strong>
-    <a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a><BR><BR>
-    <input name="new_category" type="text" value="<?php if ($new_category != "") echo htmlentities($new_category); ?>
-" size="50" maxlength="150">
-    <BR><BR>
-    <strong>Stakeholder (100)</strong><BR><BR>
-    <input name="new_stakeholder" type="text" value="<?php if ($new_stakeholder != "")
-        echo htmlentities($new_stakeholder); ?>" size="50" maxlength="100">
-    <BR><BR>
-    <strong>Notes</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-    <BR><BR>
-    <input type="hidden" name="new_pcid" value="<?php echo $pcid; ?>">
-    <input type="submit" name="button" value="Update This Category &raquo;">
-</form>
-<BR><BR><a href="category.php?pcid=<?php echo $pcid; ?>&del=1">DELETE THIS CATEGORY</a>
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_category', 'Category Name (150)', '', $new_category, '150', '', '', '');
+echo $form->showInputText('new_stakeholder', 'Stakeholder (100)', '', $new_stakeholder, '100', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputHidden('new_pcid', $pcid);
+echo $form->showSubmitButton('Save', '', '');
+echo $form->showFormBottom('');
+?>
+<BR><a href="category.php?pcid=<?php echo $pcid; ?>&del=1">DELETE THIS CATEGORY</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

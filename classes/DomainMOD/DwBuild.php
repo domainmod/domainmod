@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class DwBuild
@@ -72,7 +71,7 @@ class DwBuild
         $has_empty = $this->checkDwAssets($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records);
         $this->updateEmpty($connection, $has_empty);
 
-        $result_message = 'Data Warehouse Rebuilt.';
+        $result_message = 'The Data Warehouse has been rebuilt.';
 
         return $result_message;
 
@@ -193,4 +192,4 @@ class DwBuild
 
     }
 
-}
+} //@formatter:on

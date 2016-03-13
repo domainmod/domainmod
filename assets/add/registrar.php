@@ -26,28 +26,26 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-add-registrar.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = "Adding A New Registrar";
-$software_section = "registrars-add";
-
-// Form Variables
 $new_registrar = $_POST['new_registrar'];
 $new_url = $_POST['new_url'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_registrar != "" && $new_url != "") {
+    if ($new_registrar != "") {
 
         $query = "INSERT INTO registrars
                   (`name`, url, notes, insert_time)
@@ -67,13 +65,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_result_message'] = "Registrar <div class=\"highlight\">" . $new_registrar . "</div> Added<BR>";
+        $_SESSION['s_message_success'] = "Registrar " . $new_registrar . " Added<BR>";
 
         if ($_SESSION['s_has_registrar'] != '1') {
 
             $system->checkExistingAssets($connection);
 
-            header("Location: ../../domains.php");
+            header("Location: ../../domains/index.php");
 
         } else {
 
@@ -84,8 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_registrar == "") $_SESSION['s_result_message'] .= "Please enter the registrar name<BR>";
-        if ($new_url == "") $_SESSION['s_result_message'] .= "Please enter the registrar's URL<BR>";
+        if ($new_registrar == "") $_SESSION['s_message_danger'] .= "Enter the registrar name<BR>";
 
     }
 
@@ -97,26 +94,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()">
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="add_registrar_form" method="post">
-    <strong>Registrar Name (100)</strong>
-    <a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a><BR><BR>
-    <input name="new_registrar" type="text" value="<?php echo $new_registrar; ?>" size="50" maxlength="100">
-    <BR><BR>
-    <strong>Registrar's URL (100)</strong>
-    <a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a><BR><BR>
-    <input name="new_url" type="text" value="<?php echo $new_url; ?>" size="50" maxlength="100">
-    <BR><BR>
-    <strong>Notes</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-    <BR><BR>
-    <input type="submit" name="button" value="Add This Registrar &raquo;">
-</form>
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_registrar', 'Registrar Name (100)', '', $new_registrar, '100', '', '', '');
+echo $form->showInputText('new_url', 'Registrar\'s URL (100)', '', $new_url, '100', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showSubmitButton('Add Domain Registrar', '', '');
+echo $form->showFormBottom('');
+?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

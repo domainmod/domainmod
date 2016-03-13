@@ -28,19 +28,17 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$form = new DomainMOD\Form();
 $time = new DomainMOD\Time();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/settings-password.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = "Change Password";
-$software_section = "system-change-password";
-
-// Form Variables
 $new_password = $_POST['new_password'];
 $new_password_confirmation = $_POST['new_password_confirmation'];
 
@@ -63,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
         if ($q->num_rows() === 1) {
 
             $query_update = "UPDATE users
-                             SET password = password(?),
+                             SET `password` = password(?),
                                  new_password = '0',
                                  update_time = ?
                              WHERE id = ?
@@ -83,15 +81,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
                 $error->outputSqlError($conn, "ERROR");
             }
 
-            $_SESSION['s_result_message'] .= "Your password has been changed<BR>";
+            $_SESSION['s_message_success'] .= "Password changed<BR>";
 
             header("Location: ../index.php");
             exit;
 
         } else {
 
-            $_SESSION['s_result_message'] .= "Your password could not be updated<BR>";
-            $_SESSION['s_result_message'] .= "If the problem persists please contact your administrator<BR>";
+            $_SESSION['s_message_danger'] .= "Your password could not be updated<BR>";
+            $_SESSION['s_message_danger'] .= "If the problem persists please contact your administrator<BR>";
 
         }
 
@@ -107,11 +105,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
 
         if ($new_password == "" && $new_password_confirmation == "") {
 
-            $_SESSION['s_result_message'] .= "Your passwords were left blank<BR>";
+            $_SESSION['s_message_danger'] .= "Your passwords were left blank<BR>";
 
         } else {
 
-            $_SESSION['s_result_message'] .= "Your passwords didn't match<BR>";
+            $_SESSION['s_message_danger'] .= "Your passwords didn't match<BR>";
 
         }
 
@@ -124,16 +122,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()">
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="change_password_form" method="post">
-    <strong>New Password (255)</strong><BR><BR><input type="password" name="new_password" size="20" maxlength="255">
-    <BR><BR>
-    <strong>Confirm New Password</strong><BR><BR><input type="password" name="new_password_confirmation" size="20"
-                                                        maxlength="255">
-    <BR><BR>
-    <input type="submit" name="button" value="Change Password &raquo;">
-</form>
+
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_password', 'New Password (255)', '', '', '255', '1', '', '');
+echo $form->showInputText('new_password_confirmation', 'Confirm New Password', '', '', '255', '1', '', '');
+echo $form->showSubmitButton('Change Password', '', '');
+echo $form->showFormBottom('');
+?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

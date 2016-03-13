@@ -26,19 +26,18 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-edit-ssl-type.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-
-$page_title = "Editing An SSL Type";
-$software_section = "ssl-types-edit";
 
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
@@ -74,14 +73,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $ssltid = $new_ssltid;
 
-        $_SESSION['s_result_message'] = "SSL Type <div class=\"highlight\">$new_type</div> Updated<BR>";
+        $_SESSION['s_message_success'] = "SSL Type " . $new_type . " Updated<BR>";
 
         header("Location: ../ssl-types.php");
         exit;
 
     } else {
 
-        $_SESSION['s_result_message'] = "Please enter the Type name<BR>";
+        $_SESSION['s_message_danger'] = "Enter the Type name<BR>";
 
     }
 
@@ -122,11 +121,11 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['s_result_message'] = "This Type has SSL certificates associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] = "This Type has SSL certificates associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['s_result_message'] = "Are you sure you want to delete this SSL Type?<BR><BR><a
+            $_SESSION['s_message_danger'] = "Are you sure you want to delete this SSL Type?<BR><BR><a
                 href=\"ssl-type.php?ssltid=$ssltid&really_del=1\">YES, REALLY DELETE THIS TYPE</a><BR>";
 
         }
@@ -155,7 +154,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_result_message'] = "SSL Type <div class=\"highlight\">$new_type</div> Deleted<BR>";
+    $_SESSION['s_message_success'] = "SSL Type " . $new_type . " Deleted<BR>";
 
     header("Location: ../ssl-types.php");
     exit;
@@ -168,23 +167,17 @@ if ($really_del == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="edit_type_form" method="post">
-    <strong>Type Name (100)</strong><a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a>
-    <BR><BR>
-    <input name="new_type" type="text" value="<?php if ($new_type != "") echo htmlentities($new_type); ?>
-" size="50" maxlength="100">
-    <BR><BR>
-    <strong>Notes</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-    <input type="hidden" name="new_ssltid" value="<?php echo $ssltid; ?>">
-    <BR><BR>
-    <input type="submit" name="button" value="Update This SSL Type &raquo;">
-</form>
-<BR><BR><a href="ssl-type.php?ssltid=<?php echo $ssltid; ?>&del=1">DELETE THIS TYPE</a>
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_type', 'Type (100)', '', $new_type, '100', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputHidden('new_ssltid', $ssltid);
+echo $form->showSubmitButton('Save', '', '');
+echo $form->showFormBottom('');
+?>
+<BR><a href="ssl-type.php?ssltid=<?php echo $ssltid; ?>&del=1">DELETE THIS TYPE</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

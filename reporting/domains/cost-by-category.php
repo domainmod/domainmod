@@ -19,57 +19,54 @@
  *
  */
 ?>
-<?php
+<?php //@formatter:off
 include("../../_includes/start-session.inc.php");
 include("../../_includes/init.inc.php");
 
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$currency = new DomainMOD\Currency();
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
+$layout = new DomainMOD\Layout;
 $time = new DomainMOD\Time();
+$reporting = new DomainMOD\Reporting();
+$currency = new DomainMOD\Currency();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/reporting-domain-cost-by-category.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = $reporting_section_title;
-$page_subtitle = "Domain Cost by Category Report";
-$software_section = "reporting-domain-cost-by-category-report";
-$report_name = "domain-cost-by-category-report";
-
-// Form Variables
 $export_data = $_GET['export_data'];
 $all = $_GET['all'];
-$new_start_date = $_REQUEST['new_start_date'];
-$new_end_date = $_REQUEST['new_end_date'];
+$daterange = $_REQUEST['daterange'];
+
+$new_start_date = substr($daterange, 0, 10);
+$new_end_date = substr($daterange, -10, 10);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
-    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date >
-        $new_end_date
-    ) {
+    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date > $new_end_date) {
 
-        if (!$date->checkDateFormat($new_start_date)) $_SESSION['s_result_message'] .= "The start date is invalid<BR>";
-        if (!$date->checkDateFormat($new_end_date)) $_SESSION['s_result_message'] .= "The end date is invalid<BR>";
-        if ($new_start_date > $new_end_date) $_SESSION['s_result_message'] .= "The end date proceeds the start date<BR>";
+        if (!$date->checkDateFormat($new_start_date)) $_SESSION['s_message_danger'] .= 'The start date is invalid<BR>';
+        if (!$date->checkDateFormat($new_end_date)) $_SESSION['s_message_danger'] .= 'The end date is invalid<BR>';
+        if ($new_start_date > $new_end_date) $_SESSION['s_message_danger'] .= 'The end date proceeds the start date<BR>';
 
-        $submission_failed = "1";
+        $submission_failed = '1';
 
     }
 
-    $all = "0";
+    $all = '0';
 
 }
 
-$reporting = new DomainMOD\Reporting();
 $range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_date, $new_end_date);
 
 $sql = "SELECT cat.id, cat.name, SUM(d.total_cost * cc.conversion) AS total_cost, count(*) AS number_of_domains
@@ -96,6 +93,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, cou
                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                       " . $range_string . "";
 $result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
+
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $grand_total = $row_grand_total->grand_total;
     $number_of_domains_total = $row_grand_total->number_of_domains_total;
@@ -104,15 +102,15 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
     $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-if ($submission_failed != "1" && $total_rows > 0) {
+if ($submission_failed != '1' && $total_rows > 0) {
 
-    if ($export_data == "1") {
+    if ($export_data == '1') {
 
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $export = new DomainMOD\Export();
 
-        if ($all == "1") {
+        if ($all == '1') {
 
             $export_file = $export->openFile('domain_cost_by_category_report_all', strtotime($time->stamp()));
 
@@ -125,12 +123,12 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
         }
 
-        $row_contents = array($page_subtitle);
+        $row_contents = array($page_title);
         $export->writeRow($export_file, $row_contents);
 
         $export->writeBlankRow($export_file);
 
-        if ($all != "1") {
+        if ($all != '1') {
 
             $row_contents = array('Date Range:', $new_start_date, $new_end_date);
 
@@ -158,128 +156,98 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
         $row_contents = array(
             'Category',
-            'Domains',
             'Cost',
+            'Domains',
             'Per Domain'
         );
         $export->writeRow($export_file, $row_contents);
 
-        while ($row = mysqli_fetch_object($result)) {
+        if (mysqli_num_rows($result) > 0) {
 
-            $per_domain = $row->total_cost / $row->number_of_domains;
+            while ($row = mysqli_fetch_object($result)) {
 
-            $per_domain = $currency->format($per_domain, $_SESSION['s_default_currency_symbol'],
-                $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+                $per_domain = $row->total_cost / $row->number_of_domains;
 
-            $row->total_cost = $currency->format($row->total_cost, $_SESSION['s_default_currency_symbol'],
-                $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+                $per_domain = $currency->format($per_domain, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-            $row_contents = array(
-                $row->name,
-                $row->number_of_domains,
-                $row->total_cost,
-                $per_domain
-            );
-            $export->writeRow($export_file, $row_contents);
+                $row->total_cost = $currency->format($row->total_cost, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+                $row_contents = array(
+                    $row->name,
+                    $row->total_cost,
+                    $row->number_of_domains,
+                    $per_domain
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
 
         }
-
         $export->closeFile($export_file);
 
     }
+
+} else {
+
+    $total_rows = '0';
 
 }
 ?>
 <?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <?php include(DIR_INC . "layout/date-range-picker-head.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
-<?php echo $reporting->showTableTop(); ?>
-<form name="export_domains_form" method="post">
-    <a href="cost-by-category.php?all=1">View All</a> or Expiring Between
-    <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") {
-        echo "value=\"" . $time->toUserTimezone($time->timeBasic(), 'Y-m-d') . "\"";
-    } else {
-        echo "value=\"$new_start_date\"";
-    } ?>>
-    and
-    <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") {
-        echo "value=\"" . $time->toUserTimezone($time->timeBasic(), 'Y-m-d') . "\"";
-    } else {
-        echo "value=\"$new_end_date\"";
-    } ?>>
-    &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-    <?php if ($total_rows > 0) { //@formatter:off ?>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-category.php?export_data=1&new_start_date=<?php
-              echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php
-              echo $all; ?>">EXPORT REPORT</a>]</strong>
-    <?php } //@formatter:on ?>
-</form>
-<?php echo $reporting->showTableBottom(); ?>
 <?php
-if ($submission_failed != "1" && $total_rows > 0) { ?>
+if ($submission_failed != '1' && $total_rows > 0) { ?>
 
-    <BR>
-    <div class="subheadline"><?php echo $page_subtitle; ?></div><BR>
+    <?php include(DIR_INC . "layout/reporting-block-sub.inc.php"); ?>
 
-    <?php if ($all != "1") { ?>
-        <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
-    <?php } else { ?>
-        <strong>Date Range:</strong> ALL<BR><BR>
-    <?php } ?>
+    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        <thead>
+        <tr>
+            <th width="20px"></th>
+            <th>Category</th>
+            <th>Cost</th>
+            <th>Domains</th>
+            <th>Per Domain</th>
+        </tr>
+        </thead>
+        <tbody><?php
 
-    <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?><BR><BR>
-    <strong>Number of Domains:</strong> <?php echo $number_of_domains_total; ?><BR>
-    <table class="main_table" cellpadding="0" cellspacing="0">
-    <tr class="main_table_row_heading_active">
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Category</div>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Domains</div>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Cost</div>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Per Domain</div>
-        </td>
-    </tr>
+        while ($row = mysqli_fetch_object($result)) {
 
-    <?php
-    while ($row = mysqli_fetch_object($result)) {
+            $per_domain = $row->total_cost / $row->number_of_domains;
 
-        $per_domain = $row->total_cost / $row->number_of_domains;
+            $per_domain = $currency->format($per_domain, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-        $per_domain = $currency->format($per_domain, $_SESSION['s_default_currency_symbol'],
-            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+            $row->total_cost = $currency->format($row->total_cost, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']); ?>
 
-        $row->total_cost = $currency->format($row->total_cost, $_SESSION['s_default_currency_symbol'],
-            $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']); ?>
+            <tr>
+                <td></td>
+                <td><?php echo $row->name; ?></td>
+                <td><?php echo $row->total_cost; ?></td>
+                <td><a href="../../domains/index.php?pcid=<?php echo $row->id; ?>"><?php echo $row->number_of_domains; ?></a></td>
+                <td><?php echo $per_domain; ?></td>
+            </tr><?php
 
-        <tr class="main_table_row_active">
-        <td class="main_table_cell_active">
-            <a class="invisiblelink" href="../../domains.php?pcid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
-        </td>
-        <td class="main_table_cell_active">
-            <a class="invisiblelink" href="../../domains.php?pcid=<?php echo $row->id; ?>"><?php
-                echo $row->number_of_domains; ?></a>
-        </td>
-        <td class="main_table_cell_active"><?php echo $row->total_cost; ?></td>
-        <td class="main_table_cell_active"><?php echo $per_domain; ?></td>
-        </tr><?php
+        } ?>
 
-    }
-    ?>
+        </tbody>
     </table><?php
+
+} else {
+
+    echo 'No results.<BR><BR>';
 
 }
 ?>
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); //@formatter:on ?>
+<?php include(DIR_INC . "layout/date-range-picker-footer.inc.php"); ?>
 </body>
 </html>

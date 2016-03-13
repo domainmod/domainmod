@@ -26,23 +26,23 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$schedule = new DomainMOD\Scheduler();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "config-demo.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/admin-scheduler-main.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
-$page_title = "Task Scheduler";
-$software_section = "admin-system-task-scheduler";
-
-$sql = "SELECT id
+$sql = "SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
         FROM scheduler
         ORDER BY sort_order ASC";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -53,7 +53,7 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 The Task Scheduler allows you to run various system jobs at specified times, which helps keep your <?php
 echo $software_title; ?> installation up-to-date and running smoothly, as well as notifies you of important information,
@@ -63,19 +63,70 @@ In order to use the Task Scheduler you must setup a cron/scheduled job on your w
 <strong>cron.php</strong>, which is located in the root folder of your <?php echo $software_title; ?> installation.
 This file should be executed <em>every 10 minutes</em>, and once it's setup the Task Scheduler will be live.<BR>
 <BR>
-Using the Task Scheduler is optional, but <em>highly</em> recommended.
-<BR><BR>
-<?php
-$dwdisplay = new DomainMOD\DwDisplay();
-$schedule = new DomainMOD\Scheduler();
+Using the Task Scheduler is optional, but <em>highly</em> recommended.<BR>
+<table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
 
-echo $dwdisplay->tableTop();
-while ($row = mysqli_fetch_object($result)) {
-    echo $schedule->show($connection, $row->id);
-}
-echo $dwdisplay->tableBottom();
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody><?php
 
-?>
+    $row = mysqli_fetch_object($schedule->getTask($connection, $row->id));
+    $hour = explode(" ", $row->expression);
+
+    while ($row = mysqli_fetch_object($result)) { ?>
+
+        <tr>
+        <td>
+            <h4><?php echo $row->name; ?></h4><?php echo $row->description ?><BR><BR><BR>
+        </td>
+        <td>
+            <strong>Runs:</strong> <?php echo $row->interval; ?><BR>
+
+            <strong>Status:</strong> <?php echo $schedule->createActive($row->active, $row->id); ?><BR><?php
+
+            if ($row->last_run != '0000-00-00 00:00:00') {
+                $last_run = $time->toUserTimezone($schedule->getDateOutput($row->last_run));
+            } else {
+                $last_run = '-';
+
+            } ?>
+
+            <strong>Last Run:</strong> <?php echo $last_run; ?><?php echo $row->last_duration; ?><BR><?php
+
+            if ($row->next_run != '0000-00-00 00:00:00') {
+                $next_run = $time->toUserTimezone($schedule->getDateOutput($row->next_run));
+                $hour = date('H', strtotime($next_run));
+            } else {
+                $next_run = '-';
+
+            } ?>
+
+            <strong>Next Run:</strong> <?php echo $next_run; ?><BR><BR><?php
+
+            if ($row->active == '1') { ?>
+
+                <form name="edit_task_form" method="post" action="update.php">
+                    <select name="new_hour">
+                        <?php echo $schedule->hourSelect($hour); ?>
+                    </select><BR><BR><?php
+                    echo $form->showInputHidden('a', 'u');
+                    echo $form->showInputHidden('id', $row->id);
+                    echo $form->showSubmitButton('Change Time', '', ''); ?>
+                </form><BR><?php
+
+            } ?>
+        </td>
+
+        </tr><?php
+
+    } ?>
+
+    </tbody>
+</table>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

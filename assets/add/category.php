@@ -26,21 +26,19 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-add-category.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = "Adding A New Category";
-$software_section = "categories-add";
-
-// Form Variables
 $new_category = $_POST['new_category'];
 $new_stakeholder = $_POST['new_stakeholder'];
 $new_notes = $_POST['new_notes'];
@@ -67,14 +65,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_result_message'] = "Category <div class=\"highlight\">" . $new_category . "</div> Added<BR>";
+        $_SESSION['s_message_success'] = 'Category ' . $new_category . ' Added<BR>';
 
         header("Location: ../categories.php");
         exit;
 
     } else {
 
-        $_SESSION['s_result_message'] .= "Please enter the category name<BR>";
+        $_SESSION['s_message_danger'] .= "Enter the category name<BR>";
 
     }
 
@@ -86,23 +84,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()">
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="add_category_form" method="post">
-    <strong>Category Name (150)</strong>
-    <a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a><BR><BR>
-    <input name="new_category" type="text" value="<?php echo $new_category; ?>" size="50" maxlength="150">
-    <BR><BR>
-    <strong>Stakeholder (100)</strong><BR><BR>
-    <input name="new_stakeholder" type="text" value="<?php echo $new_stakeholder; ?>" size="50" maxlength="100">
-    <BR><BR>
-    <strong>Notes</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-    <BR><BR>
-    <input type="submit" name="button" value="Add This Category &raquo;">
-</form>
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_category', 'Category Name (150)', '', $new_category, '150', '', '', '');
+echo $form->showInputText('new_stakeholder', 'Stakeholder (100)', '', $new_stakeholder, '100', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showSubmitButton('Add Category', '', '');
+echo $form->showFormBottom('');
+?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

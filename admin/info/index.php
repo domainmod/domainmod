@@ -32,13 +32,11 @@ $system = new DomainMOD\System();
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/admin-info.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
-
-$page_title = "System Information";
-$software_section = "admin-system-info";
 ?>
 <?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
@@ -46,14 +44,15 @@ $software_section = "admin-system-info";
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
+
 <strong>Operating System:</strong> <?php echo php_uname(); ?><BR>
 <strong>Web Server:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>
 <strong>PHP:</strong> <?php echo phpversion(); ?><BR>
 <strong>MySQL:</strong> <?php echo mysqli_get_server_info($connection); ?><BR>
-<strong><?php echo $software_title; ?>:</strong> <?php echo $software_version; ?> (<em><?php echo
-    $_SESSION['s_system_db_version']; ?></em>)<BR>
+<strong><?php echo $software_title; ?>:</strong> <?php echo $software_version; ?> (<em><?php echo $_SESSION['s_system_db_version']; ?></em>)<BR>
+
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

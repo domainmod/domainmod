@@ -28,8 +28,8 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 require DIR_ROOT . 'vendor/autoload.php';
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 
 include(DIR_INC . "head.inc.php");
@@ -84,7 +84,7 @@ if ($a == 'u') {
 }
 mysqli_query($connection, $sql);
 
-$_SESSION['s_result_message'] = $message;
+$_SESSION['s_message_success'] = $message;
 
 header("Location: index.php");
 exit;

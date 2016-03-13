@@ -19,24 +19,23 @@
  *
  */
 ?>
-    <a name="top"></a>
-    <div class="main-container-login">
-
-    <div class="header-container">
-        <div class="header-center">
-            <?php echo "<img border=\"0\" src=\"" . $web_root . "/images/logo.png\">"; ?>
-        </div>
-    </div>
-
-    <div class="main-outer-login">
-    <div class="main-inner">
-    <BR><?php
+<div class="login-box">
+  <div class="login-logo">
+      <img src="<?php echo $web_root; ?>/images/logo-lg.png">
+  </div>
+  <!-- /.login-logo -->
+<?php
 include(DIR_INC . "layout/table-maintenance.inc.php");
 ?>
 <?php
-if ($_SESSION['s_result_message'] != "") {
-
-    echo $system->showResultMessage($_SESSION['s_result_message']);
-    unset($_SESSION['s_result_message']);
-
+if ($_SESSION['s_message_success'] != "") {
+    echo $system->showMessageSuccess($_SESSION['s_message_success']);
+    unset($_SESSION['s_message_success']);
 }
+
+if ($_SESSION['s_message_danger'] != "") {
+    echo $system->showMessageDanger($_SESSION['s_message_danger']);
+    unset($_SESSION['s_message_danger']);
+}
+?>
+  <div class="login-box-body">

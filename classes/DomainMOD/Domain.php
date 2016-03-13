@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Domain
@@ -134,4 +133,4 @@ class Domain
         $q->close();
     }
 
-}
+} //@formatter:on

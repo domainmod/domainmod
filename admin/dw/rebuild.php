@@ -26,21 +26,20 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$dw = new DomainMOD\DwBuild();
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
+$dw = new DomainMOD\DwBuild();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/dw-rebuild.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
-
-$page_title = "Rebuilding Data Warehouse...";
-$software_section = "admin-dw-rebuild";
 ?>
 <?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
@@ -48,9 +47,8 @@ $software_section = "admin-dw-rebuild";
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<div class="subheadline"><?php echo $page_subtitle; ?></div>
 <?php
 if ($demo_install !== '1') {
 
@@ -66,13 +64,13 @@ if ($result_message !== false) {
 
     echo $result_message;
     echo '<BR><BR>';
-    echo '<a href="dw.php">Go to Data Warehouse</a>.';
+    echo '<a href="dw.php">' . $layout->showButton('button', 'Go To Data Warehouse') . '</a>';
 
 } else {
 
     echo 'There was a problem rebuilding the Data Warehouse.';
     echo '<BR><BR>';
-    echo '<a href="rebuild.php">Try again</a>.';
+    echo '<a href="rebuild.php">' . $layout->showButton('button', 'Try again') . '</a>';
 
 }
 ?>

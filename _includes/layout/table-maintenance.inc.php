@@ -20,33 +20,18 @@
  */
 ?>
 <?php
-if ($_SESSION['s_needs_database_upgrade'] == 1) { ?>
-    <div class="maintenance_warning_outer">
-    <div class="maintenance_warning_inner">
-        <strong>Database Upgrade Available! (clear up the below issues to make this table disappear)</strong><BR><BR>
-        <LI>You are running an older version of the <?php echo $software_title; ?> database.</LI>
-        <BR>&nbsp;&nbsp;&nbsp;<a href="<?php echo $web_root; ?>/notice.php?a=u">Click here to upgrade your database</a>
-    </div>
-    </div><?php
-    exit;
+if ($_SESSION['s_missing_domain_fees'] == 1) {
+
+    $message = "Some of your Registrars/TLDs are missing domain fees. <a href=\"" . $web_root . "/assets/registrar-fees-missing.php\">Click here to fix this</a>.<BR>If you've already updated all new TLDs, you should <a href=\"" . $web_root . "/settings/maintenance/update-domain-fees.php\">update the domain fees system-wide</a> (this may take some time).";
+
+    echo $system->showMaintenanceTable($message);
+
 }
 
-if ($_SESSION['s_missing_domain_fees'] == 1 || $_SESSION['s_missing_ssl_fees'] == 1) { ?>
-    <div class="maintenance_warning_outer">
-    <div class="maintenance_warning_inner">
-        <strong>Maintenance Warning! (clear up the below issues to make this table disappear)</strong><BR><BR>
-        <?php
-        if ($_SESSION['s_missing_domain_fees'] == 1) { ?>
-            <LI>Some of your Registrars/TLDs are missing domain fees. <a
-                href="<?php echo $web_root . "/assets/edit/registrar-fees-missing.php\">Click here to fix this</a>. If you've already updated all new TLDs, you should <a href=\"" . $web_root; ?>/settings/update-domain-fees.php">update
-                the domain fees system-wide</a> (this may take some time).</LI><?php
-        } ?>
-        <?php
-        if ($_SESSION['s_missing_ssl_fees'] == 1) { ?>
-            <LI>Some of your SSL Certificate Types are missing fees. <a
-                href="<?php echo $web_root . "/assets/edit/ssl-provider-fees-missing.php\">Click here to fix this</a>. If you've already updated all new SSL Types, you should <a href=\"" . $web_root; ?>/settings/update-ssl-fees.php">update
-                the SSL fees system-wide</a> (this may take some time).</LI><?php
-        } ?>
-    </div>
-    </div><?php
+if ($_SESSION['s_missing_ssl_fees'] == 1) {
+
+    $message = "Some of your SSL Certificate Types are missing fees. <a href=\"" . $web_root . "/assets/ssl-provider-fees-missing.php\">Click here to fix this</a>.<BR>If you've already updated all new SSL Types, you should <a href=\"" . $web_root . "/settings/maintenance/update-ssl-fees.php\">update the SSL fees system-wide</a> (this may take some time).";
+
+    echo $system->showMaintenanceTable($message);
+
 }

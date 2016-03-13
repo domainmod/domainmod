@@ -31,12 +31,10 @@ $system = new DomainMOD\System();
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/settings-main.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-
-$page_title = "Settings";
-$software_section = "system";
 ?>
 <?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
@@ -44,36 +42,18 @@ $software_section = "system";
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
+<h3>User Settings</h3>
+<a href="display/">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+<a href="defaults/">User Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+<a href="profile/">User Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+<a href="password/">Change Password</a><BR>
 <BR>
-
-<div class="subheadline">User Menu</div>
-<BR>
-&raquo; <a href="display/">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="email/">Email
-    Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="defaults/">User Defaults</a><BR><BR>
-&raquo; <a href="update-profile.php">Update Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="password/">Change
-    Password</a><BR>
-<BR><BR>
-
-<div class="subheadline">Maintenance Menu</div>
-<BR>
-&raquo; <a href="update-conversions.php">Update Conversion Rates</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a
-    href="update-domain-fees.php">Update Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="update-ssl-fees.php">Update
-    SSL Fees</a><BR>
-<?php
-if ($_SESSION['s_is_admin'] === 1) { //@formatter:off ?>
-    <BR><BR>
-    <div class="subheadline">Admin Menu</div><BR>
-    &raquo; <a href="<?php echo $web_root; ?>/admin/system-settings.php">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;
-    <a href="<?php echo $web_root; ?>/admin/defaults/">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;
-    <a href="<?php echo $web_root; ?>/admin/users.php">Users</a><BR>
-    <BR>
-    &raquo; <a href="<?php echo $web_root; ?>/admin/domain-fields.php">Custom Domain Fields</a>&nbsp;&nbsp;/&nbsp;&nbsp;
-    <a href="<?php echo $web_root; ?>/admin/ssl-fields.php">Custom SSL Fields</a><BR><BR>
-    &raquo; <a href="<?php echo $web_root; ?>/admin/scheduler/">Task Scheduler</a><BR><BR>
-    &raquo; <a href="<?php echo $web_root; ?>/admin/info/">System Information</a><BR><?php
-} //@formatter:on ?>
+<h3>Maintenance</h3>
+<a href="maintenance/update-domain-fees.php">Update Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+<a href="maintenance/update-ssl-fees.php">Update SSL Certificate Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+<a href="maintenance/update-conversions.php">Update Conversion Rates</a><BR>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

@@ -27,27 +27,76 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
+$layout = new DomainMOD\Layout();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/reporting-main.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = $reporting_section_title;
-$page_subtitle = "Reporting Main";
-$software_section = "reporting";
+$report = $_REQUEST['report'];
+
+echo $layout->jumpMenu();
 ?>
 <?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
+Before running any reports you should <a href="<?php echo $web_root; ?>/settings/maintenance/update-conversions.php">update the conversion rates</a>.
+
+<h3>Domain Reports</h3>
+<?php
+echo $form->showFormTop('');
+echo $form->showDropdownTopJump('', '');
+echo $form->showDropdownOptionJump($web_root . '/reporting/', '', 'Click to select a Domain Report', '');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-category.php?all=1', '', 'Cost by Category', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-dns.php?all=1', '', 'Cost by DNS Profile', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-ip-address.php?all=1', '', 'Cost by IP Address', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-month.php?all=1', '', 'Cost by Month', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-owner.php?all=1', '', 'Cost by Owner', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-registrar.php?all=1', '', 'Cost by Registrar', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-tld.php?all=1', '', 'Cost by TLD', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-host.php?all=1', '', 'Cost by Web Host', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/domains/registrar-fees.php?all=0', '', 'Registrar Fees', 'null');
+echo $form->showDropdownBottom('');
+echo $form->showFormBottom('');
+?>
+
+<h3>SSL Certificate Reports</h3>
+<?php
+echo $form->showFormTop('');
+echo $form->showDropdownTopJump('', '');
+echo $form->showDropdownOptionJump($web_root . '/reporting/', '', 'Click to select an SSL Report', '');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-category.php?all=1', '', 'Cost by Category', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-domain.php?all=1', '', 'Cost by Domain', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-ip-address.php?all=1', '', 'Cost by IP Address', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-month.php?all=1', '', 'Cost by Month', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-owner.php?all=1', '', 'Cost by Owner', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-provider.php?all=1', '', 'Cost by Provider', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-type.php?all=1', '', 'Cost by Type', 'null');
+echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/provider-fees.php?all=0', '', 'Provider Fees', 'null');
+echo $form->showDropdownBottom('');
+echo $form->showFormBottom('');
+?>
+
+<h3>Data Warehouse Reports</h3>
+<?php
+echo $form->showFormTop('');
+echo $form->showDropdownTopJump('', '');
+echo $form->showDropdownOptionJump($web_root . '/reporting/', '', 'Click to select a DW Report', '');
+echo $form->showDropdownOptionJump($web_root . '/reporting/dw/potential-problems.php?generate=1', '', 'Potential Problems', 'null');
+echo $form->showDropdownBottom('');
+echo $form->showFormBottom('');
+?>
+
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

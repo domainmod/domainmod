@@ -18,21 +18,20 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Login
 {
 
-    public function getUserInfo($connection, $username, $password)
+    public function getUserInfo($connection, $user_id, $username)
     {
 
-        $sql = "SELECT id, first_name, last_name, username, email_address, new_password, admin, number_of_logins,
+        $sql = "SELECT first_name, last_name, username, email_address, new_password, admin, number_of_logins,
                        last_login
                 FROM users
-                WHERE username = '" . $username . "'
-                  AND password = password('" . $password . "')
+                WHERE id = '" . $user_id . "'
+                  AND username = '" . $username . "'
                   AND active = '1'";
         $result = mysqli_query($connection, $sql);
 
@@ -43,7 +42,7 @@ class Login
     public function getSystemSettings($connection)
     {
 
-        $sql = "SELECT full_url, db_version, upgrade_available, email_address, default_category_domains,
+        $sql = "SELECT full_url, db_version, upgrade_available, email_address, large_mode, default_category_domains,
                        default_category_ssl, default_dns, default_host, default_ip_address_domains,
                        default_ip_address_ssl, default_owner_domains, default_owner_ssl, default_registrar,
                        default_registrar_account, default_ssl_provider_account, default_ssl_type, default_ssl_provider,
@@ -61,8 +60,8 @@ class Login
         $sql = "SELECT default_currency, default_timezone, default_category_domains, default_category_ssl, default_dns,
                        default_host, default_ip_address_domains, default_ip_address_ssl, default_owner_domains,
                        default_owner_ssl, default_registrar, default_registrar_account, default_ssl_provider_account,
-                       default_ssl_type, default_ssl_provider, number_of_domains, number_of_ssl_certs,
-                       display_domain_owner, display_domain_registrar, display_domain_account,
+                       default_ssl_type, default_ssl_provider, expiration_emails, number_of_domains,
+                       number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account,
                        display_domain_expiry_date, display_domain_category, display_domain_dns, display_domain_host,
                        display_domain_ip, display_domain_host, display_domain_tld, display_domain_fee,
                        display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_domain,
@@ -104,4 +103,4 @@ class Login
 
     }
 
-}
+} //@formatter:on

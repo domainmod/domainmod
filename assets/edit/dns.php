@@ -19,34 +19,31 @@
  *
  */
 ?>
-<?php
+<?php //@formatter:off
 include("../../_includes/start-session.inc.php");
 include("../../_includes/init.inc.php");
 
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-edit-dns.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = "Editing A DNS Profile";
-$software_section = "dns-edit";
-
-// 'Delete DNS Profile' Confirmation Variables
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
 
 $dnsid = $_GET['dnsid'];
 
-// Form Variables
 $new_name = $_POST['new_name'];
 $new_dns1 = $_POST['new_dns1'];
 $new_dns2 = $_POST['new_dns2'];
@@ -77,36 +74,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $new_number_of_servers = 10;
 
-        if ($new_dns10 == '') {
-            $new_number_of_servers = '9';
-        }
-        if ($new_dns9 == '') {
-            $new_number_of_servers = '8';
-        }
-        if ($new_dns8 == '') {
-            $new_number_of_servers = '7';
-        }
-        if ($new_dns7 == '') {
-            $new_number_of_servers = '6';
-        }
-        if ($new_dns6 == '') {
-            $new_number_of_servers = '5';
-        }
-        if ($new_dns5 == '') {
-            $new_number_of_servers = '4';
-        }
-        if ($new_dns4 == '') {
-            $new_number_of_servers = '3';
-        }
-        if ($new_dns3 == '') {
-            $new_number_of_servers = '2';
-        }
-        if ($new_dns2 == '') {
-            $new_number_of_servers = '1';
-        }
-        if ($new_dns1 == '') {
-            $new_number_of_servers = '0';
-        }
+        if ($new_dns10 == '') $new_number_of_servers = '9';
+        if ($new_dns9 == '') $new_number_of_servers = '8';
+        if ($new_dns8 == '') $new_number_of_servers = '7';
+        if ($new_dns7 == '') $new_number_of_servers = '6';
+        if ($new_dns6 == '') $new_number_of_servers = '5';
+        if ($new_dns5 == '') $new_number_of_servers = '4';
+        if ($new_dns4 == '') $new_number_of_servers = '3';
+        if ($new_dns3 == '') $new_number_of_servers = '2';
+        if ($new_dns2 == '') $new_number_of_servers = '1';
+        if ($new_dns1 == '') $new_number_of_servers = '0';
 
         $query = "UPDATE dns
                   SET `name` = ?,
@@ -153,16 +130,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $dnsid = $new_dnsid;
 
-        $_SESSION['s_result_message'] = "DNS Profile <div class=\"highlight\">$new_name</div> Updated<BR>";
+        $_SESSION['s_message_success'] = "DNS Profile " . $new_name . " Updated<BR>";
 
         header("Location: ../dns.php");
         exit;
 
     } else {
 
-        if ($new_name == "") $_SESSION['s_result_message'] .= "Please enter a name for the DNS profile<BR>";
-        if ($new_dns1 == "") $_SESSION['s_result_message'] .= "Please enter the first DNS server<BR>";
-        if ($new_dns2 == "") $_SESSION['s_result_message'] .= "Please enter the second DNS server<BR>";
+        if ($new_name == "") $_SESSION['s_message_danger'] .= "Enter a name for the DNS profile<BR>";
+        if ($new_dns1 == "") $_SESSION['s_message_danger'] .= "Enter the first DNS server<BR>";
+        if ($new_dns2 == "") $_SESSION['s_message_danger'] .= "Enter the second DNS server<BR>";
 
     }
 
@@ -206,11 +183,11 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['s_result_message'] = "This DNS Profile has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] = "This DNS Profile has domains associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['s_result_message'] = "Are you sure you want to delete this DNS Profile?<BR><BR><a
+            $_SESSION['s_message_danger'] = "Are you sure you want to delete this DNS Profile?<BR><BR><a
                 href=\"dns.php?dnsid=$dnsid&really_del=1\">YES, REALLY DELETE THIS DNS PROFILE</a><BR>";
 
         }
@@ -239,7 +216,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_result_message'] = "DNS Profile <div class=\"highlight\">$new_name</div> Deleted<BR>";
+    $_SESSION['s_message_success'] = "DNS Profile " . $new_name . " Deleted<BR>";
 
     header("Location: ../dns.php");
     exit;
@@ -252,153 +229,132 @@ if ($really_del == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="edit_dns_form" method="post">
-    <strong>Profile Name</strong><a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a>
-    <BR><BR>
-    <input name="new_name" type="text" size="50" maxlength="255" value="<?php if ($new_name != "")
-        echo htmlentities($new_name); ?>">
-    <BR><BR>
-    <table class="dns_table">
-        <tr>
-            <td class="dns_table_left">
-                <strong>DNS Server 1</strong><a title="Required Field">
-                    <div
-                        class="default_highlight"><strong>*</strong>
-                    </div>
-                </a><BR><BR>
-                <input name="new_dns1" type="text" size="28" maxlength="255" value="<?php if ($new_dns1 != "")
-                    echo $new_dns1; ?>">
-            </td>
-            <td class="dns_table_right">
-                <strong>IP Address 1</strong><BR><BR>
-                <input name="new_ip1" type="text" size="28" maxlength="255" value="<?php if ($new_ip1 != "")
-                    echo $new_ip1; ?>">
-            </td>
-        </tr>
-        <tr>
-            <td class="dns_table_left">
-                <strong>DNS Server 2</strong><a title="Required Field">
-                    <div
-                        class="default_highlight"><strong>*</strong>
-                    </div>
-                </a><BR><BR>
-                <input name="new_dns2" type="text" size="28" maxlength="255" value="<?php if ($new_dns2 != "")
-                    echo $new_dns2; ?>">
-            </td>
-            <td class="dns_table_right">
-                <strong>IP Address 2</strong><BR><BR>
-                <input name="new_ip2" type="text" size="28" maxlength="255" value="<?php if ($new_ip2 != "")
-                    echo $new_ip2; ?>">
-            </td>
-        </tr>
-        <tr>
-            <td class="dns_table_left">
-                <strong>DNS Server 3</strong><BR><BR>
-                <input name="new_dns3" type="text" size="28" maxlength="255" value="<?php if ($new_dns3 != "")
-                    echo $new_dns3; ?>">
-            </td>
-            <td class="dns_table_right">
-                <strong>IP Address 3</strong><BR><BR>
-                <input name="new_ip3" type="text" size="28" maxlength="255" value="<?php if ($new_ip3 != "")
-                    echo $new_ip3; ?>">
-            </td>
-        </tr>
-        <tr>
-            <td class="dns_table_left">
-                <strong>DNS Server 4</strong><BR><BR>
-                <input name="new_dns4" type="text" size="28" maxlength="255" value="<?php if ($new_dns4 != "")
-                    echo $new_dns4; ?>">
-            </td>
-            <td class="dns_table_right">
-                <strong>IP Address 4</strong><BR><BR>
-                <input name="new_ip4" type="text" size="28" maxlength="255" value="<?php if ($new_ip4 != "")
-                    echo $new_ip4; ?>">
-            </td>
-        </tr>
-        <tr>
-            <td class="dns_table_left">
-                <strong>DNS Server 5</strong><BR><BR>
-                <input name="new_dns5" type="text" size="28" maxlength="255" value="<?php if ($new_dns5 != "")
-                    echo $new_dns5; ?>">
-            </td>
-            <td class="dns_table_right">
-                <strong>IP Address 5</strong><BR><BR>
-                <input name="new_ip5" type="text" size="28" maxlength="255" value="<?php if ($new_ip5 != "")
-                    echo $new_ip5; ?>">
-            </td>
-        </tr>
-        <tr>
-            <td class="dns_table_left">
-                <strong>DNS Server 6</strong><BR><BR>
-                <input name="new_dns6" type="text" size="28" maxlength="255" value="<?php if ($new_dns6 != "")
-                    echo $new_dns6; ?>">
-            </td>
-            <td class="dns_table_right">
-                <strong>IP Address 6</strong><BR><BR>
-                <input name="new_ip6" type="text" size="28" maxlength="255" value="<?php if ($new_ip6 != "")
-                    echo $new_ip6; ?>">
-            </td>
-        </tr>
-        <tr>
-            <td class="dns_table_left">
-                <strong>DNS Server 7</strong><BR><BR>
-                <input name="new_dns7" type="text" size="28" maxlength="255" value="<?php if ($new_dns7 != "")
-                    echo $new_dns7; ?>">
-            </td>
-            <td class="dns_table_right">
-                <strong>IP Address 7</strong><BR><BR>
-                <input name="new_ip7" type="text" size="28" maxlength="255" value="<?php if ($new_ip7 != "")
-                    echo $new_ip7; ?>">
-            </td>
-        </tr>
-        <tr>
-            <td class="dns_table_left">
-                <strong>DNS Server 8</strong><BR><BR>
-                <input name="new_dns8" type="text" size="28" maxlength="255" value="<?php if ($new_dns8 != "")
-                    echo $new_dns8; ?>">
-            </td>
-            <td class="dns_table_right">
-                <strong>IP Address 8</strong><BR><BR>
-                <input name="new_ip8" type="text" size="28" maxlength="255" value="<?php if ($new_ip8 != "")
-                    echo $new_ip8; ?>">
-            </td>
-        </tr>
-        <tr>
-            <td class="dns_table_left">
-                <strong>DNS Server 9</strong><BR><BR>
-                <input name="new_dns9" type="text" size="28" maxlength="255" value="<?php if ($new_dns9 != "")
-                    echo $new_dns9; ?>">
-            </td>
-            <td class="dns_table_right">
-                <strong>IP Address 9</strong><BR><BR>
-                <input name="new_ip9" type="text" size="28" maxlength="255" value="<?php if ($new_ip9 != "")
-                    echo $new_ip9; ?>">
-            </td>
-        </tr>
-        <tr>
-            <td class="dns_table_left">
-                <strong>DNS Server 10</strong><BR><BR>
-                <input name="new_dns10" type="text" size="28" maxlength="255" value="<?php if ($new_dns10 != "")
-                    echo $new_dns10; ?>">
-            </td>
-            <td class="dns_table_right">
-                <strong>IP Address 10</strong><BR><BR>
-                <input name="new_ip10" type="text" size="28" maxlength="255" value="<?php if ($new_ip10 != "")
-                    echo $new_ip10; ?>">
-            </td>
-        </tr>
-    </table>
-    <strong>Notes</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-    <input type="hidden" name="new_dnsid" value="<?php echo $dnsid; ?>">
-    <BR><BR>
-    <input type="submit" name="button" value="Update This DNS Profile &raquo;">
-</form>
-<BR><BR><a href="dns.php?dnsid=<?php echo $dnsid; ?>&del=1">DELETE THIS DNS PROFILE</a>
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_name', 'Profile Name', '', $new_name, '255', '', '', ''); ?>
+<table width="100%">
+    <tbody>
+    <tr>
+        <td width="49%">
+            <?php echo $form->showInputText('new_dns1', 'DNS Server 1', '', $new_dns1, '255', '', '', ''); ?>
+        </td>
+        <td width="2%">
+            &nbsp;
+        </td>
+        <td width="49%">
+            <?php echo $form->showInputText('new_ip1', 'IP Address 1', '', $new_ip1, '255', '', '', ''); ?>
+        </td>
+    </tr>
+    <tr>
+        <td width="49%">
+            <?php echo $form->showInputText('new_dns2', 'DNS Server 2', '', $new_dns2, '255', '', '', ''); ?>
+        </td>
+        <td width="2%">
+            &nbsp;
+        </td>
+        <td width="49%">
+            <?php echo $form->showInputText('new_ip2', 'IP Address 2', '', $new_ip2, '255', '', '', ''); ?>
+        </td>
+    </tr>
+    <tr>
+        <td width="49%">
+            <?php echo $form->showInputText('new_dns3', 'DNS Server 3', '', $new_dns3, '255', '', '', ''); ?>
+        </td>
+        <td width="2%">
+            &nbsp;
+        </td>
+        <td width="49%">
+            <?php echo $form->showInputText('new_ip3', 'IP Address 3', '', $new_ip3, '255', '', '', ''); ?>
+        </td>
+    </tr>
+    <tr>
+        <td width="49%">
+            <?php echo $form->showInputText('new_dns4', 'DNS Server 4', '', $new_dns4, '255', '', '', ''); ?>
+        </td>
+        <td width="2%">
+            &nbsp;
+        </td>
+        <td width="49%">
+            <?php echo $form->showInputText('new_ip4', 'IP Address 4', '', $new_ip4, '255', '', '', ''); ?>
+        </td>
+    </tr>
+    <tr>
+        <td width="49%">
+            <?php echo $form->showInputText('new_dns5', 'DNS Server 5', '', $new_dns5, '255', '', '', ''); ?>
+        </td>
+        <td width="2%">
+            &nbsp;
+        </td>
+        <td width="49%">
+            <?php echo $form->showInputText('new_ip5', 'IP Address 5', '', $new_ip5, '255', '', '', ''); ?>
+        </td>
+    </tr>
+    <tr>
+        <td width="49%">
+            <?php echo $form->showInputText('new_dns6', 'DNS Server 6', '', $new_dns6, '255', '', '', ''); ?>
+        </td>
+        <td width="2%">
+            &nbsp;
+        </td>
+        <td width="49%">
+            <?php echo $form->showInputText('new_ip6', 'IP Address 6', '', $new_ip6, '255', '', '', ''); ?>
+        </td>
+    </tr>
+    <tr>
+        <td width="49%">
+            <?php echo $form->showInputText('new_dns7', 'DNS Server 7', '', $new_dns7, '255', '', '', ''); ?>
+        </td>
+        <td width="2%">
+            &nbsp;
+        </td>
+        <td width="49%">
+            <?php echo $form->showInputText('new_ip7', 'IP Address 7', '', $new_ip7, '255', '', '', ''); ?>
+        </td>
+    </tr>
+    <tr>
+        <td width="49%">
+            <?php echo $form->showInputText('new_dns8', 'DNS Server 8', '', $new_dns8, '255', '', '', ''); ?>
+        </td>
+        <td width="2%">
+            &nbsp;
+        </td>
+        <td width="49%">
+            <?php echo $form->showInputText('new_ip8', 'IP Address 8', '', $new_ip8, '255', '', '', ''); ?>
+        </td>
+    </tr>
+    <tr>
+        <td width="49%">
+            <?php echo $form->showInputText('new_dns9', 'DNS Server 9', '', $new_dns9, '255', '', '', ''); ?>
+        </td>
+        <td width="2%">
+            &nbsp;
+        </td>
+        <td width="49%">
+            <?php echo $form->showInputText('new_ip9', 'IP Address 9', '', $new_ip9, '255', '', '', ''); ?>
+        </td>
+    </tr>
+    <tr>
+        <td width="49%">
+            <?php echo $form->showInputText('new_dns10', 'DNS Server 10', '', $new_dns10, '255', '', '', ''); ?>
+        </td>
+        <td width="2%">
+            &nbsp;
+        </td>
+        <td width="49%">
+            <?php echo $form->showInputText('new_ip10', 'IP Address 10', '', $new_ip10, '255', '', '', ''); ?>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<?php
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputHidden('new_dnsid', $dnsid);
+echo $form->showSubmitButton('Save', '', '');
+echo $form->showFormBottom('');
+?>
+<BR><a href="dns.php?dnsid=<?php echo $dnsid; ?>&del=1">DELETE THIS DNS PROFILE</a>
+<?php include(DIR_INC . "layout/footer.inc.php"); //@formatter:on ?>
 </body>
 </html>

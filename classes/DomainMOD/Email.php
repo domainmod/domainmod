@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Email
@@ -85,10 +84,10 @@ class Email
         $ssl_expiring = $system->checkForRowsResult($connection, $sql_ssl);
 
         if ($domains_expiring != '0' || $ssl_expiring != '0') {
-            $_SESSION['s_result_message'] .= 'Expiration Email Sent<BR>';
+            $_SESSION['s_message_success'] .= 'Expiration Email Sent<BR>';
             return array($domains_expiring, $ssl_expiring);
         } else {
-            $_SESSION['s_result_message'] .= 'No Upcoming Expirations<BR>';
+            $_SESSION['s_message_success'] .= 'No Upcoming Expirations<BR>';
             if ($from_cron == '1') exit;
             return false;
         }
@@ -104,7 +103,7 @@ class Email
         $result_recipients = mysqli_query($connection, $sql_recipients);
 
         if (mysqli_num_rows($result_recipients) <= 0) {
-            $_SESSION['s_result_message'] .= 'No Users Are Subscribed<BR>';
+            $_SESSION['s_message_danger'] .= 'No Users Are Subscribed<BR>';
             return false;
         }
         return $result_recipients;
@@ -125,7 +124,7 @@ class Email
 
     public function messageTop($software_title, $full_url, $subject, $number_of_days)
     {
-        ob_start(); //@formatter:off ?>
+        ob_start(); ?>
         <html>
         <head><title><?php echo $subject; ?></title></head>
         <body bgcolor="#FFFFFF">
@@ -138,7 +137,7 @@ class Email
         list of all the Domains & SSL Certificates in <?php echo $software_title; ?> that are expiring in the next
         <?php echo $number_of_days; ?> days.<BR> <BR>If you would like to change the frequency of this email
         notification please contact your <?php echo $software_title; ?> administrator.<BR><BR><?php
-        return ob_get_clean(); //@formatter:on
+        return ob_get_clean();
     }
 
     public function showDomains($result_domains, $full_url, $timestamp_basic)
@@ -185,7 +184,7 @@ class Email
 
     public function messageBottom($software_title, $full_url)
     {
-        ob_start(); //@formatter:off ?>
+        ob_start(); ?>
         <BR>Best Regards,<BR><BR>Greg Chetcuti<BR><a
             target="_blank" href="mailto:greg@domainmod.org">greg@domainmod.org</a><BR>
         </font>
@@ -205,4 +204,4 @@ class Email
         return ob_get_clean();
     }
 
-}
+} //@formatter:on

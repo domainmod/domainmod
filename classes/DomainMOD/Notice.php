@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Notice
@@ -28,13 +27,13 @@ class Notice
     public function dbUpgrade($software_title)
     {
 
-        $_SESSION['s_notice_page_tile'] = "Upgrade Available";
-        $_SESSION['s_notice'] = "<center>Your " . $software_title . " software was recently updated, so we now need to
+        $_SESSION['s_notice_page_title'] = "Upgrade Available";
+        $_SESSION['s_notice'] = "<BR>Your " . $software_title . " software was recently updated, so we now need to
             upgrade your database<BR><BR>Please be patient, this may take a moment<BR><BR>
-            <a href='checks.php?u=1'>Click here to upgrade your database</a></center>";
+            <a href='checks.php?u=1'>Click here to upgrade your database</a>";
 
         return true;
 
     }
 
-}
+} //@formatter:on

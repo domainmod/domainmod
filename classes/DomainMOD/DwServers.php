@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class DwServers
@@ -110,4 +109,4 @@ class DwServers
 
     }
 
-}
+} //@formatter:on

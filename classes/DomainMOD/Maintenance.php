@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Maintenance
@@ -29,10 +28,10 @@ class Maintenance
     {
 
         $this->deleteUnusedFees($connection, 'fees', 'domains');
-        $_SESSION['s_result_message'] .= $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
-        $_SESSION['s_result_message'] .= $this->updateTlds($connection);
-        $_SESSION['s_result_message'] .= $this->updateSegments($connection);
-        $_SESSION['s_result_message'] .= $this->updateAllFees($connection);
+        $_SESSION['s_message_success'] .= $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
+        $_SESSION['s_message_success'] .= $this->updateTlds($connection);
+        $_SESSION['s_message_success'] .= $this->updateSegments($connection);
+        $_SESSION['s_message_success'] .= $this->updateAllFees($connection);
 
         $result_message = 'Maintenance Completed<BR>';
 
@@ -216,4 +215,4 @@ class Maintenance
 
     }
 
-}
+} //@formatter:on

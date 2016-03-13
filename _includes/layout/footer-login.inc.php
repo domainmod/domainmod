@@ -19,16 +19,10 @@
  *
  */
 ?>
-        </div>
-    </div>
+  </div>
+  <!-- /.login-box-body -->
 </div>
-<div class="footer-container-center">
-    <?php echo $software_title; ?> is open source software released under the <a class="invisiblelink" href="http://www.gnu.org/licenses/">GNU/GPL License</a><br>
-    To obtain your own copy of the <?php echo $software_title . " software <a class=\"invisiblelink\" href=\"" . $code_home_url . "\">click here</a><BR>"; ?>
-    Created by <a class="invisiblelink" href="http://chetcuti.com">Greg Chetcuti</a><BR>
-    v<?php echo $software_version; ?><BR><BR>
-    <a href="http://www.gnu.org/licenses/"><img border="0" width="88" height="31" src="<?php echo $web_root; ?>/images/gpl_logo.png" /></a>
-</div>
+<!-- /.login-box -->
 <?php
 $full_filename = DIR_INC . "layout/footer.DEMO.inc.php";
 
@@ -37,3 +31,9 @@ if (file_exists($full_filename)) {
     include(DIR_INC . "layout/footer.DEMO.inc.php");
 
 }
+$_SESSION['s_redirect'] = $_SERVER["REQUEST_URI"];
+?>
+<!-- jQuery 2.2.0 -->
+<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/jQuery/jQuery-2.2.0.min.js"></script>
+<!-- Bootstrap 3.3.5 -->
+<script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/bootstrap/js/bootstrap.min.js"></script>

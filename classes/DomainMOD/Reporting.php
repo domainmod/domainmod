@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Reporting
@@ -42,29 +41,4 @@ class Reporting
 
     }
 
-    public function showTableTop()
-    {
-
-        ob_start(); ?>
-
-        <div class="export-outer">
-        <div class="export-inner"><?php
-
-        return ob_get_clean();
-
-    }
-
-    public function showTableBottom()
-    {
-
-        ob_start(); ?>
-
-        </div>
-        </div>
-        <div style="clear: both;"></div><?php
-
-        return ob_get_clean();
-
-    }
-
-}
+} //@formatter:on

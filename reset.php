@@ -26,15 +26,18 @@ include("_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
-$login = new DomainMOD\Login();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
+$maint = new DomainMOD\Maintenance();
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
+
 $system->loginCheck();
 
 $page_title = "Reset Password";
@@ -45,9 +48,9 @@ $new_username = $_REQUEST['new_username'];
 if ($new_username != "") {
 
     $sql = "SELECT username, email_address
-           FROM users
-           WHERE username = '$new_username'
-             AND active = '1'";
+            FROM users
+            WHERE username = '" . $new_username . "'
+              AND active = '1'";
 
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -58,7 +61,7 @@ if ($new_username != "") {
             $new_password = substr(md5(time()), 0, 8);
 
             $sql_update = "UPDATE users
-                           SET password = password('$new_password'),
+                           SET `password` = password('$new_password'),
                                   new_password = '1',
                                update_time = '" . $time->stamp() . "'
                            WHERE username = '$row->username'
@@ -70,16 +73,19 @@ if ($new_username != "") {
 
             include(DIR_INC . "email/send-new-password.inc.php");
 
-            $_SESSION['s_result_message'] .= "Your new password has been emailed to you<BR>";
+            $_SESSION['s_message_success'] .= "If there is a matching username in the system your new password will been emailed to you.<BR>";
 
-            header("Location: index.php");
+            header("Location: " . $web_root . "/");
             exit;
 
         }
 
     } else {
 
-        $_SESSION['s_result_message'] .= "You have entered an invalid username<BR>";
+        $_SESSION['s_message_success'] .= "If there is a matching username in the system your new password will been emailed to you.<BR>";
+
+        header("Location: " . $web_root . "/");
+        exit;
 
     }
 
@@ -88,7 +94,7 @@ if ($new_username != "") {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($new_username == "") {
-            $_SESSION['s_result_message'] .= "Enter your username<BR>";
+            $_SESSION['s_message_danger'] .= "Enter your username<BR>";
         }
     }
 
@@ -100,19 +106,15 @@ if ($new_username != "") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()">
+<body class="hold-transition skin-red" onLoad="document.forms[0].elements[0].focus()">
 <?php include(DIR_INC . "layout/header-login.inc.php"); ?>
-<div class="reset-password">
-    <div class="headline">Reset Your Password</div>
-    <BR><BR>
-
-    <form name="reset_password_form" method="post">
-        <strong>Username:</strong>&nbsp;<input name="new_username" type="text" value="<?php echo $new_username; ?>"
-                                               size="20" maxlength="20"><BR><BR>
-        <input type="submit" name="button" value="Reset Password &raquo;">
-    </form>
-    <BR><BR>[<a class="invisiblelink" href="index.php">Cancel Password Reset</a>]
-</div>
+<?php
+    echo $form->showFormTop('');
+    echo $form->showInputText('new_username', 'Username', '', $new_username, '20', '', '', '');
+    echo $form->showSubmitButton('Reset Password', '', '');
+    echo $form->showFormBottom('');
+?>
+<BR><a href="<?php echo $web_root; ?>/">Cancel Password Reset</a>
 <?php include(DIR_INC . "layout/footer-login.inc.php"); ?>
 </body>
 </html>

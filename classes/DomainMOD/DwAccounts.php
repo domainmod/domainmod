@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class DwAccounts
@@ -131,4 +130,4 @@ class DwAccounts
 
     }
 
-}
+} //@formatter:on

@@ -28,8 +28,8 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 require DIR_ROOT . 'vendor/autoload.php';
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 
 include(DIR_INC . "head.inc.php");
@@ -41,7 +41,7 @@ $system->installCheck($connection, $web_root);
 
 if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . "'"))) {
 
-    $_SESSION['s_result_message'] = "$software_title is already installed<BR><BR>You should delete the /install/ folder<BR>";
+    $_SESSION['s_message_danger'] = $software_title . " is already installed<BR><BR>You should delete the /install/ folder<BR>";
 
     header("Location: ../");
     exit;
@@ -680,6 +680,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `db_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `upgrade_available` INT(1) NOT NULL DEFAULT '0',
                 `email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `large_mode` TINYINT(1) NOT NULL DEFAULT '0',
                 `default_category_domains` INT(10) NOT NULL DEFAULT '0',
                 `default_category_ssl` INT(10) NOT NULL DEFAULT '0',
                 `default_dns` INT(10) NOT NULL DEFAULT '0',
@@ -772,10 +773,11 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     $sql = "INSERT INTO scheduler
             (`name`, description, slug, sort_order, is_running, active, insert_time)
              VALUES
-            ('Send Expiration Email', 'Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations." . "<" . "BR>" . "<" . "BR>Users can subscribe via " . "<" . "a href=\'../../settings/email.php\'>Email Settings" . "<" . "/a>." . "<" . "BR>" . "<" . "BR>Administrators can set the FROM email address and the number of days in the future to display in the email via " . "<" . "a href=\'../system-settings.php\'>System Settings" . "<" . "/a>.', 'expiration-email', '20', '0', '1', '" . $time->stamp() . "'),
-            ('Update Conversion Rates', 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date." . "<" . "BR>" . "<" . "BR>Users can set their default currency via " . "<" . "a href=\'../../settings/defaults.php\'>User Defaults" . "<" . "/a>." . "<" . "BR>" . "<" . "BR>Administrators can set the default system currency via " . "<" . "a href=\'../defaults.php\'>System Defaults" . "<" . "/a>.', 'update-conversion-rates', '40', '0', '1', '" . $time->stamp() . "'),
+            ('Send Expiration Email', 'Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations.<BR><BR>Users can subscribe via their User Profile.<BR><BR>Administrators can set the FROM email address and the number of days in the future to display in the email via System Settings.', 'expiration-email', '20', '0', '1', '" . $time->stamp() . "'),
+            ('Update Conversion Rates', 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date.<BR><BR>Users can set their default currency via their User Profile.', 'update-conversion-rates', '40', '0', '1', '" . $time->stamp() . "'),
             ('System Cleanup', '" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running quickly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>TLDs:" . "<" . "/em> Makes sure that the TLD entries recorded in the database are accurate.', 'cleanup', '60', '0', '1', '" . $time->stamp() . "'),
-            ('Check For New Version', 'Checks to see if there is a newer version of DomainMOD available to download." . "<" . "BR>" . "<" . "BR>You can view your current version on the " . "<" . "a href=\'../system-info.php\'>System Information" . "<" . "/a> page.', 'check-new-version', '80', '0', '1', '" . $time->stamp() . "')";
+            ('Check For New Version', 'Checks to see if there is a newer version of DomainMOD available to download.', 'check-new-version', '80', '0', '1', '" . $time->stamp() . "'),
+            ('Data Warehouse Build', 'Rebuilds the Data Warehouse so that you have the most up-to-date information available.', 'data-warehouse-build', '100', '0', '1', '" . $time->stamp() . "')";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $cron = \Cron\CronExpression::factory('0 7 * * * *');
@@ -874,7 +876,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     }
 
     $_SESSION['s_installation_mode'] = '0';
-    $_SESSION['s_result_message'] = "$software_title has been installed<BR><BR>The default username and password are both set to \"admin\"<BR>";
+    $_SESSION['s_message_success'] = $software_title . " has been installed<BR><BR>The default username and password are \"admin\"<BR>";
 
     header("Location: ../");
     exit;

@@ -19,58 +19,285 @@
  *
  */
 ?>
-    <a name="top"></a>
-    <div class="main-container">
+<!-- Site wrapper -->
+<div class="wrapper">
 
-    <div class="header-container">
-        <div class="header-left">
-            <a href="<?php echo $web_root . "/domains.php\"><img border=\"0\" src=\"" . $web_root; ?>/images/logo.png"></a>
-        </div>
-        <div class="header-right"><?php //@formatter:off ?>
-            <em>Currency: <a class="invisiblelink" href="<?php echo $web_root; ?>/settings/defaults/"><?php
-                    echo $_SESSION['s_default_currency']; ?></a>&nbsp;&nbsp;Time Zone: <a class="invisiblelink"
-                    href="<?php echo $web_root; ?>/settings/defaults/"><?php
-                    echo $_SESSION['s_default_timezone']; ?></a></em>
-            <BR>
-            <em>logged in as <?php echo $_SESSION['s_username']; ?> (<a
-                    class="subtlelink" href="<?php echo $web_root; ?>/settings/update-profile.php"><?php
-                    echo $_SESSION['s_first_name'] . " "; ?> <?php echo $_SESSION['s_last_name']; ?></a>)</em>
-            <BR><BR>
-            <?php //@formatter:on ?>
-        </div>
-    </div>
-    <div class="main-outer">
-    <div>
-        <div class="main-menu"><?php
-            if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['s_running_login_checks'] != 1) { ?>
-                <?php include(DIR_INC . "layout/menu-main.inc.php"); ?><BR><?php
-            } ?>
-        </div>
-        <div class="update_box_header">
-            <?php
-            if ($_SESSION['s_is_logged_in'] == 1) { ?>
-                [ <a target="_blank"
-                     href="http://domainmod.org/news/">News</a> ]&nbsp;&nbsp;[
-                <a target="_blank"
-                   href="http://domainmod.org/support/">Support</a> ]&nbsp;&nbsp;[ <a href="<?php echo $web_root;
-                ?>/logout.php">Logout</a> ]<?php
-            } ?>
-        </div>
-        <div style="clear: both;"></div>
-    </div>
-    <div class="main-inner"><?php
-if ($software_section != "login" && $software_section != "installation" && $software_section != "resetpassword" && $_SESSION['s_running_login_checks'] != 1) { ?>
-    <hr width="100%" size="1" noshade><BR><?php
-} ?>
-    <div class="headline"><?php echo $page_title; ?></div>
-    <BR>
-<?php
-include(DIR_INC . "layout/table-maintenance.inc.php");
-?>
-<?php
-if ($_SESSION['s_result_message'] != "") {
+  <header class="main-header">
+    <!-- Logo -->
+    <a href="<?php echo $web_root; ?>" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini">
+          <img src="<?php echo $web_root; ?>/images/logo-mini.png">
+      </span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg" >
+          <img src="<?php echo $web_root; ?>/images/logo.png">
+      </span>
+    </a>
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <span class="hidden-md hidden-lg">
+         <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+             <span class="sr-only">Toggle navigation</span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+         </a>
+      </span>
 
-    echo $system->showResultMessage($_SESSION['s_result_message']);
-    unset($_SESSION['s_result_message']);
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- Messages: style can be found in dropdown.less-->
+<?php /* ?>
+          <li class="dropdown messages-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-envelope-o"></i>
+              <span class="label label-success">4</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 4 messages</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                  <li><!-- start message -->
+                    <a href="#">
+                      <div class="pull-left">
+                        <!img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        Support Team
+                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                  <!-- end message -->
+                </ul>
+              </li>
+              <li class="footer"><a href="#">See All Messages</a></li>
+            </ul>
+          </li>
+          <!-- Notifications: style can be found in dropdown.less -->
+          <li class="dropdown notifications-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-bell-o"></i>
+              <span class="label label-warning">10</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 10 notifications</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                  <li>
+                    <a href="#">
+                      <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="footer"><a href="#">View all</a></li>
+            </ul>
+          </li>
+          <!-- Tasks: style can be found in dropdown.less -->
+          <li class="dropdown tasks-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-flag-o"></i>
+              <span class="label label-danger">9</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 9 tasks</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                  <li><!-- Task item -->
+                    <a href="#">
+                      <h3>
+                        Design some buttons
+                        <small class="pull-right">20%</small>
+                      </h3>
+                      <div class="progress xs">
+                        <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                          <span class="sr-only">20% Complete</span>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                  <!-- end task item -->
+                </ul>
+              </li>
+              <li class="footer">
+                <a href="#">View all tasks</a>
+              </li>
+            </ul>
+          </li>
+<?php */ ?>
+          <!-- User Account: style can be found in dropdown.less -->
+          <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <span class="hidden-xs"><?php echo $_SESSION['s_first_name'] . " "; ?><?php echo $_SESSION['s_last_name']; ?></span>&nbsp;
+              <i class="fa fa-user"></i>
+            </a>
 
-}
+              <ul class="dropdown-menu">
+              <!-- User image -->
+              <li class="user-header">
+                <!img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+
+                <p>
+                    <?php echo $_SESSION['s_first_name'] . " "; ?> <?php echo $_SESSION['s_last_name']; ?><BR>
+                    <?php echo $_SESSION['s_email_address']; ?><BR><BR>
+                    <small>
+                        Currency: <?php echo $_SESSION['s_default_currency']; ?><BR>
+                        Time Zone: <?php echo $_SESSION['s_default_timezone']; ?><BR>
+                        Expiration Emails: <?php
+                        if ($_SESSION['s_expiration_email'] == '1') {
+                            echo "Yes";
+                        } else {
+                            echo "No";
+                        } ?>
+                    </small>
+                </p>
+              </li>
+<?php /* ?>
+              <!-- Menu Body -->
+              <li class="user-body">
+                <div class="row">
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Followers</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Sales</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Friends</a>
+                  </div>
+                </div>
+                <!-- /.row -->
+              </li>
+              <!-- Menu Footer-->
+<?php */ ?>
+              <li class="user-footer">
+                <div class="pull-left">
+                  <a href="<?php echo $web_root; ?>/settings/profile/" class="btn btn-default btn-flat">User Profile</a>&nbsp;&nbsp;
+                </div>
+                <div class="pull-right">
+                  <a href="<?php echo $web_root; ?>/logout.php" class="btn btn-default btn-flat">Sign out</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+
+<?php /* ?>
+          <!-- Control Sidebar Toggle Button -->
+          <li>
+            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+          </li>
+<?php */ ?>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- =============================================== -->
+
+  <!-- Left side column. contains the sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- Sidebar user panel -->
+<?php /* ?>
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+          <p>Alexander Pierce</p>
+          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+        </div>
+      </div>
+<?php */ ?>
+      <!-- search form -->
+      <form action="<?php echo $web_root; ?>/domains/index.php" method="get" class="sidebar-form">
+        <div class="input-group">
+          <input type="text" name="search_for" class="form-control" placeholder="Domain Keyword Search"<?php if ($search_for && $search_for != '') echo 'value="' . $search_for . '"'; ?>"'>
+              <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                </button>
+              </span>
+        </div>
+      </form>
+      <!-- /.search form -->
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <?php include(DIR_INC . 'layout/menu-main.inc.php'); ?>
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- =============================================== -->
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+
+          <span class="visible-sm visible-md visible-lg">
+              <?php
+              $breadcrumb_position = 'left';
+              include(DIR_INC . "layout/breadcrumbs.inc.php");
+              ?>
+          </span>
+
+          <span class="visible-xs">
+              <?php
+              $breadcrumb_position = 'right';
+              include(DIR_INC . "layout/breadcrumbs.inc.php");
+              ?>
+          </span>
+          <BR>
+
+<?php /* ?>
+      <h1>
+        <?php echo $page_title; ?>
+      </h1>
+<?php */ ?>
+
+        <?php
+        include(DIR_INC . "layout/table-maintenance.inc.php");
+
+        if ($_SESSION['s_message_success'] != "") {
+            echo $system->showMessageSuccess($_SESSION['s_message_success']);
+            unset($_SESSION['s_message_success']);
+        }
+
+        if ($_SESSION['s_message_danger'] != "") {
+            echo $system->showMessageDanger($_SESSION['s_message_danger']);
+            unset($_SESSION['s_message_danger']);
+        } ?>
+
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <!-- Default box -->
+      <div class="box box-solid box-danger">
+<?php /* ?>
+        <div class="box-header with-border">
+          <h3 class="box-title">Title</h3>
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+              <i class="fa fa-minus"></i></button>
+            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+              <i class="fa fa-times"></i></button>
+          </div>
+        </div>
+<?php */ ?>
+        <div class="box-header with-border">
+            <h3 class="box-title"><?php echo $page_title; ?></h3>
+            <?php if ($software_section_logo != '') { ?>
+                <span class="pull-right"><i class="fa <?php echo $software_section_logo; ?>"></i></span>
+            <?php } ?>
+        </div>
+        <div class="box-body">

@@ -26,19 +26,18 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-edit-ssl-account.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-
-$page_title = "Editing An SSL Provider Account";
-$software_section = "ssl-provider-accounts-edit";
 
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
@@ -120,8 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_result_message'] = "SSL Account <div class=\"highlight\">$new_username ($temp_ssl_provider,
-            $temp_owner)</div> Updated<BR>";
+        $_SESSION['s_message_success'] = "SSL Account " . $new_username . " (" . $temp_ssl_provider . ", " . $temp_owner . ") Updated<BR>";
 
         header("Location: ../ssl-accounts.php");
         exit;
@@ -129,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($username == "") {
-            $_SESSION['s_result_message'] .= "Please enter a username<BR>";
+            $_SESSION['s_message_danger'] .= "Enter a username<BR>";
         }
 
     }
@@ -184,12 +182,12 @@ if ($del == "1") {
 
     if ($existing_ssl_certs > 0) {
 
-        $_SESSION['s_result_message'] = "This SSL Account has SSL certificates associated with it and cannot be
+        $_SESSION['s_message_danger'] = "This SSL Account has SSL certificates associated with it and cannot be
         deleted<BR>";
 
     } else {
 
-        $_SESSION['s_result_message'] = "Are you sure you want to delete this SSL Account?<BR><BR><a
+        $_SESSION['s_message_danger'] = "Are you sure you want to delete this SSL Account?<BR><BR><a
             href=\"ssl-provider-account.php?sslpaid=$sslpaid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER
             ACCOUNT</a><BR>";
 
@@ -233,8 +231,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_result_message'] = "SSL Account <div class=\"highlight\">$temp_username ($temp_ssl_provider_name,
-        $temp_owner_name)</div> Deleted<BR>";
+    $_SESSION['s_message_success'] = "SSL Account " . $temp_username . " (" . $temp_ssl_provider_name . ", " . $temp_owner_name . ") Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 
@@ -249,106 +246,77 @@ if ($really_del == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="edit_ssl_account_form" method="post">
-    <strong>Owner</strong><BR><BR>
-    <?php
-    $query = "SELECT id, `name`
+<?php
+echo $form->showFormTop('');
+
+$query = "SELECT id, `name`
           FROM owners
-          ORDER BY name ASC";
-    $q = $conn->stmt_init();
+          ORDER BY `name` ASC";
+$q = $conn->stmt_init();
 
-    if ($q->prepare($query)) {
+if ($q->prepare($query)) {
 
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($id, $name);
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($id, $name);
 
-        echo "<select name=\"new_owner_id\">";
+    echo $form->showDropdownTop('new_owner_id', 'Owner', '', '');
 
-        while ($q->fetch()) {
+    while ($q->fetch()) {
 
-            if ($id == $new_owner_id) {
+        echo $form->showDropdownOption($id, $name, $new_owner_id);
 
-                echo "<option value=\"$id\" selected>$name</option>";
-
-            } else {
-
-                echo "<option value=\"$id\">$name</option>";
-
-            }
-
-        }
-
-        echo "</select>";
-
-        $q->close();
-
-    } else {
-        $error->outputSqlError($conn, "ERROR");
     }
-    ?>
-    <BR><BR>
-    <strong>SSL Provider</strong><BR><BR>
-    <?php
-    $query = "SELECT id, `name`
-          FROM ssl_providers
-          ORDER BY name ASC";
-    $q = $conn->stmt_init();
 
-    if ($q->prepare($query)) {
+    echo $form->showDropdownBottom('');
 
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($id, $name);
+    $q->close();
 
-        echo "<select name=\"new_ssl_provider_id\">";
+} else {
+    $error->outputSqlError($conn, "ERROR");
+}
 
-        while ($q->fetch()) {
 
-            if ($id == $new_ssl_provider_id) {
+$query = "SELECT id, `name`
+              FROM ssl_providers
+              ORDER BY `name` ASC";
+$q = $conn->stmt_init();
 
-                echo "<option value=\"$id\" selected>$name</option>";
+if ($q->prepare($query)) {
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($id, $name);
 
-            } else {
+    echo $form->showDropdownTop('new_ssl_provider_id', 'SSL Provider', '', '');
 
-                echo "<option value=\"$id\">$name</option>";
+    while ($q->fetch()) {
 
-            }
+        echo $form->showDropdownOption($id, $name, $new_ssl_provider_id);
 
-        }
-
-        echo "</select>";
-
-        $q->close();
-
-    } else {
-        $error->outputSqlError($conn, "ERROR");
     }
-    ?>
-    <BR><BR>
-    <strong>Username (100)</strong><a title="Required Field">
-        <div class="default_highlight">*</div>
-    </a><BR><BR>
-    <input name="new_username" type="text" size="50" maxlength="100" value="<?php echo htmlentities($new_username); ?>">
-    <BR><BR>
-    <strong>Password (255)</strong><BR><BR>
-    <input name="new_password" type="text" size="50" maxlength="255" value="<?php echo htmlentities($new_password); ?>">
-    <BR><BR>
-    <strong>Reseller Account?</strong><BR><BR>
-    <select name="new_reseller">";
-        <option value="0"<?php if ($new_reseller == "0") echo " selected"; ?>>No</option>
-        <option value="1"<?php if ($new_reseller == "1") echo " selected"; ?>>Yes</option>
-    </select>
-    <BR><BR>
-    <strong>Notes</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-    <input type="hidden" name="new_sslpaid" value="<?php echo $sslpaid; ?>">
-    <BR><BR>
-    <input type="submit" name="button" value="Update This SSL Provider Account &raquo;">
-</form>
-<BR><BR><a href="ssl-provider-account.php?sslpaid=<?php echo $sslpaid; ?>&del=1">DELETE THIS SSL PROVIDER ACCOUNT</a>
+
+    echo $form->showDropdownBottom('');
+
+    $q->close();
+
+} else {
+    $error->outputSqlError($conn, "ERROR");
+}
+
+echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '', '');
+echo $form->showInputText('new_password', 'Password (255)', '', $new_password, '255', '', '', '');
+echo $form->showRadioTop('Reseller Account?', '', '');
+echo $form->showRadioOption('new_reseller', '1', 'Yes', $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_reseller', '0', 'No', $new_reseller, '', '');
+echo $form->showRadioBottom('');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputHidden('new_sslpaid', $sslpaid);
+echo $form->showSubmitButton('Save', '', '');
+echo $form->showFormBottom('');
+?>
+<BR><a href="ssl-provider-account.php?sslpaid=<?php echo $sslpaid; ?>&del=1">DELETE THIS SSL PROVIDER ACCOUNT</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

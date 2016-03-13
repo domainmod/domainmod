@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Time
@@ -64,4 +63,4 @@ class Time
         return $date->format($format);
     }
 
-}
+} //@formatter:on

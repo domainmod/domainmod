@@ -26,19 +26,18 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-edit-host.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-
-$page_title = "Editing A Web Host";
-$software_section = "hosting-edit";
 
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
@@ -51,7 +50,7 @@ $new_whid = $_REQUEST['new_whid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_host != "" && $new_url != "") {
+    if ($new_host != "") {
 
         $query = "UPDATE hosting
                   SET `name` = ?,
@@ -75,15 +74,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $whid = $new_whid;
 
-        $_SESSION['s_result_message'] = "Web Host <div class=\"highlight\">$new_host</div> Updated<BR>";
+        $_SESSION['s_message_success'] = "Web Host " . $new_host . " Updated<BR>";
 
         header("Location: ../hosting.php");
         exit;
 
     } else {
 
-        if ($new_host == "") $_SESSION['s_result_message'] .= "Please enter the web host's name<BR>";
-        if ($new_url == "") $_SESSION['s_result_message'] .= "Please enter the web host's URL<BR>";
+        if ($new_host == "") $_SESSION['s_message_danger'] .= "Enter the web host's name<BR>";
 
     }
 
@@ -125,11 +123,11 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['s_result_message'] = "This Web Host has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] = "This Web Host has domains associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['s_result_message'] = "Are you sure you want to delete this Web Host?<BR><BR><a
+            $_SESSION['s_message_danger'] = "Are you sure you want to delete this Web Host?<BR><BR><a
                 href=\"host.php?whid=$whid&really_del=1\">YES, REALLY DELETE THIS WEB HOST</a><BR>";
 
         }
@@ -158,7 +156,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_result_message'] = "Web Host <div class=\"highlight\">$new_host</div> Deleted<BR>";
+    $_SESSION['s_message_success'] = "Web Host " . $new_host . " Deleted<BR>";
 
     header("Location: ../hosting.php");
     exit;
@@ -171,29 +169,18 @@ if ($really_del == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="edit_host_form" method="post">
-    <strong>Web Host Name (100)</strong>
-    <a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a><BR><BR>
-    <input name="new_host" type="text" value="<?php if ($new_host != "") echo htmlentities($new_host); ?>
-" size="50" maxlength="100">
-    <BR><BR>
-    <strong>Web Host's URL (100)</strong>
-    <a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a><BR><BR>
-    <input name="new_url" type="text" value="<?php echo htmlentities($new_url); ?>" size="50" maxlength="100">
-    <BR><BR>
-    <strong>Notes</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-    <input type="hidden" name="new_whid" value="<?php echo $whid; ?>">
-    <BR><BR>
-    <input type="submit" name="button" value="Update This Web Host &raquo;">
-</form>
-<BR><BR><a href="host.php?whid=<?php echo $whid; ?>&del=1">DELETE THIS WEB HOST</a>
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_host', 'Web Host Name (100)', '', $new_host, '100', '', '', '');
+echo $form->showInputText('new_url', 'Web Host\'s URL (100)', '', $new_url, '100', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputHidden('new_whid', $whid);
+echo $form->showSubmitButton('Save', '', '');
+echo $form->showFormBottom('');
+?>
+<BR><a href="host.php?whid=<?php echo $whid; ?>&del=1">DELETE THIS WEB HOST</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

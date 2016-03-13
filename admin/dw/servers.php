@@ -26,26 +26,25 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$layout = new DomainMOD\Layout();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/dw-servers.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
-$page_title = "Data Warehouse Servers";
-$software_section = "admin-dw-manage-servers";
-
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT id, name, host, protocol, port, username, hash, notes, dw_accounts, dw_dns_zones, dw_dns_records, build_end_time, insert_time, update_time
+$sql = "SELECT id, `name`, `host`, protocol, `port`, username, `hash`, notes, dw_accounts, dw_dns_zones, dw_dns_records, build_end_time, insert_time, update_time
         FROM dw_servers
-        ORDER BY name, host";
+        ORDER BY `name`, `host`";
 
 if ($export_data == "1") {
 
@@ -111,73 +110,84 @@ if ($export_data == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
+<a href="add-server.php"><?php echo $layout->showButton('button', 'Add Web Server'); ?></a>&nbsp;&nbsp;&nbsp;
 <?php
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 if (mysqli_num_rows($result) > 0) { ?>
 
-    [<a href="servers.php?export_data=1">EXPORT</a>]
+    <a href="servers.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR>
 
-    <table class="main_table" cellpadding="0" cellspacing="0">
-    <tr class="main_table_row_heading_active">
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Name</div>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Host</div>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Port</div>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Username</div>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Inserted</div>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Updated</div>
-        </td>
-    </tr><?php
+    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        <thead>
+        <tr>
+            <th width="20px"></th>
+            <th>Name</th>
+            <th>Host</th>
+            <th>Port</th>
+            <th>Username</th>
+            <th>Inserted</th>
+            <th>Updated</th>
+        </tr>
+        </thead>
+    <tbody><?php
 
     while ($row = mysqli_fetch_object($result)) { ?>
 
-        <tr class="main_table_row_active">
-        <td class="main_table_cell_active">
-            <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
-        </td>
-        <td class="main_table_cell_active">
-            <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php
-                echo $row->protocol; ?>://<?php echo $row->host; ?></a>
-        </td>
-        <td class="main_table_cell_active">
-            <a class="invisiblelink" href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->port; ?></a>
-        </td>
-        <td class="main_table_cell_active">
-            <a class="invisiblelink"
-               href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
-        </td>
-        <td class="main_table_cell_active">
-            <?php if ($row->insert_time == "0000-00-00 00:00:00") $row->insert_time = "-"; ?>
-            <a class="invisiblelink"
-               href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->insert_time; ?></a>
-        </td>
-        <td class="main_table_cell_active">
-            <?php if ($row->update_time == "0000-00-00 00:00:00") $row->update_time = "-"; ?>
-            <a class="invisiblelink"
-               href="edit/server.php?dwsid=<?php echo $row->id; ?>"><?php echo $time->toUserTimezone($row->update_time); ?></a>
-        </td>
+        <tr>
+            <td></td>
+            <td>
+                <a href="edit-server.php?dwsid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a>
+            </td>
+            <td>
+                <?php echo $row->protocol; ?>://<?php echo $row->host; ?>
+            </td>
+            <td>
+                <?php echo $row->port; ?>
+            </td>
+            <td>
+                <?php echo $row->username; ?>
+            </td>
+            <td><?php
+
+                if ($row->insert_time != "0000-00-00 00:00:00") {
+
+                    $temp_time = $time->toUserTimezone($row->insert_time);
+
+                } else {
+
+                    $temp_time = '-';
+
+                }
+
+                echo $temp_time; ?>
+            </td>
+            <td><?php
+
+                if ($row->update_time != "0000-00-00 00:00:00") {
+
+                    $temp_time = $time->toUserTimezone($row->update_time);
+
+                } else {
+
+                    $temp_time = '-';
+
+                }
+
+                echo $temp_time; ?>
+            </td>
         </tr><?php
 
     } ?>
 
+    </tbody>
     </table><?php
 
 } else {
 
-    echo "You don't currently have any servers setup. <a href=\"add/server.php\">Click here to add one</a>.";
+    echo "You don't currently have any Servers. <a href=\"add/server.php\">Click here to add one</a>.";
 
 }
 ?>

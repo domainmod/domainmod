@@ -27,17 +27,16 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
+$layout = new DomainMOD\Layout();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/dw-intro.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
-
-$page_title = "Data Warehouse";
-$software_section = "admin-dw-intro";
 ?>
 <?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
@@ -45,9 +44,9 @@ $software_section = "admin-dw-intro";
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-&raquo; <a href="dw.php">Proceed to Data Warehouse</a><BR><BR>
+<BR><a href="dw.php"><?php echo $layout->showButton('button', 'Proceed to the Data Warehouse'); ?></a><BR><BR>
 
 <?php echo $software_title; ?> has a Data Warehouse framework built right into it, which allows you to import the data
 stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also
@@ -59,24 +58,21 @@ If your web server doesn't run WHM/cPanel, or you don't want to import your web 
 <?php echo $software_title; ?>, you can ignore this section.<BR>
 <BR>
 
-<div class="default_highlight">NOTE:</div>
-Importing your web server(s) into the Data Warehouse will <strong>not</strong> modify any of your other <?php
-echo $software_title; ?> data, nor any of the data on your server.<BR>
-<BR>
+<strong>NOTE:</strong> Importing your web server(s) into the Data Warehouse will <strong>not</strong> modify any of your other <?php
+echo $software_title; ?> data, nor any of the data on your web server.<BR>
 
-<div class="subheadline">Automating Builds</div>
-<BR>
+<h3>Automating Builds</h3>
 If you're going to use the Data Warehouse, it's recommended that you setup the system cron/scheduled job in order to
 automate your builds (<a href="http://domainmod.org/readme/#cron">more information here</a>). There's a lot of work
 being done in the background during a build, and more often than not a web browser will timeout if you try to build
 through the software instead of using a cron job, leading to incomplete and missing information in your Data Warehouse.
 After you've setup the cron job you will be able to manage the Data Warehouse scheduling through <?php
 echo $software_title; ?>'s Task Scheduler.<BR>
-<BR>
-<div class="subheadline">Data Structure</div>
-<BR>
+
+<h3>Data Structure</h3>
 The following data is currently imported into the Data Warehouse.<BR>
 <BR>
+
 <strong>Accounts</strong><BR>
 Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max
 FTP Accounts, Max Email Lists, Max Parked Domains, Max POP Accounts, Max SQL Accounts, Max Subdomains, Creation Date,
@@ -89,7 +85,7 @@ Authoritative Name Server<BR>
 <BR>
 <strong>DNS Records</strong><BR>
 TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW
-Data<BR>
+Data<BR><BR>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

@@ -26,11 +26,12 @@ include("_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
-$login = new DomainMOD\Login();
-$maint = new DomainMOD\Maintenance();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
+$maint = new DomainMOD\Maintenance();
+$login = new DomainMOD\Login();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
@@ -42,7 +43,7 @@ $system->loginCheck();
 
 list($installation_mode, $result_message) = $system->installCheck($connection, $web_root);
 $_SESSION['s_installation_mode'] = $installation_mode;
-$_SESSION['s_result_message'] .= $result_message;
+$_SESSION['s_message_danger'] .= $result_message;
 
 if ($_SESSION['s_installation_mode'] == '1') {
 
@@ -68,122 +69,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
               AND active = '1'";
     $result = mysqli_query($connection, $sql);
 
-    if (mysqli_num_rows($result) == 1) {
-
-        $login_succeeded = '1';
-
-    } else {
-
-        $login_succeeded = '0';
-
-    }
-
-    if ($login_succeeded == '1') {
-
-        $result = $login->getUserInfo($connection, $new_username, $new_password);
+    if (mysqli_num_rows($result) == 1) { // Login succeeded
 
         while ($row = mysqli_fetch_object($result)) {
 
             $_SESSION['s_user_id'] = $row->id;
-            $_SESSION['s_first_name'] = $row->first_name;
-            $_SESSION['s_last_name'] = $row->last_name;
-            $_SESSION['s_username'] = $row->username;
-            $_SESSION['s_email_address'] = $row->email_address;
-            $_SESSION['s_is_new_password'] = $row->new_password;
-            $_SESSION['s_number_of_logins'] = $row->number_of_logins;
-            if ($row->admin == 1) $_SESSION['s_is_admin'] = 1;
-            $_SESSION['s_is_logged_in'] = 1;
+            $_SESSION['s_username'] = $new_username;
 
         }
 
-        $result_settings = $login->getSystemSettings($connection);
+        $sql = "SELECT db_version
+                FROM settings";
+        $result = mysqli_query($connection, $sql);
 
-        while ($row_settings = mysqli_fetch_object($result_settings)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-            $_SESSION['s_system_full_url'] = $row_settings->full_url;
-            $_SESSION['s_system_db_version'] = (string) $row_settings->db_version;
-            $_SESSION['s_system_upgrade_available'] = $row_settings->upgrade_available;
-            $_SESSION['s_system_email_address'] = $row_settings->email_address;
-            $_SESSION['s_system_default_category_domains'] = $row_settings->default_category_domains;
-            $_SESSION['s_system_default_category_ssl'] = $row_settings->default_category_ssl;
-            $_SESSION['s_system_default_dns'] = $row_settings->default_dns;
-            $_SESSION['s_system_default_host'] = $row_settings->default_host;
-            $_SESSION['s_system_default_ip_address_domains'] = $row_settings->default_ip_address_domains;
-            $_SESSION['s_system_default_ip_address_ssl'] = $row_settings->default_ip_address_ssl;
-            $_SESSION['s_system_default_owner_domains'] = $row_settings->default_owner_domains;
-            $_SESSION['s_system_default_owner_ssl'] = $row_settings->default_owner_ssl;
-            $_SESSION['s_system_default_registrar'] = $row_settings->default_registrar;
-            $_SESSION['s_system_default_registrar_account'] = $row_settings->default_registrar_account;
-            $_SESSION['s_system_default_ssl_provider_account'] = $row_settings->default_ssl_provider_account;
-            $_SESSION['s_system_default_ssl_type'] = $row_settings->default_ssl_type;
-            $_SESSION['s_system_default_ssl_provider'] = $row_settings->default_ssl_provider;
-            $_SESSION['s_system_expiration_email_days'] = $row_settings->expiration_email_days;
+            $_SESSION['s_system_db_version'] = (string) $row->db_version;
 
         }
 
-        $result_user_settings = $login->getUserSettings($connection, $_SESSION['s_user_id']);
-
-        while ($row_user_settings = mysqli_fetch_object($result_user_settings)) {
-
-            $_SESSION['s_default_currency'] = $row_user_settings->default_currency;
-            $_SESSION['s_default_timezone'] = $row_user_settings->default_timezone;
-            $_SESSION['s_default_category_domains'] = $row_user_settings->default_category_domains;
-            $_SESSION['s_default_category_ssl'] = $row_user_settings->default_category_ssl;
-            $_SESSION['s_default_dns'] = $row_user_settings->default_dns;
-            $_SESSION['s_default_host'] = $row_user_settings->default_host;
-            $_SESSION['s_default_ip_address_domains'] = $row_user_settings->default_ip_address_domains;
-            $_SESSION['s_default_ip_address_ssl'] = $row_user_settings->default_ip_address_ssl;
-            $_SESSION['s_default_owner_domains'] = $row_user_settings->default_owner_domains;
-            $_SESSION['s_default_owner_ssl'] = $row_user_settings->default_owner_ssl;
-            $_SESSION['s_default_registrar'] = $row_user_settings->default_registrar;
-            $_SESSION['s_default_registrar_account'] = $row_user_settings->default_registrar_account;
-            $_SESSION['s_default_ssl_provider_account'] = $row_user_settings->default_ssl_provider_account;
-            $_SESSION['s_default_ssl_type'] = $row_user_settings->default_ssl_type;
-            $_SESSION['s_default_ssl_provider'] = $row_user_settings->default_ssl_provider;
-            $_SESSION['s_number_of_domains'] = $row_user_settings->number_of_domains;
-            $_SESSION['s_number_of_ssl_certs'] = $row_user_settings->number_of_ssl_certs;
-            $_SESSION['s_display_domain_owner'] = $row_user_settings->display_domain_owner;
-            $_SESSION['s_display_domain_registrar'] = $row_user_settings->display_domain_registrar;
-            $_SESSION['s_display_domain_account'] = $row_user_settings->display_domain_account;
-            $_SESSION['s_display_domain_expiry_date'] = $row_user_settings->display_domain_expiry_date;
-            $_SESSION['s_display_domain_category'] = $row_user_settings->display_domain_category;
-            $_SESSION['s_display_domain_dns'] = $row_user_settings->display_domain_dns;
-            $_SESSION['s_display_domain_host'] = $row_user_settings->display_domain_host;
-            $_SESSION['s_display_domain_ip'] = $row_user_settings->display_domain_ip;
-            $_SESSION['s_display_domain_host'] = $row_user_settings->display_domain_host;
-            $_SESSION['s_display_domain_tld'] = $row_user_settings->display_domain_tld;
-            $_SESSION['s_display_domain_fee'] = $row_user_settings->display_domain_fee;
-            $_SESSION['s_display_ssl_owner'] = $row_user_settings->display_ssl_owner;
-            $_SESSION['s_display_ssl_provider'] = $row_user_settings->display_ssl_provider;
-            $_SESSION['s_display_ssl_account'] = $row_user_settings->display_ssl_account;
-            $_SESSION['s_display_ssl_domain'] = $row_user_settings->display_ssl_domain;
-            $_SESSION['s_display_ssl_type'] = $row_user_settings->display_ssl_type;
-            $_SESSION['s_display_ssl_ip'] = $row_user_settings->display_ssl_ip;
-            $_SESSION['s_display_ssl_category'] = $row_user_settings->display_ssl_category;
-            $_SESSION['s_display_ssl_expiry_date'] = $row_user_settings->display_ssl_expiry_date;
-            $_SESSION['s_display_ssl_fee'] = $row_user_settings->display_ssl_fee;
-            $_SESSION['s_display_inactive_assets'] = $row_user_settings->display_inactive_assets;
-            $_SESSION['s_display_dw_intro_page'] = $row_user_settings->display_dw_intro_page;
-
-        }
-
-        $result_currencies = $login->getCurrencyInfo($connection, $_SESSION['s_default_currency']);
-
-        while ($row_currencies = mysqli_fetch_object($result_currencies)) {
-
-            $_SESSION['s_default_currency_name'] = $row_currencies->name;
-            $_SESSION['s_default_currency_symbol'] = $row_currencies->symbol;
-            $_SESSION['s_default_currency_symbol_order'] = $row_currencies->symbol_order;
-            $_SESSION['s_default_currency_symbol_space'] = $row_currencies->symbol_space;
-
-        }
+        $_SESSION['s_is_logged_in'] = 1;
 
         header("Location: checks.php");
         exit;
 
-    } else {
+    } else { // Login failed
 
-        $_SESSION['s_result_message'] = "Login Failed<BR>";
+        $_SESSION['s_message_danger'] = "Login Failed<BR>";
 
     }
 
@@ -194,12 +106,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         if ($new_username == "" && $new_password == "") {
 
-            $_SESSION['s_result_message'] .= "Enter your username & password<BR>";
+            $_SESSION['s_message_danger'] .= "Enter your username & password<BR>";
 
         } elseif ($new_username == "" || $new_password == "") {
 
-            if ($new_username == "") $_SESSION['s_result_message'] .= "Enter your username<BR>";
-            if ($new_password == "") $_SESSION['s_result_message'] .= "Enter your password<BR>";
+            if ($new_username == "") $_SESSION['s_message_danger'] .= "Enter your username<BR>";
+            if ($new_password == "") $_SESSION['s_message_danger'] .= "Enter your password<BR>";
 
         }
     }
@@ -220,35 +132,33 @@ $new_password = "";
 </head>
 <?php
 if ($new_username == "") { ?>
-<body onLoad="document.forms[0].elements[0].focus()"><?php
+
+    <body class="hold-transition skin-red" onLoad="document.forms[0].elements[0].focus()"><?php
+
 } else { ?>
-<body onLoad="document.forms[0].elements[1].focus()"><?php
+
+    <body class="hold-transition skin-red" onLoad="document.forms[0].elements[1].focus()"><?php
+
 } ?>
 <?php include(DIR_INC . "layout/header-login.inc.php"); ?>
 <?php
-if ($_SESSION['s_installation_mode'] == '0') { ?>
+if ($_SESSION['s_installation_mode'] == '0') {
 
-    <BR>
-    <form name="login_form" method="post">
-    <?php if ($demo_install == "1") { ?>
-        <div align="center"><strong>Demo Username & Password:</strong> "demo"</div><BR><BR><?php } ?>
-    <div class="login_form">
-        <strong>Username:</strong>&nbsp;
-        <input name="new_username" type="text" value="<?php echo $new_username; ?>" size="20" maxlength="20"><BR><BR>
-        &nbsp;<strong>Password:</strong>&nbsp;
-        <input name="new_password" type="password" id="new_password" size="20" maxlength="255"><br>
-    </div>
-    <div class="login_form">
-        <BR><BR>
-        <input type="submit" name="button" value="Manage Your Domains &raquo;">
-        <?php if ($demo_install != "1") { ?>
+    echo $form->showFormTop('');
 
-            <BR><BR><a class="invisiblelink" href="reset.php">Forgot your Password?</a><BR>
+    if ($demo_install == "1") { ?> <strong>Demo Username & Password:</strong> "demo"<BR><BR><?php }
 
-        <?php } ?>
+    echo $form->showInputText('new_username', 'Username', '', $new_username, '20', '', '', '');
+    echo $form->showInputText('new_password', 'Password', '', '', '255', '1', '', '');
+    echo $form->showSubmitButton('Login', '', '');
+    echo $form->showFormBottom('');
 
-    </div>
-    </form><?php
+    if ($demo_install != "1") { ?>
+
+        <BR><a href="reset.php">Forgot your Password?</a><?php
+
+    }
+
 } ?>
 <?php include(DIR_INC . "layout/footer-login.inc.php"); ?>
 </body>

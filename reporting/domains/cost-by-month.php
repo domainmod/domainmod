@@ -19,57 +19,55 @@
  *
  */
 ?>
-<?php
+<?php //@formatter:off
 include("../../_includes/start-session.inc.php");
 include("../../_includes/init.inc.php");
 
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$currency = new DomainMOD\Currency();
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
+$layout = new DomainMOD\Layout;
 $time = new DomainMOD\Time();
+$reporting = new DomainMOD\Reporting();
+$currency = new DomainMOD\Currency();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/reporting-domain-cost-by-month.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = $reporting_section_title;
-$page_subtitle = "Domain Cost by Month Report";
-$software_section = "reporting-domain-cost-by-month-report";
-$report_name = "domain-cost-by-month-report";
-
-// Form Variables
 $export_data = $_GET['export_data'];
 $all = $_GET['all'];
-$new_start_date = $_REQUEST['new_start_date'];
-$new_end_date = $_REQUEST['new_end_date'];
+$daterange = $_REQUEST['daterange'];
+
+$new_start_date = substr($daterange, 0, 10);
+$new_end_date = substr($daterange, -10, 10);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
     if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date >
-        $new_end_date
-    ) {
+        $new_end_date) {
 
-        if (!$date->checkDateFormat($new_start_date)) $_SESSION['s_result_message'] .= "The start date is invalid<BR>";
-        if (!$date->checkDateFormat($new_end_date)) $_SESSION['s_result_message'] .= "The end date is invalid<BR>";
-        if ($new_start_date > $new_end_date) $_SESSION['s_result_message'] .= "The end date proceeds the start date<BR>";
+        if (!$date->checkDateFormat($new_start_date)) $_SESSION['s_message_danger'] .= 'The start date is invalid<BR>';
+        if (!$date->checkDateFormat($new_end_date)) $_SESSION['s_message_danger'] .= 'The end date is invalid<BR>';
+        if ($new_start_date > $new_end_date) $_SESSION['s_message_danger'] .= 'The end date proceeds the start date<BR>';
 
-        $submission_failed = "1";
+        $submission_failed = '1';
 
     }
 
-    $all = "0";
+    $all = '0';
 
 }
 
-$reporting = new DomainMOD\Reporting();
 $range_string = $reporting->getRangeString($all, 'd.expiry_date', $new_start_date, $new_end_date);
 
 $sql = "SELECT d.id, YEAR(d.expiry_date) AS year, MONTH(d.expiry_date) AS month
@@ -101,15 +99,15 @@ while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
 $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_symbol'],
     $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-if ($submission_failed != "1" && $total_rows > 0) {
+if ($submission_failed != '1' && $total_rows > 0) {
 
-    if ($export_data == "1") {
+    if ($export_data == '1') {
 
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
         $export = new DomainMOD\Export();
 
-        if ($all == "1") {
+        if ($all == '1') {
 
             $export_file = $export->openFile('domain_cost_by_month_report_all', strtotime($time->stamp()));
 
@@ -122,12 +120,12 @@ if ($submission_failed != "1" && $total_rows > 0) {
 
         }
 
-        $row_contents = array($page_subtitle);
+        $row_contents = array($page_title);
         $export->writeRow($export_file, $row_contents);
 
         $export->writeBlankRow($export_file);
 
-        if ($all != "1") {
+        if ($all != '1') {
 
             $row_contents = array('Date Range:', $new_start_date, $new_end_date);
 
@@ -161,10 +159,124 @@ if ($submission_failed != "1" && $total_rows > 0) {
         );
         $export->writeRow($export_file, $row_contents);
 
-        $new_year = "";
-        $last_year = "";
-        $new_month = "";
-        $last_month = "";
+        $new_year = '';
+        $last_year = '';
+        $new_month = '';
+        $last_month = '';
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $new_year = $row->year;
+                $new_month = $row->month;
+
+                $sql_monthly_cost = "SELECT SUM(d.total_cost * cc.conversion) AS monthly_cost
+                                     FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
+                                     WHERE d.fee_id = f.id
+                                       AND f.currency_id = c.id
+                                       AND c.id = cc.currency_id
+                                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+                                       AND d.active NOT IN ('0', '10')
+                                       AND YEAR(d.expiry_date) = '" . $row->year . "'
+                                       AND MONTH(d.expiry_date) = '" . $row->month . "'
+                                       " . $range_string . "";
+                $result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
+
+                while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
+                    $monthly_cost = $row_monthly_cost->monthly_cost;
+                }
+
+                $monthly_cost = $currency->format($monthly_cost, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+                if ($row->month == '1') { $display_month = 'January';
+                } elseif ($row->month == '2') { $display_month = 'February';
+                } elseif ($row->month == '3') { $display_month = 'March';
+                } elseif ($row->month == '4') { $display_month = 'April';
+                } elseif ($row->month == '5') { $display_month = 'May';
+                } elseif ($row->month == '6') { $display_month = 'June';
+                } elseif ($row->month == '7') { $display_month = 'July';
+                } elseif ($row->month == '8') { $display_month = 'August';
+                } elseif ($row->month == '9') { $display_month = 'September';
+                } elseif ($row->month == '10') { $display_month = 'October';
+                } elseif ($row->month == '11') { $display_month = 'November';
+                } elseif ($row->month == '12') { $display_month = 'December';
+                }
+
+                $sql_yearly_cost = "SELECT SUM(d.total_cost * cc.conversion) AS yearly_cost
+                                FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
+                                WHERE d.fee_id = f.id
+                                  AND f.currency_id = c.id
+                                  AND c.id = cc.currency_id
+                                  AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+                                  AND d.active NOT IN ('0', '10')
+                                  AND YEAR(d.expiry_date) = '" . $row->year . "'
+                                  " . $range_string . "";
+                $result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
+
+                while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
+                    $yearly_cost = $row_yearly_cost->yearly_cost;
+                }
+
+                $yearly_cost = $currency->format($yearly_cost, $_SESSION['s_default_currency_symbol'],
+                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+
+                $row_contents = array(
+                    $row->year,
+                    $display_month,
+                    $monthly_cost,
+                    $yearly_cost
+                );
+                $export->writeRow($export_file, $row_contents);
+
+                $last_year = $row->year;
+                $last_month = $row->month;
+
+            }
+
+        }
+        $export->closeFile($export_file);
+
+    }
+
+} else {
+
+    $total_rows = '0';
+
+}
+?>
+<?php include(DIR_INC . 'doctype.inc.php'); ?>
+<html>
+<head>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <?php include(DIR_INC . "layout/date-range-picker-head.inc.php"); ?>
+</head>
+<body class="hold-transition skin-red sidebar-mini">
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
+<?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
+<?php
+if ($submission_failed != '1' && $total_rows > 0) { ?>
+
+    <?php include(DIR_INC . "layout/reporting-block-sub.inc.php"); ?>
+
+    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        <thead>
+        <tr>
+            <th width="20px"></th>
+            <th>Year</th>
+            <th>Month</th>
+            <th>Cost</th>
+            <th>By Year</th>
+        </tr>
+        </thead>
+        <tbody><?php
+
+        $new_year = '';
+        $last_year = '';
+        $new_month = '';
+        $last_month = '';
 
         while ($row = mysqli_fetch_object($result)) {
 
@@ -181,250 +293,85 @@ if ($submission_failed != "1" && $total_rows > 0) {
                                    AND YEAR(d.expiry_date) = '" . $row->year . "'
                                    AND MONTH(d.expiry_date) = '" . $row->month . "'
                                    " . $range_string . "";
-            $result_monthly_cost
-                = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
+            $result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
 
             while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
                 $monthly_cost = $row_monthly_cost->monthly_cost;
             }
 
-            $monthly_cost = $currency->format($monthly_cost, $_SESSION['s_default_currency_symbol'],
-                $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
+            $monthly_cost = $currency->format($monthly_cost, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
 
-            if ($row->month == "1") {
-                $display_month = "January";
-            } elseif ($row->month == "2") {
-                $display_month = "February";
-            } elseif ($row->month == "3") {
-                $display_month = "March";
-            } elseif ($row->month == "4") {
-                $display_month = "April";
-            } elseif ($row->month == "5") {
-                $display_month = "May";
-            } elseif ($row->month == "6") {
-                $display_month = "June";
-            } elseif ($row->month == "7") {
-                $display_month = "July";
-            } elseif ($row->month == "8") {
-                $display_month = "August";
-            } elseif ($row->month == "9") {
-                $display_month = "September";
-            } elseif ($row->month == "10") {
-                $display_month = "October";
-            } elseif ($row->month == "11") {
-                $display_month = "November";
-            } elseif ($row->month == "12") {
-                $display_month = "December";
+            if ($row->month == '1') { $display_month = 'January';
+            } elseif ($row->month == '2') { $display_month = 'February';
+            } elseif ($row->month == '3') { $display_month = 'March';
+            } elseif ($row->month == '4') { $display_month = 'April';
+            } elseif ($row->month == '5') { $display_month = 'May';
+            } elseif ($row->month == '6') { $display_month = 'June';
+            } elseif ($row->month == '7') { $display_month = 'July';
+            } elseif ($row->month == '8') { $display_month = 'August';
+            } elseif ($row->month == '9') { $display_month = 'September';
+            } elseif ($row->month == '10') { $display_month = 'October';
+            } elseif ($row->month == '11') { $display_month = 'November';
+            } elseif ($row->month == '12') { $display_month = 'December';
             }
 
-            $sql_yearly_cost = "SELECT SUM(d.total_cost * cc.conversion) AS yearly_cost
-                                FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
-                                WHERE d.fee_id = f.id
-                                  AND f.currency_id = c.id
-                                  AND c.id = cc.currency_id
-                                  AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                                  AND d.active NOT IN ('0', '10')
-                                  AND YEAR(d.expiry_date) = '" . $row->year . "'
-                                  " . $range_string . "";
-            $result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
-
-            while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
-                $yearly_cost = $row_yearly_cost->yearly_cost;
-            }
-
-            $yearly_cost = $currency->format($yearly_cost, $_SESSION['s_default_currency_symbol'],
-                $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
-
-            $row_contents = array(
-                $row->year,
-                $display_month,
-                $monthly_cost,
-                $yearly_cost
-            );
-            $export->writeRow($export_file, $row_contents);
-
-            $last_year = $row->year;
-            $last_month = $row->month;
-
-        }
-
-        $export->closeFile($export_file);
-
-    }
-
-}
-?>
-<?php include(DIR_INC . 'doctype.inc.php'); ?>
-<html>
-<head>
-    <title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
-    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
-</head>
-<body>
-<?php include(DIR_INC . "layout/header.inc.php"); ?>
-<?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
-<?php echo $reporting->showTableTop(); ?>
-<form name="export_domains_form" method="post">
-    <a href="cost-by-month.php?all=1">View All</a> or Expiring Between
-    <input name="new_start_date" type="text" size="10" maxlength="10" <?php if ($new_start_date == "") {
-        echo "value=\"" . $time->toUserTimezone($time->timeBasic(), 'Y-m-d') . "\"";
-    } else {
-        echo "value=\"$new_start_date\"";
-    } ?>>
-    and
-    <input name="new_end_date" type="text" size="10" maxlength="10" <?php if ($new_end_date == "") {
-        echo "value=\"" . $time->toUserTimezone($time->timeBasic(), 'Y-m-d') . "\"";
-    } else {
-        echo "value=\"$new_end_date\"";
-    } ?>>
-    &nbsp;&nbsp;<input type="submit" name="button" value="Generate Report &raquo;">
-    <?php if ($total_rows > 0) { //@formatter:off ?>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="cost-by-month.php?export_data=1&new_start_date=<?php
-              echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php
-              echo $all; ?>">EXPORT REPORT</a>]</strong>
-    <?php } //@formatter:on ?>
-</form>
-<?php echo $reporting->showTableBottom(); ?>
-<?php
-if ($submission_failed != "1" && $total_rows > 0) { ?>
-
-    <BR>
-    <div class="subheadline"><?php echo $page_subtitle; ?></div><BR>
-
-    <?php if ($all != "1") { ?>
-        <strong>Date Range:</strong> <?php echo $new_start_date; ?> - <?php echo $new_end_date; ?><BR><BR>
-    <?php } else { ?>
-        <strong>Date Range:</strong> ALL<BR><BR>
-    <?php } ?>
-    <strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?><BR><BR>
-    <strong>Number of Domains:</strong> <?php echo $number_of_domains_total; ?><BR>
-    <table class="main_table" cellpadding="0" cellspacing="0">
-        <tr class="main_table_row_heading_active">
-            <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">Year</div>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">Month</div>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">Cost</div>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">By Year</div>
-            </td>
-        </tr>
-        <?php
-        $new_year = "";
-        $last_year = "";
-        $new_month = "";
-        $last_month = "";
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $new_year = $row->year;
-            $new_month = $row->month;
-
-            $sql_monthly_cost = "SELECT SUM(d.total_cost * cc.conversion) AS monthly_cost
-                             FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
-                             WHERE d.fee_id = f.id
-                               AND f.currency_id = c.id
-                               AND c.id = cc.currency_id
-                               AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                               AND d.active NOT IN ('0', '10')
-                               AND YEAR(d.expiry_date) = '" . $row->year . "'
-                               AND MONTH(d.expiry_date) = '" . $row->month . "'
-                               " . $range_string . "";
-            $result_monthly_cost
-                = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
-
-            while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
-                $monthly_cost = $row_monthly_cost->monthly_cost;
-            }
-
-            $monthly_cost = $currency->format($monthly_cost, $_SESSION['s_default_currency_symbol'],
-                $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
-
-            if ($row->month == "1") {
-                $display_month = "January";
-            } elseif ($row->month == "2") {
-                $display_month = "February";
-            } elseif ($row->month == "3") {
-                $display_month = "March";
-            } elseif ($row->month == "4") {
-                $display_month = "April";
-            } elseif ($row->month == "5") {
-                $display_month = "May";
-            } elseif ($row->month == "6") {
-                $display_month = "June";
-            } elseif ($row->month == "7") {
-                $display_month = "July";
-            } elseif ($row->month == "8") {
-                $display_month = "August";
-            } elseif ($row->month == "9") {
-                $display_month = "September";
-            } elseif ($row->month == "10") {
-                $display_month = "October";
-            } elseif ($row->month == "11") {
-                $display_month = "November";
-            } elseif ($row->month == "12") {
-                $display_month = "December";
-            }
-
-            if ($new_year > $last_year || $new_year == "") {
+            if ($new_year > $last_year || $new_year == '') {
 
                 $sql_yearly_cost = "SELECT SUM(d.total_cost * cc.conversion) AS yearly_cost
-                                FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
-                                WHERE d.fee_id = f.id
-                                  AND f.currency_id = c.id
-                                  AND c.id = cc.currency_id
-                                  AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                                  AND d.active NOT IN ('0', '10')
-                                  AND YEAR(d.expiry_date) = '" . $row->year . "'
-                                  " . $range_string . "";
-                $result_yearly_cost
-                    = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
+                                    FROM domains AS d, fees AS f, currencies AS c, currency_conversions AS cc
+                                    WHERE d.fee_id = f.id
+                                      AND f.currency_id = c.id
+                                      AND c.id = cc.currency_id
+                                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
+                                      AND d.active NOT IN ('0', '10')
+                                      AND YEAR(d.expiry_date) = '" . $row->year . "'
+                                      " . $range_string . "";
+                $result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
 
                 while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
                     $yearly_cost = $row_yearly_cost->yearly_cost;
                 }
 
-                $yearly_cost = $currency->format($yearly_cost, $_SESSION['s_default_currency_symbol'],
-                    $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']);
-                ?>
+                $yearly_cost = $currency->format($yearly_cost, $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'], $_SESSION['s_default_currency_symbol_space']); ?>
 
-                <tr class="main_table_row_active">
-                    <td class="main_table_cell_active"><?php echo $row->year; ?></td>
-                    <td class="main_table_cell_active"><?php echo $display_month; ?></td>
-                    <td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
-                    <td class="main_table_cell_active"><?php echo $yearly_cost; ?></td>
-                </tr>
+                <tr>
+                    <td></td>
+                    <td><?php echo $row->year; ?></td>
+                    <td><?php echo $display_month; ?></td>
+                    <td><?php echo $monthly_cost; ?></td>
+                    <td><?php echo $yearly_cost; ?></td>
+                </tr><?php
 
-                <?php
                 $last_year = $row->year;
                 $last_month = $row->month;
 
             } else { ?>
 
-                <tr class="main_table_row_active">
-                    <td class="main_table_cell_active">&nbsp;</td>
-                    <td class="main_table_cell_active"><?php echo $display_month; ?></td>
-                    <td class="main_table_cell_active"><?php echo $monthly_cost; ?></td>
-                    <td class="main_table_cell_active">&nbsp;</td>
-                </tr>
+                <tr>
+                    <td></td>
+                    <td>&nbsp;</td>
+                    <td><?php echo $display_month; ?></td>
+                    <td><?php echo $monthly_cost; ?></td>
+                    <td>&nbsp;</td>
+                </tr><?php
 
-                <?php
                 $last_year = $row->year;
                 $last_month = $row->month;
 
             }
 
-        }
-        ?>
-    </table>
+        } ?>
 
-<?php
+        </tbody>
+    </table><?php
+
+} else {
+
+    echo 'No results.<BR><BR>';
+
 }
 ?>
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); //@formatter:on ?>
+<?php include(DIR_INC . "layout/date-range-picker-footer.inc.php"); ?>
 </body>
 </html>

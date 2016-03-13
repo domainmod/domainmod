@@ -26,18 +26,16 @@ include("../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$layout = new DomainMOD\Layout();
 $system = new DomainMOD\System();
+$layout = new DomainMOD\Layout();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-main.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-
-$page_title = "Asset Management";
-$software_section = "assets";
 ?>
 <?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
@@ -45,9 +43,23 @@ $software_section = "assets";
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<?php echo $layout->assetBlock(); ?>
+<h3>Domains</h3>
+<a href="registrars.php">Domain Registrars</a><BR>
+<a href="registrar-accounts.php">Domain Registrar Accounts</a><BR>
+<a href="dns.php">DNS Profiles</a><BR>
+<a href="hosting.php">Web Hosting Providers</a>
+
+<h3>SSL Certificates</h3>
+<a href="ssl-providers.php">SSL Providers</a><BR>
+<a href="ssl-accounts.php">SSL Provider Accounts</a><BR>
+<a href="ssl-types.php">SSL Certificate Types</a>
+
+<h3>Shared</h3>
+<a href="account-owners.php">Account Owners</a><BR>
+<a href="categories.php">Categories</a><BR>
+<a href="ip-addresses.php">IP Addresses</a><BR><BR>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

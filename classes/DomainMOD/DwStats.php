@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class DwStats
@@ -180,4 +179,4 @@ class DwStats
 
     }
 
-}
+} //@formatter:on

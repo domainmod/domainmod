@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Layout
@@ -27,48 +26,34 @@ class Layout
 
     public function pageBrowser($parameters)
     {
-
         list($totalrows, $numLimit, $amm, $queryStr, $numBegin, $begin, $num) = $parameters;
-
         $larrow = "&nbsp;&laquo; Prev &nbsp;";
         $rarrow = "&nbsp;Next &raquo;&nbsp;";
         $wholePiece = "<B>Page:</B> ";
-
         if ($totalrows > 0) {
-
             $numSoFar = 1;
             $cycle = ceil($totalrows / $amm);
-
             if (!isset($numBegin) || $numBegin < 1) {
                 $numBegin = 1;
                 $num = 1;
             }
-
             $minus = $numBegin - 1;
             $start = $minus * $amm;
-
             if (!isset($begin)) {
                 $begin = $start;
             }
-
             $preBegin = $numBegin - $numLimit;
             $preVBegin = $start - $amm;
             $preRedBegin = $numBegin - 1;
-
             if ($start > 0 || $numBegin > 1) {
-
                 $wholePiece .= "<a href='?num=" . $preRedBegin
                     . "&numBegin=" . $preBegin
                     . "&begin=" . $preVBegin
                     . $queryStr . "'>"
                     . $larrow . "</a>\n";
-
             }
-
             for ($i = $numBegin; $i <= $cycle; $i++) {
-
                 if ($numSoFar == $numLimit + 1) {
-
                     $piece = "<a href='?numBegin=" . $i
                         . "&num=" . $i
                         . "&begin=" . $start
@@ -76,79 +61,38 @@ class Layout
                         . $rarrow . "</a>\n";
                     $wholePiece .= $piece;
                     break;
-
                 }
-
                 $piece = "<a href='?begin=" . $start
                     . "&num=" . $i
                     . "&numBegin=" . $numBegin
                     . $queryStr
                     . "'>";
-
                 if ($num == $i) {
                     $piece .= "</a><b>$i</b><a>";
                 } else {
                     $piece .= "$i";
                 }
-
                 $piece .= "</a>\n";
                 $start = $start + $amm;
                 $numSoFar++;
                 $wholePiece .= $piece;
-
             }
-
             $wholePiece .= "\n";
             $wheBeg = $begin + 1;
             $wheEnd = $begin + $amm;
             $wheToWhe = "<b>" . number_format($wheBeg) . "</b>-<b>";
-
             if ($totalrows <= $wheEnd) {
                 $wheToWhe .= $totalrows . "</b>";
             } else {
                 $wheToWhe .= number_format($wheEnd) . "</b>";
             }
-
             $sqlprod = " LIMIT " . $begin . ", " . $amm;
-
         } else {
-
             $wholePiece = "";
             $wheToWhe = "<b>0</b> - <b>0</b>";
             $sqlprod = "";
-
         }
-
         return array($sqlprod, $wheToWhe, $wholePiece);
-
-    }
-
-    public function assetBlock()
-    {
-        ob_start(); //@formatter:off ?>
-        <div class="asset-management-block-outer">
-            <div class="asset-management-block-left">
-                <div class="subheadline">Domains</div><BR>
-                <a href="registrars.php">Domain Registrars</a><BR>
-                <a href="registrar-accounts.php">Domain Registrar Accounts</a><BR>
-                <a href="dns.php">DNS Profiles</a><BR>
-                <a href="hosting.php">Web Hosting Providers</a>
-            </div>
-            <div class="asset-management-block-center">
-                <div class="subheadline">SSL Certificates</div><BR>
-                <a href="ssl-providers.php">SSL Providers</a><BR>
-                <a href="ssl-accounts.php">SSL Provider Accounts</a><BR>
-                <a href="ssl-types.php">SSL Certificate Types</a>
-            </div>
-            <div class="asset-management-block-right">
-                <div class="subheadline">Shared</div><BR>
-                <a href="account-owners.php">Account Owners</a><BR>
-                <a href="categories.php">Categories</a><BR>
-                <a href="ip-addresses.php">IP Addresses</a>
-            </div>
-        </div><div style="clear: both;"></div><?php //@formatter:on
-
-        return ob_get_clean();
     }
 
     public function jumpMenu()
@@ -169,4 +113,13 @@ class Layout
 
     }
 
-}
+    public function showButton($button_type, $button_text)
+    {
+
+        ob_start(); ?>
+        <button type="<?php echo $button_type; ?>" class="btn btn-primary btn-danger"><?php echo $button_text; ?></button><?php
+        return ob_get_clean();
+
+    }
+
+} //@formatter:on

@@ -20,5 +20,41 @@
  */
 ?>
 <?php
-header("Location: ../invalid.php");
-exit;
+include("../_includes/start-session.inc.php");
+include("../_includes/init.inc.php");
+
+require_once(DIR_ROOT . "classes/Autoloader.php");
+spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
+
+$system = new DomainMOD\System();
+
+include(DIR_INC . "head.inc.php");
+include(DIR_INC . "config.inc.php");
+include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/admin-main.inc.php");
+include(DIR_INC . "database.inc.php");
+
+$system->authCheck();
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
+?>
+<?php include(DIR_INC . 'doctype.inc.php'); ?>
+<html>
+<head>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+</head>
+<body class="hold-transition skin-red sidebar-mini">
+<?php include(DIR_INC . "layout/header.inc.php"); ?>
+<a href="<?php echo $web_root; ?>/admin/settings/">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+<a href="<?php echo $web_root; ?>/admin/defaults/">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+<a href="<?php echo $web_root; ?>/admin/users/">Users</a><BR>
+<BR>
+<a href="<?php echo $web_root; ?>/admin/domain-fields/">Custom Domain Fields</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+<a href="<?php echo $web_root; ?>/admin/ssl-fields/">Custom SSL Fields</a><BR>
+<BR>
+<a href="<?php echo $web_root; ?>/admin/scheduler/">Task Scheduler</a><BR>
+<BR>
+<a href="<?php echo $web_root; ?>/admin/info/">System Information</a><BR>
+<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+</body>
+</html>

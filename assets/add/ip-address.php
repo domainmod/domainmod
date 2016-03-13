@@ -26,21 +26,19 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-add-ip-address.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = "Adding A New IP Address";
-$software_section = "ip-addresses-add";
-
-// Form Variables
 $new_name = $_POST['new_name'];
 $new_ip = $_POST['new_ip'];
 $new_rdns = $_POST['new_rdns'];
@@ -68,8 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_result_message'] = "IP Address <div class=\"highlight\">" . $new_name . " (" . $new_ip . ")</div>
-            Added<BR>";
+        $_SESSION['s_message_success'] = "IP Address " . $new_name . " (" . $new_ip . ") Added<BR>";
 
         header("Location: ../ip-addresses.php");
         exit;
@@ -77,10 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
 
         if ($new_name == '') {
-            $_SESSION['s_result_message'] .= "Please enter a name for the IP address<BR>";
+            $_SESSION['s_message_danger'] .= "Enter a name for the IP address<BR>";
         }
         if ($new_ip == '') {
-            $_SESSION['s_result_message'] .= "Please enter the IP address<BR>";
+            $_SESSION['s_message_danger'] .= "Enter the IP address<BR>";
         }
 
     }
@@ -93,29 +90,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()">
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="add_ip_address_form" method="post">
-    <strong>IP Address Name (100)</strong>
-    <a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a><BR><BR>
-    <input name="new_name" type="text" size="50" maxlength="100" value="<?php echo $new_name; ?>">
-    <BR><BR>
-    <strong>IP Address (100)</strong>
-    <a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a><BR><BR>
-    <input name="new_ip" type="text" size="50" maxlength="100" value="<?php echo $new_ip; ?>">
-    <BR><BR>
-    <strong>rDNS (100)</strong><BR><BR>
-    <input name="new_rdns" type="text" size="50" maxlength="100" value="<?php echo $new_rdns; ?>">
-    <BR><BR>
-    <strong>Notes</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-    <BR><BR>
-    <input type="submit" name="button" value="Add This IP Address &raquo;">
-</form>
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_name', 'IP Address Name (100)', '', $new_name, '100', '', '', '');
+echo $form->showInputText('new_ip', 'IP Address (100)', '', $new_ip, '100', '', '', '');
+echo $form->showInputText('new_rdns', 'rDNS (100)', '', $new_rdns, '100', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showSubmitButton('Add IP Address', '', '');
+echo $form->showFormBottom('');
+?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

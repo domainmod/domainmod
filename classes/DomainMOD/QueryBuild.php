@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class QueryBuild
@@ -30,8 +29,7 @@ class QueryBuild
 
         return "SELECT id
                 FROM " . $table . "
-                WHERE fee_id = '0'
-                  AND active NOT IN ('0', '10')";
+                WHERE fee_id = '0'";
 
     }
 
@@ -44,4 +42,4 @@ class QueryBuild
 
     }
 
-}
+} //@formatter:on

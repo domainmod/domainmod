@@ -19,39 +19,33 @@
  *
  */
 ?>
-<?php
+<?php //@formatter:off
 include("../_includes/start-session.inc.php");
 include("../_includes/init.inc.php");
 
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-hosting.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = "Web Hosting Providers";
-$software_section = "hosting";
-
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT id, name, url, notes, insert_time, update_time
+$sql = "SELECT id, `name`, url, notes, insert_time, update_time
         FROM hosting
-        WHERE id IN (SELECT hosting_id
-                     FROM domains
-                     WHERE hosting_id != '0'
-                       AND active NOT IN ('0','10')
-                     GROUP BY hosting_id)
-        ORDER BY name";
+        ORDER BY `name` ASC";
 
-if ($export_data == "1") {
+if ($export_data == '1') {
 
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -77,92 +71,42 @@ if ($export_data == "1") {
 
     if (mysqli_num_rows($result) > 0) {
 
-        $has_active = "1";
-
         while ($row = mysqli_fetch_object($result)) {
-
-            $new_whid = $row->id;
-
-            if ($current_whid != $new_whid) {
-                $exclude_web_host_string_raw .= "'" . $row->id . "', ";
-            }
 
             $sql_total_count = "SELECT count(*) AS total_count
                                 FROM domains
                                 WHERE hosting_id = '" . $row->id . "'
                                   AND active NOT IN ('0', '10')";
             $result_total_count = mysqli_query($connection, $sql_total_count);
+
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-                $active_domains = $row_total_count->total_count;
+                $total_domains = $row_total_count->total_count;
             }
 
             if ($row->id == $_SESSION['s_default_host']) {
 
-                $is_default = "1";
+                $is_default = '1';
 
             } else {
 
-                $is_default = "";
+                $is_default = '0';
+
+            }
+
+            if ($total_domains >= 1) {
+
+                $status = 'Active';
+
+            } else {
+
+                $status = 'Inactive';
 
             }
 
             $row_contents = array(
-                'Active',
+                $status,
                 $row->name,
-                number_format($active_domains),
-                $is_default,
-                $row->url,
-                $row->notes,
-                $time->toUserTimezone($row->insert_time),
-                $time->toUserTimezone($row->update_time)
-            );
-            $export->writeRow($export_file, $row_contents);
-
-            $current_whid = $row->id;
-
-        }
-
-    }
-
-    $exclude_web_host_string = substr($exclude_web_host_string_raw, 0, -2);
-
-    if ($exclude_web_host_string == "") {
-
-        $sql = "SELECT id, name, url, notes, insert_time, update_time
-                FROM hosting
-                ORDER BY name";
-
-    } else {
-
-        $sql = "SELECT id, name, url, notes, insert_time, update_time
-                FROM hosting
-                WHERE id NOT IN (" . $exclude_web_host_string . ")
-                ORDER BY name";
-
-    }
-
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-    if (mysqli_num_rows($result) > 0) {
-
-        $has_inactive = "1";
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            if ($row->id == $_SESSION['s_default_host']) {
-
-                $is_default = "1";
-
-            } else {
-
-                $is_default = "";
-
-            }
-
-            $row_contents = array(
-                'Inactive',
-                $row->name,
-                '0',
+                number_format($total_domains),
                 $is_default,
                 $row->url,
                 $row->notes,
@@ -185,152 +129,79 @@ if ($export_data == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<?php
-?>
 Below is a list of all the Web Hosting Providers that are stored in <?php echo $software_title; ?>.<BR><BR>
-[<a href="hosting.php?export_data=1">EXPORT</a>]<?php
+<a href="add/host.php"><?php echo $layout->showButton('button', 'Add Hosting Provider'); ?></a>&nbsp;&nbsp;&nbsp;
+<a href="hosting.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-$number_of_hosting_providers = mysqli_num_rows($result);
 
-if (mysqli_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) { ?>
 
-$has_active = "1"; ?>
-<table class="main_table" cellpadding="0" cellspacing="0">
-    <tr class="main_table_row_heading_active">
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Active Hosts (<?php echo $number_of_hosting_providers; ?>)</div>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Domains</div>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Options</div>
-        </td>
-    </tr><?php
+    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        <thead>
+        <tr>
+            <th width="20px"></th>
+            <th>Host</th>
+            <th>Domains</th>
+            <th>Options</th>
+        </tr>
+        </thead>
+        <tbody><?php
 
-    while ($row = mysqli_fetch_object($result)) {
+        while ($row = mysqli_fetch_object($result)) {
 
-        $new_whid = $row->id;
+            $sql_domain_count = "SELECT count(*) AS total_count
+                                 FROM domains
+                                 WHERE active NOT IN ('0', '10')
+                                   AND hosting_id = '" . $row->id . "'";
+            $result_domain_count = mysqli_query($connection, $sql_domain_count);
 
-        if ($current_whid != $new_whid) {
-            $exclude_web_host_string_raw .= "'" . $row->id . "', ";
-        } ?>
-
-        <tr class="main_table_row_active">
-        <td class="main_table_cell_active"><?php //@formatter:off ?>
-            <a class="invisiblelink" href="edit/host.php?whid=<?php echo $row->id; ?>"><?php echo $row->name;
-                ?></a><?php if ($_SESSION['s_default_host'] == $row->id) echo "<a title=\"Default Web Host\"><div
-                class=\"default_highlight\">*</div></a>"; //@formatter:on ?>
-        </td>
-        <td class="main_table_cell_active"><?php
-            $sql_total_count = "SELECT count(*) AS total_count
-                                    FROM domains
-                                    WHERE hosting_id = '" . $row->id . "'
-                                      AND active NOT IN ('0', '10')";
-            $result_total_count = mysqli_query($connection, $sql_total_count);
-            while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-                $active_domains = $row_total_count->total_count;
+            while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
+                $total_domains = $row_domain_count->total_count;
             }
 
-            if ($active_domains == "0") {
+            if ($total_domains >= 1 || $_SESSION['s_display_inactive_assets'] == '1') { ?>
 
-                echo number_format($active_domains);
-
-            } else { ?>
-
-                <a class="nobold" href="../domains.php?whid=<?php echo $row->id; ?>"><?php
-                echo number_format($active_domains); ?></a><?php
-
-            } ?>
-        </td>
-        <td class="main_table_cell_active">
-            <a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
-        </td>
-        </tr><?php
-
-        $current_whid = $row->id;
-
-    }
-
-    }
-
-    if ($_SESSION['s_display_inactive_assets'] == "1") {
-
-        $exclude_web_host_string = substr($exclude_web_host_string_raw, 0, -2);
-
-        if ($exclude_web_host_string == "") {
-
-            $sql = "SELECT id, name, url, notes, insert_time, update_time
-                FROM hosting
-                ORDER BY name";
-
-        } else {
-
-            $sql = "SELECT id, name, url, notes, insert_time, update_time
-                FROM hosting
-                WHERE id NOT IN (" . $exclude_web_host_string . ")
-                ORDER BY name";
-
-        }
-
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-        $number_of_hosting_providers = mysqli_num_rows($result);
-
-        if (mysqli_num_rows($result) > 0) {
-
-            $has_inactive = "1";
-            if ($has_active == "1") echo "<BR>";
-            if ($has_active != "1" && $has_inactive == "1") {
-                echo "<table class=\"main_table\" cellpadding=\"0\" cellspacing=\"0\">";
-            } ?>
-
-            <tr class="main_table_row_heading_inactive">
-            <td class="main_table_cell_heading_inactive">
-                <div class="main_table_heading">Inactive Hosts (<?php echo $number_of_hosting_providers; ?>)</div>
-            </td>
-            <td class="main_table_cell_heading_inactive">
-                <div class="main_table_heading">Options</div>
-            </td>
-            </tr><?php
-
-            while ($row = mysqli_fetch_object($result)) { ?>
-
-                <tr class="main_table_row_inactive">
-                <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" href="edit/host.php?whid=<?php echo $row->id; ?>"><?php
-                        echo $row->name; ?></a><?php if ($_SESSION['s_default_host'] == "1") echo "<a
-                        title=\"Default Web Host\"><div class=\"default_highlight\">*</div></a>"; ?>
+                <tr>
+                <td></td>
+                <td>
+                    <a href="edit/host.php?whid=<?php echo $row->id; ?>"><?php echo $row->name; ?></a><?php if ($_SESSION['s_default_host'] == $row->id) echo '<strong>*</strong>'; ?>
                 </td>
-                <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" target="_blank" href="<?php echo $row->url; ?>">www</a>
+                <td><?php
+
+                    if ($total_domains >= 1) { ?>
+
+                        <a href="../domains/index.php?whid=<?php echo $row->id; ?>"><?php echo number_format($total_domains); ?></a><?php
+
+                    } else {
+
+                        echo '-';
+
+                    } ?>
+
+                </td>
+                <td>
+                    <a target="_blank" href="<?php echo $row->url; ?>">www</a>
                 </td>
                 </tr><?php
 
             }
 
-        }
+        } ?>
 
-    }
+        </tbody>
+    </table>
 
-    if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+    <strong>*</strong> = Default (<a href="../settings/defaults/">set defaults</a>)<BR><BR><?php
 
-    //@formatter:off
-    if ($_SESSION['s_display_inactive_assets'] != "1") { ?>
-        <BR><em>Inactive Hosts are currently not displayed. <a class="invisiblelink"
-            href="../settings/display/">Click here to display them</a>.</em><BR><?php
-    } //@formatter:on
+} else { ?>
 
-    if ($has_active || $has_inactive) { ?>
-        <BR>
-        <div class="default_highlight">*</div> = Default Web Host<?php
-    }
+    <BR>You don't currently have any Web Hosts. <a href="add/host.php">Click here to add one</a>.<?php
 
-    if (!$has_active && !$has_inactive) { ?>
-        <BR>You don't currently have any Web Hosting Providers. <a href="add/host.php">Click here to add one</a>.<?php
-    } ?>
-    <?php include(DIR_INC . "layout/footer.inc.php"); ?>
+} ?>
+<?php include(DIR_INC . "layout/asset-footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); //@formatter:on ?>
 </body>
 </html>

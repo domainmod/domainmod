@@ -26,40 +26,22 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/dw-list-accounts.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $domain = $_GET['domain'];
-$search_for = $_REQUEST['search_for'];
 $export_data = $_GET['export_data'];
-
-// Search Navigation Variables
-$numBegin = $_REQUEST['numBegin'];
-$begin = $_REQUEST['begin'];
-$num = $_REQUEST['num'];
-
-if ($search_for != "") $domain = "";
-
-$page_title = "Data Warehouse";
-if ($_SESSION['s_dw_view_all'] == "1") {
-
-    $page_subtitle = "Listing All Accounts";
-
-} else {
-
-    $page_subtitle = 'Listing Accounts on ' . $_SESSION['s_dw_server_name'] . ' (' . $_SESSION['s_dw_server_host'] . ')';
-
-}
-$software_section = "admin-dw-list-accounts";
 
 if ($_SESSION['s_dw_view_all'] == "1") {
 
@@ -83,24 +65,11 @@ if ($domain != "") { //@formatter:off
             $order_clause;
 } else {
 
-    if ($search_for != "") {
-
-        $sql = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-                FROM dw_accounts AS a, dw_servers AS s
-                WHERE a.server_id = s.id
-                  AND a.domain LIKE '%" . $search_for . "%'" .
-                  $where_clause .
-                $order_clause;
-
-    } else {
-
-        $sql = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
-                FROM dw_accounts AS a, dw_servers AS s
-                WHERE a.server_id = s.id " .
-                  $where_clause .
-                $order_clause;
-
-    }
+    $sql = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
+            FROM dw_accounts AS a, dw_servers AS s
+            WHERE a.server_id = s.id " .
+              $where_clause .
+            $order_clause;
 
 } //@formatter:on
 
@@ -114,9 +83,6 @@ if ($export_data == "1") {
     $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
 
-    $row_contents = array($page_subtitle);
-    $export->writeRow($export_file, $row_contents);
-
     $export->writeBlankRow($export_file);
 
     $row_contents = array(
@@ -125,18 +91,6 @@ if ($export_data == "1") {
     $export->writeRow($export_file, $row_contents);
 
     $export->writeBlankRow($export_file);
-
-    if ($search_for != "") {
-
-        $row_contents = array(
-            'Keyword Search:',
-            "\"" . $search_for . "\""
-        );
-        $export->writeRow($export_file, $row_contents);
-
-        $export->writeBlankRow($export_file);
-
-    }
 
     if ($domain != "") {
 
@@ -234,16 +188,8 @@ if ($export_data == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()">
-<?php include(DIR_INC . "layout/header.inc.php"); ?>
-<div class="subheadline"><?php echo $page_subtitle; ?></div>
-<BR><?php
-
-$totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
-$layout = new DomainMOD\Layout();
-$parameters = array($totalrows, 15, 10, "&search_for=" . $search_for . "", $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
-$navigate = $layout->pageBrowser($parameters);
-$sql = $sql . $navigate[0];
+<body class="hold-transition skin-red sidebar-mini">
+<?php include(DIR_INC . "layout/header.inc.php");
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 if (mysqli_num_rows($result) == 0) {
@@ -252,34 +198,41 @@ if (mysqli_num_rows($result) == 0) {
 
 } else { ?>
 
-    <form name="form1" method="post">
-        <input type="text" name="search_for" size="17" value="<?php echo $search_for; ?>">&nbsp;
-        <input type="submit" name="button" value="Search &raquo;">
-        <input type="hidden" name="begin" value="0">
-        <input type="hidden" name="num" value="1">
-        <input type="hidden" name="numBegin" value="1">
-    </form><BR>
+    <a href="list-accounts.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-    <strong>
-        [<a href="list-accounts.php?export_data=1&domain=<?php echo $domain; ?>&search_for=<?php
-        echo $search_for; ?>">EXPORT</a>]
-    </strong>
-    <BR><BR>
+    $dwdisplay = new DomainMOD\DwDisplay(); ?>
 
-    <strong>Number of Accounts:</strong> <?php echo $totalrows; ?><BR><BR>
-    <?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?><BR>
-    <?php
-    $dwdisplay = new DomainMOD\DwDisplay();
+    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        <thead>
+        <tr>
+            <th width="20px"></th>
+            <th>Account</th>
+            <th>Data</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody><?php
 
-    echo $dwdisplay->tableTop();
-    while ($row = mysqli_fetch_object($result)) {
-        echo $dwdisplay->account($connection, $row->server_id, $row->domain, '1', '1', '1');
-    }
-    echo $dwdisplay->tableBottom();
+            while ($row = mysqli_fetch_object($result)) { ?>
 
-}
-?>
-<?php include(DIR_INC . "layout/pagination.menu.inc.php"); ?>
+                <tr>
+                    <td></td>
+                    <td>
+                        <?php echo $dwdisplay->accountSidebar($row->dw_server_name, $row->domain, '1', '1'); ?>
+                    </td>
+
+                    <?php echo $dwdisplay->account($connection, $row->server_id, $row->domain, '1', '1'); ?>
+
+                </tr><?php
+
+            } ?>
+
+        </tbody>
+    </table><?php
+
+} ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

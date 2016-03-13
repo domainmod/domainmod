@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Segment
@@ -49,4 +48,4 @@ class Segment
 
     }
 
-}
+} //@formatter:on

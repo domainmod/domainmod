@@ -54,9 +54,15 @@ if ($current_db_version < $software_version) {
 
     }
 
-    if ($current_db_version >= '3.0.0') {
+    if ($current_db_version >= '3.0.0' && $current_db_version < '4.00.000') {
 
-        include('updates/3.0.0-current.inc.php');
+        include('updates/3.0.0-4.00.000.inc.php');
+
+    }
+
+    if ($current_db_version >= '4.00.000') {
+
+        include('updates/4.00.000-current.inc.php');
 
     }
 
@@ -64,14 +70,15 @@ if ($current_db_version < $software_version) {
 
     $_SESSION['s_system_upgrade_available'] = '0';
 
-    $sql = "UPDATE settings SET upgrade_available = '0'";
+    $sql = "UPDATE settings
+            SET upgrade_available = '0'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-    $_SESSION['s_result_message'] .= "Your Database Has Been Updated<BR>";
+    $_SESSION['s_message_success'] .= "Your database has been upgraded<BR>";
 
 } elseif ($current_db_version > $software_version) {
 
-    $_SESSION['s_result_message'] .= "The upgrade process cannot be completed, as your versions are currently out-of-sync.
+    $_SESSION['s_message_danger'] .= "The upgrade process cannot be completed, as your versions are currently out-of-sync.
     The software on your server is older than your database version. This should never happen.<BR><BR>Please logout and
     log back in, and if the problem persists please contact your " . $software_title . " administrator.<BR>";
 
@@ -79,6 +86,6 @@ if ($current_db_version < $software_version) {
 
 } else {
 
-    $_SESSION['s_result_message'] .= "Your Database is already up-to-date<BR>";
+    $_SESSION['s_message_success'] .= "Your Database is already up-to-date<BR>";
 
 }

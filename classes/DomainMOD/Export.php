@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Export
@@ -70,4 +69,4 @@ class Export
 
     }
 
-}
+} //@formatter:on

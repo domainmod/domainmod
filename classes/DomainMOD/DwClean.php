@@ -18,13 +18,12 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class DwClean
 {
-//@formatter:off
+
     public function all($connection)
     {
         $this->prep($connection);

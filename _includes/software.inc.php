@@ -21,9 +21,6 @@
 ?>
 <?php
 $software_title = 'DomainMOD';
-$reporting_section_title = 'Reporting';
-$site_width = '96%';
-$site_width_login = '550';
 $code_home_url = 'http://domainmod.org';
-$software_version = '3.0.9';
+$software_version = '4.00.000';
 $_SESSION['s_web_root'] = $web_root;

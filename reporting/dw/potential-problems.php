@@ -26,30 +26,26 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
-$reporting = new DomainMOD\Reporting();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
+$layout = new DOmainMOD\Layout();
 $time = new DomainMOD\Time();
+$reporting = new DomainMOD\Reporting();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/reporting-dw-potential-problems.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-
-$page_title = $reporting_section_title;
-$page_subtitle = "Data Warehouse Potential Problems Report";
-$software_section = "reporting-dw-potential-problems-report";
-$report_name = "dw-potential-problems-report";
 
 $generate = $_GET['generate'];
 $export_data = $_GET['export_data'];
 
 $sql_accounts_without_a_dns_zone = "SELECT domain
                                     FROM dw_accounts
-                                    WHERE domain NOT IN (SELECT domain
-                                                         FROM dw_dns_zones)
+                                    WHERE domain NOT IN (SELECT domain FROM dw_dns_zones)
                                     ORDER BY domain";
 $result_accounts_without_a_dns_zone
     = mysqli_query($connection, $sql_accounts_without_a_dns_zone) or $error->outputOldSqlError($connection);
@@ -57,9 +53,8 @@ $temp_accounts_without_a_dns_zone = mysqli_num_rows($result_accounts_without_a_d
 
 $sql_dns_zones_without_an_account = "SELECT domain
                                      FROM dw_dns_zones
-                                     WHERE domain NOT IN (SELECT domain
-                                                           FROM dw_accounts)
-                                    ORDER BY domain";
+                                     WHERE domain NOT IN (SELECT domain FROM dw_accounts)
+                                     ORDER BY domain";
 $result_dns_zones_without_an_account
     = mysqli_query($connection, $sql_dns_zones_without_an_account) or $error->outputOldSqlError($connection);
 $temp_dns_zones_without_an_account = mysqli_num_rows($result_dns_zones_without_an_account);
@@ -72,13 +67,13 @@ $result_suspended_accounts
     = mysqli_query($connection, $sql_suspended_accounts) or $error->outputOldSqlError($connection);
 $temp_suspended_accounts = mysqli_num_rows($result_suspended_accounts);
 
-if ($export_data == "1") {
+if ($export_data == '1') {
 
     $export = new DomainMOD\Export();
 
     $export_file = $export->openFile('dw_potential_problems_report', strtotime($time->stamp()));
 
-    $row_contents = array($page_subtitle);
+    $row_contents = array($page_title);
     $export->writeRow($export_file, $row_contents);
 
     $export->writeBlankRow($export_file);
@@ -136,35 +131,27 @@ if ($export_data == "1") {
         }
 
     }
-
     $export->closeFile($export_file);
+
+} else {
+
+    $total_rows = '0';
 
 }
 ?>
 <?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
 <?php if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account != 0 || $temp_suspended_accounts != 0) { ?>
-    <?php echo $reporting->showTableTop(); ?>
-    <form name="export_dw_form" method="post">
-        <a href="potential-problems.php?generate=1">Generate</a>
-        <?php if ($generate == 1) { //@formatter:off ?>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="potential-problems.php?export_data=1&new_start_date=<?php
-              echo $new_start_date; ?>&new_end_date=<?php echo $new_end_date; ?>&all=<?php
-              echo $all; ?>">EXPORT REPORT</a>]</strong>
-    <?php } //@formatter:on ?>
-    </form>
-    <?php echo $reporting->showTableBottom(); ?>
-    <BR><?php
-} ?>
-<div class="subheadline"><?php echo $page_subtitle; ?></div>
-<BR><?php
+
+    <BR><a href="<?php echo $report_filename; ?>?export_data=1&all=1<?php echo $layout->showButton('button', 'Export'); ?></a>
+    <BR><BR><?php
+}
 
 if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account != 0 || $temp_suspended_accounts != 0) {
 
@@ -186,7 +173,7 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
             $account_list = substr($account_list_raw, 0, -2);
 
-            if ($account_list != "") {
+            if ($account_list != '') {
 
                 echo $account_list;
 
@@ -216,7 +203,7 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
             $zone_list = substr($zone_list_raw, 0, -2);
 
-            if ($zone_list != "") {
+            if ($zone_list != '') {
 
                 echo $zone_list;
 
@@ -246,7 +233,7 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
             $suspended_list = substr($suspended_list_raw, 0, -2);
 
-            if ($suspended_list != "") {
+            if ($suspended_list != '') {
 
                 echo $suspended_list;
 
@@ -261,9 +248,10 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
 } else {
 
-    echo "Nothing to report.";
+    echo '<BR>No results.<BR><BR>';
 
-} ?>
+}
+?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

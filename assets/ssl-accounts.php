@@ -19,67 +19,47 @@
  *
  */
 ?>
-<?php
+<?php //@formatter:off
 include("../_includes/start-session.inc.php");
 include("../_includes/init.inc.php");
 
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
+$layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-ssl-accounts.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-
-$page_title = "SSL Provider Accounts";
-$software_section = "ssl-provider-accounts";
 
 $sslpid = $_GET['sslpid'];
 $sslpaid = $_GET['sslpaid'];
 $oid = $_GET['oid'];
 $export_data = $_GET['export_data'];
 
-if ($sslpid != "") {
-    $sslpid_string = " AND sa.ssl_provider_id = '$sslpid' ";
-} else {
-    $sslpid_string = "";
-}
-if ($sslpaid != "") {
-    $sslpaid_string = " AND sa.id = '$sslpaid' ";
-} else {
-    $sslpaid_string = "";
-}
-if ($oid != "") {
-    $oid_string = " AND sa.owner_id = '$oid' ";
-} else {
-    $oid_string = "";
-}
+if ($sslpid != '') { $sslpid_string = " AND sa.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ''; }
+if ($sslpaid != '') { $sslpaid_string = " AND sa.id = '$sslpaid' "; } else { $sslpaid_string = ''; }
+if ($oid != '') { $oid_string = " AND sa.owner_id = '$oid' "; } else { $oid_string = ''; }
 
 $sql = "SELECT sa.id AS sslpaid, sa.username, sa.password, sa.owner_id, sa.ssl_provider_id, sa.reseller, o.id AS oid,
             o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname, sa.notes, sa.insert_time, sa.update_time
-        FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp, ssl_certs as sslc
+        FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
         WHERE sa.owner_id = o.id
           AND sa.ssl_provider_id = sslp.id
-          AND sa.id = sslc.account_id
-          AND sslc.active not in ('0')
           $sslpid_string
           $sslpaid_string
           $oid_string
-          AND (SELECT count(*)
-                 FROM ssl_certs
-               WHERE account_id = sa.id
-                 AND active NOT IN ('0'))
-                 > 0
         GROUP BY sa.username, oname, sslpname
         ORDER BY sslpname, username, oname";
 
-if ($export_data == "1") {
+if ($export_data == '1') {
 
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -108,124 +88,55 @@ if ($export_data == "1") {
 
     if (mysqli_num_rows($result) > 0) {
 
-        $has_active = 1;
-
         while ($row = mysqli_fetch_object($result)) {
-
-            $new_sslpaid = $row->sslpaid;
-
-            if ($current_sslpaid != $new_sslpaid) {
-                $exclude_account_string_raw .= "'" . $row->sslpaid . "', ";
-            }
 
             $sql_total_count = "SELECT count(*) AS total_cert_count
                                 FROM ssl_certs
                                 WHERE account_id = '$row->sslpaid'
                                   AND active NOT IN ('0')";
             $result_total_count = mysqli_query($connection, $sql_total_count);
+
             while ($row_cert_count = mysqli_fetch_object($result_total_count)) {
-                $total_cert_count = $row_cert_count->total_cert_count;
+                $total_certs = $row_cert_count->total_cert_count;
             }
 
             if ($row->sslpaid == $_SESSION['s_default_ssl_provider_account']) {
 
-                $is_default = "1";
+                $is_default = '1';
 
             } else {
 
-                $is_default = "";
+                $is_default = '0';
 
             }
 
-            if ($row->reseller == "0") {
+            if ($row->reseller == '0') {
 
-                $is_reseller = "";
+                $is_reseller = '0';
 
             } else {
 
-                $is_reseller = "1";
+                $is_reseller = '1';
 
             }
 
-            $row_contents = array(
-                'Active',
-                $row->sslpname,
-                $row->username,
-                $row->password,
-                $row->oname,
-                $total_cert_count,
-                $is_default,
-                $is_reseller,
-                $row->notes,
-                $time->toUserTimezone($row->insert_time),
-                $time->toUserTimezone($row->update_time)
-            );
-            $export->writeRow($export_file, $row_contents);
+            if ($total_certs >= 1) {
 
-            $current_sslpaid = $row->sslpaid;
-
-        }
-
-    }
-
-    $exclude_account_string = substr($exclude_account_string_raw, 0, -2);
-
-    if ($exclude_account_string != "") {
-
-        $sslpaid_string = " AND sa.id not in (" . $exclude_account_string . ") ";
-
-    } else {
-
-        $sslpaid_string = "";
-
-    }
-
-    $sql = "SELECT sa.id AS sslpaid, sa.username, sa.password, sa.owner_id, sa.ssl_provider_id, sa.reseller,
-                o.id AS oid, o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname, sa.notes,
-                sa.insert_time, sa.update_time
-            FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
-            WHERE sa.owner_id = o.id
-              AND sa.ssl_provider_id = sslp.id
-              " . $sslpid_string . "
-              " . $sslpaid_string . "
-              " . $oid_string . "
-            GROUP BY sa.username, oname, sslpname
-            ORDER BY sslpname, username, oname";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-    if (mysqli_num_rows($result) > 0) {
-
-        $has_inactive = "1";
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            if ($row->sslpaid == $_SESSION['s_default_ssl_provider_account']) {
-
-                $is_default = "1";
+                $status = 'Active';
 
             } else {
 
-                $is_default = "";
-
-            }
-
-            if ($row->reseller == "0") {
-
-                $is_reseller = "";
-
-            } else {
-
-                $is_reseller = "1";
+                $status = 'Inactive';
 
             }
 
             $row_contents = array(
-                'Inactive',
+                $status,
                 $row->sslpname,
                 $row->username,
                 $row->password,
                 $row->oname,
-                '0',
+                $total_certs,
                 $is_default,
                 $is_reseller,
                 $row->notes,
@@ -248,192 +159,100 @@ if ($export_data == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 Below is a list of all the SSL Provider Accounts that are stored in <?php echo $software_title; ?>.<BR><BR>
-[<a href="ssl-accounts.php?export_data=1&sslpid=<?php echo $sslpid; ?>&sslpaid=<?php echo $sslpaid; ?>&oid=<?php echo
-$oid; ?>">EXPORT</a>]<?php
+<a href="add/ssl-provider-account.php"><?php echo $layout->showButton('button', 'Add SSL Account'); ?></a>&nbsp;&nbsp;&nbsp;
+<a href="ssl-accounts.php?export_data=1&sslpid=<?php echo $sslpid; ?>&sslpaid=<?php echo $sslpaid; ?>&oid=<?php echo $oid; ?>"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-if (mysqli_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) { ?>
 
-$has_active = 1; ?>
-<table class="main_table" cellpadding="0" cellspacing="0">
-    <tr class="main_table_row_heading_active">
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">SSL Provider</div>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Active Accounts (<?php echo mysqli_num_rows($result); ?>)</div>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">Owner</div>
-        </td>
-        <td class="main_table_cell_heading_active">
-            <div class="main_table_heading">SSL Certs</div>
-        </td>
-    </tr><?php
+    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        <thead>
+        <tr>
+            <th width="20px"></th>
+            <th>Provider</th>
+            <th>Account</th>
+            <th>Owner</th>
+            <th>SSL Certs</th>
+        </tr>
+        </thead>
 
-    while ($row = mysqli_fetch_object($result)) {
+        <tbody><?php
 
-        $new_sslpaid = $row->sslpaid;
+        while ($row = mysqli_fetch_object($result)) {
 
-        if ($current_sslpaid != $new_sslpaid) {
-            $exclude_account_string_raw .= "'" . $row->sslpaid . "', ";
-        } ?>
-
-        <tr class="main_table_row_active">
-        <td class="main_table_cell_active">
-            <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php
-                echo $row->sslpname; ?></a>
-        </td>
-        <td class="main_table_cell_active">
-            <?php //@formatter:off ?>
-            <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php
-                echo $row->username; ?></a><?php if ($_SESSION['s_default_ssl_provider_account'] == $row->sslpaid)
-                echo "<a title=\"Default Account\"><div class=\"default_highlight\">*</div></a>"; ?><?php
-            if ($row->reseller == "1")
-                echo "<a title=\"Reseller Account\"><div class=\"reseller_highlight\">*</div></a>"; ?>
-            <?php //@formatter:on ?>
-        </td>
-        <td class="main_table_cell_active">
-            <a class="invisiblelink"
-               href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->oname; ?></a>
-        </td>
-        <td class="main_table_cell_active"><?php
             $sql_total_count = "SELECT count(*) AS total_cert_count
-                                    FROM ssl_certs
-                                    WHERE account_id = '$row->sslpaid'
-                                      AND active NOT IN ('0')";
+                                FROM ssl_certs
+                                WHERE account_id = '$row->sslpaid'
+                                  AND active NOT IN ('0')";
             $result_total_count = mysqli_query($connection, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
-                echo "<a class=\"nobold\" href=\"../ssl-certs
-                .php?oid=$row->oid&sslpid=$row->sslpid&sslpaid=$row->sslpaid\">" . number_format
-                    ($row_total_count->total_cert_count) . "</a>";
-            } ?>
-        </td>
-        </tr><?php
+                $total_certs = $row_total_count->total_cert_count;
+            }
 
-        $current_sslpaid = $row->sslpaid;
+            if ($total_certs >= 1 || $_SESSION['s_display_inactive_assets'] == '1') { ?>
 
-    }
-
-    }
-
-    if ($_SESSION['s_display_inactive_assets'] == "1") {
-
-        $exclude_account_string = substr($exclude_account_string_raw, 0, -2);
-
-        if ($exclude_account_string != "") {
-
-            $sslpaid_string = " AND sa.id not in ($exclude_account_string) ";
-
-        } else {
-
-            $sslpaid_string = "";
-
-        }
-
-        $sql = "SELECT sa.id AS sslpaid, sa.username, sa.owner_id, sa.ssl_provider_id, sa.reseller, o.id AS oid,
-                    o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname
-                FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
-                WHERE sa.owner_id = o.id
-                  AND sa.ssl_provider_id = sslp.id
-                  " . $sslpid_string . "
-                  " . $sslpaid_string . "
-                  " . $oid_string . "
-                GROUP BY sa.username, oname, sslpname
-                ORDER BY sslpname, username, oname";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-        if (mysqli_num_rows($result) > 0) {
-
-            $has_inactive = "1";
-            if ($has_active == "1") echo "<BR>";
-            if ($has_active != "1" && $has_inactive == "1") echo "<table class=\"main_table\" cellpadding=\"0\"
-            cellspacing=\"0\">"; ?>
-
-            <tr class="main_table_row_heading_inactive">
-            <td class="main_table_cell_heading_inactive">
-                <div class="main_table_heading">SSL Provider</div>
-            </td>
-            <td class="main_table_cell_heading_inactive">
-                <div class="main_table_heading">Inactive Accounts (<?php echo mysqli_num_rows($result); ?>)</div>
-            </td>
-            <td class="main_table_cell_heading_inactive">
-                <div class="main_table_heading">Owner</div>
-            </td>
-            <td class="main_table_cell_heading_inactive">&nbsp;
-
-            </td>
-            </tr><?php
-
-            while ($row = mysqli_fetch_object($result)) { ?>
-
-                <tr class="main_table_row_inactive">
-                <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid;
-                    ?>"><?php echo $row->sslpname; ?></a>
+                <tr>
+                <td></td>
+                <td>
+                    <a href="edit/ssl-provider.php?sslpid=<?php echo $row->sslpid; ?>"><?php echo $row->sslpname; ?></a>
                 </td>
-                <td class="main_table_cell_inactive">
-                    <?php //@formatter:off ?>
-                    <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid;
-                        ?>"><?php echo $row->username; ?></a><?php if ($_SESSION['s_default_ssl_provider_account'] ==
-                        $row->sslpaid) echo "<a title=\"Default Account\"><div class=\"default_highlight\">*</div></a>";
-                    if ($row->reseller == "1") echo "<a title=\"Reseller Account\"><div
-                        class=\"reseller_highlight\">*</div></a>"; ?>
-                    <?php //@formatter:on ?>
+                <td>
+                    <a href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $row->username; ?></a><?php
+                    if ($_SESSION['s_default_ssl_provider_account'] == $row->sslpaid) echo '<strong>*</strong>'; ?><?php
+                    if ($row->reseller == '1') echo '<strong>^</strong>'; ?>
                 </td>
-                <td class="main_table_cell_inactive">
-                    <a class="invisiblelink" href="edit/ssl-provider-account.php?sslpaid=<?php echo $row->sslpaid;
-                    ?>"><?php echo $row->oname; ?></a>
+                <td>
+                    <a href="edit/account-owner.php?oid=<?php echo $row->oid; ?>"><?php echo $row->oname; ?></a>
                 </td>
-                <td class="main_table_cell_inactive">&nbsp;
+                <td><?php
+
+                    if ($total_certs >= 1) { ?>
+
+                        <a href="../ssl/index.php?oid=<?php echo $row->oid; ?>&sslpid=<?php echo $row->sslpid; ?>&sslpaid=<?php echo $row->sslpaid; ?>"><?php echo $total_certs; ?></a><?php
+
+                    } else {
+
+                        echo '-';
+
+                    } ?>
 
                 </td>
                 </tr><?php
 
             }
 
-        }
+        } ?>
 
-    }
+        </tbody>
+    </table>
 
-    if ($has_active == "1" || $has_inactive == "1") echo "</table>";
+    <strong>*</strong> = Default (<a href="../settings/defaults/">set defaults</a>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>^</strong> = Reseller<BR><BR><?php
 
-    if ($_SESSION['s_display_inactive_assets'] != "1") { //@formatter:off ?>
-        <BR><em>Inactive Accounts are currently not displayed. <a class="invisiblelink"
-            href="../settings/display/">Click here to display them</a>.</em><BR><?php
-    } //@formatter:on
+} else {
 
-    if ($has_active || $has_inactive) { ?>
-        <BR>
-        <div class="default_highlight">*</div> = Default Account&nbsp;&nbsp;
-        <div class="reseller_highlight">*</div> = Reseller Account<?php
-    }
-
-    if (!$has_active && !$has_inactive) {
-
-        $sql = "SELECT id
+    $sql = "SELECT id
             FROM ssl_providers
             LIMIT 1";
-        $result = mysqli_query($connection, $sql);
+    $result = mysqli_query($connection, $sql);
 
-        if (mysqli_num_rows($result) == 0) { ?>
+    if (mysqli_num_rows($result) == 0) { ?>
 
-            <BR>Before adding an SSL Provider Account you must add at least one SSL Provider. <a
-                href="add/ssl-provider.php">Click here to add an SSL Provider</a>.<BR><?php
+        <BR>Before adding an SSL Provider Account you must add at least one SSL Provider. <a href="add/ssl-provider.php">Click here to add an SSL Provider</a>.<BR><?php
 
-        } else { ?>
+    } else { ?>
 
-            <BR>You don't currently have any SSL Provider Accounts. <a href="add/ssl-provider-account.php">Click here to
-                add one</a>.<BR><?php
+        <BR>You don't currently have any SSL Provider Accounts. <a href="add/ssl-provider-account.php">Click here to add one</a>.<BR><?php
 
-        }
+    }
 
-    } ?>
-    <?php include(DIR_INC . "layout/footer.inc.php"); ?>
+}
+?>
+<?php include(DIR_INC . "layout/asset-footer.inc.php"); ?>
+<?php include(DIR_INC . "layout/footer.inc.php"); //@formatter:on ?>
 </body>
 </html>

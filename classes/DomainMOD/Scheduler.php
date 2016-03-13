@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Scheduler
@@ -70,53 +69,6 @@ class Scheduler
         return $result;
     }
 
-    public function show($connection, $id)
-    {
-        $time = new Time();
-        $row = mysqli_fetch_object($this->getTask($connection, $id));
-        $hour = explode(" ", $row->expression);
-        ob_start(); ?>
-        <tr>
-        <td class='main_table_cell_active_top_aligned' width='600'>
-            <strong><?php echo $row->name; ?></strong><BR>
-            <?php echo $row->description?><BR><BR><BR>
-        </td>
-        <td class='main_table_cell_active_top_aligned'>
-            <strong>Runs:</strong> <?php echo $row->interval; ?><BR>
-            <strong>Status:</strong> <?php echo $this->createActive($row->active, $row->id); ?><BR>
-            <?php ?>
-            <?php if ($row->last_run != '0000-00-00 00:00:00') {
-                $last_run = $time->toUserTimezone($this->getDateOutput($row->last_run));
-            } else {
-                $last_run = 'n/a';
-
-            }?>
-            <strong>Last Run:</strong> <?php echo $last_run; ?><?php echo $row->last_duration; ?><BR><?php
-            if ($row->next_run != '0000-00-00 00:00:00') {
-                $next_run = $time->toUserTimezone($this->getDateOutput($row->next_run));
-                $hour = date('H', strtotime($next_run));
-            } else {
-                $next_run = 'n/a';
-
-            }?>
-            <strong>Next Run:</strong> <?php echo $next_run; ?>
-            <BR><BR>
-            <?php if ($row->active == '1') { ?>
-                <form name="edit_task_form" method="post" action="<?php echo $_SESSION['s_web_root'];
-                ?>/admin/scheduler/update.php">
-                    <select name="new_hour">
-                        <?php echo $this->hourSelect($hour); ?>
-                    </select>
-                    <input type="hidden" name="a" value="u">
-                    <input type="hidden" name="id" value="<?php echo $id; ?>">&nbsp;&nbsp;
-                    <input type="submit" name="button" value="Change Time &raquo;">
-                </form><BR><BR>
-            <?php } ?>
-        </td>
-        </tr><?php
-        return ob_get_clean();
-    }
-
     public function getTask($connection, $id)
     {
         $sql_task = "SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
@@ -128,13 +80,11 @@ class Scheduler
 
     public function createActive($active, $id)
     {
-        $result = '<strong><font color=\'green\'>Active</font></strong> [<a class=\'invisiblelink\'
-            href=\'update.php?a=d&id=' . $id . '\'>disable</a>] [<a class=\'invisiblelink\'
-            href=\'run.php?id=' . $id . '\'>run now</a>]';
+        $result = '<strong><font color=\'green\'>Active</font></strong> [<a href=\'update.php?a=d&id=' . $id .
+            '\'>disable</a>] [<a href=\'run.php?id=' . $id . '\'>run now</a>]';
         if ($active == '0') {
-            $result = '<strong><font color=\'red\'>Inactive</font></strong> [<a class=\'invisiblelink\'
-                href=\'update.php?a=e&id=' . $id . '\'>enable</a>] [<a class=\'invisiblelink\'
-                href=\'run.php?id=' . $id . '\'>run now</a>]';
+            $result = '<strong><font color=\'red\'>Inactive</font></strong> [<a href=\'update.php?a=e&id=' . $id .
+                '\'>enable</a>] [<a href=\'run.php?id=' . $id . '\'>run now</a>]';
         }
         return $result;
     }
@@ -157,10 +107,9 @@ class Scheduler
                        '21' => '21:00', '22' => '22:00', '23' => '23:00');
         ob_start();
         foreach ($hours AS $key => $value) { ?>
-            <option value="<?php echo $key; ?>"<?php if ($hour == $key) echo ' selected'; ?>><?php echo $value; ?>
-            </option><?php
+            <option value="<?php echo $key; ?>"<?php if ($hour == $key) echo ' selected'; ?>><?php echo $value; ?></option><?php
         }
         return ob_get_clean();
     }
 
-}
+} //@formatter:on

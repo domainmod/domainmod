@@ -26,25 +26,21 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$currency = new DomainMOD\Currency();
-$error = new DomainMOD\Error();
-$reporting = new DomainMOD\Reporting();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
+$layout = new DomainMOD\Layout;
 $time = new DomainMOD\Time();
+$reporting = new DomainMOD\Reporting();
+$currency = new DomainMOD\Currency();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/reporting-ssl-fees.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = $reporting_section_title;
-$page_subtitle = "SSL Provider Fee Report";
-$software_section = "reporting-ssl-provider-fee-report";
-$report_name = "ssl-provider-fee-report";
-
-// Form Variables
 $export_data = $_GET['export_data'];
 $all = $_GET['all'];
 
@@ -97,7 +93,7 @@ if ($total_rows > 0) {
 
         }
 
-        $row_contents = array($page_subtitle);
+        $row_contents = array($page_title);
         $export->writeRow($export_file, $row_contents);
 
         $export->writeBlankRow($export_file);
@@ -182,7 +178,6 @@ if ($total_rows > 0) {
             }
 
         }
-
         $export->closeFile($export_file);
 
     }
@@ -192,61 +187,34 @@ if ($total_rows > 0) {
 <?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitleSub($software_title, $page_title, $page_subtitle); ?></title>
+    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<?php include(DIR_INC . "layout/reporting-block.inc.php"); ?>
-<?php echo $reporting->showTableTop(); ?>
-<a href="provider-fees.php?all=1">View All</a> or <a href="provider-fees.php?all=0">Active Only</a>
+<BR>
+<a href="provider-fees.php?all=1"><?php echo $layout->showButton('button', 'View All'); ?></a>&nbsp;&nbsp;or&nbsp;<a href="provider-fees.php?all=0"><?php echo $layout->showButton('button', 'Active Only'); ?></a>
+<?php if ($total_rows > 0) { //@formatter:off ?>
+          <BR><BR><a href="provider-fees.php?export_data=1&all=<?php echo $all; ?>"><?php echo $layout->showButton('button', 'Export'); ?></a>
+<?php } //@formatter:on ?>
+
 <?php if ($total_rows > 0) { ?>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>[<a href="provider-fees.php?export_data=1&all=<?php echo $all; ?>">EXPORT
-            REPORT</a>]</strong>
-<?php } ?>
-<?php echo $reporting->showTableBottom(); ?>
 
-<BR>
-
-<div class="subheadline"><?php echo $page_subtitle; ?></div>
-<BR>
-
-<?php if ($all == "1") { ?>
-    <strong>All SSL Provider Fees</strong><BR>
-<?php } else { ?>
-    <strong>Active SSL Provider Fees</strong><BR>
-<?php } ?>
-<?php
-if ($total_rows > 0) { ?>
-
-    <table class="main_table" cellpadding="0" cellspacing="0">
-        <tr class="main_table_row_heading_active">
-            <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">SSL Provider</div>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">Certificate Type</div>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">Initial Fee</div>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">Renewal Fee</div>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">Misc Fee</div>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">Currency</div>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">Certs</div>
-            </td>
-            <td class="main_table_cell_heading_active">
-                <div class="main_table_heading">Last Updated</div>
-            </td>
+    <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
+        <thead>
+        <tr>
+            <th width="20px"></th>
+            <th>Provider</th>
+            <th>Type</th>
+            <th>Initial</th>
+            <th>Renewal</th>
+            <th>Misc</th>
+            <th>Currency</th>
+            <th>Certs</th>
+            <th>Last Updated</th>
         </tr>
-        <?php
+        </thead>
+        <tbody><?php
 
         $new_ssl_provider = "";
         $last_ssl_provider = "";
@@ -265,38 +233,32 @@ if ($total_rows > 0) { ?>
 
             if ($new_ssl_provider != $last_ssl_provider || $new_ssl_provider == "") { ?>
 
-                <tr class="main_table_row_active">
-                    <td class="main_table_cell_active">
-                        <a class="invisiblelink" href="../../assets/edit/ssl-provider-fees.php?sslpid=<?php
-                        echo $row->id; ?>"><?php echo $row->ssl_provider; ?></a>
+                <tr>
+                    <td></td>
+                    <td>
+                        <?php echo $row->ssl_provider; ?>
                     </td>
-                    <td class="main_table_cell_active">
-                        <a class="invisiblelink" href="../../assets/edit/ssl-provider-fees.php?sslpid=<?php
-                        echo $row->id; ?>"><?php echo $row->type; ?></a>
+                    <td>
+                        <?php echo $row->type; ?>
                     </td>
-                    <td class="main_table_cell_active">
+                    <td><?php
+                        $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
+                        echo $row->initial_fee; ?>
+                    </td>
+                    <td>
                         <?php
-                        $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
-                            $row->symbol_space);
-                        echo $row->initial_fee;
-                        ?>
-                    </td>
-                    <td class="main_table_cell_active">
-                        <?php
-                        $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order,
-                            $row->symbol_space);
+                        $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
                         echo $row->renewal_fee;
                         ?>
                     </td>
-                    <td class="main_table_cell_active">
+                    <td>
                         <?php
-                        $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order,
-                            $row->symbol_space);
+                        $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
                         echo $row->misc_fee;
                         ?>
                     </td>
-                    <td class="main_table_cell_active"><?php echo $row->currency; ?></td>
-                    <td class="main_table_cell_active">
+                    <td><?php echo $row->currency; ?></td>
+                    <td>
                         <?php
                         $sql_ssl_count = "SELECT count(*) AS total_ssl_count
                                       FROM ssl_certs
@@ -312,14 +274,14 @@ if ($total_rows > 0) { ?>
 
                             } else {
 
-                                echo "<a class=\"invisiblelink\" href=\"../../ssl-certs.php?sslpid=" . $row->id .
+                                echo "<a href=\"../../ssl/index.php?sslpid=" . $row->id .
                                     "&ssltid=" . $row->type_id . "\">" . $row_ssl_count->total_ssl_count . "</a>";
 
                             }
 
                         } ?>
                     </td>
-                    <td class="main_table_cell_active"><?php echo $last_updated; ?></td>
+                    <td><?php echo $last_updated; ?></td>
                 </tr>
 
                 <?php
@@ -328,35 +290,32 @@ if ($total_rows > 0) { ?>
 
             } else { ?>
 
-                <tr class="main_table_row_active">
-                    <td class="main_table_cell_active">&nbsp;</td>
-                    <td class="main_table_cell_active">
-                        <a class="invisiblelink" href="../../assets/edit/ssl-provider-fees.php?sslpid=<?php
-                        echo $row->id; ?>"><?php echo $row->type; ?></a>
+                <tr>
+                    <td></td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <?php echo $row->type; ?>
                     </td>
-                    <td class="main_table_cell_active">
+                    <td>
                         <?php
-                        $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order,
-                            $row->symbol_space);
+                        $row->initial_fee = $currency->format($row->initial_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
                         echo $row->initial_fee;
                         ?>
                     </td>
-                    <td class="main_table_cell_active">
+                    <td>
                         <?php
-                        $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order,
-                            $row->symbol_space);
+                        $row->renewal_fee = $currency->format($row->renewal_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
                         echo $row->renewal_fee;
                         ?>
                     </td>
-                    <td class="main_table_cell_active">
+                    <td>
                         <?php
-                        $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order,
-                            $row->symbol_space);
+                        $row->misc_fee = $currency->format($row->misc_fee, $row->symbol, $row->symbol_order, $row->symbol_space);
                         echo $row->misc_fee;
                         ?>
                     </td>
-                    <td class="main_table_cell_active"><?php echo $row->currency; ?></td>
-                    <td class="main_table_cell_active">
+                    <td><?php echo $row->currency; ?></td>
+                    <td>
                         <?php
                         $sql_ssl_count = "SELECT count(*) AS total_ssl_count
                                       FROM ssl_certs
@@ -372,29 +331,27 @@ if ($total_rows > 0) { ?>
 
                             } else {
 
-                                echo "<a class=\"invisiblelink\" href=\"../../ssl-certs.php?sslpid=" . $row->id .
+                                echo "<a href=\"../../ssl/index.php?sslpid=" . $row->id .
                                     "&ssltid=" . $row->type_id . "\">" . $row_ssl_count->total_ssl_count . "</a>";
 
                             }
 
                         } ?>
                     </td>
-                    <td class="main_table_cell_active"><?php echo $last_updated; ?></td>
-                </tr>
+                    <td><?php echo $last_updated; ?></td>
+                </tr><?php
 
-                <?php
                 $last_ssl_provider = $row->ssl_provider;
                 $last_type = $row->type;
 
             }
 
-        }
-        ?>
-    </table>
+        } ?>
 
-<?php
-}
-?>
+        </tbody>
+    </table><?php
+
+} ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class Error
@@ -40,4 +39,4 @@ class Error
 
     }
 
-}
+} //@formatter:on

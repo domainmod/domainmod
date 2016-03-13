@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class DwZones
@@ -123,4 +122,4 @@ class DwZones
 
     }
 
-}
+} //@formatter:on

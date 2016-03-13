@@ -26,19 +26,18 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-edit-ip-address.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-
-$page_title = "Editing An IP Address";
-$software_section = "ip-addresses-edit";
 
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];
@@ -77,15 +76,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $ipid = $new_ipid;
 
-        $_SESSION['s_result_message'] = "IP Address <div class=\"highlight\">$new_name ($new_ip)</div> Updated<BR>";
+        $_SESSION['s_message_success'] = "IP Address " . $new_name . " (" . $new_ip . ") Updated<BR>";
 
         header("Location: ../ip-addresses.php");
         exit;
 
     } else {
 
-        if ($new_name == "") $_SESSION['s_result_message'] .= "Please enter a name for the IP Address<BR>";
-        if ($new_ip == "") $_SESSION['s_result_message'] .= "Please enter the IP Address<BR>";
+        if ($new_name == "") $_SESSION['s_message_danger'] .= "Enter a name for the IP Address<BR>";
+        if ($new_ip == "") $_SESSION['s_message_danger'] .= "Enter the IP Address<BR>";
 
     }
 
@@ -127,11 +126,11 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['s_result_message'] = "This IP Address has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] = "This IP Address has domains associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['s_result_message'] = "Are you sure you want to delete this IP Address?<BR><BR><a
+            $_SESSION['s_message_danger'] = "Are you sure you want to delete this IP Address?<BR><BR><a
                 href=\"ip-address.php?ipid=$ipid&really_del=1\">YES, REALLY DELETE THIS IP ADDRESS</a><BR>";
 
         }
@@ -160,7 +159,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_result_message'] = "IP Address <div class=\"highlight\">$new_name ($new_ip)</div> Deleted<BR>";
+    $_SESSION['s_message_success'] = "IP Address " . $new_name . " (" . $new_ip . ") Deleted<BR>";
 
     header("Location: ../ip-addresses.php");
     exit;
@@ -173,32 +172,19 @@ if ($really_del == "1") {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body>
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="edit_ip_address_form" method="post">
-    <strong>IP Address Name (100)</strong>
-    <a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a><BR><BR>
-    <input name="new_name" type="text" size="50" maxlength="100" value="<?php if ($new_name != "")
-        echo htmlentities($new_name); ?>">
-    <BR><BR>
-    <strong>IP Address (100)</strong>
-    <a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a><BR><BR>
-    <input name="new_ip" type="text" size="50" maxlength="100" value="<?php if ($new_ip != "") echo $new_ip; ?>">
-    <BR><BR>
-    <strong>rDNS (100)</strong><BR><BR>
-    <input name="new_rdns" type="text" size="50" maxlength="100" value="<?php if ($new_rdns != "") echo $new_rdns; ?>">
-    <BR><BR>
-    <strong>Notes</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-    <input type="hidden" name="new_ipid" value="<?php echo $ipid; ?>">
-    <BR><BR>
-    <input type="submit" name="button" value="Update This IP Address &raquo;">
-</form>
-<BR><BR><a href="ip-address.php?ipid=<?php echo $ipid; ?>&del=1">DELETE THIS IP ADDRESS</a>
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_name', 'IP Address Name (100)', '', $new_name, '100', '', '', '');
+echo $form->showInputText('new_ip', 'IP Address (100)', '', $new_ip, '100', '', '', '');
+echo $form->showInputText('new_rdns', 'rDNS (100)', '', $new_rdns, '100', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputHidden('new_ipid', $ipid);
+echo $form->showSubmitButton('Save', '', '');
+echo $form->showFormBottom('');
+?>
+<BR><a href="ip-address.php?ipid=<?php echo $ipid; ?>&del=1">DELETE THIS IP ADDRESS</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

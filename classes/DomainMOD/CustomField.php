@@ -18,8 +18,7 @@
  * http://www.gnu.org/licenses/.
  *
  */
-?>
-<?php
+//@formatter:off
 namespace DomainMOD;
 
 class CustomField
@@ -94,4 +93,4 @@ class CustomField
 
     }
 
-}
+} //@formatter:on

@@ -26,21 +26,19 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-add-owner.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = "Adding A New Account Owner";
-$software_section = "account-owners-add";
-
-// Form Variables
 $new_owner = $_POST['new_owner'];
 $new_notes = $_POST['new_notes'];
 
@@ -66,14 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_result_message'] = "Owner <div class=\"highlight\">" . $new_owner . "</div> Added<BR>";
+        $_SESSION['s_message_success'] = 'Owner ' . $new_owner . ' Added<BR>';
 
         header("Location: ../account-owners.php");
         exit;
 
     } else {
 
-        $_SESSION['s_result_message'] .= "Please enter the owner's name<BR>";
+        $_SESSION['s_message_danger'] .= "Enter the owner's name<BR>";
 
     }
 
@@ -85,20 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()">
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="add_owner_form" method="post">
-    <strong>Owner Name (100)</strong>
-    <a title="Required Field">
-        <div class="default_highlight"><strong>*</strong></div>
-    </a><BR><BR>
-    <input name="new_owner" type="text" value="<?php echo $new_owner; ?>" size="50" maxlength="100">
-    <BR><BR>
-    <strong>Notes</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-    <BR><BR>
-    <input type="submit" name="button" value="Add This Account Owner &raquo;">
-</form>
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_owner', 'Owner Name (100)', '', $new_owner, '100', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showSubmitButton('Add Owner', '', '');
+echo $form->showFormBottom('');
+?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

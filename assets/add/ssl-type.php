@@ -26,21 +26,19 @@ include("../../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-$error = new DomainMOD\Error();
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$form = new DomainMOD\Form();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
+include(DIR_INC . "settings/assets-add-ssl-type.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
 
-$page_title = "Adding A New SSL Type";
-$software_section = "ssl-types-add";
-
-// Form Variables
 $new_type = $_POST['new_type'];
 $new_notes = $_POST['new_notes'];
 
@@ -66,14 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_result_message'] = "SSL Type <div class=\"highlight\">$new_type</div> Added<BR>";
+        $_SESSION['s_message_success'] = "SSL Type " . $new_type . " Added<BR>";
 
         header("Location: ../ssl-types.php");
         exit;
 
     } else {
 
-        $_SESSION['s_result_message'] .= "Please enter the SSL Type<BR>";
+        $_SESSION['s_message_danger'] .= "Enter the SSL Type<BR>";
 
     }
 
@@ -85,21 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
     <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
 </head>
-<body onLoad="document.forms[0].elements[0].focus()">
+<body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<form name="add_type_form" method="post">
-    <strong>Type (100)</strong><a title="Required Field">
-        <div
-            class="default_highlight"><strong>*</strong></div>
-    </a><BR>
-    <BR>
-    <input name="new_type" type="text" value="<?php echo $new_type; ?>" size="50" maxlength="100">
-    <BR><BR>
-    <strong>Notes</strong><BR><BR>
-    <textarea name="new_notes" cols="60" rows="5"><?php echo $new_notes; ?></textarea>
-    <BR><BR>
-    <input type="submit" name="button" value="Add This SSL Type &raquo;">
-</form>
+<?php
+echo $form->showFormTop('');
+echo $form->showInputText('new_type', 'Type (100)', '', $new_type, '100', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showSubmitButton('Add SSL Type', '', '');
+echo $form->showFormBottom('');
+?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>
