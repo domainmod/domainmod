@@ -498,11 +498,7 @@ if ($no_results_accounts !== 1 || $no_results_dns_zones !== 1) { ?>
 
 }
 
-if ($no_results_accounts === 1) {
-
-    // No matching DW accounts, or the query failed
-
-} else { ?>
+if ($no_results_accounts !== 1) { ?>
 
     <h4>Accounts</h4><?php
 
@@ -534,7 +530,7 @@ if ($no_results_accounts === 1) {
                     <td></td>
                     <td><?php echo $row->name; ?></td>
 
-                    <?php echo $dwdisplay->account($connection, $row->id, $new_domain, '1', '1'); ?>
+                    <?php echo $dwdisplay->account($connection, $row->id, $new_domain); ?>
 
                 </tr><?php
 
@@ -545,11 +541,7 @@ if ($no_results_accounts === 1) {
 
 }
 
-if ($no_results_dns_zones === 1) {
-
-    // No matching DW DNS zones or the query failed
-
-} else { ?>
+if ($no_results_dns_zones !== 1) { ?>
 
     <h4>DNS Zones & Records</h4><?php
     $sql = "SELECT s.id AS dw_server_id, s.name

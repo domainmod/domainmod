@@ -182,7 +182,7 @@ if ($q->prepare($query)) {
     $q->store_result();
     $q->bind_result($id, $name);
 
-    echo $form->showDropdownTop('new_field_type_id', 'Data Type', '<strong>WARNING:</strong> The Data Type cannot be changed.', '', '');
+    echo $form->showDropdownTop('new_field_type_id', 'Data Type', '<strong>WARNING:</strong> The Data Type cannot be changed.', '');
 
     while ($q->fetch()) {
 

@@ -24,7 +24,7 @@ namespace DomainMOD;
 class DwDisplay
 {
 
-    public function account($connection, $server_id, $domain, $show_heading, $show_url)
+    public function account($connection, $server_id, $domain)
     { 
         $result_account = $this->getAccount($connection, $server_id, $domain);
         $result = '';
@@ -77,13 +77,49 @@ class DwDisplay
                 WHERE a.server_id = s.id
                   AND a.server_id = '" . $server_id . "'
                   AND a.domain = '" . $domain . "'";
+
+
+
+
+
+
+
+        $query = "SELECT id, `name`, description FROM segments WHERE id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $segid);
+            $q->execute();
+            // You must call store_result for every query that successfully produces a result set (SELECT, SHOW, DESCRIBE, EXPLAIN)
+            $q->store_result();
+            $q->bind_result($id, $name, $description);
+
+            while ($q->fetch()) {
+
+                $new_id = $id;
+                $new_name = $name;
+                $new_description = $description;
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
+
+
+
+
+
+
+
+
         return mysqli_query($connection, $sql);
     }
 
     public function accountSidebar($server_name, $domain, $show_heading, $show_url)
     { 
         ob_start();
-        $result = '';
         echo $this->showHeading($domain, $show_heading);
         $server_wrapped = wordwrap($server_name, 20, "<BR>", true);
         echo $server_wrapped . "<BR>";
@@ -151,8 +187,6 @@ class DwDisplay
     public function zoneSidebar($connection, $server_id, $domain, $show_heading, $show_url)
     { 
         ob_start();
-        $result = '';
-
         $zone = $this->getZonefile($connection, $server_id, $domain);
         echo $this->showHeading($zone, $show_heading);
         $server_name = $this->getServerName($connection, $server_id);
