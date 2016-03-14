@@ -7,7 +7,7 @@ Project Demo: http://demo.domainmod.org
 Source Code: http://github.com/domainmod/domainmod/  
 
 ## About
-DomainMOD is an open source application written in PHP & MySQL used to manage your domains and other internet assets in a central location. DomainMOD also includes a Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports web servers running WHM/cPanel, but further support will be added in the future.
+DomainMOD is an open source application written in PHP & MySQL used to manage your domains and other internet assets in a central location. DomainMOD also includes a Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports web servers running WHM/cPanel.
 
 
 ## Live Demo
@@ -66,7 +66,7 @@ WARNING: Before upgrading, it is strongly recommended that you make a backup of 
 
 ## Data Warehouse
 
-DomainMOD has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also plan to add support for Plesk once I've ironed out all the kinks in the framework and figured out Plesk's API, and hopefully one day you'll be able to import any web server into the Data Warehouse, regardless of whether or not it uses a control panel.
+DomainMOD has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel.
 
 If your web server doesn't run WHM/cPanel, or you don't want to import your web server data into DomainMOD, you can ignore this section.
 
