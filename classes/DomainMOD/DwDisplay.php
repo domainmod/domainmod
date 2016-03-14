@@ -77,43 +77,6 @@ class DwDisplay
                 WHERE a.server_id = s.id
                   AND a.server_id = '" . $server_id . "'
                   AND a.domain = '" . $domain . "'";
-
-
-
-
-
-
-
-        $query = "SELECT id, `name`, description FROM segments WHERE id = ?";
-        $q = $conn->stmt_init();
-
-        if ($q->prepare($query)) {
-
-            $q->bind_param('i', $segid);
-            $q->execute();
-            // You must call store_result for every query that successfully produces a result set (SELECT, SHOW, DESCRIBE, EXPLAIN)
-            $q->store_result();
-            $q->bind_result($id, $name, $description);
-
-            while ($q->fetch()) {
-
-                $new_id = $id;
-                $new_name = $name;
-                $new_description = $description;
-
-            }
-
-            $q->close();
-
-        } else $error->outputSqlError($conn, "ERROR");
-
-
-
-
-
-
-
-
         return mysqli_query($connection, $sql);
     }
 
