@@ -28,6 +28,7 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
+$time = new DomainMOD\Time();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
@@ -49,7 +50,96 @@ $system->authCheck();
 <!-- Small boxes (Stat box) -->
 <div class="row">
 
+    <!-- Expiring Boxes -->
+    <?php
+    $sql = "SELECT expiration_email_days
+            FROM settings";
+    $result = mysqli_query($connection, $sql);
+
+    while ($row = mysqli_fetch_object($result)) {
+        $expiration_days = $row->expiration_email_days;
+    }
+
+    $start_date = '2000-01-01';
+    $end_date = $time->timeBasicPlusDays($expiration_days);
+    $daterange = $start_date . ' - ' . $end_date;
+    ?>
+    <h3 style="padding-left:20px;">Expiring in the next <?php echo $expiration_days; ?> days</h3>
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-red">
+            <div class="inner">
+                <?php
+                $sql_domains = "SELECT id, expiry_date, domain
+                                FROM domains
+                                WHERE active NOT IN ('0', '10')
+                                  AND expiry_date <= '" . $end_date . "'
+                                ORDER BY expiry_date, domain";
+                $domains_expiring = $system->checkForRowsResult($connection, $sql_domains);
+
+                if ($domains_expiring != '0') {
+
+                    $to_display = mysqli_num_rows($domains_expiring);
+
+                } else {
+
+                    $to_display = '0';
+
+                }
+                ?>
+                <h3><?php echo number_format($to_display); ?></h3>
+                <p>Domains</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-close-circled" style="padding-top:16px;"></i>
+            </div>
+            <a href="<?php echo $web_root; ?>/domains/index.php?daterange=<?php echo urlencode($daterange); ?>" class="small-box-footer">View <i
+                    class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-red">
+            <div class="inner">
+                <?php
+                $sql_ssl = "SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
+                            FROM ssl_certs AS sslc, ssl_cert_types AS sslt
+                            WHERE sslc.type_id = sslt.id
+                              AND sslc.active NOT IN ('0')
+                              AND sslc.expiry_date <= '" . $end_date . "'
+                            ORDER BY sslc.expiry_date, sslc.name";
+                $ssl_expiring = $system->checkForRowsResult($connection, $sql_ssl);
+
+                if ($ssl_expiring != '0') {
+
+                    $to_display = mysqli_num_rows($ssl_expiring);
+
+                } else {
+
+                    $to_display = '0';
+
+                }
+                ?>
+                <h3><?php echo number_format($to_display); ?></h3>
+                <p>SSL Certificates</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-close-circled" style="padding-top:16px;"></i>
+            </div>
+            <a href="<?php echo $web_root; ?>/ssl/index.php?daterange=<?php echo urlencode($daterange); ?>" class="small-box-footer">View <i
+                    class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+
+</div>
+
+<div class="row">
+
     <!-- Main Boxes -->
+    <h3 style="padding-left:20px;">System Totals</h3>
     <div class="col-lg-3 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-green">
