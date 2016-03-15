@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 echo $form->showFormTop('');
 echo $form->showInputText('new_full_url', 'Full ' . $software_title . ' URL (100)', 'Enter the full URL of your ' . $software_title . ' installation, excluding the trailing slash (Example: http://example.com/domainmod)', $new_full_url, '100', '', '', '');
 echo $form->showInputText('new_email_address', 'System Email Address (100)', 'This should be a valid email address that is able to receive mail. It will be used in various system locations, such as the FROM and REPLY-TO address for emails sent by ' . $software_title . '.', $new_email_address, '100', '', '', '');
-echo $form->showInputText('new_expiration_email_days', 'Days to Display in Expiration Emails', 'This is the number of days in the future to display in the expiration emails.', $new_expiration_email_days, '3', '', '', '');
+echo $form->showInputText('new_expiration_email_days', 'Days to Display on Dashboard and in Expiration Emails', 'This is the number of days in the future to display on the Dashboard and in expiration emails.', $new_expiration_email_days, '3', '', '', '');
 
 echo $form->showRadioTop('Enable Large Mode?', 'If you have a very large database and your main Domain page is loading slowly, enabling Large Mode will fix the issue, at the cost of losing some of the advanced filtering and mobile functionality. You should only need to enable this if your database contains upwards of 10,000 domains.', '');
 echo $form->showRadioOption('new_large_mode', '1', 'Yes', $new_large_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
