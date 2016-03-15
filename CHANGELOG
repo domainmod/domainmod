@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.00.000    2016-03-14
+- DomainMOD v4 Release -- Complete Redesign
+
 v3.0.9    2016-02-09
 - Moved Domain & SSL results within while statement
 - Reset is_running flag before running cron jobs
