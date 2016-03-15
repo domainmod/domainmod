@@ -103,12 +103,6 @@ Please see the CHANGELOG file that came with DomainMOD, or view the Changelog on
 If you have any questions, comments, or bugs to report, please visit http://domainmod.org/support/
 
 
-## Contribute
-Up to this point all of the coding has been done by myself, but I am 100% open to other contributors. However, this is my first open source project and I believe there's still a lot of work to be done before DomainMOD is ready for multiple developers, so if you want to contribute you'll need to bear with me while I figure things out.
-
-Feel free to send an email to contribute@domainmod.org if you would like to contribute.
-
-
 ## License
 DomainMOD is an open source domain and internet asset manager.  
 Copyright (c) 2010-2016 Greg Chetcuti <greg@chetcuti.com>  
