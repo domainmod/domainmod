@@ -839,7 +839,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains (and associated SSL Certificates) Deleted<BR>";
+                $_SESSION['s_message_success'] = "Domains (and associated data) Deleted<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -1580,6 +1580,11 @@ if ($action == "UCF") {
 }
 
 if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != "")) {
+
+    if ($action == "DD") {
+
+        echo "<strong>WARNING: In addition to deleting the domains, all SSL certificates and custom field data associated with the domains and SSL certificates will also be deleted. If you don't want to completely remove all traces of the domains from the system you may be better off marking them as expired instead.</strong><BR><BR>";
+    }
 
     if ($action == "AD") {
 
