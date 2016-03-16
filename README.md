@@ -1,10 +1,10 @@
-[![DomainMOD](http://domainmod.org/images/logo.png)](http://domainmod.org)
+[![DomainMOD](https://domainmod.org/images/logo.png)](https://domainmod.org)
 
 [![Build Status](https://scrutinizer-ci.com/g/domainmod/domainmod/badges/build.png?b=master)](https://scrutinizer-ci.com/g/domainmod/domainmod/?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/domainmod/domainmod/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/domainmod/domainmod/?branch=master)
 
-Project Home: http://domainmod.org  
-Project Demo: http://demo.domainmod.org  
-Source Code: http://github.com/domainmod/domainmod/  
+Project Home: https://domainmod.org  
+Project Demo: https://demo.domainmod.org  
+Source Code: https://github.com/domainmod/domainmod/  
 
 ## About
 DomainMOD is an open source application written in PHP & MySQL used to manage your domains and other internet assets in a central location. DomainMOD also includes a Data Warehouse framework that allows you to import your web server data so that you can view, export, and report on your live data. Currently the Data Warehouse only supports web servers running WHM/cPanel.
@@ -13,13 +13,13 @@ DomainMOD is an open source application written in PHP & MySQL used to manage yo
 ## Live Demo
 Not sure if DomainMOD is what you're looking for? Don't want to take the time to install it only to find out that it's not? I hate when that happens myself, which is why I've setup a live demo so you don't waste your time.  
 
-So go ahead, take the live demo for a test drive before you install! http://demo.domainmod.org  
+So go ahead, take the live demo for a test drive before you install! https://demo.domainmod.org  
 
 
 ## Downloading
 There are currently two options for downloading DomainMOD. Whenever possible I recommend that you use option #2, the git repository download directly from your web server. Not only is it a nice quick install, but it makes upgrading a breeze.
 
-1. Visit the following URL to download the most up-to-date version of DomainMOD: http://domainmod.org/dl/
+1. Visit the following URL to download the most up-to-date version of DomainMOD: https://domainmod.org/dl/
 
 2. Use git right from your web server to retrieve the source code. To do so, change to the directory where you want to install DomainMOD and run the following command:  
 
@@ -53,7 +53,7 @@ NOTE: This file should be executed every 10 minutes.
 ## Upgrading
 WARNING: Before upgrading, it is strongly recommended that you make a backup of your DomainMOD installation directory and database. If something goes wrong during the upgrade there may be no recovering, and having a backup of your installation directory and database will allow you to easily restore your previous installation.
 
-1. If you installed DomainMOD by downloading the .ZIP file, visit the following URL to download the most up-to-date version: http://domainmod.org/dl/  
+1. If you installed DomainMOD by downloading the .ZIP file, visit the following URL to download the most up-to-date version: https://domainmod.org/dl/  
 
    Once the download completes, upload and unpack the new archive overtop of where you installed the previous version (or unpack it and then upload it, whichever you prefer).  
 
@@ -96,11 +96,11 @@ After installation just load the URL in a web browser and play around in the UI,
 
 
 ## Changelog
-Please see the CHANGELOG file that came with DomainMOD, or view the Changelog online at http://domainmod.org/changelog/
+Please see the CHANGELOG file that came with DomainMOD, or view the Changelog online at https://domainmod.org/changelog/
 
 
 ## Support
-If you have any questions, comments, or bugs to report, please visit http://domainmod.org/support/
+If you have any questions, comments, or bugs to report, please visit https://domainmod.org/support/
 
 
 ## License
