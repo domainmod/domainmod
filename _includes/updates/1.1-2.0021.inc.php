@@ -20,6 +20,7 @@
  */
 ?>
 <?php //@formatter:off
+
 // upgrade database from 1.1 to 1.2
 if ($current_db_version === '1.1') {
 

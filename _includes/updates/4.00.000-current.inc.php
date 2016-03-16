@@ -18,3 +18,31 @@
  * http://www.gnu.org/licenses/.
  *
  */
+?>
+<?php //@formatter:off
+
+// upgrade database from 4.00.000 to 4.00.001
+if ($current_db_version === '4.00.000') {
+
+    $sql = "ALTER TABLE `settings`
+            ADD `expiration_days` INT(3) NOT NULL DEFAULT '60' AFTER `expiration_email_days`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "UPDATE `settings`
+            SET `expiration_days` = `expiration_email_days`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `settings`
+            DROP `expiration_email_days`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "UPDATE settings
+            SET db_version = '4.00.001',
+                update_time = '" . $time->stamp() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $current_db_version = '4.00.001';
+
+}
+
+//@formatter:on

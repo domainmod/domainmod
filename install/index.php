@@ -694,7 +694,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `default_ssl_provider_account` INT(10) NOT NULL DEFAULT '0',
                 `default_ssl_type` INT(10) NOT NULL DEFAULT '0',
                 `default_ssl_provider` INT(10) NOT NULL DEFAULT '0',
-                `expiration_email_days` INT(3) NOT NULL DEFAULT '60',
+                `expiration_days` INT(3) NOT NULL DEFAULT '60',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
@@ -809,7 +809,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
         $_SESSION['s_system_default_ssl_provider_account'] = $row_settings->default_ssl_provider_account;
         $_SESSION['s_system_default_ssl_type'] = $row_settings->default_ssl_type;
         $_SESSION['s_system_default_ssl_provider'] = $row_settings->default_ssl_provider;
-        $_SESSION['s_system_expiration_email_days'] = $row_settings->expiration_email_days;
+        $_SESSION['s_system_expiration_days'] = $row_settings->expiration_days;
 
     }
 

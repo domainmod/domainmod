@@ -20,6 +20,7 @@
  */
 ?>
 <?php //@formatter:off
+
 // upgrade database from 2.0048 to 2.0049
 if ($current_db_version === '2.0048') {
 
