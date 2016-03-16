@@ -43,17 +43,15 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 $new_email_address = $_POST['new_email_address'];
 $new_large_mode = $_POST['new_large_mode'];
 $new_full_url = $_POST['new_full_url'];
-$new_expiration_email_days = $_POST['new_expiration_email_days'];
+$new_expiration_days = $_POST['new_expiration_days'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "" &&
-    $new_expiration_email_days != ""
-) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "" && $new_expiration_days != "") {
 
     $query = "UPDATE settings
               SET full_url = ?,
                   email_address = ?,
                   large_mode = ?,
-                  expiration_email_days = ?,
+                  expiration_days = ?,
                   update_time = ?";
     $q = $conn->stmt_init();
 
@@ -61,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
         $timestamp = $time->stamp();
 
-        $q->bind_param('ssiis', $new_full_url, $new_email_address, $new_large_mode, $new_expiration_email_days, $timestamp);
+        $q->bind_param('ssiis', $new_full_url, $new_email_address, $new_large_mode, $new_expiration_days, $timestamp);
         $q->execute();
         $q->close();
 
@@ -72,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
     $_SESSION['s_system_full_url'] = $new_full_url;
     $_SESSION['s_system_email_address'] = $new_email_address;
     $_SESSION['s_system_large_mode'] = $new_large_mode;
-    $_SESSION['s_system_expiration_email_days'] = $new_expiration_email_days;
+    $_SESSION['s_system_expiration_days'] = $new_expiration_days;
 
     $_SESSION['s_message_success'] .= "The System Settings were updated<BR>";
 
@@ -85,11 +83,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
         if ($new_email_address == "") $_SESSION['s_message_danger'] .= "Enter the system email address<BR>";
         if ($new_full_url == "") $_SESSION['s_message_danger'] .= "Enter the full URL of your " . $software_title . " installation<BR>";
-        if ($new_expiration_email_days == "") $_SESSION['s_message_danger'] .= "Enter the number of days to display in expiration emails<BR>";
+        if ($new_expiration_days == "") $_SESSION['s_message_danger'] .= "Enter the number of days to display in expiration emails<BR>";
 
     } else {
 
-        $query = "SELECT full_url, email_address, large_mode, expiration_email_days
+        $query = "SELECT full_url, email_address, large_mode, expiration_days
                   FROM settings";
         $q = $conn->stmt_init();
 
@@ -97,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
             $q->execute();
             $q->store_result();
-            $q->bind_result($new_full_url, $new_email_address, $new_large_mode, $new_expiration_email_days);
+            $q->bind_result($new_full_url, $new_email_address, $new_large_mode, $new_expiration_days);
             $q->fetch();
             $q->close();
 
@@ -120,8 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 echo $form->showFormTop('');
 echo $form->showInputText('new_full_url', 'Full ' . $software_title . ' URL (100)', 'Enter the full URL of your ' . $software_title . ' installation, excluding the trailing slash (Example: http://example.com/domainmod)', $new_full_url, '100', '', '', '');
 echo $form->showInputText('new_email_address', 'System Email Address (100)', 'This should be a valid email address that is able to receive mail. It will be used in various system locations, such as the FROM and REPLY-TO address for emails sent by ' . $software_title . '.', $new_email_address, '100', '', '', '');
-echo $form->showInputText('new_expiration_email_days', 'Days to Display on Dashboard and in Expiration Emails', 'This is the number of days in the future to display on the Dashboard and in expiration emails.', $new_expiration_email_days, '3', '', '', '');
-
+echo $form->showInputText('new_expiration_days', 'Days to Display on Dashboard and in Expiration Emails', 'This is the number of days in the future to display on the Dashboard and in expiration emails.', $new_expiration_days, '3', '', '', '');
 echo $form->showRadioTop('Enable Large Mode?', 'If you have a very large database and your main Domain page is loading slowly, enabling Large Mode will fix the issue, at the cost of losing some of the advanced filtering and mobile functionality. You should only need to enable this if your database contains upwards of 10,000 domains.', '');
 echo $form->showRadioOption('new_large_mode', '1', 'Yes', $new_large_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_large_mode', '0', 'No', $new_large_mode, '', '');

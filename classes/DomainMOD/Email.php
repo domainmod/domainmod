@@ -49,7 +49,7 @@ class Email
 
     public function getSettings($connection)
     {
-        $sql = "SELECT full_url, email_address, expiration_email_days FROM settings";
+        $sql = "SELECT full_url, email_address, expiration_days FROM settings";
         $result = mysqli_query($connection, $sql);
         $url = '';
         $email = '';
@@ -57,7 +57,7 @@ class Email
         while ($row = mysqli_fetch_object($result)) {
             $url = $row->full_url;
             $email = $row->email_address;
-            $days = $row->expiration_email_days;
+            $days = $row->expiration_days;
         }
         return array($url, $email, $days);
     }

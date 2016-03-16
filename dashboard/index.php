@@ -52,12 +52,12 @@ $system->authCheck();
 
     <!-- Expiring Boxes -->
     <?php
-    $sql = "SELECT expiration_email_days
+    $sql = "SELECT expiration_days
             FROM settings";
     $result = mysqli_query($connection, $sql);
 
     while ($row = mysqli_fetch_object($result)) {
-        $expiration_days = $row->expiration_email_days;
+        $expiration_days = $row->expiration_days;
     }
 
     $start_date = '2000-01-01';

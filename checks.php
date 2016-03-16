@@ -95,7 +95,7 @@ while ($row_settings = mysqli_fetch_object($result_settings)) {
     $_SESSION['s_system_default_ssl_provider_account'] = $row_settings->default_ssl_provider_account;
     $_SESSION['s_system_default_ssl_type'] = $row_settings->default_ssl_type;
     $_SESSION['s_system_default_ssl_provider'] = $row_settings->default_ssl_provider;
-    $_SESSION['s_system_expiration_email_days'] = $row_settings->expiration_email_days;
+    $_SESSION['s_system_expiration_days'] = $row_settings->expiration_days;
 
 }
 
