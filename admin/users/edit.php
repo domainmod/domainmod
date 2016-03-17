@@ -342,9 +342,13 @@ echo $form->showSubmitButton('Save', '', '');
 
 echo $form->showFormBottom('');
 ?>
-<BR><a href="reset-password.php?new_username=<?php echo $new_username; ?>&display=1">RESET AND DISPLAY PASSWORD</a><BR>
-<BR><a href="reset-password.php?new_username=<?php echo $new_username; ?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
-<BR><a href="edit.php?uid=<?php echo $uid; ?>&del=1">DELETE THIS USER</a>
+<?php
+$new_username_clean = urlencode($new_username);
+$uid_clean = (integer) $uid;
+?>
+<BR><a href="reset-password.php?new_username=<?php echo $new_username_clean; ?>&display=1">RESET AND DISPLAY PASSWORD</a><BR>
+<BR><a href="reset-password.php?new_username=<?php echo $new_username_clean; ?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
+<BR><a href="edit.php?uid=<?php echo $uid_clean; ?>&del=1">DELETE THIS USER</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

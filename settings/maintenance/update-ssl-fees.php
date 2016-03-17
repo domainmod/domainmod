@@ -48,5 +48,5 @@ $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
 $_SESSION['s_message_success'] .= "SSL Certificate Fees updated<BR>";
 
-header("Location: " . $_SERVER['HTTP_REFERER']);
+header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
 exit;

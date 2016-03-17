@@ -180,7 +180,10 @@ echo $form->showInputHidden('new_whid', $whid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="host.php?whid=<?php echo $whid; ?>&del=1">DELETE THIS WEB HOST</a>
+<?php
+$whid_clean = (integer) $whid;
+?>
+<BR><a href="host.php?whid=<?php echo $whid_clean; ?>&del=1">DELETE THIS WEB HOST</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

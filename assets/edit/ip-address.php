@@ -184,7 +184,10 @@ echo $form->showInputHidden('new_ipid', $ipid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="ip-address.php?ipid=<?php echo $ipid; ?>&del=1">DELETE THIS IP ADDRESS</a>
+<?php
+$ipid_clean = (integer) $ipid;
+?>
+<BR><a href="ip-address.php?ipid=<?php echo $ipid_clean; ?>&del=1">DELETE THIS IP ADDRESS</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

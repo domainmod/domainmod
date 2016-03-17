@@ -41,5 +41,5 @@ $system->authCheck();
 
 $_SESSION['s_message_success'] .= $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
-header("Location: " . $_SERVER['HTTP_REFERER']);
+header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
 exit;

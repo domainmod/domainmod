@@ -327,7 +327,10 @@ echo $form->showInputHidden('new_raid', $raid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="registrar-account.php?raid=<?php echo $raid; ?>&del=1">DELETE THIS REGISTRAR ACCOUNT</a>
+<?php
+$raid_clean = (integer) $raid;
+?>
+<BR><a href="registrar-account.php?raid=<?php echo $raid_clean; ?>&del=1">DELETE THIS REGISTRAR ACCOUNT</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

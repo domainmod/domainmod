@@ -238,7 +238,10 @@ echo $form->showInputHidden('rid', $rid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="registrar.php?rid=<?php echo $rid; ?>&del=1">DELETE THIS REGISTRAR</a>
+<?php
+$rid_clean = (integer) $rid;
+?>
+<BR><a href="registrar.php?rid=<?php echo $rid_clean; ?>&del=1">DELETE THIS REGISTRAR</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

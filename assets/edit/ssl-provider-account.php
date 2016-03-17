@@ -316,7 +316,10 @@ echo $form->showInputHidden('new_sslpaid', $sslpaid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="ssl-provider-account.php?sslpaid=<?php echo $sslpaid; ?>&del=1">DELETE THIS SSL PROVIDER ACCOUNT</a>
+<?php
+$sslpaid_clean = (integer) $sslpaid;
+?>
+<BR><a href="ssl-provider-account.php?sslpaid=<?php echo $sslpaid_clean; ?>&del=1">DELETE THIS SSL PROVIDER ACCOUNT</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

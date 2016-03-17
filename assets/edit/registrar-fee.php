@@ -95,7 +95,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['s_message_success'] .= "The fee for ." . $new_tld . " has been updated<BR>";
 
-        header("Location: ../registrar-fees.php?rid=" . $rid);
+        $rid_clean = (integer) $rid;
+
+        header("Location: ../registrar-fees.php?rid=" . $rid_clean);
         exit;
 
     } else {

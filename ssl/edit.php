@@ -413,9 +413,11 @@ if (mysqli_num_rows($result) > 0) { ?>
 echo $form->showInputHidden('sslcid', $sslcid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
-
-    ?>
-<BR><BR><a href="edit.php?sslcid=<?php echo $sslcid; ?>&del=1">DELETE THIS SSL CERTIFICATE</a>
+?>
+<?php
+$sslcid_clean = (integer) $sslcid;
+?>
+<BR><BR><a href="edit.php?sslcid=<?php echo $sslcid_clean; ?>&del=1">DELETE THIS SSL CERTIFICATE</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>
