@@ -162,4 +162,18 @@ class System
         return ob_get_clean();
     }
 
+    public function cleanVar($type, $data)
+    {
+        if ($type == 'i') { // Integer
+            $result = (integer) $data;
+        } elseif ($type == 's') { // String
+            $result = htmlentities($data, ENT_QUOTES);
+        } elseif ($type == 'u') { // URL
+            $result = urlencode($data);
+        } elseif ($type == 'h') { // HTML
+            $result = htmlentities($data, ENT_QUOTES);
+        }
+        return $result;
+    }
+
 } //@formatter:on
