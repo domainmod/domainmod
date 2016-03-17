@@ -2039,15 +2039,15 @@ if ($segid != "") {
 
     <?php if ($totalrows_inactive > 0) { ?>
         <strong>Matching But Inactive Domains:</strong> <?php echo number_format($totalrows_inactive); ?> [<a
-            target="_blank" href="results.php?type=inactive&segid=<?php echo $segid; ?>">view</a>]<BR><BR>
+            target="_blank" href="results.php?type=inactive&segid=<?php echo urlencode($segid); ?>">view</a>]<BR><BR>
     <?php } ?>
     <?php if ($totalrows_filtered > 0) { ?>
         <strong>Matching But Filtered Domains:</strong> <?php echo number_format($totalrows_filtered); ?> [<a
-            target="_blank" href="results.php?type=filtered&segid=<?php echo $segid; ?>">view</a>]<BR><BR>
+            target="_blank" href="results.php?type=filtered&segid=<?php echo urlencode($segid); ?>">view</a>]<BR><BR>
     <?php } ?>
     <?php if ($totalrows_missing > 0) { ?>
         <strong>Missing Domains:</strong> <?php echo number_format($totalrows_missing); ?> [<a
-            target="_blank" href="results.php?type=missing&segid=<?php echo $segid; ?>">view</a>]<BR><BR>
+            target="_blank" href="results.php?type=missing&segid=<?php echo urlencode($segid); ?>">view</a>]<BR><BR>
     <?php }
 
 }
@@ -2056,13 +2056,13 @@ if (mysqli_num_rows($result) > 0) { ?>
 
     <a href="add.php"><?php echo $layout->showButton('button', 'Add Domain'); ?></a>
     <a target="_blank" href="<?php echo $web_root; ?>/raw.php"><?php echo $layout->showButton('button', 'Raw List'); ?></a>
-    <a href="index.php?<?php echo $_SERVER['QUERY_STRING']; ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a>
+    <a href="index.php?<?php echo urlencode($_SERVER['QUERY_STRING']); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a>
 
     <?php if ($segid != "") { ?>
-        <BR><BR><strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?>
+        <BR><BR><strong>Total Cost:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES); ?>
         <BR><BR>
     <?php } else { ?>
-        <BR><BR><strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?><BR>
+        <BR><BR><strong>Total Cost:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES); ?><BR>
 
         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
             <strong>Number of Domains:</strong> <?php echo number_format($totalrows); ?><BR><BR>
@@ -2087,11 +2087,11 @@ if (mysqli_num_rows($result) > 0) { ?>
 
                 <th class="all">
                     <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                        <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                        ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                        echo $raid; ?>&start_date=<?php echo $new_start_date; ?>&end_date=<?php echo $new_end_date; ?>&segid=<?php
-                        echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active; ?>&result_limit=<?php
-                        echo $result_limit; ?>&sort_by=<?php
+                        <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
+                        ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
+                        echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date); ?>&segid=<?php
+                        echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active); ?>&result_limit=<?php
+                        echo urlencode($result_limit); ?>&sort_by=<?php
                         if ($sort_by == "dn_a") {
                             echo "dn_d";
                         } else {
@@ -2104,11 +2104,11 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <?php if ($_SESSION['s_display_domain_expiry_date'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php
-                            echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid;
-                            ?>&raid=<?php echo $raid; ?>&start_date=<?php echo $new_start_date; ?>&end_date=<?php
-                            echo $new_end_date; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php
-                            echo $is_active; ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php
+                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php
+                            echo urlencode($dnsid); ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid);
+                            ?>&raid=<?php echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php
+                            echo urlencode($new_end_date); ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php
+                            echo urlencode($is_active); ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "ed_a") {
                                 echo "ed_d";
                             } else {
@@ -2123,11 +2123,11 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <?php if ($_SESSION['s_display_domain_fee'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php
-                            echo $dnsid; ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid;
-                            ?>&raid=<?php echo $raid; ?>&start_date=<?php echo $new_start_date; ?>&end_date=<?php
-                            echo $new_end_date; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php
-                            echo $is_active; ?>&result_limit=<?php echo $result_limit;
+                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php
+                            echo urlencode($dnsid); ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid);
+                            ?>&raid=<?php echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php
+                            echo urlencode($new_end_date); ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php
+                            echo urlencode($is_active); ?>&result_limit=<?php echo urlencode($result_limit);
                             ?>&sort_by=<?php
                             if ($sort_by == "df_a") {
                                 echo "df_d";
@@ -2143,11 +2143,11 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <?php if ($_SESSION['s_display_domain_tld'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                        <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                        ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                        echo $raid; ?>&start_date=<?php echo $new_start_date; ?>&end_date=<?php
-                        echo $new_end_date; ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php
-                        echo $is_active; ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php
+                        <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
+                        ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
+                        echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php
+                        echo urlencode($new_end_date); ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php
+                        echo urlencode($is_active); ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                         if ($sort_by == "tld_a") {
                             echo "tld_d";
                         } else {
@@ -2161,11 +2161,11 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <?php if ($_SESSION['s_display_domain_registrar'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo $new_start_date; ?>&end_date=<?php echo $new_end_date;
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active;
-                            ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php
+                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
+                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
+                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
+                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "r_a") {
                                 echo "r_d";
                             } else {
@@ -2179,11 +2179,11 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <?php if ($_SESSION['s_display_domain_account'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo $new_start_date; ?>&end_date=<?php echo $new_end_date;
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active;
-                            ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php
+                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
+                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
+                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
+                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "ra_a") {
                                 echo "ra_d";
                             } else {
@@ -2197,11 +2197,11 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <?php if ($_SESSION['s_display_domain_dns'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo $new_start_date; ?>&end_date=<?php echo $new_end_date;
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active;
-                            ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php
+                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
+                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
+                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
+                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "dns_a") {
                                 echo "dns_d";
                             } else {
@@ -2215,11 +2215,11 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <?php if ($_SESSION['s_display_domain_ip'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo $new_start_date; ?>&end_date=<?php echo $new_end_date;
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active;
-                            ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php
+                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
+                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
+                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
+                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "ip_a") {
                                 echo "ip_d";
                             } else {
@@ -2233,10 +2233,10 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <?php if ($_SESSION['s_display_domain_host'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo $new_start_date; ?>&end_date=<?php echo $new_end_date;
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active;
+                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
+                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
+                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
                             ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php
                             if ($sort_by == "wh_a") {
                                 echo "wh_d";
@@ -2251,11 +2251,11 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <?php if ($_SESSION['s_display_domain_category'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo $new_start_date; ?>&end_date=<?php echo $new_end_date;
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active;
-                            ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php
+                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
+                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
+                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
+                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "pc_a") {
                                 echo "pc_d";
                             } else {
@@ -2269,11 +2269,11 @@ if (mysqli_num_rows($result) > 0) { ?>
                 <?php if ($_SESSION['s_display_domain_owner'] == "1") { ?>
                     <th<?php if ($_SESSION['s_system_large_mode'] == '1') { echo ' style="padding-left:20px;"'; } ?>>
                         <?php if ($_SESSION['s_system_large_mode'] == '1') { ?>
-                            <a href="index.php?pcid=<?php echo $pcid; ?>&oid=<?php echo $oid; ?>&dnsid=<?php echo $dnsid;
-                            ?>&ipid=<?php echo $ipid; ?>&whid=<?php echo $whid; ?>&rid=<?php echo $rid; ?>&raid=<?php
-                            echo $raid; ?>&start_date=<?php echo $new_start_date; ?>&end_date=<?php echo $new_end_date;
-                            ?>&segid=<?php echo $segid; ?>&tld=<?php echo $tld; ?>&is_active=<?php echo $is_active;
-                            ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php
+                            <a href="index.php?pcid=<?php echo urlencode($pcid); ?>&oid=<?php echo urlencode($oid); ?>&dnsid=<?php echo urlencode($dnsid);
+                            ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
+                            echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
+                            ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
+                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "o_a") {
                                 echo "o_d";
                             } else {
@@ -2326,7 +2326,7 @@ if (mysqli_num_rows($result) > 0) { ?>
                                 $temp_output_amount = $currency->format($converted_total_cost,
                                     $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
                                     $_SESSION['s_default_currency_symbol_space']);
-                                echo $temp_output_amount;
+                                echo htmlentities($temp_output_amount, ENT_QUOTES);
                                 ?>
                             </a>
                         </td>

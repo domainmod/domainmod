@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<a href="../registrar-fees.php?rid=<?php echo $rid; ?>"><?php echo $layout->showButton('button', 'Back to Registrar Fees'); ?></a><BR><BR>
+<a href="../registrar-fees.php?rid=<?php echo urlencode($rid); ?>"><?php echo $layout->showButton('button', 'Back to Registrar Fees'); ?></a><BR><BR>
 <?php
 echo $form->showFormTop('');
 
@@ -151,7 +151,7 @@ while ($row = mysqli_fetch_object($result)) {
 <strong>Domain Registrar</strong><BR>
 <?php echo $temp_registrar; ?><BR><BR>
 <strong>TLD</strong><BR>
-<?php echo '.' . $new_tld; ?><BR><BR>
+<?php echo '.' . htmlentities($new_tld, ENT_QUOTES); ?><BR><BR>
 <?php
 echo $form->showInputText('new_initial_fee', 'Initial Fee', '', $new_initial_fee, '10', '', '', '');
 echo $form->showInputText('new_renewal_fee', 'Renewal Fee', '', $new_renewal_fee, '10', '', '', '');

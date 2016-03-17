@@ -1466,9 +1466,9 @@ if (mysqli_num_rows($result) > 0) { ?>
 
     <a href="add.php"><?php echo $layout->showButton('button', 'Add SSL Cert'); ?></a>&nbsp;&nbsp;&nbsp;
     <a target="_blank" href="<?php echo $web_root; ?>/raw.php"><?php echo $layout->showButton('button', 'Raw List'); ?></a>&nbsp;&nbsp;&nbsp;
-    <a href="index.php?<?php echo $_SERVER['QUERY_STRING']; ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a>
+    <a href="index.php?<?php echo urlencode($_SERVER['QUERY_STRING']); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a>
 
-    <BR><BR><strong>Total Cost:</strong> <?php echo $grand_total; ?> <?php echo $_SESSION['s_default_currency']; ?><BR>
+    <BR><BR><strong>Total Cost:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES); ?><BR>
     <strong>Number of SSL Certs:</strong> <?php echo number_format(mysqli_num_rows($result)); ?><BR><BR><?php
 
     if ($totalrows != '0') { ?>
@@ -1556,7 +1556,7 @@ if (mysqli_num_rows($result) > 0) { ?>
                             $temp_output_amount = $currency->format($converted_total_cost,
                                 $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
                                 $_SESSION['s_default_currency_symbol_space']);
-                            echo $temp_output_amount;
+                            echo htmlentities($temp_output_amount, ENT_QUOTES);
                             ?>
                         </a>
                 </td>

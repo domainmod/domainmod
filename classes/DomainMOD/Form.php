@@ -45,8 +45,7 @@ class Form
     public function showInputText($name, $text_to_display, $subtext, $value, $maxlength, $is_password, $before, $after)
     {
         ob_start();
-            echo $before;
-            $system = new System(); ?>
+            echo $before; ?>
             <div class="form-group">
                 <label><?php echo $text_to_display; ?><?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <input type="<?php if ($is_password == '1') { echo "password"; } else { echo "text"; } ?>" class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>"
@@ -63,7 +62,7 @@ class Form
             <div class="form-group">
                 <label><?php echo $text_to_display; ?><?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <textarea class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php
-                    echo $name; ?>" style="height: 80px;"><?php echo $value; ?></textarea>
+                    echo $name; ?>" style="height: 80px;"><?php echo htmlentities($value, ENT_QUOTES); ?></textarea>
             </div><?php
             echo $after;
         return ob_get_clean();
@@ -71,8 +70,7 @@ class Form
 
     public function showInputHidden($name, $value)
     {
-        ob_start();
-            $system = new System(); ?>
+        ob_start(); ?>
             <input type="hidden" class="form-control" name="<?php echo $name; ?>" value="<?php echo htmlentities($value, ENT_QUOTES); ?>"><?php
         return ob_get_clean();
     }
@@ -116,7 +114,7 @@ class Form
     public function showDropdownOptionJump($url, $value, $text_to_display, $to_compare)
     {
         ob_start(); ?>
-            <option value="<?php echo $url; ?><?php echo $value ?>"<?php if ($value == $to_compare) echo " selected" ?>><?php echo $text_to_display; ?></option><?php
+            <option value="<?php echo htmlentities($url, ENT_QUOTES); ?><?php echo htmlentities($value , ENT_QUOTES)?>"<?php if ($value == $to_compare) echo " selected" ?>><?php echo htmlentities($text_to_display, ENT_QUOTES); ?></option><?php
         return ob_get_clean();
     }
 

@@ -301,11 +301,11 @@ if ($type == "inactive") {
 ?>
 <?php
 if ($type == "inactive") {
-    echo "[<a href=\"results.php?type=inactive&segid=" . $segid . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
+    echo "[<a href=\"results.php?type=inactive&segid=" . urlencode($segid) . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
 } elseif ($type == "filtered") {
-    echo "[<a href=\"results.php?type=filtered&segid=" . $segid . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
+    echo "[<a href=\"results.php?type=filtered&segid=" . urlencode($segid) . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
 } elseif ($type == "missing") {
-    echo "[<a href=\"results.php?type=missing&segid=" . $segid . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
+    echo "[<a href=\"results.php?type=missing&segid=" . urlencode($segid) . "&export_data=1\">EXPORT RESULTS</a>]<BR><BR>";
 }
 ?>
 <?php

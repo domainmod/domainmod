@@ -116,9 +116,9 @@ if ($export_data == '1') {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-Below is a list of all the fees associated with <a href="edit/ssl-provider.php?sslpid=<?php echo $sslpid; ?>"><?php echo $ssl_provider_name; ?></a>.<BR><BR>
-<a href="add/ssl-provider-fee.php?sslpid=<?php echo $sslpid; ?>"><?php echo $layout->showButton('button', 'Add Fee'); ?></a>&nbsp;&nbsp;&nbsp;
-<a href="ssl-provider-fees.php?sslpid=<?php echo $sslpid; ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
+Below is a list of all the fees associated with <a href="edit/ssl-provider.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $ssl_provider_name; ?></a>.<BR><BR>
+<a href="add/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>"><?php echo $layout->showButton('button', 'Add Fee'); ?></a>&nbsp;&nbsp;&nbsp;
+<a href="ssl-provider-fees.php?sslpid=<?php echo urlencode($sslpid); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
 $sql_missing = "SELECT sslct.id, sslct.type
                 FROM ssl_certs AS sslc, ssl_cert_types AS sslct
@@ -171,7 +171,7 @@ if (mysqli_num_rows($result) > 0) { ?>
             <tr>
             <td></td>
             <td>
-                <a href="edit/ssl-provider-fee.php?sslpid=<?php echo $sslpid; ?>&fee_id=<?php echo $row->id; ?>"><?php echo $row->type; ?></a>
+                <a href="edit/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>&fee_id=<?php echo urlencode($row->id); ?>"><?php echo $row->type; ?></a>
             </td>
             <td><?php
                 if ($row->initial_fee > 0) {
@@ -223,7 +223,7 @@ if (mysqli_num_rows($result) > 0) { ?>
 
 } else { ?>
 
-    <BR>You don't currently have any fees associated with this SSL provider. <a href="add/ssl-provider-fee.php?sslpid=<?php echo $sslpid; ?>">Click here to add one</a>.<?php
+    <BR>You don't currently have any fees associated with this SSL provider. <a href="add/ssl-provider-fee.php?sslpid=<?php echo urlencode($sslpid); ?>">Click here to add one</a>.<?php
 
 } ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); //@formatter:on ?>

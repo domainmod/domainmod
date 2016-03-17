@@ -163,7 +163,7 @@ if ($export_data == '1') {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 Below is a list of all the SSL Provider Accounts that are stored in <?php echo $software_title; ?>.<BR><BR>
 <a href="add/ssl-provider-account.php"><?php echo $layout->showButton('button', 'Add SSL Account'); ?></a>&nbsp;&nbsp;&nbsp;
-<a href="ssl-accounts.php?export_data=1&sslpid=<?php echo $sslpid; ?>&sslpaid=<?php echo $sslpaid; ?>&oid=<?php echo $oid; ?>"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
+<a href="ssl-accounts.php?export_data=1&sslpid=<?php echo urlencode($sslpid); ?>&sslpaid=<?php echo urlencode($sslpaid); ?>&oid=<?php echo urlencode($oid); ?>"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 

@@ -119,9 +119,9 @@ if ($export_data == '1') {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-Below is a list of all the fees associated with <a href="edit/registrar.php?rid=<?php echo $rid; ?>"><?php echo $registrar_name; ?></a>.<BR><BR>
-<a href="add/registrar-fee.php?rid=<?php echo $rid; ?>"><?php echo $layout->showButton('button', 'Add Fee'); ?></a>&nbsp;&nbsp;&nbsp;
-<a href="registrar-fees.php?rid=<?php echo $rid; ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
+Below is a list of all the fees associated with <a href="edit/registrar.php?rid=<?php echo urlencode($rid); ?>"><?php echo $registrar_name; ?></a>.<BR><BR>
+<a href="add/registrar-fee.php?rid=<?php echo urlencode($rid); ?>"><?php echo $layout->showButton('button', 'Add Fee'); ?></a>&nbsp;&nbsp;&nbsp;
+<a href="registrar-fees.php?rid=<?php echo urlencode($rid); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
 $sql_missing = "SELECT tld
                 FROM domains
@@ -175,7 +175,7 @@ if (mysqli_num_rows($result) > 0) { ?>
             <tr>
             <td></td>
             <td>
-                .<a href="edit/registrar-fee.php?rid=<?php echo $rid; ?>&fee_id=<?php echo $row->id; ?>"><?php echo $row->tld; ?></a>
+                .<a href="edit/registrar-fee.php?rid=<?php echo urlencode($rid); ?>&fee_id=<?php echo urlencode($row->id); ?>"><?php echo $row->tld; ?></a>
             </td>
             <td><?php
                 if ($row->initial_fee > 0) {
