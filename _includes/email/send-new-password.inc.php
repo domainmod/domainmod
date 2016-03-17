@@ -33,7 +33,9 @@ if ($q_settings->prepare($query_settings)) {
     $q_settings->close();
 
 } else {
+
     $error->outputSqlError($conn, "ERROR");
+
 }
 
 $to = $email_address;

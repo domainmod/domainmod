@@ -265,17 +265,33 @@ if ($new_expiry_date == '') {
 }
 echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '', '');
 
-$sql_domain = "SELECT id, domain
-               FROM domains
-               WHERE (active NOT IN ('0', '10') OR id = '" . $new_domain_id . "')
-               ORDER BY domain";
-$result_domain = mysqli_query($connection, $sql_domain) or $error->outputOldSqlError($connection);
+
+
+
+
 echo $form->showDropdownTop('new_domain_id', 'Domain', '', '');
-while ($row_domain = mysqli_fetch_object($result_domain)) {
+$query = "SELECT id, domain
+          FROM domains
+          WHERE (active NOT IN ('0', '10') OR id = ?)
+          ORDER BY domain";
+$q = $conn->stmt_init();
 
-    echo $form->showDropdownOption($row_domain->id, $row_domain->domain, '');
+if ($q->prepare($query)) {
 
-}
+    $q->bind_param('i', $new_domain_id);
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($id, $domain);
+
+    while ($q->fetch()) {
+
+        echo $form->showDropdownOption($id, $domain, '');
+
+    }
+
+    $q->close();
+
+} else $error->outputSqlError($conn, "ERROR");
 echo $form->showDropdownBottom('');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

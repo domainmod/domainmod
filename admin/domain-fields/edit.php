@@ -52,39 +52,71 @@ $new_notes = $_POST['new_notes'];
 
 if ($new_cdfid == '') $new_cdfid = $cdfid;
 
-$sql = "SELECT id
-        FROM domain_fields
-        WHERE id = '" . $cdfid . "'";
-$result = mysqli_query($connection, $sql);
+$query = "SELECT id
+          FROM domain_fields
+          WHERE id = ?";
+$q = $conn->stmt_init();
 
-if (mysqli_num_rows($result) == 0) {
+if ($q->prepare($query)) {
 
-    $_SESSION['s_message_danger'] .= 'You\'re trying to edit an invalid Custom Domain Field<BR>';
+    $q->bind_param('i', $cdfid);
+    $q->execute();
+    $q->store_result();
 
-    header("Location: ../domain-fields/");
-    exit;
+    if ($q->num_rows() == 0) {
 
-}
+        $_SESSION['s_message_danger'] .= "You're trying to edit an invalid Custom Domain Field<BR>";
+
+        header("Location: ../domain-fields/");
+        exit;
+
+    }
+
+    $q->close();
+
+} else $error->outputSqlError($conn, "ERROR");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
-    $sql = "UPDATE domain_fields
-            SET name = '" . mysqli_real_escape_string($connection, $new_name) . "',
-                description = '" . mysqli_real_escape_string($connection, $new_description) . "',
-                notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-                update_time = '" . $time->stamp() . "'
-            WHERE id = '" . $new_cdfid . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $query = "UPDATE domain_fields
+              SET `name` = ?,
+                  description = ?,
+                  notes = ?,
+                  update_time = ?
+              WHERE id = ?";
+    $q = $conn->stmt_init();
 
-    $sql = "SELECT field_name
-            FROM domain_fields
-            WHERE id = '" . $new_cdfid . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-    while ($row = mysqli_fetch_object($result)) {
-        $temp_field_name = $row->field_name;
-    }
+    if ($q->prepare($query)) {
 
-    $_SESSION['s_message_success'] .= 'Custom Domain Field ' . $new_name . ' (' . $temp_field_name . ') Updated<BR>';
+        $timestamp = $time->stamp();
+
+        $q->bind_param('ssssi', $new_name, $new_description, $new_notes, $timestamp, $new_cdfid);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
+
+    $query = "SELECT field_name
+              FROM domain_fields
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $new_cdfid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($field_name);
+
+        while ($q->fetch()) {
+
+            $_SESSION['s_message_success'] .= 'Custom Domain Field ' . $new_name . ' (' . $field_name . ') Updated<BR>';
+
+        }
+
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     header("Location: ../domain-fields/");
     exit;
@@ -97,22 +129,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
     } else {
 
-        $sql = "SELECT f.name, f.field_name, f.description, f.notes, f.insert_time, f.update_time, t.name AS type
-                FROM domain_fields AS f, custom_field_types AS t
-                WHERE f.type_id = t.id
-                  AND f.id = '" . $cdfid . "'
-                ORDER BY f.name";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $query = "SELECT f.name, f.field_name, f.description, f.notes, t.name
+                  FROM domain_fields AS f, custom_field_types AS t
+                  WHERE f.type_id = t.id
+                    AND f.id = ?
+                  ORDER BY f.name";
+        $q = $conn->stmt_init();
 
-        while ($row = mysqli_fetch_object($result)) {
+        if ($q->prepare($query)) {
 
-            $new_name = $row->name;
-            $new_field_name = $row->field_name;
-            $new_description = $row->description;
-            $new_field_type = $row->type;
-            $new_notes = $row->notes;
+            $q->bind_param('i', $cdfid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($name, $field_name, $description, $notes, $field_type);
 
-        }
+            while ($q->fetch()) {
+
+                $new_name = $name;
+                $new_field_name = $field_name;
+                $new_description = $description;
+                $new_notes = $notes;
+                $new_field_type = $field_type;
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
@@ -132,23 +175,52 @@ if ($really_del == '1') {
 
     } else {
 
-        $sql = "SELECT `name`, field_name
-                FROM domain_fields
-                WHERE id = '" . $cdfid . "'";
-        $result = mysqli_query($connection, $sql);
+        $query = "SELECT `name`, field_name
+                  FROM domain_fields
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row = mysqli_fetch_object($result)) {
-            $temp_name = $row->name;
-            $temp_field_name = $row->field_name;
-        }
+        if ($q->prepare($query)) {
 
-        $sql = "ALTER TABLE `domain_field_data`
-                DROP `" . $temp_field_name . "`";
-        $result = mysqli_query($connection, $sql);
+            $q->bind_param('i', $cdfid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($name, $field_name);
 
-        $sql = "DELETE FROM domain_fields
-                WHERE id = '" . $cdfid . "'";
-        $result = mysqli_query($connection, $sql);
+            while ($q->fetch()) {
+
+                $temp_name = $name;
+                $temp_field_name = $field_name;
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
+
+        $query = "ALTER TABLE `domain_field_data`
+                  DROP `?`";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('s', $temp_field_name);
+            $q->execute();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
+
+        $query = "DELETE FROM domain_fields
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $cdfid);
+            $q->execute();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
         $_SESSION['s_message_success'] = 'Custom Domain Field ' . $temp_name . ' (' . $temp_field_name . ') Deleted<BR>';
 

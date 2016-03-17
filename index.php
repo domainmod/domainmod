@@ -62,45 +62,55 @@ $new_password = $_POST['new_password'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
 
-    $sql = "SELECT id
-            FROM users
-            WHERE username = '" . $new_username . "'
-              AND `password` = password('" . $new_password . "')
-              AND active = '1'";
-    $result = mysqli_query($connection, $sql);
+    $query = "SELECT id, username
+              FROM users
+              WHERE username = ?
+                AND `password` = password(?)
+                AND active = '1'";
+    $q = $conn->stmt_init();
 
-    if (mysqli_num_rows($result) == 1) { // Login succeeded
+    if ($q->prepare($query)) {
 
-        while ($row = mysqli_fetch_object($result)) {
+        $q->bind_param('ss', $new_username, $new_password);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($id, $username);
 
-            $_SESSION['s_user_id'] = $row->id;
-            $_SESSION['s_username'] = $new_username;
+        if ($q->num_rows() == 1) { // Login succeeded
+
+            while ($q->fetch()) {
+
+                $_SESSION['s_user_id'] = $id;
+                $_SESSION['s_username'] = $username;
+
+            }
+
+            $sql = "SELECT db_version
+                    FROM settings";
+            $result = mysqli_query($connection, $sql);
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $_SESSION['s_system_db_version'] = (string) $row->db_version;
+
+            }
+
+            $_SESSION['s_is_logged_in'] = 1;
+
+            header("Location: checks.php");
+            exit;
+
+        } else { // Login failed
+
+            $_SESSION['s_message_danger'] = "Login Failed<BR>";
 
         }
 
-        $sql = "SELECT db_version
-                FROM settings";
-        $result = mysqli_query($connection, $sql);
+        $q->close();
 
-        while ($row = mysqli_fetch_object($result)) {
-
-            $_SESSION['s_system_db_version'] = (string) $row->db_version;
-
-        }
-
-        $_SESSION['s_is_logged_in'] = 1;
-
-        header("Location: checks.php");
-        exit;
-
-    } else { // Login failed
-
-        $_SESSION['s_message_danger'] = "Login Failed<BR>";
-
-    }
+    } else $error->outputSqlError($conn, "ERROR");
 
 } else {
-
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

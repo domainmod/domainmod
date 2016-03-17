@@ -47,31 +47,43 @@ $new_username = $_REQUEST['new_username'];
 
 if ($new_username != "") {
 
-    $sql = "SELECT username, email_address
-            FROM users
-            WHERE username = '" . $new_username . "'
-              AND active = '1'";
+    $query = "SELECT username, email_address
+              FROM users
+              WHERE username = ?
+                AND active = '1'";
+    $q = $conn->stmt_init();
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    if ($q->prepare($query)) {
 
-    if (mysqli_num_rows($result) == 1) {
+        $q->bind_param('s', $new_username);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($username, $email_address);
 
-        while ($row = mysqli_fetch_object($result)) {
+        if ($q->num_rows() == 1) {
 
-            $new_password = substr(md5(time()), 0, 8);
+            while ($q->fetch()) {
 
-            $sql_update = "UPDATE users
-                           SET `password` = password('$new_password'),
-                                  new_password = '1',
-                               update_time = '" . $time->stamp() . "'
-                           WHERE username = '$row->username'
-                             AND email_address = '$row->email_address'";
-            $result_update = mysqli_query($connection, $sql_update);
+                $new_password = substr(md5(time()), 0, 8);
 
-            $username = $row->username;
-            $email_address = $row->email_address;
+                $sql_update = "UPDATE users
+                               SET `password` = password('" . $new_password . "'),
+                                   new_password = '1',
+                                   update_time = '" . $time->stamp() . "'
+                               WHERE username = '" . $username . "'
+                                 AND email_address = '" . $email_address . "'";
+                $result_update = mysqli_query($connection, $sql_update);
 
-            include(DIR_INC . "email/send-new-password.inc.php");
+                include(DIR_INC . "email/send-new-password.inc.php");
+
+                $_SESSION['s_message_success'] .= "If there is a matching username in the system your new password will been emailed to you.<BR>";
+
+                header("Location: " . $web_root . "/");
+                exit;
+
+            }
+
+        } else {
 
             $_SESSION['s_message_success'] .= "If there is a matching username in the system your new password will been emailed to you.<BR>";
 
@@ -80,14 +92,9 @@ if ($new_username != "") {
 
         }
 
-    } else {
+        $q->close();
 
-        $_SESSION['s_message_success'] .= "If there is a matching username in the system your new password will been emailed to you.<BR>";
-
-        header("Location: " . $web_root . "/");
-        exit;
-
-    }
+    } else $error->outputSqlError($conn, "ERROR");
 
 } else {
 

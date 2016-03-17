@@ -50,59 +50,94 @@ if ($new_uid == '') $new_uid = $uid;
 $new_first_name = $_POST['new_first_name'];
 $new_last_name = $_POST['new_last_name'];
 $new_username = $_POST['new_username'];
+$original_username = $_POST['original_username'];
 $new_email_address = $_POST['new_email_address'];
 $new_is_admin = $_POST['new_is_admin'];
 $new_is_active = $_POST['new_is_active'];
 $new_uid = $_POST['new_uid'];
 
-$sql = "SELECT username
-        FROM users
-        WHERE id = '" . $uid . "'";
-$result = mysqli_query($connection, $sql);
+//make sure they're not trying to edit the primary admin account
+$query = "SELECT username
+          FROM users
+          WHERE id = ?";
+$q = $conn->stmt_init();
 
-while ($row = mysqli_fetch_object($result)) {
+if ($q->prepare($query)) {
 
-    if ($row->username == 'admin' && $_SESSION['s_username'] != 'admin') {
+    $q->bind_param('i', $uid);
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($username);
 
-        $_SESSION['s_message_danger'] .= 'You\'re trying to edit an invalid user<BR>';
+    while ($q->fetch()) {
 
-        header("Location: index.php");
-        exit;
+        if ($username == 'admin' && $_SESSION['s_username'] != 'admin') {
+
+            $_SESSION['s_message_danger'] .= "You don't have permissions to edit the primary administrator account<BR>";
+
+            header("Location: index.php");
+            exit;
+
+        }
 
     }
 
-}
+    $q->close();
+
+} else $error->outputSqlError($conn, "ERROR");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != '' && $new_email_address != '') {
 
-    // Check to see if another user already has the username
-    $sql = "SELECT username
-            FROM users
-            WHERE username = '" . mysqli_real_escape_string($connection, $new_username) . "'
-            AND id != '" . $new_uid . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-    $is_username_taken = mysqli_num_rows($result);
-    if ($is_username_taken > 0) {
-        $invalid_username = 1;
-        $new_username = '';
-    }
+    // Make sure the new username isn't already in use
+    $query = "SELECT username
+              FROM users
+              WHERE username = ?
+                AND id != ?";
+    $q = $conn->stmt_init();
 
-    // Make sure they aren't trying to assign a reserved username
-    if ($new_username == 'admin' || $new_username == 'administrator') {
+    if ($q->prepare($query)) {
 
-        $sql = "SELECT username
-                FROM users
-                WHERE username = '" . mysqli_real_escape_string($connection, $new_username) . "'
-                AND id = '" . $new_uid . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-        $is_it_my_username = mysqli_num_rows($result);
+        $q->bind_param('si', $new_username, $new_uid);
+        $q->execute();
+        $q->store_result();
 
-        if ($is_it_my_username == 0) {
+        if ($q->num_rows() > 0) {
 
             $invalid_username = 1;
-            $new_username = '';
+            $new_username = $original_username;
 
         }
+
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
+
+    // Make sure they aren't trying to assign a reserved username
+    // If it's the primary admin account editing their own profile the query will return 1, otherwise 0
+    if ($new_username == 'admin' || $new_username == 'administrator') {
+
+        $query = "SELECT username
+                  FROM users
+                  WHERE username = ?
+                    AND id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('si', $new_username, $new_uid);
+            $q->execute();
+            $q->store_result();
+
+            if ($q->num_rows() == 0) {
+
+                $invalid_username = 1;
+                $new_username = $original_username;
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
@@ -110,16 +145,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != '' && $new_email_address != '' && $invalid_username != 1) {
 
-    $sql = "UPDATE users
-            SET first_name = '" . mysqli_real_escape_string($connection, $new_first_name) . "',
-                last_name = '" . mysqli_real_escape_string($connection, $new_last_name) . "',
-                username = '" . mysqli_real_escape_string($connection, $new_username) . "',
-                email_address = '" . mysqli_real_escape_string($connection, $new_email_address) . "',
-                admin = '" . $new_is_admin . "',
-                active = '" . $new_is_active . "',
-                update_time = '" . $time->stamp() . "'
-            WHERE id = '" . $new_uid . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $query = "UPDATE users
+              SET first_name = ?,
+                  last_name = ?,
+                  username = ?,
+                  email_address = ?,
+                  admin = ?,
+                  active = ?,
+                  update_time = ?
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $timestamp = $time->stamp();
+
+        $q->bind_param('ssssiisi', $new_first_name, $new_last_name, $new_username, $new_email_address, $new_is_admin, $new_is_active, $timestamp, $new_uid);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Updated<BR>';
 
@@ -145,21 +190,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     } else {
 
-        $sql = "SELECT first_name, last_name, username, email_address, admin, active
-                FROM users
-                WHERE id = '" . $uid . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $query = "SELECT first_name, last_name, username, email_address, admin, active
+                  FROM users
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row = mysqli_fetch_object($result)) {
+        if ($q->prepare($query)) {
 
-            $new_first_name = $row->first_name;
-            $new_last_name = $row->last_name;
-            $new_username = $row->username;
-            $new_email_address = $row->email_address;
-            $new_is_admin = $row->admin;
-            $new_is_active = $row->active;
+            $q->bind_param('i', $uid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($first_name, $last_name, $username, $email_address, $admin, $active);
 
-        }
+                while ($q->fetch()) {
+
+                    $new_first_name = $first_name;
+                    $new_last_name = $last_name;
+                    $new_username = $username;
+                    $original_username = $username;
+                    $new_email_address = $email_address;
+                    $new_is_admin = $admin;
+                    $new_is_active = $active;
+
+                }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 }
@@ -175,6 +232,7 @@ if ($really_del == '1') {
             FROM users
             WHERE username = 'admin'";
     $result = mysqli_query($connection, $sql);
+
     while ($row = mysqli_fetch_object($result)) {
         $temp_uid = $row->id;
     }
@@ -186,13 +244,29 @@ if ($really_del == '1') {
 
     } else {
 
-        $sql = "DELETE FROM user_settings
-                WHERE user_id = '" . $uid . "'";
-        $result = mysqli_query($connection, $sql);
+        $query = "DELETE FROM user_settings
+                  WHERE user_id = ?";
+        $q = $conn->stmt_init();
 
-        $sql = "DELETE FROM users
-                WHERE id = '" . $uid . "'";
-        $result = mysqli_query($connection, $sql);
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $uid);
+            $q->execute();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
+
+        $query = "DELETE FROM users
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $uid);
+            $q->execute();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
         $_SESSION['s_message_success'] = 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Deleted<BR>';
 
@@ -262,6 +336,7 @@ if ($new_username == 'admin' || $new_username == 'administrator') {
 
 }
 
+echo $form->showInputHidden('original_username', $original_username);
 echo $form->showInputHidden('new_uid', $uid);
 echo $form->showSubmitButton('Save', '', '');
 
