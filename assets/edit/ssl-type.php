@@ -177,7 +177,7 @@ echo $form->showInputHidden('new_ssltid', $ssltid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="ssl-type.php?ssltid=<?php echo $system->cleanVar('i', $ssltid); ?>&del=1">DELETE THIS TYPE</a>
+<BR><a href="ssl-type.php?ssltid=<?php echo urlencode($ssltid); ?>&del=1">DELETE THIS TYPE</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

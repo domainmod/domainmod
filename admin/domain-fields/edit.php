@@ -252,7 +252,7 @@ echo $form->showInputHidden('new_cdfid', $cdfid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="edit.php?cdfid=<?php echo $system->cleanVar('i', $cdfid); ?>&del=1">DELETE THIS CUSTOM DOMAIN FIELD</a>
+<BR><a href="edit.php?cdfid=<?php echo urlencode($cdfid); ?>&del=1">DELETE THIS CUSTOM DOMAIN FIELD</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); //@formatter:on ?>
 </body>
 </html>

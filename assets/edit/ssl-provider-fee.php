@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['s_message_success'] .= "The fee for " . $temp_type . " has been updated<BR>";
 
-        header("Location: ../ssl-provider-fees.php?sslpid=" . $system->cleanVar('i', $sslpid));
+        header("Location: ../ssl-provider-fees.php?sslpid=" . urlencode($sslpid));
         exit;
 
     } else {

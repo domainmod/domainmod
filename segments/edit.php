@@ -297,7 +297,7 @@ echo $form->showInputHidden('new_segid', $segid);
 echo $form->showSubmitButton('Update Segment', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="edit.php?segid=<?php echo $system->cleanVar('i', $segid); ?>&del=1">DELETE THIS SEGMENT</a>
+<BR><a href="edit.php?segid=<?php echo urlencode($segid); ?>&del=1">DELETE THIS SEGMENT</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

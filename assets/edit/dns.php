@@ -354,7 +354,7 @@ echo $form->showInputHidden('new_dnsid', $dnsid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="dns.php?dnsid=<?php echo $system->cleanVar('i', $dnsid); ?>&del=1">DELETE THIS DNS PROFILE</a>
+<BR><a href="dns.php?dnsid=<?php echo urlencode($dnsid); ?>&del=1">DELETE THIS DNS PROFILE</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); //@formatter:on ?>
 </body>
 </html>

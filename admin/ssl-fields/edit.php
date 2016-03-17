@@ -252,7 +252,7 @@ echo $form->showInputHidden('new_csfid', $csfid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="edit.php?csfid=<?php echo $system->cleanVar('i', $csfid); ?>&del=1">DELETE THIS CUSTOM SSL FIELD</a>
+<BR><a href="edit.php?csfid=<?php echo urlencode($csfid); ?>&del=1">DELETE THIS CUSTOM SSL FIELD</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); //@formatter:on ?>
 </body>
 </html>

@@ -181,7 +181,7 @@ echo $form->showInputHidden('new_pcid', $pcid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="category.php?pcid=<?php echo $system->cleanVar('i', $pcid); ?>&del=1">DELETE THIS CATEGORY</a>
+<BR><a href="category.php?pcid=<?php echo urlencode($pcid); ?>&del=1">DELETE THIS CATEGORY</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

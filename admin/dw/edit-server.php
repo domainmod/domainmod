@@ -252,7 +252,7 @@ echo $form->showInputHidden('new_dwsid', $dwsid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="edit-server.php?dwsid=<?php echo $system->cleanVar('i', $dwsid); ?>&del=1">DELETE THIS SERVER</a>
+<BR><a href="edit-server.php?dwsid=<?php echo urlencode($dwsid); ?>&del=1">DELETE THIS SERVER</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

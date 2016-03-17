@@ -270,7 +270,7 @@ echo $form->showInputHidden('new_oid', $oid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="account-owner.php?oid=<?php echo $system->cleanVar('i', $oid); ?>&del=1">DELETE THIS OWNER</a>
+<BR><a href="account-owner.php?oid=<?php echo urlencode($oid); ?>&del=1">DELETE THIS OWNER</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

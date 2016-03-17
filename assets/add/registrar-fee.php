@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $_SESSION['s_message_success'] .= "The fee for " . $new_tld . "has been added<BR>";
 
-            header("Location: ../registrar-fees.php?rid=" . $system->cleanVar('i', $rid));
+            header("Location: ../registrar-fees.php?rid=" . urlencode($rid));
             exit;
 
         }
