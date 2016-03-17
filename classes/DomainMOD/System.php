@@ -162,4 +162,19 @@ class System
         return ob_get_clean();
     }
 
+    public function dynamicQuery($conn, $query, $params1, $params2, $binding)
+    {
+        $error = new Error();
+        $q = $conn->stmt_init();
+        if ($q->prepare($query)) {
+
+            call_user_func_array(array($q, "bind_param"), array_merge(array($params1), $params2));
+            $q->execute();
+            $q->store_result();
+            call_user_func_array(array($q,'bind_result'), $binding);
+
+        } else $error->outputSqlError($conn, "ERROR");
+        return $q;
+    }
+
 } //@formatter:on

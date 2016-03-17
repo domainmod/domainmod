@@ -54,56 +54,63 @@ $software_section = "segments";
 
 if ($type == "inactive") {
 
-    $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
-            FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
-            WHERE d.account_id = ra.id
-              AND ra.registrar_id = r.id
-              AND ra.owner_id = o.id
-              AND d.registrar_id = f.registrar_id
-              AND d.tld = f.tld
-              AND f.currency_id = c.id
-              AND c.id = cc.currency_id
-              AND d.cat_id = cat.id
-              AND d.dns_id = dns.id
-              AND d.ip_id = ip.id
-              AND d.hosting_id = h.id
-              AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-              AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = '" . $segid . "' AND inactive = '1' ORDER BY domain)
-            ORDER BY d.domain asc";
+    $query = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+              FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
+              WHERE d.account_id = ra.id
+                AND ra.registrar_id = r.id
+                AND ra.owner_id = o.id
+                AND d.registrar_id = f.registrar_id
+                AND d.tld = f.tld
+                AND f.currency_id = c.id
+                AND c.id = cc.currency_id
+                AND d.cat_id = cat.id
+                AND d.dns_id = dns.id
+                AND d.ip_id = ip.id
+                AND d.hosting_id = h.id
+                AND cc.user_id = ?
+                AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = ? AND inactive = '1' ORDER BY domain)
+              ORDER BY d.domain asc";
+    $params1 = 'ii';
+    $params2 = array(&$_SESSION['s_user_id'], &$segid);
+    $binding = array(&$id, &$domain, &$tld, &$expiry_date, &$function, &$notes, &$autorenew, &$privacy, &$active, &$insert_time, &$update_time, &$username, &$registrar_name, &$owner_name, &$initial_fee, &$renewal_fee, &$conversion, &$category_name, &$category_stakeholder, &$dns_profile, &$name, &$ip, &$rdns, &$wh_name);
 
 } elseif ($type == "filtered") {
 
-    $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
-            FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
-            WHERE d.account_id = ra.id
-              AND ra.registrar_id = r.id
-              AND ra.owner_id = o.id
-              AND d.registrar_id = f.registrar_id
-              AND d.tld = f.tld
-              AND f.currency_id = c.id
-              AND c.id = cc.currency_id
-              AND d.cat_id = cat.id
-              AND d.dns_id = dns.id
-              AND d.ip_id = ip.id
-              AND d.hosting_id = h.id
-              AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-              AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = '" . $segid . "' AND filtered = '1' ORDER BY domain)
-            ORDER BY d.domain asc";
+    $query = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.username, r.name AS registrar_name, o.name AS owner_name, f.initial_fee, f.renewal_fee, cc.conversion, cat.name AS category_name, cat.stakeholder AS category_stakeholder, dns.name AS dns_profile, ip.name, ip.ip, ip.rdns, h.name AS wh_name
+              FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, fees AS f, currencies AS c, currency_conversions AS cc, categories AS cat, dns, ip_addresses AS ip, hosting AS h
+              WHERE d.account_id = ra.id
+                AND ra.registrar_id = r.id
+                AND ra.owner_id = o.id
+                AND d.registrar_id = f.registrar_id
+                AND d.tld = f.tld
+                AND f.currency_id = c.id
+                AND c.id = cc.currency_id
+                AND d.cat_id = cat.id
+                AND d.dns_id = dns.id
+                AND d.ip_id = ip.id
+                AND d.hosting_id = h.id
+                AND cc.user_id = ?
+                AND d.domain in (SELECT domain FROM segment_data WHERE segment_id = ? AND filtered = '1' ORDER BY domain)
+              ORDER BY d.domain asc";
+    $params1 = 'ii';
+    $params2 = array(&$_SESSION['s_user_id'], &$segid);
+    $binding = array(&$id, &$domain, &$tld, &$expiry_date, &$function, &$notes, &$autorenew, &$privacy, &$active, &$insert_time, &$update_time, &$username, &$registrar_name, &$owner_name, &$initial_fee, &$renewal_fee, &$conversion, &$category_name, &$category_stakeholder, &$dns_profile, &$name, &$ip, &$rdns, &$wh_name);
 
 } elseif ($type == "missing") {
 
-    $sql = "SELECT domain
-            FROM segment_data
-            WHERE segment_id = '" . $segid . "'
-              AND missing = '1'
-            ORDER BY domain";
+    $query = "SELECT domain
+              FROM segment_data
+              WHERE segment_id = ?
+                AND missing = '1'
+              ORDER BY domain";
+    $params1 = 'i';
+    $params2 = array(&$segid);
+    $binding = array(&$domain);
 
 }
-$result = mysqli_query($connection, $sql);
+$qd = $system->dynamicQuery($conn, $query, $params1, $params2, $binding);
 
 if ($export_data == "1") {
-
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     if ($type == "inactive") {
 
@@ -173,47 +180,47 @@ if ($export_data == "1") {
 
     if ($type == "inactive" || $type == "filtered") {
 
-        while ($row = mysqli_fetch_object($result)) {
+        while ($qd->fetch()) {
 
-            $temp_initial_fee = $row->initial_fee * $row->conversion;
+            $temp_initial_fee = $initial_fee * $conversion;
             $total_initial_fee_export = $total_initial_fee_export + $temp_initial_fee;
 
-            $temp_renewal_fee = $row->renewal_fee * $row->conversion;
+            $temp_renewal_fee = $renewal_fee * $conversion;
             $total_renewal_fee_export = $total_renewal_fee_export + $temp_renewal_fee;
 
-            if ($row->active == "0") {
+            if ($active == "0") {
                 $domain_status = "EXPIRED";
-            } elseif ($row->active == "1") {
+            } elseif ($active == "1") {
                 $domain_status = "ACTIVE";
-            } elseif ($row->active == "2") {
+            } elseif ($active == "2") {
                 $domain_status = "PENDING (TRANSFER)";
-            } elseif ($row->active == "3") {
+            } elseif ($active == "3") {
                 $domain_status = "PENDING (RENEWAL)";
-            } elseif ($row->active == "4") {
+            } elseif ($active == "4") {
                 $domain_status = "PENDING (OTHER)";
-            } elseif ($row->active == "5") {
+            } elseif ($active == "5") {
                 $domain_status = "PENDING (REGISTRATION)";
-            } elseif ($row->active == "10") {
+            } elseif ($active == "10") {
                 $domain_status = "SOLD";
             } else {
                 $domain_status = "ERROR -- PROBLEM WITH CODE IN RESULTS.PHP";
             }
 
-            if ($row->autorenew == "1") {
+            if ($autorenew == "1") {
 
                 $autorenew_status = "Auto Renewal";
 
-            } elseif ($row->autorenew == "0") {
+            } elseif ($autorenew == "0") {
 
                 $autorenew_status = "Manual Renewal";
 
             }
 
-            if ($row->privacy == "1") {
+            if ($privacy == "1") {
 
                 $privacy_status = "Private";
 
-            } elseif ($row->privacy == "0") {
+            } elseif ($privacy == "0") {
 
                 $privacy_status = "Public";
 
@@ -229,27 +236,27 @@ if ($export_data == "1") {
 
             $row_contents = array(
                 $domain_status,
-                $row->expiry_date,
+                $expiry_date,
                 $export_initial_fee,
                 $export_renewal_fee,
-                $row->domain,
-                '.' . $row->tld,
+                $domain,
+                '.' . $tld,
                 $autorenew_status,
                 $privacy_status,
-                $row->registrar_name,
-                $row->username,
-                $row->dns_profile,
-                $row->name,
-                $row->ip,
-                $row->rdns,
-                $row->wh_name,
-                $row->category_name,
-                $row->category_stakeholder,
-                $row->owner_name,
-                $row->function,
-                $row->notes,
-                $time->toUserTimezone($row->insert_time),
-                $time->toUserTimezone($row->update_time)
+                $registrar_name,
+                $username,
+                $dns_profile,
+                $name,
+                $ip,
+                $rdns,
+                $wh_name,
+                $category_name,
+                $category_stakeholder,
+                $owner_name,
+                $function,
+                $notes,
+                $time->toUserTimezone($insert_time),
+                $time->toUserTimezone($update_time)
             );
             $export->writeRow($export_file, $row_contents);
 
@@ -257,14 +264,16 @@ if ($export_data == "1") {
 
     } elseif ($type == "missing") {
 
-        while ($row = mysqli_fetch_object($result)) {
+        while ($qd->fetch()) {
 
-            $row_contents = array($row->domain);
+            $row_contents = array($domain);
             $export->writeRow($export_file, $row_contents);
 
         }
 
     }
+
+    $qd->close;
 
     $export->closeFile($export_file);
 
@@ -281,16 +290,28 @@ if ($export_data == "1") {
 $page_align = 'left';
 include(DIR_INC . "layout/header-bare.inc.php"); ?>
 <?php
-$sql_name = "SELECT `name`
-             FROM segments
-             WHERE id = '" . $segid . "'";
-$result_name = mysqli_query($connection, $sql_name);
-while ($row_name = mysqli_fetch_object($result_name)) {
-    $segment_name = $row_name->name;
-}
-?>
+$query = "SELECT `name`
+          FROM segments
+          WHERE id = ?";
+$q = $conn->stmt_init();
 
-<?php
+if ($q->prepare($query)) {
+
+    $q->bind_param('i', $segid);
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($name);
+
+    while ($q->fetch()) {
+
+        $segment_name = $name;
+
+    }
+
+    $q->close();
+
+} else $error->outputSqlError($conn, "ERROR");
+
 if ($type == "inactive") {
     echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, and they are stored in your  " . $software_title . " database, but they are currently marked as inactive.<BR><BR>";
 } elseif ($type == "filtered") {
@@ -309,9 +330,10 @@ if ($type == "inactive") {
 }
 ?>
 <?php
-while ($row = mysqli_fetch_object($result)) {
-    echo $row->domain . "<BR>";
+while ($qd->fetch()) {
+    echo $domain . "<BR>";
 }
+$qd->close;
 ?>
 <?php include(DIR_INC . "layout/footer-bare.inc.php"); ?>
 </body>
