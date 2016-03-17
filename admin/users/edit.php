@@ -292,7 +292,7 @@ echo $form->showInputText('new_last_name', 'Last Name (50)', '', $new_last_name,
 
 if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
-    <strong>Username</strong><BR><?php echo $new_username; ?><BR><BR><?php
+    <strong>Username</strong><BR><?php echo $system->cleanVar('h', $new_username); ?><BR><BR><?php
 
 } else {
 
@@ -342,13 +342,9 @@ echo $form->showSubmitButton('Save', '', '');
 
 echo $form->showFormBottom('');
 ?>
-<?php
-$new_username_clean = urlencode($new_username);
-$uid_clean = (integer) $uid;
-?>
-<BR><a href="reset-password.php?new_username=<?php echo $new_username_clean; ?>&display=1">RESET AND DISPLAY PASSWORD</a><BR>
-<BR><a href="reset-password.php?new_username=<?php echo $new_username_clean; ?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
-<BR><a href="edit.php?uid=<?php echo $uid_clean; ?>&del=1">DELETE THIS USER</a>
+<BR><a href="reset-password.php?new_username=<?php echo $system->cleanVar('u', $new_username); ?>&display=1">RESET AND DISPLAY PASSWORD</a><BR>
+<BR><a href="reset-password.php?new_username=<?php echo $system->cleanVar('u', $new_username); ?>">RESET AND EMAIL NEW PASSWORD TO USER</a><BR>
+<BR><a href="edit.php?uid=<?php echo $system->cleanVar('i', $uid); ?>&del=1">DELETE THIS USER</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

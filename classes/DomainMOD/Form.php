@@ -45,11 +45,12 @@ class Form
     public function showInputText($name, $text_to_display, $subtext, $value, $maxlength, $is_password, $before, $after)
     {
         ob_start();
-            echo $before; ?>
+            echo $before;
+            $system = new System(); ?>
             <div class="form-group">
                 <label><?php echo $text_to_display; ?><?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <input type="<?php if ($is_password == '1') { echo "password"; } else { echo "text"; } ?>" class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>"
-                    value="<?php echo htmlentities($value, ENT_QUOTES); ?>" maxlength="<?php echo $maxlength; ?>">
+                    value="<?php echo $system->cleanVar('h', $value); ?>" maxlength="<?php echo $maxlength; ?>">
             </div><?php
             echo $after;
         return ob_get_clean();
@@ -70,8 +71,9 @@ class Form
 
     public function showInputHidden($name, $value)
     {
-        ob_start(); ?>
-            <input type="hidden" class="form-control" name="<?php echo $name; ?>" value="<?php echo htmlentities($value, ENT_QUOTES); ?>"><?php
+        ob_start();
+            $system = new System(); ?>
+            <input type="hidden" class="form-control" name="<?php echo $name; ?>" value="<?php echo $system->cleanVar('h', $value); ?>"><?php
         return ob_get_clean();
     }
 

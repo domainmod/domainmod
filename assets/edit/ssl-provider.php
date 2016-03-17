@@ -243,10 +243,7 @@ echo $form->showInputHidden('new_sslpid', $sslpid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<?php
-$sslpid_clean = (integer) $sslpid;
-?>
-<BR><a href="ssl-provider.php?sslpid=<?php echo $sslpid_clean; ?>&del=1">DELETE THIS SSL PROVIDER</a>
+<BR><a href="ssl-provider.php?sslpid=<?php echo $system->cleanVar('i', $sslpid); ?>&del=1">DELETE THIS SSL PROVIDER</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

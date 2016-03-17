@@ -580,10 +580,7 @@ if ($no_results_dns_zones !== 1) { ?>
     </table><?php
 }
 ?>
-<?php
-$did_clean = (integer) $did;
-?>
-<BR><BR><a href="edit.php?did=<?php echo $did_clean; ?>&del=1">DELETE THIS DOMAIN</a>
+<BR><BR><a href="edit.php?did=<?php echo $system->cleanVar('i', $did); ?>&del=1">DELETE THIS DOMAIN</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>
