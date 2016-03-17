@@ -253,7 +253,7 @@ if (mysqli_num_rows($result) > 0) { ?>
 
 } else { ?>
 
-    <BR>You don't currently have any fees associated with this domain registrar. <a href="add/registrar-fee.php?rid=<?php echo $rid; ?>">Click here to add one</a>.<?php
+    <BR>You don't currently have any fees associated with this domain registrar. <a href="add/registrar-fee.php?rid=<?php echo urlencode($rid); ?>">Click here to add one</a>.<?php
 
 } ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); //@formatter:on ?>

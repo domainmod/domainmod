@@ -2237,7 +2237,7 @@ if (mysqli_num_rows($result) > 0) { ?>
                             ?>&ipid=<?php echo urlencode($ipid); ?>&whid=<?php echo urlencode($whid); ?>&rid=<?php echo urlencode($rid); ?>&raid=<?php
                             echo urlencode($raid); ?>&start_date=<?php echo urlencode($new_start_date); ?>&end_date=<?php echo urlencode($new_end_date);
                             ?>&segid=<?php echo urlencode($segid); ?>&tld=<?php echo urlencode($tld); ?>&is_active=<?php echo urlencode($is_active);
-                            ?>&result_limit=<?php echo $result_limit; ?>&sort_by=<?php
+                            ?>&result_limit=<?php echo urlencode($result_limit); ?>&sort_by=<?php
                             if ($sort_by == "wh_a") {
                                 echo "wh_d";
                             } else {
