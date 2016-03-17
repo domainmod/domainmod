@@ -43,19 +43,19 @@ $system->loginCheck();
 $page_title = "Reset Password";
 $software_section = "resetpassword";
 
-$new_username = $_REQUEST['new_username'];
+$new_data = $_REQUEST['new_data'];
 
-if ($new_username != "") {
+if ($new_data != "") {
 
     $query = "SELECT username, email_address
               FROM users
-              WHERE username = ?
+              WHERE (username = ? OR email_address = ?)
                 AND active = '1'";
     $q = $conn->stmt_init();
 
     if ($q->prepare($query)) {
 
-        $q->bind_param('s', $new_username);
+        $q->bind_param('ss', $new_data, $new_data);
         $q->execute();
         $q->store_result();
         $q->bind_result($username, $email_address);
@@ -76,7 +76,7 @@ if ($new_username != "") {
 
                 include(DIR_INC . "email/send-new-password.inc.php");
 
-                $_SESSION['s_message_success'] .= "If there is a matching username in the system your new password will been emailed to you.<BR>";
+                $_SESSION['s_message_success'] .= "If there is a matching username or email address in the system your new password will been emailed to you.<BR>";
 
                 header("Location: " . $web_root . "/");
                 exit;
@@ -85,7 +85,7 @@ if ($new_username != "") {
 
         } else {
 
-            $_SESSION['s_message_success'] .= "If there is a matching username in the system your new password will been emailed to you.<BR>";
+            $_SESSION['s_message_success'] .= "If there is a matching username or email address in the system your new password will been emailed to you.<BR>";
 
             header("Location: " . $web_root . "/");
             exit;
@@ -100,9 +100,10 @@ if ($new_username != "") {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        if ($new_username == "") {
-            $_SESSION['s_message_danger'] .= "Enter your username<BR>";
+        if ($new_data == "") {
+            $_SESSION['s_message_danger'] .= "Enter your username or email address<BR>";
         }
+
     }
 
 }
@@ -117,7 +118,7 @@ if ($new_username != "") {
 <?php include(DIR_INC . "layout/header-login.inc.php"); ?>
 <?php
     echo $form->showFormTop('');
-    echo $form->showInputText('new_username', 'Username', '', $new_username, '20', '', '', '');
+    echo $form->showInputText('new_data', 'Username or Email Address', '', $new_data, '20', '', '', '');
     echo $form->showSubmitButton('Reset Password', '', '');
     echo $form->showFormBottom('');
 ?>
