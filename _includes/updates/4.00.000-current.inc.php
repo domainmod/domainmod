@@ -45,4 +45,20 @@ if ($current_db_version === '4.00.000') {
 
 }
 
+// upgrade database from 4.00.001 to 4.00.002
+if ($current_db_version === '4.00.001') {
+
+    $sql = "ALTER TABLE `registrar_accounts`
+            ADD `api_key` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `password`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "UPDATE settings
+            SET db_version = '4.00.002',
+                update_time = '" . $time->stamp() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $current_db_version = '4.00.002';
+
+}
+
 //@formatter:on
