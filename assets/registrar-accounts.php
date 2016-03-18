@@ -48,8 +48,8 @@ if ($rid != '') { $rid_string = " AND ra.registrar_id = '$rid' "; } else { $rid_
 if ($raid != '') { $raid_string = " AND ra.id = '$raid' "; } else { $raid_string = ''; }
 if ($oid != '') { $oid_string = " AND ra.owner_id = '$oid' "; } else { $oid_string = ''; }
 
-$sql = "SELECT ra.id AS raid, ra.username, ra.password, ra.owner_id, ra.registrar_id, ra.reseller, o.id AS oid,
-            o.name AS oname, r.id AS rid, r.name AS rname, ra.notes, ra.insert_time, ra.update_time
+$sql = "SELECT ra.id AS raid, ra.username, ra.password, ra.api_key, ra.owner_id, ra.registrar_id, ra.reseller,
+            o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname, ra.notes, ra.insert_time, ra.update_time
         FROM registrar_accounts AS ra, owners AS o, registrars AS r
         WHERE ra.owner_id = o.id
           AND ra.registrar_id = r.id
@@ -76,6 +76,7 @@ if ($export_data == '1') {
         'Registrar',
         'Username',
         'Password',
+        'API Key',
         'Owner',
         'Domains',
         'Default Account?',
@@ -135,6 +136,7 @@ if ($export_data == '1') {
                 $row->rname,
                 $row->username,
                 $row->password,
+                $row->api_key,
                 $row->oname,
                 $total_domain_count,
                 $is_default,

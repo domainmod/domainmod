@@ -47,6 +47,7 @@ $new_owner_id = $_POST['new_owner_id'];
 $new_registrar_id = $_POST['new_registrar_id'];
 $new_username = $_POST['new_username'];
 $new_password = $_POST['new_password'];
+$new_api_key = $_POST['new_api_key'];
 $new_reseller = $_POST['new_reseller'];
 $new_notes = $_POST['new_notes'];
 $new_raid = $_POST['new_raid'];
@@ -61,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       registrar_id = ?,
                       username = ?,
                       `password` = ?,
+                      api_key = ?,
                       notes = ?,
                       reseller = ?,
                       update_time = ?
@@ -71,8 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $timestamp = $time->stamp();
 
-            $q->bind_param('iisssisi', $new_owner_id, $new_registrar_id, $new_username, $new_password, $new_notes,
-                $new_reseller, $timestamp, $new_raid);
+            $q->bind_param('iissssisi', $new_owner_id, $new_registrar_id, $new_username, $new_password, $new_api_key,
+                $new_notes, $new_reseller, $timestamp, $new_raid);
             $q->execute();
             $q->close();
 
@@ -148,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT owner_id, registrar_id, username, `password`, notes, reseller
+    $query = "SELECT owner_id, registrar_id, username, `password`, api_key, notes, reseller
               FROM registrar_accounts
               WHERE id = ?";
     $q = $conn->stmt_init();
@@ -158,7 +160,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->bind_param('i', $raid);
         $q->execute();
         $q->store_result();
-        $q->bind_result($new_owner_id, $new_registrar_id, $new_username, $new_password, $new_notes, $new_reseller);
+        $q->bind_result($new_owner_id, $new_registrar_id, $new_username, $new_password, $new_api_key, $new_notes,
+            $new_reseller);
         $q->fetch();
         $q->close();
 
@@ -290,7 +293,7 @@ if ($q->prepare($query)) {
     $error->outputSqlError($conn, "ERROR");
 }
 
-$query = "SELECT id, name
+$query = "SELECT id, `name`
           FROM registrars
           ORDER BY `name` ASC";
 $q = $conn->stmt_init();
@@ -318,6 +321,7 @@ if ($q->prepare($query)) {
 }
 echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '', '');
 echo $form->showInputText('new_password', 'Password (255)', '', $new_password, '255', '', '', '');
+echo $form->showInputText('new_api_key', 'API Key', '', $new_api_key, '255', '', '', '');
 echo $form->showRadioTop('Reseller Account?', '', '');
 echo $form->showRadioOption('new_reseller', '1', 'Yes', $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_reseller', '0', 'No', $new_reseller, '', '');

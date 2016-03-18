@@ -43,6 +43,7 @@ $new_owner_id = $_POST['new_owner_id'];
 $new_registrar_id = $_POST['new_registrar_id'];
 $new_username = $_POST['new_username'];
 $new_password = $_POST['new_password'];
+$new_api_key = $_POST['new_api_key'];
 $new_reseller = $_POST['new_reseller'];
 $new_notes = $_POST['new_notes'];
 
@@ -52,17 +53,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_registrar_id != "0") {
 
         $query = "INSERT INTO registrar_accounts
-                  (owner_id, registrar_id, username, `password`, notes, reseller, insert_time)
+                  (owner_id, registrar_id, username, `password`, api_key, notes, reseller, insert_time)
                   VALUES
-                  (?, ?, ?, ?, ?, ?, ?)";
+                  (?, ?, ?, ?, ?, ?, ?, ?)";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
 
             $timestamp = $time->stamp();
 
-            $q->bind_param('iisssis', $new_owner_id, $new_registrar_id, $new_username, $new_password, $new_notes,
-                $new_reseller, $timestamp);
+            $q->bind_param('iissssis', $new_owner_id, $new_registrar_id, $new_username, $new_password, $new_api_key,
+                $new_notes, $new_reseller, $timestamp);
             $q->execute();
             $q->close();
 
@@ -171,7 +172,7 @@ if ($q->prepare($query)) {
     $error->outputSqlError($conn, "ERROR");
 }
 
-$query = "SELECT id, name
+$query = "SELECT id, `name`
           FROM registrars
           ORDER BY `name` ASC";
 $q = $conn->stmt_init();
@@ -199,6 +200,7 @@ if ($q->prepare($query)) {
 }
 echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '', '');
 echo $form->showInputText('new_password', 'Password (255)', '', $new_password, '255', '', '', '');
+echo $form->showInputText('new_api_key', 'API Key', '', $new_api_key, '255', '', '', '');
 echo $form->showRadioTop('Reseller Account?', '', '');
 if ($new_reseller == '') $new_reseller = '0';
 echo $form->showRadioOption('new_reseller', '1', 'Yes', $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
