@@ -41,7 +41,7 @@ $system->installCheck($connection, $web_root);
 
 if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . "'"))) {
 
-    $_SESSION['s_message_danger'] = $software_title . " is already installed<BR><BR>You should delete the /install/ folder<BR>";
+    $_SESSION['s_message_danger'] .= $software_title . " is already installed<BR><BR>You should delete the /install/ folder<BR>";
 
     header("Location: ../");
     exit;
@@ -55,7 +55,28 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
             DEFAULT CHARACTER SET utf8
             COLLATE utf8_unicode_ci
             DEFAULT COLLATE utf8_unicode_ci;";
-    $result = mysqli_query($connection, $sql);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "CREATE TABLE IF NOT EXISTS `creation_types` (
+                `id` TINYINT(2) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                PRIMARY KEY  (`id`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "INSERT INTO creation_types
+            (`name`, insert_time)
+             VALUES
+            ('Installation', '" . $time->stamp() . "'),
+            ('Manual', '" . $time->stamp() . "'),
+            ('Bulk Updater', '" . $time->stamp() . "'),
+            ('Manual or Bulk Updater', '" . $time->stamp() . "'),
+            ('Queue', '" . $time->stamp() . "')";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    
+    $creation_type_id_installation = $system->getCreationTypeId($connection, 'Installation');
+    $creation_type_id_manual = $system->getCreationTypeId($connection, 'Manual');
 
     $sql = "CREATE TABLE IF NOT EXISTS `users` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -69,6 +90,8 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `active` INT(1) NOT NULL DEFAULT '1',
                 `number_of_logins` INT(10) NOT NULL DEFAULT '0',
                 `last_login` DATETIME NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
@@ -76,10 +99,10 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "INSERT INTO `users`
-            (`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `insert_time`) VALUES
-            ('Domain', 'Administrator', 'admin', 'admin@domainmod.org', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '" . $time->stamp() . "');";
+            (`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `creation_type_id`, `insert_time`) VALUES
+            ('Domain', 'Administrator', 'admin', '" . $_SESSION['new_install_email'] . "', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '" . $creation_type_id_installation . "', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
+    
     $sql = "CREATE TABLE IF NOT EXISTS `user_settings` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `user_id` INT(10) NOT NULL,
@@ -109,8 +132,8 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `display_domain_dns` INT(1) NOT NULL DEFAULT '1',
                 `display_domain_host` INT(1) NOT NULL DEFAULT '0',
                 `display_domain_ip` INT(1) NOT NULL DEFAULT '0',
-                `display_domain_tld` INT(1) NOT NULL DEFAULT '0',
-                `display_domain_fee` INT(1) NOT NULL DEFAULT '0',
+                `display_domain_tld` INT(1) NOT NULL DEFAULT '1',
+                `display_domain_fee` INT(1) NOT NULL DEFAULT '1',
                 `display_ssl_owner` INT(1) NOT NULL DEFAULT '1',
                 `display_ssl_provider` INT(1) NOT NULL DEFAULT '0',
                 `display_ssl_account` INT(1) NOT NULL DEFAULT '1',
@@ -130,20 +153,26 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $sql = "SELECT id
             FROM users";
-    $result = mysqli_query($connection, $sql);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     while ($row = mysqli_fetch_object($result)) {
-        $sql_temp = "INSERT INTO user_settings
-                     (user_id, default_currency, insert_time) VALUES
-                     ('$row->id', 'USD', '" . $time->stamp() . "');";
-        $result_temp = mysqli_query($connection, $sql_temp);
+
+        $temp_user_id = $row->id;
+
     }
+
+    $sql_temp = "INSERT INTO user_settings
+                 (user_id, default_currency, insert_time) VALUES
+                 ('$temp_user_id', 'USD', '" . $time->stamp() . "');";
+    $result_temp = mysqli_query($connection, $sql_temp) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `categories` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `stakeholder` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
@@ -151,8 +180,8 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "INSERT INTO `categories`
-            (`name`, `stakeholder`, `insert_time`) VALUES
-            ('[no category]', '[no stakeholder]', '" . $time->stamp() . "');";
+            (`name`, `stakeholder`, `creation_type_id`, `insert_time`) VALUES
+            ('[no category]', '[no stakeholder]', '" . $creation_type_id_installation . "', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `hosting` (
@@ -160,6 +189,8 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
@@ -167,14 +198,16 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "INSERT INTO `hosting`
-            (`name`, `insert_time`) VALUES
-            ('[no hosting]', '" . $time->stamp() . "');";
+            (`name`, `creation_type_id`, `insert_time`) VALUES
+            ('[no hosting]', '" . $creation_type_id_installation . "', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `owners` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`),
@@ -183,8 +216,8 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "INSERT INTO `owners`
-            (`name`, `insert_time`) VALUES
-            ('[no owner]', '" . $time->stamp() . "');";
+            (`name`, `creation_type_id`, `insert_time`) VALUES
+            ('[no owner]', '" . $creation_type_id_installation . "', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `currencies` (
@@ -369,7 +402,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
             ('Comoran Franc', 'KMF', 'CF', '" . $time->stamp() . "'),
             ('Sao Tomean Dobra', 'STD', 'STD', '" . $time->stamp() . "'),
             ('Seborgan Luigino', 'SPL', 'SPL', '" . $time->stamp() . "')";
-    $result = mysqli_query($connection, $sql);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `currency_conversions` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -380,7 +413,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($connection, $sql);
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `fees` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -434,10 +467,94 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `privacy` INT(1) NOT NULL DEFAULT '0',
                 `active` INT(2) NOT NULL DEFAULT '1',
                 `fee_fixed` INT(1) NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`),
                 KEY `domain` (`domain`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "CREATE TABLE IF NOT EXISTS `domain_queue` (
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `api_registrar_id` SMALLINT(5) NOT NULL DEFAULT '0',
+                `domain_id` INT(10) NOT NULL DEFAULT '0',
+                `owner_id` INT(10) NOT NULL DEFAULT '0',
+                `registrar_id` INT(10) NOT NULL DEFAULT '0',
+                `account_id` INT(10) NOT NULL DEFAULT '0',
+                `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `expiry_date` DATE NOT NULL,
+                `cat_id` INT(10) NOT NULL DEFAULT '0',
+                `dns_id` INT(10) NOT NULL DEFAULT '0',
+                `ip_id` INT(10) NOT NULL DEFAULT '0',
+                `hosting_id` INT(10) NOT NULL DEFAULT '0',
+                `autorenew` TINYINT(1) NOT NULL DEFAULT '0',
+                `privacy` TINYINT(1) NOT NULL DEFAULT '0',
+                `processing` TINYINT(1) NOT NULL DEFAULT '0',
+                `ready_to_import` TINYINT(1) NOT NULL DEFAULT '0',
+                `finished` TINYINT(1) NOT NULL DEFAULT '0',
+                `already_in_domains` TINYINT(1) NOT NULL DEFAULT '0',
+                `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
+                `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `insert_time` DATETIME NOT NULL,
+                PRIMARY KEY  (`id`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_history` (
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `api_registrar_id` SMALLINT(5) NOT NULL DEFAULT '0',
+                `domain_id` INT(10) NOT NULL DEFAULT '0',
+                `owner_id` INT(10) NOT NULL DEFAULT '0',
+                `registrar_id` INT(10) NOT NULL DEFAULT '0',
+                `account_id` INT(10) NOT NULL DEFAULT '0',
+                `domain` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `expiry_date` DATE NOT NULL,
+                `cat_id` INT(10) NOT NULL DEFAULT '0',
+                `dns_id` INT(10) NOT NULL DEFAULT '0',
+                `ip_id` INT(10) NOT NULL DEFAULT '0',
+                `hosting_id` INT(10) NOT NULL DEFAULT '0',
+                `autorenew` TINYINT(1) NOT NULL DEFAULT '0',
+                `privacy` TINYINT(1) NOT NULL DEFAULT '0',
+                `already_in_domains` TINYINT(1) NOT NULL DEFAULT '0',
+                `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `insert_time` DATETIME NOT NULL,
+                PRIMARY KEY  (`id`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_list` (
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `api_registrar_id` SMALLINT(5) NOT NULL DEFAULT '0',
+                `domain_count` INT(6) NOT NULL DEFAULT '0',
+                `owner_id` INT(10) NOT NULL DEFAULT '0',
+                `registrar_id` INT(10) NOT NULL DEFAULT '0',
+                `account_id` INT(10) NOT NULL DEFAULT '0',
+                `processing` TINYINT(1) NOT NULL DEFAULT '0',
+                `ready_to_import` TINYINT(1) NOT NULL DEFAULT '0',
+                `finished` TINYINT(1) NOT NULL DEFAULT '0',
+                `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `insert_time` DATETIME NOT NULL,
+                PRIMARY KEY  (`id`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_list_history` (
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `api_registrar_id` SMALLINT(5) NOT NULL DEFAULT '0',
+                `domain_count` INT(6) NOT NULL DEFAULT '0',
+                `owner_id` INT(10) NOT NULL DEFAULT '0',
+                `registrar_id` INT(10) NOT NULL DEFAULT '0',
+                `account_id` INT(10) NOT NULL DEFAULT '0',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `insert_time` DATETIME NOT NULL,
+                PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -464,6 +581,8 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `type_id` INT(10) NOT NULL,
                 `description` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
@@ -495,6 +614,8 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `active` INT(1) NOT NULL DEFAULT '1',
                 `fee_fixed` INT(1) NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
@@ -505,6 +626,8 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `type` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
@@ -512,11 +635,11 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "INSERT INTO `ssl_cert_types`
-            (`id`, `type`, `insert_time`) VALUES
-            (1, 'Web Server SSL/TLS Certificate', '" . $time->stamp() . "'),
-            (2, 'S/MIME and Authentication Certificate', '" . $time->stamp() . "'),
-            (3, 'Object Code Signing Certificate', '" . $time->stamp() . "'),
-            (4, 'Digital ID', '" . $time->stamp() . "');";
+            (`id`, `type`, `creation_type_id`, `insert_time`) VALUES
+            (1, 'Web Server SSL/TLS Certificate', '" . $creation_type_id_installation . "', '" . $time->stamp() . "'),
+            (2, 'S/MIME and Authentication Certificate', '" . $creation_type_id_installation . "', '" . $time->stamp() . "'),
+            (3, 'Object Code Signing Certificate', '" . $creation_type_id_installation . "', '" . $time->stamp() . "'),
+            (4, 'Digital ID', '" . $creation_type_id_installation . "', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_fields` (
@@ -526,6 +649,8 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `type_id` INT(10) NOT NULL,
                 `description` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
@@ -566,6 +691,8 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `ip10` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `number_of_servers` INT(2) NOT NULL DEFAULT '0',
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
@@ -573,19 +700,45 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "INSERT INTO `dns`
-            (`name`, `dns1`, `dns2`, `number_of_servers`, `insert_time`) VALUES
-            ('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '" . $time->stamp() . "');";
+            (`name`, `dns1`, `dns2`, `number_of_servers`, `creation_type_id`, `insert_time`) VALUES
+            ('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '" . $creation_type_id_installation . "', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `registrars` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `api_registrar_id` TINYINT(3) NOT NULL DEFAULT '0',
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`),
                 KEY `name` (`name`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "CREATE TABLE IF NOT EXISTS `registrar_accounts` (
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `owner_id` INT(10) NOT NULL,
+                `registrar_id` INT(10) NOT NULL,
+                `email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `reseller` INT(1) NOT NULL DEFAULT '0',
+                `reseller_id` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `api_app_name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `api_key` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `api_secret` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `api_ip_id` INT(10) NOT NULL DEFAULT '0',
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
+                PRIMARY KEY  (`id`),
+                KEY `registrar_id` (`registrar_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -594,25 +747,11 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-    $sql = "CREATE TABLE IF NOT EXISTS `registrar_accounts` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `owner_id` INT(10) NOT NULL,
-                `registrar_id` INT(10) NOT NULL,
-                `username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `api_key` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `reseller` INT(1) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
-                PRIMARY KEY  (`id`),
-                KEY `registrar_id` (`registrar_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -620,10 +759,14 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `owner_id` INT(10) NOT NULL,
                 `ssl_provider_id` INT(10) NOT NULL,
+                `email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `reseller` INT(1) NOT NULL DEFAULT '0',
+                `reseller_id` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`),
@@ -638,6 +781,8 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `segment` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `number_of_domains` INT(6) NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
@@ -662,8 +807,10 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `ip` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `rdns` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '-',
+                `rdns` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
@@ -671,44 +818,8 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "INSERT INTO `ip_addresses`
-            (`id`, `name`, `ip`, `rdns`, `insert_time`) VALUES
-            ('1', '[no ip address]', '-', '-', '" . $time->stamp() . "');";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-    $sql = "CREATE TABLE IF NOT EXISTS `settings` (
-                `id` INT(10) NOT NULL AUTO_INCREMENT,
-                `full_url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'http://',
-                `db_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `upgrade_available` INT(1) NOT NULL DEFAULT '0',
-                `email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `large_mode` TINYINT(1) NOT NULL DEFAULT '0',
-                `default_category_domains` INT(10) NOT NULL DEFAULT '0',
-                `default_category_ssl` INT(10) NOT NULL DEFAULT '0',
-                `default_dns` INT(10) NOT NULL DEFAULT '0',
-                `default_host` INT(10) NOT NULL DEFAULT '0',
-                `default_ip_address_domains` INT(10) NOT NULL DEFAULT '0',
-                `default_ip_address_ssl` INT(10) NOT NULL DEFAULT '0',
-                `default_owner_domains` INT(10) NOT NULL DEFAULT '0',
-                `default_owner_ssl` INT(10) NOT NULL DEFAULT '0',
-                `default_registrar` INT(10) NOT NULL DEFAULT '0',
-                `default_registrar_account` INT(10) NOT NULL DEFAULT '0',
-                `default_ssl_provider_account` INT(10) NOT NULL DEFAULT '0',
-                `default_ssl_type` INT(10) NOT NULL DEFAULT '0',
-                `default_ssl_provider` INT(10) NOT NULL DEFAULT '0',
-                `expiration_days` INT(3) NOT NULL DEFAULT '60',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
-                PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-    $full_url = substr($_SERVER["HTTP_REFERER"], 0, -1);
-
-    $temp_system_email = "support@" . $_SERVER["HTTP_HOST"];
-
-    $sql = "INSERT INTO `settings`
-            (`full_url`, `db_version`, `email_address`, `insert_time`) VALUES
-            ('" . $full_url . "', '" . $software_version . "', '" . $temp_system_email . "', '" . $time->stamp() . "');";
+            (`id`, `name`, `ip`, `rdns`, `creation_type_id`, `insert_time`) VALUES
+            ('1', '[no ip address]', '-', '-', '" . $creation_type_id_installation . "', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "CREATE TABLE IF NOT EXISTS `timezones` (
@@ -746,6 +857,8 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `build_end_time_overall` DATETIME NOT NULL,
                 `build_time_overall` INT(10) NOT NULL DEFAULT '0',
                 `has_ever_been_built_overall` INT(1) NOT NULL DEFAULT '0',
+                `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
+                `created_by` INT(10) NOT NULL DEFAULT '0',
                 `insert_time` DATETIME NOT NULL,
                 `update_time` DATETIME NOT NULL,
                 PRIMARY KEY  (`id`)
@@ -757,10 +870,10 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `slug` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `description` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `interval` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Daily',
+                `interval` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Daily',
                 `expression` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0 7 * * * *',
                 `last_run` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-                `last_duration` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+                `last_duration` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `next_run` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 `sort_order` INT(4) NOT NULL DEFAULT '1',
                 `is_running` INT(1) NOT NULL DEFAULT '0',
@@ -772,25 +885,111 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "INSERT INTO scheduler
-            (`name`, description, slug, sort_order, is_running, active, insert_time)
+            (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
              VALUES
-            ('Send Expiration Email', 'Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations.<BR><BR>Users can subscribe via their User Profile.<BR><BR>Administrators can set the FROM email address and the number of days in the future to display in the email via System Settings.', 'expiration-email', '20', '0', '1', '" . $time->stamp() . "'),
-            ('Update Conversion Rates', 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date.<BR><BR>Users can set their default currency via their User Profile.', 'update-conversion-rates', '40', '0', '1', '" . $time->stamp() . "'),
-            ('System Cleanup', '" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running quickly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>TLDs:" . "<" . "/em> Makes sure that the TLD entries recorded in the database are accurate.', 'cleanup', '60', '0', '1', '" . $time->stamp() . "'),
-            ('Check For New Version', 'Checks to see if there is a newer version of DomainMOD available to download.', 'check-new-version', '80', '0', '1', '" . $time->stamp() . "'),
-            ('Data Warehouse Build', 'Rebuilds the Data Warehouse so that you have the most up-to-date information available.', 'data-warehouse-build', '100', '0', '1', '" . $time->stamp() . "')";
+            ('Domain Queue Processing', 'Retrieves information for domains in the queue and adds them to DomainMOD.', 'Every 5 Minutes', '*/5 * * * * *', 'domain-queue', '10', '0', '1', '" . $time->stamp() . "'),
+            ('Send Expiration Email', 'Sends an email out to everyone who\'s subscribed, letting them know of upcoming Domain & SSL Certificate expirations.<BR><BR>Users can subscribe via their User Profile.<BR><BR>Administrators can set the FROM email address and the number of days in the future to display in the email via System Settings.', 'Daily', '0 0 * * * *', 'expiration-email', '20', '0', '1', '" . $time->stamp() . "'),
+            ('Update Conversion Rates', 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date.<BR><BR>Users can set their default currency via their User Profile.', 'Daily', '0 0 * * * *', 'update-conversion-rates', '40', '0', '1', '" . $time->stamp() . "'),
+            ('System Cleanup', '" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running quickly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>TLDs:" . "<" . "/em> Makes sure that the TLD entries recorded in the database are accurate.', 'Daily', '0 0 * * * *', 'cleanup', '60', '0', '1', '" . $time->stamp() . "'),
+            ('Check For New Version', 'Checks to see if there is a newer version of DomainMOD available to download.', 'Daily', '0 0 * * * *', 'check-new-version', '80', '0', '1', '" . $time->stamp() . "'),
+            ('Data Warehouse Build', 'Rebuilds the Data Warehouse so that you have the most up-to-date information available.', 'Daily', '0 0 * * * *', 'data-warehouse-build', '100', '0', '1', '" . $time->stamp() . "')";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
+    // Update tasks that run daily
     $cron = \Cron\CronExpression::factory('0 7 * * * *');
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
     $sql = "UPDATE scheduler
-            SET next_run = '" . $next_run . "'";
+            SET next_run = '" . $next_run . "'
+            WHERE `interval` = 'Daily'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    // Update tasks that run every 5 minutes
+    $cron = \Cron\CronExpression::factory('*/5 * * * * *');
+    $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
+
+    $sql = "UPDATE scheduler
+            SET next_run = '" . $next_run . "'
+            WHERE `interval` = 'Every 5 Minutes'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "CREATE TABLE IF NOT EXISTS `api_registrars` (
+                `id` TINYINT(3) NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `req_account_username` TINYINT(1) NOT NULL DEFAULT '0',
+                `req_account_password` TINYINT(1) NOT NULL DEFAULT '0',
+                `req_reseller_id` TINYINT(1) NOT NULL DEFAULT '0',
+                `req_api_app_name` TINYINT(1) NOT NULL DEFAULT '0',
+                `req_api_key` TINYINT(1) NOT NULL DEFAULT '0',
+                `req_api_secret` TINYINT(1) NOT NULL DEFAULT '0',
+                `req_ip_address` TINYINT(1) NOT NULL DEFAULT '0',
+                `lists_domains` TINYINT(1) NOT NULL DEFAULT '0',
+                `ret_expiry_date` TINYINT(1) NOT NULL DEFAULT '0',
+                `ret_dns_servers` TINYINT(1) NOT NULL DEFAULT '0',
+                `ret_privacy_status` TINYINT(1) NOT NULL DEFAULT '0',
+                `ret_autorenewal_status` TINYINT(1) NOT NULL DEFAULT '0',
+                `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `insert_time` DATETIME NOT NULL,
+                PRIMARY KEY  (`id`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "INSERT INTO api_registrars
+            (`name`, req_account_username, req_account_password, req_reseller_id, req_api_app_name, req_api_key,
+             req_api_secret, req_ip_address, lists_domains, ret_expiry_date, ret_dns_servers, ret_privacy_status,
+             ret_autorenewal_status, notes, insert_time)
+             VALUES
+            ('DNSimple', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),
+            ('Dynadot', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),
+            ('eNom', '1', '1', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),
+            ('Fabulous', '1', '1', '0', '0', '0', '0', '0', '1', '1', '1', '0', '0', 'Fabulous does not currently allow the privacy or auto renewal status of a domain to be retrieved using their API, so all domains added to the queue from a Fabulous account will have their privacy and auto renewal status set to No.', '" . $time->stamp() . "'),
+            ('GoDaddy', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),
+            ('Internet.bs', '0', '0', '0', '0', '1', '1', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),
+            ('Name.com', '1', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),
+            ('NameBright', '1', '0', '0', '1', '0', '1', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),
+            ('Namecheap', '1', '0', '0', '0', '1', '0', '1', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),
+            ('NameSilo', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),
+            ('OpenSRS', '1', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),
+            ('ResellerClub', '0', '0', '1', '0', '1', '0', '0', '0', '1', '1', '1', '0', 'ResellerClub does not currently allow the auto renewal status of a domain to be retrieved using their API, so all domains added to the queue from a ResellerClub account will have their auto renewal status set to No.', '" . $time->stamp() . "')";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "CREATE TABLE IF NOT EXISTS `settings` (
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `full_url` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'http://',
+                `db_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `upgrade_available` INT(1) NOT NULL DEFAULT '0',
+                `email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `large_mode` TINYINT(1) NOT NULL DEFAULT '0',
+                `default_category_domains` INT(10) NOT NULL DEFAULT '0',
+                `default_category_ssl` INT(10) NOT NULL DEFAULT '0',
+                `default_dns` INT(10) NOT NULL DEFAULT '0',
+                `default_host` INT(10) NOT NULL DEFAULT '0',
+                `default_ip_address_domains` INT(10) NOT NULL DEFAULT '0',
+                `default_ip_address_ssl` INT(10) NOT NULL DEFAULT '0',
+                `default_owner_domains` INT(10) NOT NULL DEFAULT '0',
+                `default_owner_ssl` INT(10) NOT NULL DEFAULT '0',
+                `default_registrar` INT(10) NOT NULL DEFAULT '0',
+                `default_registrar_account` INT(10) NOT NULL DEFAULT '0',
+                `default_ssl_provider_account` INT(10) NOT NULL DEFAULT '0',
+                `default_ssl_type` INT(10) NOT NULL DEFAULT '0',
+                `default_ssl_provider` INT(10) NOT NULL DEFAULT '0',
+                `expiration_days` INT(3) NOT NULL DEFAULT '60',
+                `insert_time` DATETIME NOT NULL,
+                `update_time` DATETIME NOT NULL,
+                PRIMARY KEY  (`id`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $full_url = substr($_SERVER["HTTP_REFERER"], 0, -1);
+
+    $sql = "INSERT INTO `settings`
+            (`full_url`, `db_version`, `email_address`, `insert_time`) VALUES
+            ('" . $full_url . "', '" . $software_version . "', '" . $_SESSION['new_install_email'] . "', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql_settings = "SELECT *
                      FROM settings";
-    $result_settings = mysqli_query($connection, $sql_settings);
+    $result_settings = mysqli_query($connection, $sql_settings) or $error->outputOldSqlError($connection);
 
     while ($row_settings = mysqli_fetch_object($result_settings)) {
 
@@ -818,7 +1017,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
                           FROM user_settings
                           ORDER BY id DESC
                           LIMIT 1";
-    $result_user_settings = mysqli_query($connection, $sql_user_settings);
+    $result_user_settings = mysqli_query($connection, $sql_user_settings) or $error->outputOldSqlError($connection);
 
     while ($row_user_settings = mysqli_fetch_object($result_user_settings)) {
 
@@ -867,18 +1066,23 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
     $sql_currencies = "SELECT `name`, symbol, symbol_order, symbol_space
                        FROM currencies
                        WHERE currency = '" . $_SESSION['s_default_currency'] . "'";
-    $result_currencies = mysqli_query($connection, $sql_currencies);
+    $result_currencies = mysqli_query($connection, $sql_currencies) or $error->outputOldSqlError($connection);
 
     while ($row_currencies = mysqli_fetch_object($result_currencies)) {
+        
         $_SESSION['s_default_currency_name'] = $row_currencies->name;
         $_SESSION['s_default_currency_symbol'] = $row_currencies->symbol;
         $_SESSION['s_default_currency_symbol_order'] = $row_currencies->symbol_order;
         $_SESSION['s_default_currency_symbol_space'] = $row_currencies->symbol_space;
+    
     }
 
-    $_SESSION['s_installation_mode'] = '0';
-    $_SESSION['s_message_success'] = $software_title . " has been installed<BR><BR>The default username and password are \"admin\"<BR>";
+    // Without this, the "DomainMOD is not yet installed" message will continue to display after installation. The header isn't displayed on the install file, which is when this normally unsets.
+    unset($_SESSION['s_message_danger']);
 
+    $_SESSION['s_installation_mode'] = '0';
+    $_SESSION['s_message_success'] .= $software_title . " has been installed and you should now delete the /install/ folder<BR><BR>The default username and password are \"admin\"<BR>";
+    
     header("Location: ../");
     exit;
 
