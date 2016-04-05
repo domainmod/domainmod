@@ -55,7 +55,7 @@ Before running any reports you should <a href="<?php echo $web_root; ?>/settings
 <h3>Domain Reports</h3>
 <?php
 echo $form->showFormTop('');
-echo $form->showDropdownTopJump('', '');
+echo $form->showDropdownTopJump('', '', '', '');
 echo $form->showDropdownOptionJump($web_root . '/reporting/', '', 'Click to select a Domain Report', '');
 echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-category.php?all=1', '', 'Cost by Category', 'null');
 echo $form->showDropdownOptionJump($web_root . '/reporting/domains/cost-by-dns.php?all=1', '', 'Cost by DNS Profile', 'null');
@@ -73,7 +73,7 @@ echo $form->showFormBottom('');
 <h3>SSL Certificate Reports</h3>
 <?php
 echo $form->showFormTop('');
-echo $form->showDropdownTopJump('', '');
+echo $form->showDropdownTopJump('', '', '', '');
 echo $form->showDropdownOptionJump($web_root . '/reporting/', '', 'Click to select an SSL Report', '');
 echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-category.php?all=1', '', 'Cost by Category', 'null');
 echo $form->showDropdownOptionJump($web_root . '/reporting/ssl/cost-by-domain.php?all=1', '', 'Cost by Domain', 'null');
@@ -90,7 +90,7 @@ echo $form->showFormBottom('');
 <h3>Data Warehouse Reports</h3>
 <?php
 echo $form->showFormTop('');
-echo $form->showDropdownTopJump('', '');
+echo $form->showDropdownTopJump('', '', '', '');
 echo $form->showDropdownOptionJump($web_root . '/reporting/', '', 'Click to select a DW Report', '');
 echo $form->showDropdownOptionJump($web_root . '/reporting/dw/potential-problems.php?generate=1', '', 'Potential Problems', 'null');
 echo $form->showDropdownBottom('');

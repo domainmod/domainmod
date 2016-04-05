@@ -45,25 +45,27 @@ $really_del = $_GET['really_del'];
 $sslpaid = $_GET['sslpaid'];
 $new_owner_id = $_POST['new_owner_id'];
 $new_ssl_provider_id = $_POST['new_ssl_provider_id'];
+$new_email_address = $_POST['new_email_address'];
 $new_username = $_POST['new_username'];
 $new_password = $_POST['new_password'];
 $new_reseller = $_POST['new_reseller'];
+$new_reseller_id = $_POST['new_reseller_id'];
 $new_notes = $_POST['new_notes'];
 $new_sslpaid = $_POST['new_sslpaid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_username != "" && $new_owner_id != "" && $new_ssl_provider_id != "" && $new_owner_id != "0" &&
-        $new_ssl_provider_id != "0"
-    ) {
+    if ($new_username != "" && $new_owner_id != "" && $new_ssl_provider_id != "" && $new_owner_id != "0" && $new_ssl_provider_id != "0") {
 
         $query = "UPDATE ssl_accounts
                   SET owner_id = ?,
                       ssl_provider_id = ?,
+                      email_address = ?,
                       username = ?,
                       `password` = ?,
-                      notes = ?,
                       reseller = ?,
+                      reseller_id = ?,
+                      notes = ?,
                       update_time = ?
                       WHERE id = ?";
         $q = $conn->stmt_init();
@@ -72,8 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $timestamp = $time->stamp();
 
-            $q->bind_param('iisssisi', $new_owner_id, $new_ssl_provider_id, $new_username, $new_password, $new_notes,
-                $new_reseller, $timestamp, $new_sslpaid);
+            $q->bind_param('iisssisssi', $new_owner_id, $new_ssl_provider_id, $new_email_address, $new_username,
+                $new_password, $new_reseller, $new_reseller_id, $new_notes, $timestamp, $new_sslpaid);
             $q->execute();
             $q->close();
 
@@ -119,22 +121,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_message_success'] = "SSL Account " . $new_username . " (" . $temp_ssl_provider . ", " . $temp_owner . ") Updated<BR>";
+        $_SESSION['s_message_success'] .= "SSL Account " . $new_username . " (" . $temp_ssl_provider . ", " . $temp_owner . ") Updated<BR>";
 
         header("Location: ../ssl-accounts.php");
         exit;
 
     } else {
 
-        if ($username == "") {
-            $_SESSION['s_message_danger'] .= "Enter a username<BR>";
+        if ($new_owner_id == '' || $new_owner_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Owner<BR>";
+
         }
+
+        if ($new_ssl_provider_id == '' || $new_ssl_provider_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the SSL Provider<BR>";
+
+        }
+
+        if ($new_username == "") { $_SESSION['s_message_danger'] .= "Enter a username<BR>"; }
 
     }
 
 } else {
 
-    $query = "SELECT owner_id, ssl_provider_id, username, `password`, notes, reseller
+    $query = "SELECT owner_id, ssl_provider_id, email_address, username, `password`, reseller, reseller_id, notes
               FROM ssl_accounts
               WHERE id = ?";
     $q = $conn->stmt_init();
@@ -144,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->bind_param('i', $sslpaid);
         $q->execute();
         $q->store_result();
-        $q->bind_result($new_owner_id, $new_ssl_provider_id, $new_username, $new_password, $new_notes, $new_reseller);
+        $q->bind_result($new_owner_id, $new_ssl_provider_id, $new_email_address, $new_username, $new_password, $new_reseller, $new_reseller_id, $new_notes);
         $q->fetch();
         $q->close();
 
@@ -182,14 +194,13 @@ if ($del == "1") {
 
     if ($existing_ssl_certs > 0) {
 
-        $_SESSION['s_message_danger'] = "This SSL Account has SSL certificates associated with it and cannot be
+        $_SESSION['s_message_danger'] .= "This SSL Account has SSL certificates associated with it and cannot be
         deleted<BR>";
 
     } else {
 
-        $_SESSION['s_message_danger'] = "Are you sure you want to delete this SSL Account?<BR><BR><a
-            href=\"ssl-provider-account.php?sslpaid=$sslpaid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER
-            ACCOUNT</a><BR>";
+        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Account?<BR><BR><a
+            href=\"ssl-provider-account.php?sslpaid=$sslpaid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER ACCOUNT</a><BR>";
 
     }
 
@@ -231,7 +242,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_message_success'] = "SSL Account " . $temp_username . " (" . $temp_ssl_provider_name . ", " . $temp_owner_name . ") Deleted<BR>";
+    $_SESSION['s_message_success'] .= "SSL Account " . $temp_username . " (" . $temp_ssl_provider_name . ", " . $temp_owner_name . ") Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 
@@ -252,34 +263,6 @@ if ($really_del == "1") {
 echo $form->showFormTop('');
 
 $query = "SELECT id, `name`
-          FROM owners
-          ORDER BY `name` ASC";
-$q = $conn->stmt_init();
-
-if ($q->prepare($query)) {
-
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
-
-    echo $form->showDropdownTop('new_owner_id', 'Owner', '', '');
-
-    while ($q->fetch()) {
-
-        echo $form->showDropdownOption($id, $name, $new_owner_id);
-
-    }
-
-    echo $form->showDropdownBottom('');
-
-    $q->close();
-
-} else {
-    $error->outputSqlError($conn, "ERROR");
-}
-
-
-$query = "SELECT id, `name`
               FROM ssl_providers
               ORDER BY `name` ASC";
 $q = $conn->stmt_init();
@@ -289,7 +272,7 @@ if ($q->prepare($query)) {
     $q->store_result();
     $q->bind_result($id, $name);
 
-    echo $form->showDropdownTop('new_ssl_provider_id', 'SSL Provider', '', '');
+    echo $form->showDropdownTop('new_ssl_provider_id', 'SSL Provider', '', '1', '');
 
     while ($q->fetch()) {
 
@@ -305,13 +288,42 @@ if ($q->prepare($query)) {
     $error->outputSqlError($conn, "ERROR");
 }
 
-echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '', '');
-echo $form->showInputText('new_password', 'Password (255)', '', $new_password, '255', '', '', '');
+$query = "SELECT id, `name`
+          FROM owners
+          ORDER BY `name` ASC";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($id, $name);
+
+    echo $form->showDropdownTop('new_owner_id', 'Account Owner', '', '1', '');
+
+    while ($q->fetch()) {
+
+        echo $form->showDropdownOption($id, $name, $new_owner_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
+
+    $q->close();
+
+} else {
+    $error->outputSqlError($conn, "ERROR");
+}
+
+echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '', '', '');
+echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '1', '', '');
+echo $form->showInputText('new_password', 'Password (255)', '', $new_password, '255', '', '', '', '');
 echo $form->showRadioTop('Reseller Account?', '', '');
 echo $form->showRadioOption('new_reseller', '1', 'Yes', $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_reseller', '0', 'No', $new_reseller, '', '');
 echo $form->showRadioBottom('');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $new_reseller_id, '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showInputHidden('new_sslpaid', $sslpaid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

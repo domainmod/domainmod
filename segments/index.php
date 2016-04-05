@@ -42,7 +42,7 @@ $system->authCheck();
 $segid = $_GET['segid'];
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.insert_time, s.update_time, sd.domain
+$sql = "SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.creation_type_id, s.created_by, s.insert_time, s.update_time, sd.domain
         FROM segments AS s, segment_data AS sd
         WHERE s.id = sd.segment_id
         GROUP BY s.id
@@ -93,7 +93,7 @@ if ($export_data == "1") {
     }
 
     // The only difference between this SELECT statement and the primary one above is that it uses a GROUP BY clause
-    $sql = "SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.insert_time, s.update_time, sd.domain
+    $sql = "SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.creation_type_id, s.created_by, s.insert_time, s.update_time, sd.domain
             FROM segments AS s, segment_data AS sd
             WHERE s.id = sd.segment_id
             $seg_clause
@@ -161,7 +161,8 @@ if ($export_data == "1") {
         $row_contents[$count++] = "Number of Domains in Segment";
 
     }
-    $row_contents[$count++] = "Notes";
+    $row_contents[$count++] = "Creation Type";
+    $row_contents[$count++] = "Created By";
     $row_contents[$count++] = "Insert Time";
     $row_contents[$count++] = "Update Time";
     $export->writeRow($export_file, $row_contents);
@@ -169,6 +170,15 @@ if ($export_data == "1") {
     if (mysqli_num_rows($result) > 0) {
 
         while ($row = mysqli_fetch_object($result)) {
+
+            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+
+            if ($row->created_by == '0') {
+                $created_by = 'Unknown';
+            } else {
+                $user = new DomainMOD\User();
+                $created_by = $user->getFullName($connection, $row->created_by);
+            }
 
             unset($row_contents);
             $count = 0;
@@ -181,6 +191,8 @@ if ($export_data == "1") {
                 $row_contents[$count++] = $row->number_of_domains;
             }
             $row_contents[$count++] = $row->notes;
+            $row_contents[$count++] = $creation_type;
+            $row_contents[$count++] = $created_by;
             $row_contents[$count++] = $time->toUserTimezone($row->insert_time);
             $row_contents[$count++] = $time->toUserTimezone($row->update_time);
             $export->writeRow($export_file, $row_contents);

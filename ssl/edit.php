@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($date->checkDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" &&
         $new_type_id != "" && $new_ip_id != "" && $new_cat_id != "" && $new_domain_id != "0" && $new_account_id != "0"
-        && $new_type_id != "0" && $new_ip_id != "0" && $new_cat_id != "0") {
+        && $new_type_id != "0" && $new_ip_id != "0" && $new_cat_id != "0" && $new_active != '') {
 
         $sql = "SELECT ssl_provider_id, owner_id
                 FROM ssl_accounts
@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         }
 
-        $_SESSION['s_message_success'] = "SSL Certificate " . $new_name . " Updated<BR>";
+        $_SESSION['s_message_success'] .= "SSL Certificate " . $new_name . " Updated<BR>";
 
         $queryB = new DomainMOD\QueryBuild();
 
@@ -196,6 +196,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         if (!$date->checkDateFormat($new_expiry_date)) {
             $_SESSION['s_message_danger'] .= "The expiry date you entered is invalid<BR>";
+        }
+
+        if ($new_domain_id == '' || $new_domain_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the domain<BR>";
+
+        }
+
+        if ($new_account_id == '' || $new_account_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the SSL Provider Account<BR>";
+
+        }
+
+        if ($new_type_id == '' || $new_type_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the SSL Type<BR>";
+
+        }
+
+        if ($new_ip_id == '' || $new_ip_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the IP Address<BR>";
+
+        }
+
+        if ($new_cat_id == '' || $new_cat_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Category<BR>";
+
+        }
+
+        if ($new_active == '') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Status<BR>";
+
         }
 
     }
@@ -232,8 +268,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($del == "1") {
 
     $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Certificate?<BR><BR>
-        <a href=\"edit.php?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE
-        ACCOUNT</a><BR>";
+        <a href=\"edit.php?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE ACCOUNT</a><BR>";
 
 }
 
@@ -251,7 +286,7 @@ if ($really_del == "1") {
         $temp_type = $row->type;
     }
 
-    $_SESSION['s_message_success'] = "SSL Certificate $new_name ($temp_type) Deleted<BR>";
+    $_SESSION['s_message_success'] .= "SSL Certificate $new_name ($temp_type) Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 
@@ -270,15 +305,15 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Host / Label (100)', '', $new_name, '100', '', '', '');
-echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '', '');
+echo $form->showInputText('new_name', 'Host / Label (100)', '', $new_name, '100', '', '1', '', '');
+echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $sql_domain = "SELECT id, domain
                FROM domains
                WHERE (active NOT IN ('0', '10') OR id = '" . $new_domain_id . "')
                ORDER BY domain";
 $result_domain = mysqli_query($connection, $sql_domain) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_domain_id', 'Domain', '', '');
+echo $form->showDropdownTop('new_domain_id', 'Domain', '', '1', '');
 while ($row_domain = mysqli_fetch_object($result_domain)) {
 
     echo $form->showDropdownOption($row_domain->id, $row_domain->domain, $new_domain_id);
@@ -292,7 +327,7 @@ $sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS 
                   AND sslpa.ssl_provider_id = sslp.id
                 ORDER BY sslp_name ASC, o_name ASC, sslpa.username ASC";
 $result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_account_id', 'SSL Provider Account', '', '');
+echo $form->showDropdownTop('new_account_id', 'SSL Provider Account', '', '1', '');
 while ($row_account = mysqli_fetch_object($result_account)) {
 
     echo $form->showDropdownOption($row_account->id, $row_account->sslp_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $new_account_id);
@@ -304,7 +339,7 @@ $sql_type = "SELECT id, type
              FROM ssl_cert_types
              ORDER BY type ASC";
 $result_type = mysqli_query($connection, $sql_type) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_type_id', 'Certificate Type', '', '');
+echo $form->showDropdownTop('new_type_id', 'Certificate Type', '', '1', '');
 while ($row_type = mysqli_fetch_object($result_type)) {
 
     echo $form->showDropdownOption($row_type->id, $row_type->type, $new_type_id);
@@ -316,7 +351,7 @@ $sql_ip = "SELECT id, ip, `name`
            FROM ip_addresses
            ORDER BY `name`, ip";
 $result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '');
+echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
 while ($row_ip = mysqli_fetch_object($result_ip)) {
 
     echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ')', $new_ip_id);
@@ -328,7 +363,7 @@ $sql_cat = "SELECT id, `name`
             FROM categories
             ORDER BY `name`";
 $result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_cat_id', 'Category', '', '');
+echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
 while ($row_cat = mysqli_fetch_object($result_cat)) {
 
     echo $form->showDropdownOption($row_cat->id, $row_cat->name, $new_cat_id);
@@ -336,7 +371,7 @@ while ($row_cat = mysqli_fetch_object($result_cat)) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_active', 'Certificate Status', '', '');
+echo $form->showDropdownTop('new_active', 'Certificate Status', '', '', '');
 echo $form->showDropdownOption('1', 'Active', $new_active);
 echo $form->showDropdownOption('5', 'Pending (Registration)', $new_active);
 echo $form->showDropdownOption('3', 'Pending (Renewal)', $new_active);
@@ -349,7 +384,7 @@ if ($new_notes != '') {
 } else {
     $subtext = '';
 }
-echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', '', '');
 
 $sql = "SELECT field_name
         FROM ssl_cert_fields
@@ -396,11 +431,11 @@ if (mysqli_num_rows($result) > 0) { ?>
 
             } elseif ($row->type_id == "2") { // Text
 
-                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '255', '', '', '');
+                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '255', '', '', '', '');
 
             } elseif ($row->type_id == "3") { // Text Area
 
-                echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, $field_data, '', '');
+                echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, $field_data, '', '', '');
 
             }
 
@@ -414,7 +449,7 @@ echo $form->showInputHidden('sslcid', $sslcid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><BR><a href="edit.php?sslcid=<?php echo urlencode($sslcid); ?>&del=1">DELETE THIS SSL CERTIFICATE</a>
+<BR><a href="edit.php?sslcid=<?php echo urlencode($sslcid); ?>&del=1">DELETE THIS SSL CERTIFICATE</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

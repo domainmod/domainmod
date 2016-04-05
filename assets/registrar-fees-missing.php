@@ -90,7 +90,7 @@ update these fees as soon as possible.<BR>
 
             while ($row_missing_tlds = mysqli_fetch_object($result_missing_tlds)) {
 
-                $full_tld_list .= $row_missing_tlds->tld . ", ";
+                $full_tld_list .= '<a href=\'' . $web_root . '/assets/add/registrar-fee.php?rid=' . $row->registrar_id . '&tld=' . $row_missing_tlds->tld . '\'>' . $row_missing_tlds->tld . "</a>, ";
 
             }
 

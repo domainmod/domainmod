@@ -45,26 +45,35 @@ $really_del = $_GET['really_del'];
 $raid = $_GET['raid'];
 $new_owner_id = $_POST['new_owner_id'];
 $new_registrar_id = $_POST['new_registrar_id'];
+$new_email_address = $_POST['new_email_address'];
 $new_username = $_POST['new_username'];
 $new_password = $_POST['new_password'];
-$new_api_key = $_POST['new_api_key'];
 $new_reseller = $_POST['new_reseller'];
+$new_reseller_id = $_POST['new_reseller_id'];
+$new_api_app_name = $_POST['new_api_app_name'];
+$new_api_key = $_POST['new_api_key'];
+$new_api_secret = $_POST['new_api_secret'];
+$new_api_ip_id = $_POST['new_api_ip_id'];
 $new_notes = $_POST['new_notes'];
 $new_raid = $_POST['new_raid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" &&
-        $new_registrar_id != "0") {
+    if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" && $new_registrar_id != "0") {
 
         $query = "UPDATE registrar_accounts
                   SET owner_id = ?,
                       registrar_id = ?,
+                      email_address = ?,
                       username = ?,
                       `password` = ?,
-                      api_key = ?,
-                      notes = ?,
                       reseller = ?,
+                      reseller_id = ?,
+                      api_app_name = ?,
+                      api_key = ?,
+                      api_secret = ?,
+                      api_ip_id = ?,
+                      notes = ?,
                       update_time = ?
                   WHERE id = ?";
         $q = $conn->stmt_init();
@@ -73,8 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $timestamp = $time->stamp();
 
-            $q->bind_param('iissssisi', $new_owner_id, $new_registrar_id, $new_username, $new_password, $new_api_key,
-                $new_notes, $new_reseller, $timestamp, $new_raid);
+            $q->bind_param('iisssissssissi', $new_owner_id, $new_registrar_id, $new_email_address, $new_username,
+                $new_password, $new_reseller, $new_reseller_id, $new_api_app_name, $new_api_key, $new_api_secret,
+                $new_api_ip_id, $new_notes, $timestamp, $new_raid);
             $q->execute();
             $q->close();
 
@@ -101,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $query = "SELECT `name`
                   FROM registrars
-                  WHERE id = '" . $new_registrar_id . "'";
+                  WHERE id = ?";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
@@ -135,22 +145,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_message_success'] = "Registrar Account " . $new_username . " (" . $temp_registrar . ", " . $temp_owner . ") Updated<BR>";
+        $_SESSION['s_message_success'] .= "Registrar Account " . $new_username . " (" . $temp_registrar . ", " . $temp_owner . ") Updated<BR>";
 
         header("Location: ../registrar-accounts.php");
         exit;
 
     } else {
 
-        if ($username == "") {
-            $_SESSION['s_message_danger'] .= "Enter the username<BR>";
+        if ($new_owner_id == '' || $new_owner_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Owner<BR>";
+
         }
+
+        if ($new_registrar_id == '' || $new_registrar_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Registrar<BR>";
+
+        }
+
+        if ($new_username == "") { $_SESSION['s_message_danger'] .= "Enter the username<BR>"; }
 
     }
 
 } else {
 
-    $query = "SELECT owner_id, registrar_id, username, `password`, api_key, notes, reseller
+    $query = "SELECT owner_id, registrar_id, email_address, username, `password`, reseller, reseller_id, api_app_name,
+                  api_key, api_secret, api_ip_id, notes
               FROM registrar_accounts
               WHERE id = ?";
     $q = $conn->stmt_init();
@@ -160,12 +181,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->bind_param('i', $raid);
         $q->execute();
         $q->store_result();
-        $q->bind_result($new_owner_id, $new_registrar_id, $new_username, $new_password, $new_api_key, $new_notes,
-            $new_reseller);
+        $q->bind_result($new_owner_id, $new_registrar_id, $new_email_address, $new_username,
+                        $new_password, $new_reseller, $new_reseller_id, $new_api_app_name, $new_api_key,
+                        $new_api_secret, $new_api_ip_id, $new_notes);
         $q->fetch();
         $q->close();
 
     } else {
+
         $error->outputSqlError($conn, "ERROR");
     }
 
@@ -192,13 +215,12 @@ if ($del == "1") {
 
         if ($existing_domains > 0) {
 
-            $_SESSION['s_message_danger'] = "This Registrar Account has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] .= "This Registrar Account has domains associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['s_message_danger'] = "Are you sure you want to delete this Registrar Account?<BR><BR><a
-                href=\"registrar-account.php?raid=$raid&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR
-                ACCOUNT</a><BR>";
+            $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Registrar Account?<BR><BR><a
+                href=\"registrar-account.php?raid=$raid&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR ACCOUNT</a><BR>";
 
         }
 
@@ -246,13 +268,41 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_message_success'] = "Registrar Account " . $temp_username . " (" . $temp_registrar_name . ", " . $temp_owner_name . ") Deleted<BR>";
+    $_SESSION['s_message_success'] .= "Registrar Account " . $temp_username . " (" . $temp_registrar_name . ", " . $temp_owner_name . ") Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 
     header("Location: ../registrar-accounts.php");
     exit;
 
+}
+
+$query = "SELECT apir.name, apir.req_account_username, apir.req_account_password, apir.req_reseller_id,
+              apir.req_api_app_name, apir.req_api_key, apir.req_api_secret, apir.req_ip_address, apir.lists_domains,
+              apir.ret_expiry_date, apir.ret_dns_servers, apir.ret_privacy_status, apir.ret_autorenewal_status,
+              apir.notes
+          FROM registrar_accounts AS ra, registrars AS r, api_registrars AS apir
+          WHERE ra.registrar_id = r.id
+            AND r.api_registrar_id = apir.id
+            AND ra.id = ?";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+
+    $q->bind_param('i', $raid);
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($api_registrar_name, $req_account_username, $req_account_password, $req_reseller_id,
+                    $req_api_app_name, $req_api_key, $req_api_secret, $req_ip_address, $lists_domains,
+                    $ret_expiry_date, $ret_dns_servers, $ret_privacy_status, $ret_autorenewal_status,
+                    $api_registrar_notes);
+    $q->fetch();
+    $has_api_support = $q->num_rows();
+    $q->close();
+
+} else {
+
+    $error->outputSqlError($conn, "ERROR");
 }
 ?>
 <?php include(DIR_INC . 'doctype.inc.php'); ?>
@@ -267,6 +317,33 @@ if ($really_del == "1") {
 echo $form->showFormTop('');
 
 $query = "SELECT id, `name`
+          FROM registrars
+          ORDER BY `name` ASC";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($id, $name);
+
+    echo $form->showDropdownTop('new_registrar_id', 'Registrar', '', '1', '');
+
+    while ($q->fetch()) {
+
+        echo $form->showDropdownOption($id, $name, $new_registrar_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
+
+    $q->close();
+
+} else {
+    $error->outputSqlError($conn, "ERROR");
+}
+
+$query = "SELECT id, `name`
           FROM owners
           ORDER BY `name` ASC";
 $q = $conn->stmt_init();
@@ -277,7 +354,7 @@ if ($q->prepare($query)) {
     $q->store_result();
     $q->bind_result($id, $name);
 
-    echo $form->showDropdownTop('new_owner_id', 'Owner', '', '');
+    echo $form->showDropdownTop('new_owner_id', 'Account Owner', '', '1', '');
 
     while ($q->fetch()) {
 
@@ -293,40 +370,149 @@ if ($q->prepare($query)) {
     $error->outputSqlError($conn, "ERROR");
 }
 
-$query = "SELECT id, `name`
-          FROM registrars
-          ORDER BY `name` ASC";
-$q = $conn->stmt_init();
+echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '', '', '');
+echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '1', '', '');
+echo $form->showInputText('new_password', 'Password (255)', '', $new_password, '255', '', '', '', '');
 
-if ($q->prepare($query)) {
-
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
-
-    echo $form->showDropdownTop('new_registrar_id', 'Registrar', '', '');
-
-    while ($q->fetch()) {
-
-        echo $form->showDropdownOption($id, $name, $new_registrar_id);
-
-    }
-
-    echo $form->showDropdownBottom('');
-
-    $q->close();
-
-} else {
-    $error->outputSqlError($conn, "ERROR");
-}
-echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '', '');
-echo $form->showInputText('new_password', 'Password (255)', '', $new_password, '255', '', '', '');
-echo $form->showInputText('new_api_key', 'API Key', '', $new_api_key, '255', '', '', '');
 echo $form->showRadioTop('Reseller Account?', '', '');
 echo $form->showRadioOption('new_reseller', '1', 'Yes', $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_reseller', '0', 'No', $new_reseller, '', '');
 echo $form->showRadioBottom('');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+
+echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $new_reseller_id, '100', '', '', '', '');
+
+if ($has_api_support >= 1) { ?>
+
+    <div class="box box-default collapsed-box box-solid">
+        <div class="box-header with-border">
+            <h3 class="box-title">API Credentials</h3>
+            <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                        class="fa fa-plus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body">
+
+            <strong>API Requirements</strong><BR>
+            <?php echo $api_registrar_name; ?> requires the following credentials in order to use their API.
+
+            <ul><?php
+
+                $missing_text = ' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '"><span style="color: #a30000"><strong>missing</strong></span></a>)';
+                $saved_text = ' (<span style="color: darkgreen"><strong>saved</strong></span>)';
+
+                if ($req_account_username == '1') {
+                    echo '<li>Registrar Account Username';
+                    if ($new_username == '') {
+                        echo $missing_text;
+                    } else {
+                        echo $saved_text;
+                    }
+                    echo '</li>';
+                }
+                if ($req_account_password == '1') {
+                    echo '<li>Registrar Account Password';
+                    if ($new_password == '') {
+                        echo $missing_text;
+                    } else {
+                        echo $saved_text;
+                    }
+                    echo '</li>';
+                }
+                if ($req_reseller_id == '1') {
+                    echo '<li>Reseller ID';
+                    if ($new_reseller_id == '' || $new_reseller_id == '0') {
+                        echo $missing_text;
+                    } else {
+                        echo $saved_text;
+                    }
+                    echo '</li>';
+                }
+                if ($req_api_app_name == '1') {
+                    echo '<li>API Application Name';
+                    if ($new_api_app_name == '') {
+                        echo $missing_text;
+                    } else {
+                        echo $saved_text;
+                    }
+                    echo '</li>';
+                }
+                if ($req_api_key == '1') {
+                    echo '<li>API Key';
+                    if ($new_api_key == '') {
+                        echo $missing_text;
+                    } else {
+                        echo $saved_text;
+                    }
+                    echo '</li>';
+                }
+                if ($req_api_secret == '1') {
+                    echo '<li>API Secret';
+                    if ($new_api_secret == '') {
+                        echo $missing_text;
+                    } else {
+                        echo $saved_text;
+                    }
+                    echo '</li>';
+                }
+                if ($req_ip_address == '1') {
+                    echo '<li>Connecting IP Address';
+                    if ($new_api_ip_id == '0') {
+                        echo $missing_text;
+                    } else {
+                        echo $saved_text;
+                    }
+                    echo '</li>';
+                } ?>
+            </ul><?php
+
+            if ($api_registrar_notes != '') {
+
+                echo '<strong>Registrar Notes</strong><BR>';
+                echo $api_registrar_notes . "<BR><BR>";
+
+            }
+
+            echo $form->showInputText('new_api_app_name', 'API App Name', '', $new_api_app_name, '255', '', '', '', '');
+            echo $form->showInputText('new_api_key', 'API Key', '', $new_api_key, '255', '', '', '', '');
+            echo $form->showInputText('new_api_secret', 'API Secret', '', $new_api_secret, '255', '', '', '', '');
+
+            $query = "SELECT id, `name`, ip
+                      FROM ip_addresses
+                      ORDER BY `name` ASC";
+            $q = $conn->stmt_init();
+
+            if ($q->prepare($query)) {
+
+                $q->execute();
+                $q->store_result();
+                $q->bind_result($id, $name, $ip_address);
+
+                echo $form->showDropdownTop('new_api_ip_id', 'API IP Address', 'The IP Address that you whitelisted with the domain registrar for API access. <a href="' . $web_root . '/assets/add/ip-address.php">Click here</a> to add a new IP Address.', '', '');
+
+                echo $form->showDropdownOption('0', 'n/a', '0');
+
+                while ($q->fetch()) {
+
+                    echo $form->showDropdownOption($id, $name . ' (' . $ip_address . ')', $new_api_ip_id);
+
+                }
+
+                echo $form->showDropdownBottom('');
+
+                $q->close();
+
+            } else {
+                $error->outputSqlError($conn, "ERROR");
+            } ?>
+
+        </div>
+    </div><BR><?php
+
+}
+
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showInputHidden('new_raid', $raid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

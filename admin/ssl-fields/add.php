@@ -68,16 +68,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
         } else {
 
             $query_i = "INSERT INTO ssl_cert_fields
-                        (`name`, field_name, description, type_id, notes, insert_time)
+                        (`name`, field_name, description, type_id, notes, created_by, insert_time)
                         VALUES
-                        (?, ?, ?, ?, ?, ?)";
+                        (?, ?, ?, ?, ?, ?, ?)";
             $q_i = $conn->stmt_init();
 
             if ($q_i->prepare($query_i)) {
 
                 $timestamp = $time->stamp();
 
-                $q_i->bind_param('sssiss', $new_name, $new_field_name, $new_description, $new_field_type_id, $new_notes, $timestamp);
+                $q_i->bind_param('sssisis', $new_name, $new_field_name, $new_description, $new_field_type_id, $new_notes, $_SESSION['s_user_id'], $timestamp);
                 $q_i->execute();
                 $q_i->close();
 
@@ -167,8 +167,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Display Name (75)', '', $new_name, '75', '', '', '');
-echo $form->showInputText('new_field_name', 'Database Field Name (30)', 'The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField).<BR><strong>WARNING:</strong> The Database Field Name cannot be renamed.', $new_field_name, '30', '', '', '');
+echo $form->showInputText('new_name', 'Display Name (75)', '', $new_name, '75', '', '1', '', '');
+echo $form->showInputText('new_field_name', 'Database Field Name (30)', 'The Database Field Name can contain only letters and underscores (ie. sample_field or SampleField).<BR><strong>WARNING:</strong> The Database Field Name cannot be renamed.', $new_field_name, '30', '', '1', '', '');
 ?>
 <?php
 $query = "SELECT id, `name`
@@ -182,7 +182,7 @@ if ($q->prepare($query)) {
     $q->store_result();
     $q->bind_result($id, $name);
 
-    echo $form->showDropdownTop('new_field_type_id', 'Data Type', '<strong>WARNING:</strong> The Data Type cannot be changed.', '');
+    echo $form->showDropdownTop('new_field_type_id', 'Data Type', '<strong>WARNING:</strong> The Data Type cannot be changed.', '', '');
 
     while ($q->fetch()) {
 
@@ -198,8 +198,8 @@ if ($q->prepare($query)) {
     $error->outputSqlError($conn, "ERROR");
 }
 
-echo $form->showInputText('new_description', 'Description (255)', '', $new_description, '255', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_description', 'Description (255)', '', $new_description, '255', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showSubmitButton('Add Custom Field', '', '');
 echo $form->showFormBottom('');
 ?>

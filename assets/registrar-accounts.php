@@ -48,8 +48,9 @@ if ($rid != '') { $rid_string = " AND ra.registrar_id = '$rid' "; } else { $rid_
 if ($raid != '') { $raid_string = " AND ra.id = '$raid' "; } else { $raid_string = ''; }
 if ($oid != '') { $oid_string = " AND ra.owner_id = '$oid' "; } else { $oid_string = ''; }
 
-$sql = "SELECT ra.id AS raid, ra.username, ra.password, ra.api_key, ra.owner_id, ra.registrar_id, ra.reseller,
-            o.id AS oid, o.name AS oname, r.id AS rid, r.name AS rname, ra.notes, ra.insert_time, ra.update_time
+$sql = "SELECT ra.id AS raid, ra.email_address, ra.username, ra.password, ra.reseller, ra.reseller_id, ra.api_app_name,
+            ra.api_key, ra.api_secret, ra.api_ip_id, ra.owner_id, ra.registrar_id, o.id AS oid, o.name AS oname,
+            r.id AS rid, r.name AS rname, ra.notes, ra.creation_type_id, ra.created_by, ra.insert_time, ra.update_time
         FROM registrar_accounts AS ra, owners AS o, registrars AS r
         WHERE ra.owner_id = o.id
           AND ra.registrar_id = r.id
@@ -74,14 +75,22 @@ if ($export_data == '1') {
     $row_contents = array(
         'Status',
         'Registrar',
+        'Email Address',
         'Username',
         'Password',
+        'Reseller Account?',
+        'Reseller ID',
+        'API App Name',
         'API Key',
+        'API Secret',
+        'API IP (Name)',
+        'API IP (IP)',
         'Owner',
         'Domains',
         'Default Account?',
-        'Reseller Account?',
         'Notes',
+        'Creation Type',
+        'Created By',
         'Inserted',
         'Updated'
     );
@@ -90,6 +99,27 @@ if ($export_data == '1') {
     if (mysqli_num_rows($result) > 0) {
 
         while ($row = mysqli_fetch_object($result)) {
+
+            if ($row->api_ip_id != '0') {
+
+                $sql_temp = "SELECT `name`, ip
+                             FROM ip_addresses
+                             WHERE id = '" . $row->api_ip_id . "'";
+                $result_temp = mysqli_query($connection, $sql_temp);
+
+                while ($row_temp = mysqli_fetch_object($result_temp)) {
+
+                    $api_ip_name = $row_temp->name;
+                    $api_ip_address = $row_temp->ip;
+
+                }
+
+            } else {
+
+                $api_ip_name = '';
+                $api_ip_address = '';
+
+            }
 
             $sql_domain_count = "SELECT count(*) AS total_domain_count
                                  FROM domains
@@ -131,17 +161,34 @@ if ($export_data == '1') {
 
             }
 
+            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+
+            if ($row->created_by == '0') {
+                $created_by = 'Unknown';
+            } else {
+                $user = new DomainMOD\User();
+                $created_by = $user->getFullName($connection, $row->created_by);
+            }
+
             $row_contents = array(
                 $status,
                 $row->rname,
+                $row->email_address,
                 $row->username,
                 $row->password,
+                $is_reseller,
+                $row->reseller_id,
+                $row->api_app_name,
                 $row->api_key,
+                $row->api_secret,
+                $api_ip_name,
+                $api_ip_address,
                 $row->oname,
                 $total_domain_count,
                 $is_default,
-                $is_reseller,
                 $row->notes,
+                $creation_type,
+                $created_by,
                 $time->toUserTimezone($row->insert_time),
                 $time->toUserTimezone($row->update_time)
             );

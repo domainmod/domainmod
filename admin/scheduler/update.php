@@ -84,7 +84,7 @@ if ($a == 'u') {
 }
 mysqli_query($connection, $sql);
 
-$_SESSION['s_message_success'] = $message;
+$_SESSION['s_message_success'] .= $message;
 
 header("Location: index.php");
 exit;

@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/settings/settings-maintenance.inc.php
+ * /_includes/settings/maintenance-main.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2016 Greg Chetcuti <greg@chetcuti.com>
@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-$page_title = "System Maintenance";
-$breadcrumb = "System Maintenance";
-$software_section = "settings";
-$software_section_logo = "fa-gears";
-$slug = "settings-maintenance";
+$page_title = "Maintenance";
+$breadcrumb = "Maintenance";
+$software_section = "maintenance";
+$software_section_logo = "fa-check";
+$slug = "maintenance-main";

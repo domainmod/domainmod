@@ -222,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 }
 if ($del == '1') {
 
-    $_SESSION['s_message_danger'] = 'Are you sure you want to delete this User?<BR><BR><a href="edit.php?uid=' . $uid . '&really_del=1">YES, REALLY DELETE THIS USER</a><BR>';
+    $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this User?<BR><BR><a href="edit.php?uid=' . $uid . '&really_del=1">YES, REALLY DELETE THIS USER</a><BR>';
 
 }
 
@@ -239,8 +239,8 @@ if ($really_del == '1') {
 
     if ($uid == $temp_uid || $uid == $_SESSION['s_user_id']) {
 
-        if ($uid == $temp_uid) $_SESSION['s_message_danger'] = 'The user admin cannot be deleted<BR>';
-        if ($uid == $_SESSION['s_user_id']) $_SESSION['s_message_danger'] = 'You can\'t delete yourself<BR>';
+        if ($uid == $temp_uid) $_SESSION['s_message_danger'] .= 'The user admin cannot be deleted<BR>';
+        if ($uid == $_SESSION['s_user_id']) $_SESSION['s_message_danger'] .= 'You can\'t delete yourself<BR>';
 
     } else {
 
@@ -268,7 +268,7 @@ if ($really_del == '1') {
 
         } else $error->outputSqlError($conn, "ERROR");
 
-        $_SESSION['s_message_success'] = 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Deleted<BR>';
+        $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Deleted<BR>';
 
         header("Location: index.php");
         exit;
@@ -287,8 +287,8 @@ if ($really_del == '1') {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_first_name', 'First Name (50)', '', $new_first_name, '50', '', '', '');
-echo $form->showInputText('new_last_name', 'Last Name (50)', '', $new_last_name, '50', '', '', '');
+echo $form->showInputText('new_first_name', 'First Name (50)', '', $new_first_name, '50', '', '1', '', '');
+echo $form->showInputText('new_last_name', 'Last Name (50)', '', $new_last_name, '50', '', '1', '', '');
 
 if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
@@ -296,11 +296,11 @@ if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
 } else {
 
-    echo $form->showInputText('new_username', 'Username (30)', '', $new_username, '30', '', '', '');
+    echo $form->showInputText('new_username', 'Username (30)', '', $new_username, '30', '', '1', '', '');
 
 }
 
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '', '');
+echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '1', '', '');
 
 if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 

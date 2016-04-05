@@ -95,8 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($date->checkDateFormat($new_expiry_date) && $new_name != "" && $new_type_id != "" && $new_ip_id != "" &&
         $new_cat_id != "" && $new_domain_id != "" && $new_account_id != "" && $new_type_id != "0" && $new_ip_id != "0"
-        && $new_cat_id != "0" && $new_domain_id != "0" && $new_account_id != "0"
-    ) {
+        && $new_cat_id != "0" && $new_domain_id != "0" && $new_account_id != "0" && $new_active != '') {
 
         $query = "SELECT ssl_provider_id, owner_id
                   FROM ssl_accounts
@@ -140,16 +139,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $query = "INSERT INTO ssl_certs
                   (owner_id, ssl_provider_id, account_id, domain_id, `name`, type_id, ip_id, cat_id, expiry_date,
-                   fee_id, total_cost, notes, active, insert_time)
+                   fee_id, total_cost, notes, active, created_by, insert_time)
                   VALUES
-                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
 
-            $q->bind_param('iiiisiiisidsis', $new_owner_id, $new_ssl_provider_id, $new_account_id, $new_domain_id,
+            $q->bind_param('iiiisiiisidsiis', $new_owner_id, $new_ssl_provider_id, $new_account_id, $new_domain_id,
                 $new_name, $new_type_id, $new_ip_id, $new_cat_id, $new_expiry_date, $new_fee_id, $new_total_cost,
-                $new_notes, $new_active, $timestamp);
+                $new_notes, $new_active, $_SESSION['s_user_id'], $timestamp);
             $q->execute();
 
             $temp_ssl_id = $q->insert_id;
@@ -227,14 +226,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_message_success'] = "SSL Certificate $new_name Added<BR>";
-
         $queryB = new DomainMOD\QueryBuild();
-
         $sql = $queryB->missingFees('ssl_certs');
         $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
         $system->checkExistingAssets($connection);
+        
+        $_SESSION['s_message_success'] .= 'SSL Certificate ' . $new_name . ' Added<BR>';
 
     } else {
 
@@ -243,6 +241,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         if (!$date->checkDateFormat($new_expiry_date)) {
             $_SESSION['s_message_danger'] .= "The expiry date you entered is invalid<BR>";
+        }
+
+        if ($new_domain_id == '' || $new_domain_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the domain<BR>";
+
+        }
+
+        if ($new_account_id == '' || $new_account_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the SSL Provider Account<BR>";
+
+        }
+
+        if ($new_type_id == '' || $new_type_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the SSL Type<BR>";
+
+        }
+
+        if ($new_ip_id == '' || $new_ip_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the IP Address<BR>";
+
+        }
+
+        if ($new_cat_id == '' || $new_cat_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Category<BR>";
+
+        }
+
+        if ($new_cat_id == '' || $new_cat_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Category<BR>";
+
+        }
+
+        if ($new_active == '') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Status<BR>";
+
         }
 
     }
@@ -259,17 +299,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Host / Label (100)', '', $new_name, '100', '', '', '');
+echo $form->showInputText('new_name', 'Host / Label (100)', '', $new_name, '100', '', '1', '', '');
 if ($new_expiry_date == '') {
     $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
 }
-echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '', '');
+echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
-
-
-
-
-echo $form->showDropdownTop('new_domain_id', 'Domain', '', '');
+echo $form->showDropdownTop('new_domain_id', 'Domain', '', '1', '');
 $query = "SELECT id, domain
           FROM domains
           WHERE (active NOT IN ('0', '10') OR id = ?)
@@ -309,7 +345,7 @@ $sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS 
                   AND sslpa.ssl_provider_id = sslp.id
                 ORDER BY sslp_name ASC, o_name ASC, sslpa.username ASC";
 $result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_account_id', 'SSL Provider Account', '', '');
+echo $form->showDropdownTop('new_account_id', 'SSL Provider Account', '', '1', '');
 while ($row_account = mysqli_fetch_object($result_account)) {
 
     echo $form->showDropdownOption($row_account->id, $row_account->sslp_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $to_compare);
@@ -330,7 +366,7 @@ $sql_type = "SELECT id, type
              FROM ssl_cert_types
              ORDER BY type ASC";
 $result_type = mysqli_query($connection, $sql_type) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_type_id', 'Certificate Type', '', '');
+echo $form->showDropdownTop('new_type_id', 'Certificate Type', '', '1', '');
 while ($row_type = mysqli_fetch_object($result_type)) {
 
     echo $form->showDropdownOption($row_type->id, $row_type->type, $to_compare);
@@ -351,7 +387,7 @@ $sql_ip = "SELECT id, ip, `name`
            FROM ip_addresses
            ORDER BY `name`, ip";
 $result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '');
+echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
 while ($row_ip = mysqli_fetch_object($result_ip)) {
 
     echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ')', $to_compare);
@@ -372,7 +408,7 @@ $sql_cat = "SELECT id, `name`
             FROM categories
             ORDER BY `name`";
 $result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_cat_id', 'Category', '', '');
+echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
 while ($row_cat = mysqli_fetch_object($result_cat)) {
 
     echo $form->showDropdownOption($row_cat->id, $row_cat->name, $to_compare);
@@ -380,7 +416,7 @@ while ($row_cat = mysqli_fetch_object($result_cat)) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_active', 'Certificate Status', '', '');
+echo $form->showDropdownTop('new_active', 'Certificate Status', '', '', '');
 echo $form->showDropdownOption('1', 'Active', $new_active);
 echo $form->showDropdownOption('5', 'Pending (Registration)', $new_active);
 echo $form->showDropdownOption('3', 'Pending (Renewal)', $new_active);
@@ -388,7 +424,7 @@ echo $form->showDropdownOption('4', 'Pending (Other)', $new_active);
 echo $form->showDropdownOption('0', 'Expired', $new_active);
 echo $form->showDropdownBottom('');
 
-echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', '', '');
 
 $query = "SELECT field_name
           FROM ssl_cert_fields
@@ -437,11 +473,11 @@ if ($q->prepare($query)) {
 
                     } elseif ($type_id == "2") { // Text
 
-                        echo $form->showInputText('new_' . $field_name, $name, $description, ${'new_' . $field}, '255', '', '', '');
+                        echo $form->showInputText('new_' . $field_name, $name, $description, ${'new_' . $field}, '255', '', '', '', '');
 
                     } elseif ($type_id == "3") { // Text Area
 
-                        echo $form->showInputTextarea('new_' . $field_name, $name, $description, ${'new_' . $field}, '', '');
+                        echo $form->showInputTextarea('new_' . $field_name, $name, $description, ${'new_' . $field}, '', '', '');
 
                     }
 

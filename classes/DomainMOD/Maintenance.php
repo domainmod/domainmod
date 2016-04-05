@@ -28,10 +28,10 @@ class Maintenance
     {
 
         $this->deleteUnusedFees($connection, 'fees', 'domains');
-        $_SESSION['s_message_success'] .= $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
-        $_SESSION['s_message_success'] .= $this->updateTlds($connection);
-        $_SESSION['s_message_success'] .= $this->updateSegments($connection);
-        $_SESSION['s_message_success'] .= $this->updateAllFees($connection);
+        $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
+        $this->updateTlds($connection);
+        $this->updateSegments($connection);
+        $this->updateAllFees($connection);
 
         $result_message = 'Maintenance Completed<BR>';
 
@@ -158,6 +158,87 @@ class Maintenance
                      WHERE registrar_id = '" . $row->registrar_id . "'
                        AND tld = '" . $row->tld . "'";
             mysqli_query($connection, $sql2);
+
+        }
+
+        return true;
+
+    }
+
+    public function updateDomainFee($connection, $domain_id)
+    {
+
+        $time = new Time();
+        $timestamp = $time->stamp();
+
+        $sql = "SELECT registrar_id, tld
+                FROM domains
+                WHERE id = '" . $domain_id . "'";
+        $result = mysqli_query($connection, $sql);
+
+        while ($row = mysqli_fetch_object($result)) {
+
+            $registrar_id = $row->registrar_id;
+            $tld = $row->tld;
+
+        }
+
+        $sql = "UPDATE domains
+                SET fee_fixed = '0'
+                WHERE id = '" . $domain_id . "'";
+        mysqli_query($connection, $sql);
+
+        $sql = "UPDATE fees
+                SET fee_fixed = '0',
+                    update_time = '" . $timestamp . "'
+                WHERE registrar_id = '" . $registrar_id . "'
+                  AND tld = '" . $tld . "'";
+        mysqli_query($connection, $sql);
+
+        $sql = "SELECT id, registrar_id, tld
+                FROM fees
+                WHERE fee_fixed = '0'
+                  AND registrar_id = '" . $registrar_id . "'
+                  AND tld = '" . $tld . "'";
+        $result = mysqli_query($connection, $sql);
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $sql2 = "UPDATE domains
+                         SET fee_id = '" . $row->id . "'
+                         WHERE registrar_id = '" . $row->registrar_id . "'
+                           AND tld = '" . $row->tld . "'
+                           AND fee_fixed = '0'";
+                mysqli_query($connection, $sql2);
+
+                $sql2 = "UPDATE domains d
+                         JOIN fees f ON d.fee_id = f.id
+                         SET d.fee_fixed = '1',
+                             d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
+                         WHERE d.registrar_id = '" . $row->registrar_id . "'
+                           AND d.tld = '" . $row->tld . "'
+                           AND d.privacy = '1'";
+                mysqli_query($connection, $sql2);
+
+                $sql2 = "UPDATE domains d
+                         JOIN fees f ON d.fee_id = f.id
+                         SET d.fee_fixed = '1',
+                             d.total_cost = f.renewal_fee + f.misc_fee
+                         WHERE d.registrar_id = '" . $row->registrar_id . "'
+                           AND d.tld = '" . $row->tld . "'
+                           AND d.privacy = '0'";
+                mysqli_query($connection, $sql2);
+
+                $sql2 = "UPDATE fees
+                         SET fee_fixed = '1',
+                             update_time = '" . $timestamp . "'
+                         WHERE registrar_id = '" . $row->registrar_id . "'
+                           AND tld = '" . $row->tld . "'";
+                mysqli_query($connection, $sql2);
+
+            }
 
         }
 

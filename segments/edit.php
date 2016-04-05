@@ -26,9 +26,9 @@ include("../_includes/init.inc.php");
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
+$system = new DomainMOD\System();
 $error = new DomainMOD\Error();
 $maint = new DomainMOD\Maintenance();
-$system = new DomainMOD\System();
 $form = new DomainMOD\Form();
 $time = new DomainMOD\Time();
 $timestamp = $time->stamp();
@@ -73,12 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($invalid_count == 1) {
 
-                    $_SESSION['s_message_danger'] = "There is " . number_format($invalid_count) . " invalid domain
+                    $_SESSION['s_message_danger'] .= "There is " . number_format($invalid_count) . " invalid domain
                         on your list<BR><BR>" . $temp_result_message;
 
                 } else {
 
-                    $_SESSION['s_message_danger'] = "There are " . number_format($invalid_count) . " invalid
+                    $_SESSION['s_message_danger'] .= "There are " . number_format($invalid_count) . " invalid
                         domains on your list<BR><BR>" . $temp_result_message;
 
                     if (($invalid_count - $invalid_to_display) == 1) {
@@ -175,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $segid = $new_segid;
 
-            $_SESSION['s_message_success'] = "Segment " . $new_name . " Updated<BR>";
+            $_SESSION['s_message_success'] .= "Segment " . $new_name . " Updated<BR>";
 
             $maint->updateSegments($connection);
 
@@ -219,7 +219,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($del == "1") {
 
-    $_SESSION['s_message_danger'] = "Are you sure you want to delete this Segment?<BR><BR><a
+    $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Segment?<BR><BR><a
         href=\"edit.php?segid=$segid&really_del=1\">YES, REALLY DELETE THIS SEGMENT</a><BR>";
 
 }
@@ -272,7 +272,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_message_success'] = "Segment " . $temp_segment_name . " Deleted<BR>";
+    $_SESSION['s_message_success'] .= "Segment " . $temp_segment_name . " Deleted<BR>";
 
     header("Location: ../segments/");
     exit;
@@ -289,10 +289,10 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Segment Name (35)', '', $new_name, '35', '', '', '');
-echo $form->showInputTextarea('new_segment', 'Segment Domains (one per line)', '', $new_segment, '', '');
-echo $form->showInputTextarea('new_description', 'Description', '', $new_description, '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_name', 'Segment Name (35)', '', $new_name, '35', '', '1', '', '');
+echo $form->showInputTextarea('new_segment', 'Segment Domains (one per line)', '', $new_segment, '1', '', '');
+echo $form->showInputTextarea('new_description', 'Description', '', $new_description, '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showInputHidden('new_segid', $segid);
 echo $form->showSubmitButton('Update Segment', '', '');
 echo $form->showFormBottom('');

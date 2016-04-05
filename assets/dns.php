@@ -42,7 +42,7 @@ $system->authCheck();
 $export_data = $_GET['export_data'];
 
 $sql = "SELECT id, `name`, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3,
-            ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, insert_time, update_time
+            ip4, ip5, ip6, ip7, ip8, ip9, ip10, notes, creation_type_id, created_by, insert_time, update_time
         FROM dns
         ORDER BY `name` ASC, number_of_servers DESC";
 
@@ -85,6 +85,8 @@ if ($export_data == '1') {
         'DNS Server 10',
         'IP Address 10',
         'Notes',
+        'Creation Type',
+        'Created By',
         'Inserted',
         'Updated'
     );
@@ -124,6 +126,15 @@ if ($export_data == '1') {
 
             }
 
+            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+            
+            if ($row->created_by == '0') {
+                $created_by = 'Unknown';
+            } else {
+                $user = new DomainMOD\User();
+                $created_by = $user->getFullName($connection, $row->created_by);
+            }
+
             $row_contents = array(
                 $status,
                 $row->name,
@@ -151,6 +162,8 @@ if ($export_data == '1') {
                 $row->dns10,
                 $row->ip10,
                 $row->notes,
+                $creation_type,
+                $created_by,
                 $time->toUserTimezone($row->insert_time),
                 $time->toUserTimezone($row->update_time)
             );

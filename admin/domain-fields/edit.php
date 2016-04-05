@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
 if ($del == '1') {
 
-    $_SESSION['s_message_danger'] = 'Are you sure you want to delete this Custom Domain Field?<BR><BR><a href=\"edit.php?cdfid=' . $cdfid . '&really_del=1\">YES, REALLY DELETE THIS CUSTOM DOMAIN FIELD</a><BR>';
+    $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this Custom Domain Field?<BR><BR><a href="edit.php?cdfid=' . $cdfid . '&really_del=1">YES, REALLY DELETE THIS CUSTOM DOMAIN FIELD</a><BR>';
 
 }
 
@@ -171,7 +171,7 @@ if ($really_del == '1') {
 
     if ($cdfid == '') {
 
-        $_SESSION['s_message_danger'] = 'The Custom Domain Field cannot be deleted<BR>';
+        $_SESSION['s_message_danger'] .= 'The Custom Domain Field cannot be deleted<BR>';
 
     } else {
 
@@ -222,7 +222,7 @@ if ($really_del == '1') {
 
         } else $error->outputSqlError($conn, "ERROR");
 
-        $_SESSION['s_message_success'] = 'Custom Domain Field ' . $temp_name . ' (' . $temp_field_name . ') Deleted<BR>';
+        $_SESSION['s_message_success'] .= 'Custom Domain Field ' . $temp_name . ' (' . $temp_field_name . ') deleted<BR>';
 
         header("Location: ../domain-fields/");
         exit;
@@ -241,13 +241,13 @@ if ($really_del == '1') {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Display Name (75)', '', $new_name, '75', '', '', '');
+echo $form->showInputText('new_name', 'Display Name (75)', '', $new_name, '75', '', '1', '', '');
 ?>
 <strong>Database Field Name</strong><BR><?php echo $new_field_name; ?><BR><BR>
 <strong>Data Type</strong><BR><?php echo $new_field_type; ?><BR><BR>
 <?php
-echo $form->showInputText('new_description', 'Description (255)', '', $new_description, '255', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_description', 'Description (255)', '', $new_description, '255', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showInputHidden('new_cdfid', $cdfid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

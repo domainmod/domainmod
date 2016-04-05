@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $dwsid = $new_dwsid;
 
-        $_SESSION['s_message_success'] = "Server " . $new_name . " (" . $new_host . ") Updated<BR>";
+        $_SESSION['s_message_success'] .= "Server " . $new_name . " (" . $new_host . ") Updated<BR>";
 
         header("Location: servers.php");
         exit;
@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 if ($del == "1") {
 
-    $_SESSION['s_message_danger'] = "Are you sure you want to delete this Server?<BR><BR><a
+    $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Server?<BR><BR><a
     href=\"edit-server.php?dwsid=$dwsid&really_del=1\">YES, REALLY DELETE THIS SERVER</a><BR>";
 
 }
@@ -221,7 +221,7 @@ if ($really_del == "1") {
     $dwstats = new DomainMOD\DwStats();
     $dwstats->updateDwTotalsTable($connection);
 
-    $_SESSION['s_message_success'] = "Server " . $new_name . " (" . $new_host . ") Deleted<BR>";
+    $_SESSION['s_message_success'] .= "Server " . $new_name . " (" . $new_host . ") Deleted<BR>";
 
     header("Location: servers.php");
     exit;
@@ -238,16 +238,16 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Name (100)', 'Enter the display name for this server', $new_name, '100', '', '', '');
-echo $form->showInputText('new_host', 'Host Name (100)', 'Enter the host name of your WHM installation (ie. server1.example.com).', $new_host, '100', '', '', '');
-echo $form->showDropdownTop('new_protocol', 'Protocol (5)', 'Enter the protocol you connect with.', '');
+echo $form->showInputText('new_name', 'Name (100)', 'Enter the display name for this server', $new_name, '100', '', '1', '', '');
+echo $form->showInputText('new_host', 'Host Name (100)', 'Enter the host name of your WHM installation (ie. server1.example.com).', $new_host, '100', '', '1', '', '');
+echo $form->showDropdownTop('new_protocol', 'Protocol (5)', 'Enter the protocol you connect with.', '1', '');
 echo $form->showDropdownOption('https', 'Secured (https)', $new_protocol);
 echo $form->showDropdownOption('http', 'Unsecured (http)', $new_protocol);
 echo $form->showDropdownBottom('');
-echo $form->showInputText('new_port', 'Port (5)', 'Enter the port that you connect to (usually 2086 or 2087).', $new_port, '5', '', '', '');
-echo $form->showInputText('new_username', 'Username (100)', 'Enter the username for your WHM installation.', $new_username, '100', '', '', '');
-echo $form->showInputTextarea('new_hash', 'Hash/Remote Access Key', 'Enter the hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the right-hand side of the screen.', $new_hash, '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_port', 'Port (5)', 'Enter the port that you connect to (usually 2086 or 2087).', $new_port, '5', '', '1', '', '');
+echo $form->showInputText('new_username', 'Username (100)', 'Enter the username for your WHM installation.', $new_username, '100', '', '1', '', '');
+echo $form->showInputTextarea('new_hash', 'Hash/Remote Access Key', 'Enter the hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the right-hand side of the screen.', $new_hash, '1', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showInputHidden('new_dwsid', $dwsid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

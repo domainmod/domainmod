@@ -1,6 +1,6 @@
 <?php
 /**
- * /settings/maintenance/index.php
+ * /admin/maintenance/clear-queues.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2016 Greg Chetcuti <greg@chetcuti.com>
@@ -27,27 +27,19 @@ require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
+$error = new DomainMOD\Error();
+$queue = new DomainMOD\DomainQueue();
+$time = new DomainMOD\Time();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
-include(DIR_INC . "settings/settings-maintenance.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
-?>
-<?php include(DIR_INC . 'doctype.inc.php'); ?>
-<html>
-<head>
-    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
-</head>
-<body class="hold-transition skin-red sidebar-mini">
-<?php include(DIR_INC . "layout/header.inc.php"); ?>
-<a href="update-domain-fees.php">Update Domain Fees</a><BR><BR>
-<a href="update-ssl-fees.php">Update SSL Certificate Fees</a><BR><BR>
-<a href="update-conversions.php">Update Conversion Rates</a>
-<?php //@formatter:on ?>
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
-</body>
-</html>
+$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
+
+$_SESSION['s_message_success'] .= $queue->clearQueues($connection);
+
+header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
+exit;

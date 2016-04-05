@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $whid = $new_whid;
 
-        $_SESSION['s_message_success'] = "Web Host " . $new_host . " Updated<BR>";
+        $_SESSION['s_message_success'] .= "Web Host " . $new_host . " Updated<BR>";
 
         header("Location: ../hosting.php");
         exit;
@@ -123,11 +123,11 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['s_message_danger'] = "This Web Host has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] .= "This Web Host has domains associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['s_message_danger'] = "Are you sure you want to delete this Web Host?<BR><BR><a
+            $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Web Host?<BR><BR><a
                 href=\"host.php?whid=$whid&really_del=1\">YES, REALLY DELETE THIS WEB HOST</a><BR>";
 
         }
@@ -156,7 +156,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_message_success'] = "Web Host " . $new_host . " Deleted<BR>";
+    $_SESSION['s_message_success'] .= "Web Host " . $new_host . " Deleted<BR>";
 
     header("Location: ../hosting.php");
     exit;
@@ -173,9 +173,9 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_host', 'Web Host Name (100)', '', $new_host, '100', '', '', '');
-echo $form->showInputText('new_url', 'Web Host\'s URL (100)', '', $new_url, '100', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_host', 'Web Host Name (100)', '', $new_host, '100', '', '1', '', '');
+echo $form->showInputText('new_url', 'Web Host\'s URL (100)', '', $new_url, '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showInputHidden('new_whid', $whid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

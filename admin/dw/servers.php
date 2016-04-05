@@ -42,7 +42,7 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT id, `name`, `host`, protocol, `port`, username, `hash`, notes, dw_accounts, dw_dns_zones, dw_dns_records, build_end_time, insert_time, update_time
+$sql = "SELECT id, `name`, `host`, protocol, `port`, username, `hash`, notes, dw_accounts, dw_dns_zones, dw_dns_records, build_end_time, creation_type_id, created_by, insert_time, update_time
         FROM dw_servers
         ORDER BY `name`, `host`";
 
@@ -70,6 +70,8 @@ if ($export_data == "1") {
         'DW DNS Zones',
         'DW DNS Records',
         'DW Last Built',
+        'Creation Type',
+        'Created By',
         'Inserted',
         'Updated'
     );
@@ -78,6 +80,15 @@ if ($export_data == "1") {
     if (mysqli_num_rows($result) > 0) {
 
         while ($row = mysqli_fetch_object($result)) {
+
+            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+
+            if ($row->created_by == '0') {
+                $created_by = 'Unknown';
+            } else {
+                $user = new DomainMOD\User();
+                $created_by = $user->getFullName($connection, $row->created_by);
+            }
 
             $row_contents = array(
                 $row->name,
@@ -91,6 +102,8 @@ if ($export_data == "1") {
                 $row->dw_dns_zones,
                 $row->dw_dns_records,
                 $time->toUserTimezone($row->build_end_time),
+                $creation_type,
+                $created_by,
                 $time->toUserTimezone($row->insert_time),
                 $time->toUserTimezone($row->update_time)
             );
@@ -184,10 +197,6 @@ if (mysqli_num_rows($result) > 0) { ?>
 
     </tbody>
     </table><?php
-
-} else {
-
-    echo "You don't currently have any Servers. <a href=\"add/server.php\">Click here to add one</a>.";
 
 }
 ?>

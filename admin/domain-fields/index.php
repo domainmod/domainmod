@@ -42,7 +42,7 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT f.id, f.name, f.field_name, f.description, f.notes, f.insert_time, f.update_time, t.name AS type
+$sql = "SELECT f.id, f.name, f.field_name, f.description, f.notes, f.creation_type_id, f.created_by, f.insert_time, f.update_time, t.name AS type
         FROM domain_fields AS f, custom_field_types AS t
         WHERE f.type_id = t.id
         ORDER BY f.name";
@@ -65,6 +65,8 @@ if ($export_data == '1') {
         'Data Type',
         'Description',
         'Notes',
+        'Creation Type',
+        'Created By',
         'Inserted',
         'Updated'
     );
@@ -74,12 +76,23 @@ if ($export_data == '1') {
 
         while ($row = mysqli_fetch_object($result)) {
 
+            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+
+            if ($row->created_by == '0') {
+                $created_by = 'Unknown';
+            } else {
+                $user = new DomainMOD\User();
+                $created_by = $user->getFullName($connection, $row->created_by);
+            }
+
             $row_contents = array(
                 $row->name,
                 $row->field_name,
                 $row->type,
                 $row->description,
                 $row->notes,
+                $creation_type,
+                $created_by,
                 $time->toUserTimezone($row->insert_time),
                 $time->toUserTimezone($row->update_time)
             );

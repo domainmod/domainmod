@@ -118,7 +118,7 @@ if ($new_data != "") {
 <?php include(DIR_INC . "layout/header-login.inc.php"); ?>
 <?php
     echo $form->showFormTop('');
-    echo $form->showInputText('new_data', 'Username or Email Address', '', $new_data, '20', '', '', '');
+    echo $form->showInputText('new_data', 'Username or Email Address', '', $new_data, '20', '', '', '', '');
     echo $form->showSubmitButton('Reset Password', '', '');
     echo $form->showFormBottom('');
 ?>

@@ -54,6 +54,8 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 <BR>
 <a href="<?php echo $web_root; ?>/admin/scheduler/">Task Scheduler</a><BR>
 <BR>
+<a href="<?php echo $web_root; ?>/admin/maintenance/">Maintenance</a><BR>
+<BR>
 <a href="<?php echo $web_root; ?>/admin/info/">System Information</a><BR>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

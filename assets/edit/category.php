@@ -75,14 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $pcid = $new_pcid;
 
-        $_SESSION['s_message_success'] = "Category " . $new_category . " Updated<BR>";
+        $_SESSION['s_message_success'] .= "Category " . $new_category . " Updated<BR>";
 
         header("Location: ../categories.php");
         exit;
 
     } else {
 
-        $_SESSION['s_message_danger'] = "Enter the category name<BR>";
+        $_SESSION['s_message_danger'] .= "Enter the category name<BR>";
 
     }
 
@@ -124,11 +124,11 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['s_message_danger'] = "This Category has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] .= "This Category has domains associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['s_message_danger'] = "Are you sure you want to delete this Category?<BR><BR><a
+            $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Category?<BR><BR><a
                 href=\"category.php?pcid=" . $pcid . "&really_del=1\">YES, REALLY DELETE THIS CATEGORY</a><BR>";
 
         }
@@ -157,7 +157,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_message_success'] = "Category " . $new_category . " Deleted<BR>";
+    $_SESSION['s_message_success'] .= "Category " . $new_category . " Deleted<BR>";
 
     header("Location: ../categories.php");
     exit;
@@ -174,9 +174,9 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_category', 'Category Name (150)', '', $new_category, '150', '', '', '');
-echo $form->showInputText('new_stakeholder', 'Stakeholder (100)', '', $new_stakeholder, '100', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_category', 'Category Name (150)', '', $new_category, '150', '', '1', '', '');
+echo $form->showInputText('new_stakeholder', 'Stakeholder (100)', '', $new_stakeholder, '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showInputHidden('new_pcid', $pcid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

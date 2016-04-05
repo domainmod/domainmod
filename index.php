@@ -59,8 +59,23 @@ if ($_SESSION['s_installation_mode'] == '1') {
 
 $new_username = $_POST['new_username'];
 $new_password = $_POST['new_password'];
+$from_install_form = $_POST['from_install_form'];
+$new_install_email = $_POST['new_install_email'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $from_install_form == '1') {
+
+    if ($new_install_email != '') {
+
+        $_SESSION['new_install_email'] = $new_install_email;
+
+        header("Location: install/");
+        exit;
+
+    }
+
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "" && $from_install_form != '1') {
 
     $query = "SELECT id, username
               FROM users
@@ -102,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         } else { // Login failed
 
-            $_SESSION['s_message_danger'] = "Login Failed<BR>";
+            $_SESSION['s_message_danger'] .= "Login Failed<BR>";
 
         }
 
@@ -112,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
 } else {
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && $from_install_form != '1') {
 
         if ($new_username == "" && $new_password == "") {
 
@@ -124,6 +139,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
             if ($new_password == "") $_SESSION['s_message_danger'] .= "Enter your password<BR>";
 
         }
+
+    } elseif ($_SERVER['REQUEST_METHOD'] == 'POST' && $from_install_form == '1') {
+
+        $_SESSION['s_message_danger'] .= "<BR>Enter the system/administrator email address<BR>";
+
     }
 
 }
@@ -158,8 +178,8 @@ if ($_SESSION['s_installation_mode'] == '0') {
 
     if ($demo_install == "1") { ?> <strong>Demo Username & Password:</strong> "demo"<BR><BR><?php }
 
-    echo $form->showInputText('new_username', 'Username', '', $new_username, '20', '', '', '');
-    echo $form->showInputText('new_password', 'Password', '', '', '255', '1', '', '');
+    echo $form->showInputText('new_username', 'Username', '', $new_username, '20', '', '', '', '');
+    echo $form->showInputText('new_password', 'Password', '', '', '255', '1', '', '', '');
     echo $form->showSubmitButton('Login', '', '');
     echo $form->showFormBottom('');
 
@@ -169,7 +189,18 @@ if ($_SESSION['s_installation_mode'] == '0') {
 
     }
 
-} ?>
+} else {
+
+    $email_address_text = 'This email address will be used in various locations by the system (such as the FROM address when expiration emails are sent to users), as well as be used as the primary system administrator\'s email address.<BR><BR>Please double check that this address is valid, as it will be required if the system administrator forgets their password.';
+    echo $form->showFormTop('');
+    echo $form->showInputText('new_install_email', 'Enter The System/Administrator Email Address', $email_address_text, $new_install_email, '100', '', '', '', '');
+    echo $form->showSubmitButton('Install DomainMOD', '', '');
+    echo $form->showInputHidden('from_install_form', '1');
+    echo $form->showFormBottom('');
+
+
+}
+?>
 <?php include(DIR_INC . "layout/footer-login.inc.php"); ?>
 </body>
 </html>

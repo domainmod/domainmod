@@ -205,7 +205,7 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
 
     } else {
 
-        echo $form->showDropdownTopJump('', '');
+        echo $form->showDropdownTopJump('', '', '', '');
 
         $sql_dw_account = "SELECT id, `name`, dw_accounts
                            FROM dw_servers
@@ -231,7 +231,7 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
 
     } else {
 
-        echo $form->showDropdownTopJump('', '');
+        echo $form->showDropdownTopJump('', '', '', '');
 
         $sql_dw_dns_records = "SELECT id, name, dw_dns_zones, dw_dns_records
                                FROM dw_servers

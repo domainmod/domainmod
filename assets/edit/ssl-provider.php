@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $sslpid = $new_sslpid;
 
-        $_SESSION['s_message_success'] = "SSL Provider " . $new_ssl_provider . " Updated<BR>";
+        $_SESSION['s_message_success'] .= "SSL Provider " . $new_ssl_provider . " Updated<BR>";
 
         header("Location: ../ssl-providers.php");
         exit;
@@ -166,7 +166,7 @@ if ($del == "1") {
 
     } else {
 
-        $_SESSION['s_message_danger'] = "Are you sure you want to delete this SSL Provider?<BR><BR><a
+        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Provider?<BR><BR><a
             href=\"ssl-provider.php?sslpid=$sslpid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER</a><BR>";
 
     }
@@ -217,7 +217,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_message_success'] = "SSL Provider " . $new_ssl_provider . " Deleted<BR>";
+    $_SESSION['s_message_success'] .= "SSL Provider " . $new_ssl_provider . " Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 
@@ -236,9 +236,9 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_ssl_provider', 'SSL Provider Name (100)', '', $new_ssl_provider, '100', '', '', '');
-echo $form->showInputText('new_url', 'SSL Provider\'s URL', '', $new_url, '100', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_ssl_provider', 'SSL Provider Name (100)', '', $new_ssl_provider, '100', '', '1', '', '');
+echo $form->showInputText('new_url', 'SSL Provider\'s URL', '', $new_url, '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showInputHidden('new_sslpid', $sslpid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

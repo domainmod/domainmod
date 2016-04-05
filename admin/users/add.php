@@ -84,15 +84,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
         $new_password = substr(md5(time()), 0, 8);
 
         $query = "INSERT INTO users
-                  (first_name, last_name, username, email_address, `password`, admin, active, insert_time)
+                  (first_name, last_name, username, email_address, `password`, admin, active, created_by, insert_time)
                   VALUES
-                  (?, ?, ?, ?, password(?), ?, ?, ?)";
+                  (?, ?, ?, ?, password(?), ?, ?, ?, ?)";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
 
-            $q->bind_param('ssssssis', $new_first_name, $new_last_name, $new_username, $new_email_address,
-                $new_password, $new_admin, $new_active, $timestamp);
+            $q->bind_param('ssssssiis', $new_first_name, $new_last_name, $new_username, $new_email_address,
+                $new_password, $new_admin, $new_active, $_SESSION['s_user_id'], $timestamp);
             $q->execute() or $error->outputSqlError($conn, '');
             $q->close();
 
@@ -205,10 +205,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_first_name', 'First Name (50)', '', $new_first_name, '50', '', '', '');
-echo $form->showInputText('new_last_name', 'Last Name (50)', '', $new_last_name, '50', '', '', '');
-echo $form->showInputText('new_username', 'Username (30)', '', $new_username, '30', '', '', '');
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '', '');
+echo $form->showInputText('new_first_name', 'First Name (50)', '', $new_first_name, '50', '', '1', '', '');
+echo $form->showInputText('new_last_name', 'Last Name (50)', '', $new_last_name, '50', '', '1', '', '');
+echo $form->showInputText('new_username', 'Username (30)', '', $new_username, '30', '', '1', '', '');
+echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '1', '', '');
 echo $form->showRadioTop('Admin Privileges?', '', '');
 if ($new_admin == '') $new_admin = '0';
 echo $form->showRadioOption('new_admin', '1', 'Yes', $new_admin, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');

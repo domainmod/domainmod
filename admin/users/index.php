@@ -42,7 +42,7 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.number_of_logins, u.last_login, u.active, u.insert_time, u.update_time, us.default_timezone, us.default_currency
+$sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.number_of_logins, u.last_login, u.active, u.creation_type_id, u.created_by, u.insert_time, u.update_time, us.default_timezone, us.default_currency
         FROM users AS u, user_settings AS us
         WHERE u.id = us.user_id
         ORDER BY u.first_name, u.last_name, u.username, u.email_address";
@@ -70,6 +70,8 @@ if ($export_data == '1') {
         'Default Timezone',
         'Number of Logins',
         'Last Login',
+        'Creation Type',
+        'Created By',
         'Inserted',
         'Updated'
     );
@@ -99,6 +101,15 @@ if ($export_data == '1') {
 
             }
 
+            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+
+            if ($row->created_by == '0') {
+                $created_by = 'Unknown';
+            } else {
+                $user = new DomainMOD\User();
+                $created_by = $user->getFullName($connection, $row->created_by);
+            }
+
             $row_contents = array(
                 $status,
                 $row->first_name,
@@ -110,6 +121,8 @@ if ($export_data == '1') {
                 $row->default_timezone,
                 $row->number_of_logins,
                 $time->toUserTimezone($row->last_login),
+                $creation_type,
+                $created_by,
                 $time->toUserTimezone($row->insert_time),
                 $time->toUserTimezone($row->update_time)
             );

@@ -35,7 +35,7 @@ If you used git to retrieve the source code in the previous step, just change to
 
 2. In the '_includes' folder, copy config.SAMPLE.inc.php to config.inc.php and then update config.inc.php to reflect your web server's settings.  
 
-3. In a web browser, visit the URL where you just installed DomainMOD and then click the Install link. For example, example.com/dm/ or example.com/domainmod/. After a few seconds a message will appear letting you know that the installation was successful.  
+3. In a web browser, visit the URL where you just installed DomainMOD, enter the requested information, and then click the Install button. For example, example.com/dm/ or example.com/domainmod/. After a few seconds a message will appear letting you know that the installation was successful.  
 
 If you have any problems during installation please see the Support section.
 

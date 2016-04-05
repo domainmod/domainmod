@@ -55,8 +55,7 @@ class Domain
 
     public function checkFormat($input_domain)
     {
-
-        /*
+/*
         if (preg_match('/^[A-Z0-9.-]+\.[A-Z0-9-]{2,50}$/i', $input_domain, $output_domain)) {
 
             return $output_domain;
@@ -66,8 +65,7 @@ class Domain
             return false;
 
         }
-        */
-
+*/
         return $input_domain;
 
     }
@@ -131,6 +129,17 @@ class Domain
 
         $q->execute();
         $q->close();
+    }
+    
+    public function getTld($domain)
+    {
+        return preg_replace("/^((.*?)\.)(.*)$/", "\\3", $domain);
+    }
+
+    public function getDomainPart($domain)
+    {
+        $temp = preg_replace("/^((.*?)\.)(.*)$/", "\\1", $domain);
+        return rtrim($temp, ".");
     }
 
 } //@formatter:on

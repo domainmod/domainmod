@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_data == "") {
 
-        $_SESSION['s_message_danger'] = "Enter the list of domains to apply the action to<BR>";
+        $_SESSION['s_message_danger'] .= "Enter the list of domains to apply the action to<BR>";
 
     } else {
 
@@ -115,11 +115,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($invalid_count == 1) {
 
-                    $_SESSION['s_message_danger'] = "There is " . number_format($invalid_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
+                    $_SESSION['s_message_danger'] .= "There is " . number_format($invalid_count) . " invalid domain on your list<BR><BR>" . $temp_result_message;
 
                 } else {
 
-                    $_SESSION['s_message_danger'] = "There are " . number_format($invalid_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
+                    $_SESSION['s_message_danger'] .= "There are " . number_format($invalid_count) . " invalid domains on your list<BR><BR>" . $temp_result_message;
 
                     if (($invalid_count - $invalid_to_display) == 1) {
 
@@ -134,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } else {
 
-                $_SESSION['s_message_danger'] = "Enter the list of domains to apply the action to<BR>";
+                $_SESSION['s_message_danger'] .= "Enter the list of domains to apply the action to<BR>";
 
             }
             $submission_failed = 1;
@@ -155,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains Renewed<BR>";
+                $_SESSION['s_message_success'] .= "Domains Renewed<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -293,18 +293,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $query = "INSERT INTO domains
                                   (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id,
                                    total_cost, dns_id, ip_id, hosting_id, `function`, notes, autorenew, privacy,
-                                   active, fee_fixed, insert_time)
+                                   creation_type_id, created_by, active, fee_fixed, insert_time)
                                   VALUES
-                                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                         $q = $conn->stmt_init();
 
                         if ($q->prepare($query)) {
 
-                            $q->bind_param('iiisssiidiiissiiiis', $temp_owner_id, $temp_registrar_id, $new_raid,
+                            $creation_type_id = $system->getCreationTypeId($connection, 'Bulk Updater');
+
+                            $q->bind_param('iiisssiidiiissiiiiiis', $temp_owner_id, $temp_registrar_id, $new_raid,
                                 $new_domain, $new_tld, $new_expiry_date, $new_pcid, $temp_fee_id, $new_total_cost,
                                 $new_dnsid, $new_ipid, $new_whid, $new_function, $new_notes, $new_autorenew,
-                                $new_privacy, $new_active, $temp_fee_fixed, $timestamp);
-                            $q->execute() or $error->outputSqlError($conn, "here23");
+                                $new_privacy, $creation_type_id, $_SESSION['s_user_id'], $new_active, $temp_fee_fixed,
+                                $timestamp);
+                            $q->execute() or $error->outputSqlError($conn, "Couldn't insert domains");
                             $q->close();
 
                         } else $error->outputSqlError($conn, "ERROR");
@@ -380,7 +383,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         // finish cycling through domains here
                     }
 
-                    $_SESSION['s_message_success'] = "Domains Added<BR>";
+                    $_SESSION['s_message_success'] .= "Domains Added<BR>";
 
                     $queryB = new DomainMOD\QueryBuild();
 
@@ -441,13 +444,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $maint->updateSegments($connection);
 
-                $_SESSION['s_message_success'] = "Domains Fully Renewed<BR>";
+                $_SESSION['s_message_success'] .= "Domains Fully Renewed<BR>";
 
             } elseif ($action == "CPC") {
 
                 if ($new_pcid == "" || $new_pcid == 0) {
 
-                    $_SESSION['s_message_danger'] = "Please choose the new Category<BR>";
+                    $_SESSION['s_message_danger'] .= "Please choose the new Category<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -487,7 +490,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     }
 
-                    $_SESSION['s_message_success'] = "Category Changed<BR>";
+                    $_SESSION['s_message_success'] .= "Category Changed<BR>";
 
                 }
 
@@ -495,7 +498,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_dnsid == "" || $new_dnsid == 0) {
 
-                    $_SESSION['s_message_danger'] = "Please choose the new DNS Profile<BR>";
+                    $_SESSION['s_message_danger'] .= "Please choose the new DNS Profile<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -535,14 +538,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     }
 
-                    $_SESSION['s_message_success'] = "DNS Profile Changed<BR>";
+                    $_SESSION['s_message_success'] .= "DNS Profile Changed<BR>";
                 }
 
             } elseif ($action == "CIP") {
 
                 if ($new_ipid == "" || $new_ipid == 0) {
 
-                    $_SESSION['s_message_danger'] = "Please choose the new IP Address<BR>";
+                    $_SESSION['s_message_danger'] .= "Please choose the new IP Address<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -582,7 +585,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     }
 
-                    $_SESSION['s_message_success'] = "IP Address Changed<BR>";
+                    $_SESSION['s_message_success'] .= "IP Address Changed<BR>";
 
                 }
 
@@ -590,7 +593,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_notes == "") {
 
-                    $_SESSION['s_message_danger'] = "Enter the new Note<BR>";
+                    $_SESSION['s_message_danger'] .= "Enter the new Note<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -609,7 +612,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     }
 
-                    $_SESSION['s_message_success'] = "Note Added<BR>";
+                    $_SESSION['s_message_success'] .= "Note Added<BR>";
 
                 }
 
@@ -617,7 +620,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_raid == "" || $new_raid == 0) {
 
-                    $_SESSION['s_message_danger'] = "Please choose the new Registrar Account<BR>";
+                    $_SESSION['s_message_danger'] .= "Please choose the new Registrar Account<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -730,7 +733,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               AND d.domain IN (" . $new_data_formatted . ")";
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-                    $_SESSION['s_message_success'] = "Registrar Account Changed<BR>";
+                    $_SESSION['s_message_success'] .= "Registrar Account Changed<BR>";
 
                     $queryB = new DomainMOD\QueryBuild();
 
@@ -743,7 +746,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_whid == "" || $new_whid == 0) {
 
-                    $_SESSION['s_message_danger'] = "Please choose the new Web Hosting Provider<BR>";
+                    $_SESSION['s_message_danger'] .= "Please choose the new Web Hosting Provider<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -783,7 +786,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     }
 
-                    $_SESSION['s_message_success'] = "Web Hosting Provider Changed<BR>";
+                    $_SESSION['s_message_success'] .= "Web Hosting Provider Changed<BR>";
 
                 }
 
@@ -839,7 +842,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains (and associated data) Deleted<BR>";
+                $_SESSION['s_message_success'] .= "Domains (and associated data) Deleted<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -880,7 +883,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains marked as expired<BR>";
+                $_SESSION['s_message_success'] .= "Domains marked as expired<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -921,7 +924,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains marked as sold<BR>";
+                $_SESSION['s_message_success'] .= "Domains marked as sold<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -962,7 +965,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains marked as active<BR>";
+                $_SESSION['s_message_success'] .= "Domains marked as active<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -1003,7 +1006,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains marked as Pending Transfer<BR>";
+                $_SESSION['s_message_success'] .= "Domains marked as Pending Transfer<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -1044,7 +1047,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains marked as Pending Registration<BR>";
+                $_SESSION['s_message_success'] .= "Domains marked as Pending Registration<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -1085,7 +1088,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains marked as Pending Renewal<BR>";
+                $_SESSION['s_message_success'] .= "Domains marked as Pending Renewal<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -1126,7 +1129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains marked as Pending (Other)<BR>";
+                $_SESSION['s_message_success'] .= "Domains marked as Pending (Other)<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -1167,7 +1170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains marked as Auto Renewal<BR>";
+                $_SESSION['s_message_success'] .= "Domains marked as Auto Renewal<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -1208,7 +1211,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains marked as Manual Renewal<BR>";
+                $_SESSION['s_message_success'] .= "Domains marked as Manual Renewal<BR>";
 
             } elseif ($action == "PRVE") {
 
@@ -1262,7 +1265,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains marked as Private WHOIS<BR>";
+                $_SESSION['s_message_success'] .= "Domains marked as Private WHOIS<BR>";
 
                 $maint->updateSegments($connection);
 
@@ -1318,13 +1321,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Domains marked as Public WHOIS<BR>";
+                $_SESSION['s_message_success'] .= "Domains marked as Public WHOIS<BR>";
 
             } elseif ($action == "CED") {
 
                 if (!$date->checkDateFormat($new_expiry_date)) {
 
-                    $_SESSION['s_message_danger'] = "The expiry date you entered is invalid<BR>";
+                    $_SESSION['s_message_danger'] .= "The expiry date you entered is invalid<BR>";
                     $submission_failed = 1;
 
                 } else {
@@ -1364,7 +1367,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     }
 
-                    $_SESSION['s_message_success'] = "Expiry Date Updated<BR>";
+                    $_SESSION['s_message_success'] .= "Expiry Date Updated<BR>";
 
                 }
 
@@ -1413,7 +1416,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $_SESSION['s_message_success'] = "Custom Field " . $name_array[0] . " Updated<BR>";
+                $_SESSION['s_message_success'] .= "Custom Field " . $name_array[0] . " Updated<BR>";
 
             }
 
@@ -1466,6 +1469,7 @@ if ($breadcrumb_text != '') {
 ?>
 
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
+The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.<BR><BR>
 <?php if ($done == "1") { ?>
 
     <?php if ($submission_failed != "1") { ?>
@@ -1531,7 +1535,7 @@ if ($breadcrumb_text != '') {
 
 <?php
 echo $form->showFormTop('');
-echo $form->showDropdownTopJump('', '');
+echo $form->showDropdownTopJump('', '', '', '');
 echo $form->showDropdownOptionJump('index.php', '', 'Choose Action', $action);
 echo $form->showDropdownOptionJump('index.php?action=', 'AD', 'Add Domains', $action);
 echo $form->showDropdownOptionJump('index.php?action=', 'AN', 'Add A Note', $action);
@@ -1560,7 +1564,7 @@ echo $form->showDropdownBottom('');
 
 if ($action == "UCF") {
 
-    echo $form->showDropdownTopJump('', '');
+    echo $form->showDropdownTopJump('', '', '', '');
     echo $form->showDropdownOptionJump('index.php?action=', 'UCF', 'Choose the Custom Field to Edit', $action);
 
     $sql = "SELECT df.id, df.name, df.type_id, cft.name AS type
@@ -1596,7 +1600,7 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
 
     }
 
-    echo $form->showInputTextarea('new_data', $text, '', $new_data, '', '');
+    echo $form->showInputTextarea('new_data', $text, '', $new_data, '1', '', '');
 
 }
 
@@ -1604,7 +1608,7 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
 if ($action == "AD") { // Add Domains
 
     // Function
-    echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '');
+    echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '', '');
 
     // Expiry Date
     if ($new_expiry_date != "") {
@@ -1612,10 +1616,10 @@ if ($action == "AD") { // Add Domains
     } else {
         $temp_expiry_date = $timestamp_basic_plus_one_year;
     }
-    echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '', '');
+    echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '1', '', '');
 
     // Registrar Account
-    echo $form->showDropdownTop('new_raid', 'Registrar Account', '', '');
+    echo $form->showDropdownTop('new_raid', 'Registrar Account', '', '1', '');
 
     $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                     FROM registrar_accounts AS ra, owners AS o, registrars AS r
@@ -1638,7 +1642,7 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownBottom('');
 
     // DNS Profile
-    echo $form->showDropdownTop('new_dnsid', 'DNS Profile', '', '');
+    echo $form->showDropdownTop('new_dnsid', 'DNS Profile', '', '1', '');
 
     $sql_dns = "SELECT id, `name`
                 FROM dns
@@ -1659,7 +1663,7 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownBottom('');
 
     // IP Address
-    echo $form->showDropdownTop('new_ipid', 'IP Address', '', '');
+    echo $form->showDropdownTop('new_ipid', 'IP Address', '', '1', '');
 
     $sql_ip = "SELECT id, `name`, ip
                FROM ip_addresses
@@ -1680,7 +1684,7 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownBottom('');
 
     // Web Hosting Provider
-    echo $form->showDropdownTop('new_whid', 'Web Hosting Provider', '', '');
+    echo $form->showDropdownTop('new_whid', 'Web Hosting Provider', '', '1', '');
 
     $sql_host = "SELECT id, `name`
                  FROM hosting
@@ -1701,7 +1705,7 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownBottom('');
 
     // Category
-    echo $form->showDropdownTop('new_pcid', 'Category', '', '');
+    echo $form->showDropdownTop('new_pcid', 'Category', '', '1', '');
 
     $sql_cat = "SELECT id, `name`
                 FROM categories
@@ -1722,7 +1726,7 @@ if ($action == "AD") { // Add Domains
     echo $form->showDropdownBottom('');
 
     // Domain Status
-    echo $form->showDropdownTop('new_active', 'Domain Status', '', '');
+    echo $form->showDropdownTop('new_active', 'Domain Status', '', '', '');
     echo $form->showDropdownOption('1', 'Active', $new_active);
     echo $form->showDropdownOption('5', 'Pending (Registration)', $new_active);
     echo $form->showDropdownOption('3', 'Pending (Renewal)', $new_active);
@@ -1748,7 +1752,7 @@ if ($action == "AD") { // Add Domains
 
 } elseif ($action == "RENEW" || $action == "FR") {
 
-    echo $form->showDropdownTop('new_renewal_years', 'Renew For', '', '');
+    echo $form->showDropdownTop('new_renewal_years', 'Renew For', '', '', '');
     echo $form->showDropdownOption('1', '1 Year', $new_renewal_years);
     echo $form->showDropdownOption('2', '2 Years', $new_renewal_years);
     echo $form->showDropdownOption('3', '3 Years', $new_renewal_years);
@@ -1763,7 +1767,7 @@ if ($action == "AD") { // Add Domains
 
 } elseif ($action == "CPC") {
 
-    echo $form->showDropdownTop('new_pcid', 'New Category', '', '');
+    echo $form->showDropdownTop('new_pcid', 'New Category', '', '1', '');
     echo $form->showDropdownOption('', $choose_text . ' Category', $new_pcid);
 
     $sql_cat = "SELECT id, `name`
@@ -1787,7 +1791,7 @@ if ($action == "AD") { // Add Domains
 
 } elseif ($action == "CDNS") {
 
-    echo $form->showDropdownTop('new_dnsid', 'New DNS Profile', '', '');
+    echo $form->showDropdownTop('new_dnsid', 'New DNS Profile', '', '1', '');
     echo $form->showDropdownOption('', $choose_text . ' DNS Profile', $new_dnsid);
 
     $sql_dns = "SELECT id, `name`
@@ -1811,7 +1815,7 @@ if ($action == "AD") { // Add Domains
 
 } elseif ($action == "CIP") {
 
-    echo $form->showDropdownTop('new_ipid', 'New IP Address', '', '');
+    echo $form->showDropdownTop('new_ipid', 'New IP Address', '', '1', '');
     echo $form->showDropdownOption('', $choose_text . ' IP Address', $new_ipid);
 
     $sql_ip = "SELECT id, `name`, ip
@@ -1835,7 +1839,7 @@ if ($action == "AD") { // Add Domains
 
 } elseif ($action == "CRA") {
 
-    echo $form->showDropdownTop('new_raid', 'New Registrar Account', '', '');
+    echo $form->showDropdownTop('new_raid', 'New Registrar Account', '', '1', '');
     echo $form->showDropdownOption('', $choose_text . ' Registrar Account', $new_raid);
 
     $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS o_name
@@ -1866,7 +1870,7 @@ if ($action == "AD") { // Add Domains
 
 } elseif ($action == "CWH") {
 
-    echo $form->showDropdownTop('new_whid', 'New Web Hosting Provider', '', '');
+    echo $form->showDropdownTop('new_whid', 'New Web Hosting Provider', '', '1', '');
     echo $form->showDropdownOption('', $choose_text . ' Web Hosting Provider', $new_whid);
 
     $sql_host = "SELECT id, `name`
@@ -1896,7 +1900,7 @@ if ($action == "AD") { // Add Domains
         $temp_expiry_date = $timestamp_basic;
     }
 
-    echo $form->showInputText('new_expiry_date', 'New Expiry Date (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '', '');
+    echo $form->showInputText('new_expiry_date', 'New Expiry Date (YYYY-MM-DD)', '', $temp_expiry_date, '10', '', '1', '', '');
 
 } elseif ($action == "UCF") {
 
@@ -1924,7 +1928,7 @@ if ($action == "AD") { // Add Domains
 
         while ($row = mysqli_fetch_object($result)) {
 
-            echo $form->showInputText('new_' . $row->field_name, $row->name . ' (255)', $row->description, ${'new_' . $row->field_name}, '255', '', '', '');
+            echo $form->showInputText('new_' . $row->field_name, $row->name . ' (255)', $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '');
 
         }
 
@@ -1938,7 +1942,7 @@ if ($action == "AD") { // Add Domains
 
         while ($row = mysqli_fetch_object($result)) {
 
-            echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '', '');
+            echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '', '', '');
 
         }
 
@@ -1964,8 +1968,14 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
 
     if ($action != "DD") {
 
-        echo $form->showInputTextarea('new_notes', $notes_heading, '', $new_notes, '', '');
+        if ($action == "AN") {
 
+            echo $form->showInputTextarea('new_notes', $notes_heading, '', $new_notes, '1', '', '');
+
+        } else {
+
+            echo $form->showInputTextarea('new_notes', $notes_heading, '', $new_notes, '', '', '');
+        }
 
     }
 
@@ -2006,11 +2016,11 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
 
                     } elseif ($row->type_id == "2") { // Text
 
-                        echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '255', '', '', '');
+                        echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '');
 
                     } elseif ($row->type_id == "3") { // Text Area
 
-                        echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '', '');
+                        echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '', '', '');
 
                     }
 

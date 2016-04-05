@@ -1,6 +1,6 @@
 <?php
 /**
- * /settings/maintenance/update-ssl-fees.php
+ * /maintenance/update-ssl-fees.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2016 Greg Chetcuti <greg@chetcuti.com>
@@ -20,8 +20,8 @@
  */
 ?>
 <?php
-include("../../_includes/start-session.inc.php");
-include("../../_includes/init.inc.php");
+include("../_includes/start-session.inc.php");
+include("../_includes/init.inc.php");
 
 require_once(DIR_ROOT . "classes/Autoloader.php");
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
@@ -48,5 +48,5 @@ $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($connection, $sql);
 
 $_SESSION['s_message_success'] .= "SSL Certificate Fees updated<BR>";
 
-header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
+header("Location: index.php");
 exit;

@@ -73,14 +73,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $ssltid = $new_ssltid;
 
-        $_SESSION['s_message_success'] = "SSL Type " . $new_type . " Updated<BR>";
+        $_SESSION['s_message_success'] .= "SSL Type " . $new_type . " Updated<BR>";
 
         header("Location: ../ssl-types.php");
         exit;
 
     } else {
 
-        $_SESSION['s_message_danger'] = "Enter the Type name<BR>";
+        $_SESSION['s_message_danger'] .= "Enter the Type name<BR>";
 
     }
 
@@ -121,12 +121,12 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['s_message_danger'] = "This Type has SSL certificates associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] .= "This Type has SSL certificates associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['s_message_danger'] = "Are you sure you want to delete this SSL Type?<BR><BR><a
-                href=\"ssl-type.php?ssltid=$ssltid&really_del=1\">YES, REALLY DELETE THIS TYPE</a><BR>";
+            $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Type?<BR><BR><a
+                href=\"ssl-type.php?ssltid=$ssltid&really_del=1\">YES, REALLY DELETE THIS SSL TYPE</a><BR>";
 
         }
 
@@ -154,7 +154,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_message_success'] = "SSL Type " . $new_type . " Deleted<BR>";
+    $_SESSION['s_message_success'] .= "SSL Type " . $new_type . " Deleted<BR>";
 
     header("Location: ../ssl-types.php");
     exit;
@@ -171,13 +171,13 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_type', 'Type (100)', '', $new_type, '100', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_type', 'Type (100)', '', $new_type, '100', '', '1', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showInputHidden('new_ssltid', $ssltid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');
 ?>
-<BR><a href="ssl-type.php?ssltid=<?php echo urlencode($ssltid); ?>&del=1">DELETE THIS TYPE</a>
+<BR><a href="ssl-type.php?ssltid=<?php echo urlencode($ssltid); ?>&del=1">DELETE THIS SSL TYPE</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

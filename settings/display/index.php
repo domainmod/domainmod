@@ -197,7 +197,7 @@ if ($new_number_of_domains != "") {
 } else {
     $temp_number_of_domains = '';
 }
-echo $form->showInputText('new_number_of_domains', 'Number of domains per page', '', $temp_number_of_domains, '5', '', '', '');
+echo $form->showInputText('new_number_of_domains', 'Number of domains per page', '', $temp_number_of_domains, '5', '', '1', '', '');
 
 echo $form->showMultipleSelectTop('domain_column_options', 'Columns to Display', '');
 echo $form->showMultipleSelectOption('Expiry Date', 'expiry', $new_display_domain_expiry_date);
@@ -220,7 +220,7 @@ if ($new_number_of_ssl_certs != "") {
 } else {
     $temp_number_of_ssl_certs = '';
 }
-echo $form->showInputText('new_number_of_ssl_certs', 'Number of SSL certificates per page', '', $temp_number_of_ssl_certs, '5', '', '', '');
+echo $form->showInputText('new_number_of_ssl_certs', 'Number of SSL certificates per page', '', $temp_number_of_ssl_certs, '5', '', '1', '', '');
 
 echo $form->showMultipleSelectTop('ssl_column_options', 'Columns to Display', '');
 echo $form->showMultipleSelectOption('Expiry Date', 'expiry', $new_display_ssl_expiry_date);

@@ -66,12 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($invalid_count == 1) {
 
-                    $_SESSION['s_message_danger'] = "There is " . number_format($invalid_count) . " invalid domain
+                    $_SESSION['s_message_danger'] .= "There is " . number_format($invalid_count) . " invalid domain
                         on your list<BR><BR>" . $temp_result_message;
 
                 } else {
 
-                    $_SESSION['s_message_danger'] = "There are " . number_format($invalid_count) . " invalid
+                    $_SESSION['s_message_danger'] .= "There are " . number_format($invalid_count) . " invalid
                         domains on your list<BR><BR>" . $temp_result_message;
 
                     if (($invalid_count - $invalid_to_display) == 1) {
@@ -113,15 +113,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $new_segment_formatted = trim($new_segment_formatted);
 
             $query = "INSERT INTO segments
-                      (`name`, description, segment, number_of_domains, notes, insert_time)
+                      (`name`, description, segment, number_of_domains, notes, created_by, insert_time)
                       VALUES
-                      (?, ?, ?, ?, ?, ?)";
+                      (?, ?, ?, ?, ?, ?, ?)";
             $q = $conn->stmt_init();
 
             if ($q->prepare($query)) {
 
-                $q->bind_param('sssiss', $new_name, $new_description, $new_segment_formatted, $number_of_domains,
-                    $new_notes, $timestamp);
+                $q->bind_param('sssisis', $new_name, $new_description, $new_segment_formatted, $number_of_domains,
+                    $new_notes, $_SESSION['s_user_id'], $timestamp);
                 $q->execute();
                 $q->close();
 
@@ -183,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             }
 
-            $_SESSION['s_message_success'] = "Segment " . $new_name . " Added<BR>";
+            $_SESSION['s_message_success'] .= "Segment " . $new_name . " Added<BR>";
 
             $maint->updateSegments($connection);
 
@@ -215,10 +215,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Segment Name (35)', '', $new_name, '35', '', '', '');
-echo $form->showInputTextarea('new_segment', 'Segment Domains (one per line)', '', $new_segment, '', '');
-echo $form->showInputTextarea('new_description', 'Description', '', $new_description, '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_name', 'Segment Name (35)', '', $new_name, '35', '', '1', '', '');
+echo $form->showInputTextarea('new_segment', 'Segment Domains (one per line)', '', $new_segment, '1', '', '');
+echo $form->showInputTextarea('new_description', 'Description', '', $new_description, '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showSubmitButton('Add Segment', '', '');
 echo $form->showFormBottom('');
 ?>

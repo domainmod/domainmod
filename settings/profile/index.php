@@ -232,15 +232,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 echo $form->showFormTop('');
 
 if ($new_first_name != "") { $temp_first_name = $new_first_name; } else { $temp_first_name = $_SESSION['s_first_name']; }
-echo $form->showInputText('new_first_name', 'First Name (50)', '', $temp_first_name, '50', '', '', '');
+echo $form->showInputText('new_first_name', 'First Name (50)', '', $temp_first_name, '50', '', '1', '', '');
 
 if ($new_last_name != "") { $temp_last_name = $new_last_name; } else { $temp_last_name = $_SESSION['s_last_name']; }
-echo $form->showInputText('new_last_name', 'Last Name (50)', '', $temp_last_name, '50', '', '', '');
+echo $form->showInputText('new_last_name', 'Last Name (50)', '', $temp_last_name, '50', '', '1', '', '');
 
 if ($new_email_address != "") { $temp_email_address = $new_email_address; } else { $temp_email_address = $_SESSION['s_email_address']; }
-echo $form->showInputText('new_email_address', 'Email Address (100)', '', $temp_email_address, '100', '', '', '');
+echo $form->showInputText('new_email_address', 'Email Address (100)', '', $temp_email_address, '100', '', '1', '', '');
 
-echo $form->showDropdownTop('new_currency', 'Currency', '', '');
+echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
 $sql = "SELECT currency, `name`, symbol
         FROM currencies
         ORDER BY name";
@@ -250,7 +250,7 @@ while ($row = mysqli_fetch_object($result)) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_timezone', 'Time Zone', '', '');
+echo $form->showDropdownTop('new_timezone', 'Time Zone', '', '', '');
 $sql = "SELECT timezone
         FROM timezones
         ORDER BY timezone";

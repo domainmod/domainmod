@@ -41,7 +41,7 @@ $system->authCheck();
 
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT id AS rid, `name` AS rname, url, notes, insert_time, update_time
+$sql = "SELECT id AS rid, `name` AS rname, url, api_registrar_id, notes, creation_type_id, created_by, insert_time, update_time
         FROM registrars
         ORDER BY rname ASC";
 
@@ -65,6 +65,9 @@ if ($export_data == '1') {
         'Default Registrar?',
         'URL',
         'Notes',
+        'API Registrar',
+        'Creation Type',
+        'Created By',
         'Inserted',
         'Updated'
     );
@@ -113,6 +116,22 @@ if ($export_data == '1') {
 
             }
 
+            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+
+            if ($row->created_by == '0') {
+                $created_by = 'Unknown';
+            } else {
+                $user = new DomainMOD\User();
+                $created_by = $user->getFullName($connection, $row->created_by);
+            }
+
+            $api = new DomainMOD\Api();
+            $api_registrar_name = $api->getApiRegistrarName($connection, $row->api_registrar_id);
+
+            if ($api_registrar_name == '') {
+                $api_registrar_name = 'n/a';
+            }
+
             $row_contents = array(
                 $status,
                 $row->rname,
@@ -121,6 +140,9 @@ if ($export_data == '1') {
                 $is_default,
                 $row->url,
                 $row->notes,
+                $api_registrar_name,
+                $creation_type,
+                $created_by,
                 $time->toUserTimezone($row->insert_time),
                 $time->toUserTimezone($row->update_time)
             );

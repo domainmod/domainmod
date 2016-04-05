@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $ipid = $new_ipid;
 
-        $_SESSION['s_message_success'] = "IP Address " . $new_name . " (" . $new_ip . ") Updated<BR>";
+        $_SESSION['s_message_success'] .= "IP Address " . $new_name . " (" . $new_ip . ") Updated<BR>";
 
         header("Location: ../ip-addresses.php");
         exit;
@@ -126,11 +126,11 @@ if ($del == "1") {
 
         if ($q->num_rows() > 0) {
 
-            $_SESSION['s_message_danger'] = "This IP Address has domains associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] .= "This IP Address has domains associated with it and cannot be deleted<BR>";
 
         } else {
 
-            $_SESSION['s_message_danger'] = "Are you sure you want to delete this IP Address?<BR><BR><a
+            $_SESSION['s_message_danger'] .= "Are you sure you want to delete this IP Address?<BR><BR><a
                 href=\"ip-address.php?ipid=$ipid&really_del=1\">YES, REALLY DELETE THIS IP ADDRESS</a><BR>";
 
         }
@@ -159,7 +159,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_message_success'] = "IP Address " . $new_name . " (" . $new_ip . ") Deleted<BR>";
+    $_SESSION['s_message_success'] .= "IP Address " . $new_name . " (" . $new_ip . ") Deleted<BR>";
 
     header("Location: ../ip-addresses.php");
     exit;
@@ -176,10 +176,10 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'IP Address Name (100)', '', $new_name, '100', '', '', '');
-echo $form->showInputText('new_ip', 'IP Address (100)', '', $new_ip, '100', '', '', '');
-echo $form->showInputText('new_rdns', 'rDNS (100)', '', $new_rdns, '100', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_name', 'IP Address Name (100)', '', $new_name, '100', '', '1', '', '');
+echo $form->showInputText('new_ip', 'IP Address (100)', '', $new_ip, '100', '', '1', '', '');
+echo $form->showInputText('new_rdns', 'rDNS (100)', '', $new_rdns, '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showInputHidden('new_ipid', $ipid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

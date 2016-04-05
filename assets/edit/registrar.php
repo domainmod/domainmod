@@ -45,6 +45,7 @@ $really_del = $_GET['really_del'];
 $rid = $_REQUEST['rid'];
 $new_registrar = $_POST['new_registrar'];
 $new_url = $_POST['new_url'];
+$new_api_registrar_id = $_POST['new_api_registrar_id'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -54,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query = "UPDATE registrars
                   SET `name` = ?,
                       url = ?,
+                      api_registrar_id = ?,
                       notes = ?,
                       update_time = ?
                   WHERE id = ?";
@@ -63,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $timestamp = $time->stamp();
 
-            $q->bind_param('ssssi', $new_registrar, $new_url, $new_notes, $timestamp, $rid);
+            $q->bind_param('ssissi', $new_registrar, $new_url, $new_api_registrar_id, $new_notes, $timestamp, $rid);
             $q->execute();
             $q->close();
 
@@ -71,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_message_success'] = "Registrar " . $new_registrar . " Updated<BR>";
+        $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Updated<BR>";
 
         header("Location: ../registrars.php");
         exit;
@@ -84,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $query = "SELECT `name`, url, notes
+    $query = "SELECT `name`, url, api_registrar_id, notes
               FROM registrars
               WHERE id = ?";
     $q = $conn->stmt_init();
@@ -94,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->bind_param('i', $rid);
         $q->execute();
         $q->store_result();
-        $q->bind_result($new_registrar, $new_url, $new_notes);
+        $q->bind_result($new_registrar, $new_url, $new_api_registrar_id, $new_notes);
         $q->fetch();
         $q->close();
 
@@ -161,7 +163,7 @@ if ($del == "1") {
 
     } else {
 
-        $_SESSION['s_message_danger'] = "Are you sure you want to delete this Registrar?<BR><BR><a
+        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Registrar?<BR><BR><a
             href=\"registrar.php?rid=$rid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
 
     }
@@ -212,7 +214,7 @@ if ($really_del == "1") {
         $error->outputSqlError($conn, "ERROR");
     }
 
-    $_SESSION['s_message_success'] = "Registrar " . $new_registrar . " Deleted<BR>";
+    $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 
@@ -231,9 +233,41 @@ if ($really_del == "1") {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_registrar', 'Registrar Name (100)', '', $new_registrar, '100', '', '', '');
-echo $form->showInputText('new_url', 'Registrar\'s URL (100)', '', $new_url, '100', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_registrar', 'Registrar Name (100)', '', $new_registrar, '100', '', '1', '', '');
+echo $form->showInputText('new_url', 'Registrar\'s URL (100)', '', $new_url, '100', '', '', '', '');
+
+
+$query = "SELECT id, `name`
+          FROM api_registrars
+          ORDER BY `name` ASC";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($id, $name);
+
+    echo $form->showDropdownTop('new_api_registrar_id', 'API Support', 'If the registrar has an API please select it from the list below.', '', '');
+
+    echo $form->showDropdownOption('0', 'n/a', '0');
+
+    while ($q->fetch()) {
+
+        echo $form->showDropdownOption($id, $name, $new_api_registrar_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
+
+    $q->close();
+
+} else {
+    $error->outputSqlError($conn, "ERROR");
+}
+
+
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showInputHidden('rid', $rid);
 echo $form->showSubmitButton('Save', '', '');
 echo $form->showFormBottom('');

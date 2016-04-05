@@ -171,18 +171,18 @@ while ($row = mysqli_fetch_object($result)) {
 <strong>Domain Registrar</strong><BR>
 <?php echo $temp_registrar; ?><BR><BR><?php
 
-echo $form->showInputText('new_tld', 'TLD', '', $new_tld, '50', '', '', '');
-echo $form->showInputText('new_initial_fee', 'Initial Fee', '', $new_initial_fee, '10', '', '', '');
-echo $form->showInputText('new_renewal_fee', 'Renewal Fee', '', $new_renewal_fee, '10', '', '', '');
-echo $form->showInputText('new_transfer_fee', 'Transfer Fee', '', $new_transfer_fee, '10', '', '', '');
-echo $form->showInputText('new_privacy_fee', 'Privacy Fee', '', $new_privacy_fee, '10', '', '', '');
-echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '', '', '');
+echo $form->showInputText('new_tld', 'TLD', '', $new_tld, '50', '', '1', '', '');
+echo $form->showInputText('new_initial_fee', 'Initial Fee', '', $new_initial_fee, '10', '', '1', '', '');
+echo $form->showInputText('new_renewal_fee', 'Renewal Fee', '', $new_renewal_fee, '10', '', '1', '', '');
+echo $form->showInputText('new_transfer_fee', 'Transfer Fee', '', $new_transfer_fee, '10', '', '1', '', '');
+echo $form->showInputText('new_privacy_fee', 'Privacy Fee', '', $new_privacy_fee, '10', '', '', '', '');
+echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '', '', '', '');
 
 $sql = "SELECT id, currency, `name`, symbol
         FROM currencies
         ORDER BY `name`";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_currency', 'Currency', '', '');
+echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
 while ($row = mysqli_fetch_object($result)) {
 
     echo $form->showDropdownOption($row->currency, $row->name . ' (' . $row->currency . ')', $_SESSION['s_default_currency']);

@@ -41,29 +41,34 @@ $system->authCheck();
 
 $new_owner_id = $_POST['new_owner_id'];
 $new_registrar_id = $_POST['new_registrar_id'];
+$new_email_address = $_POST['new_email_address'];
 $new_username = $_POST['new_username'];
 $new_password = $_POST['new_password'];
+$new_api_app_name = $_POST['new_api_app_name'];
 $new_api_key = $_POST['new_api_key'];
+$new_api_secret = $_POST['new_api_secret'];
+$new_api_ip_id = $_POST['new_api_ip_id'];
 $new_reseller = $_POST['new_reseller'];
+$new_reseller_id = $_POST['new_reseller_id'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" &&
-        $new_registrar_id != "0") {
+    if ($new_username != "" && $new_owner_id != "" && $new_registrar_id != "" && $new_owner_id != "0" && $new_registrar_id != "0") {
 
         $query = "INSERT INTO registrar_accounts
-                  (owner_id, registrar_id, username, `password`, api_key, notes, reseller, insert_time)
+                  (owner_id, registrar_id, email_address, username, `password`, reseller, reseller_id, api_app_name, api_key, api_secret, api_ip_id, notes, created_by, insert_time)
                   VALUES
-                  (?, ?, ?, ?, ?, ?, ?, ?)";
+                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
 
             $timestamp = $time->stamp();
 
-            $q->bind_param('iissssis', $new_owner_id, $new_registrar_id, $new_username, $new_password, $new_api_key,
-                $new_notes, $new_reseller, $timestamp);
+            $q->bind_param('iisssissssisis', $new_owner_id, $new_registrar_id, $new_email_address, $new_username,
+                $new_password, $new_reseller, $new_reseller_id, $new_api_app_name, $new_api_key, $new_api_secret,
+                $new_api_ip_id, $new_notes, $_SESSION['s_user_id'], $timestamp);
             $q->execute();
             $q->close();
 
@@ -107,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_message_success'] = "Registrar Account " . $new_username . " (" . $temp_registrar . ", " . $temp_owner . ") Added<BR>";
+        $_SESSION['s_message_success'] .= "Registrar Account " . $new_username . " (" . $temp_registrar . ", " . $temp_owner . ") Added<BR>";
 
         if ($_SESSION['s_has_registrar_account'] != '1') {
 
@@ -124,11 +129,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_username == "") {
+        if ($new_owner_id == "" || $new_owner_id == "0") {
 
-            $_SESSION['s_message_danger'] .= "Enter a username<BR>";
+            $_SESSION['s_message_danger'] .= "Choose the owner<BR>";
 
         }
+
+        if ($new_registrar_id == "" || $new_registrar_id == "0") {
+
+            $_SESSION['s_message_danger'] .= "Choose the registrar<BR>";
+
+        }
+
+        if ($new_username == "") { $_SESSION['s_message_danger'] .= "Enter a username<BR>"; }
 
     }
 
@@ -146,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 echo $form->showFormTop('');
 
 $query = "SELECT id, `name`
-          FROM owners
+          FROM registrars
           ORDER BY `name` ASC";
 $q = $conn->stmt_init();
 
@@ -156,11 +169,20 @@ if ($q->prepare($query)) {
     $q->store_result();
     $q->bind_result($id, $name);
 
-    echo $form->showDropdownTop('new_owner_id', 'Owner', '', '');
+    echo $form->showDropdownTop('new_registrar_id', 'Registrar', '', '1', '');
+
+    if ($new_registrar_id == '') {
+
+        $to_compare = $_SESSION['s_default_registrar'];
+
+    } else {
+
+        $to_compare = $new_registrar_id;
+    }
 
     while ($q->fetch()) {
 
-        echo $form->showDropdownOption($id, $name, $_SESSION['s_default_owner_domains']);
+        echo $form->showDropdownOption($id, $name, $to_compare);
 
     }
 
@@ -173,7 +195,7 @@ if ($q->prepare($query)) {
 }
 
 $query = "SELECT id, `name`
-          FROM registrars
+          FROM owners
           ORDER BY `name` ASC";
 $q = $conn->stmt_init();
 
@@ -183,11 +205,20 @@ if ($q->prepare($query)) {
     $q->store_result();
     $q->bind_result($id, $name);
 
-    echo $form->showDropdownTop('new_registrar_id', 'Registrar', '', '');
+    echo $form->showDropdownTop('new_owner_id', 'Account Owner', '', '1', '');
+
+    if ($new_owner_id == '') {
+
+        $to_compare = $_SESSION['s_default_owner_domains'];
+
+    } else {
+
+        $to_compare = $new_owner_id;
+    }
 
     while ($q->fetch()) {
 
-        echo $form->showDropdownOption($id, $name, $_SESSION['s_default_registrar']);
+        echo $form->showDropdownOption($id, $name, $to_compare);
 
     }
 
@@ -198,15 +229,68 @@ if ($q->prepare($query)) {
 } else {
     $error->outputSqlError($conn, "ERROR");
 }
-echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '', '');
-echo $form->showInputText('new_password', 'Password (255)', '', $new_password, '255', '', '', '');
-echo $form->showInputText('new_api_key', 'API Key', '', $new_api_key, '255', '', '', '');
+
+echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '', '', '');
+echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '1', '', '');
+echo $form->showInputText('new_password', 'Password (255)', '', $new_password, '255', '', '', '', '');
+
 echo $form->showRadioTop('Reseller Account?', '', '');
 if ($new_reseller == '') $new_reseller = '0';
 echo $form->showRadioOption('new_reseller', '1', 'Yes', $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_reseller', '0', 'No', $new_reseller, '', '');
 echo $form->showRadioBottom('');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+
+echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $new_reseller_id, '100', '', '', '', '');
+?>
+
+<div class="box box-default collapsed-box box-solid">
+    <div class="box-header with-border">
+        <h3 class="box-title">API Credentials</h3>
+        <div class="box-tools">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                    class="fa fa-plus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body"><?php
+
+        echo $form->showInputText('new_api_app_name', 'API App Name', '', $new_api_app_name, '255', '', '', '', '');
+        echo $form->showInputText('new_api_key', 'API Key', '', $new_api_key, '255', '', '', '', '');
+        echo $form->showInputText('new_api_secret', 'API Secret', '', $new_api_secret, '255', '', '', '', '');
+
+        $query = "SELECT id, `name`, ip
+                  FROM ip_addresses
+                  ORDER BY `name` ASC";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($id, $name, $ip_address);
+
+            echo $form->showDropdownTop('new_api_ip_id', 'API IP Address', 'The IP Address that you whitelisted with the domain registrar for API access.', '', '');
+
+            echo $form->showDropdownOption('0', 'n/a', '0');
+
+            while ($q->fetch()) {
+
+                echo $form->showDropdownOption($id, $name . ' (' . $ip_address . ')', $new_api_ip_id);
+
+            }
+
+            echo $form->showDropdownBottom('');
+
+            $q->close();
+
+        } else {
+            $error->outputSqlError($conn, "ERROR");
+        } ?>
+
+    </div>
+</div><BR><?php
+
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showSubmitButton('Add Registrar Account', '', '');
 echo $form->showFormBottom('');
 ?>

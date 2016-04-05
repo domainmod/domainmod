@@ -48,8 +48,8 @@ if ($sslpid != '') { $sslpid_string = " AND sa.ssl_provider_id = '$sslpid' "; } 
 if ($sslpaid != '') { $sslpaid_string = " AND sa.id = '$sslpaid' "; } else { $sslpaid_string = ''; }
 if ($oid != '') { $oid_string = " AND sa.owner_id = '$oid' "; } else { $oid_string = ''; }
 
-$sql = "SELECT sa.id AS sslpaid, sa.username, sa.password, sa.owner_id, sa.ssl_provider_id, sa.reseller, o.id AS oid,
-            o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname, sa.notes, sa.insert_time, sa.update_time
+$sql = "SELECT sa.id AS sslpaid, sa.email_address, sa.username, sa.password, sa.owner_id, sa.ssl_provider_id, sa.reseller, sa.reseller_id, o.id AS oid,
+            o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname, sa.notes, sa.creation_type_id, sa.created_by, sa.insert_time, sa.update_time
         FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
         WHERE sa.owner_id = o.id
           AND sa.ssl_provider_id = sslp.id
@@ -74,13 +74,17 @@ if ($export_data == '1') {
     $row_contents = array(
         'Status',
         'SSL Provider',
+        'Email Address',
         'Username',
         'Password',
+        'Reseller Account?',
+        'Reseller ID',
         'Owner',
         'SSL Certs',
         'Default Account?',
-        'Reseller Account?',
         'Notes',
+        'Creation Type',
+        'Created By',
         'Inserted',
         'Updated'
     );
@@ -130,16 +134,29 @@ if ($export_data == '1') {
 
             }
 
+            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+
+            if ($row->created_by == '0') {
+                $created_by = 'Unknown';
+            } else {
+                $user = new DomainMOD\User();
+                $created_by = $user->getFullName($connection, $row->created_by);
+            }
+
             $row_contents = array(
                 $status,
                 $row->sslpname,
+                $row->email_address,
                 $row->username,
                 $row->password,
+                $is_reseller,
+                $row->reseller_id,
                 $row->oname,
                 $total_certs,
                 $is_default,
-                $is_reseller,
                 $row->notes,
+                $creation_type,
+                $created_by,
                 $time->toUserTimezone($row->insert_time),
                 $time->toUserTimezone($row->update_time)
             );

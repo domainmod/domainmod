@@ -122,4 +122,13 @@ class Layout
 
     }
 
+    public function highlightText($text_to_display)
+    {
+
+        ob_start(); ?>
+        <strong><span style="color:#a30000;"><?php echo $text_to_display; ?></span></strong><?php
+        return ob_get_clean();
+
+    }
+
 } //@formatter:on

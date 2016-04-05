@@ -81,19 +81,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $query = "INSERT INTO dns
                   (`name`, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, ip1, ip2, ip3, ip4, ip5, ip6,
-                   ip7, ip8, ip9, ip10, notes, number_of_servers, insert_time)
+                   ip7, ip8, ip9, ip10, notes, number_of_servers, created_by, insert_time)
                    VALUES
-                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
 
             $timestamp = $time->stamp();
 
-            $q->bind_param('ssssssssssssssssssssssss', $new_name, $new_dns1, $new_dns2, $new_dns3, $new_dns4, $new_dns5,
+            $q->bind_param('sssssssssssssssssssssssis', $new_name, $new_dns1, $new_dns2, $new_dns3, $new_dns4, $new_dns5,
                 $new_dns6, $new_dns7, $new_dns8, $new_dns9, $new_dns10, $new_ip1, $new_ip2, $new_ip3, $new_ip4,
                 $new_ip5, $new_ip6, $new_ip7, $new_ip8, $new_ip9, $new_ip10, $new_notes, $new_number_of_servers,
-                $timestamp);
+                $_SESSION['s_user_id'], $timestamp);
             $q->execute();
             $q->close();
 
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_message_success'] = 'DNS Profile ' . $new_name . ' Added<BR>';
+        $_SESSION['s_message_success'] .= 'DNS Profile ' . $new_name . ' Added<BR>';
 
         header("Location: ../dns.php");
         exit;
@@ -129,123 +129,123 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'Profile Name', '', $new_name, '255', '', '', ''); ?>
+echo $form->showInputText('new_name', 'Profile Name', '', $new_name, '255', '', '1', '', ''); ?>
 <table width="100%">
     <tbody>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns1', 'DNS Server 1', '', $new_dns1, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns1', 'DNS Server 1', '', $new_dns1, '255', '', '1', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip1', 'IP Address 1', '', $new_ip1, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip1', 'IP Address 1', '', $new_ip1, '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns2', 'DNS Server 2', '', $new_dns2, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns2', 'DNS Server 2', '', $new_dns2, '255', '', '1', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip2', 'IP Address 2', '', $new_ip2, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip2', 'IP Address 2', '', $new_ip2, '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns3', 'DNS Server 3', '', $new_dns3, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns3', 'DNS Server 3', '', $new_dns3, '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip3', 'IP Address 3', '', $new_ip3, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip3', 'IP Address 3', '', $new_ip3, '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns4', 'DNS Server 4', '', $new_dns4, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns4', 'DNS Server 4', '', $new_dns4, '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip4', 'IP Address 4', '', $new_ip4, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip4', 'IP Address 4', '', $new_ip4, '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns5', 'DNS Server 5', '', $new_dns5, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns5', 'DNS Server 5', '', $new_dns5, '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip5', 'IP Address 5', '', $new_ip5, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip5', 'IP Address 5', '', $new_ip5, '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns6', 'DNS Server 6', '', $new_dns6, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns6', 'DNS Server 6', '', $new_dns6, '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip6', 'IP Address 6', '', $new_ip6, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip6', 'IP Address 6', '', $new_ip6, '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns7', 'DNS Server 7', '', $new_dns7, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns7', 'DNS Server 7', '', $new_dns7, '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip7', 'IP Address 7', '', $new_ip7, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip7', 'IP Address 7', '', $new_ip7, '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns8', 'DNS Server 8', '', $new_dns8, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns8', 'DNS Server 8', '', $new_dns8, '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip8', 'IP Address 8', '', $new_ip8, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip8', 'IP Address 8', '', $new_ip8, '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns9', 'DNS Server 9', '', $new_dns9, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns9', 'DNS Server 9', '', $new_dns9, '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip9', 'IP Address 9', '', $new_ip9, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip9', 'IP Address 9', '', $new_ip9, '255', '', '', '', ''); ?>
         </td>
     </tr>
     <tr>
         <td width="49%">
-            <?php echo $form->showInputText('new_dns10', 'DNS Server 10', '', $new_dns10, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_dns10', 'DNS Server 10', '', $new_dns10, '255', '', '', '', ''); ?>
         </td>
         <td width="2%">
             &nbsp;
         </td>
         <td width="49%">
-            <?php echo $form->showInputText('new_ip10', 'IP Address 10', '', $new_ip10, '255', '', '', ''); ?>
+            <?php echo $form->showInputText('new_ip10', 'IP Address 10', '', $new_ip10, '255', '', '', '', ''); ?>
         </td>
     </tr>
     </tbody>
 </table>
 <?php
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showSubmitButton('Add DNS Profile', '', '');
 echo $form->showFormBottom('');
 ?>

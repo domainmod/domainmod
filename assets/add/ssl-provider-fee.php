@@ -55,7 +55,7 @@ $new_currency = $_POST['new_currency'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_type_id != '' && $new_initial_fee != '' && $new_renewal_fee != '') {
+    if ($new_type_id != '' && $new_type_id != '0' && $new_initial_fee != '' && $new_renewal_fee != '') {
 
         $timestamp = $time->stamp();
 
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_type_id == '') $_SESSION['s_message_danger'] .= "Choose the SSL Type<BR>";
+        if ($new_type_id == '' || $new_type_id == '0') $_SESSION['s_message_danger'] .= "Choose the SSL Type<BR>";
         if ($new_initial_fee == '') $_SESSION['s_message_danger'] .= "Enter the initial fee<BR>";
         if ($new_renewal_fee == '') $_SESSION['s_message_danger'] .= "Enter the renewal fee<BR>";
 
@@ -163,7 +163,7 @@ $sql = "SELECT id, type
         FROM ssl_cert_types
         ORDER BY `type`";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_type_id', 'SSL Type', '', '');
+echo $form->showDropdownTop('new_type_id', 'SSL Type', '', '1', '');
 echo $form->showDropdownOption('', 'Choose an SSL Type', 'null');
 while ($row = mysqli_fetch_object($result)) {
 
@@ -172,15 +172,15 @@ while ($row = mysqli_fetch_object($result)) {
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showInputText('new_initial_fee', 'Initial Fee', '', $new_initial_fee, '10', '', '', '');
-echo $form->showInputText('new_renewal_fee', 'Renewal Fee', '', $new_renewal_fee, '10', '', '', '');
-echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '', '', '');
+echo $form->showInputText('new_initial_fee', 'Initial Fee', '', $new_initial_fee, '10', '', '1', '', '');
+echo $form->showInputText('new_renewal_fee', 'Renewal Fee', '', $new_renewal_fee, '10', '', '1', '', '');
+echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '', '', '', '');
 
 $sql = "SELECT id, currency, `name`, symbol
         FROM currencies
         ORDER BY `name`";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_currency', 'Currency', '', '');
+echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
 while ($row = mysqli_fetch_object($result)) {
 
     echo $form->showDropdownOption($row->currency, $row->name . ' (' . $row->currency . ')', $_SESSION['s_default_currency']);

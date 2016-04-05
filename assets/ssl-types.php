@@ -41,7 +41,7 @@ $system->authCheck();
 
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT id, type, notes, insert_time, update_time
+$sql = "SELECT id, type, notes, creation_type_id, created_by, insert_time, update_time
         FROM ssl_cert_types
         ORDER BY type ASC";
 
@@ -63,6 +63,8 @@ if ($export_data == '1') {
         'SSL Certs',
         'Default SSL Type?',
         'Notes',
+        'Creation Type',
+        'Created By',
         'Inserted',
         'Updated'
     );
@@ -102,12 +104,23 @@ if ($export_data == '1') {
 
             }
 
+            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+
+            if ($row->created_by == '0') {
+                $created_by = 'Unknown';
+            } else {
+                $user = new DomainMOD\User();
+                $created_by = $user->getFullName($connection, $row->created_by);
+            }
+
             $row_contents = array(
                 $status,
                 $row->type,
                 number_format($total_certs),
                 $is_default,
                 $row->notes,
+                $creation_type,
+                $created_by,
                 $time->toUserTimezone($row->insert_time),
                 $time->toUserTimezone($row->update_time)
             );

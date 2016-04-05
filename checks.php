@@ -157,8 +157,10 @@ while ($row_currencies = mysqli_fetch_object($result_currencies)) {
 
 }
 
-// Check GitHub to see if a newer version is available
-$system->checkVersion($connection, $software_version);
+// Check to see if there are any domain lists or domains in the queue
+$queue = new DomainMOD\DomainQueue();
+$queue->checkListQueue($connection);
+$queue->checkDomainQueue($connection);
 
 // Check for existing Domain and SSL assets
 $system->checkExistingAssets($connection);
@@ -198,6 +200,9 @@ if ($_SESSION['s_version_error'] != '1') {
     }
 
 }
+
+// Check GitHub to see if a newer version is available
+$system->checkVersion($connection, $software_version);
 
 if (isset($_SESSION['s_user_redirect'])) {
 

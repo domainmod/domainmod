@@ -49,16 +49,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($new_name != '' && $new_ip != '') {
 
         $query = "INSERT INTO ip_addresses
-                  (`name`, ip, rdns, notes, insert_time)
+                  (`name`, ip, rdns, notes, created_by, insert_time)
                   VALUES
-                  (?, ?, ?, ?, ?)";
+                  (?, ?, ?, ?, ?, ?)";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
 
             $timestamp = $time->stamp();
 
-            $q->bind_param('sssss', $new_name, $new_ip, $new_rdns, $new_notes, $timestamp);
+            $q->bind_param('ssssis', $new_name, $new_ip, $new_rdns, $new_notes, $_SESSION['s_user_id'], $timestamp);
             $q->execute();
             $q->close();
 
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_message_success'] = "IP Address " . $new_name . " (" . $new_ip . ") Added<BR>";
+        $_SESSION['s_message_success'] .= "IP Address " . $new_name . " (" . $new_ip . ") Added<BR>";
 
         header("Location: ../ip-addresses.php");
         exit;
@@ -94,10 +94,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_name', 'IP Address Name (100)', '', $new_name, '100', '', '', '');
-echo $form->showInputText('new_ip', 'IP Address (100)', '', $new_ip, '100', '', '', '');
-echo $form->showInputText('new_rdns', 'rDNS (100)', '', $new_rdns, '100', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_name', 'IP Address Name (100)', '', $new_name, '100', '', '1', '', '');
+echo $form->showInputText('new_ip', 'IP Address (100)', '', $new_ip, '100', '', '1', '', '');
+echo $form->showInputText('new_rdns', 'rDNS (100)', '', $new_rdns, '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showSubmitButton('Add IP Address', '', '');
 echo $form->showFormBottom('');
 ?>

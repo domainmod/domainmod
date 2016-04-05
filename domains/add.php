@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($date->checkDateFormat($new_expiry_date) && $domain->checkFormat($new_domain) && $new_cat_id != "" &&
         $new_dns_id != "" && $new_ip_id != "" && $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" &&
-        $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0") {
+        $new_dns_id != "0" && $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0" && $new_active != '') {
 
         $query = "SELECT domain
                   FROM domains
@@ -171,17 +171,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $query_d = "INSERT INTO domains
                             (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
-                             hosting_id, fee_id, total_cost, `function`, notes, autorenew, privacy, active, insert_time)
+                             hosting_id, fee_id, total_cost, `function`, notes, autorenew, privacy, created_by,
+                             active, insert_time)
                             VALUES
-                            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 $q_d = $conn->stmt_init();
 
                 if ($q_d->prepare($query_d)) {
 
-                    $q_d->bind_param('iiisssiiiiidssiiis', $new_owner_id, $new_registrar_id, $new_account_id,
+                    $q_d->bind_param('iiisssiiiiidssiiiis', $new_owner_id, $new_registrar_id, $new_account_id,
                         $new_domain, $tld, $new_expiry_date, $new_cat_id, $new_dns_id, $new_ip_id, $new_hosting_id,
                         $new_fee_id, $new_total_cost, $new_function, $new_notes, $new_autorenew, $new_privacy,
-                        $new_active, $timestamp);
+                        $_SESSION['s_user_id'], $new_active, $timestamp);
                     $q_d->execute();
 
                     $temp_domain_id = $q_d->insert_id;
@@ -255,20 +256,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q_df->close();
 
-                    $_SESSION['s_message_success'] = "Domain " . $new_domain . " Added<BR>";
-
-                    $maint->updateSegments($connection);
-
-                    $queryB = new DomainMOD\QueryBuild();
-
-                    $sql = $queryB->missingFees('domains');
-                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
-
-                    $system->checkExistingAssets($connection);
-
                 } else {
                     $error->outputSqlError($conn, "ERROR");
                 }
+
+                $maint->updateDomainFee($connection, $temp_domain_id);
+
+                $queryB = new DomainMOD\QueryBuild();
+                $sql = $queryB->missingFees('domains');
+                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
+
+                $maint->updateSegments($connection);
+
+                $system->checkExistingAssets($connection);
+
+                $_SESSION['s_message_success'] .= 'Domain ' . $new_domain . ' Added<BR>';
 
             } else {
 
@@ -283,13 +285,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
     } else {
-
+        
         if (!$domain->checkFormat($new_domain)) {
             $_SESSION['s_message_danger'] .= "The domain format is incorrect<BR>";
         }
 
         if (!$date->checkDateFormat($new_expiry_date)) {
             $_SESSION['s_message_danger'] .= "The expiry date you entered is invalid<BR>";
+        }
+
+        if ($new_account_id == '' || $new_account_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Registrar Account<BR>";
+
+        }
+
+        if ($new_dns_id == '' || $new_dns_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the DNS Profile<BR>";
+
+        }
+
+        if ($new_ip_id == '' || $new_ip_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the IP Address<BR>";
+
+        }
+
+        if ($new_hosting_id == '' || $new_hosting_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Web Host<BR>";
+
+        }
+
+        if ($new_cat_id == '' || $new_cat_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Category<BR>";
+
+        }
+
+        if ($new_active == '') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Status<BR>";
+
         }
 
     }
@@ -306,12 +344,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_domain', 'Domain (255)', '', $new_domain, '255', '', '', '');
-echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '');
+echo $form->showInputText('new_domain', 'Domain (255)', '', $new_domain, '255', '', '1', '', '');
+echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '', '');
 if ($new_expiry_date == '') {
     $new_expiry_date = $time->toUserTimezone($timestamp_basic_plus_one_year, 'Y-m-d');
 }
-echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '', '');
+echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                 FROM registrar_accounts AS ra, owners AS o, registrars AS r
@@ -329,7 +367,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $to_compare = $_SESSION['s_default_registrar_account'];
 
 }
-echo $form->showDropdownTop('new_account_id', 'Registrar Account', '', '');
+echo $form->showDropdownTop('new_account_id', 'Registrar Account', '', '1', '');
 while ($row_account = mysqli_fetch_object($result_account)) { //@formatter:off
 
     echo $form->showDropdownOption($row_account->id, $row_account->r_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $to_compare);
@@ -350,7 +388,8 @@ $sql_dns = "SELECT id, `name`
             FROM dns
             ORDER BY `name` ASC";
 $result_dns = mysqli_query($connection, $sql_dns) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '');
+
+echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '1', '');
 while ($row_dns = mysqli_fetch_object($result_dns)) { //@formatter:off
 
     echo $form->showDropdownOption($row_dns->id, $row_dns->name, $to_compare);
@@ -372,7 +411,8 @@ $sql_ip = "SELECT id, `name`, ip
            FROM ip_addresses
            ORDER BY `name` ASC, ip ASC";
 $result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '');
+
+echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
 while ($row_ip = mysqli_fetch_object($result_ip)) { //@formatter:off
 
     echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ' )', $to_compare);
@@ -394,7 +434,8 @@ $sql_hosting = "SELECT id, `name`
                 FROM hosting
                 ORDER BY name ASC";
 $result_hosting = mysqli_query($connection, $sql_hosting) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '');
+
+echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '1', '');
 while ($row_hosting = mysqli_fetch_object($result_hosting)) { //@formatter:off
 
     echo $form->showDropdownOption($row_hosting->id, $row_hosting->name, $to_compare);
@@ -415,7 +456,8 @@ $sql_cat = "SELECT id, `name`
             FROM categories
             ORDER BY name ASC";
 $result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_cat_id', 'Category', '', '');
+
+echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
 while ($row_cat = mysqli_fetch_object($result_cat)) { //@formatter:off
 
     echo $form->showDropdownOption($row_cat->id, $row_cat->name, $to_compare);
@@ -423,7 +465,7 @@ while ($row_cat = mysqli_fetch_object($result_cat)) { //@formatter:off
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_active', 'Domain Status', '', '');
+echo $form->showDropdownTop('new_active', 'Domain Status', '', '', '');
 echo $form->showDropdownOption('1', 'Active', $new_active);
 echo $form->showDropdownOption('5', 'Pending (Registration)', $new_active);
 echo $form->showDropdownOption('3', 'Pending (Renewal)', $new_active);
@@ -445,7 +487,7 @@ echo $form->showRadioOption('new_privacy', '1', 'Yes', $new_privacy, '<BR>', '&n
 echo $form->showRadioOption('new_privacy', '0', 'No', $new_privacy, '', '');
 echo $form->showRadioBottom('');
 
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 
 $query = "SELECT field_name
           FROM domain_fields
@@ -493,11 +535,11 @@ if ($q->prepare($query)) {
 
                     } elseif ($df_type_id == "2") { // Text
 
-                        echo $form->showInputText('new_' . $df_field_name, $df_name, $df_description, ${'new_' . $field}, '255', '', '', '');
+                        echo $form->showInputText('new_' . $df_field_name, $df_name, $df_description, ${'new_' . $field}, '255', '', '', '', '');
 
                     } elseif ($df_type_id == "3") { // Text Area
 
-                        echo $form->showInputTextarea('new_' . $df_field_name, $df_name, $df_description, ${'new_' . $field}, '', '');
+                        echo $form->showInputTextarea('new_' . $df_field_name, $df_name, $df_description, ${'new_' . $field}, '', '', '');
 
                     }
 

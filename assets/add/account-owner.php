@@ -47,16 +47,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($new_owner != "") {
 
         $query = "INSERT INTO owners
-                  (`name`, notes, insert_time)
+                  (`name`, notes, created_by, insert_time)
                   VALUES
-                  (?, ?, ?)";
+                  (?, ?, ?, ?)";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
 
             $timestamp = $time->stamp();
 
-            $q->bind_param('sss', $new_owner, $new_notes, $timestamp);
+            $q->bind_param('ssis', $new_owner, $new_notes, $_SESSION['s_user_id'], $timestamp);
             $q->execute();
             $q->close();
 
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_message_success'] = 'Owner ' . $new_owner . ' Added<BR>';
+        $_SESSION['s_message_success'] .= 'Owner ' . $new_owner . ' Added<BR>';
 
         header("Location: ../account-owners.php");
         exit;
@@ -87,8 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_owner', 'Owner Name (100)', '', $new_owner, '100', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_owner', 'Owner Name (100)', '', $new_owner, '100', '', '1', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showSubmitButton('Add Owner', '', '');
 echo $form->showFormBottom('');
 ?>

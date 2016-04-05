@@ -30,7 +30,7 @@ class System
         if (is_dir($full_install_path) &&
             !mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_servers` . "'"))) {
             $installation_mode = 1;
-            $result_message = "DomainMOD is not yet installed<BR><BR><a href=\"" . $web_root . "/install/\">Click here to start the installation</a><BR>";
+            $result_message = "DomainMOD is not yet installed<BR>";
         } else {
             $installation_mode = 0;
             $result_message = '';
@@ -104,7 +104,7 @@ class System
     {
         if ($_SESSION['s_is_logged_in'] != 1) {
             $_SESSION['s_user_redirect'] = $_SERVER["REQUEST_URI"];
-            $_SESSION['s_message_danger'] = "You must be logged in to access this area<BR>";
+            $_SESSION['s_message_danger'] .= "You must be logged in to access this area<BR>";
             header("Location: " . $_SESSION['s_web_root'] . "/");
             exit;
         }
@@ -175,6 +175,62 @@ class System
 
         } else $error->outputSqlError($conn, "ERROR");
         return $q;
+    }
+    
+    public function getCreationType($connection, $creation_type_id)
+    {
+        $error = new Error();
+        
+        $sql = "SELECT `name`
+                FROM creation_types
+                WHERE id = '" . $creation_type_id . "'";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        
+        if (mysqli_num_rows($result) == 1) {
+        
+            while ($row = mysqli_fetch_object($result)) {
+                
+                $creation_type = $row->name;
+            
+            }
+        
+        } else {
+            
+            echo 'There was a problem retrieving the creation type';
+            exit;
+            
+        }
+        
+        return $creation_type;
+    
+    }
+
+    public function getCreationTypeId($connection, $creation_type)
+    {
+        $error = new Error();
+        
+        $sql = "SELECT id
+                FROM creation_types
+                WHERE `name` = '" . $creation_type . "'";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        
+        if (mysqli_num_rows($result) == 1) {
+        
+            while ($row = mysqli_fetch_object($result)) {
+                
+                $creation_type_id = $row->id;
+            
+            }
+        
+        } else {
+            
+            echo 'There was a problem retrieving the creation type ID';
+            exit;
+            
+        }
+        
+        return $creation_type_id;
+    
     }
 
 } //@formatter:on

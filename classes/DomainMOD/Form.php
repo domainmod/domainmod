@@ -42,12 +42,13 @@ class Form
         return ob_get_clean();
     }
 
-    public function showInputText($name, $text_to_display, $subtext, $value, $maxlength, $is_password, $before, $after)
+    public function showInputText($name, $text_to_display, $subtext, $value, $maxlength, $is_password, $required, $before, $after)
     {
         ob_start();
             echo $before; ?>
             <div class="form-group">
-                <label><?php echo $text_to_display; ?><?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
+                <label><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('*'); ?><?php } ?>
+                <?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <input type="<?php if ($is_password == '1') { echo "password"; } else { echo "text"; } ?>" class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>"
                     value="<?php echo htmlentities($value, ENT_QUOTES); ?>" maxlength="<?php echo $maxlength; ?>">
             </div><?php
@@ -55,12 +56,13 @@ class Form
         return ob_get_clean();
     }
 
-    public function showInputTextarea($name, $text_to_display, $subtext, $value, $before, $after)
+    public function showInputTextarea($name, $text_to_display, $subtext, $value, $required, $before, $after)
     {
         ob_start();
             echo $before; ?>
             <div class="form-group">
-                <label><?php echo $text_to_display; ?><?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . htmlentities($subtext , ENT_QUOTES) . '</span><BR>'; ?></label>
+                <label><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('*'); ?><?php } ?>
+                <?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <textarea class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php
                     echo $name; ?>" style="height: 80px;"><?php echo htmlentities($value, ENT_QUOTES); ?></textarea>
             </div><?php
@@ -75,22 +77,24 @@ class Form
         return ob_get_clean();
     }
 
-    public function showDropdownTop($name, $text_to_display, $subtext, $before)
+    public function showDropdownTop($name, $text_to_display, $subtext, $required, $before)
     {
         ob_start();
             echo $before; ?>
             <div class="form-group">
-                <label class="control-label"><?php echo $text_to_display; ?><?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
+                <label class="control-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('*'); ?><?php } ?>
+                <?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <select class="form-control" name="<?php echo $name; ?>"><?php
         return ob_get_clean();
     }
 
-    public function showDropdownTopJump($text_to_display, $before)
+    public function showDropdownTopJump($text_to_display, $subtext, $required, $before)
     {
         ob_start();
             echo $before; ?>
             <div class="form-group">
-                <label class="control-label"><?php echo $text_to_display; ?></label>
+                <label class="control-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('*'); ?><?php } ?>
+                <?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <select class="form-control" name="jumpMenu" id="jumpMenu" onChange="MM_jumpMenu('parent',this,0)"><?php
         return ob_get_clean();
     }

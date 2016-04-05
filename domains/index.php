@@ -267,7 +267,7 @@ if ($_SESSION['s_system_large_mode'] == '1') {
 
 $dfd_columns = $customField->getCustomFieldsSql($connection, 'domain_fields', 'dfd');
 
-$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.autorenew, d.privacy, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.id AS f_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name" . $dfd_columns . "
+$sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.autorenew, d.privacy, d.creation_type_id, d.created_by, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.id AS f_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name" . $dfd_columns . "
         FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
         WHERE d.account_id = ra.id
           AND ra.registrar_id = r.id
@@ -749,6 +749,8 @@ if ($export_data == "1") {
     $row_contents[$count++] = "Category Stakeholder";
     $row_contents[$count++] = "Owner";
     $row_contents[$count++] = "Notes";
+    $row_contents[$count++] = "Creation Type";
+    $row_contents[$count++] = "Created By";
     $row_contents[$count++] = "Inserted";
     $row_contents[$count++] = "Updated";
     $row_contents[$count++] = "CUSTOM FIELDS";
@@ -827,6 +829,8 @@ if ($export_data == "1") {
 
         unset($row_contents);
         $count = 0;
+        
+        $creation_type = $system->getCreationType($connection, $row->creation_type_id);
 
         $row_contents[$count++] = $domain_status;
         $row_contents[$count++] = $row->expiry_date;
@@ -853,6 +857,13 @@ if ($export_data == "1") {
         $row_contents[$count++] = $row->stakeholder;
         $row_contents[$count++] = $row->owner_name;
         $row_contents[$count++] = $row->notes;
+        $row_contents[$count++] = $creation_type;
+        if ($row->created_by == '0') {
+            $row_contents[$count++] = 'Unknown';
+        } else {
+            $user = new DomainMOD\User();
+            $row_contents[$count++] = $user->getFullName($connection, $row->created_by);
+        }
         $row_contents[$count++] = $time->toUserTimezone($row->insert_time);
         $row_contents[$count++] = $time->toUserTimezone($row->update_time);
         $row_contents[$count++] = '';
@@ -888,16 +899,70 @@ if ($export_data == "1") {
 <body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
-if ($_SESSION['s_has_registrar'] != '1') {
-    echo "<BR><strong>0</strong> Domain Registrars found. <a href=\"../assets/add/registrar.php\">Click here to add one</a>.<BR><BR>";
-}
+$sql_supported = "SELECT `name`
+                  FROM api_registrars
+                  ORDER BY name ASC";
+$result_supported = mysqli_query($connection, $sql_supported);
+$supported_registrars = '';
+while ($row_supported = mysqli_fetch_object($result_supported)) {
 
-if ($_SESSION['s_has_registrar_account'] != '1' && $_SESSION['s_has_registrar'] == '1') {
-    echo "<BR><strong>0</strong> Domain Registrar Accounts found. <a href=\"../assets/add/registrar-account.php\">Click here to add one</a>.<BR><BR>";
+    $supported_registrars .= ', ' . $row_supported->name;
+
+}
+$supported_registrars = substr($supported_registrars, 2);
+
+
+// Double check to make sure there are still no domains in the system
+if ($_SESSION['s_has_domain'] == '0') {
+    
+    $queryB = new DomainMOD\QueryBuild();
+    $sql_asset_check = $queryB->singleAsset('domains');
+    $_SESSION['s_has_domain'] = $system->checkForRows($connection, $sql_asset_check);
+
 }
 
 if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
-    echo "<BR><strong>0</strong> Domains found. <a href=\"add.php\">Click here to add one</a>.<BR><BR>";
+
+    $go_text1 = ' [<a href="' . $web_root . '/queue/info.php">go</a>]';
+    $go_text2 = ' [<a href="' . $web_root . '/bulk/">go</a>]';
+    $go_text3 = ' [<a href="' . $web_root . '/domains/add.php">go</a>]';
+
+} else {
+
+    $go_text1 = '';
+    $go_text2 = '';
+    $go_text3 = '';
+
+}
+
+$subtext1 = 'Before you can start adding domains to DomainMOD you need to add at least one registrar and a registrar account. Once you\'re created these you can use any of the below options to add your domains.<BR><BR>';
+
+$subtext2 .= '
+<h4>Domain Queue' . $go_text1 . '</h4>
+The easiest option for adding domains is to use the Domain Queue, which allows you to supply a list of domains and let ' . $software_title . ' take care of the rest. This option uses your domain registrar\'s API to retrieve information required to add domains, so unfortunately it only works if your registrar has an API and support for it has been built into DomainMOD. Before using this option make sure your API credentials have been saved with your registrar account.<BR>
+<BR>
+Currently Supported Registrars: ' . $supported_registrars . '<BR>
+<BR>
+<h4>Bulk Updater' . $go_text2 . '</h4>
+The Bulk Updater also allows you to supply a list of domains to be added, however you need to manually choose the options for the domains you\'re adding, and all of the domains will have the same settings. The Bulk Updater generally works best if you\'re adding a list of newly registered domains, since they will have the same expiry date and will generally have the same settings.<BR>
+<BR>
+<h4>Manually' . $go_text3 . '</h4>
+Domains can also be added one-by-one, which allows you to choose custom settings for each domain.
+';
+
+if ($_SESSION['s_has_registrar'] != '1') {
+    echo "<BR><strong>0</strong> Registrars found. <a href=\"../assets/add/registrar.php\">Click here to add one</a>.<BR><BR>";
+    echo $subtext1 . $subtext2 . '<BR><BR>';
+}
+
+if ($_SESSION['s_has_registrar_account'] != '1' && $_SESSION['s_has_registrar'] == '1') {
+    echo "<BR><strong>0</strong> Registrar Accounts found. <a href=\"../assets/add/registrar-account.php\">Click here to add one</a>.<BR><BR>";
+    echo $subtext1 . $subtext2 . '<BR><BR>';
+}
+
+if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
+    echo "<BR><strong>0</strong> Domains found. Please choose one of the below options to start adding domains.<BR><BR>";
+    echo $subtext2 . '<BR><BR>';
 }
 
 if ($_SESSION['s_system_large_mode'] == '1') {
@@ -923,8 +988,7 @@ if ($segid != "") {
     }
 
 }
-?>
-<?php
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand == '1') {
     $box_type = 'expanded';
     $box_icon = 'minus';
@@ -962,7 +1026,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                             ORDER BY `name` ASC";
             $result_segment = mysqli_query($connection, $sql_segment);
 
-            echo $form->showDropdownTopJump('', '');
+            echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Segment Filter - OFF', 'null');
             while ($row_segment = mysqli_fetch_object($result_segment)) {
 
@@ -1072,7 +1136,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                               ORDER BY r.name asc";
             $result_registrar = mysqli_query($connection, $sql_registrar);
 
-            echo $form->showDropdownTopJump('', '');
+            echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Registrar - ALL', 'null');
             while ($row_registrar = mysqli_fetch_object($result_registrar)) {
 
@@ -1178,7 +1242,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                             GROUP BY r.name, o.name, ra.username
                             ORDER BY r.name asc, o.name asc, ra.username asc";
             $result_account = mysqli_query($connection, $sql_account);
-            echo $form->showDropdownTopJump('', '');
+            echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Registrar Account - ALL', 'null');
             while ($row_account = mysqli_fetch_object($result_account)) {
 
@@ -1287,7 +1351,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                         GROUP BY dns.name
                         ORDER BY dns.name asc";
             $result_dns = mysqli_query($connection, $sql_dns);
-            echo $form->showDropdownTopJump('', '');
+            echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'DNS Profile - ALL', 'null');
             while ($row_dns = mysqli_fetch_object($result_dns)) {
 
@@ -1396,7 +1460,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                        GROUP BY ip.name
                        ORDER BY ip.name asc";
             $result_ip = mysqli_query($connection, $sql_ip);
-            echo $form->showDropdownTopJump('', '');
+            echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'IP Address - ALL', 'null');
             while ($row_ip = mysqli_fetch_object($result_ip)) {
 
@@ -1505,7 +1569,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                             GROUP BY h.name
                             ORDER BY h.name asc";
             $result_hosting = mysqli_query($connection, $sql_hosting);
-            echo $form->showDropdownTopJump('', '');
+            echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Web Hosting Provider - ALL', 'null');
             while ($row_hosting = mysqli_fetch_object($result_hosting)) {
 
@@ -1614,7 +1678,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                              GROUP BY c.name
                              ORDER BY c.name asc";
             $result_category = mysqli_query($connection, $sql_category);
-            echo $form->showDropdownTopJump('', '');
+            echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Category - ALL', 'null');
             while ($row_category = mysqli_fetch_object($result_category)) {
 
@@ -1722,7 +1786,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                           GROUP BY o.name
                           ORDER BY o.name asc";
             $result_owner = mysqli_query($connection, $sql_owner);
-            echo $form->showDropdownTopJump('', '');
+            echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Owner - ALL', 'null');
             while ($row_owner = mysqli_fetch_object($result_owner)) {
 
@@ -1830,7 +1894,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                         GROUP BY tld
                         ORDER BY tld asc";
             $result_tld = mysqli_query($connection, $sql_tld);
-            echo $form->showDropdownTopJump('', '');
+            echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'TLD - ALL', 'null');
             while ($row_tld = mysqli_fetch_object($result_tld)) {
 
@@ -1914,7 +1978,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                            GROUP BY active
                            ORDER BY active asc";
             $result_active = mysqli_query($connection, $sql_active);
-            echo $form->showDropdownTopJump('', '');
+            echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=LIVE&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $is_active, '"Live" Domains (Active / Transfers / Pending)', 'LIVE');
             while ($row_active = mysqli_fetch_object($result_active)) {
 
@@ -1943,7 +2007,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             if ($_SESSION['s_system_large_mode'] == '1') {
 
                 // NUMBER OF DOMAINS TO DISPLAY
-                echo $form->showDropdownTopJump('', '');
+                echo $form->showDropdownTopJump('', '', '', '');
 
                 if ($_SESSION['s_number_of_domains'] != "10" && $_SESSION['s_number_of_domains'] != "50" && $_SESSION['s_number_of_domains'] != "100" && $_SESSION['s_number_of_domains'] != "500" && $_SESSION['s_number_of_domains'] != "1000" && $_SESSION['s_number_of_domains'] != "1000000") {
 
@@ -1963,7 +2027,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             } ?>
 
 
-            <?php echo $form->showInputText('search_for', 'Domain Keyword Search', '', $_SESSION['s_search_for'], '100', '', '', ''); ?>
+            <?php echo $form->showInputText('search_for', 'Domain Keyword Search', '', $_SESSION['s_search_for'], '100', '', '', '', ''); ?>
 
             <?php
             if ($new_start_date == "") {
@@ -1972,7 +2036,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             if ($new_end_date == "") {
                 $new_end_date = '3000-12-31';
             }
-            echo $form->showInputText('daterange', 'Expiring Between', '', $new_start_date . ' - ' . $new_end_date, '23', '', '', '');
+            echo $form->showInputText('daterange', 'Expiring Between', '', $new_start_date . ' - ' . $new_end_date, '23', '', '', '', '');
 
             echo $form->showInputHidden('pcid', $pcid);
             echo $form->showInputHidden('oid', $oid);
@@ -2055,6 +2119,7 @@ if ($segid != "") {
 if (mysqli_num_rows($result) > 0) { ?>
 
     <a href="add.php"><?php echo $layout->showButton('button', 'Add Domain'); ?></a>
+    <a href="<?php echo $web_root; ?>/queue/info.php"><?php echo $layout->showButton('button', 'Add Domains To Queue'); ?></a>
     <a target="_blank" href="<?php echo $web_root; ?>/raw.php"><?php echo $layout->showButton('button', 'Raw List'); ?></a>
     <a href="index.php?<?php echo urlencode($_SERVER['QUERY_STRING']); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a>
 

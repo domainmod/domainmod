@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($date->checkDateFormat($new_expiry_date) && $new_cat_id != "" && $new_dns_id != "" && $new_ip_id != "" &&
         $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" &&
-        $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0") {
+        $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0" && $new_active != '') {
 
         $sql = "SELECT registrar_id, owner_id
                 FROM registrar_accounts
@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         }
 
-        $_SESSION['s_message_success'] = "Domain " . $new_domain . " Updated<BR>";
+        $_SESSION['s_message_success'] .= "Domain " . $new_domain . " Updated<BR>";
 
         $maint->updateSegments($connection);
 
@@ -223,6 +223,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (!$date->checkDateFormat($new_expiry_date)) {
             $_SESSION['s_message_danger'] .= "The expiry date you entered is invalid<BR>";
+        }
+
+        if ($new_account_id == '' || $new_account_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Registrar Account<BR>";
+
+        }
+
+        if ($new_dns_id == '' || $new_dns_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the DNS Profile<BR>";
+
+        }
+
+        if ($new_ip_id == '' || $new_ip_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the IP Address<BR>";
+
+        }
+
+        if ($new_hosting_id == '' || $new_hosting_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Web Host<BR>";
+
+        }
+
+        if ($new_cat_id == '' || $new_cat_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Category<BR>";
+
+        }
+
+        if ($new_active == '') {
+
+            $_SESSION['s_message_danger'] .= "Choose the Status<BR>";
+
         }
 
     }
@@ -269,11 +305,11 @@ if ($del == "1") {
 
     if ($existing_ssl_certs > 0) {
 
-        $_SESSION['s_message_danger'] = "This Domain has SSL Certificates associated with it and cannot be deleted<BR>";
+        $_SESSION['s_message_danger'] .= "This Domain has SSL Certificates associated with it and cannot be deleted<BR>";
 
     } else {
 
-        $_SESSION['s_message_danger'] = "Are you sure you want to delete this Domain?<BR><BR><a
+        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Domain?<BR><BR><a
             href=\"edit.php?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
 
     }
@@ -290,7 +326,7 @@ if ($really_del == "1") {
             WHERE domain_id = '" . $did . "'";
     $result = mysqli_query($connection, $sql);
 
-    $_SESSION['s_message_success'] = "Domain " . $new_domain . " Deleted<BR>";
+    $_SESSION['s_message_success'] .= "Domain " . $new_domain . " Deleted<BR>";
 
     $maint->updateSegments($connection);
 
@@ -313,8 +349,8 @@ if ($really_del == "1") {
 echo $form->showFormTop('');
 echo '<strong>Domain</strong><BR>';
 echo htmlentities($new_domain , ENT_QUOTES). '<BR><BR>';
-echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '');
-echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '', '');
+echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '', '');
+echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
 $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                 FROM registrar_accounts AS ra, owners AS o, registrars AS r
@@ -322,7 +358,7 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                   AND ra.registrar_id = r.id
                 ORDER BY r_name ASC, o_name ASC, ra.username ASC";
 $result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_account_id', 'Registrar Account', '', '');
+echo $form->showDropdownTop('new_account_id', 'Registrar Account', '', '1', '');
 while ($row_account = mysqli_fetch_object($result_account)) { //@formatter:off
 
     echo $form->showDropdownOption($row_account->id, $row_account->r_name . ', ' . $row_account->o_name . ' (' . $row_account->username . ')', $new_account_id);
@@ -334,7 +370,7 @@ $sql_dns = "SELECT id, `name`
             FROM dns
             ORDER BY name ASC";
 $result_dns = mysqli_query($connection, $sql_dns) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '');
+echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '1', '');
 while ($row_dns = mysqli_fetch_object($result_dns)) { //@formatter:off
 
     echo $form->showDropdownOption($row_dns->id, $row_dns->name, $new_dns_id);
@@ -346,7 +382,7 @@ $sql_ip = "SELECT id, `name`, ip
            FROM ip_addresses
            ORDER BY `name` ASC, ip ASC";
 $result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '');
+echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
 while ($row_ip = mysqli_fetch_object($result_ip)) { //@formatter:off
 
     echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ' )', $new_ip_id);
@@ -358,7 +394,7 @@ $sql_hosting = "SELECT id, `name`
                 FROM hosting
                 ORDER BY name ASC";
 $result_hosting = mysqli_query($connection, $sql_hosting) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '');
+echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '1', '');
 while ($row_hosting = mysqli_fetch_object($result_hosting)) { //@formatter:off
 
     echo $form->showDropdownOption($row_hosting->id, $row_hosting->name, $new_hosting_id);
@@ -370,7 +406,7 @@ $sql_cat = "SELECT id, `name`
             FROM categories
             ORDER BY name ASC";
 $result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_cat_id', 'Category', '', '');
+echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
 while ($row_cat = mysqli_fetch_object($result_cat)) { //@formatter:off
 
     echo $form->showDropdownOption($row_cat->id, $row_cat->name, $new_cat_id);
@@ -378,7 +414,7 @@ while ($row_cat = mysqli_fetch_object($result_cat)) { //@formatter:off
 }
 echo $form->showDropdownBottom('');
 
-echo $form->showDropdownTop('new_active', 'Domain Status', '', '');
+echo $form->showDropdownTop('new_active', 'Domain Status', '', '', '');
 echo $form->showDropdownOption('1', 'Active', $new_active);
 echo $form->showDropdownOption('5', 'Pending (Registration)', $new_active);
 echo $form->showDropdownOption('3', 'Pending (Renewal)', $new_active);
@@ -403,7 +439,7 @@ if ($new_notes != '') {
 } else {
     $subtext = '';
 }
-echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', '', '');
 
 $sql = "SELECT field_name
         FROM domain_fields
@@ -450,11 +486,11 @@ if (mysqli_num_rows($result) > 0) { ?>
 
             } elseif ($row->type_id == "2") { // Text
 
-                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '255', '', '', '');
+                echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, $field_data, '255', '', '', '', '');
 
             } elseif ($row->type_id == "3") { // Text Area
 
-                echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, $field_data, '', '');
+                echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, $field_data, '', '', '');
 
             }
 
@@ -580,7 +616,7 @@ if ($no_results_dns_zones !== 1) { ?>
     </table><?php
 }
 ?>
-<BR><BR><a href="edit.php?did=<?php echo urlencode($did); ?>&del=1">DELETE THIS DOMAIN</a>
+<BR><a href="edit.php?did=<?php echo urlencode($did); ?>&del=1">DELETE THIS DOMAIN</a>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

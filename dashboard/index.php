@@ -140,6 +140,44 @@ $system->authCheck();
 
     <!-- Main Boxes -->
     <h3 style="padding-left:20px;">System Totals</h3>
+
+
+    <?php // only display the queue widget if there are results
+    $sql = "SELECT id
+            FROM domain_queue
+            LIMIT 1";
+    $result = mysqli_query($connection, $sql);
+
+    if (mysqli_num_rows($result) > 0) { ?>
+
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <?php
+                    $sql = "SELECT count(*) AS total_count
+                            FROM domain_queue";
+                    $result = mysqli_query($connection, $sql);
+                    while ($row = mysqli_fetch_object($result)) {
+                        $total_count = $row->total_count;
+                    }
+                    ?>
+                    <h3><?php echo number_format($total_count); ?></h3>
+
+                    <p>Domains in Queue</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-clock" style="padding-top:16px;"></i>
+                </div>
+                <a href="<?php echo $web_root; ?>/queue/" class="small-box-footer">View <i
+                        class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col --><?php
+
+    } ?>
+
     <div class="col-lg-3 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-green">

@@ -74,7 +74,7 @@ if ($demo_install != '1') {
             $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 
-            $_SESSION['s_message_success'] = "System Cleanup Performed";
+            $_SESSION['s_message_success'] .= "System Cleanup Performed";
 
         } elseif ($row->slug == 'expiration-email') {
 

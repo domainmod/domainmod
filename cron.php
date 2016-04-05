@@ -34,7 +34,6 @@ $maint = new DomainMOD\Maintenance();
 $conversion = new DomainMOD\Conversion();
 $schedule = new DomainMOD\Scheduler();
 $time = new DomainMOD\Time();
-$timestamp = $time->stamp();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
@@ -51,7 +50,7 @@ if ($demo_install != '1') {
             FROM scheduler
             WHERE active = '1'
               AND is_running = '0'
-              AND next_run <= '" . $timestamp . "'";
+              AND next_run <= '" . $time->stamp() . "'";
     $result = mysqli_query($connection, $sql);
 
     while ($row = mysqli_fetch_object($result)) {
@@ -63,7 +62,7 @@ if ($demo_install != '1') {
 
             $schedule->isRunning($connection, $row->id);
             $maint->performCleanup($connection);
-            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
+            $schedule->updateTime($connection, $row->id, $time->stamp(), $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 
         } elseif ($row->slug == 'expiration-email') {
@@ -71,7 +70,7 @@ if ($demo_install != '1') {
             $email = new DomainMOD\Email();
             $schedule->isRunning($connection, $row->id);
             $email->sendExpirations($connection, $software_title, '1');
-            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
+            $schedule->updateTime($connection, $row->id, $time->stamp(), $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 
         } elseif ($row->slug == 'update-conversion-rates') {
@@ -86,14 +85,14 @@ if ($demo_install != '1') {
                 $conversion->updateRates($connection, $row_currency->default_currency, $row_currency->user_id);
 
             }
-            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
+            $schedule->updateTime($connection, $row->id, $time->stamp(), $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 
         } elseif ($row->slug == 'check-new-version') {
 
             $schedule->isRunning($connection, $row->id);
             $system->checkVersion($connection, $software_version);
-            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
+            $schedule->updateTime($connection, $row->id, $time->stamp(), $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 
         } elseif ($row->slug == 'data-warehouse-build') {
@@ -101,7 +100,16 @@ if ($demo_install != '1') {
             $dw = new DomainMOD\DwBuild();
             $schedule->isRunning($connection, $row->id);
             $dw->build($connection);
-            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
+            $schedule->updateTime($connection, $row->id, $time->stamp(), $next_run, $row->active);
+            $schedule->isFinished($connection, $row->id);
+
+        } elseif ($row->slug == 'domain-queue') {
+
+            $queue = new DomainMOD\DomainQueue();
+            $schedule->isRunning($connection, $row->id);
+            $queue->processQueueList($connection);
+            $queue->processQueueDomain($connection);
+            $schedule->updateTime($connection, $row->id, $time->stamp(), $next_run, $row->active);
             $schedule->isFinished($connection, $row->id);
 
         }

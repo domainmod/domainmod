@@ -78,20 +78,20 @@ fees as soon as possible.<BR>
         </td>
         <td><?php
 
-            $sql_missing_types = "SELECT sslcf.type
-                                  FROM ssl_certs AS sslc, ssl_cert_types AS sslcf
-                                  WHERE sslc.type_id = sslcf.id
+            $sql_missing_types = "SELECT sslct.id, sslct.type
+                                  FROM ssl_certs AS sslc, ssl_cert_types AS sslct
+                                  WHERE sslc.type_id = sslct.id
                                     AND sslc.ssl_provider_id = '" . $row->ssl_provider_id . "'
                                     AND sslc.fee_id = '0'
-                                  GROUP BY sslcf.type
-                                  ORDER BY sslcf.type ASC";
+                                  GROUP BY sslct.type
+                                  ORDER BY sslct.type ASC";
             $result_missing_types = mysqli_query($connection, $sql_missing_types);
 
             $full_type_list = "";
 
             while ($row_missing_types = mysqli_fetch_object($result_missing_types)) {
 
-                $full_type_list .= $row_missing_types->type . ", ";
+                $full_type_list .= '<a href=\'' . $web_root . '/assets/add/ssl-provider-fee.php?sslpid=' . $row->ssl_provider_id . '&type_id=' . $row_missing_types->id . '\'>' . $row_missing_types->type . "</a>, ";
 
             }
 

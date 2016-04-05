@@ -41,7 +41,7 @@ $system->authCheck();
 
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT id, `name`, url, notes, insert_time, update_time
+$sql = "SELECT id, `name`, url, notes, creation_type_id, created_by, insert_time, update_time
         FROM hosting
         ORDER BY `name` ASC";
 
@@ -64,6 +64,8 @@ if ($export_data == '1') {
         'Default Web Host?',
         'URL',
         'Notes',
+        'Creation Type',
+        'Created By',
         'Inserted',
         'Updated'
     );
@@ -103,6 +105,15 @@ if ($export_data == '1') {
 
             }
 
+            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+
+            if ($row->created_by == '0') {
+                $created_by = 'Unknown';
+            } else {
+                $user = new DomainMOD\User();
+                $created_by = $user->getFullName($connection, $row->created_by);
+            }
+
             $row_contents = array(
                 $status,
                 $row->name,
@@ -110,6 +121,8 @@ if ($export_data == '1') {
                 $is_default,
                 $row->url,
                 $row->notes,
+                $creation_type,
+                $created_by,
                 $time->toUserTimezone($row->insert_time),
                 $time->toUserTimezone($row->update_time)
             );

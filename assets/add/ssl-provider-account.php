@@ -41,29 +41,29 @@ $system->authCheck();
 
 $new_owner_id = $_POST['new_owner_id'];
 $new_ssl_provider_id = $_POST['new_ssl_provider_id'];
+$new_email_address = $_POST['new_email_address'];
 $new_username = $_POST['new_username'];
 $new_password = $_POST['new_password'];
 $new_reseller = $_POST['new_reseller'];
+$new_reseller_id = $_POST['new_reseller_id'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_username != "" && $new_owner_id != "" && $new_ssl_provider_id != "" && $new_owner_id != "0" &&
-        $new_ssl_provider_id != "0"
-    ) {
+    if ($new_username != "" && $new_owner_id != "" && $new_ssl_provider_id != "" && $new_owner_id != "0" && $new_ssl_provider_id != "0") {
 
         $query = "INSERT INTO ssl_accounts
-                  (owner_id, ssl_provider_id, username, `password`, notes, reseller, insert_time)
+                  (owner_id, ssl_provider_id, email_address, username, `password`, reseller, reseller_id, notes, created_by, insert_time)
                   VALUES
-                  (?, ?, ?, ?, ?, ?, ?)";
+                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
 
             $timestamp = $time->stamp();
 
-            $q->bind_param('iisssis', $new_owner_id, $new_ssl_provider_id, $new_username, $new_password, $new_notes,
-                $new_reseller, $timestamp);
+            $q->bind_param('iisssissis', $new_owner_id, $new_ssl_provider_id, $new_email_address, $new_username,
+                    $new_password, $new_reseller, $new_reseller_id, $new_notes, $_SESSION['s_user_id'], $timestamp);
             $q->execute() or die('1');
             $q->close();
 
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_message_success'] = "SSL Account " . $new_username . " (" . $temp_ssl_provider . ", " . $temp_owner . ") Added<BR>";
+        $_SESSION['s_message_success'] .= "SSL Account " . $new_username . " (" . $temp_ssl_provider . ", " . $temp_owner . ") Added<BR>";
 
         if ($_SESSION['s_has_ssl_account'] != '1') {
 
@@ -124,9 +124,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        if ($new_username == "") {
-            $_SESSION['s_message_danger'] .= "Enter a username<BR>";
+        if ($new_owner_id == '' || $new_owner_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the owner<BR>";
+
         }
+
+        if ($new_ssl_provider_id == '' || $new_ssl_provider_id == '0') {
+
+            $_SESSION['s_message_danger'] .= "Choose the SSL Provider<BR>";
+
+        }
+
+        if ($new_username == "") { $_SESSION['s_message_danger'] .= "Enter a username<BR>"; }
 
     }
 
@@ -144,6 +154,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 echo $form->showFormTop('');
 
 $query = "SELECT id, `name`
+              FROM ssl_providers
+              ORDER BY `name` ASC";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($id, $name);
+
+    echo $form->showDropdownTop('new_ssl_provider_id', 'SSL Provider', '', '1', '');
+
+    if ($new_ssl_provider_id == '') {
+
+        $to_compare = $_SESSION['s_default_ssl_provider'];
+
+    } else {
+
+        $to_compare = $new_ssl_provider_id;
+    }
+
+    while ($q->fetch()) {
+
+        echo $form->showDropdownOption($id, $name, $to_compare);
+
+    }
+
+    echo $form->showDropdownBottom('');
+
+    $q->close();
+
+} else {
+    $error->outputSqlError($conn, "ERROR");
+}
+
+$query = "SELECT id, `name`
           FROM owners
           ORDER BY `name` ASC";
 $q = $conn->stmt_init();
@@ -154,11 +199,20 @@ if ($q->prepare($query)) {
     $q->store_result();
     $q->bind_result($id, $name);
 
-    echo $form->showDropdownTop('new_owner_id', 'Owner', '', '');
+    echo $form->showDropdownTop('new_owner_id', 'Account Owner', '', '1', '');
+
+    if ($new_owner_id == '') {
+
+        $to_compare = $_SESSION['s_default_owner_ssl'];
+
+    } else {
+
+        $to_compare = $new_owner_id;
+    }
 
     while ($q->fetch()) {
 
-        echo $form->showDropdownOption($id, $name, $_SESSION['s_default_owner_ssl']);
+        echo $form->showDropdownOption($id, $name, $to_compare);
 
     }
 
@@ -170,41 +224,16 @@ if ($q->prepare($query)) {
     $error->outputSqlError($conn, "ERROR");
 }
 
-
-$query = "SELECT id, `name`
-              FROM ssl_providers
-              ORDER BY `name` ASC";
-$q = $conn->stmt_init();
-
-if ($q->prepare($query)) {
-    $q->execute();
-    $q->store_result();
-    $q->bind_result($id, $name);
-
-    echo $form->showDropdownTop('new_ssl_provider_id', 'SSL Provider', '', '');
-
-    while ($q->fetch()) {
-
-        echo $form->showDropdownOption($id, $name, $_SESSION['s_default_ssl_provider']);
-
-    }
-
-    echo $form->showDropdownBottom('');
-
-    $q->close();
-
-} else {
-    $error->outputSqlError($conn, "ERROR");
-}
-
-echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '', '');
-echo $form->showInputText('new_password', 'Password (255)', '', $new_password, '255', '', '', '');
+echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '', '', '');
+echo $form->showInputText('new_username', 'Username (100)', '', $new_username, '100', '', '1', '', '');
+echo $form->showInputText('new_password', 'Password (255)', '', $new_password, '255', '', '', '', '');
 echo $form->showRadioTop('Reseller Account?', '', '');
 if ($new_reseller == '') $new_reseller = '0';
 echo $form->showRadioOption('new_reseller', '1', 'Yes', $new_reseller, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_reseller', '0', 'No', $new_reseller, '', '');
 echo $form->showRadioBottom('');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_reseller_id', 'Reseller ID (100)', '', $new_reseller_id, '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showSubmitButton('Add SSL Provider Account', '', '');
 echo $form->showFormBottom('');
 ?>

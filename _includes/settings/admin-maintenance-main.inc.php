@@ -1,6 +1,6 @@
 <?php
 /**
- * /settings/maintenance/update-conversions.php
+ * /_includes/settings/admin-maintenance-main.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2016 Greg Chetcuti <greg@chetcuti.com>
@@ -20,26 +20,8 @@
  */
 ?>
 <?php
-include("../../_includes/start-session.inc.php");
-include("../../_includes/init.inc.php");
-
-require_once(DIR_ROOT . "classes/Autoloader.php");
-spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
-
-$system = new DomainMOD\System();
-$error = new DomainMOD\Error();
-$time = new DomainMOD\Time();
-$conversion = new DomainMOD\Conversion();
-$timestamp = $time->stamp();
-
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "database.inc.php");
-
-$system->authCheck();
-
-$_SESSION['s_message_success'] .= $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
-
-header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
-exit;
+$page_title = "Admin Maintenance";
+$breadcrumb = "Maintenance";
+$software_section = "admin";
+$software_section_logo = "fa-check";
+$slug = "admin-maintenance-main";

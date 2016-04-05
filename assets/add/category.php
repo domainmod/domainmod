@@ -48,16 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($new_category != "") {
 
         $query = "INSERT INTO categories
-                  (`name`, stakeholder, notes, insert_time)
+                  (`name`, stakeholder, notes, created_by, insert_time)
                   VALUES
-                  (?, ?, ?, ?)";
+                  (?, ?, ?, ?, ?)";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
 
             $timestamp = $time->stamp();
 
-            $q->bind_param('ssss', $new_category, $new_stakeholder, $new_notes, $timestamp);
+            $q->bind_param('sssis', $new_category, $new_stakeholder, $new_notes, $_SESSION['s_user_id'], $timestamp);
             $q->execute();
             $q->close();
 
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_message_success'] = 'Category ' . $new_category . ' Added<BR>';
+        $_SESSION['s_message_success'] .= 'Category ' . $new_category . ' Added<BR>';
 
         header("Location: ../categories.php");
         exit;
@@ -88,9 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_category', 'Category Name (150)', '', $new_category, '150', '', '', '');
-echo $form->showInputText('new_stakeholder', 'Stakeholder (100)', '', $new_stakeholder, '100', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_category', 'Category Name (150)', '', $new_category, '150', '', '1', '', '');
+echo $form->showInputText('new_stakeholder', 'Stakeholder (100)', '', $new_stakeholder, '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showSubmitButton('Add Category', '', '');
 echo $form->showFormBottom('');
 ?>

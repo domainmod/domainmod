@@ -48,16 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($new_host != "") {
 
         $query = "INSERT INTO hosting
-                  (`name`, url, notes, insert_time)
+                  (`name`, url, notes, created_by, insert_time)
                   VALUES
-                  (?, ?, ?, ?)";
+                  (?, ?, ?, ?, ?)";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
 
             $timestamp = $time->stamp();
 
-            $q->bind_param('ssss', $new_host, $new_url, $new_notes, $timestamp);
+            $q->bind_param('sssis', $new_host, $new_url, $new_notes, $_SESSION['s_user_id'], $timestamp);
             $q->execute();
             $q->close();
 
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error->outputSqlError($conn, "ERROR");
         }
 
-        $_SESSION['s_message_success'] = "Web Host " . $new_host . " Added<BR>";
+        $_SESSION['s_message_success'] .= "Web Host " . $new_host . " Added<BR>";
 
         header("Location: ../hosting.php");
         exit;
@@ -88,9 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <?php
 echo $form->showFormTop('');
-echo $form->showInputText('new_host', 'Web Host Name (100)', '', $new_host, '100', '', '', '');
-echo $form->showInputText('new_url', 'Web Host\'s URL (100)', '', $new_url, '100', '', '', '');
-echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '');
+echo $form->showInputText('new_host', 'Web Host Name (100)', '', $new_host, '100', '', '1', '', '');
+echo $form->showInputText('new_url', 'Web Host\'s URL (100)', '', $new_url, '100', '', '', '', '');
+echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showSubmitButton('Add Web Host', '', '');
 echo $form->showFormBottom('');
 ?>
