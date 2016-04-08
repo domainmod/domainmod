@@ -41,7 +41,7 @@ include(DIR_INC . "database.inc.php");
 
 $system->loginCheck();
 
-list($installation_mode, $result_message) = $system->installCheck($connection, $web_root);
+list($installation_mode, $result_message) = $system->installCheck($connection);
 $_SESSION['s_installation_mode'] = $installation_mode;
 $_SESSION['s_message_danger'] .= $result_message;
 

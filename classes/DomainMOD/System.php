@@ -24,7 +24,7 @@ namespace DomainMOD;
 class System
 {
 
-    public function installCheck($connection, $web_root)
+    public function installCheck($connection)
     {
         $full_install_path = DIR_ROOT . "install/";
         if (is_dir($full_install_path) &&
