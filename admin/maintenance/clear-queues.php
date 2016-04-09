@@ -41,5 +41,5 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $_SESSION['s_message_success'] .= $queue->clearQueues($connection);
 
-header("Location: " . urlencode($_SERVER['HTTP_REFERER']));
+header("Location: index.php");
 exit;
