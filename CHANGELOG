@@ -1,5 +1,17 @@
 DomainMOD CHANGELOG
 ===================
+v4.01.000    2016-04-08
+- Added Domain Queue for automatic domain imports
+- Added support for saving registrar API keys
+- Added asset creation tracking
+- Added email address to SSL provider accounts
+- Added Reseller ID to registrar accounts
+- Added Reseller ID to SSL provider accounts
+- Updated the installation process
+- Updated password resets to allow email addresses
+- Database cleanup
+- Security cleanup
+
 v4.00.000    2016-03-14
 - DomainMOD v4 Release -- Complete Redesign
 
