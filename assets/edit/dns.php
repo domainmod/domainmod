@@ -69,6 +69,8 @@ $new_dnsid = $_POST['new_dnsid'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
     if ($new_name != "" && $new_dns1 != "" && $new_dns2 != "") {
 

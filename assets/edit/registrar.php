@@ -49,6 +49,8 @@ $new_api_registrar_id = $_POST['new_api_registrar_id'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
     if ($new_registrar != "") {
 

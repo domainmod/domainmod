@@ -40,6 +40,7 @@ include(DIR_INC . "settings/assets-add-ssl-provider-fee.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
+$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $sslpid = $_REQUEST['sslpid'];
 $type_id = $_GET['type_id'];

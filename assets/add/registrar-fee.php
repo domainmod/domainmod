@@ -40,6 +40,7 @@ include(DIR_INC . "settings/assets-add-registrar-fee.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
+$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $rid = $_REQUEST['rid'];
 $tld = $_GET['tld'];

@@ -38,6 +38,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
+$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $maint->updateDomainFees($connection);
 

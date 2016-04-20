@@ -50,6 +50,8 @@ $new_misc_fee = $_POST['new_misc_fee'];
 $new_currency_id = $_POST['new_currency_id'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
     if ($new_initial_fee != '' && $new_renewal_fee != '') {
 

@@ -54,6 +54,8 @@ $new_notes = $_POST['new_notes'];
 $new_sslpaid = $_POST['new_sslpaid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
     if ($new_username != "" && $new_owner_id != "" && $new_ssl_provider_id != "" && $new_owner_id != "0" && $new_ssl_provider_id != "0") {
 

@@ -82,6 +82,8 @@ if (mysqli_num_rows($result) > 0) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+
     $date = new DomainMOD\Date();
 
     if ($date->checkDateFormat($new_expiry_date) && $new_name != "" && $new_domain_id != "" && $new_account_id != "" &&

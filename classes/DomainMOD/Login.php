@@ -27,8 +27,8 @@ class Login
     public function getUserInfo($connection, $user_id, $username)
     {
 
-        $sql = "SELECT first_name, last_name, username, email_address, new_password, admin, number_of_logins,
-                       last_login
+        $sql = "SELECT first_name, last_name, username, email_address, new_password, admin, `read_only`,
+                       number_of_logins, last_login
                 FROM users
                 WHERE id = '" . $user_id . "'
                   AND username = '" . $username . "'

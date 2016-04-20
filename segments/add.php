@@ -40,6 +40,7 @@ include(DIR_INC . "settings/segments-add.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
+$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $new_name = $_POST['new_name'];
 $new_description = $_POST['new_description'];

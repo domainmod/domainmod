@@ -110,6 +110,15 @@ class System
         }
     }
 
+    public function readOnlyCheck($redirect_url)
+    {
+        if ($_SESSION['s_read_only'] == '1') {
+            $_SESSION['s_message_danger'] .= "You are not authorized to perform that action<BR>";
+            header("Location: " . $redirect_url);
+            exit;
+        }
+    }
+
     public function loginCheck()
     {
         if ($_SESSION['s_is_logged_in'] == 1) {

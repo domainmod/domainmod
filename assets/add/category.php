@@ -38,6 +38,7 @@ include(DIR_INC . "settings/assets-add-category.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
+$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $new_category = $_POST['new_category'];
 $new_stakeholder = $_POST['new_stakeholder'];

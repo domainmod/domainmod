@@ -32,11 +32,17 @@
         <li<?php if ($software_section == "ssl") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/ssl/"><i class="fa fa-lock"></i> <span>SSL Certificates</span></a></li>
         <li<?php if ($software_section == "assets") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/assets/"><i class="fa fa-cubes"></i> <span>Assets</span></a></li>
         <li<?php if ($software_section == "segments") echo " class=\"active\""; ?>><a href="<?php echo $web_root; ?>/segments/"><i class="fa fa-filter"></i> <span>Segments</span></a></li>
-        <li<?php if ($slug == "bulk-main") { echo " class=\"active\""; } ?>><a href="<?php echo $web_root; ?>/bulk/"><i class="fa fa-copy"></i> <span>Bulk Updater</span></a></li>
+
+        <?php if ($_SESSION['s_read_only'] == '0') { ?>
+          
+          <li<?php if ($slug == "bulk-main") { echo " class=\"active\""; } ?>><a href="<?php echo $web_root; ?>/bulk/"><i class="fa fa-copy"></i> <span>Bulk Updater</span></a></li>
+        
+        <?php } ?>
+
         <li<?php if ($software_section == "reporting") { echo " class=\"active\""; } ?>><a href="<?php echo $web_root; ?>/reporting/"><i class="fa fa-bar-chart"></i> <span>Reporting</span></a></li>
 
         <?php if ($_SESSION['s_is_admin'] === 1) { //@formatter:off ?>
-        <li<?php if ($software_section == "dw") { echo " class=\"active\""; } ?>><a href="<?php echo $web_root; ?>/admin/dw/"><i class="fa fa-database"></i> <span>Data Warehouse</span></a></li>
+          <li<?php if ($software_section == "dw") { echo " class=\"active\""; } ?>><a href="<?php echo $web_root; ?>/admin/dw/"><i class="fa fa-database"></i> <span>Data Warehouse</span></a></li>
         <?php } ?>
 
         <li class="treeview<?php if ($software_section == "settings") echo " active"; ?>">
@@ -52,17 +58,21 @@
           </ul>
         </li>
 
-        <li class="treeview<?php if ($software_section == "maintenance") echo " active"; ?>">
-          <a href="#">
-            <i class="fa fa-check"></i> <span>Maintenance</span>
-            <i class="fa fa-angle-left pull-right"></i>
-          </a>
-          <ul class="treeview-menu">
-              <li><a href="<?php echo $web_root; ?>/maintenance/update-domain-fees.php"><i class="fa"></i>Update Domain Fees</a></li>
-              <li><a href="<?php echo $web_root; ?>/maintenance/update-ssl-fees.php"><i class="fa"></i>Update SSL Fees</a></li>
-              <li><a href="<?php echo $web_root; ?>/maintenance/update-conversions.php"><i class="fa"></i>Update Conversion Rates</a></li>
-          </ul>
-        </li>
+        <?php if ($_SESSION['s_read_only'] == '0') { ?>
+
+            <li class="treeview<?php if ($software_section == "maintenance") echo " active"; ?>">
+              <a href="#">
+                <i class="fa fa-check"></i> <span>Maintenance</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                  <li><a href="<?php echo $web_root; ?>/maintenance/update-domain-fees.php"><i class="fa"></i>Update Domain Fees</a></li>
+                  <li><a href="<?php echo $web_root; ?>/maintenance/update-ssl-fees.php"><i class="fa"></i>Update SSL Fees</a></li>
+                  <li><a href="<?php echo $web_root; ?>/maintenance/update-conversions.php"><i class="fa"></i>Update Conversion Rates</a></li>
+              </ul>
+            </li>
+
+        <?php } ?>
 
         <?php if ($_SESSION['s_is_admin'] === 1) { //@formatter:off ?>
 

@@ -47,6 +47,7 @@ $new_last_name = $_POST['new_last_name'];
 $new_username = $_POST['new_username'];
 $new_email_address = $_POST['new_email_address'];
 $new_admin = $_POST['new_admin'];
+$new_read_only = $_POST['new_read_only'];
 $new_active = $_POST['new_active'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != ''
@@ -84,15 +85,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
         $new_password = substr(md5(time()), 0, 8);
 
         $query = "INSERT INTO users
-                  (first_name, last_name, username, email_address, `password`, admin, active, created_by, insert_time)
+                  (first_name, last_name, username, email_address, `password`, admin, `read_only`, active, created_by, insert_time)
                   VALUES
-                  (?, ?, ?, ?, password(?), ?, ?, ?, ?)";
+                  (?, ?, ?, ?, password(?), ?, ?, ?, ?, ?)";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
 
-            $q->bind_param('ssssssiis', $new_first_name, $new_last_name, $new_username, $new_email_address,
-                $new_password, $new_admin, $new_active, $_SESSION['s_user_id'], $timestamp);
+            $q->bind_param('sssssiiiis', $new_first_name, $new_last_name, $new_username, $new_email_address,
+                $new_password, $new_admin, $new_read_only, $new_active, $_SESSION['s_user_id'], $timestamp);
             $q->execute() or $error->outputSqlError($conn, '');
             $q->close();
 
@@ -213,6 +214,11 @@ echo $form->showRadioTop('Admin Privileges?', '', '');
 if ($new_admin == '') $new_admin = '0';
 echo $form->showRadioOption('new_admin', '1', 'Yes', $new_admin, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_admin', '0', 'No', $new_admin, '', '');
+echo $form->showRadioBottom('');
+echo $form->showRadioTop('Read-Only User?', '', '');
+if ($new_read_only == '') $new_read_only = '1';
+echo $form->showRadioOption('new_read_only', '1', 'Yes', $new_read_only, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_read_only', '0', 'No', $new_read_only, '', '');
 echo $form->showRadioBottom('');
 echo $form->showRadioTop('Active Account?', '', '');
 if ($new_active == '') $new_active = '1';

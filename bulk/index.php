@@ -46,6 +46,7 @@ include(DIR_INC . "settings/bulk-main.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
+$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $jumpMenu = $_GET['jumpMenu'];
 $action = $_REQUEST['action'];

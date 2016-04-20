@@ -54,6 +54,8 @@ $new_segid = $_POST['new_segid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+
     $format = new DomainMOD\Format();
     $new_segment = $format->stripSpacing($new_segment);
 

@@ -71,6 +71,7 @@ while ($row = mysqli_fetch_object($result)) {
     $_SESSION['s_is_new_password'] = $row->new_password;
     $_SESSION['s_number_of_logins'] = $row->number_of_logins;
     if ($row->admin == 1) $_SESSION['s_is_admin'] = 1;
+    if ($row->read_only == '0') $_SESSION['s_read_only'] = '0';
 
 }
 

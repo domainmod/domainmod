@@ -40,6 +40,7 @@ include(DIR_INC . "settings/queue-add.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
+$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $new_raid = $_REQUEST['new_raid'];
 $new_data = $_POST['new_data'];

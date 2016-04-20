@@ -41,6 +41,7 @@ include(DIR_INC . "settings/domains-add.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
+$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $new_domain = $_POST['new_domain'];
 $new_expiry_date = $_POST['new_expiry_date'];

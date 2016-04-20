@@ -49,6 +49,8 @@ $new_notes = $_REQUEST['new_notes'];
 $new_whid = $_REQUEST['new_whid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
     if ($new_host != "") {
 

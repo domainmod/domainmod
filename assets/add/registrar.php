@@ -38,6 +38,7 @@ include(DIR_INC . "settings/assets-add-registrar.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
+$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $new_registrar = $_POST['new_registrar'];
 $new_url = $_POST['new_url'];

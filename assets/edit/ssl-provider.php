@@ -49,6 +49,8 @@ $new_notes = $_POST['new_notes'];
 $new_sslpid = $_POST['new_sslpid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
     if ($new_ssl_provider != "") {
 

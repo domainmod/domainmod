@@ -53,6 +53,7 @@ $new_username = $_POST['new_username'];
 $original_username = $_POST['original_username'];
 $new_email_address = $_POST['new_email_address'];
 $new_is_admin = $_POST['new_is_admin'];
+$new_read_only = $_POST['new_read_only'];
 $new_is_active = $_POST['new_is_active'];
 $new_uid = $_POST['new_uid'];
 
@@ -151,6 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                   username = ?,
                   email_address = ?,
                   admin = ?,
+                  `read_only` = ?,
                   active = ?,
                   update_time = ?
               WHERE id = ?";
@@ -160,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
         $timestamp = $time->stamp();
 
-        $q->bind_param('ssssiisi', $new_first_name, $new_last_name, $new_username, $new_email_address, $new_is_admin, $new_is_active, $timestamp, $new_uid);
+        $q->bind_param('ssssiiisi', $new_first_name, $new_last_name, $new_username, $new_email_address, $new_is_admin, $new_read_only, $new_is_active, $timestamp, $new_uid);
         $q->execute();
         $q->close();
 
@@ -190,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     } else {
 
-        $query = "SELECT first_name, last_name, username, email_address, admin, active
+        $query = "SELECT first_name, last_name, username, email_address, admin, `read_only`, active
                   FROM users
                   WHERE id = ?";
         $q = $conn->stmt_init();
@@ -200,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             $q->bind_param('i', $uid);
             $q->execute();
             $q->store_result();
-            $q->bind_result($first_name, $last_name, $username, $email_address, $admin, $active);
+            $q->bind_result($first_name, $last_name, $username, $email_address, $admin, $read_only, $active);
 
                 while ($q->fetch()) {
 
@@ -210,6 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                     $original_username = $username;
                     $new_email_address = $email_address;
                     $new_is_admin = $admin;
+                    $new_read_only = $read_only;
                     $new_is_active = $active;
 
                 }
@@ -317,6 +320,19 @@ if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
 if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
+    <strong>Read Only?</strong>&nbsp;&nbsp;No<BR><BR><?php
+
+} else {
+
+    echo $form->showRadioTop('Read-Only User?', '', '');
+    echo $form->showRadioOption('new_read_only', '1', 'Yes', $new_read_only, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+    echo $form->showRadioOption('new_read_only', '0', 'No', $new_read_only, '', '');
+    echo $form->showRadioBottom('');
+
+}
+
+if ($new_username == 'admin' || $new_username == 'administrator') { ?>
+
     <strong>Active Account?</strong>&nbsp;&nbsp;Yes<BR><BR><?php
 
 } else {
@@ -332,6 +348,7 @@ if ($new_username == 'admin' || $new_username == 'administrator') {
 
     echo $form->showInputHidden('new_username', 'admin');
     echo $form->showInputHidden('new_is_admin', '1');
+    echo $form->showInputHidden('new_read_only', '0');
     echo $form->showInputHidden('new_is_active', '1');
 
 }

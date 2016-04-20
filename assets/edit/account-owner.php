@@ -50,6 +50,8 @@ $new_oid = $_POST['new_oid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
+
     if ($new_owner != "") {
 
         $query = "UPDATE owners

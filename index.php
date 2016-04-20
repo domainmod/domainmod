@@ -76,6 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $from_install_form == '1') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password != "" && $from_install_form != '1') {
+    
+    $_SESSION['s_read_only'] = '1';
 
     $query = "SELECT id, username
               FROM users

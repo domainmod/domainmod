@@ -40,6 +40,7 @@ include(DIR_INC . "settings/ssl-add.inc.php");
 include(DIR_INC . "database.inc.php");
 
 $system->authCheck();
+$system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $new_domain_id = $_POST['new_domain_id'];
 $new_name = $_POST['new_name'];
