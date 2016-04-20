@@ -120,12 +120,10 @@ class Fabulous
             $dns_servers = $this->processDns($dns_result);
 
             // get privacy status
-            // Fabulous doesn't expose the privacy status with their API, so this information can't be retrieved yet
-            $privacy_status = '0';
+            $privacy_status = $array_results[0]['response']['results']['result']['whoisprivacyenabled'];
 
             // get auto renewal status
-            // Fabulous doesn't expose the auto renewal status with their API, so this information can't be retrieved yet
-            $autorenewal_status = '0';
+            $autorenewal_status = $array_results[0]['response']['results']['result']['autorenewstatus'];
 
         } else {
 
