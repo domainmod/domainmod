@@ -522,4 +522,37 @@ if ($current_db_version === '4.00.002') {
 
 }
 
+// upgrade database from 4.01.000 to 4.01.001
+if ($current_db_version === '4.01.000') {
+
+    $sql = "ALTER TABLE `api_registrars`
+            ADD `update_time` DATETIME NOT NULL AFTER `insert_time`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "UPDATE api_registrars
+            SET ret_privacy_status = '1',
+                ret_autorenewal_status = '1',
+                notes = '',
+                update_time = '" . $time->stamp() . "'
+             WHERE `name` = 'Fabulous'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `users`
+            ADD `read_only` TINYINT(1) NOT NULL DEFAULT '1' AFTER `admin`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "UPDATE users
+            SET `read_only` = '0',
+                update_time = '" . $time->stamp() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "UPDATE settings
+            SET db_version = '4.01.001',
+                update_time = '" . $time->stamp() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $current_db_version = '4.01.001';
+
+}
+
 //@formatter:on
