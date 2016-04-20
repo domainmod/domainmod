@@ -1,5 +1,9 @@
 DomainMOD CHANGELOG
 ===================
+v4.01.001    2016-04-19
+- Update Fabulous API call in Domain Queue
+- Add Read-Only Users
+
 v4.01.000    2016-04-08
 - Added Domain Queue for automatic domain imports
 - Added support for saving registrar API keys
