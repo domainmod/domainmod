@@ -87,7 +87,7 @@ if ($current_db_version === '4.00.002') {
     $sql = "CREATE TABLE IF NOT EXISTS `creation_types` (
                 `id` TINYINT(2) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -308,7 +308,7 @@ if ($current_db_version === '4.00.002') {
                 `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
                 `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -332,7 +332,7 @@ if ($current_db_version === '4.00.002') {
                 `already_in_domains` TINYINT(1) NOT NULL DEFAULT '0',
                 `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -349,7 +349,7 @@ if ($current_db_version === '4.00.002') {
                 `finished` TINYINT(1) NOT NULL DEFAULT '0',
                 `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -362,7 +362,7 @@ if ($current_db_version === '4.00.002') {
                 `registrar_id` INT(10) NOT NULL DEFAULT '0',
                 `account_id` INT(10) NOT NULL DEFAULT '0',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -397,7 +397,7 @@ if ($current_db_version === '4.00.002') {
                 `ret_privacy_status` TINYINT(1) NOT NULL DEFAULT '0',
                 `ret_autorenewal_status` TINYINT(1) NOT NULL DEFAULT '0',
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -526,7 +526,7 @@ if ($current_db_version === '4.00.002') {
 if ($current_db_version === '4.01.000') {
 
     $sql = "ALTER TABLE `api_registrars`
-            ADD `update_time` DATETIME NOT NULL AFTER `insert_time`";
+            ADD `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00' AFTER `insert_time`";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "UPDATE api_registrars

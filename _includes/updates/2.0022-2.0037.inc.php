@@ -27,7 +27,7 @@ if ($current_db_version === '2.0022') {
     $sql = "CREATE TABLE IF NOT EXISTS `timezones` (
                 `id` INT(5) NOT NULL AUTO_INCREMENT,
                 `timezone` VARCHAR(50) NOT NULL,
-                `insert_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -71,8 +71,8 @@ if ($current_db_version === '2.0024') {
                 `notes` LONGTEXT NOT NULL,
                 `default_host` INT(1) NOT NULL DEFAULT '0',
                 `active` INT(1) NOT NULL DEFAULT '1',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -950,8 +950,8 @@ if ($current_db_version === '2.0037') {
                 `currency_id` INT(10) NOT NULL,
                 `user_id` INT(10) NOT NULL,
                 `conversion` FLOAT NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql);

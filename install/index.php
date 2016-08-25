@@ -63,7 +63,7 @@ if ($is_installed == '1') {
     $sql = "CREATE TABLE IF NOT EXISTS `creation_types` (
                 `id` TINYINT(2) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -93,11 +93,11 @@ if ($is_installed == '1') {
                 `read_only` TINYINT(1) NOT NULL DEFAULT '1',
                 `active` INT(1) NOT NULL DEFAULT '1',
                 `number_of_logins` INT(10) NOT NULL DEFAULT '0',
-                `last_login` DATETIME NOT NULL,
+                `last_login` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -149,8 +149,8 @@ if ($is_installed == '1') {
                 `display_ssl_fee` INT(1) NOT NULL DEFAULT '0',
                 `display_inactive_assets` INT(1) NOT NULL DEFAULT '1',
                 `display_dw_intro_page` INT(1) NOT NULL DEFAULT '1',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -177,8 +177,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -195,8 +195,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -212,8 +212,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `name` (`name`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
@@ -232,8 +232,8 @@ if ($is_installed == '1') {
                 `symbol_order` INT(1) NOT NULL DEFAULT '0',
                 `symbol_space` INT(1) NOT NULL DEFAULT '0',
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -413,8 +413,8 @@ if ($is_installed == '1') {
                 `currency_id` INT(10) NOT NULL,
                 `user_id` INT(10) NOT NULL,
                 `conversion` FLOAT NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -430,8 +430,8 @@ if ($is_installed == '1') {
                 `misc_fee` FLOAT NOT NULL,
                 `currency_id` INT(10) NOT NULL,
                 `fee_fixed` INT(1) NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -445,8 +445,8 @@ if ($is_installed == '1') {
                 `misc_fee` FLOAT NOT NULL,
                 `currency_id` INT(10) NOT NULL,
                 `fee_fixed` INT(1) NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -473,8 +473,8 @@ if ($is_installed == '1') {
                 `fee_fixed` INT(1) NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `domain` (`domain`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
@@ -503,7 +503,7 @@ if ($is_installed == '1') {
                 `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
                 `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -527,7 +527,7 @@ if ($is_installed == '1') {
                 `already_in_domains` TINYINT(1) NOT NULL DEFAULT '0',
                 `already_in_queue` TINYINT(1) NOT NULL DEFAULT '0',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -544,7 +544,7 @@ if ($is_installed == '1') {
                 `finished` TINYINT(1) NOT NULL DEFAULT '0',
                 `copied_to_history` TINYINT(1) NOT NULL DEFAULT '0',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -557,7 +557,7 @@ if ($is_installed == '1') {
                 `registrar_id` INT(10) NOT NULL DEFAULT '0',
                 `account_id` INT(10) NOT NULL DEFAULT '0',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -565,8 +565,8 @@ if ($is_installed == '1') {
     $sql = "CREATE TABLE IF NOT EXISTS `custom_field_types` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -587,8 +587,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -596,8 +596,8 @@ if ($is_installed == '1') {
     $sql = "CREATE TABLE IF NOT EXISTS `domain_field_data` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `domain_id` INT(10) NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -620,8 +620,8 @@ if ($is_installed == '1') {
                 `fee_fixed` INT(1) NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -632,8 +632,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -655,8 +655,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -664,8 +664,8 @@ if ($is_installed == '1') {
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_field_data` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `ssl_id` INT(10) NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -697,8 +697,8 @@ if ($is_installed == '1') {
                 `number_of_servers` INT(2) NOT NULL DEFAULT '0',
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -716,8 +716,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `name` (`name`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
@@ -739,8 +739,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `registrar_id` (`registrar_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
@@ -753,8 +753,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -771,8 +771,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`),
                 KEY `ssl_provider_id` (`ssl_provider_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
@@ -787,8 +787,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -801,8 +801,8 @@ if ($is_installed == '1') {
                 `inactive` INT(1) NOT NULL DEFAULT '0',
                 `missing` INT(1) NOT NULL DEFAULT '0',
                 `filtered` INT(1) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -815,8 +815,8 @@ if ($is_installed == '1') {
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -829,7 +829,7 @@ if ($is_installed == '1') {
     $sql = "CREATE TABLE IF NOT EXISTS `timezones` (
                 `id` INT(5) NOT NULL AUTO_INCREMENT,
                 `timezone` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -852,19 +852,19 @@ if ($is_installed == '1') {
                 `dw_dns_zones` INT(10) NOT NULL,
                 `dw_dns_records` INT(10) NOT NULL,
                 `build_status` INT(1) NOT NULL DEFAULT '0',
-                `build_start_time` DATETIME NOT NULL,
-                `build_end_time` DATETIME NOT NULL,
+                `build_start_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `build_end_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 `build_time` INT(10) NOT NULL DEFAULT '0',
                 `has_ever_been_built` INT(1) NOT NULL DEFAULT '0',
                 `build_status_overall` INT(1) NOT NULL DEFAULT '0',
-                `build_start_time_overall` DATETIME NOT NULL,
-                `build_end_time_overall` DATETIME NOT NULL,
+                `build_start_time_overall` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `build_end_time_overall` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 `build_time_overall` INT(10) NOT NULL DEFAULT '0',
                 `has_ever_been_built_overall` INT(1) NOT NULL DEFAULT '0',
                 `creation_type_id` TINYINT(2) NOT NULL DEFAULT '" . $creation_type_id_manual . "',
                 `created_by` INT(10) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -933,8 +933,8 @@ if ($is_installed == '1') {
                 `ret_privacy_status` TINYINT(1) NOT NULL DEFAULT '0',
                 `ret_autorenewal_status` TINYINT(1) NOT NULL DEFAULT '0',
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -979,8 +979,8 @@ if ($is_installed == '1') {
                 `default_ssl_type` INT(10) NOT NULL DEFAULT '0',
                 `default_ssl_provider` INT(10) NOT NULL DEFAULT '0',
                 `expiration_days` INT(3) NOT NULL DEFAULT '60',
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);

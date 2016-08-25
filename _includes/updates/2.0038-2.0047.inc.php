@@ -699,8 +699,8 @@ if ($current_db_version === '2.0047') {
     $sql = "CREATE TABLE IF NOT EXISTS `custom_field_types` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -719,8 +719,8 @@ if ($current_db_version === '2.0047') {
                 `type_id` INT(10) NOT NULL,
                 `description` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -728,8 +728,8 @@ if ($current_db_version === '2.0047') {
     $sql = "CREATE TABLE IF NOT EXISTS `domain_field_data` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `domain_id` INT(10) NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -761,8 +761,8 @@ if ($current_db_version === '2.0047') {
                 `type_id` INT(10) NOT NULL,
                 `description` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -770,8 +770,8 @@ if ($current_db_version === '2.0047') {
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_field_data` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `ssl_id` INT(10) NOT NULL,
-                `insert_time` DATETIME NOT NULL,
-                `update_time` DATETIME NOT NULL,
+                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
