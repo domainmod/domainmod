@@ -39,7 +39,10 @@ include(DIR_INC . "database.inc.php");
 
 $system->installCheck($connection);
 
-if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . "'"))) {
+$result = mysqli_query($connection, "SHOW TABLES LIKE 'settings'");
+$is_installed = mysqli_num_rows($result) > 0;
+
+if ($is_installed == '1') {
 
     $_SESSION['s_message_danger'] .= $software_title . " is already installed<BR><BR>You should delete the /install/ folder<BR>";
 
@@ -50,7 +53,7 @@ if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . settings . 
 
     $_SESSION['s_installation_mode'] = '1';
 
-    $sql = "ALTER DATABASE " . $dbname . "
+    $sql = "ALTER DATABASE `" . $dbname . "`
             CHARACTER SET utf8
             DEFAULT CHARACTER SET utf8
             COLLATE utf8_unicode_ci
