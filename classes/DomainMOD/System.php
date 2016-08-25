@@ -27,8 +27,9 @@ class System
     public function installCheck($connection)
     {
         $full_install_path = DIR_ROOT . "install/";
-        if (is_dir($full_install_path) &&
-            !mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_servers` . "'"))) {
+        $result = mysqli_query($connection, "SHOW TABLES LIKE 'settings'");
+        $is_installed = mysqli_num_rows($result) > 0;
+        if (is_dir($full_install_path) && $is_installed != '1') {
             $installation_mode = 1;
             $result_message = "DomainMOD is not yet installed<BR>";
         } else {
