@@ -1,8 +1,13 @@
 DomainMOD CHANGELOG
 ===================
+v4.01.002    2016-08-25
+- Updated installation check
+- Updated installation process
+- Added default values to DATETIME fields
+
 v4.01.001    2016-04-19
-- Update Fabulous API call in Domain Queue
-- Add Read-Only Users
+- Updated Fabulous API call in Domain Queue
+- Added Read-Only Users
 
 v4.01.000    2016-04-08
 - Added Domain Queue for automatic domain imports
