@@ -555,4 +555,284 @@ if ($current_db_version === '4.01.000') {
 
 }
 
+// upgrade database from 4.01.001 to 4.01.002
+if ($current_db_version === '4.01.001') {
+
+    $sql = "ALTER TABLE `creation_types`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `users`
+            CHANGE `last_login` `last_login` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `users`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `users`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `user_settings`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `user_settings`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `categories`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `categories`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `hosting`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `hosting`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `owners`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `owners`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `currencies`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `currencies`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `currency_conversions`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `currency_conversions`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `fees`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `fees`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_fees`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_fees`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `domains`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `domains`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `domain_queue`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `domain_queue_history`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `domain_queue_list`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `domain_queue_list_history`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `custom_field_types`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `custom_field_types`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `domain_fields`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `domain_fields`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `domain_field_data`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `domain_field_data`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_certs`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_certs`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_cert_types`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_cert_types`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_cert_fields`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_cert_fields`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_cert_field_data`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_cert_field_data`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `dns`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `dns`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `registrars`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `registrars`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `registrar_accounts`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `registrar_accounts`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_providers`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_providers`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_accounts`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ssl_accounts`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `segments`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `segments`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `segment_data`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `segment_data`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ip_addresses`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `ip_addresses`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `timezones`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `dw_servers`
+            CHANGE `build_start_time` `build_start_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `dw_servers`
+            CHANGE `build_end_time` `build_end_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `dw_servers`
+            CHANGE `build_start_time_overall` `build_start_time_overall` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `dw_servers`
+            CHANGE `build_end_time_overall` `build_end_time_overall` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `dw_servers`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `dw_servers`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `api_registrars`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `api_registrars`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `settings`
+            CHANGE `insert_time` `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `settings`
+            CHANGE `update_time` `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "UPDATE settings
+            SET db_version = '4.01.002',
+                update_time = '" . $time->stamp() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $current_db_version = '4.01.002';
+
+}
+
 //@formatter:on
