@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $query2 = "SELECT id
                            FROM currencies
-                           WHERE currency = '" . $new_currency . "'";
+                           WHERE currency = ?";
                 $q2 = $conn->stmt_init();
 
                 if ($q2->prepare($query2)) {
@@ -208,13 +208,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 
-$sql = "SELECT `name`
-        FROM registrars
-        where id = '" . $rid . "'";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    $temp_registrar = $row->name;
-}
+$query = "SELECT `name`
+          FROM registrars
+          WHERE id = ?";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+
+    $q->bind_param('i', $rid);
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($t_registrar);
+
+    while ($q->fetch()) {
+
+        $temp_registrar = $t_registrar;
+
+    }
+
+    $q->close();
+
+} else $error->outputSqlError($conn, "ERROR");
 ?>
 <strong>Domain Registrar</strong><BR>
 <?php echo $temp_registrar; ?><BR><BR><?php

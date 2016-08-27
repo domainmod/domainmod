@@ -481,9 +481,17 @@ if ($dell != '' && $list_id != '') {
 
 if ($really_dell == '1' && $list_id != '') {
 
-    $sql = "DELETE FROM domain_queue_list
-            WHERE id = '" . $list_id . "'";
-    $result = mysqli_query($connection, $sql);
+    $query = "DELETE FROM domain_queue_list
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $list_id);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     $queue->checkListQueue($connection);
 
@@ -499,9 +507,17 @@ if ($deld != '' && $domain_id != '') {
 
 if ($really_deld == '1' && $domain_id != '') {
 
-    $sql = "DELETE FROM domain_queue
-            WHERE id = '" . $domain_id . "'";
-    $result = mysqli_query($connection, $sql);
+    $query = "DELETE FROM domain_queue
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $domain_id);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     $queue->checkDomainQueue($connection);
 
@@ -613,16 +629,27 @@ if (mysqli_num_rows($result_lists) == 0) {
 
                 } else {
 
-                    $sql_temp = "SELECT first_name, last_name
-                                         FROM users
-                                         WHERE id = '" . $row_lists->created_by . "'";
-                    $result_temp = mysqli_query($connection, $sql_temp);
+                    $query = "SELECT first_name, last_name
+                              FROM users
+                              WHERE id = ?";
+                    $q = $conn->stmt_init();
 
-                    while ($row_temp = mysqli_fetch_object($result_temp)) {
+                    if ($q->prepare($query)) {
 
-                        $to_display = $row_temp->first_name . ' ' . $row_temp->last_name;
+                        $q->bind_param('i', $row_lists->created_by);
+                        $q->execute();
+                        $q->store_result();
+                        $q->bind_result($t_first_name, $t_last_name);
 
-                    }
+                        while ($q->fetch()) {
+
+                            $to_display = $t_first_name . ' ' . $t_last_name;
+
+                        }
+
+                        $q->close();
+
+                    } else $error->outputSqlError($conn, "ERROR");
 
                 }
                 echo $to_display; ?>
@@ -758,16 +785,27 @@ if (mysqli_num_rows($result_domains) == 0) {
 
                 } else {
 
-                    $sql_temp = "SELECT `name`
-                                     FROM dns
-                                     WHERE id = '" . $row_domains->dns_id . "'";
-                    $result_temp = mysqli_query($connection, $sql_temp);
+                    $query = "SELECT `name`
+                              FROM dns
+                              WHERE id = ?";
+                    $q = $conn->stmt_init();
 
-                    while ($row_temp = mysqli_fetch_object($result_temp)) {
+                    if ($q->prepare($query)) {
 
-                        $to_display = $row_temp->name;
+                        $q->bind_param('i', $row_domains->dns_id);
+                        $q->execute();
+                        $q->store_result();
+                        $q->bind_result($t_name);
 
-                    }
+                        while ($q->fetch()) {
+
+                            $to_display = $t_name;
+
+                        }
+
+                        $q->close();
+
+                    } else $error->outputSqlError($conn, "ERROR");
 
                 }
                 echo $to_display; ?>
@@ -787,16 +825,28 @@ if (mysqli_num_rows($result_domains) == 0) {
 
                 } else {
 
-                    $sql_temp = "SELECT `name`
-                                     FROM ip_addresses
-                                     WHERE id = '" . $row_domains->ip_id . "'";
-                    $result_temp = mysqli_query($connection, $sql_temp);
+                    $query = "SELECT `name`
+                              FROM ip_addresses
+                              WHERE id = ?";
+                    $q = $conn->stmt_init();
 
-                    while ($row_temp = mysqli_fetch_object($result_temp)) {
+                    if ($q->prepare($query)) {
 
-                        $to_display = $row_temp->name;
+                        $q->bind_param('i', $row_domains->ip_id);
+                        $q->execute();
+                        $q->store_result();
+                        $q->bind_result($t_name);
 
-                    }
+                        while ($q->fetch()) {
+
+                            $to_display = $t_name;
+
+                        }
+
+                        $q->close();
+
+                    } else $error->outputSqlError($conn, "ERROR");
+
                 }
                 echo $to_display; ?>
             </td>
@@ -807,16 +857,27 @@ if (mysqli_num_rows($result_domains) == 0) {
 
                 } else {
 
-                    $sql_temp = "SELECT first_name, last_name
-                                     FROM users
-                                     WHERE id = '" . $row_domains->created_by . "'";
-                    $result_temp = mysqli_query($connection, $sql_temp);
+                    $query = "SELECT first_name, last_name
+                              FROM users
+                              WHERE id = ?";
+                    $q = $conn->stmt_init();
 
-                    while ($row_temp = mysqli_fetch_object($result_temp)) {
+                    if ($q->prepare($query)) {
 
-                        $to_display = $row_temp->first_name . ' ' . $row_temp->last_name;
+                        $q->bind_param('i', $row_domains->created_by);
+                        $q->execute();
+                        $q->store_result();
+                        $q->bind_result($t_first_name, $t_last_name);
 
-                    }
+                        while ($q->fetch()) {
+
+                            $to_display = $t_first_name . ' ' . $t_last_name;
+
+                        }
+
+                        $q->close();
+
+                    } else $error->outputSqlError($conn, "ERROR");
 
                 }
                 echo $to_display; ?>

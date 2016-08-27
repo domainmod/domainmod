@@ -179,17 +179,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $_SESSION['s_default_timezone'] = $new_timezone;
             $_SESSION['s_expiration_email'] = $new_expiration_email;
 
-            $sql_currencies = "SELECT `name`, symbol, symbol_order, symbol_space
-                               FROM currencies
-                               WHERE currency = '" . $new_currency . "'";
-            $result_currencies = mysqli_query($connection, $sql_currencies);
+            $query = "SELECT `name`, symbol, symbol_order, symbol_space
+                      FROM currencies
+                      WHERE currency = ?";
+            $q = $conn->stmt_init();
 
-            while ($row_currencies = mysqli_fetch_object($result_currencies)) {
-                $_SESSION['s_default_currency_name'] = $row_currencies->name;
-                $_SESSION['s_default_currency_symbol'] = $row_currencies->symbol;
-                $_SESSION['s_default_currency_symbol_order'] = $row_currencies->symbol_order;
-                $_SESSION['s_default_currency_symbol_space'] = $row_currencies->symbol_space;
-            }
+            if ($q->prepare($query)) {
+
+                $q->bind_param('s', $new_currency);
+                $q->execute();
+                $q->store_result();
+                $q->bind_result($t_name, $t_symbol, $t_order, $t_space);
+
+                while ($q->fetch()) {
+
+                    $_SESSION['s_default_currency_name'] = $t_name;
+                    $_SESSION['s_default_currency_symbol'] = $t_symbol;
+                    $_SESSION['s_default_currency_symbol_order'] = $t_order;
+                    $_SESSION['s_default_currency_symbol_space'] = $t_space;
+
+                }
+
+                $q->close();
+
+            } else $error->outputSqlError($conn, "ERROR");
 
             header("Location: ../index.php");
             exit;

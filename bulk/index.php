@@ -199,15 +199,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    $sql = "SELECT owner_id, registrar_id
-                            FROM registrar_accounts
-                            WHERE id = '" . $new_raid . "'";
-                    $result = mysqli_query($connection, $sql);
+                    $query = "SELECT owner_id, registrar_id
+                              FROM registrar_accounts
+                              WHERE id = ?";
+                    $q = $conn->stmt_init();
 
-                    while ($row = mysqli_fetch_object($result)) {
-                        $temp_owner_id = $row->owner_id;
-                        $temp_registrar_id = $row->registrar_id;
-                    }
+                    if ($q->prepare($query)) {
+
+                        $q->bind_param('i', $new_raid);
+                        $q->execute();
+                        $q->store_result();
+                        $q->bind_result($t_owner_id, $t_registrar_id);
+
+                        while ($q->fetch()) {
+
+                            $temp_owner_id = $t_owner_id;
+                            $temp_registrar_id = $t_registrar_id;
+
+                        }
+
+                        $q->close();
+
+                    } else $error->outputSqlError($conn, "ERROR");
 
                     reset($domain_list);
 
@@ -1976,7 +1989,7 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
         <?php
         $sql = "SELECT field_name
                 FROM domain_fields
-                ORDER BY type_id, name";
+                ORDER BY type_id, `name`";
         $result = mysqli_query($connection, $sql);
 
         if (mysqli_num_rows($result) > 0) { ?>

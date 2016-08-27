@@ -987,10 +987,20 @@ if ($is_installed == '1') {
 
     $full_url = substr($_SERVER["HTTP_REFERER"], 0, -1);
 
-    $sql = "INSERT INTO `settings`
-            (`full_url`, `db_version`, `email_address`, `insert_time`) VALUES
-            ('" . $full_url . "', '" . $software_version . "', '" . $_SESSION['new_install_email'] . "', '" . $time->stamp() . "');";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $query = "INSERT INTO `settings`
+              (`full_url`, `db_version`, `email_address`, `insert_time`)
+               VALUES
+              (?, ?, ?, ?)";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $timestamp = $time->stamp();
+        $q->bind_param('ssss', $full_url, $software_version, $_SESSION['new_install_email'], $timestamp);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     $sql_settings = "SELECT *
                      FROM settings";
@@ -1068,19 +1078,30 @@ if ($is_installed == '1') {
 
     }
 
-    $sql_currencies = "SELECT `name`, symbol, symbol_order, symbol_space
-                       FROM currencies
-                       WHERE currency = '" . $_SESSION['s_default_currency'] . "'";
-    $result_currencies = mysqli_query($connection, $sql_currencies) or $error->outputOldSqlError($connection);
+    $query = "SELECT `name`, symbol, symbol_order, symbol_space
+              FROM currencies
+              WHERE currency = ?";
+    $q = $conn->stmt_init();
 
-    while ($row_currencies = mysqli_fetch_object($result_currencies)) {
-        
-        $_SESSION['s_default_currency_name'] = $row_currencies->name;
-        $_SESSION['s_default_currency_symbol'] = $row_currencies->symbol;
-        $_SESSION['s_default_currency_symbol_order'] = $row_currencies->symbol_order;
-        $_SESSION['s_default_currency_symbol_space'] = $row_currencies->symbol_space;
-    
-    }
+    if ($q->prepare($query)) {
+
+        $q->bind_param('s', $_SESSION['s_default_currency']);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($t_name, $t_symbol, $t_order, $t_space);
+
+        while ($q->fetch()) {
+
+            $_SESSION['s_default_currency_name'] = $t_name;
+            $_SESSION['s_default_currency_symbol'] = $t_symbol;
+            $_SESSION['s_default_currency_symbol_order'] = $t_order;
+            $_SESSION['s_default_currency_symbol_space'] = $t_space;
+
+        }
+
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     // Without this, the "DomainMOD is not yet installed" message will continue to display after installation. The header isn't displayed on the install file, which is when this normally unsets.
     unset($_SESSION['s_message_danger']);

@@ -115,12 +115,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else $error->outputSqlError($conn, "ERROR");
 
-
-
-
-
-
-
         $query = "SELECT type
                   FROM ssl_cert_types
                   WHERE id = ?";

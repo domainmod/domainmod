@@ -88,18 +88,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($new_raid == '') $_SESSION['s_message_danger'] .= "Please choose the registrar account<BR>";
 
         } else {
-            
-            $sql = "SELECT ra.owner_id, ra.registrar_id, r.api_registrar_id
-                    FROM registrar_accounts AS ra, registrars AS r
-                    WHERE ra.registrar_id = r.id
-                      AND ra.id = '" . $new_raid . "'";
-            $result = mysqli_query($connection, $sql);
 
-            while ($row = mysqli_fetch_object($result)) {
-                $temp_owner_id = $row->owner_id;
-                $temp_registrar_id = $row->registrar_id;
-                $temp_api_registrar_id = $row->api_registrar_id;
-            }
+            $query = "SELECT ra.owner_id, ra.registrar_id, r.api_registrar_id
+                      FROM registrar_accounts AS ra, registrars AS r
+                      WHERE ra.registrar_id = r.id
+                        AND ra.id = ?";
+            $q = $conn->stmt_init();
+
+            if ($q->prepare($query)) {
+
+                $q->bind_param('i', $new_raid);
+                $q->execute();
+                $q->store_result();
+                $q->bind_result($t_owner_id, $t_registrar_id, $t_api_registrar_id);
+
+                while ($q->fetch()) {
+
+                    $temp_owner_id = $t_owner_id;
+                    $temp_registrar_id = $t_registrar_id;
+                    $temp_api_registrar_id = $t_api_registrar_id;
+
+                }
+
+                $q->close();
+
+            } else $error->outputSqlError($conn, "ERROR");
 
             $query = "INSERT INTO domain_queue_list
                       (api_registrar_id, owner_id, registrar_id, account_id, created_by, insert_time)
@@ -130,33 +143,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
              // problem with he automatic import, use the list supplied
 
         // check to make sure that the registrar associated with the account has API support
-        $sql = "SELECT ra.id, ra.registrar_id
-                FROM registrar_accounts AS ra, registrars AS r, api_registrars AS ar
-                WHERE ra.registrar_id = r.id
-                  AND r.api_registrar_id = ar.id
-                  AND ra.id = '" . $new_raid . "'";
-        $result = mysqli_query($connection, $sql);
+        $query = "SELECT ra.id, ra.registrar_id
+                  FROM registrar_accounts AS ra, registrars AS r, api_registrars AS ar
+                  WHERE ra.registrar_id = r.id
+                    AND r.api_registrar_id = ar.id
+                    AND ra.id = ?";
+        $q = $conn->stmt_init();
 
-        if (mysqli_num_rows($result) == 0) {
+        if ($q->prepare($query)) {
 
-            $sql_temp = "SELECT registrar_id
-                         FROM registrar_accounts
-                         WHERE id = '" . $new_raid . "'";
-            $result_temp = mysqli_query($connection, $sql_temp);
+            $q->bind_param('i', $new_raid);
+            $q->execute();
+            $q->store_result();
 
-            while ($row_temp = mysqli_fetch_object($result_temp)) {
+            if ($q->num_rows() == 0) {
 
-                $temp_registrar_id = $row_temp->registrar_id;
+                $query2 = "SELECT registrar_id
+                           FROM registrar_accounts
+                           WHERE id = ?";
+                $q2 = $conn->stmt_init();
+
+                if ($q2->prepare($query2)) {
+
+                    $q2->bind_param('i', $new_raid);
+                    $q2->execute();
+                    $q2->store_result();
+                    $q2->bind_result($t_rid);
+
+                    while ($q2->fetch()) {
+
+                        $temp_registrar_id = $t_rid;
+
+                    }
+
+                    $q2->close();
+
+                } else $error->outputSqlError($conn, "ERROR");
+
+                $has_api_support = '0';
+
+            } else {
+
+                $has_api_support = '1';
 
             }
 
-            $has_api_support = '0';
+            $q->close();
 
-        } else {
-
-            $has_api_support = '1';
-
-        }
+        } else $error->outputSqlError($conn, "ERROR");
 
         if ($new_raid == '' || $raw_domain_list == '' || $has_api_support != '1') {
 
@@ -271,17 +305,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 } else {
 
-                    $sql = "SELECT ra.owner_id, ra.registrar_id, r.api_registrar_id
-                            FROM registrar_accounts AS ra, registrars AS r
-                            WHERE ra.registrar_id = r.id
-                              AND ra.id = '" . $new_raid . "'";
-                    $result = mysqli_query($connection, $sql);
+                    $query = "SELECT ra.owner_id, ra.registrar_id, r.api_registrar_id
+                              FROM registrar_accounts AS ra, registrars AS r
+                              WHERE ra.registrar_id = r.id
+                                AND ra.id = ?";
+                    $q = $conn->stmt_init();
 
-                    while ($row = mysqli_fetch_object($result)) {
-                        $temp_owner_id = $row->owner_id;
-                        $temp_registrar_id = $row->registrar_id;
-                        $temp_api_registrar_id = $row->api_registrar_id;
-                    }
+                    if ($q->prepare($query)) {
+
+                        $q->bind_param('i', $new_raid);
+                        $q->execute();
+                        $q->store_result();
+                        $q->bind_result($t_oid, $t_rid, $t_apirid);
+
+                        while ($q->fetch()) {
+
+                            $temp_owner_id = $t_oid;
+                            $temp_registrar_id = $t_rid;
+                            $temp_api_registrar_id = $t_apirid;
+
+                        }
+
+                        $q->close();
+
+                    } else $error->outputSqlError($conn, "ERROR");
 
                     reset($domain_list);
 

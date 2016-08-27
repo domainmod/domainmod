@@ -60,11 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $timestamp = $time->stamp();
 
-
-
-
-
-
         $query = "SELECT *
                   FROM ssl_fees
                   WHERE ssl_provider_id = ?
@@ -211,13 +206,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 
-$sql = "SELECT `name`
-        FROM ssl_providers
-        where id = '" . $sslpid . "'";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    $temp_ssl_provider = $row->name;
-}
+$query = "SELECT `name`
+          FROM ssl_providers
+          WHERE id = ?";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+
+    $q->bind_param('i', $sslpid);
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($t_ssl_provider);
+
+    while ($q->fetch()) {
+
+        $t_ssl_provider = $temp_ssl_provider;
+
+    }
+
+    $q->close();
+
+} else $error->outputSqlError($conn, "ERROR");
 ?>
 <strong>SSL Provider</strong><BR>
 <?php echo $temp_ssl_provider; ?><BR><BR><?php
