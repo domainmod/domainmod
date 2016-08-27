@@ -90,35 +90,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_type_id != "" && $new_ip_id != "" && $new_cat_id != "" && $new_domain_id != "0" && $new_account_id != "0"
         && $new_type_id != "0" && $new_ip_id != "0" && $new_cat_id != "0" && $new_active != '') {
 
-        $sql = "SELECT ssl_provider_id, owner_id
-                FROM ssl_accounts
-                WHERE id = '" . $new_account_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $query = "SELECT ssl_provider_id, owner_id
+                  FROM ssl_accounts
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row = mysqli_fetch_object($result)) {
-            $new_ssl_provider_id = $row->ssl_provider_id;
-            $new_owner_id = $row->owner_id;
-        }
+        if ($q->prepare($query)) {
 
-        $sql_fee_id = "SELECT id
-                       FROM ssl_fees
-                       WHERE ssl_provider_id = '" . $new_ssl_provider_id . "'
-                         AND type_id = '" . $new_type_id . "'";
-        $result_fee_id = mysqli_query($connection, $sql_fee_id);
+            $q->bind_param('i', $new_account_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($t_ssl_provider_id, $t_owner_id);
 
-        if (mysqli_num_rows($result_fee_id) >= 1) {
+            while ($q->fetch()) {
 
-            while ($row_fee_id = mysqli_fetch_object($result_fee_id)) {
-                $temp_fee_id = $row_fee_id->id;
+                $new_ssl_provider_id = $t_ssl_provider_id;
+                $new_owner_id = $t_owner_id;
+
             }
-            $temp_fee_fixed = "1";
 
-        } else {
+            $q->close();
 
-            $temp_fee_id = "0";
-            $temp_fee_fixed = "0";
+        } else $error->outputSqlError($conn, "ERROR");
 
-        }
+        $query = "SELECT id
+                  FROM ssl_fees
+                  WHERE ssl_provider_id = ?
+                    AND type_id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('ii', $new_ssl_provider_id, $new_type_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($t_fee_id);
+
+            if ($q->num_rows() >= 1) {
+
+                while ($q->fetch()) {
+
+                    $temp_fee_id = $t_fee_id;
+
+                }
+
+                $temp_fee_fixed = "1";
+
+            } else {
+
+                $temp_fee_id = "0";
+                $temp_fee_fixed = "0";
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
         $fee_string = "renewal_fee + misc_fee";
 
@@ -132,24 +159,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $new_total_cost = $row->total_cost;
         }
 
-        $sql_update = "UPDATE ssl_certs
-                       SET owner_id = '" . $new_owner_id . "',
-                              ssl_provider_id = '" . $new_ssl_provider_id . "',
-                           account_id = '" . $new_account_id . "',
-                           domain_id = '" . $new_domain_id . "',
-                           `name` = '" . mysqli_real_escape_string($connection, $new_name) . "',
-                           type_id = '" . $new_type_id . "',
-                           ip_id = '" . $new_ip_id . "',
-                           cat_id = '" . $new_cat_id . "',
-                           expiry_date = '" . $new_expiry_date . "',
-                           fee_id = '" . $temp_fee_id . "',
-                           total_cost = '" . $new_total_cost . "',
-                           notes = '" . mysqli_real_escape_string($connection, $new_notes) . "',
-                           active = '" . $new_active . "',
-                           fee_fixed = '" . $temp_fee_fixed . "',
-                           update_time = '" . $timestamp . "'
-                       WHERE id = '" . $sslcid . "'";
-        $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
+        $query = "UPDATE ssl_certs
+                  SET owner_id = ?,
+                      ssl_provider_id = ?,
+                      account_id = ?,
+                      domain_id = ?,
+                      `name` = ?,
+                      type_id = ?,
+                      ip_id = ?,
+                      cat_id = ?,
+                      expiry_date = ?,
+                      fee_id = ?,
+                      total_cost = ?,
+                      notes = ?,
+                      active = ?,
+                      fee_fixed = ?,
+                      update_time = ?
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('iiiisiiisidsiisi', $new_owner_id, $new_ssl_provider_id, $new_account_id, $new_domain_id, $new_name, $new_type_id, $new_ip_id, $new_cat_id, $new_expiry_date, $temp_fee_id, $new_total_cost, $new_notes, $new_active, $temp_fee_fixed, $timestamp, $sslcid);
+            $q->execute();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
         $sql = "SELECT field_name
                 FROM ssl_cert_fields
@@ -240,30 +275,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $sql = "SELECT sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS account_id,
-                sslcf.id AS type_id, ip.id AS ip_id, cat.id AS cat_id
-            FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_cert_types AS sslcf, ip_addresses AS ip,
-                categories AS cat
-            WHERE sslc.account_id = sslpa.id
-              AND sslc.type_id = sslcf.id
-              AND sslc.ip_id = ip.id
-              AND sslc.cat_id = cat.id
-              AND sslc.id = '" . $sslcid . "'";
-    $result = mysqli_query($connection, $sql);
+    $query = "SELECT sslc.domain_id, sslc.name, sslc.expiry_date, sslc.notes, sslc.active, sslpa.id AS account_id, sslcf.id AS type_id, ip.id AS ip_id, cat.id AS cat_id
+              FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat
+              WHERE sslc.account_id = sslpa.id
+                AND sslc.type_id = sslcf.id
+                AND sslc.ip_id = ip.id
+                AND sslc.cat_id = cat.id
+                AND sslc.id = ?";
+    $q = $conn->stmt_init();
 
-    while ($row = mysqli_fetch_object($result)) {
+    if ($q->prepare($query)) {
 
-        $new_domain_id = $row->domain_id;
-        $new_name = $row->name;
-        $new_type_id = $row->type_id;
-        $new_ip_id = $row->ip_id;
-        $new_cat_id = $row->cat_id;
-        $new_expiry_date = $row->expiry_date;
-        $new_notes = $row->notes;
-        $new_active = $row->active;
-        $new_account_id = $row->account_id;
+        $q->bind_param('i', $sslcid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($t_domain_id, $t_name, $t_expiry_date, $t_notes, $t_active, $t_account_id, $t_type_id, $t_ip_id, $t_cat_id);
 
-    }
+        while ($q->fetch()) {
+
+            $new_domain_id = $t_domain_id;
+            $new_name = $t_name;
+            $new_type_id = $t_expiry_date;
+            $new_ip_id = $t_notes;
+            $new_cat_id = $t_active;
+            $new_expiry_date = $t_account_id;
+            $new_notes = $t_type_id;
+            $new_active = $t_ip_id;
+            $new_account_id = $t_cat_id;
+
+        }
+
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
 }
 
@@ -276,17 +320,51 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $sql = "DELETE FROM ssl_certs WHERE id = '" . $sslcid . "'";
-    $result = mysqli_query($connection, $sql);
+    $query = "DELETE FROM ssl_certs
+              WHERE id = ?";
+    $q = $conn->stmt_init();
 
-    $sql = "DELETE FROM ssl_cert_field_data WHERE ssl_id = '" . $sslcid . "'";
-    $result = mysqli_query($connection, $sql);
+    if ($q->prepare($query)) {
 
-    $sql = "SELECT type FROM ssl_cert_types WHERE id = '" . $new_type_id . "'";
-    $result = mysqli_query($connection, $sql);
-    while ($row = mysqli_fetch_object($result)) {
-        $temp_type = $row->type;
-    }
+        $q->bind_param('i', $sslcid);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
+
+    $query = "DELETE FROM ssl_cert_field_data
+              WHERE ssl_id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $sslcid);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
+
+    $query = "SELECT type
+              FROM ssl_cert_types
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $new_type_id);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($t_type);
+
+        while ($q->fetch()) {
+
+            $temp_type = $t_type;
+
+        }
+
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     $_SESSION['s_message_success'] .= "SSL Certificate $new_name ($temp_type) Deleted<BR>";
 
@@ -310,18 +388,32 @@ echo $form->showFormTop('');
 echo $form->showInputText('new_name', 'Host / Label (100)', '', $new_name, '100', '', '1', '', '');
 echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
-$sql_domain = "SELECT id, domain
-               FROM domains
-               WHERE (active NOT IN ('0', '10') OR id = '" . $new_domain_id . "')
-               ORDER BY domain";
-$result_domain = mysqli_query($connection, $sql_domain) or $error->outputOldSqlError($connection);
-echo $form->showDropdownTop('new_domain_id', 'Domain', '', '1', '');
-while ($row_domain = mysqli_fetch_object($result_domain)) {
+$query = "SELECT id, domain
+          FROM domains
+          WHERE (active NOT IN ('0', '10') OR id = ?)
+          ORDER BY domain";
+$q = $conn->stmt_init();
 
-    echo $form->showDropdownOption($row_domain->id, $row_domain->domain, $new_domain_id);
+if ($q->prepare($query)) {
 
-}
-echo $form->showDropdownBottom('');
+    $q->bind_param('i', $new_domain_id);
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($t_id, $t_domain);
+
+    echo $form->showDropdownTop('new_domain_id', 'Domain', '', '1', '');
+
+    while ($q->fetch()) {
+
+        echo $form->showDropdownOption($t_id, $t_domain, $new_domain_id);
+
+    }
+
+    echo $form->showDropdownBottom('');
+
+    $q->close();
+
+} else $error->outputSqlError($conn, "ERROR");
 
 $sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS sslp_name
                 FROM ssl_accounts AS sslpa, owners AS o, ssl_providers AS sslp

@@ -96,35 +96,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_hosting_id != "" && $new_account_id != "" && $new_cat_id != "0" && $new_dns_id != "0" &&
         $new_ip_id != "0" && $new_hosting_id != "0" && $new_account_id != "0" && $new_active != '') {
 
-        $sql = "SELECT registrar_id, owner_id
-                FROM registrar_accounts
-                WHERE id = '" . $new_account_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $query = "SELECT registrar_id, owner_id
+                  FROM registrar_accounts
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row = mysqli_fetch_object($result)) {
-            $new_registrar_id = $row->registrar_id;
-            $new_owner_id = $row->owner_id;
-        }
+        if ($q->prepare($query)) {
 
-        $sql_fee_id = "SELECT id
-                       FROM fees
-                       WHERE registrar_id = '" . $new_registrar_id . "'
-                         AND tld = '" . $new_tld . "'";
-        $result_fee_id = mysqli_query($connection, $sql_fee_id);
+            $q->bind_param('i', $new_account_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($t_registrar_id, $t_owner_id);
 
-        if (mysqli_num_rows($result_fee_id) >= 1) {
+            while ($q->fetch()) {
 
-            while ($row_fee_id = mysqli_fetch_object($result_fee_id)) {
-                $temp_fee_id = $row_fee_id->id;
+                $new_registrar_id = $t_registrar_id;
+                $new_owner_id = $t_owner_id;
+
             }
-            $temp_fee_fixed = "1";
 
-        } else {
+            $q->close();
 
-            $temp_fee_id = "0";
-            $temp_fee_fixed = "0";
+        } else $error->outputSqlError($conn, "ERROR");
 
-        }
+        $query = "SELECT id
+                  FROM fees
+                  WHERE registrar_id = ?
+                    AND tld = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('is', $new_registrar_id, $new_tld);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($t_fee_id);
+
+            if ($q->num_rows() >= 1) {
+
+                while ($q->fetch()) {
+
+                    $temp_fee_id = $t_fee_id;
+
+                }
+
+                $temp_fee_fixed = "1";
+
+            } else {
+
+                $temp_fee_id = "0";
+                $temp_fee_fixed = "0";
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
         if ($new_privacy == "1") {
 
@@ -181,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $sql = "SELECT field_name
                 FROM domain_fields
-                ORDER BY name";
+                ORDER BY `name`";
         $result = mysqli_query($connection, $sql);
 
         if (mysqli_num_rows($result) > 0) {
@@ -267,43 +294,70 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    $sql = "SELECT d.domain, d.tld, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.hosting_id, d.function, d.notes,
-              d.autorenew, d.privacy, d.active, ra.id AS account_id
-            FROM domains AS d, registrar_accounts AS ra
-            WHERE d.account_id = ra.id
-              AND d.id = '" . $did . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $query = "SELECT d.domain, d.tld, d.expiry_date, d.cat_id, d.dns_id, d.ip_id, d.hosting_id, d.function, d.notes, d.autorenew, d.privacy, d.active, ra.id AS account_id
+              FROM domains AS d, registrar_accounts AS ra
+              WHERE d.account_id = ra.id
+                AND d.id = ?";
+    $q = $conn->stmt_init();
 
-    while ($row = mysqli_fetch_object($result)) {
+    if ($q->prepare($query)) {
 
-        $new_domain = $row->domain;
-        $new_tld = $row->tld;
-        $new_expiry_date = $row->expiry_date;
-        $new_cat_id = $row->cat_id;
-        $new_dns_id = $row->dns_id;
-        $new_ip_id = $row->ip_id;
-        $new_hosting_id = $row->hosting_id;
-        $new_function = $row->function;
-        $new_notes = $row->notes;
-        $new_autorenew = $row->autorenew;
-        $new_privacy = $row->privacy;
-        $new_active = $row->active;
-        $new_account_id = $row->account_id;
+        $q->bind_param('i', $did);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($t_domain, $t_tld, $t_expiry_date, $t_cat_id, $t_dns_id, $t_ip_id, $t_hosting_id, $t_function, $t_notes, $t_autorenew, $t_privacy, $t_active, $t_account_id);
 
-    }
+        while ($q->fetch()) {
+
+            $new_domain = $t_domain;
+            $new_tld = $t_tld;
+            $new_expiry_date = $t_expiry_date;
+            $new_cat_id = $t_cat_id;
+            $new_dns_id = $t_dns_id;
+            $new_ip_id = $t_ip_id;
+            $new_hosting_id = $t_hosting_id;
+            $new_function = $t_function;
+            $new_notes = $t_notes;
+            $new_autorenew = $t_autorenew;
+            $new_privacy = $t_privacy;
+            $new_active = $t_active;
+            $new_account_id = $t_account_id;
+
+        }
+
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
 }
 
 if ($del == "1") {
 
-    $sql = "SELECT domain_id
-            FROM ssl_certs
-            WHERE domain_id = '" . $did . "'";
-    $result = mysqli_query($connection, $sql);
+    $query = "SELECT domain_id
+              FROM ssl_certs
+              WHERE domain_id = ?";
+    $q = $conn->stmt_init();
 
-    while ($row = mysqli_fetch_object($result)) {
-        $existing_ssl_certs = 1;
-    }
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $did);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($t_domain_id);
+
+        if ($q->num_rows() >= 1) {
+
+            while ($q->fetch()) {
+
+                $existing_ssl_certs = 1;
+
+            }
+
+        }
+
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     if ($existing_ssl_certs > 0) {
 
@@ -311,8 +365,7 @@ if ($del == "1") {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Domain?<BR><BR><a
-            href=\"edit.php?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
+        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Domain?<BR><BR><a href=\"edit.php?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
 
     }
 
@@ -320,13 +373,29 @@ if ($del == "1") {
 
 if ($really_del == "1") {
 
-    $sql = "DELETE FROM domains
-            WHERE id = '" . $did . "'";
-    $result = mysqli_query($connection, $sql);
+    $query = "DELETE FROM domains
+              WHERE id = ?";
+    $q = $conn->stmt_init();
 
-    $sql = "DELETE FROM domain_field_data
-            WHERE domain_id = '" . $did . "'";
-    $result = mysqli_query($connection, $sql);
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $did);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
+
+    $query = "DELETE FROM domain_field_data
+              WHERE domain_id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $did);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     $_SESSION['s_message_success'] .= "Domain " . $new_domain . " Deleted<BR>";
 
