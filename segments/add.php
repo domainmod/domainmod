@@ -44,24 +44,22 @@ $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $new_name = $_POST['new_name'];
 $new_description = $_POST['new_description'];
-$new_segment = $_POST['new_segment'];
+$raw_domain_list = $_POST['raw_domain_list'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $format = new DomainMOD\Format();
-    $new_segment = $format->stripSpacing($new_segment);
+    $domain_list = $format->cleanAndSplitDomains($raw_domain_list);
 
-    if ($new_name != "" && $new_segment != "") {
-
-        $lines = array_unique(explode("\r\n", $new_segment));
+    if ($new_name != "" && $raw_domain_list != "") {
 
         $domain = new DomainMOD\Domain();
 
         list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) =
-            $domain->findInvalidDomains($lines);
+            $domain->findInvalidDomains($domain_list);
 
-        if ($new_segment == "" || $invalid_domains == 1) {
+        if ($raw_domain_list == "" || $invalid_domains == 1) {
 
             if ($invalid_domains == 1) {
 
@@ -93,12 +91,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $lines = array_unique(explode("\r\n", $new_segment));
-            $number_of_domains = count($lines);
+            $number_of_domains = count($domain_list);
 
             $domain = new DomainMOD\Domain();
 
-            while (list($key, $new_domain) = each($lines)) {
+            while (list($key, $new_domain) = each($domain_list)) {
 
                 if (!$domain->checkFormat($new_domain)) {
                     echo "invalid domain $key";
@@ -107,11 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             }
 
-            $new_segment_formatted = "'" . $new_segment;
-            $new_segment_formatted = $new_segment_formatted . "'";
-            $new_segment_formatted = preg_replace("/\r\n/", "','", $new_segment_formatted);
-            $new_segment_formatted = str_replace(" ", "", $new_segment_formatted);
-            $new_segment_formatted = trim($new_segment_formatted);
+            $new_data_formatted = $format->formatForMysql($domain_list);
 
             $query = "INSERT INTO segments
                       (`name`, description, segment, number_of_domains, notes, created_by, insert_time)
@@ -121,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($q->prepare($query)) {
 
-                $q->bind_param('sssisis', $new_name, $new_description, $new_segment_formatted, $number_of_domains,
+                $q->bind_param('sssisis', $new_name, $new_description, $new_data_formatted, $number_of_domains,
                     $new_notes, $_SESSION['s_user_id'], $timestamp);
                 $q->execute();
                 $q->close();
@@ -139,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($q->prepare($query)) {
 
-                $q->bind_param('sss', $new_name, $new_segment_formatted, $timestamp);
+                $q->bind_param('sss', $new_name, $new_data_formatted, $timestamp);
                 $q->execute();
                 $q->store_result();
                 $q->bind_result($temp_segment_id);
@@ -164,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $error->outputSqlError($conn, "ERROR");
             }
 
-            foreach ($lines as $domain) {
+            foreach ($domain_list as $domain) {
 
                 $query = "INSERT INTO segment_data
                           (segment_id, domain, insert_time)
@@ -198,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($new_name == "") {
             $_SESSION['s_message_danger'] .= "Enter the segment name<BR>";
         }
-        if ($new_segment == "") {
+        if ($raw_domain_list == "") {
             $_SESSION['s_message_danger'] .= "Enter the segment<BR>";
         }
 
@@ -217,7 +210,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 echo $form->showInputText('new_name', 'Segment Name (35)', '', $new_name, '35', '', '1', '', '');
-echo $form->showInputTextarea('new_segment', 'Segment Domains (one per line)', '', $new_segment, '1', '', '');
+echo $form->showInputTextarea('raw_domain_list', 'Segment Domains (one per line)', '', $raw_domain_list, '1', '', '');
 echo $form->showInputTextarea('new_description', 'Description', '', $new_description, '', '', '');
 echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showSubmitButton('Add Segment', '', '');

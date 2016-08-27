@@ -27,9 +27,7 @@ class Format
     public function stripSpacing($input)
     {
 
-        $output = trim(preg_replace("/^\n+|^[\t\s]*\n+/m", "", $input));
-
-        return $output;
+        return trim(preg_replace("/^\n+|^[\t\s]*\n+/m", "", $input));
 
     }
 
@@ -41,6 +39,36 @@ class Format
         $output_notes = str_replace("\n", "<BR>", $output_notes);
 
         return $output_notes;
+
+    }
+
+    public function cleanAndSplitDomains($raw_domain_list)
+    {
+
+        $clean_domain_list = $this->stripSpacing($raw_domain_list);
+
+        $domain_list = explode("\r\n", $clean_domain_list);
+
+        foreach($domain_list AS &$value) {
+
+            $value = $this->stripSpacing($value);
+
+        }
+
+        return array_unique($domain_list);
+
+    }
+
+    public function formatForMysql($domain_list)
+    {
+
+        $domain_list_formatted = implode("\r\n", $domain_list);
+        $domain_list_formatted = "'" . $domain_list_formatted;
+        $domain_list_formatted = $domain_list_formatted . "'";
+        $domain_list_formatted = preg_replace("/\r\n/", "','", $domain_list_formatted);
+        $domain_list_formatted = str_replace(" ", "", $domain_list_formatted);
+
+        return trim($domain_list_formatted);
 
     }
 

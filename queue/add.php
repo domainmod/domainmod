@@ -43,7 +43,7 @@ $system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $new_raid = $_REQUEST['new_raid'];
-$new_data = $_POST['new_data'];
+$raw_domain_list = $_POST['raw_domain_list'];
 
 if ($new_raid != '' ) {
 
@@ -78,10 +78,10 @@ if ($new_raid != '' ) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $format = new DomainMOD\Format();
-    $new_data = $format->stripSpacing($new_data);
+    $domain_list = $format->cleanAndSplitDomains($raw_domain_list);
 
     // If the registrar has the ability to retrieve the list of domains
-    if ($lists_domains == '1' && $new_data == '') {
+    if ($lists_domains == '1' && $raw_domain_list == '') {
 
         if ($new_raid == '') {
 
@@ -158,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         }
 
-        if ($new_raid == '' || $new_data == '' || $has_api_support != '1') {
+        if ($new_raid == '' || $raw_domain_list == '' || $has_api_support != '1') {
 
             if ($has_api_support != '1' && $new_raid != '') {
 
@@ -167,17 +167,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
 
                 if ($new_raid == '') $_SESSION['s_message_danger'] .= "Please choose the registrar account<BR>";
-                if ($new_data == '') $_SESSION['s_message_danger'] .= "Enter the list of domains to add to the queue<BR>";
+                if ($raw_domain_list == '') $_SESSION['s_message_danger'] .= "Enter the list of domains to add to the queue<BR>";
 
             }
 
         } else {
 
-            $domain_list = array_unique(explode("\r\n", $new_data));
-
             list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($domain_list);
 
-            if ($new_data == "" || $invalid_domains == 1) {
+            if ($raw_domain_list == "" || $invalid_domains == 1) {
 
                 if ($invalid_domains == 1) {
 
@@ -209,16 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             } else {
 
-                $new_data_formatted = "'" . $new_data;
-                $new_data_formatted = $new_data_formatted . "'";
-                $new_data_formatted = preg_replace("/\r\n/", "','", $new_data_formatted);
-                $new_data_formatted = str_replace(" ", "", $new_data_formatted);
-                $new_data_formatted = trim($new_data_formatted);
-
                 $date = new DomainMOD\Date();
-
-                // Make sure the domains don't already exist in the domains table
-                $domain_list = array_unique(explode("\r\n", $new_data));
 
                 reset($domain_list);
 
@@ -245,9 +234,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
 
                 }
-
-                // Make sure the domains don't already exist in the domain queue
-                $domain_list = array_unique(explode("\r\n", $new_data));
 
                 reset($domain_list);
 
@@ -297,8 +283,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $temp_api_registrar_id = $row->api_registrar_id;
                     }
 
-                    $domain_list = array_unique(explode("\r\n", $new_data));
-
                     reset($domain_list);
 
                     // cycle through domains here
@@ -327,7 +311,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     } // finish cycling through domains here
 
                     $done = "1";
-                    $new_data_unformatted = strtolower(preg_replace("/\r\n/", ", ", $new_data));
+                    reset($domain_list);
+                    $new_data_unformatted = implode(", ", $domain_list);
 
                     $_SESSION['s_domains_in_queue'] = '1';
 
@@ -455,11 +440,11 @@ if ($new_raid != '') {
 
         echo '<strong>Domain List</strong><BR>';
         echo htmlentities($api_registrar_name) . '\'s API has a domain list feature, so you don\'t even have to supply a list of the domains you want to import, DomainMOD will retrieve them for you automatically. If for some reason you\'re having issues with the automatic import though, you can still manually paste a list of domains to import below.<BR><BR>';
-        echo $form->showInputTextarea('new_data', '[OPTIONAL] Domains to add (one per line)', '', $new_data, '', '', '');
+        echo $form->showInputTextarea('raw_domain_list', '[OPTIONAL] Domains to add (one per line)', '', $raw_domain_list, '', '', '');
 
     } else {
 
-        echo $form->showInputTextarea('new_data', 'Domains to add (one per line)', '', $new_data, '1', '', '');
+        echo $form->showInputTextarea('raw_domain_list', 'Domains to add (one per line)', '', $raw_domain_list, '1', '', '');
     }
 
 }

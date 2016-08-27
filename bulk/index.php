@@ -50,7 +50,7 @@ $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $jumpMenu = $_GET['jumpMenu'];
 $action = $_REQUEST['action'];
-$new_data = $_POST['new_data'];
+$raw_domain_list = $_POST['raw_domain_list'];
 $new_expiry_date = $_POST['new_expiry_date'];
 $new_function = $_POST['new_function'];
 $new_pcid = $_POST['new_pcid'];
@@ -98,19 +98,18 @@ $choose_text = "Click here to choose the new";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $format = new DomainMOD\Format();
-    $new_data = $format->stripSpacing($new_data);
 
-    if ($new_data == "") {
+    $domain_list = $format->cleanAndSplitDomains($raw_domain_list);
+
+    if ($raw_domain_list == "") {
 
         $_SESSION['s_message_danger'] .= "Enter the list of domains to apply the action to<BR>";
 
     } else {
 
-        $domain_list = array_unique(explode("\r\n", $new_data));
-
         list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($domain_list);
 
-        if ($new_data == "" || $invalid_domains == 1) {
+        if ($raw_domain_list == "" || $invalid_domains == 1) {
 
             if ($invalid_domains == 1) {
 
@@ -142,11 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $new_data_formatted = "'" . $new_data;
-            $new_data_formatted = $new_data_formatted . "'";
-            $new_data_formatted = preg_replace("/\r\n/", "','", $new_data_formatted);
-            $new_data_formatted = str_replace(" ", "", $new_data_formatted);
-            $new_data_formatted = trim($new_data_formatted);
+            $new_data_formatted = $format->formatForMysql($domain_list);
 
             if ($action == "RENEW") {
 
@@ -163,9 +158,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } elseif ($action == "AD") {
 
                 $date = new DomainMOD\Date();
-
-                // Make sure the domains don't already exist
-                $domain_list = array_unique(explode("\r\n", $new_data));
 
                 reset($domain_list);
 
@@ -216,8 +208,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $temp_owner_id = $row->owner_id;
                         $temp_registrar_id = $row->registrar_id;
                     }
-
-                    $domain_list = array_unique(explode("\r\n", $new_data));
 
                     reset($domain_list);
 
@@ -1422,7 +1412,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             $done = "1";
-            $new_data_unformatted = strtolower(preg_replace("/\r\n/", ", ", $new_data));
+            reset($domain_list);
+            $new_data_unformatted = implode(", ", $domain_list);
 
         }
 
@@ -1470,7 +1461,7 @@ if ($breadcrumb_text != '') {
 ?>
 
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.<BR><BR>
+The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.<BR>
 <?php if ($done == "1") { ?>
 
     <?php if ($submission_failed != "1") { ?>
@@ -1601,7 +1592,7 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
 
     }
 
-    echo $form->showInputTextarea('new_data', $text, '', $new_data, '1', '', '');
+    echo $form->showInputTextarea('raw_domain_list', $text, '', $raw_domain_list, '1', '', '');
 
 }
 
