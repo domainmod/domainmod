@@ -22,7 +22,7 @@
 <?php
 if ($_SESSION['s_missing_domain_fees'] == 1) {
 
-    $message = "Some of your Registrars/TLDs are missing domain fees. <a href=\"" . $web_root . "/assets/registrar-fees-missing.php\">Click here to fix this</a>.<BR>If you've already updated all new TLDs, you should <a href=\"" . $web_root . "/settings/maintenance/update-domain-fees.php\">update the domain fees system-wide</a> (this may take some time).";
+    $message = "Some of your Registrars/TLDs are missing domain fees. <a href=\"" . $web_root . "/assets/registrar-fees-missing.php\">Click here to fix this</a>.<BR>If you've already updated all new TLDs, you should <a href=\"" . $web_root . "/maintenance/update-domain-fees.php\">update the domain fees system-wide</a> (this may take some time).";
 
     echo $system->showMaintenanceTable($message);
 
@@ -30,7 +30,7 @@ if ($_SESSION['s_missing_domain_fees'] == 1) {
 
 if ($_SESSION['s_missing_ssl_fees'] == 1) {
 
-    $message = "Some of your SSL Certificate Types are missing fees. <a href=\"" . $web_root . "/assets/ssl-provider-fees-missing.php\">Click here to fix this</a>.<BR>If you've already updated all new SSL Types, you should <a href=\"" . $web_root . "/settings/maintenance/update-ssl-fees.php\">update the SSL fees system-wide</a> (this may take some time).";
+    $message = "Some of your SSL Certificate Types are missing fees. <a href=\"" . $web_root . "/assets/ssl-provider-fees-missing.php\">Click here to fix this</a>.<BR>If you've already updated all new SSL Types, you should <a href=\"" . $web_root . "/maintenance/update-ssl-fees.php\">update the SSL fees system-wide</a> (this may take some time).";
 
     echo $system->showMaintenanceTable($message);
 

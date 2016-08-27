@@ -50,7 +50,7 @@ echo $layout->jumpMenu();
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-Before running any reports you should <a href="<?php echo $web_root; ?>/settings/maintenance/update-conversions.php">update the conversion rates</a>.
+Before running any reports you should <a href="<?php echo $web_root; ?>/maintenance/update-conversions.php">update the conversion rates</a>.
 
 <h3>Domain Reports</h3>
 <?php
