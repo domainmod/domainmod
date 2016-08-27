@@ -60,38 +60,70 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_tld = trim($new_tld, ". \t\n\r\0\x0B");
         $timestamp = $time->stamp();
 
-        $sql = "UPDATE fees
-                SET initial_fee = '" . $new_initial_fee . "',
-                    renewal_fee = '" . $new_renewal_fee . "',
-                    transfer_fee = '" . $new_transfer_fee . "',
-                    privacy_fee = '" . $new_privacy_fee . "',
-                    misc_fee = '" . $new_misc_fee . "',
-                    currency_id = '" . $new_currency_id . "',
-                    update_time = '" . $timestamp . "'
-                WHERE registrar_id = '" . $rid . "'
-                  AND tld = '" . $new_tld . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $query = "UPDATE fees
+                  SET initial_fee = ?,
+                      renewal_fee = ?,
+                      transfer_fee = ?,
+                      privacy_fee = ?,
+                      misc_fee = ?,
+                      currency_id = ?,
+                      update_time = ?
+                  WHERE registrar_id = ?
+                    AND tld = ?";
+        $q = $conn->stmt_init();
 
-        $sql = "UPDATE domains
-                SET fee_id = '" . $fee_id . "',
-                    update_time = '" . $timestamp . "'
-                WHERE registrar_id = '" . $rid . "'
-                  AND tld = '" . $new_tld . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        if ($q->prepare($query)) {
 
-        $sql = "UPDATE domains d
-                JOIN fees f ON d.fee_id = f.id
-                SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
-                WHERE d.privacy = '1'
-                  AND d.fee_id = '" . $fee_id . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            $q->bind_param('dddddisis', $new_initial_fee, $new_renewal_fee, $new_transfer_fee, $new_privacy_fee, $new_misc_fee, $new_currency_id, $timestamp, $rid, $new_tld);
+            $q->execute();
+            $q->close();
 
-        $sql = "UPDATE domains d
-                JOIN fees f ON d.fee_id = f.id
-                SET d.total_cost = f.renewal_fee + f.misc_fee
-                WHERE d.privacy = '0'
-                  AND d.fee_id = '" . $fee_id . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        } else $error->outputSqlError($conn, "ERROR");
+
+        $query = "UPDATE domains
+                  SET fee_id = ?,
+                      update_time = ?
+                  WHERE registrar_id = ?
+                    AND tld = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('isis', $fee_id, $timestamp, $rid, $new_tld);
+            $q->execute();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
+
+        $query = "UPDATE domains d
+                  JOIN fees f ON d.fee_id = f.id
+                  SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
+                  WHERE d.privacy = '1'
+                    AND d.fee_id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $fee_id);
+            $q->execute();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
+
+        $query = "UPDATE domains d
+                  JOIN fees f ON d.fee_id = f.id
+                  SET d.total_cost = f.renewal_fee + f.misc_fee
+                  WHERE d.privacy = '0'
+                    AND d.fee_id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $fee_id);
+            $q->execute();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
         $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
@@ -142,13 +174,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 
-$sql = "SELECT `name`
-        FROM registrars
-        where id = '" . $rid . "'";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    $temp_registrar = $row->name;
-}
+$query = "SELECT `name`
+          FROM registrars
+          WHERE id = ?";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+
+    $q->bind_param('i', $rid);
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($t_registrar);
+
+    while ($q->fetch()) {
+
+        $temp_registrar = $t_registrar;
+
+    }
+
+    $q->close();
+
+} else $error->outputSqlError($conn, "ERROR");
 ?>
 <strong>Domain Registrar</strong><BR>
 <?php echo $temp_registrar; ?><BR><BR>

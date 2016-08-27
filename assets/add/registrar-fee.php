@@ -63,80 +63,127 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_tld = trim($new_tld, ". \t\n\r\0\x0B");
         $timestamp = $time->stamp();
 
-        $sql = "SELECT *
-                FROM fees
-                WHERE registrar_id = '" . $rid . "'
-                  AND tld = '" . $new_tld . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $query = "SELECT *
+                  FROM fees
+                  WHERE registrar_id = ?
+                    AND tld = ?";
+        $q = $conn->stmt_init();
 
-        if (mysqli_num_rows($result) > 0) {
+        if ($q->prepare($query)) {
 
-            $_SESSION['s_message_danger'] .= 'A fee for this TLD already exists.<BR>';
+            $q->bind_param('is', $rid, $new_tld);
+            $q->execute();
+            $q->store_result();
 
-        } else {
+            if ($q->num_rows() > 0) {
 
-            $sql = "SELECT id
-                    FROM currencies
-                    WHERE currency = '" . $new_currency . "'";
-            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-            while ($row = mysqli_fetch_object($result)) {
-                $currency_id = $row->id;
-            }
-
-            $query = "INSERT INTO fees
-                      (registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id, insert_time)
-                      VALUES
-                      (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $q = $conn->stmt_init();
-
-            if ($q->prepare($query)) {
-
-                $q->bind_param('isdddddis', $rid, $new_tld, $new_initial_fee, $new_renewal_fee, $new_transfer_fee, $new_privacy_fee, $new_misc_fee, $currency_id, $timestamp);
-                $q->execute();
-
-                $new_fee_id = $q->insert_id;
-
-                $q->close();
+                $_SESSION['s_message_danger'] .= 'A fee for this TLD already exists.<BR>';
 
             } else {
-                $error->outputSqlError($conn, "ERROR");
+
+                $query2 = "SELECT id
+                           FROM currencies
+                           WHERE currency = '" . $new_currency . "'";
+                $q2 = $conn->stmt_init();
+
+                if ($q2->prepare($query2)) {
+
+                    $q2->bind_param('s', $new_currency);
+                    $q2->execute();
+                    $q2->store_result();
+                    $q2->bind_result($id);
+
+                    while ($q2->fetch()) {
+
+                        $currency_id = $id;
+
+                    }
+
+                    $q2->close();
+
+                } else $error->outputSqlError($conn, "ERROR");
+
+                $query2 = "INSERT INTO fees
+                           (registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id, insert_time)
+                           VALUES
+                           (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $q2 = $conn->stmt_init();
+
+                if ($q2->prepare($query2)) {
+
+                    $q2->bind_param('isdddddis', $rid, $new_tld, $new_initial_fee, $new_renewal_fee, $new_transfer_fee, $new_privacy_fee, $new_misc_fee, $currency_id, $timestamp);
+                    $q2->execute();
+
+                    $new_fee_id = $q2->insert_id;
+
+                    $q2->close();
+
+                } else {
+                    $error->outputSqlError($conn, "ERROR");
+                }
+
+                $query2 = "UPDATE domains
+                           SET fee_id = ?,
+                               update_time = ?
+                           WHERE registrar_id = ?
+                             AND tld = ?";
+                $q2 = $conn->stmt_init();
+
+                if ($q2->prepare($query2)) {
+
+                    $q2->bind_param('isis', $new_fee_id, $timestamp, $rid, $new_tld);
+                    $q2->execute();
+                    $q2->close();
+
+                } else $error->outputSqlError($conn, "ERROR");
+
+                $query2 = "UPDATE domains d
+                           JOIN fees f ON d.fee_id = f.id
+                           SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
+                           WHERE d.privacy = '1'
+                             AND d.fee_id = ?";
+                $q2 = $conn->stmt_init();
+
+                if ($q2->prepare($query2)) {
+
+                    $q2->bind_param('i', $new_fee_id);
+                    $q2->execute();
+                    $q2->close();
+
+                } else $error->outputSqlError($conn, "ERROR");
+
+                $query2 = "UPDATE domains d
+                           JOIN fees f ON d.fee_id = f.id
+                           SET d.total_cost = f.renewal_fee + f.misc_fee
+                           WHERE d.privacy = '0'
+                             AND d.fee_id = ?";
+                $q2 = $conn->stmt_init();
+
+                if ($q2->prepare($query2)) {
+
+                    $q2->bind_param('i', $new_fee_id);
+                    $q2->execute();
+                    $q2->close();
+
+                } else $error->outputSqlError($conn, "ERROR");
+
+                $queryB = new DomainMOD\QueryBuild();
+
+                $sql = $queryB->missingFees('domains');
+                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
+
+                $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+
+                $_SESSION['s_message_success'] .= "The fee for " . $new_tld . "has been added<BR>";
+
+                header("Location: ../registrar-fees.php?rid=" . urlencode($rid));
+                exit;
+
             }
 
-            $sql = "UPDATE domains
-                    SET fee_id = '" . $new_fee_id . "',
-                        update_time = '" . $timestamp . "'
-                    WHERE registrar_id = '" . $rid . "'
-                      AND tld = '" . $new_tld . "'";
-            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            $q->close();
 
-            $sql = "UPDATE domains d
-                    JOIN fees f ON d.fee_id = f.id
-                    SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
-                    WHERE d.privacy = '1'
-                      AND d.fee_id = '" . $new_fee_id . "'";
-            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-            $sql = "UPDATE domains d
-                    JOIN fees f ON d.fee_id = f.id
-                    SET d.total_cost = f.renewal_fee + f.misc_fee
-                    WHERE d.privacy = '0'
-                      AND d.fee_id = '" . $new_fee_id . "'";
-            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-            $queryB = new DomainMOD\QueryBuild();
-
-            $sql = $queryB->missingFees('domains');
-            $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
-
-            $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
-
-            $_SESSION['s_message_success'] .= "The fee for " . $new_tld . "has been added<BR>";
-
-            header("Location: ../registrar-fees.php?rid=" . urlencode($rid));
-            exit;
-
-        }
+        } else $error->outputSqlError($conn, "ERROR");
 
     } else {
 

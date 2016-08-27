@@ -57,50 +57,105 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $timestamp = $time->stamp();
 
-        $sql = "UPDATE ssl_fees
-                SET initial_fee = '" . $new_initial_fee . "',
-                    renewal_fee = '" . $new_renewal_fee . "',
-                    misc_fee = '" . $new_misc_fee . "',
-                    currency_id = '" . $new_currency_id . "',
-                    update_time = '" . $timestamp . "'
-                WHERE ssl_provider_id = '" . $sslpid . "'
-                  AND type_id = '" . $new_type_id . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $query = "UPDATE ssl_fees
+                  SET initial_fee = ?,
+                      renewal_fee = ?,
+                      misc_fee = ?,
+                      currency_id = ?,
+                      update_time = ?
+                  WHERE ssl_provider_id = ?
+                    AND type_id = ?";
+        $q = $conn->stmt_init();
 
-        $new_fee_id = mysqli_insert_id($connection);
+        if ($q->prepare($query)) {
 
-        $sql = "SELECT id
-                FROM ssl_fees
-                WHERE ssl_provider_id = '" . $sslpid . "'
-                  AND type_id = '" . $new_type_id . "'
-                  AND currency_id = '" . $new_currency_id . "'
-                LIMIT 1";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            $q->bind_param('dddisii', $new_initial_fee, $new_renewal_fee, $new_misc_fee, $new_currency_id, $timestamp, $sslpid, $new_type_id);
+            $q->execute();
+            $q->close();
 
-        while ($row = mysqli_fetch_object($result)) {
-            $new_fee_id = $row->id;
-        }
+        } else $error->outputSqlError($conn, "ERROR");
 
-        $sql = "UPDATE ssl_certs
-                SET fee_id = '" . $new_fee_id . "',
-                    update_time = '" . $timestamp . "'
-                WHERE ssl_provider_id = '" . $sslpid . "'
-                  AND type_id = '" . $new_type_id . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $query = "SELECT id
+                  FROM ssl_fees
+                  WHERE ssl_provider_id = ?
+                    AND type_id = ?
+                    AND currency_id = ?
+                  LIMIT 1";
+        $q = $conn->stmt_init();
 
-        $sql = "SELECT type
-                FROM ssl_cert_types
-                WHERE id = '" . $new_type_id . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-        while ($row = mysqli_fetch_object($result)) {
-            $temp_type = $row->type;
-        }
+        if ($q->prepare($query)) {
 
-        $sql = "UPDATE ssl_certs sslc
-                JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
-                SET sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
-                WHERE sslc.fee_id = '" . $new_fee_id . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            $q->bind_param('iii', $sslpid, $new_type_id, $new_currency_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_id);
+
+            while ($q->fetch()) {
+
+                $new_fee_id = $temp_id;
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
+
+        $query = "UPDATE ssl_certs
+                  SET fee_id = ?,
+                      update_time = ?
+                  WHERE ssl_provider_id = ?
+                    AND type_id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('isii', $new_fee_id, $timestamp, $sslpid, $new_type_id);
+            $q->execute();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
+
+
+
+
+
+
+
+        $query = "SELECT type
+                  FROM ssl_cert_types
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $new_type_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($t_type);
+
+            while ($q->fetch()) {
+
+                $temp_type = $t_type;
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
+
+        $query = "UPDATE ssl_certs sslc
+                  JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
+                  SET sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
+                  WHERE sslc.fee_id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $new_fee_id);
+            $q->execute();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
         $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
@@ -150,24 +205,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 echo $form->showFormTop('');
 
-$sql = "SELECT `name`
-        FROM ssl_providers
-        where id = '" . $sslpid . "'";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    $temp_ssl_provider = $row->name;
-}
+$query = "SELECT `name`
+          FROM ssl_providers
+          where id = ?";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+
+    $q->bind_param('i', $sslpid);
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($t_ssl_provider);
+
+    while ($q->fetch()) {
+
+        $temp_ssl_provider = $t_ssl_provider;
+
+    }
+
+    $q->close();
+
+} else $error->outputSqlError($conn, "ERROR");
 ?>
 <strong>SSL Provider</strong><BR>
 <?php echo $temp_ssl_provider; ?><BR><BR><?php
 
-$sql = "SELECT type
-        FROM ssl_cert_types
-        where id = '" . $new_type_id . "'";
-$result = mysqli_query($connection, $sql);
-while ($row = mysqli_fetch_object($result)) {
-    $temp_type = $row->type;
-}
+$query = "SELECT type
+          FROM ssl_cert_types
+          WHERE id = ?";
+$q = $conn->stmt_init();
+
+if ($q->prepare($query)) {
+
+    $q->bind_param('i', $new_type_id);
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($t_type);
+
+    while ($q->fetch()) {
+
+        $temp_type = $t_type;
+
+    }
+
+    $q->close();
+
+} else $error->outputSqlError($conn, "ERROR");
 ?>
 <strong>Type</strong><BR>
 <?php echo $temp_type; ?><BR><BR>

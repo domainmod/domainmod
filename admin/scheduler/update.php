@@ -52,37 +52,84 @@ if ($a == 'u') {
     $hour = date("G", strtotime($new_time_utc));
     $full_expression = '0 ' . $hour . ' * * * *';
 
-    $sql = "UPDATE scheduler
-            SET expression = '" . $full_expression . "',
-                next_run = '" . $new_time_utc . "'
-            WHERE id = '" . $id . "'";
-    mysqli_query($connection, $sql);
+    $query = "UPDATE scheduler
+              SET expression = ?,
+                  next_run = ?
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('ssi', $full_expression, $new_time_utc, $id);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     $message = 'Task Updated<BR>';
 
 } elseif ($a == 'e') {
 
-    $sql = "SELECT expression FROM scheduler WHERE id = '" . $id . "'";
-    $result = mysqli_query($connection, $sql);
-    while ($row = mysqli_fetch_object($result)) {
-        $full_expression = $row->expression;
-    }
+    $query = "SELECT expression
+              FROM scheduler
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $id);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($temp_expression);
+
+        while ($q->fetch()) {
+
+            $full_expression = $temp_expression;
+
+        }
+
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     $cron = \Cron\CronExpression::factory($full_expression);
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
-    $sql = "UPDATE scheduler SET active = '1', next_run = '" . $next_run . "' WHERE id = '" . $id . "'";
+    $query = "UPDATE scheduler
+              SET active = '1', 
+                  next_run = ?
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('si', $next_run, $id);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     $message = 'Task Enabled<BR>';
 
 } elseif ($a == 'd') {
 
-    $sql = "UPDATE scheduler SET active = '0', next_run = '0000-00-00 00:00:00' WHERE id = '" . $id . "'";
+    $query = "UPDATE scheduler
+              SET active = '0', 
+                  next_run = '0000-00-00 00:00:00'
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $id);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     $message = 'Task Disabled<BR>';
 
 }
-mysqli_query($connection, $sql);
 
 $_SESSION['s_message_success'] .= $message;
 

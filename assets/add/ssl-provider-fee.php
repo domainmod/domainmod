@@ -60,72 +60,134 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $timestamp = $time->stamp();
 
-        $sql = "SELECT *
-                FROM ssl_fees
-                WHERE ssl_provider_id = '" . $sslpid . "'
-                  AND type_id = '" . $new_type_id . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-        if (mysqli_num_rows($result) > 0) {
 
-            $_SESSION['s_message_danger'] .= 'A fee for this SSL Type already exists.<BR>';
 
-        } else {
 
-            $sql = "SELECT id
-                    FROM currencies
-                    WHERE currency = '" . $new_currency . "'";
-            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
-            while ($row = mysqli_fetch_object($result)) {
-                $currency_id = $row->id;
+        $query = "SELECT *
+                  FROM ssl_fees
+                  WHERE ssl_provider_id = ?
+                    AND type_id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('ii', $sslpid, $new_type_id);
+            $q->execute();
+            $q->store_result();
+
+            if ($q->num_rows() > 0) {
+
+                $_SESSION['s_message_danger'] .= 'A fee for this SSL Type already exists.<BR>';
+
+            } else {
+
+                $query2 = "SELECT id
+                           FROM currencies
+                           WHERE currency = ?";
+                $q2 = $conn->stmt_init();
+
+                if ($q2->prepare($query2)) {
+
+                    $q2->bind_param('s', $new_currency);
+                    $q2->execute();
+                    $q2->store_result();
+                    $q2->bind_result($temp_id);
+
+                    while ($q2->fetch()) {
+
+                        $currency_id = $temp_id;
+
+                    }
+
+                    $q2->close();
+
+                } else $error->outputSqlError($conn, "ERROR");
+
+                $query2 = "INSERT INTO ssl_fees
+                           (ssl_provider_id, type_id, initial_fee, renewal_fee, misc_fee, currency_id, insert_time)
+                           VALUES
+                           (?, ?, ?, ?, ?, ?, ?)";
+                $q2 = $conn->stmt_init();
+
+                if ($q2->prepare($query2)) {
+
+                    $q2->bind_param('iidddis', $sslpid, $new_type_id, $new_initial_fee, $new_renewal_fee, $new_misc_fee, $currency_id, $timestamp);
+                    $q2->execute();
+                    $new_fee_id = $q2->insert_id;
+                    $q2->close();
+
+                } else $error->outputSqlError($conn, "ERROR");
+
+                $query2 = "UPDATE ssl_certs
+                           SET fee_id = ?,
+                               update_time = ?
+                           WHERE ssl_provider_id = ?
+                             AND type_id = ?";
+                $q2 = $conn->stmt_init();
+
+                if ($q2->prepare($query2)) {
+
+                    $q2->bind_param('isii', $new_fee_id, $timestamp, $sslpid, $new_type_id);
+                    $q2->execute();
+                    $q2->close();
+
+                } else $error->outputSqlError($conn, "ERROR");
+
+                $query2 = "SELECT type
+                           FROM ssl_cert_types
+                           WHERE id = ?";
+                $q2 = $conn->stmt_init();
+
+                if ($q2->prepare($query2)) {
+
+                    $q2->bind_param('i', $new_type_id);
+                    $q2->execute();
+                    $q2->store_result();
+                    $q2->bind_result($t_type);
+
+                    while ($q2->fetch()) {
+
+                        $temp_type = $t_type;
+
+                    }
+
+                    $q2->close();
+
+                } else $error->outputSqlError($conn, "ERROR");
+
+                $query2 = "UPDATE ssl_certs sslc
+                           JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
+                           SET sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
+                           WHERE sslc.fee_id = ?";
+                $q2 = $conn->stmt_init();
+
+                if ($q2->prepare($query2)) {
+
+                    $q2->bind_param('i', $new_fee_id);
+                    $q2->execute();
+                    $q2->close();
+
+                } else $error->outputSqlError($conn, "ERROR");
+
+                $queryB = new DomainMOD\QueryBuild();
+
+                $sql = $queryB->missingFees('ssl_certs');
+                $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($connection, $sql);
+
+                $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+
+                $_SESSION['s_message_success'] .= "The fee for " . $temp_type . "has been added<BR>";
+
+                header("Location: ../ssl-provider-fees.php?sslpid=" . urlencode($sslpid));
+                exit;
+
             }
 
-            $sql = "INSERT INTO ssl_fees
-                    (ssl_provider_id, type_id, initial_fee, renewal_fee, misc_fee, currency_id, insert_time)
-                    VALUES
-                    ('" . $sslpid . "', '" . $new_type_id . "', '" . $new_initial_fee . "',
-                     '" . $new_renewal_fee . "', '" . $new_misc_fee . "', '" . $currency_id . "',
-                     '" . $timestamp . "')";
-            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            $q->close();
 
-            $new_fee_id = mysqli_insert_id($connection);
-
-            $sql = "UPDATE ssl_certs
-                    SET fee_id = '" . $new_fee_id . "',
-                        update_time = '" . $timestamp . "'
-                    WHERE ssl_provider_id = '" . $sslpid . "'
-                      AND type_id = '" . $new_type_id . "'";
-            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-            $sql = "SELECT type
-                    FROM ssl_cert_types
-                    WHERE id = '" . $new_type_id . "'";
-            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-            while ($row = mysqli_fetch_object($result)) {
-                $temp_type = $row->type;
-            }
-
-            $sql = "UPDATE ssl_certs sslc
-                    JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
-                    SET sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
-                    WHERE sslc.fee_id = '" . $new_fee_id . "'";
-            $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-            $queryB = new DomainMOD\QueryBuild();
-
-            $sql = $queryB->missingFees('ssl_certs');
-            $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($connection, $sql);
-
-            $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
-
-            $_SESSION['s_message_success'] .= "The fee for " . $temp_type . "has been added<BR>";
-
-            header("Location: ../ssl-provider-fees.php?sslpid=" . urlencode($sslpid));
-            exit;
-
-        }
+        } else $error->outputSqlError($conn, "ERROR");
 
     } else {
 

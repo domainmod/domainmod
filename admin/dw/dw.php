@@ -54,19 +54,30 @@ if ($action != "") {
 
         } else {
 
-            $sql = "SELECT `name`, host
-                    FROM dw_servers
-                    WHERE id = '" . $id . "'";
-            $result = mysqli_query($connection, $sql);
+            $query = "SELECT `name`, `host`
+                      FROM dw_servers
+                      WHERE id = ?";
+            $q = $conn->stmt_init();
 
-            while ($row = mysqli_fetch_object($result)) {
+            if ($q->prepare($query)) {
 
-                $_SESSION['s_dw_view_all'] = "";
-                $_SESSION['s_dw_server_id'] = $id;
-                $_SESSION['s_dw_server_name'] = $row->name;
-                $_SESSION['s_dw_server_host'] = $row->host;
+                $q->bind_param('i', $id);
+                $q->execute();
+                $q->store_result();
+                $q->bind_result($temp_name, $temp_host);
 
-            }
+                while ($q->fetch()) {
+
+                    $_SESSION['s_dw_view_all'] = "";
+                    $_SESSION['s_dw_server_id'] = $id;
+                    $_SESSION['s_dw_server_name'] = $temp_name;
+                    $_SESSION['s_dw_server_host'] = $temp_host;
+
+                }
+
+                $q->close();
+
+            } else $error->outputSqlError($conn, "ERROR");
 
         }
 
@@ -81,19 +92,30 @@ if ($action != "") {
 
         } else {
 
-            $sql = "SELECT `name`, `host`
-                    FROM dw_servers
-                    WHERE id = '" . $id . "'";
-            $result = mysqli_query($connection, $sql);
+            $query = "SELECT `name`, `host`
+                      FROM dw_servers
+                      WHERE id = ?";
+            $q = $conn->stmt_init();
 
-            while ($row = mysqli_fetch_object($result)) {
+            if ($q->prepare($query)) {
 
-                $_SESSION['s_dw_view_all'] = "";
-                $_SESSION['s_dw_server_id'] = $id;
-                $_SESSION['s_dw_server_name'] = $row->name;
-                $_SESSION['s_dw_server_host'] = $row->host;
+                $q->bind_param('i', $id);
+                $q->execute();
+                $q->store_result();
+                $q->bind_result($temp_name, $temp_host);
 
-            }
+                while ($q->fetch()) {
+
+                    $_SESSION['s_dw_view_all'] = "";
+                    $_SESSION['s_dw_server_id'] = $id;
+                    $_SESSION['s_dw_server_name'] = $temp_name;
+                    $_SESSION['s_dw_server_host'] = $temp_host;
+
+                }
+
+                $q->close();
+
+            } else $error->outputSqlError($conn, "ERROR");
 
         }
 

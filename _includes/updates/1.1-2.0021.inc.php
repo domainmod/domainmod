@@ -968,9 +968,18 @@ if ($current_db_version === '2.002') {
 
     $full_url = substr($_SERVER["HTTP_REFERER"], 0, -1);
 
-    $sql = "UPDATE settings
-            SET full_url = '" . $full_url . "'";
-    $result = mysqli_query($connection, $sql);
+    $query = "UPDATE settings
+              SET full_url = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('s', $full_url);
+        $q->execute();
+
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     $sql = "UPDATE settings
             SET db_version = '2.0021',

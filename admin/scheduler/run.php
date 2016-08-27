@@ -49,74 +49,91 @@ $id = $_GET['id'];
 
 if ($demo_install != '1') {
 
-    $sql = "SELECT id, slug, expression, next_run, active
-            FROM scheduler
-            WHERE id = '" . $id . "'";
-    $result = mysqli_query($connection, $sql);
+    $query = "SELECT id, slug, expression, next_run, active
+              FROM scheduler
+              WHERE id = ?";
+    $q = $conn->stmt_init();
 
-    while ($row = mysqli_fetch_object($result)) {
+    if ($q->prepare($query)) {
 
-        if ($row->active == '1') {
+        $q->bind_param('i', $id);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($temp_id, $temp_slug, $temp_expression, $temp_next_run, $temp_active);
 
-            $cron = \Cron\CronExpression::factory($row->expression);
-            $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
+        while ($q->fetch()) {
 
-        } else {
-
-            $next_run = '0000-00-00 00:00:00';
-
-        }
-
-        if ($row->slug == 'cleanup') {
-
-            $schedule->isRunning($connection, $row->id);
-            $maint->performCleanup($connection);
-            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
-            $schedule->isFinished($connection, $row->id);
-
-            $_SESSION['s_message_success'] .= "System Cleanup Performed";
-
-        } elseif ($row->slug == 'expiration-email') {
-
-            $email = new DomainMOD\Email();
-            $schedule->isRunning($connection, $row->id);
-            $email->sendExpirations($connection, $software_title, '0');
-            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
-            $schedule->isFinished($connection, $row->id);
-
-        } elseif ($row->slug == 'update-conversion-rates') {
-
-            $schedule->isRunning($connection, $row->id);
-            $sql_currency = "SELECT user_id, default_currency
-                             FROM user_settings";
-            $result_currency = mysqli_query($connection, $sql_currency);
-
-            while ($row_currency = mysqli_fetch_object($result_currency)) {
-                $conversion->updateRates($connection, $row_currency->default_currency, $row_currency->user_id);
-            }
-            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
-            $schedule->isFinished($connection, $row->id);
-
-            $_SESSION['s_message_success'] .= "Conversion Rates Updated";
-
-        } elseif ($row->slug == 'check-new-version') {
-
-            $schedule->isRunning($connection, $row->id);
-            $system->checkVersion($connection, $software_version);
-            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
-            $schedule->isFinished($connection, $row->id);
-
-            $_SESSION['s_message_success'] .= "No Upgrade Available";
-
-        } elseif ($row->slug == 'data-warehouse-build') {
-
-            $dw = new DomainMOD\DwBuild();
-            $schedule->isRunning($connection, $row->id);
-            $dw->build($connection);
-            $schedule->updateTime($connection, $row->id, $timestamp, $next_run, $row->active);
-            $schedule->isFinished($connection, $row->id);
+            $id = $temp_id;
+            $slug = $temp_slug;
+            $expression = $temp_expression;
+            $next_run = $temp_next_run;
+            $active = $temp_active;
 
         }
+
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
+
+    if ($active == '1') {
+
+        $cron = \Cron\CronExpression::factory($expression);
+        $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
+
+    } else {
+
+        $next_run = '0000-00-00 00:00:00';
+
+    }
+
+    if ($slug == 'cleanup') {
+
+        $schedule->isRunning($connection, $id);
+        $maint->performCleanup($connection);
+        $schedule->updateTime($connection, $id, $timestamp, $next_run, $active);
+        $schedule->isFinished($connection, $id);
+
+        $_SESSION['s_message_success'] .= "System Cleanup Performed";
+
+    } elseif ($slug == 'expiration-email') {
+
+        $email = new DomainMOD\Email();
+        $schedule->isRunning($connection, $id);
+        $email->sendExpirations($connection, $software_title, '0');
+        $schedule->updateTime($connection, $id, $timestamp, $next_run, $active);
+        $schedule->isFinished($connection, $id);
+
+    } elseif ($slug == 'update-conversion-rates') {
+
+        $schedule->isRunning($connection, $id);
+        $sql_currency = "SELECT user_id, default_currency
+                         FROM user_settings";
+        $result_currency = mysqli_query($connection, $sql_currency);
+
+        while ($row_currency = mysqli_fetch_object($result_currency)) {
+            $conversion->updateRates($connection, $row_currency->default_currency, $row_currency->user_id);
+        }
+        $schedule->updateTime($connection, $id, $timestamp, $next_run, $active);
+        $schedule->isFinished($connection, $id);
+
+        $_SESSION['s_message_success'] .= "Conversion Rates Updated";
+
+    } elseif ($slug == 'check-new-version') {
+
+        $schedule->isRunning($connection, $id);
+        $system->checkVersion($connection, $software_version);
+        $schedule->updateTime($connection, $id, $timestamp, $next_run, $active);
+        $schedule->isFinished($connection, $id);
+
+        $_SESSION['s_message_success'] .= "No Upgrade Available";
+
+    } elseif ($slug == 'data-warehouse-build') {
+
+        $dw = new DomainMOD\DwBuild();
+        $schedule->isRunning($connection, $id);
+        $dw->build($connection);
+        $schedule->updateTime($connection, $id, $timestamp, $next_run, $active);
+        $schedule->isFinished($connection, $id);
 
     }
 
