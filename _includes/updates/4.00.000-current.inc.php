@@ -835,4 +835,20 @@ if ($current_db_version === '4.01.001') {
 
 }
 
+// upgrade database from 4.01.002 to 4.01.003
+if ($current_db_version === '4.01.002') {
+
+    $sql = "UPDATE domains
+            SET domain = TRIM(domain)";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "UPDATE settings
+            SET db_version = '4.01.003',
+                update_time = '" . $time->stamp() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $current_db_version = '4.01.003';
+
+}
+
 //@formatter:on
