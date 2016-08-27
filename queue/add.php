@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $domain_list = explode("\r\n", $new_data);
+            $domain_list = array_unique(explode("\r\n", $new_data));
 
             list($invalid_to_display, $invalid_domains, $invalid_count, $temp_result_message) = $domain->findInvalidDomains($domain_list);
 
@@ -218,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $date = new DomainMOD\Date();
 
                 // Make sure the domains don't already exist in the domains table
-                $domain_list = explode("\r\n", $new_data);
+                $domain_list = array_unique(explode("\r\n", $new_data));
 
                 reset($domain_list);
 
@@ -247,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
 
                 // Make sure the domains don't already exist in the domain queue
-                $domain_list = explode("\r\n", $new_data);
+                $domain_list = array_unique(explode("\r\n", $new_data));
 
                 reset($domain_list);
 
@@ -297,7 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $temp_api_registrar_id = $row->api_registrar_id;
                     }
 
-                    $domain_list = explode("\r\n", $new_data);
+                    $domain_list = array_unique(explode("\r\n", $new_data));
 
                     reset($domain_list);
 
