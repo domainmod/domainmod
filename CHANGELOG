@@ -1,5 +1,10 @@
 DomainMOD CHANGELOG
 ===================
+v4.01.003    2016-08-26
+- Updated broken maintenance URLs
+- Added array_unique to domain list splitting
+- Updated bulk domain list processing
+
 v4.01.002    2016-08-25
 - Updated installation check
 - Updated installation process
