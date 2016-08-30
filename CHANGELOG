@@ -1,5 +1,9 @@
 DomainMOD CHANGELOG
 ===================
+v4.01.004    2016-08-29
+- Security Updates
+- Updated Task Scheduler 'run' command
+
 v4.01.003    2016-08-26
 - Updated broken maintenance URLs
 - Added array_unique to domain list splitting
