@@ -135,6 +135,15 @@ if ($demo_install != '1') {
         $schedule->updateTime($connection, $id, $timestamp, $next_run, $active);
         $schedule->isFinished($connection, $id);
 
+    } elseif ($slug == 'domain-queue') {
+
+        $queue = new DomainMOD\DomainQueue();
+        $schedule->isRunning($connection, $id);
+        $queue->processQueueList($connection);
+        $queue->processQueueDomain($connection);
+        $schedule->updateTime($connection, $id, $timestamp, $next_run, $active);
+        $schedule->isFinished($connection, $id);
+
     }
 
 } else {
