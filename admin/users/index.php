@@ -180,7 +180,7 @@ if (mysqli_num_rows($result) > 0) { ?>
         <tr>
         <td></td>
         <td>
-            <a href="edit.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?>&nbsp;<?php echo $row->last_name; ?></a><?php if ($row->admin == '1') echo "<strong>*</strong>"; ?>
+            <a <?php if ($row->active != '1') { ?>style="text-decoration: line-through;" <?php } ?>href="edit.php?uid=<?php echo $row->id; ?>"><?php echo $row->first_name; ?>&nbsp;<?php echo $row->last_name; ?></a><?php if ($row->admin == '1') echo "&nbsp;&nbsp;<strong>A</strong>"; ?><?php if ($row->read_only == '1') echo "&nbsp;&nbsp;<strong>R</strong>"; ?>
         </td>
         <td>
             <a href="edit.php?uid=<?php echo $row->id; ?>"><?php echo $row->username; ?></a>
@@ -195,7 +195,7 @@ if (mysqli_num_rows($result) > 0) { ?>
     </tbody>
 </table>
 
-    <strong>*</strong> = Admin User<?php
+    <span style="text-decoration: line-through;">STRIKE</span> = Inactive&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>A</strong> = Admin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>R</strong> = Read-Only<?php
 
 } ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
