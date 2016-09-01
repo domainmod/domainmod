@@ -42,7 +42,7 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.number_of_logins, u.last_login, u.active, u.creation_type_id, u.created_by, u.insert_time, u.update_time, us.default_timezone, us.default_currency
+$sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.admin, u.read_only, u.active, u.number_of_logins, u.last_login, u.creation_type_id, u.created_by, u.insert_time, u.update_time, us.default_timezone, us.default_currency
         FROM users AS u, user_settings AS us
         WHERE u.id = us.user_id
         ORDER BY u.first_name, u.last_name, u.username, u.email_address";
@@ -65,7 +65,8 @@ if ($export_data == '1') {
         'Last Name',
         'Username',
         'Email Address',
-        'Is Admin?',
+        'Admin?',
+        'Read-only?',
         'Default Currency',
         'Default Timezone',
         'Number of Logins',
@@ -88,6 +89,16 @@ if ($export_data == '1') {
             } else {
 
                 $is_admin = '0';
+
+            }
+
+            if ($row->read_only == '1') {
+
+                $is_read_only = '1';
+
+            } else {
+
+                $is_read_only = '0';
 
             }
 
@@ -117,6 +128,7 @@ if ($export_data == '1') {
                 $row->username,
                 $row->email_address,
                 $is_admin,
+                $is_read_only,
                 $row->default_currency,
                 $row->default_timezone,
                 $row->number_of_logins,
