@@ -149,15 +149,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $fee_string = "renewal_fee + misc_fee";
 
-        $sql = "SELECT (" . $fee_string . ") AS total_cost
-                FROM ssl_fees
-                WHERE ssl_provider_id = '" . $new_ssl_provider_id . "'
-                  AND type_id = '" . $new_type_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $query = "SELECT (" . $fee_string . ") AS total_cost
+                  FROM ssl_fees
+                  WHERE ssl_provider_id = ?
+                    AND type_id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row = mysqli_fetch_object($result)) {
-            $new_total_cost = $row->total_cost;
-        }
+        if ($q->prepare($query)) {
+
+            $q->bind_param('ii', $new_ssl_provider_id, $new_type_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_total_cost);
+
+            while ($q->fetch()) {
+
+                $new_total_cost = $temp_total_cost;
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
         $query = "UPDATE ssl_certs
                   SET owner_id = ?,
@@ -207,9 +220,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $full_field = "new_" . $field;
 
                 $sql = "UPDATE ssl_cert_field_data
-                    SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "',
-                        update_time = '" . $timestamp . "'
-                    WHERE ssl_id = '" . $sslcid . "'";
+                        SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "',
+                            update_time = '" . $timestamp . "'
+                        WHERE ssl_id = '" . mysqli_real_escape_string($connection, $sslcid) . "'";
                 $result = mysqli_query($connection, $sql);
 
             }
@@ -509,14 +522,12 @@ if (mysqli_num_rows($result) > 0) { ?>
         while ($row = mysqli_fetch_object($result)) {
 
             $sql_data = "SELECT " . $row->field_name . "
-                     FROM ssl_cert_field_data
-                     WHERE ssl_id = '" . $sslcid . "'";
+                         FROM ssl_cert_field_data
+                         WHERE ssl_id = '" . mysqli_real_escape_string($connection, $sslcid) . "'";
             $result_data = mysqli_query($connection, $sql_data);
 
             while ($row_data = mysqli_fetch_object($result_data)) {
-
                 $field_data = $row_data->{$row->field_name};
-
             }
 
             if ($row->type_id == "1") { // Check Box

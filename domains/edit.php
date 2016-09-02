@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = "SELECT (" . $fee_string . ") AS total_cost
                 FROM fees
                 WHERE registrar_id = '" . $new_registrar_id . "'
-                  AND tld = '" . $new_tld . "'";
+                  AND tld = '" . mysqli_real_escape_string($connection, $new_tld) . "'";
         $result = mysqli_query($connection, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
@@ -229,7 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = "UPDATE domain_field_data
                         SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "',
                             update_time = '" . $timestamp . "'
-                        WHERE domain_id = '" . $did . "'";
+                        WHERE domain_id = '" . mysqli_real_escape_string($connection, $did) . "'";
                 $result = mysqli_query($connection, $sql);
 
             }
@@ -542,7 +542,7 @@ if (mysqli_num_rows($result) > 0) { ?>
 
             $sql_data = "SELECT " . $row->field_name . "
                          FROM domain_field_data
-                         WHERE domain_id = '" . $did . "'";
+                         WHERE domain_id = '" . mysqli_real_escape_string($connection, $did) . "'";
             $result_data = mysqli_query($connection, $sql_data);
 
             while ($row_data = mysqli_fetch_object($result_data)) {
@@ -579,7 +579,7 @@ echo $form->showFormBottom('');
 
 $sql_accounts = "SELECT id
                  FROM dw_accounts
-                 WHERE domain = '" . $new_domain . "'";
+                 WHERE domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'";
 $result_accounts = mysqli_query($connection, $sql_accounts);
 
 if ($result_accounts === false || mysqli_num_rows($result_accounts) <= 0) {
@@ -612,7 +612,7 @@ if ($no_results_accounts !== 1) { ?>
     $sql = "SELECT s.id, s.name
             FROM dw_accounts AS a, dw_servers AS s
             WHERE a.server_id = s.id
-              AND a.domain = '" . $new_domain . "'
+              AND a.domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'
             ORDER BY s.name ASC, a.unix_startdate DESC";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -654,7 +654,7 @@ if ($no_results_dns_zones !== 1) { ?>
     $sql = "SELECT s.id AS dw_server_id, s.name
             FROM dw_dns_zones AS z, dw_servers AS s
             WHERE z.server_id = s.id
-              AND z.domain = '" . $new_domain . "'
+              AND z.domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'
             ORDER BY s.name, z.zonefile, z.domain";
     $result = mysqli_query($connection, $sql)
     or $error->outputOldSqlError($connection);

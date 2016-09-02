@@ -424,7 +424,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $new_notes_renewal = $timestamp_basic . " - Domain Renewed For " . $renewal_years_string;
 
                         $sql_update = "UPDATE domains
-                                       SET expiry_date = '" . $new_expiry . "',
+                                       SET expiry_date = '" . mysqli_real_escape_string($connection, $new_expiry) . "',
                                               notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', '" . mysqli_real_escape_string($connection, $new_notes_renewal) . "\r\n\r\n', notes),
                                            active = '1',
                                            update_time = '" . $timestamp . "'
