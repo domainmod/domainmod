@@ -428,11 +428,11 @@ echo $form->showDropdownBottom('');
 if ($new_raid != '') { ?>
 
     <strong>API Requirements</strong><BR>
-    <?php echo $api_registrar_name; ?> requires the following credentials in order to use their API. These credentials must to be saved with the <a href="<?php echo $web_root; ?>/assets/edit/registrar-account.php?raid=<?php echo $new_raid; ?>">registrar account asset</a>.
+    <?php echo $api_registrar_name; ?> requires the following credentials in order to use their API. These credentials must to be saved with the <a href="<?php echo $web_root; ?>/assets/edit/registrar-account.php?raid=<?php echo urlencode($new_raid); ?>">registrar account asset</a>.
 
     <ul><?php
 
-        $missing_text = ' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '"><span style="color: #a30000"><strong>missing</strong></span></a>)';
+        $missing_text = htmlentities(' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '"><span style="color: #a30000"><strong>missing</strong></span></a>)', ENT_QUOTES);
         $saved_text = ' (<span style="color: darkgreen"><strong>saved</strong></span>)';
 
         if ($req_account_username == '1') {

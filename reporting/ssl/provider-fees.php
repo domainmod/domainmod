@@ -195,7 +195,7 @@ if ($total_rows > 0) {
 <BR>
 <a href="provider-fees.php?all=1"><?php echo $layout->showButton('button', 'View All'); ?></a>&nbsp;&nbsp;or&nbsp;<a href="provider-fees.php?all=0"><?php echo $layout->showButton('button', 'Active Only'); ?></a>
 <?php if ($total_rows > 0) { //@formatter:off ?>
-          <BR><BR><a href="provider-fees.php?export_data=1&all=<?php echo $all; ?>"><?php echo $layout->showButton('button', 'Export'); ?></a>
+          <BR><BR><a href="provider-fees.php?export_data=1&all=<?php echo urlencode($all); ?>"><?php echo $layout->showButton('button', 'Export'); ?></a>
 <?php } //@formatter:on ?>
 
 <?php if ($total_rows > 0) { ?>
