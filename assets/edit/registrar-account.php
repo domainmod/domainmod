@@ -401,7 +401,7 @@ if ($has_api_support >= 1) { ?>
 
             <ul><?php
 
-                $missing_text = ' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '"><span style="color: #a30000"><strong>missing</strong></span></a>)';
+                $missing_text = htmlentities(' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '"><span style="color: #a30000"><strong>missing</strong></span></a>)', ENT_QUOTES);
                 $saved_text = ' (<span style="color: darkgreen"><strong>saved</strong></span>)';
 
                 if ($req_account_username == '1') {
