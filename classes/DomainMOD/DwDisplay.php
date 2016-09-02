@@ -76,7 +76,7 @@ class DwDisplay
                 FROM dw_accounts AS a, dw_servers AS s
                 WHERE a.server_id = s.id
                   AND a.server_id = '" . $server_id . "'
-                  AND a.domain = '" . $domain . "'";
+                  AND a.domain = '" . mysqli_real_escape_string($connection, $domain) . "'";
         return mysqli_query($connection, $sql);
     }
 
@@ -189,7 +189,7 @@ class DwDisplay
                 FROM dw_dns_zones AS z, dw_servers AS s
                 WHERE z.server_id = s.id
                   AND z.server_id = '" . $server_id . "'
-                  AND z.domain = '" . $domain . "'";
+                  AND z.domain = '" . mysqli_real_escape_string($connection, $domain) . "'";
         return mysqli_query($connection, $sql);
     }
 

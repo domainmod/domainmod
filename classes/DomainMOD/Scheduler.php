@@ -26,13 +26,13 @@ class Scheduler
 
     public function isRunning($connection, $id)
     {
-        $sql_running = "UPDATE scheduler SET is_running = '1' WHERE id = '" . $id . "'";
+        $sql_running = "UPDATE scheduler SET is_running = '1' WHERE id = '" . mysqli_real_escape_string($connection, $id) . "'";
         return mysqli_query($connection, $sql_running);
     }
 
     public function isFinished($connection, $id)
     {
-        $sql_finished = "UPDATE scheduler SET is_running = '0' WHERE id = '" . $id . "'";
+        $sql_finished = "UPDATE scheduler SET is_running = '0' WHERE id = '" . mysqli_real_escape_string($connection, $id) . "'";
         return mysqli_query($connection, $sql_finished);
     }
 
@@ -46,12 +46,12 @@ class Scheduler
                            SET last_run = '" . $timestamp . "',
                                last_duration = '" . $duration . "',
                                next_run = '" . $next_run . "'
-                           WHERE id = '" . $id . "'";
+                           WHERE id = '" . mysqli_real_escape_string($connection, $id) . "'";
         } else {
             $sql_update = "UPDATE scheduler
                            SET last_run = '" . $timestamp . "',
                                duration = '" . $duration . "'
-                           WHERE id = '" . $id . "'";
+                           WHERE id = '" . mysqli_real_escape_string($connection, $id) . "'";
         }
         return mysqli_query($connection, $sql_update);
     }

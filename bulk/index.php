@@ -404,7 +404,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $sql = "SELECT domain, expiry_date
                         FROM domains
-                        WHERE domain IN (" . $new_data_formatted . ")";
+                        WHERE domain IN (" . mysqli_real_escape_string($connection, $new_data_formatted) . ")";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 while ($row = mysqli_fetch_object($result)) {
@@ -704,14 +704,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $sql = "UPDATE domains
                             SET fee_id = '0', total_cost = '0'
-                            WHERE domain IN (" . $new_data_formatted . ")";
+                            WHERE domain IN (" . mysqli_real_escape_string($connection, $new_data_formatted) . ")";
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $sql = "SELECT d.id, f.id AS fee_id
                             FROM domains AS d, fees AS f
                             WHERE d.registrar_id = f.registrar_id
                               AND d.tld = f.tld
-                              AND d.domain IN (" . $new_data_formatted . ")";
+                              AND d.domain IN (" . mysqli_real_escape_string($connection, $new_data_formatted) . ")";
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     while ($row = mysqli_fetch_object($result)) {
@@ -727,14 +727,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             JOIN fees f ON d.fee_id = f.id
                             SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
                             WHERE d.privacy = '1'
-                              AND d.domain IN (" . $new_data_formatted . ")";
+                              AND d.domain IN (" . mysqli_real_escape_string($connection, $new_data_formatted) . ")";
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $sql = "UPDATE domains d
                             JOIN fees f ON d.fee_id = f.id
                             SET d.total_cost = f.renewal_fee + f.misc_fee
                             WHERE d.privacy = '0'
-                              AND d.domain IN (" . $new_data_formatted . ")";
+                              AND d.domain IN (" . mysqli_real_escape_string($connection, $new_data_formatted) . ")";
                     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                     $_SESSION['s_message_success'] .= "Registrar Account Changed<BR>";
@@ -798,7 +798,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $sql = "SELECT id
                         FROM domains
-                        WHERE domain IN (" . $new_data_formatted . ")";
+                        WHERE domain IN (" . mysqli_real_escape_string($connection, $new_data_formatted) . ")";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 if (mysqli_num_rows($result) > 0) {
@@ -1257,7 +1257,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = "SELECT d.id, (f.renewal_fee + f.privacy_fee + f.misc_fee) AS total_cost
                             FROM domains AS d, fees AS f
                             WHERE d.fee_id = f.id
-                              AND d.domain IN (" . $new_data_formatted . ")";
+                              AND d.domain IN (" . mysqli_real_escape_string($connection, $new_data_formatted) . ")";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 while ($row = mysqli_fetch_object($result)) {
@@ -1313,7 +1313,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = "SELECT d.id, (f.renewal_fee + f.misc_fee) AS total_cost
                             FROM domains AS d, fees AS f
                             WHERE d.fee_id = f.id
-                              AND d.domain IN (" . $new_data_formatted . ")";
+                              AND d.domain IN (" . mysqli_real_escape_string($connection, $new_data_formatted) . ")";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 while ($row = mysqli_fetch_object($result)) {
@@ -1379,7 +1379,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $sql = "SELECT id
                         FROM domains
-                        WHERE domain IN (" . $new_data_formatted . ")";
+                        WHERE domain IN (" . mysqli_real_escape_string($connection, $new_data_formatted) . ")";
                 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
                 while ($row = mysqli_fetch_object($result)) {

@@ -66,8 +66,8 @@ if ($domain != "") {
     $sql = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
             FROM dw_dns_zones AS z, dw_servers AS s
             WHERE z.server_id = s.id
-              AND z.domain = '" . $domain . "'" .
-        $where_clause . "
+              AND z.domain = '" . mysqli_real_escape_string($connection, $domain) . "'" .
+              $where_clause . "
             ORDER BY s.name, z.zonefile, z.domain";
 
 } else {
@@ -75,7 +75,7 @@ if ($domain != "") {
     $sql = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
             FROM dw_dns_zones AS z, dw_servers AS s
             WHERE z.server_id = s.id" .
-            $where_clause . "
+              $where_clause . "
             ORDER BY s.name, z.zonefile, z.domain";
 
 }
@@ -96,8 +96,8 @@ if ($export_data == "1") {
 
         $sql_total_records = "SELECT count(*) AS total_dns_record_count
                               FROM dw_dns_records
-                              WHERE domain = '" . $domain . "'" .
-            $where_clause_no_join;
+                              WHERE domain = '" . mysqli_real_escape_string($connection, $domain) . "'" .
+                                $where_clause_no_join;
 
     } else {
 
