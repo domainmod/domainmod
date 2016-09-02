@@ -75,7 +75,7 @@ $sql = "SELECT d.id, YEAR(d.expiry_date) AS year, MONTH(d.expiry_date) AS month
         WHERE d.fee_id = f.id
           AND f.currency_id = c.id
           AND d.active NOT IN ('0', '10')
-          " . $range_string . "
+          " . mysqli_real_escape_string($connection, $range_string) . "
         GROUP BY YEAR, MONTH
         ORDER BY YEAR, MONTH";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -88,7 +88,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, cou
                       AND c.id = cc.currency_id
                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                       AND d.active NOT IN ('0', '10')
-                      " . $range_string . "";
+                      " . mysqli_real_escape_string($connection, $range_string) . "";
 $result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
 
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
@@ -180,7 +180,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
                                        AND d.active NOT IN ('0', '10')
                                        AND YEAR(d.expiry_date) = '" . $row->year . "'
                                        AND MONTH(d.expiry_date) = '" . $row->month . "'
-                                       " . $range_string . "";
+                                       " . mysqli_real_escape_string($connection, $range_string) . "";
                 $result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
 
                 while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
@@ -212,7 +212,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
                                   AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                   AND d.active NOT IN ('0', '10')
                                   AND YEAR(d.expiry_date) = '" . $row->year . "'
-                                  " . $range_string . "";
+                                  " . mysqli_real_escape_string($connection, $range_string) . "";
                 $result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
 
                 while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
@@ -292,7 +292,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
                                    AND d.active NOT IN ('0', '10')
                                    AND YEAR(d.expiry_date) = '" . $row->year . "'
                                    AND MONTH(d.expiry_date) = '" . $row->month . "'
-                                   " . $range_string . "";
+                                   " . mysqli_real_escape_string($connection, $range_string) . "";
             $result_monthly_cost = mysqli_query($connection, $sql_monthly_cost) or $error->outputOldSqlError($connection);
 
             while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
@@ -325,7 +325,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
                                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                       AND d.active NOT IN ('0', '10')
                                       AND YEAR(d.expiry_date) = '" . $row->year . "'
-                                      " . $range_string . "";
+                                      " . mysqli_real_escape_string($connection, $range_string) . "";
                 $result_yearly_cost = mysqli_query($connection, $sql_yearly_cost) or $error->outputOldSqlError($connection);
 
                 while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {

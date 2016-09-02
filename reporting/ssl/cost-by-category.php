@@ -78,7 +78,7 @@ $sql = "SELECT cat.id, cat.name, SUM(sslc.total_cost * cc.conversion) AS total_c
           AND sslc.cat_id = cat.id
           AND sslc.active NOT IN ('0')
           AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-          " . $range_string . "
+          " . mysqli_real_escape_string($connection, $range_string) . "
         GROUP BY cat.name
         ORDER BY cat.name";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -92,7 +92,7 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, 
                       AND sslc.cat_id = cat.id
                       AND sslc.active NOT IN ('0')
                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                      " . $range_string . "";
+                      " . mysqli_real_escape_string($connection, $range_string) . "";
 $result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
 
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
