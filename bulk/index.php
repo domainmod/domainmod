@@ -435,7 +435,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $new_notes_renewal = $timestamp_basic . " - Domain Renewed For " . $renewal_years_string;
 
                         $sql_update = "UPDATE domains
-                                       SET expiry_date = '" . $new_expiry . "',
+                                       SET expiry_date = '" . mysqli_real_escape_string($connection, $new_expiry) . "',
                                               notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes_renewal) . "\r\n\r\n', notes),
                                            active = '1',
                                            update_time = '" . $timestamp . "'
@@ -1390,17 +1390,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $domain_id_list_formatted = substr($domain_id_list, 0, -2);
 
-                $sql = "SELECT `name`, field_name
-                        FROM domain_fields
-                        WHERE id = '" . $field_id . "'";
-                $result = mysqli_query($connection, $sql);
+                $query = "SELECT `name`, field_name
+                          FROM domain_fields
+                          WHERE id = ?";
+                $q = $conn->stmt_init();
 
-                while ($row = mysqli_fetch_object($result)) {
+                if ($q->prepare($query)) {
 
-                    $temp_name = $row->name;
-                    $temp_field_name = $row->field_name;
+                    $q->bind_param('i', $field_id);
+                    $q->execute();
+                    $q->store_result();
+                    $q->bind_result($name, $field_name);
 
-                }
+                    while ($q->fetch()) {
+
+                        $temp_name = $name;
+                        $temp_field_name = $field_name;
+
+                    }
+
+                    $q->close();
+
+                } else $error->outputSqlError($conn, "ERROR");
 
                 $full_field = "new_" . $temp_field_name;
 
@@ -1911,45 +1922,78 @@ if ($action == "AD") { // Add Domains
 
     if ($type_id == "1") {
 
-        $sql = "SELECT df.name, df.field_name, df.type_id, df.description
-                FROM domain_fields AS df, custom_field_types AS cft
-                WHERE df.type_id = cft.id
-                  AND df.id = '" . $field_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $query = "SELECT df.name, df.field_name, df.description
+                  FROM domain_fields AS df, custom_field_types AS cft
+                  WHERE df.type_id = cft.id
+                    AND df.id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row = mysqli_fetch_object($result)) {
+        if ($q->prepare($query)) {
 
-            echo $form->showCheckbox('new_' . $row->field_name, '1', $row->name, $row->description, ${'new_' . $row->field_name}, '', '');
+            $q->bind_param('i', $field_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name, $temp_field_name, $temp_description);
 
-        }
+            while ($q->fetch()) {
+
+                echo $form->showCheckbox('new_' . $temp_field_name, '1', $temp_name, $temp_description, ${'new_' . $temp_field_name}, '', '');
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     } elseif ($type_id == "2") {
 
-        $sql = "SELECT df.name, df.field_name, df.type_id, df.description
-                FROM domain_fields AS df, custom_field_types AS cft
-                WHERE df.type_id = cft.id
-                  AND df.id = '" . $field_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $query = "SELECT df.name, df.field_name, df.description
+                  FROM domain_fields AS df, custom_field_types AS cft
+                  WHERE df.type_id = cft.id
+                    AND df.id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row = mysqli_fetch_object($result)) {
+        if ($q->prepare($query)) {
 
-            echo $form->showInputText('new_' . $row->field_name, $row->name . ' (255)', $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '');
+            $q->bind_param('i', $field_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name, $temp_field_name, $temp_description);
 
-        }
+            while ($q->fetch()) {
+
+                echo $form->showInputText('new_' . $temp_field_name, $temp_name . ' (255)', $temp_description, ${'new_' . $temp_field_name}, '255', '', '', '', '');
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     } elseif ($type_id == "3") {
 
-        $sql = "SELECT df.name, df.field_name, df.type_id, df.description
-                FROM domain_fields AS df, custom_field_types AS cft
-                WHERE df.type_id = cft.id
-                  AND df.id = '" . $field_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $query = "SELECT df.name, df.field_name, df.type_id, df.description
+                  FROM domain_fields AS df, custom_field_types AS cft
+                  WHERE df.type_id = cft.id
+                    AND df.id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row = mysqli_fetch_object($result)) {
+        if ($q->prepare($query)) {
 
-            echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '', '', '');
+            $q->bind_param('i', $field_id);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name, $temp_field_name, $temp_description);
 
-        }
+            while ($q->fetch()) {
+
+                echo $form->showInputTextarea('new_' . $temp_field_name, $temp_name, $temp_description, ${'new_' . $temp_field_name}, '', '', '');
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
@@ -2007,29 +2051,40 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
 
             foreach ($field_array as $field) {
 
-                $sql = "SELECT df.name, df.field_name, df.type_id, df.description
-                        FROM domain_fields AS df, custom_field_types AS cft
-                        WHERE df.type_id = cft.id
-                          AND df.field_name = '" . $field . "'";
-                $result = mysqli_query($connection, $sql);
+                $query = "SELECT df.name, df.field_name, df.type_id, df.description
+                          FROM domain_fields AS df, custom_field_types AS cft
+                          WHERE df.type_id = cft.id
+                            AND df.field_name = ?";
+                $q = $conn->stmt_init();
 
-                while ($row = mysqli_fetch_object($result)) {
+                if ($q->prepare($query)) {
 
-                    if ($row->type_id == "1") { // Check Box
+                    $q->bind_param('s', $field);
+                    $q->execute();
+                    $q->store_result();
+                    $q->bind_result($temp_name, $temp_field_name, $temp_type_id, $temp_description);
 
-                        echo $form->showCheckbox('new_' . $row->field_name, '1', $row->name, $row->description, '', '', '');
+                    while ($q->fetch()) {
 
-                    } elseif ($row->type_id == "2") { // Text
+                        if ($temp_type_id == "1") { // Check Box
 
-                        echo $form->showInputText('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '255', '', '', '', '');
+                            echo $form->showCheckbox('new_' . $temp_field_name, '1', $temp_name, $temp_description, '', '', '');
 
-                    } elseif ($row->type_id == "3") { // Text Area
+                        } elseif ($temp_type_id == "2") { // Text
 
-                        echo $form->showInputTextarea('new_' . $row->field_name, $row->name, $row->description, ${'new_' . $row->field_name}, '', '', '');
+                            echo $form->showInputText('new_' . $temp_field_name, $temp_name, $temp_description, ${'new_' . $temp_field_name}, '255', '', '', '', '');
+
+                        } elseif ($temp_type_id == "3") { // Text Area
+
+                            echo $form->showInputTextarea('new_' . $temp_field_name, $temp_name, $temp_description, ${'new_' . $temp_field_name}, '', '', '');
+
+                        }
 
                     }
 
-                }
+                    $q->close();
+
+                } else $error->outputSqlError($conn, "ERROR");
 
             }
 
