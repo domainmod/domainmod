@@ -52,7 +52,7 @@ $ssltid = $_REQUEST['ssltid'];
 $sslipid = $_REQUEST['sslipid'];
 $sslpcid = $_REQUEST['sslpcid'];
 $is_active = $_REQUEST['is_active'];
-$search_for = $_REQUEST['search_for'];
+$search_for = mysqli_real_escape_string($conn, $_REQUEST['search_for']);
 $from_dropdown = $_REQUEST['from_dropdown'];
 $expand = $_REQUEST['expand'];
 $daterange = $_REQUEST['daterange'];
@@ -275,136 +275,213 @@ if ($export_data == "1") {
 
     if ($did > 0) {
 
-        $sql_filter = "SELECT domain
-                       FROM domains
-                       WHERE id = '" . $did . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT domain
+                  FROM domains
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'Associated Domain:',
-                $row_filter->domain
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $did);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_domain);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'Associated Domain:',
+                    $temp_domain
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
     if ($sslpid > 0) {
 
-        $sql_filter = "SELECT `name`
-                       FROM ssl_providers
-                       WHERE id = '" . $sslpid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT `name`
+                  FROM ssl_providers
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'SSL Provider:',
-                $row_filter->name
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $sslpid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'SSL Provider:',
+                    $temp_name
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
     if ($sslpaid > 0) {
 
-        $sql_filter = "SELECT sslp.name AS ssl_provider_name, o.name AS owner_name, sslpa.username
-                       FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o
-                       WHERE sslpa.ssl_provider_id = sslp.id
-                         AND sslpa.owner_id = o.id
-                         AND sslpa.id = '" . $sslpaid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT sslp.name AS ssl_provider_name, o.name AS owner_name, sslpa.username
+                  FROM ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o
+                  WHERE sslpa.ssl_provider_id = sslp.id
+                    AND sslpa.owner_id = o.id
+                    AND sslpa.id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'SSL Provider Account:',
-                $row_filter->ssl_provider_name . " - " . $row_filter->owner_name . " - " . $row_filter->username
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $sslpaid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name, $temp_owner, $temp_username);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'SSL Provider Account:',
+                    $temp_name . " - " . $temp_owner . " - " . $temp_username
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
     if ($ssltid > 0) {
 
-        $sql_filter = "SELECT type
-                       FROM ssl_cert_types
-                       WHERE id = '" . $ssltid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT type
+                  FROM ssl_cert_types
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'SSL Type:',
-                $row_filter->type
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $ssltid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_type);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'SSL Type:',
+                    $temp_type
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
     if ($sslipid > 0) {
 
-        $sql_filter = "SELECT `name`, ip
-                       FROM ip_addresses
-                       WHERE id = '" . $sslipid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT `name`, ip
+                  FROM ip_addresses
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'SSL IP Address:',
-                $row_filter->name . ' (' . $row_filter->ip . ')'
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $sslipid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name, $temp_ip);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'SSL IP Address:',
+                    $temp_name . ' (' . $temp_ip . ')'
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
     if ($sslpcid > 0) {
 
-        $sql_filter = "SELECT `name`
-                       FROM categories
-                       WHERE id = '" . $sslpcid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT `name`
+                  FROM categories
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'SSL Category:',
-                $row_filter->name
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $sslpcid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'SSL Category:',
+                    $temp_name
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
     if ($oid > 0) {
 
-        $sql_filter = "SELECT `name`
-                       FROM owners
-                       WHERE id = '" . $oid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT `name`
+                  FROM owners
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'Owner:',
-                $row_filter->name
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $oid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'Owner:',
+                    $temp_name
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
