@@ -29,6 +29,7 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout();
+$page = new DomainMOD\Page();
 $time = new DomainMOD\Time();
 $currency = new DomainMOD\Currency();
 $customField = new DomainMOD\CustomField();
@@ -1095,7 +1096,7 @@ if ($_SESSION['s_system_large_mode'] == '1') {
 
     $totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
     $parameters = array($totalrows, 15, $result_limit, "&pcid=" . $pcid . "&oid=" . $oid . "&dnsid=" . $dnsid . "&ipid=" . $ipid . "&whid=" . $whid . "&rid=" . $rid . "&raid=" . $raid . "&daterange=" . $daterange . "&tld=" . $tld . "&segid=" . $segid . "&is_active=" . $is_active . "&result_limit=" . $result_limit . "&sort_by=" . $sort_by, $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
-    $navigate = $layout->pageBrowser($parameters);
+    $navigate = $page->browser($parameters);
     $sql = $sql . $navigate[0];
 
 }
