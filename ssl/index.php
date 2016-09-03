@@ -33,6 +33,7 @@ $time = new DomainMOD\Time();
 $currency = new DomainMOD\Currency();
 $customField = new DomainMOD\CustomField();
 $form = new DomainMOD\Form();
+$date = new DomainMOD\Date();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
@@ -56,8 +57,7 @@ $from_dropdown = $_REQUEST['from_dropdown'];
 $expand = $_REQUEST['expand'];
 $daterange = $_REQUEST['daterange'];
 
-$new_start_date = substr($daterange, 0, 10);
-$new_end_date = substr($daterange, -10, 10);
+list($new_start_date, $new_end_date) = $date->splitAndCheckRange($daterange);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -65,11 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
 
-    if ((!$date->checkDateFormat($new_start_date) || !$date->checkDateFormat($new_end_date)) || $new_start_date > $new_end_date) {
+    if ($new_start_date > $new_end_date) {
 
-        if (!$date->checkDateFormat($new_start_date) && $new_start_date != 'YYYY-MM-DD') $_SESSION['s_message_danger'] .= 'The start date is invalid<BR>';
-        if (!$date->checkDateFormat($new_end_date) && $new_end_date != 'YYYY-MM-DD') $_SESSION['s_message_danger'] .= 'The end date is invalid<BR>';
-        if ($new_start_date > $new_end_date) $_SESSION['s_message_danger'] .= 'The date range is invalid<BR>';
+        $_SESSION['s_message_danger'] .= 'The date range is invalid<BR>';
 
     }
 
