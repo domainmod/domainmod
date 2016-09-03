@@ -39,4 +39,17 @@ class Date
 
     }
 
+    public function splitAndCheckRange($daterange)
+    {
+
+        $start_date = substr($daterange, 0, 10);
+        $end_date = substr($daterange, -10, 10);
+
+        if (!$this->checkDateFormat($start_date)) $start_date = '1900-01-01';
+        if (!$this->checkDateFormat($end_date)) $end_date = '2300-01-01';
+
+        return array($start_date, $end_date);
+
+    }
+
 } //@formatter:on
