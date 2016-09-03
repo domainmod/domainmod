@@ -49,6 +49,10 @@ $daterange = $_REQUEST['daterange'];
 $new_start_date = substr($daterange, 0, 10);
 $new_end_date = substr($daterange, -10, 10);
 
+$date = new DomainMOD\Date();
+if (!$date->checkDateFormat($new_start_date)) $new_start_date = '1900-01-01';
+if (!$date->checkDateFormat($new_end_date)) $new_end_date = '2300-01-01';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $date = new DomainMOD\Date();
