@@ -522,7 +522,7 @@ if ($export_data == "1") {
 
         $row_contents = array(
             'Keyword Search:',
-            $_SESSION['s_search_for']
+            htmlentities($_SESSION['s_search_for'], ENT_QUOTES)
         );
         $export->writeRow($export_file, $row_contents);
 
