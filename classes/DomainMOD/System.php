@@ -101,12 +101,12 @@ class System
         if (mysqli_num_rows($result) >= 1) { return $result; } else { return '0'; }
     }
 
-    public function authCheck()
+    public function authCheck($web_root)
     {
         if ($_SESSION['s_is_logged_in'] != 1) {
-            $_SESSION['s_user_redirect'] = $_SERVER["REQUEST_URI"];
+            $_SESSION['s_user_redirect'] = urlencode($_SERVER["REQUEST_URI"]);
             $_SESSION['s_message_danger'] .= "You must be logged in to access this area<BR>";
-            header("Location: " . $_SESSION['s_web_root'] . "/");
+            header("Location: " . $web_root . "/");
             exit;
         }
     }

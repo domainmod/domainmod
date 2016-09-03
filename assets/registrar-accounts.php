@@ -37,7 +37,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/assets-registrar-accounts.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 
 $rid = $_GET['rid'];
 $raid = $_GET['raid'];

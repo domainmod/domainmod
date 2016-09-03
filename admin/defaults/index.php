@@ -37,7 +37,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/admin-defaults.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $new_default_category_domains = $_POST['new_default_category_domains'];

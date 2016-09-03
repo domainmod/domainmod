@@ -37,7 +37,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/assets-add-ssl-provider.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $new_ssl_provider = $_POST['new_ssl_provider'];

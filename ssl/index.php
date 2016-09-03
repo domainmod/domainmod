@@ -40,7 +40,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/ssl-main.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 
 $export_data = $_GET['export_data'];
 $oid = $_REQUEST['oid'];

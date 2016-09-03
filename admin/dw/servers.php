@@ -37,7 +37,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/dw-servers.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $export_data = $_GET['export_data'];

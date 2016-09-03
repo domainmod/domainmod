@@ -39,7 +39,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/reporting-domain-fees.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 
 $export_data = $_GET['export_data'];
 $all = $_GET['all'];

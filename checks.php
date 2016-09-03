@@ -39,7 +39,7 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 
 $upgrade_approved = $_GET['u'];
 
@@ -207,7 +207,7 @@ $system->checkVersion($connection, $software_version);
 
 if (isset($_SESSION['s_user_redirect'])) {
 
-    $temp_redirect = $_SESSION['s_user_redirect'];
+    $temp_redirect = urlencode($_SESSION['s_user_redirect']);
     unset($_SESSION['s_user_redirect']);
 
     header("Location: $temp_redirect");

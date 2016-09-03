@@ -37,7 +37,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/settings-password.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 
 $new_password = $_POST['new_password'];
 $new_password_confirmation = $_POST['new_password_confirmation'];

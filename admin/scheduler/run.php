@@ -42,7 +42,7 @@ include(DIR_INC . "config-demo.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $id = $_GET['id'];

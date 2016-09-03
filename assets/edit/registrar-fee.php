@@ -39,7 +39,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/assets-edit-registrar-fee.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 
 $fee_id = $_REQUEST['fee_id'];
 $rid = $_REQUEST['rid'];

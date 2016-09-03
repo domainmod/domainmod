@@ -36,7 +36,7 @@ include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $_SESSION['s_message_success'] .= $queue->clearProcessing($connection);

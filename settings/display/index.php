@@ -37,7 +37,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/settings-display.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 
 $new_number_of_domains = $_POST['new_number_of_domains'];
 $new_number_of_ssl_certs = $_POST['new_number_of_ssl_certs'];

@@ -32,7 +32,7 @@ include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
 include(DIR_INC . "software.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 ?>
 <?php

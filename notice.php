@@ -35,7 +35,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/system-notice.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 
 $action = $_GET['a'];
 

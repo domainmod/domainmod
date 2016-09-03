@@ -38,7 +38,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/admin-add-custom-domain-field.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $new_name = $_POST['new_name'];

@@ -38,7 +38,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/settings-defaults.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 
 $new_default_category_domains = $_POST['new_default_category_domains'];
 $new_default_category_ssl = $_POST['new_default_category_ssl'];

@@ -31,7 +31,7 @@ if (file_exists($full_filename)) {
     include(DIR_INC . "layout/footer.DEMO.inc.php");
 
 }
-$_SESSION['s_redirect'] = $_SERVER["REQUEST_URI"];
+$_SESSION['s_redirect'] = urlencode($_SERVER["REQUEST_URI"]);
 ?>
 <!-- jQuery 2.2.0 -->
 <script src="<?php echo $web_root . '/' . WEBROOT_THEME; ?>/plugins/jQuery/jQuery-2.2.0.min.js"></script>

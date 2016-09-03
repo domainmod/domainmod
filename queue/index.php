@@ -38,7 +38,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/queue-main.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 
 $list_id = $_GET['list_id'];
 $dell = $_GET['dell'];

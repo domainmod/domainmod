@@ -39,7 +39,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/admin-scheduler-main.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $sql = "SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active

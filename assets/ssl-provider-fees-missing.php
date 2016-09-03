@@ -37,7 +37,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/assets-ssl-provider-fees-missing.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 ?>
 <?php include(DIR_INC . 'doctype.inc.php'); ?>
 <html>

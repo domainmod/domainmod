@@ -39,7 +39,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/settings-profile.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 
 $new_first_name = $_POST['new_first_name'];
 $new_last_name = $_POST['new_last_name'];

@@ -34,7 +34,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/admin-main.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 ?>
 <?php include(DIR_INC . 'doctype.inc.php'); ?>

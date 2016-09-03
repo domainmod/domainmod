@@ -38,7 +38,7 @@ include(DIR_INC . "software.inc.php");
 include(DIR_INC . "settings/reporting-dw-potential-problems.inc.php");
 include(DIR_INC . "database.inc.php");
 
-$system->authCheck();
+$system->authCheck($web_root);
 
 $generate = $_GET['generate'];
 $export_data = $_GET['export_data'];
