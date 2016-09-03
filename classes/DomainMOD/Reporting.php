@@ -33,6 +33,10 @@ class Reporting
 
         } else {
 
+            $date = new Date();
+            if (!$date->checkDateFormat($new_start_date)) $new_start_date = '1900-01-01';
+            if (!$date->checkDateFormat($new_end_date)) $new_end_date = '2300-01-01';
+
             $range_string = " AND " . $column . " between '" . $new_start_date . "' AND '" . $new_end_date . "' ";
 
         }

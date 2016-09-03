@@ -78,7 +78,7 @@ $sql = "SELECT d.id, d.domain, SUM(sslc.total_cost * cc.conversion) AS total_cos
           AND sslc.domain_id = d.id
           AND sslc.active NOT IN ('0')
           AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-          " . mysqli_real_escape_string($connection, $range_string) . "
+          " . $range_string . "
         GROUP BY d.domain
         ORDER BY d.domain";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -92,7 +92,7 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, 
                       AND sslc.domain_id = d.id
                       AND sslc.active NOT IN ('0')
                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                      " . mysqli_real_escape_string($connection, $range_string) . "";
+                      " . $range_string . "";
 $result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
 
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {

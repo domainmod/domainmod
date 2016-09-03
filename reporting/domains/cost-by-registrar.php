@@ -80,7 +80,7 @@ $sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS re
           AND d.owner_id = o.id
           AND d.active NOT IN ('0', '10')
           AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-          " . mysqli_real_escape_string($connection, $range_string) . "
+          " . $range_string . "
         GROUP BY r.name, o.name, ra.username
         ORDER BY r.name, o.name, ra.username";
 $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -96,7 +96,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, cou
                       AND d.owner_id = o.id
                       AND d.active NOT IN ('0', '10')
                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
-                      " . mysqli_real_escape_string($connection, $range_string) . "";
+                      " . $range_string . "";
 $result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
 
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
@@ -193,7 +193,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
                                           AND d.active NOT IN ('0', '10')
                                           AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                           AND r.id = '" . $row->id . "'
-                                          " . mysqli_real_escape_string($connection, $range_string) . "";
+                                          " . $range_string . "";
                 $result_registrar_total
                     = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
 
@@ -294,7 +294,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
                                       AND d.active NOT IN ('0', '10')
                                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                       AND r.id = '" . $row->id . "'
-                                      " . mysqli_real_escape_string($connection, $range_string) . "";
+                                      " . $range_string . "";
             $result_registrar_total = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
 
             while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) {
