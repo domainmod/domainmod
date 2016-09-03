@@ -155,13 +155,28 @@ if ($is_active == "0") { $is_active_string = " AND d.active = '0' ";
 
 if ($segid != "") {
 
-    $seg_sql = "SELECT segment
-                FROM segments
-                WHERE id = '" . $segid . "'";
-    $seg_result = mysqli_query($connection, $seg_sql);
-    while ($seg_row = mysqli_fetch_object($seg_result)) {
-        $temp_segment = $seg_row->segment;
-    }
+    $query = "SELECT segment
+              FROM segments
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $segid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($segment);
+
+        while ($q->fetch()) {
+
+            $temp_segment = $segment;
+
+        }
+
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
+
     $segid_string = " AND d.domain IN ($temp_segment)";
 
 } else {
@@ -340,11 +355,19 @@ if ($segid != "") {
     $active_domains .= "'";
     $active_domains = substr($active_domains, 0, -4);
 
-    $sql_filter_update = "UPDATE segment_data
-                          SET filtered = '0'
-                          WHERE active = '1'
-                            AND segment_id = '$segid'";
-    $result_filter_update = mysqli_query($connection, $sql_filter_update);
+    $query = "UPDATE segment_data
+              SET filtered = '0'
+              WHERE active = '1'
+                AND segment_id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $segid);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
     $sql_filter_update = "UPDATE segment_data
                           SET filtered = '1'
@@ -456,20 +479,31 @@ if ($export_data == "1") {
         $row_contents = array('[Segment Results]');
         $export->writeRow($export_file, $row_contents);
 
-        $sql_filter = "SELECT `name`
-                       FROM segments
-                       WHERE id = '" . $segid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT `name`
+                  FROM segments
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'Segment Filter:',
-                $row_filter->name
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $segid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'Segment Filter:',
+                    $temp_name
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
         $row_contents = array(
             'Domains in Segment:',
@@ -530,20 +564,31 @@ if ($export_data == "1") {
 
     if ($rid > 0) {
 
-        $sql_filter = "SELECT `name`
-                       FROM registrars
-                       WHERE id = '" . $rid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT `name`
+                  FROM registrars
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'Registrar:',
-                $row_filter->name
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $rid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'Registrar:',
+                    $temp_name
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
@@ -566,100 +611,183 @@ if ($export_data == "1") {
 
         }
 
+        $query = "SELECT r.name AS registrar_name, o.name AS owner_name, ra.username
+                  FROM registrar_accounts AS ra, registrars AS r, owners AS o
+                  WHERE ra.registrar_id = r.id
+                    AND ra.owner_id = o.id
+                    AND ra.id = ?";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $raid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name, $temp_owner, $temp_username);
+
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'Registrar Account:',
+                    $temp_name . " - " . $temp_owner . " - " . $temp_username
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
+
     }
 
     if ($dnsid > 0) {
 
-        $sql_filter = "SELECT `name`
-                       FROM dns
-                       WHERE id = '" . $dnsid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT `name`
+                  FROM dns
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'DNS Profile:',
-                $row_filter->name
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $dnsid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'DNS Profile:',
+                    $temp_name
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
     if ($ipid > 0) {
 
-        $sql_filter = "SELECT `name`, ip
-                       FROM ip_addresses
-                       WHERE id = '" . $ipid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT `name`, ip
+                  FROM ip_addresses
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'IP Address:',
-                $row_filter->name . ' (' . $row_filter->ip . ')'
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $ipid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name, $temp_ip);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'IP Address:',
+                    $temp_name . ' (' . $temp_ip . ')'
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
     if ($whid > 0) {
 
-        $sql_filter = "SELECT `name`
-                       FROM hosting
-                       WHERE id = '" . $whid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT `name`
+                  FROM hosting
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'Web Host:',
-                $row_filter->name
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $whid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'Web Host:',
+                    $temp_name
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
     if ($pcid > 0) {
 
-        $sql_filter = "SELECT `name`
-                       FROM categories
-                       WHERE id = '" . $pcid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT `name`
+                  FROM categories
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'Category:',
-                $row_filter->name
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $pcid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'Category:',
+                    $temp_name
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
     if ($oid > 0) {
 
-        $sql_filter = "SELECT `name`
-                       FROM owners
-                       WHERE id = '" . $oid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT `name`
+                  FROM owners
+                  WHERE id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'Owner:',
-                $row_filter->name
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $oid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'Owner:',
+                    $temp_name
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
     }
 
@@ -977,13 +1105,27 @@ $total_rows = number_format(mysqli_num_rows($result));
 
 if ($segid != "") {
 
-    $sql_segment = "SELECT number_of_domains
-                    FROM segments
-                    WHERE id = '$segid'";
-    $result_segment = mysqli_query($connection, $sql_segment);
-    while ($row_segment = mysqli_fetch_object($result_segment)) {
-        $number_of_domains = $row_segment->number_of_domains;
-    }
+    $query = "SELECT number_of_domains
+              FROM segments
+              WHERE id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $segid);
+        $q->execute();
+        $q->store_result();
+        $q->bind_result($temp_number_of_domains);
+
+        while ($q->fetch()) {
+
+            $number_of_domains = $temp_number_of_domains;
+
+        }
+
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
 
 }
 
@@ -2067,29 +2209,56 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
 
 if ($segid != "") {
 
-    $sql_segment = "SELECT domain
-                    FROM segment_data
-                    WHERE segment_id = '$segid'
-                      AND inactive = '1'
-                    ORDER BY domain";
-    $result_segment = mysqli_query($connection, $sql_segment);
-    $totalrows_inactive = mysqli_num_rows($result_segment);
+    $query = "SELECT domain
+              FROM segment_data
+              WHERE segment_id = ?
+                AND inactive = '1'
+              ORDER BY domain";
+    $q = $conn->stmt_init();
 
-    $sql_segment = "SELECT domain
-                    FROM segment_data
-                    WHERE segment_id = '$segid'
-                      AND missing = '1'
-                    ORDER BY domain";
-    $result_segment = mysqli_query($connection, $sql_segment);
-    $totalrows_missing = mysqli_num_rows($result_segment);
+    if ($q->prepare($query)) {
 
-    $sql_segment = "SELECT domain
-                    FROM segment_data
-                    WHERE segment_id = '$segid'
-                      AND filtered = '1'
-                    ORDER BY domain";
-    $result_segment = mysqli_query($connection, $sql_segment);
-    $totalrows_filtered = mysqli_num_rows($result_segment);
+        $q->bind_param('i', $segid);
+        $q->execute();
+        $q->store_result();
+        $totalrows_inactive = $q->num_rows();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
+
+    $query = "SELECT domain
+              FROM segment_data
+              WHERE segment_id = ?
+                AND missing = '1'
+              ORDER BY domain";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $segid);
+        $q->execute();
+        $q->store_result();
+        $totalrows_missing = $q->num_rows();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
+
+    $query = "SELECT domain
+              FROM segment_data
+              WHERE segment_id = ?
+                AND filtered = '1'
+              ORDER BY domain";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $q->bind_param('i', $segid);
+        $q->execute();
+        $q->store_result();
+        $totalrows_filtered = $q->num_rows();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
     ?>
     <strong>Domains in Segment:</strong> <?php echo number_format($number_of_domains); ?><BR><BR>
 
