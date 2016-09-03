@@ -441,39 +441,80 @@ if ($export_data == "1") {
 
     if ($segid != "") {
 
-        $sql_segment = "SELECT domain
-                        FROM segment_data
-                        WHERE segment_id = '" . $segid . "'
-                          AND inactive = '1'
-                        ORDER BY domain";
-        $result_segment = mysqli_query($connection, $sql_segment);
-        $totalrows_inactive = mysqli_num_rows($result_segment);
+        $query = "SELECT domain
+                  FROM segment_data
+                  WHERE segment_id = ?
+                    AND inactive = '1'
+                  ORDER BY domain";
+        $q = $conn->stmt_init();
 
-        $sql_segment = "SELECT domain
-                        FROM segment_data
-                        WHERE segment_id = '" . $segid . "'
-                          AND missing = '1'
-                        ORDER BY domain";
-        $result_segment = mysqli_query($connection, $sql_segment);
-        $totalrows_missing = mysqli_num_rows($result_segment);
+        if ($q->prepare($query)) {
 
-        $sql_segment = "SELECT domain
-                        FROM segment_data
-                        WHERE segment_id = '" . $segid . "'
-                          AND filtered = '1'
-                        ORDER BY domain";
-        $result_segment = mysqli_query($connection, $sql_segment);
-        $totalrows_filtered = mysqli_num_rows($result_segment);
+            $q->bind_param('i', $segid);
+            $q->execute();
+            $q->store_result();
+            $totalrows_inactive = $q->num_rows();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
+
+        $query = "SELECT domain
+                  FROM segment_data
+                  WHERE segment_id = ?
+                    AND missing = '1'
+                  ORDER BY domain";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $segid);
+            $q->execute();
+            $q->store_result();
+            $totalrows_missing = $q->num_rows();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
+
+        $query = "SELECT domain
+                  FROM segment_data
+                  WHERE segment_id = ?
+                    AND filtered = '1'
+                  ORDER BY domain";
+        $q = $conn->stmt_init();
+
+        if ($q->prepare($query)) {
+
+            $q->bind_param('i', $segid);
+            $q->execute();
+            $q->store_result();
+            $totalrows_filtered = $q->num_rows();
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
         if ($segid != "") {
 
-            $sql_segment = "SELECT number_of_domains
-                            FROM segments
-                            WHERE id = '" . $segid . "'";
-            $result_segment = mysqli_query($connection, $sql_segment);
-            while ($row_segment = mysqli_fetch_object($result_segment)) {
-                $number_of_domains = $row_segment->number_of_domains;
-            }
+            $query = "SELECT number_of_domains
+                      FROM segments
+                      WHERE id = ?";
+            $q = $conn->stmt_init();
+
+            if ($q->prepare($query)) {
+
+                $q->bind_param('i', $segid);
+                $q->execute();
+                $q->store_result();
+                $q->bind_result($temp_number_of_domains);
+
+                while ($q->fetch()) {
+
+                    $number_of_domains = $temp_number_of_domains;
+
+                }
+
+                $q->close();
+
+            } else $error->outputSqlError($conn, "ERROR");
 
         }
 
@@ -595,22 +636,33 @@ if ($export_data == "1") {
 
     if ($raid > 0) {
 
-        $sql_filter = "SELECT r.name AS registrar_name, o.name AS owner_name, ra.username
-                       FROM registrar_accounts AS ra, registrars AS r, owners AS o
-                       WHERE ra.registrar_id = r.id
-                         AND ra.owner_id = o.id
-                         AND ra.id = '" . $raid . "'";
-        $result_filter = mysqli_query($connection, $sql_filter);
+        $query = "SELECT r.name AS registrar_name, o.name AS owner_name, ra.username
+                  FROM registrar_accounts AS ra, registrars AS r, owners AS o
+                  WHERE ra.registrar_id = r.id
+                    AND ra.owner_id = o.id
+                    AND ra.id = ?";
+        $q = $conn->stmt_init();
 
-        while ($row_filter = mysqli_fetch_object($result_filter)) {
+        if ($q->prepare($query)) {
 
-            $row_contents = array(
-                'Registrar Account:',
-                $row_filter->registrar_name . " - " . $row_filter->owner_name . " - " . $row_filter->username
-            );
-            $export->writeRow($export_file, $row_contents);
+            $q->bind_param('i', $raid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($temp_name, $temp_owner, $temp_username);
 
-        }
+            while ($q->fetch()) {
+
+                $row_contents = array(
+                    'Registrar Account:',
+                    $temp_name . " - " . $temp_owner . " - " . $temp_username
+                );
+                $export->writeRow($export_file, $row_contents);
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($conn, "ERROR");
 
         $query = "SELECT r.name AS registrar_name, o.name AS owner_name, ra.username
                   FROM registrar_accounts AS ra, registrars AS r, owners AS o
