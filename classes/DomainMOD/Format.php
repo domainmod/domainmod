@@ -62,13 +62,13 @@ class Format
     public function formatForMysql($domain_list)
     {
 
-        $domain_list_formatted = implode("\r\n", $domain_list);
-        $domain_list_formatted = "'" . $domain_list_formatted;
-        $domain_list_formatted = $domain_list_formatted . "'";
-        $domain_list_formatted = preg_replace("/\r\n/", "','", $domain_list_formatted);
-        $domain_list_formatted = str_replace(" ", "", $domain_list_formatted);
+        $list_formatted = implode("\r\n", $domain_list);
+        $list_formatted = "'" . $list_formatted;
+        $list_formatted = $list_formatted . "'";
+        $list_formatted = preg_replace("/\r\n/", "','", $list_formatted);
+        $list_formatted = str_replace(" ", "", $list_formatted);
 
-        return trim($domain_list_formatted);
+        return trim($list_formatted);
 
     }
 
