@@ -863,4 +863,16 @@ if ($current_db_version === '4.01.003') {
 
 }
 
+// upgrade database from 4.01.004 to 4.01.005
+if ($current_db_version === '4.01.004') {
+
+    $sql = "UPDATE settings
+            SET db_version = '4.01.005',
+                update_time = '" . $time->stamp() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $current_db_version = '4.01.005';
+
+}
+
 //@formatter:on
