@@ -1,5 +1,10 @@
 DomainMOD CHANGELOG
 ===================
+v4.01.005    2016-09-03
+- Added read-only user data to user export
+- Added inactive and read-only user designations
+- Security Updates
+
 v4.01.004    2016-08-29
 - Security Updates
 - Updated Task Scheduler 'run' command
