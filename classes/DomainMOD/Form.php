@@ -62,7 +62,7 @@ class Form
             echo $before; ?>
             <div class="form-group">
                 <label><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('*'); ?><?php } ?>
-                <?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . htmlentities($subtext, ENT_QUOTES) . '</span><BR>'; ?></label>
+                <?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <textarea class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php
                     echo $name; ?>" style="height: 80px;"><?php echo htmlentities($value, ENT_QUOTES); ?></textarea>
             </div><?php
