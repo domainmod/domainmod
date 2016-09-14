@@ -200,7 +200,8 @@ if ($del == "1") {
 
     $query = "SELECT account_id
               FROM domains
-              WHERE account_id = ?";
+              WHERE account_id = ?
+              LIMIT 1";
     $q = $conn->stmt_init();
 
     if ($q->prepare($query)) {
@@ -222,7 +223,7 @@ if ($del == "1") {
         } else {
 
             $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Registrar Account?<BR><BR><a
-                href=\"registrar-account.php?raid=$raid&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR ACCOUNT</a><BR>";
+                href=\"registrar-account.php?raid=" . $raid . "&really_del=1\">YES, REALLY DELETE THIS DOMAIN REGISTRAR ACCOUNT</a><BR>";
 
         }
 

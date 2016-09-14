@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($del == "1") {
 
     $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Server?<BR><BR><a
-    href=\"edit-server.php?dwsid=$dwsid&really_del=1\">YES, REALLY DELETE THIS SERVER</a><BR>";
+    href=\"edit-server.php?dwsid=" . $dwsid . "&really_del=1\">YES, REALLY DELETE THIS SERVER</a><BR>";
 
 }
 

@@ -169,7 +169,7 @@ if ($del == "1") {
     } else {
 
         $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Provider?<BR><BR><a
-            href=\"ssl-provider.php?sslpid=$sslpid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER</a><BR>";
+            href=\"ssl-provider.php?sslpid=" . $sslpid . "&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER</a><BR>";
 
     }
 

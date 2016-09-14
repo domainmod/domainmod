@@ -327,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($del == "1") {
 
     $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Certificate?<BR><BR>
-        <a href=\"edit.php?sslcid=$sslcid&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE ACCOUNT</a><BR>";
+        <a href=\"edit.php?sslcid=" . $sslcid . "&really_del=1\">YES, REALLY DELETE THIS SSL CERTIFICATE ACCOUNT</a><BR>";
 
 }
 
@@ -379,7 +379,7 @@ if ($really_del == "1") {
 
     } else $error->outputSqlError($conn, "ERROR");
 
-    $_SESSION['s_message_success'] .= "SSL Certificate $new_name ($temp_type) Deleted<BR>";
+    $_SESSION['s_message_success'] .= "SSL Certificate " . $new_name . " (" . $temp_type . ") Deleted<BR>";
 
     $system->checkExistingAssets($connection);
 

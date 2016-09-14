@@ -166,7 +166,7 @@ if ($del == "1") {
     } else {
 
         $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Registrar?<BR><BR><a
-            href=\"registrar.php?rid=$rid&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
+            href=\"registrar.php?rid=" . $rid . "&really_del=1\">YES, REALLY DELETE THIS REGISTRAR</a><BR>";
 
     }
 

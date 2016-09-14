@@ -136,7 +136,8 @@ if ($del == "1") {
 
     $query = "SELECT owner_id
               FROM ssl_accounts
-              WHERE owner_id = ?";
+              WHERE owner_id = ?
+              LIMIT 1";
     $q = $conn->stmt_init();
 
     if ($q->prepare($query)) {
@@ -159,7 +160,8 @@ if ($del == "1") {
 
     $query = "SELECT owner_id
               FROM domains
-              WHERE owner_id = ?";
+              WHERE owner_id = ?
+              LIMIT 1";
     $q = $conn->stmt_init();
 
     if ($q->prepare($query)) {
@@ -182,7 +184,8 @@ if ($del == "1") {
 
     $query = "SELECT owner_id
               FROM ssl_certs
-              WHERE owner_id = ?";
+              WHERE owner_id = ?
+              LIMIT 1";
     $q = $conn->stmt_init();
 
     if ($q->prepare($query)) {

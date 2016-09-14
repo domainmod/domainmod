@@ -215,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($del == "1") {
 
     $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Segment?<BR><BR><a
-        href=\"edit.php?segid=$segid&really_del=1\">YES, REALLY DELETE THIS SEGMENT</a><BR>";
+        href=\"edit.php?segid=" . $segid . "&really_del=1\">YES, REALLY DELETE THIS SEGMENT</a><BR>";
 
 }
 

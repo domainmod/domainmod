@@ -128,7 +128,7 @@ if ($del == "1") {
         } else {
 
             $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Type?<BR><BR><a
-                href=\"ssl-type.php?ssltid=$ssltid&really_del=1\">YES, REALLY DELETE THIS SSL TYPE</a><BR>";
+                href=\"ssl-type.php?ssltid=" . $ssltid . "&really_del=1\">YES, REALLY DELETE THIS SSL TYPE</a><BR>";
 
         }
 

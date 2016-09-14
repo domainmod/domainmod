@@ -335,7 +335,8 @@ if ($del == "1") {
 
     $query = "SELECT domain_id
               FROM ssl_certs
-              WHERE domain_id = ?";
+              WHERE domain_id = ?
+              LIMIT 1";
     $q = $conn->stmt_init();
 
     if ($q->prepare($query)) {
@@ -343,15 +344,10 @@ if ($del == "1") {
         $q->bind_param('i', $did);
         $q->execute();
         $q->store_result();
-        $q->bind_result($t_domain_id);
 
-        if ($q->num_rows() >= 1) {
+        if ($q->num_rows() > 0) {
 
-            while ($q->fetch()) {
-
-                $existing_ssl_certs = 1;
-
-            }
+            $existing_ssl_certs = 1;
 
         }
 
@@ -365,7 +361,7 @@ if ($del == "1") {
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Domain?<BR><BR><a href=\"edit.php?did=$did&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
+        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Domain?<BR><BR><a href=\"edit.php?did=" . $did . "&really_del=1\">YES, REALLY DELETE THIS DOMAIN</a><BR>";
 
     }
 

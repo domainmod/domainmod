@@ -190,7 +190,7 @@ if ($del == "1") {
         } else {
 
             $_SESSION['s_message_danger'] .= "Are you sure you want to delete this DNS Profile?<BR><BR><a
-                href=\"dns.php?dnsid=$dnsid&really_del=1\">YES, REALLY DELETE THIS DNS PROFILE</a><BR>";
+                href=\"dns.php?dnsid=" . $dnsid . "&really_del=1\">YES, REALLY DELETE THIS DNS PROFILE</a><BR>";
 
         }
 

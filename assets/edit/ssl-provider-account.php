@@ -202,7 +202,7 @@ if ($del == "1") {
     } else {
 
         $_SESSION['s_message_danger'] .= "Are you sure you want to delete this SSL Account?<BR><BR><a
-            href=\"ssl-provider-account.php?sslpaid=$sslpaid&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER ACCOUNT</a><BR>";
+            href=\"ssl-provider-account.php?sslpaid=" . $sslpaid . "&really_del=1\">YES, REALLY DELETE THIS SSL PROVIDER ACCOUNT</a><BR>";
 
     }
 
