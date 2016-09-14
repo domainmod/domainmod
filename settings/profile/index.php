@@ -143,7 +143,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
                     //@formatter:off
                     $sql_insert_currency = "INSERT INTO currency_conversions
-                                            (currency_id, user_id, conversion, insert_time, update_time) VALUES
+                                            (currency_id, user_id, conversion, insert_time, update_time)
+                                            VALUES
                                             ('" . $temp_new_currency_id . "', '" . $_SESSION['s_user_id'] . "', '1', '" .
                                              $timestamp . "', '" . $timestamp . "')";
                     $result_insert_currency = mysqli_query($connection, $sql_insert_currency);

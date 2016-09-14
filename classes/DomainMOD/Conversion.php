@@ -114,7 +114,8 @@ class Conversion
         } else {
 
             $sql = "INSERT INTO currency_conversions
-                    (currency_id, user_id, conversion, insert_time) VALUES
+                    (currency_id, user_id, conversion, insert_time)
+                    VALUES
                     ('" . $currency_id . "', '" . $user_id . "', '" . $conversion_rate . "', '" . $timestamp . "')";
 
         }

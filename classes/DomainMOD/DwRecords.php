@@ -89,13 +89,13 @@ class DwRecords
                          minimum, nsdname, `name`, ttl, class, type, address, cname, `exchange`, preference,
                          txtdata, line, nlines, raw, insert_time)
                         VALUES
-                        ('" . $server_id . "', '" . $zone_id . "', '" . $domain . "', '" .
-                         $hit->mname . "', '" . $hit->rname . "', '" . $hit->serial . "', '" . $hit->refresh . "', '" .
-                         $hit->retry . "', '" . $hit->expire . "', '" . $hit->minimum . "', '" . $hit->nsdname . "', '"
-                         . $hit->name . "', '" . $hit->ttl . "', '" . $hit->class . "', '" . $hit->type . "', '" .
-                         $hit->address . "', '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference .
-                         "', '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw .
-                         "', '" . $time->stamp() . "')";
+                        ('" . $server_id . "', '" . $zone_id . "', '" . $domain . "', '" . $hit->mname . "',
+                         '" . $hit->rname . "', '" . $hit->serial . "', '" . $hit->refresh . "', '" . $hit->retry . "',
+                         '" . $hit->expire . "', '" . $hit->minimum . "', '" . $hit->nsdname . "', '" . $hit->name . "',
+                         '" . $hit->ttl . "', '" . $hit->class . "', '" . $hit->type . "', '" . $hit->address . "',
+                         '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference . "',
+                         '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw . "',
+                         '" . $time->stamp() . "')";
                 mysqli_query($connection, $sql);
 
             }

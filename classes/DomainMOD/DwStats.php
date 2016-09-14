@@ -148,8 +148,8 @@ class DwStats
         $sql_insert = "INSERT INTO dw_server_totals
                        (dw_servers, dw_accounts, dw_dns_zones, dw_dns_records, insert_time)
                        VALUES
-                       ('" . $total_dw_servers . "', '" . $total_dw_accounts . "', '" . $total_dw_dns_zones . "', '" .
-            $total_dw_records . "', '" . $time->stamp() . "')";
+                       ('" . $total_dw_servers . "', '" . $total_dw_accounts . "', '" . $total_dw_dns_zones . "',
+                        '" . $total_dw_records . "', '" . $time->stamp() . "')";
         mysqli_query($connection, $sql_insert);
 
         return true;

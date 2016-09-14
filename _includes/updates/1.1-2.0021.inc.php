@@ -107,7 +107,8 @@ if ($current_db_version === '1.5') {
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "INSERT INTO `ip_addresses`
-            (`id`, `name`, `ip`, `insert_time`) VALUES
+            (`id`, `name`, `ip`, `insert_time`)
+            VALUES
             ('1', '[no ip address]', '-', '" . $time->stamp() . "')";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -329,7 +330,8 @@ if ($current_db_version === '1.96') {
 if ($current_db_version === '1.97') {
 
     $sql = "INSERT INTO `categories`
-            (`name`, `owner`, `insert_time`) VALUES
+            (`name`, `owner`, `insert_time`)
+            VALUES
             ('[no category]', '[no stakeholder]', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -351,7 +353,8 @@ if ($current_db_version === '1.97') {
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "INSERT INTO `dns`
-            (`name`, `dns1`, `dns2`, `number_of_servers`, `insert_time`) VALUES
+            (`name`, `dns1`, `dns2`, `number_of_servers`, `insert_time`)
+            VALUES
             ('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -373,7 +376,8 @@ if ($current_db_version === '1.97') {
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "INSERT INTO `owners`
-            (`name`, `insert_time`) VALUES
+            (`name`, `insert_time`)
+            VALUES
             ('[no owner]', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -710,7 +714,8 @@ if ($current_db_version === '2.0009') {
 
     while ($row = mysqli_fetch_object($result)) {
         $sql_temp = "INSERT INTO user_settings
-                     (user_id, insert_time) VALUES
+                     (user_id, insert_time)
+                     VALUES
                      ('" . $row->id . "', '" . $time->stamp() . "');";
         $result_temp = mysqli_query($connection, $sql_temp) or $error->outputOldSqlError($connection);
     }

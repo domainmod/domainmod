@@ -706,7 +706,8 @@ if ($current_db_version === '2.0047') {
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $sql = "INSERT INTO custom_field_types
-                (id, name, insert_time) VALUES
+                (id, name, insert_time)
+                VALUES
                 (1, 'Check Box', '" . $time->stamp() . "'),
                 (2, 'Text', '" . $time->stamp() . "'),
                 (3, 'Text Area', '" . $time->stamp() . "')";
@@ -747,7 +748,8 @@ if ($current_db_version === '2.0047') {
     $full_id_string_formatted = substr($full_id_string, 0, -2);
 
     $sql = "INSERT INTO domain_field_data
-            (domain_id, insert_time) VALUES
+            (domain_id, insert_time)
+            VALUES
             " . $full_id_string_formatted . "";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -791,7 +793,8 @@ if ($current_db_version === '2.0047') {
         $full_id_string_formatted = substr($full_id_string, 0, -2);
 
         $sql = "INSERT INTO ssl_cert_field_data
-                (ssl_id, insert_time) VALUES
+                (ssl_id, insert_time)
+                VALUES
                 " . $full_id_string_formatted . "";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 

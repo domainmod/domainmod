@@ -92,15 +92,15 @@ class DwAccounts
                          unix_startdate, suspended, suspendreason, suspendtime, MAX_EMAIL_PER_HOUR,
                          MAX_DEFER_FAIL_PERCENTAGE, MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION, insert_time)
                         VALUES
-                        ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->ip . "', '" . $hit->owner
-                    . "', '" . $hit->user . "', '" . $hit->email . "', '" . $hit->plan . "', '" . $hit->theme
-                    . "', '" . $hit->shell . "', '" . $hit->partition . "', '" . $disklimit_formatted
-                    . "', '" . $diskused_formatted . "', '" . $hit->maxaddons . "', '" . $hit->maxftp . "', '"
-                    . $hit->maxlst . "', '" . $hit->maxparked . "', '" . $hit->maxpop . "', '" . $hit->maxsql
-                    . "', '" . $hit->maxsub . "', '" . $hit->startdate . "', '" . $hit->unix_startdate
-                    . "', '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime
-                    . "', '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "', '"
-                    . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . $time->stamp() . "')";
+                        ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->ip . "', '" . $hit->owner . "',
+                         '" . $hit->user . "', '" . $hit->email . "', '" . $hit->plan . "', '" . $hit->theme . "',
+                         '" . $hit->shell . "', '" . $hit->partition . "', '" . $disklimit_formatted . "',
+                         '" . $diskused_formatted . "', '" . $hit->maxaddons . "', '" . $hit->maxftp . "',
+                         '" . $hit->maxlst . "', '" . $hit->maxparked . "', '" . $hit->maxpop . "', '" . $hit->maxsql . "',
+                         '" . $hit->maxsub . "', '" . $hit->startdate . "', '" . $hit->unix_startdate . "',
+                         '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime . "',
+                         '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "',
+                         '" . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . $time->stamp() . "')";
                 mysqli_query($connection, $sql);
 
             }
