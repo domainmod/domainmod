@@ -44,17 +44,10 @@ $system->authCheck($web_root);
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<h3>User Settings</h3>
-<a href="display/">Display Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;
-<a href="defaults/">User Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;
-<a href="profile/">User Profile</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+<a href="display/">Display Settings</a><BR><BR>
+<a href="defaults/">User Defaults</a><BR><BR>
+<a href="profile/">User Profile</a><BR><BR>
 <a href="password/">Change Password</a><BR>
-<BR>
-<h3>Maintenance</h3>
-<a href="maintenance/update-domain-fees.php">Update Domain Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;
-<a href="maintenance/update-ssl-fees.php">Update SSL Certificate Fees</a>&nbsp;&nbsp;/&nbsp;&nbsp;
-<a href="maintenance/update-conversions.php">Update Conversion Rates</a>&nbsp;&nbsp;/&nbsp;&nbsp;
-<a href="maintenance/clear-queue-processing.php">Clear Queue Processing</a><BR><BR>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
 </html>

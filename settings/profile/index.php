@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
             if ($q_u->prepare($query_u)) {
 
-                $q_u->bind_param('sssssis', $new_first_name, $new_last_name, $new_email_address, $timestamp,
+                $q_u->bind_param('ssssis', $new_first_name, $new_last_name, $new_email_address, $timestamp,
                     $_SESSION['s_user_id'], $_SESSION['s_email_address']);
                 $q_u->execute();
                 $q_u->close();

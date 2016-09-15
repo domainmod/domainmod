@@ -45,8 +45,8 @@ $system->authCheck($web_root);
 <body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <a href="update-domain-fees.php">Update Domain Fees</a><BR><BR>
-<a href="update-ssl-fees.php">Update SSL Certificate Fees</a><BR><BR>
-<a href="update-conversions.php">Update Conversion Rates</a><BR><BR>
+<a href="update-ssl-fees.php">Update SSL Fees</a><BR><BR>
+<a href="update-conversions.php">Update Conversion Rates</a><BR>
 <?php //@formatter:on ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>

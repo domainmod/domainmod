@@ -45,17 +45,13 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
-<a href="<?php echo $web_root; ?>/admin/settings/">System Settings</a>&nbsp;&nbsp;/&nbsp;&nbsp;
-<a href="<?php echo $web_root; ?>/admin/defaults/">System Defaults</a>&nbsp;&nbsp;/&nbsp;&nbsp;
-<a href="<?php echo $web_root; ?>/admin/users/">Users</a><BR>
-<BR>
-<a href="<?php echo $web_root; ?>/admin/domain-fields/">Custom Domain Fields</a>&nbsp;&nbsp;/&nbsp;&nbsp;
-<a href="<?php echo $web_root; ?>/admin/ssl-fields/">Custom SSL Fields</a><BR>
-<BR>
-<a href="<?php echo $web_root; ?>/admin/scheduler/">Task Scheduler</a><BR>
-<BR>
-<a href="<?php echo $web_root; ?>/admin/maintenance/">Maintenance</a><BR>
-<BR>
+<a href="<?php echo $web_root; ?>/admin/settings/">System Settings</a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/defaults/">System Defaults</a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/users/">Users</a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/domain-fields/">Custom Domain Fields</a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/ssl-fields/">Custom SSL Fields</a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/scheduler/">Task Scheduler</a><BR><BR>
+<a href="<?php echo $web_root; ?>/admin/maintenance/">Maintenance</a><BR><BR>
 <a href="<?php echo $web_root; ?>/admin/info/">System Information</a><BR>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
 </body>
