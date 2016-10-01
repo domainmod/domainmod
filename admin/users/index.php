@@ -195,7 +195,7 @@ if (mysqli_num_rows($result) > 0) { ?>
     </tbody>
 </table>
 
-    <span style="text-decoration: line-through;">STRIKE</span> = Inactive&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>A</strong> = Admin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>R</strong> = Read-Only<?php
+    <strong>A</strong> = Admin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>R</strong> = Read-Only&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="text-decoration: line-through;">STRIKE</span> = Inactive<?php
 
 } ?>
 <?php include(DIR_INC . "layout/footer.inc.php"); ?>
