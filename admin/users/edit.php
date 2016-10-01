@@ -52,6 +52,9 @@ $new_last_name = $_POST['new_last_name'];
 $new_username = $_POST['new_username'];
 $original_username = $_POST['original_username'];
 $new_email_address = $_POST['new_email_address'];
+$new_currency = $_POST['new_currency'];
+$new_timezone = $_POST['new_timezone'];
+$new_expiration_emails = $_POST['new_expiration_emails'];
 $new_is_admin = $_POST['new_is_admin'];
 $new_read_only = $_POST['new_read_only'];
 $new_is_active = $_POST['new_is_active'];
@@ -168,6 +171,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     } else $error->outputSqlError($conn, "ERROR");
 
+    $query = "UPDATE user_settings
+              SET default_currency = ?,
+                  default_timezone = ?,
+                  expiration_emails = ?,
+                  update_time = ?
+              WHERE user_id = ?";
+    $q = $conn->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $timestamp = $time->stamp();
+
+        $q->bind_param('ssisi', $new_currency, $new_timezone, $new_expiration_emails, $timestamp, $new_uid);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($conn, "ERROR");
+
     $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Updated<BR>';
 
     if ($_SESSION['s_username'] == $new_username) {
@@ -192,9 +213,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
     } else {
 
-        $query = "SELECT first_name, last_name, username, email_address, admin, `read_only`, active
-                  FROM users
-                  WHERE id = ?";
+        $query = "SELECT u.first_name, u.last_name, u.username, u.email_address, us.default_currency, us.default_timezone, us.expiration_emails, u.admin, u.`read_only`, u.active
+                  FROM users AS u, user_settings AS us
+                  WHERE u.id = us.user_id
+                    AND u.id = ?";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
@@ -202,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             $q->bind_param('i', $uid);
             $q->execute();
             $q->store_result();
-            $q->bind_result($first_name, $last_name, $username, $email_address, $admin, $read_only, $active);
+            $q->bind_result($first_name, $last_name, $username, $email_address, $currency, $timezone, $expiration_emails, $admin, $read_only, $active);
 
                 while ($q->fetch()) {
 
@@ -211,6 +233,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                     $new_username = $username;
                     $original_username = $username;
                     $new_email_address = $email_address;
+                    $new_currency = $currency;
+                    $new_timezone = $timezone;
+                    $new_expiration_emails = $expiration_emails;
                     $new_is_admin = $admin;
                     $new_read_only = $read_only;
                     $new_is_active = $active;
@@ -304,6 +329,31 @@ if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 }
 
 echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '1', '', '');
+
+echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
+$sql = "SELECT currency, `name`, symbol
+        FROM currencies
+        ORDER BY name";
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
+    echo $form->showDropdownOption($row->currency, $row->name . ' (' . $row->currency . ' ' . $row->symbol . ')', $new_currency);
+}
+echo $form->showDropdownBottom('');
+
+echo $form->showDropdownTop('new_timezone', 'Time Zone', '', '', '');
+$sql = "SELECT timezone
+        FROM timezones
+        ORDER BY timezone";
+$result = mysqli_query($connection, $sql);
+while ($row = mysqli_fetch_object($result)) {
+    echo $form->showDropdownOption($row->timezone, $row->timezone, $new_timezone);
+}
+echo $form->showDropdownBottom('');
+
+echo $form->showRadioTop('Subscribe to Domain & SSL Certificate expiration emails?', '', '');
+echo $form->showRadioOption('new_expiration_emails', '1', 'Yes', $new_expiration_emails, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+echo $form->showRadioOption('new_expiration_emails', '0', 'No', $new_expiration_emails, '', '');
+echo $form->showRadioBottom('');
 
 if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
