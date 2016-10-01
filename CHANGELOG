@@ -1,5 +1,11 @@
 DomainMOD CHANGELOG
 ===================
+v4.01.006    2016-10-01
+- Allow admins to edit user profile settings
+- Updated Admin, Maintenance & Settings menus
+- Formatting updates
+- Fixes
+
 v4.01.005    2016-09-03
 - Added read-only user data to user export
 - Added inactive and read-only user designations
