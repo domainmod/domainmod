@@ -452,7 +452,7 @@ $result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($co
 echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
 while ($row_ip = mysqli_fetch_object($result_ip)) { //@formatter:off
 
-    echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ' )', $new_ip_id);
+    echo $form->showDropdownOption($row_ip->id, $row_ip->name . ' (' . $row_ip->ip . ')', $new_ip_id);
 
 }
 echo $form->showDropdownBottom('');
