@@ -502,7 +502,7 @@ echo $form->showRadioOption('new_privacy', '0', 'No', $new_privacy, '', '');
 echo $form->showRadioBottom('');
 
 if ($new_notes != '') {
-    $subtext = '[<a target="_blank" href="notes.php?did=' . htmlentities($did, ENT_QUOTES) . '">view full notes</a>]';
+    #$subtext = '[<a target="_blank" href="notes.php?did=' . htmlentities($did, ENT_QUOTES) . '">view full notes</a>]';
 } else {
     $subtext = '';
 }
