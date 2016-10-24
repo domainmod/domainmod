@@ -80,10 +80,10 @@ Using the Task Scheduler is optional, but <em>highly</em> recommended.<BR>
     while ($row = mysqli_fetch_object($result)) { ?>
 
         <tr>
-        <td>
+        <td style="padding: 7px 5px 0px 10px;">
             <h4><?php echo $row->name; ?></h4><?php echo $row->description ?><BR><BR><BR>
         </td>
-        <td>
+        <td style="padding: 15px 0px 18px 0px;">
             <strong>Runs:</strong> <?php echo $row->interval; ?><BR>
 
             <strong>Status:</strong> <?php echo $schedule->createActive($row->active, $row->id); ?><BR><?php
@@ -105,10 +105,11 @@ Using the Task Scheduler is optional, but <em>highly</em> recommended.<BR>
 
             } ?>
 
-            <strong>Next Run:</strong> <?php echo $next_run; ?><BR><BR><?php
+            <strong>Next Run:</strong> <?php echo $next_run; ?><BR><?php
 
-            if ($row->active == '1') { ?>
+            if ($row->interval == 'Daily' && $row->active == '1') { ?>
 
+                <BR>
                 <form name="edit_task_form" method="post" action="update.php">
                     <select name="new_hour">
                         <?php echo $schedule->hourSelect($hour); ?>
@@ -116,7 +117,7 @@ Using the Task Scheduler is optional, but <em>highly</em> recommended.<BR>
                     echo $form->showInputHidden('a', 'u');
                     echo $form->showInputHidden('id', $row->id);
                     echo $form->showSubmitButton('Change Time', '', ''); ?>
-                </form><BR><?php
+                </form><?php
 
             } ?>
         </td>
