@@ -308,13 +308,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $new_domain_id = $t_domain_id;
             $new_name = $t_name;
-            $new_type_id = $t_expiry_date;
-            $new_ip_id = $t_notes;
-            $new_cat_id = $t_active;
-            $new_expiry_date = $t_account_id;
-            $new_notes = $t_type_id;
-            $new_active = $t_ip_id;
-            $new_account_id = $t_cat_id;
+            $new_type_id = $t_type_id;
+            $new_ip_id = $t_ip_id;
+            $new_cat_id = $t_cat_id;
+            $new_expiry_date = $t_expiry_date;
+            $new_notes = $t_notes;
+            $new_active = $t_active;
+            $new_account_id = $t_account_id;
 
         }
 
