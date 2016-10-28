@@ -1570,7 +1570,7 @@ if (mysqli_num_rows($result) > 0) { ?>
     <a target="_blank" href="<?php echo $web_root; ?>/raw.php"><?php echo $layout->showButton('button', 'Raw List'); ?></a>&nbsp;&nbsp;&nbsp;
     <a href="index.php?<?php echo urlencode($_SERVER['QUERY_STRING']); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a>
 
-    <BR><BR><strong>Total Cost:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES); ?><BR>
+    <BR><BR><strong>Total Cost:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?><BR>
     <strong>Number of SSL Certs:</strong> <?php echo number_format(mysqli_num_rows($result)); ?><BR><BR><?php
 
     if ($totalrows != '0') { ?>
@@ -1658,7 +1658,7 @@ if (mysqli_num_rows($result) > 0) { ?>
                             $temp_output_amount = $currency->format($converted_total_cost,
                                 $_SESSION['s_default_currency_symbol'], $_SESSION['s_default_currency_symbol_order'],
                                 $_SESSION['s_default_currency_symbol_space']);
-                            echo htmlentities($temp_output_amount, ENT_QUOTES);
+                            echo htmlentities($temp_output_amount, ENT_QUOTES, 'UTF-8');
                             ?>
                         </a>
                 </td>

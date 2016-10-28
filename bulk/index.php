@@ -1493,12 +1493,12 @@ The Bulk Updater allows you add or modify multiple domains at the same time, whe
         <?php if ($action == "AD") { ?>
             <BR><strong>The following domains were added:</strong><BR>
         <?php } elseif ($action == "RENEW") { ?>
-            <BR><strong>The following domains were renewed for <?php echo htmlentities($new_renewal_years, ENT_QUOTES); ?>
+            <BR><strong>The following domains were renewed for <?php echo htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8'); ?>
                 year<?php if ($new_renewal_years > 1) {
                     echo "s";
                 } ?>:</strong><BR>
         <?php } elseif ($action == "FR") { ?>
-            <BR><strong>The following domains were fully renewed for <?php echo htmlentities($new_renewal_years, ENT_QUOTES); ?>
+            <BR><strong>The following domains were fully renewed for <?php echo htmlentities($new_renewal_years, ENT_QUOTES, 'UTF-8'); ?>
                 year<?php if ($new_renewal_years > 1) {
                     echo "s";
                 } ?>:</strong><BR>
@@ -1544,7 +1544,7 @@ The Bulk Updater allows you add or modify multiple domains at the same time, whe
             <BR><strong>The following domains had their Custom Domain Field updated:</strong><BR>
         <?php } ?>
 
-        <BR><?php echo htmlentities($new_data_unformatted, ENT_QUOTES); ?><BR><BR>
+        <BR><?php echo htmlentities($new_data_unformatted, ENT_QUOTES, 'UTF-8'); ?><BR><BR>
     <?php } ?>
 
 <?php } ?>

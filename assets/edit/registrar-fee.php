@@ -199,7 +199,7 @@ if ($q->prepare($query)) {
 <strong>Domain Registrar</strong><BR>
 <?php echo $temp_registrar; ?><BR><BR>
 <strong>TLD</strong><BR>
-<?php echo '.' . htmlentities($new_tld, ENT_QUOTES); ?><BR><BR>
+<?php echo '.' . htmlentities($new_tld, ENT_QUOTES, 'UTF-8'); ?><BR><BR>
 <?php
 echo $form->showInputText('new_initial_fee', 'Initial Fee', '', $new_initial_fee, '10', '', '1', '', '');
 echo $form->showInputText('new_renewal_fee', 'Renewal Fee', '', $new_renewal_fee, '10', '', '1', '', '');

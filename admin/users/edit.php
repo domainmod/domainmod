@@ -320,7 +320,7 @@ echo $form->showInputText('new_last_name', 'Last Name (50)', '', $new_last_name,
 
 if ($new_username == 'admin' || $new_username == 'administrator') { ?>
 
-    <strong>Username</strong><BR><?php echo htmlentities($new_username, ENT_QUOTES); ?><BR><BR><?php
+    <strong>Username</strong><BR><?php echo htmlentities($new_username, ENT_QUOTES, 'UTF-8'); ?><BR><BR><?php
 
 } else {
 

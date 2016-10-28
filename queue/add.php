@@ -390,7 +390,7 @@ if ($done == "1") {
     if ($submission_failed != "1") { ?>
 
         <strong>The following domains were added to the queue:</strong><BR>
-        <?php echo htmlentities($new_data_unformatted, ENT_QUOTES); ?><BR><BR><?php
+        <?php echo htmlentities($new_data_unformatted, ENT_QUOTES, 'UTF-8'); ?><BR><BR><?php
 
     }
 
@@ -432,7 +432,7 @@ if ($new_raid != '') { ?>
 
     <ul><?php
 
-        $missing_text = htmlentities(' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '"><span style="color: #a30000"><strong>missing</strong></span></a>)', ENT_QUOTES);
+        $missing_text = htmlentities(' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '"><span style="color: #a30000"><strong>missing</strong></span></a>)', ENT_QUOTES, 'UTF-8');
         $saved_text = ' (<span style="color: darkgreen"><strong>saved</strong></span>)';
 
         if ($req_account_username == '1') {
@@ -486,7 +486,7 @@ if ($new_raid != '') {
     if ($lists_domains == '1') {
 
         echo '<strong>Domain List</strong><BR>';
-        echo htmlentities($api_registrar_name) . '\'s API has a domain list feature, so you don\'t even have to supply a list of the domains you want to import, DomainMOD will retrieve them for you automatically. If for some reason you\'re having issues with the automatic import though, you can still manually paste a list of domains to import below.<BR><BR>';
+        echo htmlentities($api_registrar_name, ENT_QUOTES, 'UTF-8') . '\'s API has a domain list feature, so you don\'t even have to supply a list of the domains you want to import, DomainMOD will retrieve them for you automatically. If for some reason you\'re having issues with the automatic import though, you can still manually paste a list of domains to import below.<BR><BR>';
         echo $form->showInputTextarea('raw_domain_list', '[OPTIONAL] Domains to add (one per line)', '', $raw_domain_list, '', '', '');
 
     } else {

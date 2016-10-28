@@ -415,7 +415,7 @@ if ($really_del == "1") {
 <?php
 echo $form->showFormTop('');
 echo '<strong>Domain</strong><BR>';
-echo htmlentities($new_domain , ENT_QUOTES). '<BR><BR>';
+echo htmlentities($new_domain , ENT_QUOTES, 'UTF-8'). '<BR><BR>';
 echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '', '');
 echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 
@@ -502,7 +502,7 @@ echo $form->showRadioOption('new_privacy', '0', 'No', $new_privacy, '', '');
 echo $form->showRadioBottom('');
 
 if ($new_notes != '') {
-    $subtext = '[<a target="_blank" href="notes.php?did=' . htmlentities($did, ENT_QUOTES) . '">view full notes</a>]';
+    $subtext = '[<a target="_blank" href="notes.php?did=' . htmlentities($did, ENT_QUOTES, 'UTF-8') . '">view full notes</a>]';
 } else {
     $subtext = '';
 }
@@ -597,7 +597,7 @@ if ($result_dns_zones === false || mysqli_num_rows($result_dns_zones) <= 0) {
 
 if ($no_results_accounts !== 1 || $no_results_dns_zones !== 1) { ?>
 
-    <BR><BR><h3>Data Warehouse Information for <?php echo htmlentities($new_domain, ENT_QUOTES); ?></h3><?php
+    <BR><BR><h3>Data Warehouse Information for <?php echo htmlentities($new_domain, ENT_QUOTES, 'UTF-8'); ?></h3><?php
 
 }
 

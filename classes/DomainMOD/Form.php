@@ -50,7 +50,7 @@ class Form
                 <label><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <input type="<?php if ($is_password == '1') { echo "password"; } else { echo "text"; } ?>" class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>"
-                    value="<?php echo htmlentities($value, ENT_QUOTES); ?>" maxlength="<?php echo $maxlength; ?>">
+                    value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>" maxlength="<?php echo $maxlength; ?>">
             </div><?php
             echo $after;
         return ob_get_clean();
@@ -64,7 +64,7 @@ class Form
                 <label><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <textarea class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php
-                    echo $name; ?>" style="height: 80px;"><?php echo htmlentities($value, ENT_QUOTES); ?></textarea>
+                    echo $name; ?>" style="height: 80px;"><?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?></textarea>
             </div><?php
             echo $after;
         return ob_get_clean();
@@ -73,7 +73,7 @@ class Form
     public function showInputHidden($name, $value)
     {
         ob_start(); ?>
-            <input type="hidden" class="form-control" name="<?php echo $name; ?>" value="<?php echo htmlentities($value, ENT_QUOTES); ?>"><?php
+            <input type="hidden" class="form-control" name="<?php echo $name; ?>" value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>"><?php
         return ob_get_clean();
     }
 
@@ -118,7 +118,7 @@ class Form
     public function showDropdownOptionJump($url, $value, $text_to_display, $to_compare)
     {
         ob_start(); ?>
-            <option value="<?php echo htmlentities($url, ENT_QUOTES); ?><?php echo htmlentities($value , ENT_QUOTES)?>"<?php if ($value == $to_compare) echo " selected" ?>><?php echo htmlentities($text_to_display, ENT_QUOTES); ?></option><?php
+            <option value="<?php echo htmlentities($url, ENT_QUOTES, 'UTF-8'); ?><?php echo htmlentities($value , ENT_QUOTES, 'UTF-8')?>"<?php if ($value == $to_compare) echo " selected" ?>><?php echo htmlentities($text_to_display, ENT_QUOTES, 'UTF-8'); ?></option><?php
         return ob_get_clean();
     }
 

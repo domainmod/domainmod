@@ -27,7 +27,7 @@ class Error
     public function outputSqlError($connection, $msg_to_display)
     {
 
-        return trigger_error(htmlentities($msg_to_display . ": " . mysqli_error($connection)), E_USER_ERROR);
+        return trigger_error(htmlentities($msg_to_display . ": " . mysqli_error($connection)), E_USER_ERROR, 'UTF-8');
 
     }
 
@@ -35,7 +35,7 @@ class Error
     public function outputOldSqlError($connection)
     {
 
-        return trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR);
+        return trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR, 'UTF-8');
 
     }
 
