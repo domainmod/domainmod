@@ -37,17 +37,17 @@ if ($current_db_version === '2.0048') {
                 `dw_dns_zones` INT(10) NOT NULL,
                 `dw_dns_records` INT(10) NOT NULL,
                 `build_status` INT(1) NOT NULL DEFAULT '0',
-                `build_start_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-                `build_end_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `build_start_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `build_end_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 `build_time` INT(10) NOT NULL DEFAULT '0',
                 `has_ever_been_built` INT(1) NOT NULL DEFAULT '0',
                 `build_status_overall` INT(1) NOT NULL DEFAULT '0',
-                `build_start_time_overall` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-                `build_end_time_overall` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `build_start_time_overall` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `build_end_time_overall` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 `build_time_overall` INT(10) NOT NULL DEFAULT '0',
                 `has_ever_been_built_overall` INT(1) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);

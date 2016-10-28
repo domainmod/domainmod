@@ -59,14 +59,14 @@ if ($current_db_version === '3.0.2') {
                 `description` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `interval` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Daily',
                 `expression` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0 7 * * * *',
-                `last_run` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `last_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 `last_duration` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-                `next_run` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `next_run` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 `sort_order` INT(4) NOT NULL DEFAULT '1',
                 `is_running` INT(1) NOT NULL DEFAULT '0',
                 `active` INT(1) NOT NULL DEFAULT '1',
-                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
              ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);

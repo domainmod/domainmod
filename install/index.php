@@ -77,7 +77,7 @@ if ($is_installed == '1') {
             ('Manual or Bulk Updater', '" . $time->stamp() . "'),
             ('Queue', '" . $time->stamp() . "')";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-    
+
     $creation_type_id_installation = $system->getCreationTypeId($connection, 'Installation');
     $creation_type_id_manual = $system->getCreationTypeId($connection, 'Manual');
 
@@ -107,7 +107,7 @@ if ($is_installed == '1') {
             VALUES
             ('Domain', 'Administrator', 'admin', '" . $_SESSION['new_install_email'] . "', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '0', '" . $creation_type_id_installation . "', '" . $time->stamp() . "');";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-    
+
     $sql = "CREATE TABLE IF NOT EXISTS `user_settings` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `user_id` INT(10) NOT NULL,
@@ -418,7 +418,7 @@ if ($is_installed == '1') {
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `currency_id` INT(10) NOT NULL,
                 `user_id` INT(10) NOT NULL,
-                `conversion` FLOAT NOT NULL,
+                `conversion` DECIMAL(12,4) NOT NULL,
                 `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
@@ -429,11 +429,11 @@ if ($is_installed == '1') {
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `registrar_id` INT(10) NOT NULL,
                 `tld` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-                `initial_fee` FLOAT NOT NULL,
-                `renewal_fee` FLOAT NOT NULL,
-                `transfer_fee` FLOAT NOT NULL,
-                `privacy_fee` FLOAT NOT NULL,
-                `misc_fee` FLOAT NOT NULL,
+                `initial_fee` DECIMAL(10,2) NOT NULL,
+                `renewal_fee` DECIMAL(10,2) NOT NULL,
+                `transfer_fee` DECIMAL(10,2) NOT NULL,
+                `privacy_fee` DECIMAL(10,2) NOT NULL,
+                `misc_fee` DECIMAL(10,2) NOT NULL,
                 `currency_id` INT(10) NOT NULL,
                 `fee_fixed` INT(1) NOT NULL,
                 `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -446,9 +446,9 @@ if ($is_installed == '1') {
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `ssl_provider_id` INT(10) NOT NULL,
                 `type_id` INT(10) NOT NULL,
-                `initial_fee` FLOAT NOT NULL,
-                `renewal_fee` FLOAT NOT NULL,
-                `misc_fee` FLOAT NOT NULL,
+                `initial_fee` DECIMAL(10,2) NOT NULL,
+                `renewal_fee` DECIMAL(10,2) NOT NULL,
+                `misc_fee` DECIMAL(10,2) NOT NULL,
                 `currency_id` INT(10) NOT NULL,
                 `fee_fixed` INT(1) NOT NULL,
                 `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -467,7 +467,7 @@ if ($is_installed == '1') {
                 `expiry_date` DATE NOT NULL,
                 `cat_id` INT(10) NOT NULL DEFAULT '1',
                 `fee_id` INT(10) NOT NULL DEFAULT '0',
-                `total_cost` FLOAT NOT NULL,
+                `total_cost` DECIMAL(10,2) NOT NULL,
                 `dns_id` INT(10) NOT NULL DEFAULT '1',
                 `ip_id` INT(10) NOT NULL DEFAULT '1',
                 `hosting_id` INT(10) NOT NULL DEFAULT '1',
@@ -621,7 +621,7 @@ if ($is_installed == '1') {
                 `name` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `expiry_date` DATE NOT NULL,
                 `fee_id` INT(10) NOT NULL,
-                `total_cost` FLOAT NOT NULL,
+                `total_cost` DECIMAL(10,2) NOT NULL,
                 `notes` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `active` INT(1) NOT NULL DEFAULT '1',
                 `fee_fixed` INT(1) NOT NULL,

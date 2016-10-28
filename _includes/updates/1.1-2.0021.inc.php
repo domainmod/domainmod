@@ -44,8 +44,8 @@ if ($current_db_version === '1.2') {
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(255) NOT NULL,
                 `ip` VARCHAR(255) NOT NULL,
-                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -289,8 +289,8 @@ if ($current_db_version === '1.96') {
                 `notes` LONGTEXT NOT NULL,
                 `active` INT(1) NOT NULL DEFAULT '1',
                 `test_data` INT(1) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`),
                 KEY `name` (`name`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
@@ -545,8 +545,8 @@ if ($current_db_version === '2.0003') {
                 `notes` LONGTEXT NOT NULL,
                 `default_type` INT(1) NOT NULL DEFAULT '0',
                 `active` INT(1) NOT NULL DEFAULT '1',
-                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -702,8 +702,8 @@ if ($current_db_version === '2.0009') {
                 `display_ssl_domain` INT(1) NOT NULL DEFAULT '0',
                 `display_ssl_type` INT(1) NOT NULL DEFAULT '0',
                 `display_ssl_expiry_date` INT(1) NOT NULL DEFAULT '0',
-                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
@@ -841,8 +841,8 @@ if ($current_db_version === '2.0013') {
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `segment_id` INT(10) NOT NULL,
                 `domain` VARCHAR(255) NOT NULL,
-                `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-                `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
+                `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
