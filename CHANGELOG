@@ -1,5 +1,12 @@
 DomainMOD CHANGELOG
 ===================
+v4.01.007    2016-10-27
+- Updated default values for DATETIME fields
+- Changed fee and conversion rate data types
+- Removed time change form from non-daily events
+- Updated htmlentities to specify encoding type
+- Fixed edit SSL page (retrieved field order)
+
 v4.01.006    2016-10-01
 - Allow admins to edit user profile settings
 - Updated Admin, Maintenance & Settings menus
