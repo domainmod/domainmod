@@ -48,9 +48,8 @@ class Smtp
         $mail->AltBody = $message_text;
 
         if(!$mail->send()) {
-            echo 'Message could not be sent. Please check your account credentials and try again.<BR>';
-        } else {
-            echo 'Message successfully sent.<BR>';
+            echo 'Message could not be sent.<BR><BR>Please check your SMTP server and account information and try again.';
+            exit;
         }
         return;
     }
