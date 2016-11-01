@@ -1,5 +1,12 @@
 DomainMOD CHANGELOG
 ===================
+v4.01.008    2016-11-01
+- Added PHPMailer class
+- Added SMTP support
+- Added text versions of system emails
+- Fixed post-login redirect bug
+- Formatting updates
+
 v4.01.007    2016-10-27
 - Updated default values for DATETIME fields
 - Changed fee and conversion rate data types
