@@ -145,9 +145,9 @@ echo $form->showRadioBottom('');
 ?>
 <div class="box box-default collapsed-box box-solid">
     <div class="box-header with-border">
-        <h3 class="box-title">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>&nbsp;
-            SMTP Server Settings</h3>
+        <h3 class="box-title" style="padding-top: 3px;">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>&nbsp;SMTP Server Settings
+        </h3>
     </div>
     <div class="box-body"><?php
         echo $form->showRadioTop('Use SMTP Server?', "If the instance of PHP running on your " . $software_title . " server isn't configured to send mail, you can use an external SMTP server to send system emails.", '');

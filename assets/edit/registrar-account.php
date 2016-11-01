@@ -388,12 +388,9 @@ if ($has_api_support >= 1) { ?>
 
     <div class="box box-default collapsed-box box-solid">
         <div class="box-header with-border">
-            <h3 class="box-title">API Credentials</h3>
-            <div class="box-tools">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                        class="fa fa-plus"></i>
-                </button>
-            </div>
+            <h3 class="box-title" style="padding-top: 3px;">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>&nbsp;API Credentials
+            </h3>
         </div>
         <div class="box-body">
 

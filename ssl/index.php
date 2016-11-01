@@ -724,12 +724,9 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
 
     <div class="box box-default <?php echo $box_type; ?>-box box-solid">
         <div class="box-header with-border">
-            <h3 class="box-title">Advanced Filtering [<a href="<?php echo $web_root; ?>/ssl/">reset filters</a>]</h3>
-            <div class="box-tools">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                        class="fa fa-<?php echo $box_icon; ?>"></i>
-                </button>
-            </div>
+            <h3 class="box-title" style="padding-top: 3px;">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-<?php echo $box_icon; ?>"></i></button>&nbsp;Advanced Filtering [<a href="<?php echo $web_root; ?>/ssl/">reset filters</a>]
+            </h3>
         </div>
         <div class="box-body">
             <?php
