@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/updates/4.00.000-current.inc.php
+ * /_includes/updates/4.00.000-4.02.000.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2016 Greg Chetcuti <greg@chetcuti.com>
@@ -994,6 +994,18 @@ if ($current_db_version === '4.01.007') {
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
     $current_db_version = '4.01.008';
+
+}
+
+// upgrade database from 4.01.008 to 4.02.000
+if ($current_db_version === '4.01.008') {
+
+    $sql = "UPDATE settings
+            SET db_version = '4.02.000',
+                update_time = '" . $time->stamp() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $current_db_version = '4.02.000';
 
 }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/software.inc.php
+ * /_includes/updates/4.02.000-current.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2016 Greg Chetcuti <greg@chetcuti.com>
@@ -19,8 +19,6 @@
  *
  */
 ?>
-<?php
-$software_title = 'DomainMOD';
-$code_home_url = 'https://domainmod.org';
-$software_version = '4.02.000';
-$_SESSION['s_web_root'] = $web_root;
+<?php //@formatter:off
+
+//@formatter:on

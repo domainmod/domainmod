@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/updates/1.1-2.0021.inc.php
+ * /_includes/updates/1.1-2.0022.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2016 Greg Chetcuti <greg@chetcuti.com>
