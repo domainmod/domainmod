@@ -1,5 +1,8 @@
 DomainMOD CHANGELOG
 ===================
+v4.02.000    2016-11-01
+- Fixed SMTP Support version number
+
 v4.01.008    2016-11-01
 - Added PHPMailer class
 - Added SMTP support
