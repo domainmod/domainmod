@@ -24,9 +24,8 @@ namespace DomainMOD;
 class Smtp
 {
 
-    public function send($connection, $reply_address, $to_address, $to_name, $subject, $message)
+    public function send($connection, $reply_address, $to_address, $to_name, $subject, $message_html, $message_text)
     {
-
         require DIR_ROOT . 'vendor/autoload.php';
         $mail = new \PHPMailer();
 
@@ -43,12 +42,10 @@ class Smtp
         $mail->setFrom($email_address, 'DomainMOD');
         $mail->addAddress($to_address, $to_name);
         $mail->addReplyTo($reply_address, 'DomainMOD System Admin');
-
         $mail->isHTML(true);  // Set email format to HTML
-
         $mail->Subject = $subject;
-
-        $mail->Body = $message;
+        $mail->Body = $message_html;
+        $mail->AltBody = $message_text;
 
         if(!$mail->send()) {
             echo 'Message could not be sent. Please check your account credentials and try again.<BR>';

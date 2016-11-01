@@ -35,25 +35,34 @@ class Email
         $subject = "Upcoming Expirations - " . $timestamp_long;
         $headers = $this->getHeaders($software_title, $from_address);
 
+        list($result_domains, $result_ssl) = $this->checkExpiring($connection, $number_of_days, $from_cron);
+        $message_html = '';
+        $message_html .= $this->messageTopHtml($software_title, $full_url, $subject, $number_of_days);
+        $message_html .= $this->showDomainsHtml($result_domains, $full_url, $timestamp_basic);
+        $message_html .= $this->showSslHtml($result_ssl, $full_url, $timestamp_basic);
+        $message_html .= $this->messageBottomHtml($software_title, $full_url);
+
+        list($result_domains, $result_ssl) = $this->checkExpiring($connection, $number_of_days, $from_cron);
+        $message_text = '';
+        $message_text = $subject . "\n\n";
+        $message_text .= $this->messageTopText($software_title, $number_of_days);
+        $message_text .= $this->showDomainsText($result_domains, $timestamp_basic);
+        $message_text .= $this->showSslText($result_ssl, $timestamp_basic);
+        $message_text .= $this->messageBottomText($software_title, $full_url);
+
         while ($row_recipients = mysqli_fetch_object($send_to)) {
 
-            list($result_domains, $result_ssl) = $this->checkExpiring($connection, $number_of_days, $from_cron);
-            $message = '';
-            $message .= $this->messageTop($software_title, $full_url, $subject, $number_of_days);
-            $message .= $this->showDomains($result_domains, $full_url, $timestamp_basic);
-            $message .= $this->showSsl($result_ssl, $full_url, $timestamp_basic);
-            $message .= $this->messageBottom($software_title, $full_url);
             $full_to = "\"$row_recipients->first_name $row_recipients->last_name\" <$row_recipients->email_address>";
 
             if ($use_smtp != '1') {
 
-                mail($full_to, $subject, $message, $headers, "-f $from_address");
+                mail($full_to, $subject, $message_html, $headers, "-f $from_address");
 
             } else {
 
                 $smtp = new Smtp();
                 $smtp->send($connection, $from_address, $row_recipients->email_address, $row_recipients->first_name
-                    . ' ' . $row_recipients->last_name, $subject, $message);
+                    . ' ' . $row_recipients->last_name, $subject, $message_html, $message_text);
 
             }
             sleep(2);
@@ -136,7 +145,7 @@ class Email
         return $headers;
     }
 
-    public function messageTop($software_title, $full_url, $subject, $number_of_days)
+    public function messageTopHtml($software_title, $full_url, $subject, $number_of_days)
     {
         ob_start(); ?>
         <html>
@@ -154,7 +163,13 @@ class Email
         return ob_get_clean();
     }
 
-    public function showDomains($result_domains, $full_url, $timestamp_basic)
+    public function messageTopText($software_title, $number_of_days)
+    {
+        $message = "Below is a list of all the Domains & SSL Certificates in " . $software_title . " that are expiring in the next " . $number_of_days . " days.\n\nIf you would like to change the frequency of this email notification please contact your " . $software_title . " administrator.\n\n";
+        return $message;
+    }
+
+    public function showDomainsHtml($result_domains, $full_url, $timestamp_basic)
     {
         ob_start();
         if ($result_domains != '0') { ?>
@@ -177,7 +192,23 @@ class Email
         return ob_get_clean();
     }
 
-    public function showSsl($result_ssl, $full_url, $timestamp_basic)
+    public function showDomainsText($result_domains, $timestamp_basic)
+    {
+        if ($result_domains != '0') {
+            $message .= "[DOMAINS]\n";
+            while ($row_domains = mysqli_fetch_object($result_domains)) {
+                if ($row_domains->expiry_date < $timestamp_basic) {
+                    $message .= $row_domains->expiry_date . " - " . $row_domains->domain . " *EXPIRED*\n";
+                } else {
+                    $message .= $row_domains->expiry_date . " - " . $row_domains->domain . "\n";
+                }
+            }
+            $message .= "\n";
+        }
+        return $message;
+    }
+
+    public function showSslHtml($result_ssl, $full_url, $timestamp_basic)
     {
         ob_start();
         if ($result_ssl != '0') { ?>
@@ -198,7 +229,23 @@ class Email
         return ob_get_clean();
     }
 
-    public function messageBottom($software_title, $full_url)
+    public function showSslText($result_ssl, $timestamp_basic)
+    {
+        if ($result_ssl != '0') {
+            $message .= "[SSL CERTIFICATES]\n";
+            while ($row_ssl = mysqli_fetch_object($result_ssl)) {
+                if ($row_ssl->expiry_date < $timestamp_basic) {
+                    $message .= $row_ssl->expiry_date . " - " . $row_ssl->name . " (" . $row_ssl->type . ") *EXPIRED*\n";
+                } else {
+                    $message .= $row_ssl->expiry_date . " - " . $row_ssl->name . " (" . $row_ssl->type . ")\n";
+                }
+            }
+            $message .= "\n";
+        }
+        return $message;
+    }
+
+    public function messageBottomHtml($software_title, $full_url)
     {
         ob_start(); ?>
         <BR>Best Regards,<BR><BR>Greg Chetcuti<BR><a
@@ -207,8 +254,8 @@ class Email
         </td></tr>
         </table>
         <table width="575" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF"><tr>
-        <td width="100%"><font color="#000000" size="1" face="Verdana, Arial, Helvetica, sans-serif">
-        <BR><hr width="100%" size="1" noshade>You've received this email because you're currently subscribed to receive
+        <td width="100%"><font color="#000000" size="2" face="Verdana, Arial, Helvetica, sans-serif">
+        <BR><hr width="100%" size="2" noshade>You've received this email because you're currently subscribed to receive
         expiration notifications from the <?php echo $software_title; ?> installation located at: <a target="_blank"
         href="<?php echo $full_url; ?>/"><?php echo $full_url; ?>/</a><BR><BR>To unsubscribe from these notifications
         please visit: <BR><a target="_blank" href="<?php echo $full_url; ?>/settings/email/"><?php echo $full_url;
@@ -218,6 +265,18 @@ class Email
         </body>
         </html><?php
         return ob_get_clean();
+    }
+
+    public function messageBottomText($software_title, $full_url)
+    {
+        $message .= "Best Regards,\n";
+        $message .= "\n";
+        $message .= "Greg Chetcuti\n";
+        $message .= "greg@domainmod.org\n\n";
+        $message .= "---\n\n";
+        $message .= "You've received this email because you're currently subscribed to receive expiration notifications from the " . $software_title . " installation located at: " . $full_url . "\n\n";
+        $message .= "To unsubscribe from these notifications please visit: " . $full_url . "/settings/email/";
+        return $message;
     }
 
 } //@formatter:on
