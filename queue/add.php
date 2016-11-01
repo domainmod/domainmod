@@ -432,7 +432,7 @@ if ($new_raid != '') { ?>
 
     <ul><?php
 
-        $missing_text = htmlentities(' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . $new_raid . '"><span style="color: #a30000"><strong>missing</strong></span></a>)', ENT_QUOTES, 'UTF-8');
+        $missing_text = ' (<a href="' . $web_root . '/assets/edit/registrar-account.php?raid=' . htmlentities($new_raid, ENT_QUOTES, 'UTF-8') . '"><span style="color: #a30000"><strong>missing - click here to enter</strong></span></a>)';
         $saved_text = ' (<span style="color: darkgreen"><strong>saved</strong></span>)';
 
         if ($req_account_username == '1') {
