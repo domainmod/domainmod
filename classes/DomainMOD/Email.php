@@ -29,12 +29,14 @@ class Email
         $time = new Time();
         $timestamp_basic = $time->timeBasic();
         $timestamp_long = $time->timeLong();
-        list($full_url, $from_address, $number_of_days) = $this->getSettings($connection);
+
+        list($full_url, $from_address, $number_of_days, $use_smtp) = $this->getSettings($connection);
         $send_to = $this->getRecipients($connection);
         $subject = "Upcoming Expirations - " . $timestamp_long;
         $headers = $this->getHeaders($software_title, $from_address);
 
         while ($row_recipients = mysqli_fetch_object($send_to)) {
+
             list($result_domains, $result_ssl) = $this->checkExpiring($connection, $number_of_days, $from_cron);
             $message = '';
             $message .= $this->messageTop($software_title, $full_url, $subject, $number_of_days);
@@ -42,14 +44,25 @@ class Email
             $message .= $this->showSsl($result_ssl, $full_url, $timestamp_basic);
             $message .= $this->messageBottom($software_title, $full_url);
             $full_to = "\"$row_recipients->first_name $row_recipients->last_name\" <$row_recipients->email_address>";
-            mail($full_to, $subject, $message, $headers, "-f $from_address");
+
+            if ($use_smtp != '1') {
+
+                mail($full_to, $subject, $message, $headers, "-f $from_address");
+
+            } else {
+
+                $smtp = new Smtp();
+                $smtp->send($connection, $from_address, $row_recipients->email_address, $row_recipients->first_name
+                    . ' ' . $row_recipients->last_name, $subject, $message);
+
+            }
             sleep(2);
         }
     }
 
     public function getSettings($connection)
     {
-        $sql = "SELECT full_url, email_address, expiration_days FROM settings";
+        $sql = "SELECT full_url, email_address, expiration_days, use_smtp FROM settings";
         $result = mysqli_query($connection, $sql);
         $url = '';
         $email = '';
@@ -58,8 +71,9 @@ class Email
             $url = $row->full_url;
             $email = $row->email_address;
             $days = $row->expiration_days;
+            $use_smtp = $row->use_smtp;
         }
-        return array($url, $email, $days);
+        return array($url, $email, $days, $use_smtp);
     }
 
     public function checkExpiring($connection, $days, $from_cron)
@@ -112,12 +126,12 @@ class Email
     public function getHeaders($software_title, $from_address)
     {
         $headers = '';
-        $version = phpversion();
         $headers .= 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
         $headers .= 'From: "' . $software_title . '" <' . $from_address . ">\r\n";
         $headers .= 'Return-Path: ' . $from_address . "\r\n";
         $headers .= 'Reply-to: ' . $from_address . "\r\n";
+        $version = phpversion();
         $headers .= 'X-Mailer: PHP/' . $version . "\r\n";
         return $headers;
     }
@@ -147,11 +161,13 @@ class Email
             <strong><u>Domains</u></strong><BR><?php
             while ($row_domains = mysqli_fetch_object($result_domains)) {
                 if ($row_domains->expiry_date < $timestamp_basic) { ?>
+
                     <font color="#CC0000"><?php echo $row_domains->expiry_date; ?></font>&nbsp;&nbsp;<a
                         href="<?php echo $full_url; ?>/edit/domain.php?did=<?php echo $row_domains->id;
                         ?>"><?php echo $row_domains->domain; ?></a>&nbsp;&nbsp;<font
                         color="#CC0000">*EXPIRED*</font><BR><?php
                 } else { ?>
+
                     <?php echo $row_domains->expiry_date; ?>&nbsp;&nbsp;<a href="<?php echo $full_url;
                     ?>/edit/domain.php?did=<?php echo $row_domains->id; ?>"><?php echo $row_domains->domain;
                         ?></a><BR><?php

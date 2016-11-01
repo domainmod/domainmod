@@ -40,10 +40,17 @@ include(DIR_INC . "database.inc.php");
 $system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
-$new_email_address = $_POST['new_email_address'];
-$new_large_mode = $_POST['new_large_mode'];
 $new_full_url = $_POST['new_full_url'];
+$new_email_address = $_POST['new_email_address'];
 $new_expiration_days = $_POST['new_expiration_days'];
+$new_large_mode = $_POST['new_large_mode'];
+$new_use_smtp = $_POST['new_use_smtp'];
+$new_smtp_server = $_POST['new_smtp_server'];
+$new_smtp_protocol = $_POST['new_smtp_protocol'];
+$new_smtp_port = $_POST['new_smtp_port'];
+$new_smtp_email_address = $_POST['new_smtp_email_address'];
+$new_smtp_username = $_POST['new_smtp_username'];
+$new_smtp_password = $_POST['new_smtp_password'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_full_url != "" && $new_expiration_days != "") {
 
@@ -51,6 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
               SET full_url = ?,
                   email_address = ?,
                   large_mode = ?,
+                  use_smtp = ?,
+                  smtp_server = ?,
+                  smtp_protocol = ?,
+                  smtp_port = ?,
+                  smtp_email_address = ?,
+                  smtp_username = ?,
+                  smtp_password = ?,
                   expiration_days = ?,
                   update_time = ?";
     $q = $conn->stmt_init();
@@ -59,7 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
         $timestamp = $time->stamp();
 
-        $q->bind_param('ssiis', $new_full_url, $new_email_address, $new_large_mode, $new_expiration_days, $timestamp);
+        $q->bind_param('ssiissssssis', $new_full_url, $new_email_address, $new_large_mode, $new_use_smtp,
+            $new_smtp_server, $new_smtp_protocol, $new_smtp_port, $new_smtp_email_address, $new_smtp_username,
+            $new_smtp_password, $new_expiration_days, $timestamp);
         $q->execute();
         $q->close();
 
@@ -87,7 +103,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
     } else {
 
-        $query = "SELECT full_url, email_address, large_mode, expiration_days
+        $query = "SELECT full_url, email_address, large_mode, use_smtp, smtp_server, smtp_protocol, smtp_port,
+                    smtp_email_address, smtp_username, smtp_password, expiration_days
                   FROM settings";
         $q = $conn->stmt_init();
 
@@ -95,7 +112,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 
             $q->execute();
             $q->store_result();
-            $q->bind_result($new_full_url, $new_email_address, $new_large_mode, $new_expiration_days);
+            $q->bind_result($new_full_url, $new_email_address, $new_large_mode, $new_use_smtp, $new_smtp_server,
+                $new_smtp_protocol, $new_smtp_port, $new_smtp_email_address, $new_smtp_username, $new_smtp_password,
+                $new_expiration_days);
             $q->fetch();
             $q->close();
 
@@ -117,12 +136,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
 <?php
 echo $form->showFormTop('');
 echo $form->showInputText('new_full_url', 'Full ' . $software_title . ' URL (100)', 'Enter the full URL of your ' . $software_title . ' installation, excluding the trailing slash (Example: http://example.com/domainmod)', $new_full_url, '100', '', '1', '', '');
-echo $form->showInputText('new_email_address', 'System Email Address (100)', 'This should be a valid email address that is able to receive mail. It will be used in various system locations, such as the FROM and REPLY-TO address for emails sent by ' . $software_title . '.', $new_email_address, '100', '', '1', '', '');
+echo $form->showInputText('new_email_address', 'System Email Address (100)', 'This should be a valid email address that is monitored by the ' . $software_title . ' System Administrator. It will be used in various system locations, such as the REPLY-TO address for emails sent by ' . $software_title . '.', $new_email_address, '100', '', '1', '', '');
 echo $form->showInputText('new_expiration_days', 'Expiration Days to Display', 'This is the number of days in the future to display on the Dashboard and in expiration emails.', $new_expiration_days, '3', '', '1', '', '');
 echo $form->showRadioTop('Enable Large Mode?', 'If you have a very large database and your main Domain page is loading slowly, enabling Large Mode will fix the issue, at the cost of losing some of the advanced filtering and mobile functionality. You should only need to enable this if your database contains upwards of 10,000 domains.', '');
 echo $form->showRadioOption('new_large_mode', '1', 'Yes', $new_large_mode, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
 echo $form->showRadioOption('new_large_mode', '0', 'No', $new_large_mode, '', '');
 echo $form->showRadioBottom('');
+?>
+<div class="box box-default collapsed-box box-solid">
+    <div class="box-header with-border">
+        <h3 class="box-title">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>&nbsp;
+            SMTP Server Settings</h3>
+    </div>
+    <div class="box-body"><?php
+        echo $form->showRadioTop('Use SMTP Server?', "If the instance of PHP running on your " . $software_title . " server isn't configured to send mail, you can use an external SMTP server to send system emails.", '');
+        echo $form->showRadioOption('new_use_smtp', '1', 'Yes', $new_use_smtp, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+        echo $form->showRadioOption('new_use_smtp', '0', 'No', $new_use_smtp, '', '');
+        echo $form->showRadioBottom('');
+        echo $form->showInputText('new_smtp_server', 'SMTP Server (255)', 'If you plan on using an external SMTP server, enter the server name here.', $new_smtp_server, '100', '', '', '', '');
+        echo $form->showRadioTop('SMTP Server Protocol', '', '');
+        echo $form->showRadioOption('new_smtp_protocol', 'tls', 'TLS', $new_smtp_protocol, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
+        echo $form->showRadioOption('new_smtp_protocol', 'ssl', 'SSL', $new_smtp_protocol, '', '');
+        echo $form->showRadioBottom('');
+        echo $form->showInputText('new_smtp_port', 'SMTP Server Port (3)', '', $new_smtp_port, '3', '', '', '', '');
+        echo $form->showInputText('new_smtp_email_address', 'SMTP Email Address (100)', '', $new_smtp_email_address, '100', '', '', '', '');
+        echo $form->showInputText('new_smtp_username', 'SMTP Username (100)', 'This is usually the same as the SMTP Email Address.', $new_smtp_username, '100', '', '', '', '');
+        echo $form->showInputText('new_smtp_password', 'SMTP Password (255)', '', $new_smtp_password, '255', '', '', '', ''); ?>
+    </div>
+</div><BR><?php
 
 echo $form->showSubmitButton('Update System Settings', '', '');
 echo $form->showFormBottom('');

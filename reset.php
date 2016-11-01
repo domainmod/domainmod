@@ -47,7 +47,7 @@ $new_data = $_REQUEST['new_data'];
 
 if ($new_data != "") {
 
-    $query = "SELECT username, email_address
+    $query = "SELECT first_name, last_name, username, email_address
               FROM users
               WHERE (username = ? OR email_address = ?)
                 AND active = '1'";
@@ -58,7 +58,7 @@ if ($new_data != "") {
         $q->bind_param('ss', $new_data, $new_data);
         $q->execute();
         $q->store_result();
-        $q->bind_result($username, $email_address);
+        $q->bind_result($first_name, $last_name, $username, $email_address);
 
         if ($q->num_rows() == 1) {
 
@@ -118,7 +118,7 @@ if ($new_data != "") {
 <?php include(DIR_INC . "layout/header-login.inc.php"); ?>
 <?php
     echo $form->showFormTop('');
-    echo $form->showInputText('new_data', 'Username or Email Address', '', $new_data, '20', '', '', '', '');
+    echo $form->showInputText('new_data', 'Username or Email Address', '', $new_data, '100', '', '', '', '');
     echo $form->showSubmitButton('Reset Password', '', '');
     echo $form->showFormBottom('');
 ?>

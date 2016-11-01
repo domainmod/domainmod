@@ -46,7 +46,7 @@ $display = $_GET['display'];
 
 if ($new_username != '') {
 
-    $query = "SELECT id, username, email_address
+    $query = "SELECT id, first_name, last_name, username, email_address
               FROM users
               WHERE username = ?
                 AND active = '1'";
@@ -57,7 +57,7 @@ if ($new_username != '') {
         $q->bind_param('s', $new_username);
         $q->execute();
         $q->store_result();
-        $q->bind_result($id, $username, $email_address);
+        $q->bind_result($id, $first_name, $last_name, $username, $email_address);
 
         if ($q->num_rows() === 1) {
 

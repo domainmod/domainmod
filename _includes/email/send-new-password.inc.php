@@ -20,35 +20,24 @@
  */
 ?>
 <?php
-$query_settings = "SELECT full_url, email_address
-                   FROM settings";
-$q_settings = $conn->stmt_init();
+$email = new DomainMOD\Email();
 
-if ($q_settings->prepare($query_settings)) {
+list($full_url, $from_address, $null_variable, $use_smtp) = $email->getSettings($connection);
 
-    $q_settings->execute();
-    $q_settings->store_result();
-    $q_settings->bind_result($full_url, $from_address);
-    $q_settings->fetch();
-    $q_settings->close();
-
-} else {
-
-    $error->outputSqlError($conn, "ERROR");
-
-}
-
-$to = $email_address;
+$to_address = $email_address;
 $from_name = $software_title;
 
 $subject = "Your " . $software_title . " Password has been Reset";
 $headline = "Your " . $software_title . " Password has been Reset";
 
-$headers = "";
-$headers .= "MIME-Version: 1.0" . "\r\n";
-$headers .= "Content-type: text/html; charset=iso-8859-1" . "\r\n";
-$headers .= "From: \"" . $from_name . "\" <" . $from_address . ">\n";
-$headers .= "Return-Path: <" . $from_address . ">\n";  // Return path for errors
+$headers = '';
+$headers .= 'MIME-Version: 1.0' . "\r\n";
+$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+$headers .= 'From: "' . $software_title . '" <' . $from_address . ">\r\n";
+$headers .= 'Return-Path: ' . $from_address . "\r\n";
+$headers .= 'Reply-to: ' . $from_address . "\r\n";
+$version = phpversion();
+$headers .= 'X-Mailer: PHP/' . $version . "\r\n";
 
 $message .= "
 <html>
@@ -119,4 +108,13 @@ $message .= "<BR></font>
 </body>
 </html>";
 
-mail("$to", "$subject", "$message", "$headers");
+if ($use_smtp != '1') {
+
+    mail($to_address, $subject, $message, $headers, "-f $from_address");
+
+} else {
+
+    $smtp = new DomainMOD\Smtp();
+    $smtp->send($connection, $from_address, $to_address, $first_name . ' ' . $last_name, $subject, $message);
+
+}
