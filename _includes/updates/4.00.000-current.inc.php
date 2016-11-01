@@ -957,4 +957,44 @@ if ($current_db_version === '4.01.006') {
 
 }
 
+// upgrade database from 4.01.007 to 4.01.008
+if ($current_db_version === '4.01.007') {
+
+    $sql = "ALTER TABLE `settings`
+            ADD `use_smtp` TINYINT(1) NOT NULL DEFAULT '0' AFTER `expiration_days`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `settings`
+            ADD `smtp_server` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `use_smtp`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `settings`
+            ADD `smtp_protocol` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'tls' AFTER `smtp_server`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `settings`
+            ADD `smtp_port` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '587' AFTER `smtp_protocol`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `settings`
+            ADD `smtp_email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `smtp_port`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `settings`
+            ADD `smtp_username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `smtp_email_address`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "ALTER TABLE `settings`
+            ADD `smtp_password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `smtp_username`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "UPDATE settings
+            SET db_version = '4.01.008',
+                update_time = '" . $time->stamp() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $current_db_version = '4.01.008';
+
+}
+
 //@formatter:on

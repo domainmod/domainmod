@@ -990,6 +990,13 @@ if ($is_installed == '1') {
                 `default_ssl_type` INT(10) NOT NULL DEFAULT '0',
                 `default_ssl_provider` INT(10) NOT NULL DEFAULT '0',
                 `expiration_days` INT(3) NOT NULL DEFAULT '60',
+                `use_smtp` TINYINT(1) NOT NULL DEFAULT '0',
+                `smtp_server` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `smtp_protocol` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'tls',
+                `smtp_port` VARCHAR(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '587',
+                `smtp_email_address` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `smtp_username` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+                `smtp_password` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
                 `insert_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 `update_time` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
                 PRIMARY KEY  (`id`)
