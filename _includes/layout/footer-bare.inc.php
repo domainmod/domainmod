@@ -29,4 +29,4 @@ if (file_exists($full_filename)) {
     include(DIR_INC . "layout/footer.DEMO.inc.php");
 
 }
-$_SESSION['s_redirect'] = urlencode($_SERVER["REQUEST_URI"]);
+$_SESSION['s_redirect'] = $_SERVER["REQUEST_URI"];
