@@ -66,9 +66,9 @@
                 <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
+                  <li><a href="<?php echo $web_root; ?>/maintenance/update-conversions.php"><i class="fa"></i>Update Conversion Rates</a></li>
                   <li><a href="<?php echo $web_root; ?>/maintenance/update-domain-fees.php"><i class="fa"></i>Update Domain Fees</a></li>
                   <li><a href="<?php echo $web_root; ?>/maintenance/update-ssl-fees.php"><i class="fa"></i>Update SSL Fees</a></li>
-                  <li><a href="<?php echo $web_root; ?>/maintenance/update-conversions.php"><i class="fa"></i>Update Conversion Rates</a></li>
               </ul>
             </li>
 
