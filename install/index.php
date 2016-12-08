@@ -347,7 +347,7 @@ if ($is_installed == '1') {
             ('Taiwan New Dollar', 'TWD', 'NT$', '" . $time->stamp() . "'),
             ('Thailand Baht', 'THB', '฿', '" . $time->stamp() . "'),
             ('Trinidad and Tobago Dollar', 'TTD', 'TT$', '" . $time->stamp() . "'),
-            ('Turkey Lira', 'TRY', '₤', '" . $time->stamp() . "'),
+            ('Turkey Lira', 'TRY', '₺', '" . $time->stamp() . "'),
             ('Tuvalu Dollar', 'TVD', '$', '" . $time->stamp() . "'),
             ('Ukraine Hryvna', 'UAH', '₴', '" . $time->stamp() . "'),
             ('United Kingdom Pound', 'GBP', '£', '" . $time->stamp() . "'),

@@ -21,4 +21,14 @@
 ?>
 <?php //@formatter:off
 
+// upgrade database from 4.02.000 to 4.02.001
+if ($current_db_version === '4.02.000') {
+
+    $sql = "UPDATE currencies
+            SET symbol = '₺'
+            WHERE currency = 'TRY'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+}
+
 //@formatter:on
