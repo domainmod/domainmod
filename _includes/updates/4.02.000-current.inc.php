@@ -29,6 +29,10 @@ if ($current_db_version === '4.02.000') {
             WHERE currency = 'TRY'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
+    $sql = "ALTER TABLE `settings`
+            CHANGE `smtp_port` `smtp_port` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '587'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
 }
 
 //@formatter:on
