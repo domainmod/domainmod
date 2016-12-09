@@ -22,5 +22,5 @@
 <?php
 $software_title = 'DomainMOD';
 $code_home_url = 'https://domainmod.org';
-$software_version = '4.02.000';
+$software_version = '4.02.001';
 $_SESSION['s_web_root'] = $web_root;
