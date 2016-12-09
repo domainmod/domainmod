@@ -159,7 +159,7 @@ echo $form->showRadioBottom('');
         echo $form->showRadioOption('new_smtp_protocol', 'tls', 'TLS', $new_smtp_protocol, '<BR>', '&nbsp;&nbsp;&nbsp;&nbsp;');
         echo $form->showRadioOption('new_smtp_protocol', 'ssl', 'SSL', $new_smtp_protocol, '', '');
         echo $form->showRadioBottom('');
-        echo $form->showInputText('new_smtp_port', 'SMTP Server Port (3)', '', $new_smtp_port, '3', '', '', '', '');
+        echo $form->showInputText('new_smtp_port', 'SMTP Server Port (5)', '', $new_smtp_port, '5', '', '', '', '');
         echo $form->showInputText('new_smtp_email_address', 'SMTP Email Address (100)', '', $new_smtp_email_address, '100', '', '', '', '');
         echo $form->showInputText('new_smtp_username', 'SMTP Username (100)', 'This is usually the same as the SMTP Email Address.', $new_smtp_username, '100', '', '', '', '');
         echo $form->showInputText('new_smtp_password', 'SMTP Password (255)', '', $new_smtp_password, '255', '', '', '', ''); ?>
