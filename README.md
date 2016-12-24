@@ -2,7 +2,7 @@
 
 Project Home: <https://domainmod.org>  
 Project Demo: <https://demo.domainmod.org>  
-Source Code: <https://github.com/domainmod/domainmod/>
+Source Code: <https://domainmod.org/source/>
 
 About
 ------
