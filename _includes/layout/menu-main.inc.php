@@ -96,6 +96,7 @@
         <?php } ?>
 
         <li class="header">HELP</li>
-        <li><a target="_blank" href="http://domainmod.org/news/"><i class="fa fa-newspaper-o"></i> <span>News</span></a></li>
+        <li><a target="_blank" href="<?php echo $web_root; ?>/documentation/"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
         <li><a target="_blank" href="http://domainmod.org/support/"><i class="fa fa-support"></i> <span>Support</span></a></li>
+        <li><a target="_blank" href="http://domainmod.org/news/"><i class="fa fa-newspaper-o"></i> <span>News</span></a></li>
       </ul>
