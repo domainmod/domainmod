@@ -2337,7 +2337,7 @@ if (mysqli_num_rows($result) > 0) { ?>
     <a href="add.php"><?php echo $layout->showButton('button', 'Add Domain'); ?></a>
     <a href="<?php echo $web_root; ?>/queue/info.php"><?php echo $layout->showButton('button', 'Add Domains To Queue'); ?></a>
     <a target="_blank" href="<?php echo $web_root; ?>/raw.php"><?php echo $layout->showButton('button', 'Raw List'); ?></a>
-    <a href="index.php?<?php echo urlencode($_SERVER['QUERY_STRING']); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a>
+    <a href="index.php?<?php echo htmlentities($_SERVER['QUERY_STRING']); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a>
 
     <?php if ($segid != "") { ?>
         <BR><BR><strong>Total Cost:</strong> <?php echo htmlentities($grand_total, ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlentities($_SESSION['s_default_currency'], ENT_QUOTES, 'UTF-8'); ?>
