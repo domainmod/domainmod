@@ -27,11 +27,12 @@ class Maintenance
     public function performCleanup($connection)
     {
 
-        $this->deleteUnusedFees($connection, 'fees', 'domains');
-        $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
+        $this->lowercaseDomains($connection);
         $this->updateTlds($connection);
         $this->updateSegments($connection);
         $this->updateAllFees($connection);
+        $this->deleteUnusedFees($connection, 'fees', 'domains');
+        $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
 
         $result_message = 'Maintenance Completed<BR>';
 
@@ -39,15 +40,14 @@ class Maintenance
 
     }
 
-    public function deleteUnusedFees($connection, $fee_table, $compare_table)
+    public function lowercaseDomains($connection)
     {
-        $sql = "DELETE FROM " . $fee_table . "
-                WHERE id NOT IN (
-                                 SELECT fee_id
-                                 FROM " . $compare_table . "
-                                 )";
+
+        $sql = "UPDATE domains
+                SET domain = LOWER(domain)";
         mysqli_query($connection, $sql);
         return true;
+
     }
 
     public function updateTlds($connection)
@@ -294,6 +294,17 @@ class Maintenance
 
         return true;
 
+    }
+
+    public function deleteUnusedFees($connection, $fee_table, $compare_table)
+    {
+        $sql = "DELETE FROM " . $fee_table . "
+                WHERE id NOT IN (
+                                 SELECT fee_id
+                                 FROM " . $compare_table . "
+                                 )";
+        mysqli_query($connection, $sql);
+        return true;
     }
 
 } //@formatter:on
