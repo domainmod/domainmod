@@ -92,7 +92,7 @@ TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data
 
 Support
 --------
-For the DomainMOD documentation please visit <https://domainmod.org/documentation/>, or access the /documentation/ folder within your DomainMOD installation.
+For the DomainMOD documentation please visit <https://domainmod.org/docs/>, or access the /docs/ folder within your DomainMOD installation.
 
 If you have any questions, comments, or bugs to report, please visit <https://domainmod.org/support/>.
 
