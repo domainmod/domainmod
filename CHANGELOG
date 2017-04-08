@@ -1,5 +1,13 @@
 DomainMOD CHANGELOG
 ===================
+v4.03.000    2017-04-07
+- Increase SMTP Port form field from 3 to 5
+- Update Maintenance class to lowercase domains
+- Update Domain Queue maintenance tasks
+- Update highlightText method
+- Add Softaculous to README
+- Add Documentation (User Guide)
+
 v4.02.001    2016-12-08
 - Updated GoDaddy API domain retrieval to 10,000
 - Increased SMTP port length from 3 to 5
