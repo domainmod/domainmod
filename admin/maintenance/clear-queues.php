@@ -41,5 +41,8 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $_SESSION['s_message_success'] .= $queue->clearQueues($connection);
 
+$queue->checkListQueue($connection);
+$queue->checkDomainQueue($connection);
+
 header("Location: index.php");
 exit;
