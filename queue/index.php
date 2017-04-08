@@ -715,17 +715,17 @@ if (mysqli_num_rows($result_domains) == 0) {
 
                     if ($row_domains->already_in_domains == '1') {
 
-                        echo $layout->highlightText('Already in DomainMOD');
+                        echo $layout->highlightText('failure', 'Already in DomainMOD');
                         $already_exists = '1';
 
                     } elseif ($row_domains->already_in_queue == '1') {
 
-                        echo $layout->highlightText('Already in Domain Queue');
+                        echo $layout->highlightText('failure', 'Already in Domain Queue');
                         $already_exists = '1';
 
                     } else {
 
-                        echo 'Successfully Imported';
+                        echo $layout->highlightText('success', 'Successfully Imported');
 
                     }
 

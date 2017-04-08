@@ -47,7 +47,7 @@ class Form
         ob_start();
             echo $before; ?>
             <div class="form-group">
-                <label><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('*'); ?><?php } ?>
+                <label><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('failure', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <input type="<?php if ($is_password == '1') { echo "password"; } else { echo "text"; } ?>" class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php echo $name; ?>"
                     value="<?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?>" maxlength="<?php echo $maxlength; ?>">
@@ -61,7 +61,7 @@ class Form
         ob_start();
             echo $before; ?>
             <div class="form-group">
-                <label><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('*'); ?><?php } ?>
+                <label><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('failure', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <textarea class="form-control" placeholder="<?php echo $text_to_display; ?>" name="<?php
                     echo $name; ?>" style="height: 80px;"><?php echo htmlentities($value, ENT_QUOTES, 'UTF-8'); ?></textarea>
@@ -82,7 +82,7 @@ class Form
         ob_start();
             echo $before; ?>
             <div class="form-group">
-                <label class="control-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('*'); ?><?php } ?>
+                <label class="control-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('failure', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <select class="form-control" name="<?php echo $name; ?>"><?php
         return ob_get_clean();
@@ -93,7 +93,7 @@ class Form
         ob_start();
             echo $before; ?>
             <div class="form-group">
-                <label class="control-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('*'); ?><?php } ?>
+                <label class="control-label"><?php echo $text_to_display; ?><?php if ($required == '1') { ?><?php $layout = new Layout(); echo $layout->highlightText('failure', '*'); ?><?php } ?>
                 <?php if ($subtext != '') echo '<BR><span style="font-weight: normal;">' . $subtext . '</span><BR>'; ?></label>
                 <select class="form-control" name="jumpMenu" id="jumpMenu" onChange="MM_jumpMenu('parent',this,0)"><?php
         return ob_get_clean();
