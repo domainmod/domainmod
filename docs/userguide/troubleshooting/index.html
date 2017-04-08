@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Greg Chetcuti">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Troubleshooting - DomainMOD User Guide</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Troubleshooting";
+    var mkdocs_page_input_path = "troubleshooting.md";
+    var mkdocs_page_url = "/troubleshooting/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+  
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+
+	<div class="wy-side-nav-search">
+	<!---->
+		<!--<a href=".." class="icon icon-home"> DomainMOD User Guide</a>-->
+	<!---->
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search The User Guide" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        <ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="..">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../getting-started/">Getting Started</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../first-run/">First Run</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../upgrading/">Upgrading</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../creating-assets/">Creating Assets</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../adding-domains/">Adding Domains</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../domain-queue/">Domain Queue</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../bulk-updater/">Bulk Updater</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../administration/">Administration</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../data-warehouse/">Data Warehouse</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../faq/">Frequently Asked Questions</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Troubleshooting</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#installation">Installation</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#usage">Usage</a></li>
+                
+            
+            </ul>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../contribute/">Contribute</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../support/">Support</a>
+        
+    </li>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <!--<a href="..">DomainMOD User Guide</a>-->
+        <a href="..">User Guide</a>
+      </nav>
+
+      
+
+	  <div class="wy-nav-content">
+
+        <span class="domainmod-logo">
+          <a href="https://domainmod.org"><img width="264" height="40" src="https://cdn.domainmod.org/images/logo.png"></a>
+        </span>
+
+        <div class="rst-content" style="padding-top: 23px;">
+
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">User Guide</a> &raquo;&nbsp;</li>
+    
+      
+    
+    <li>Troubleshooting</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/domainmod/userguide/edit/master/docs/troubleshooting.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+                
+                
+                <h1>Troubleshooting</h1>
+                
+
+                
+                <h2 id="installation">Installation</h2>
+<p><h4>During installation the database tables are being created but some of the data isn't getting inserted.</h4></p>
+<p>MySQL strict mode may be enabled on your server. In order for DomainMOD to install and run, strict mode must to be disabled.</p>
+<p>To disable strict mode you need to edit your MySQL configuration file. In it there will be a line that looks like:</p>
+<p><strong>sql-mode="STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"</strong></p>
+<p>To disable strict mode you need to remove STRICT_TRANS_TABLES from this line (including the comma after it, if there is one), which in this example would leave you with:</p>
+<p><strong>sql-mode="NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"</strong></p>
+<p>Once disabled you will need to restart MySQL, and then DomainMOD should install properly.</p>
+<h2 id="usage"><BR>Usage</h2>
+<p><h4>DomainMOD seems to be working properly, but when I use the software I get a bunch of warning messages, such as "undefined index" and "undefined variable".</h4></p>
+<p>This is related to the error reporting level that you have turned on in PHP. Although these are only warnings and won't actually be breaking anything, you can get rid of them by editing your php.ini file and changing the error_reporting line.</p>
+<p>Right now you probably have something that looks like this:</p>
+<p><strong>error_reporting = E_ALL</strong></p>
+<p>But you should have something that looks like this:</p>
+<p><strong>error_reporting = E_ALL &amp; ~E_NOTICE &amp; ~E_STRICT &amp; ~E_DEPRECATED</strong></p>
+<p>Commented out in your php.ini file, above the error_reporting directive, there may be a suggested error reporting line for a "Production" environment. Try using that line instead of what you're using now, restart Apache/PHP, and that should get rid of the errors.</p>
+<h4>I'm trying to connect DomainMOD to my domain registrar account using the API so that I can import my domains, but everything in the Domain Queue just says "Pending".</h4>
+
+<p>In order to import your domains using the domain registrar's API you must setup the <a href="../getting-started/#cron-job">cron job</a> that comes with DomainMOD. In addition to having the cron job running, you must also have your API credential saved along with your registrar account Asset.</p>
+<h4>I've setup the Data Warehouse within DomainMOD, but none of my changes propagate to my web server.</h4>
+
+<p>The Data Warehouse is read-only. You can import data from your web server into your Data Warehouse, but this data is for informational purposes only, and you can't edit your server data within DomainMOD and have it update your web server. This is something that will be worked on in the future, but is currently not possible.</p>
+                
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../contribute/" class="btn btn-neutral float-right" title="Contribute">Next&nbsp;&nbsp;<span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../faq/" class="btn btn-neutral" title="Frequently Asked Questions"><span class="icon icon-circle-arrow-left"></span>&nbsp;&nbsp;Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    
+  </div>
+
+  <span style="font-family: 'Verdana'; font-size: 12px; font-style: italic;"><a href="https://domainmod.org">DomainMOD</a> is open source software released under the <a href="http://www.gnu.org/licenses/">GNU/GPL License</a>.<BR>
+  Copyright &copy; 2017 <a href="http://chetcuti.com">Greg Chetcuti</a>. All rights reserved.</span>
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/domainmod/userguide/" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../faq/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../contribute/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script src="../js/theme.js"></script>
+
+</body>
+</html>
