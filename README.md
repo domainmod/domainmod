@@ -16,20 +16,25 @@ So go ahead, take the live demo for a test drive before you install: <https://de
 
 Downloading
 -------------
-There are currently two options for downloading DomainMOD. Whenever possible we recommend that you use option #2, the git repository download directly from your web server. Not only is it a nice quick install, but it also makes upgrading a breeze.
+There are currently three options for downloading DomainMOD.
 
-**NOTE:** Using download option #2 requires that you have git installed on your web server, and that you have access to and know how to use the command line.
+**Option #1**  
+Visit the following URL to download DomainMOD in a .ZIP file: <https://domainmod.org/download/>
 
-**Download Option #1**  
-Visit the following URL to download the most up-to-date version of DomainMOD: <https://domainmod.org/download/>
-
-**Download Option #2**  
-Use git right from your web server to retrieve the source code. To do so, change to the directory where you want to install DomainMOD and run the following command:
+**Option #2**  
+Use git from your web server to retrieve the DomainMOD source code. To do so, change to the directory where you want to install DomainMOD and run the following command (this download option requires that you have git installed on your web server):
 
     git clone https://github.com/domainmod/domainmod.git
 
+**Option #3**  
+Use Softaculous from your web server to download **and** install DomainMOD.  Softaculous is the web hosting industry's leading software auto-installer, and it has helped millions of users install applications with a few clicks of a mouse. Softaculous easily integrates into the leading control panels like cPanel, Plesk, DirectAdmin, InterWorx, H-Sphere, and more. Check your hosting control panel or contact your web host if you're not sure if they offer Softaculous.
+
+To install DomainMOD simply open Softaculous, use the search feature to find DomainMOD, and then click the "Install Now" button. After you answer a few questions about your installation Softaculous will do the rest.
+
 Installing
 ---------
+If you installed DomainMOD using Softaculous in the previous step you can ignore the rest of this *Installing* section, as you should already have DomainMOD up-and-running.
+
 If you downloaded the .ZIP file in the previous step, you will now need to upload the archive to your web server and then unpack it into the folder where you wish to install (or unpack it and then upload it, whichever you prefer).
 
 If you used git to retrieve the source code in the previous step, just change to the directory where you ran the git command and your files are already waiting for you in a folder called /domainmod/. Feel free to rename this folder to whatever you want.
