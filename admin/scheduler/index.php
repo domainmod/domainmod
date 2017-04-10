@@ -57,13 +57,15 @@ $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connecti
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 The Task Scheduler allows you to run various system jobs at specified times, which helps keep your <?php
 echo $software_title; ?> installation up-to-date and running smoothly, as well as notifies you of important information,
-such as emailing you to let you know about upcoming Domain & SSL Certificate expirations.<BR>
-<BR>
-In order to use the Task Scheduler you must setup a cron/scheduled job on your web server to execute the file
-<strong>cron.php</strong>, which is located in the root folder of your <?php echo $software_title; ?> installation.
+such as emailing you to let you know about upcoming Domain & SSL Certificate expirations. In order to use the Task
+Scheduler you must setup a cron/scheduled job on your web server to execute the file <strong>cron.php</strong>, which is
+located in the root folder of your <?php echo $software_title; ?> installation.
 This file should be executed <em>every 10 minutes</em>, and once it's setup the Task Scheduler will be live.<BR>
 <BR>
 Using the Task Scheduler is optional, but <em>highly</em> recommended.<BR>
+<BR>
+Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?></strong><BR>
+<BR>
 <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
 
     <thead>
