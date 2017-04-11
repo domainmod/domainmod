@@ -176,7 +176,7 @@
 	  <div class="wy-nav-content">
 
         <span class="domainmod-logo">
-          <a href="https://domainmod.org"><img width="264" height="40" src="https://cdn.domainmod.org/images/logo.png"></a>
+          <a href="https://domainmod.org"><img width="264" height="40" src="../img/logo.png"></a>
         </span>
 
         <div class="rst-content" style="padding-top: 23px;">
@@ -210,17 +210,21 @@
 <p><h4>During installation the database tables are being created but some of the data isn't getting inserted.</h4></p>
 <p>MySQL strict mode may be enabled on your server. In order for DomainMOD to install and run, strict mode must to be disabled.</p>
 <p>To disable strict mode you need to edit your MySQL configuration file. In it there will be a line that looks like:</p>
-<p><strong>sql-mode="STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"</strong></p>
+<pre><code>sql-mode="STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+</code></pre>
 <p>To disable strict mode you need to remove STRICT_TRANS_TABLES from this line (including the comma after it, if there is one), which in this example would leave you with:</p>
-<p><strong>sql-mode="NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"</strong></p>
+<pre><code>sql-mode="NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+</code></pre>
 <p>Once disabled you will need to restart MySQL, and then DomainMOD should install properly.</p>
 <h2 id="usage"><BR>Usage</h2>
 <p><h4>DomainMOD seems to be working properly, but when I use the software I get a bunch of warning messages, such as "undefined index" and "undefined variable".</h4></p>
 <p>This is related to the error reporting level that you have turned on in PHP. Although these are only warnings and won't actually be breaking anything, you can get rid of them by editing your php.ini file and changing the error_reporting line.</p>
 <p>Right now you probably have something that looks like this:</p>
-<p><strong>error_reporting = E_ALL</strong></p>
+<pre><code>error_reporting = E_ALL
+</code></pre>
 <p>But you should have something that looks like this:</p>
-<p><strong>error_reporting = E_ALL &amp; ~E_NOTICE &amp; ~E_STRICT &amp; ~E_DEPRECATED</strong></p>
+<pre><code>error_reporting = E_ALL &amp; ~E_NOTICE &amp; ~E_STRICT &amp; ~E_DEPRECATED
+</code></pre>
 <p>Commented out in your php.ini file, above the error_reporting directive, there may be a suggested error reporting line for a "Production" environment. Try using that line instead of what you're using now, restart Apache/PHP, and that should get rid of the errors.</p>
 <h4>I'm trying to connect DomainMOD to my domain registrar account using the API so that I can import my domains, but everything in the Domain Queue just says "Pending".</h4>
 
@@ -228,6 +232,15 @@
 <h4>I've setup the Data Warehouse within DomainMOD, but none of my changes propagate to my web server.</h4>
 
 <p>The Data Warehouse is read-only. You can import data from your web server into your Data Warehouse, but this data is for informational purposes only, and you can't edit your server data within DomainMOD and have it update your web server. This is something that will be worked on in the future, but is currently not possible.</p>
+<h4>I'm getting the error, "Database Connection Error: 1045".</h4>
+
+<p>Error 1045 is an access denied error, which seems to be caused when the user doesn't have appropriate permissions on the database, or there's another privilege issue with the database. Unfortunately this is pretty difficult to troubleshoot on our end, as there are many things that can cause this.</p>
+<p>We would recommend trying some of the suggestions for this error in Google and see if any of them help: <a href="https://www.google.com/search?q=Database+Connection+Error%3A+1045">https://www.google.com/search?q=Database+Connection+Error%3A+1045</a>.</p>
+<h4>I'm trying to import data using the Domain Queue, but everything is stuck on "Processing".</h4>
+
+<p>In case there's a problem with the cron job you can also try triggering the queue manually. Go to Administration -&gt; Task Scheduler, and then beside "Domain Queue Processing" click on the "run now" link (this may take a bit of time to run). Then go back to the queue and see if anything has changed.</p>
+<p>If that doesn't work you can try clearing the queue items that are currently processing by going to Administration -&gt; Maintenance, and then clicking on "Clear Queue Processing". Now try the last suggestion again to see if running the queue manually through the Task Scheduler helps.</p>
+<p>If that still doesn't do it go to Administration -&gt; Maintenance, and then click on "Clear Queues". This will completely clear out the queue. Now try retrieving your data again using the Domain Queue.</p>
                 
             </div>
           </div>
