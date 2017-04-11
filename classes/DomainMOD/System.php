@@ -48,6 +48,8 @@ class System
             $_SESSION['s_system_upgrade_available'] = '1';
             $message = $this->getUpgradeMessage();
         } else {
+            $sql = "UPDATE settings SET upgrade_available = '0'";
+            mysqli_query($connection, $sql);
             $_SESSION['s_system_upgrade_available'] = '0';
             $message = "No Upgrade Available";
         }
@@ -56,7 +58,19 @@ class System
 
     public function getLiveVersion()
     {
-        return file_get_contents('https://raw.githubusercontent.com/domainmod/domainmod/master/version.txt');
+        $version_file = 'https://raw.githubusercontent.com/domainmod/domainmod/master/version.txt';
+        $version_fgc = file_get_contents($version_file);
+        if ($version_fgc) {
+            $live_version = $version_fgc;
+        } else {
+            $handle = curl_init();
+            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($handle, CURLOPT_URL, $version_file);
+            $result = curl_exec($handle);
+            curl_close($handle);
+            $live_version = $result;
+        }
+        return $live_version;
     }
 
     public function getUpgradeMessage()
