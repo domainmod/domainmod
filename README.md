@@ -31,6 +31,8 @@ Use Softaculous from your web server to download **and** install DomainMOD.  Sof
 
 To install DomainMOD simply open Softaculous, use the search feature to find DomainMOD, and then click the "Install Now" button. After you answer a few questions about your installation Softaculous will do the rest.
 
+More Information: <http://www.softaculous.com/softaculous/apps/others/DomainMOD/>
+
 Installing
 ---------
 If you installed DomainMOD using Softaculous in the previous step you can ignore the rest of this *Installing* section, as you should already have DomainMOD up-and-running.
