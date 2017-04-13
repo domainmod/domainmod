@@ -23,33 +23,6 @@ namespace DomainMOD;
 
 class NameSilo
 {
-    
-    public function getApiKey($connection, $account_id)
-    {
-        $error = new Error();
-        $sql = "SELECT api_key
-                FROM registrar_accounts
-                WHERE id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-        if (mysqli_num_rows($result) > 0) {
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                $api_key = $row->api_key;
-
-            }
-
-        } else {
-
-            echo "No API Credentials Found";
-            exit;
-
-        }
-
-        return $api_key;
-    }
 
     public function getApiUrl($api_key, $domain, $command)
     {

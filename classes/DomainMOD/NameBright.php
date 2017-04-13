@@ -24,35 +24,6 @@ namespace DomainMOD;
 class NameBright
 {
 
-    public function getApiKey($connection, $account_id)
-    {
-        $error = new Error();
-        $sql = "SELECT username, api_app_name, api_secret
-                FROM registrar_accounts
-                WHERE id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-        if (mysqli_num_rows($result) > 0) {
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                $account_username = $row->username;
-                $api_app_name = $row->api_app_name;
-                $api_secret = $row->api_secret;
-
-            }
-
-        } else {
-
-            echo "No API Credentials Found";
-            exit;
-
-        }
-
-        return array($account_username, $api_app_name, $api_secret);
-    }
-
     public function getApiUrl($account_username, $api_app_name, $api_secret, $command, $domain)
     {
         $base_url = 'https://api.namebright.com/';

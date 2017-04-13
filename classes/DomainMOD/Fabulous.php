@@ -24,34 +24,6 @@ namespace DomainMOD;
 class Fabulous
 {
 
-    public function getApiKey($connection, $account_id)
-    {
-        $error = new Error();
-        $sql = "SELECT username, `password`
-                FROM registrar_accounts
-                WHERE id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-        if (mysqli_num_rows($result) > 0) {
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                $account_username = $row->username;
-                $account_password = $row->password;
-
-            }
-
-        } else {
-
-            echo "No API Credentials Found";
-            exit;
-
-        }
-
-        return array($account_username, $account_password);
-    }
-
     public function getApiUrl($account_username, $account_password, $domain, $command)
     {
         $base_url = 'https://api.fabulous.com/';

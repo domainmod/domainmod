@@ -24,34 +24,6 @@ namespace DomainMOD;
 class InternetBs
 {
 
-    public function getApiKey($connection, $account_id)
-    {
-        $error = new Error();
-        $sql = "SELECT api_key, api_secret
-                FROM registrar_accounts
-                WHERE id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-        if (mysqli_num_rows($result) > 0) {
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                $api_key = $row->api_key;
-                $api_secret = $row->api_secret;
-
-            }
-
-        } else {
-
-            echo "No API Credentials Found";
-            exit;
-
-        }
-
-        return array($api_key, $api_secret);
-    }
-
     public function getApiUrl($api_key, $api_secret, $command, $domain)
     {
         $base_url = 'https://api.internet.bs/';

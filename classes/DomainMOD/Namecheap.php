@@ -23,45 +23,6 @@ namespace DomainMOD;
 
 class Namecheap
 {
-    
-    public function getApiKey($connection, $account_id)
-    {
-        $error = new Error();
-        $sql = "SELECT username, api_key, api_ip_id
-                FROM registrar_accounts
-                WHERE id = '" . $account_id . "'
-                LIMIT 1";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
-
-        if (mysqli_num_rows($result) > 0) {
-
-            while ($row = mysqli_fetch_object($result)) {
-
-                $account_username = $row->username;
-                $api_key = $row->api_key;
-
-                $sql_temp = "SELECT ip
-                             FROM ip_addresses
-                             WHERE id = '" . $row->api_ip_id . "'";
-                $result_temp = mysqli_query($connection, $sql_temp);
-
-                while ($row_temp = mysqli_fetch_object($result_temp)) {
-
-                    $api_ip_address = $row_temp->ip;
-
-                }
-
-            }
-
-        } else {
-
-            echo "No API Credentials Found";
-            exit;
-
-        }
-
-        return array($account_username, $api_key, $api_ip_address);
-    }
 
     public function getApiUrl($api_key, $command, $domain, $account_username, $api_ip_address)
     {

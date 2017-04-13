@@ -33,85 +33,87 @@ class DomainQueue
 
         if (mysqli_num_rows($result) > 0) {
 
+            $api = new Api();
+
             while ($row = mysqli_fetch_object($result)) {
 
                 if ($row->api_registrar_name == 'DNSimple') {
 
                     $registrar = new DnSimple();
-                    $api_key = $registrar->getApiKey($connection, $row->account_id);
+                    $api_key = $api->getKey($connection, $row->account_id);
                     $account_id = $registrar->getAccountId($api_key);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $account_id);
 
                 } elseif ($row->api_registrar_name == 'DreamHost') {
 
                     $registrar = new DreamHost();
-                    $api_key = $registrar->getApiKey($connection, $row->account_id);
+                    $api_key = $api->getKey($connection, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($connection, $api_key, $row->account_id);
 
                 } elseif ($row->api_registrar_name == 'Dynadot') {
 
                     $registrar = new Dynadot();
-                    $api_key = $registrar->getApiKey($connection, $row->account_id);
+                    $api_key = $api->getKey($connection, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key);
 
                 } elseif ($row->api_registrar_name == 'eNom') {
 
                     $registrar = new Enom();
-                    list($account_username, $account_password) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $account_password) = $api->getUserPass($connection, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $account_password);
 
                 } elseif ($row->api_registrar_name == 'Fabulous') {
 
                     $registrar = new Fabulous();
-                    list($account_username, $account_password) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $account_password) = $api->getUserPass($connection, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $account_password);
 
                 } elseif ($row->api_registrar_name == 'Freenom') {
 
                     $registrar = new Freenom();
-                    list($account_username, $account_password) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $account_password) = $api->getUserPass($connection, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $account_password);
 
                 } elseif ($row->api_registrar_name == 'GoDaddy') {
 
                     $registrar = new GoDaddy();
-                    list($api_key, $api_secret) = $registrar->getApiKey($connection, $row->account_id);
+                    list($api_key, $api_secret) = $api->getKeySecret($connection, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $api_secret);
 
                 } elseif ($row->api_registrar_name == 'Internet.bs') {
 
                     $registrar = new InternetBs();
-                    list($api_username, $api_secret) = $registrar->getApiKey($connection, $row->account_id);
-                    list($domain_count, $domain_list) = $registrar->getDomainList($api_username, $api_secret);
+                    list($api_key, $api_secret) = $api->getKeySecret($connection, $row->account_id);
+                    list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $api_secret);
 
                 } elseif ($row->api_registrar_name == 'NameBright') {
 
                     $registrar = new NameBright();
-                    list($account_username, $api_app_name, $api_secret) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $api_app_name, $api_secret) = $api->getUserAppSecret($connection, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_app_name, $api_secret);
 
                 } elseif ($row->api_registrar_name == 'Namecheap') {
 
                     $registrar = new Namecheap();
-                    list($account_username, $api_key, $api_ip_address) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $api_key, $api_ip_address) = $api->getUserKeyIp($connection, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_key, $api_ip_address);
 
                 } elseif ($row->api_registrar_name == 'Name.com') {
 
                     $registrar = new Namecom();
-                    list($account_username, $api_key) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $api_key) = $api->getUserKey($connection, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_key);
 
                 } elseif ($row->api_registrar_name == 'NameSilo') {
 
                     $registrar = new NameSilo();
-                    $api_key = $registrar->getApiKey($connection, $row->account_id);
+                    $api_key = $api->getKey($connection, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key);
 
                 } elseif ($row->api_registrar_name == 'OpenSRS') {
 
                     $registrar = new OpenSrs();
-                    list($account_username, $api_key) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $api_key) = $api->getUserKey($connection, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_key);
 
                 } else {
@@ -158,12 +160,14 @@ class DomainQueue
 
         if (mysqli_num_rows($result) > 0) {
 
+            $api = new Api();
+
             while ($row = mysqli_fetch_object($result)) {
 
                 if ($row->api_registrar_name == 'DNSimple') {
 
                     $registrar = new DnSimple();
-                    $api_key = $registrar->getApiKey($connection, $row->account_id);
+                    $api_key = $api->getKey($connection, $row->account_id);
                     $account_id = $registrar->getAccountId($api_key);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $account_id, $row->domain);
 
@@ -175,73 +179,73 @@ class DomainQueue
                 } elseif ($row->api_registrar_name == 'Dynadot') {
 
                     $registrar = new Dynadot();
-                    $api_key = $registrar->getApiKey($connection, $row->account_id);
+                    $api_key = $api->getKey($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'eNom') {
 
                     $registrar = new Enom();
-                    list($account_username, $account_password) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $account_password) = $api->getUserPass($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Fabulous') {
 
                     $registrar = new Fabulous();
-                    list($account_username, $account_password) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $account_password) = $api->getUserPass($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Freenom') {
 
                     $registrar = new Freenom();
-                    list($account_username, $account_password) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $account_password) = $api->getUserPass($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'GoDaddy') {
 
                     $registrar = new GoDaddy();
-                    list($api_key, $api_secret) = $registrar->getApiKey($connection, $row->account_id);
+                    list($api_key, $api_secret) = $api->getKeySecret($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Internet.bs') {
 
                     $registrar = new InternetBs();
-                    list($api_key, $api_secret) = $registrar->getApiKey($connection, $row->account_id);
+                    list($api_key, $api_secret) = $api->getKeySecret($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'NameBright') {
 
                     $registrar = new NameBright();
-                    list($account_username, $api_app_name, $api_secret) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $api_app_name, $api_secret) = $api->getUserAppSecret($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_app_name, $api_secret, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Namecheap') {
 
                     $registrar = new Namecheap();
-                    list($account_username, $api_key, $api_ip_address) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $api_key, $api_ip_address) = $api->getUserKeyIp($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $api_ip_address, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Name.com') {
 
                     $registrar = new Namecom();
-                    list($account_username, $api_key) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $api_key) = $api->getUserKey($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'NameSilo') {
 
                     $registrar = new NameSilo();
-                    $api_key = $registrar->getApiKey($connection, $row->account_id);
+                    $api_key = $api->getKey($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'OpenSRS') {
 
                     $registrar = new OpenSrs();
-                    list($account_username, $api_key) = $registrar->getApiKey($connection, $row->account_id);
+                    list($account_username, $api_key) = $api->getUserKey($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'ResellerClub') {
 
                     $registrar = new ResellerClub();
-                    list($reseller_id, $api_key) = $registrar->getApiKey($connection, $row->account_id);
+                    list($reseller_id, $api_key) = $api->getReselleridKey($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($reseller_id, $api_key, $row->domain);
 
                 } else {

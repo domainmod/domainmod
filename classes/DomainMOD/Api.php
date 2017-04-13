@@ -24,6 +24,213 @@ namespace DomainMOD;
 class Api
 {
 
+    public function getKey($connection, $account_id)
+    {
+        $error = new Error();
+        $sql = "SELECT api_key
+                FROM registrar_accounts
+                WHERE id = '" . $account_id . "'
+                LIMIT 1";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $api_key = $row->api_key;
+
+            }
+
+        } else {
+
+            echo "No API Credentials Found";
+            exit;
+
+        }
+
+        return $api_key;
+    }
+
+    public function getKeySecret($connection, $account_id)
+    {
+        $error = new Error();
+        $sql = "SELECT api_key, api_secret
+                FROM registrar_accounts
+                WHERE id = '" . $account_id . "'
+                LIMIT 1";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $api_key = $row->api_key;
+                $api_secret = $row->api_secret;
+
+            }
+
+        } else {
+
+            echo "No API Credentials Found";
+            exit;
+
+        }
+
+        return array($api_key, $api_secret);
+    }
+
+    public function getUserKey($connection, $account_id)
+    {
+        $error = new Error();
+        $sql = "SELECT username, api_key
+                FROM registrar_accounts
+                WHERE id = '" . $account_id . "'
+                LIMIT 1";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $account_username = $row->username;
+                $api_key = $row->api_key;
+
+            }
+
+        } else {
+
+            echo "No API Credentials Found";
+            exit;
+
+        }
+
+        return array($account_username, $api_key);
+    }
+
+    public function getUserAppSecret($connection, $account_id)
+    {
+        $error = new Error();
+        $sql = "SELECT username, api_app_name, api_secret
+                FROM registrar_accounts
+                WHERE id = '" . $account_id . "'
+                LIMIT 1";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $account_username = $row->username;
+                $api_app_name = $row->api_app_name;
+                $api_secret = $row->api_secret;
+
+            }
+
+        } else {
+
+            echo "No API Credentials Found";
+            exit;
+
+        }
+
+        return array($account_username, $api_app_name, $api_secret);
+    }
+
+    public function getUserKeyIp($connection, $account_id)
+    {
+        $error = new Error();
+        $sql = "SELECT username, api_key, api_ip_id
+                FROM registrar_accounts
+                WHERE id = '" . $account_id . "'
+                LIMIT 1";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $account_username = $row->username;
+                $api_key = $row->api_key;
+
+                $sql_temp = "SELECT ip
+                             FROM ip_addresses
+                             WHERE id = '" . $row->api_ip_id . "'";
+                $result_temp = mysqli_query($connection, $sql_temp);
+
+                while ($row_temp = mysqli_fetch_object($result_temp)) {
+
+                    $api_ip_address = $row_temp->ip;
+
+                }
+
+            }
+
+        } else {
+
+            echo "No API Credentials Found";
+            exit;
+
+        }
+
+        return array($account_username, $api_key, $api_ip_address);
+    }
+
+    public function getReselleridKey($connection, $account_id)
+    {
+        $error = new Error();
+        $sql = "SELECT reseller_id, api_key
+                FROM registrar_accounts
+                WHERE id = '" . $account_id . "'
+                LIMIT 1";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $reseller_id = $row->reseller_id;
+                $api_key = $row->api_key;
+
+            }
+
+        } else {
+
+            echo "No API Credentials Found";
+            exit;
+
+        }
+
+        return array($reseller_id, $api_key);
+    }
+
+    public function getUserPass($connection, $account_id)
+    {
+        $error = new Error();
+        $sql = "SELECT username, `password`
+                FROM registrar_accounts
+                WHERE id = '" . $account_id . "'
+                LIMIT 1";
+        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+        if (mysqli_num_rows($result) > 0) {
+
+            while ($row = mysqli_fetch_object($result)) {
+
+                $account_username = $row->username;
+                $account_password = $row->password;
+
+            }
+
+        } else {
+
+            echo "No API Credentials Found";
+            exit;
+
+        }
+
+        return array($account_username, $account_password);
+    }
+
     public function getApiRegistrarName($connection, $api_registrar_id)
     {
         $sql = "SELECT `name`
