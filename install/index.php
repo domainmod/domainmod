@@ -569,6 +569,28 @@ if ($is_installed == '1') {
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
+    $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_temp` (
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `account_id` INT(10) NOT NULL,
+                `domain` VARCHAR(255) NOT NULL,
+                `expiry_date` DATE NOT NULL,
+                `ns1` VARCHAR(255) NOT NULL,
+                `ns2` VARCHAR(255) NOT NULL,
+                `ns3` VARCHAR(255) NOT NULL,
+                `ns4` VARCHAR(255) NOT NULL,
+                `ns5` VARCHAR(255) NOT NULL,
+                `ns6` VARCHAR(255) NOT NULL,
+                `ns7` VARCHAR(255) NOT NULL,
+                `ns8` VARCHAR(255) NOT NULL,
+                `ns9` VARCHAR(255) NOT NULL,
+                `ns10` VARCHAR(255) NOT NULL,
+                `autorenew` TINYINT(1) NOT NULL DEFAULT '0',
+                `privacy` TINYINT(1) NOT NULL DEFAULT '0',
+                PRIMARY KEY  (`id`),
+                KEY `domain` (`domain`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
     $sql = "CREATE TABLE IF NOT EXISTS `custom_field_types` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
                 `name` VARCHAR(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -957,6 +979,7 @@ if ($is_installed == '1') {
              ret_autorenewal_status, notes, insert_time)
              VALUES
             ('DNSimple', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),
+            ('DreamHost', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '0', '1', 'DreamHost does not currently allow the WHOIS privacy status of a domain to be retrieved using their API, so all domains added to the queue from a DreamHost account will have their WHOIS privacy status set to No.', '" . $time->stamp() . "'),
             ('Dynadot', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),
             ('eNom', '1', '1', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),
             ('Fabulous', '1', '1', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "'),

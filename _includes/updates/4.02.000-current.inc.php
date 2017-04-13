@@ -74,7 +74,30 @@ if ($current_db_version === '4.03.000') {
              req_api_secret, req_ip_address, lists_domains, ret_expiry_date, ret_dns_servers, ret_privacy_status,
              ret_autorenewal_status, notes, insert_time)
              VALUES
-            ('Freenom', '1', '1', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', 'Freenom currently only gives API access to reseller accounts.', '" . $time->stamp() . "')";
+            ('Freenom', '1', '1', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', 'Freenom currently only gives API access to reseller accounts.', '" . $time->stamp() . "'),
+            ('DreamHost', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '0', '1', 'DreamHost does not currently allow the WHOIS privacy status of a domain to be retrieved using their API, so all domains added to the queue from a DreamHost account will have their WHOIS privacy status set to No.', '" . $time->stamp() . "')";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_temp` (
+                `id` INT(10) NOT NULL AUTO_INCREMENT,
+                `account_id` INT(10) NOT NULL,
+                `domain` VARCHAR(255) NOT NULL,
+                `expiry_date` DATE NOT NULL,
+                `ns1` VARCHAR(255) NOT NULL,
+                `ns2` VARCHAR(255) NOT NULL,
+                `ns3` VARCHAR(255) NOT NULL,
+                `ns4` VARCHAR(255) NOT NULL,
+                `ns5` VARCHAR(255) NOT NULL,
+                `ns6` VARCHAR(255) NOT NULL,
+                `ns7` VARCHAR(255) NOT NULL,
+                `ns8` VARCHAR(255) NOT NULL,
+                `ns9` VARCHAR(255) NOT NULL,
+                `ns10` VARCHAR(255) NOT NULL,
+                `autorenew` TINYINT(1) NOT NULL DEFAULT '0',
+                `privacy` TINYINT(1) NOT NULL DEFAULT '0',
+                PRIMARY KEY  (`id`),
+                KEY `domain` (`domain`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
 }
