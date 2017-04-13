@@ -69,6 +69,14 @@ if ($current_db_version === '4.03.000') {
             WHERE `name` = 'Fabulous'";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
+    $sql = "INSERT INTO api_registrars
+            (`name`, req_account_username, req_account_password, req_reseller_id, req_api_app_name, req_api_key,
+             req_api_secret, req_ip_address, lists_domains, ret_expiry_date, ret_dns_servers, ret_privacy_status,
+             ret_autorenewal_status, notes, insert_time)
+             VALUES
+            ('Freenom', '1', '1', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', 'Freenom currently only gives API access to reseller accounts.', '" . $time->stamp() . "')";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
 }
 
 //@formatter:on

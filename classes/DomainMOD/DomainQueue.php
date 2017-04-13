@@ -60,6 +60,12 @@ class DomainQueue
                     list($account_username, $account_password) = $registrar->getApiKey($connection, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $account_password);
 
+                } elseif ($row->api_registrar_name == 'Freenom') {
+
+                    $registrar = new Freenom();
+                    list($account_username, $account_password) = $registrar->getApiKey($connection, $row->account_id);
+                    list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $account_password);
+
                 } elseif ($row->api_registrar_name == 'GoDaddy') {
 
                     $registrar = new GoDaddy();
@@ -170,6 +176,12 @@ class DomainQueue
                 } elseif ($row->api_registrar_name == 'Fabulous') {
 
                     $registrar = new Fabulous();
+                    list($account_username, $account_password) = $registrar->getApiKey($connection, $row->account_id);
+                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
+
+                } elseif ($row->api_registrar_name == 'Freenom') {
+
+                    $registrar = new Freenom();
                     list($account_username, $account_password) = $registrar->getApiKey($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
 
