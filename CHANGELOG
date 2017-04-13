@@ -1,12 +1,19 @@
 DomainMOD CHANGELOG
 ===================
+v4.03.001    2017-04-13
+- Added timestamp to Task Scheduler page
+- Added Log class
+- Updated Fabulous API
+- Added Freenom API
+- Added DreamHost API
+
 v4.03.000    2017-04-07
-- Increase SMTP Port form field from 3 to 5
-- Update Maintenance class to lowercase domains
-- Update Domain Queue maintenance tasks
-- Update highlightText method
-- Add Softaculous to README
-- Add Documentation (User Guide)
+- Increased SMTP Port form field from 3 to 5
+- Updated Maintenance class to lowercase domains
+- Updated Domain Queue maintenance tasks
+- Updated highlightText method
+- Added Softaculous to README
+- Added Documentation (User Guide)
 
 v4.02.001    2016-12-08
 - Updated GoDaddy API domain retrieval to 10,000
