@@ -51,7 +51,7 @@ class DreamHost
         return $api_key;
     }
 
-    public function getApiUrl($api_key, $domain, $command)
+    public function getApiUrl($api_key, $command)
     {
         $base_url = 'https://api.dreamhost.com/?key=' . $api_key;
         if ($command == 'domainlist') {
@@ -73,7 +73,7 @@ class DreamHost
     public function getDomainList($connection, $api_key, $account_id)
     {
         $error = new Error();
-        $api_url = $this->getApiUrl($api_key, '', 'domainlist');
+        $api_url = $this->getApiUrl($api_key, 'domainlist');
         $api_results = $this->apiCall($api_url);
         $array_results = $this->convertToArray($api_results);
 
