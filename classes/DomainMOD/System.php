@@ -59,7 +59,8 @@ class System
     public function getLiveVersion()
     {
         $version_file = 'https://raw.githubusercontent.com/domainmod/domainmod/master/version.txt';
-        $version_fgc = file_get_contents($version_file);
+        $context = stream_context_create(array('https' => array('header' => 'Connection: close\r\n')));
+        $version_fgc = file_get_contents($version_file, false, $context);
         if ($version_fgc) {
             $live_version = $version_fgc;
         } else {
