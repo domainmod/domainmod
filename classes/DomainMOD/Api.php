@@ -139,9 +139,10 @@ class Api
     public function getUserKeyIp($connection, $account_id)
     {
         $error = new Error();
-        $sql = "SELECT username, api_key, api_ip_id
-                FROM registrar_accounts
-                WHERE id = '" . $account_id . "'
+        $sql = "SELECT ra.username, ra.api_key, ip.ip
+                FROM registrar_accounts AS ra, ip_addresses AS ip
+                WHERE ra.api_ip_id = ip.id
+                  AND ra.id = '" . $account_id . "'
                 LIMIT 1";
         $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
@@ -151,17 +152,7 @@ class Api
 
                 $account_username = $row->username;
                 $api_key = $row->api_key;
-
-                $sql_temp = "SELECT ip
-                             FROM ip_addresses
-                             WHERE id = '" . $row->api_ip_id . "'";
-                $result_temp = mysqli_query($connection, $sql_temp);
-
-                while ($row_temp = mysqli_fetch_object($result_temp)) {
-
-                    $api_ip_address = $row_temp->ip;
-
-                }
+                $api_ip_address = $row->ip;
 
             }
 
