@@ -59,4 +59,16 @@ if ($current_db_version === '4.02.001') {
 
 }
 
+// upgrade database from 4.03.000 to 4.03.001
+if ($current_db_version === '4.03.000') {
+
+    $sql = "UPDATE api_registrars
+            SET ret_privacy_status = '1',
+                ret_autorenewal_status = '1',
+                notes = ''
+            WHERE `name` = 'Fabulous'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+}
+
 //@formatter:on
