@@ -82,6 +82,8 @@ if ($current_db_version < $software_version) {
 
     $_SESSION['s_message_success'] .= "Your database has been upgraded<BR>";
 
+    $log->goal('upgrade');
+
 } elseif ($current_db_version > $software_version) {
 
     $_SESSION['s_message_danger'] .= "The upgrade process cannot be completed, as your versions are currently out-of-sync.

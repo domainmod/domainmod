@@ -31,6 +31,7 @@ require DIR_ROOT . 'vendor/autoload.php';
 $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
+$log = new DomainMOD\Log();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
@@ -1126,7 +1127,9 @@ if ($is_installed == '1') {
 
     $_SESSION['s_installation_mode'] = '0';
     $_SESSION['s_message_success'] .= $software_title . " has been installed and you should now delete the /install/ folder<BR><BR>The default username and password are \"admin\"<BR>";
-    
+
+    $log->goal('install');
+
     header("Location: ../");
     exit;
 

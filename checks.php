@@ -33,6 +33,7 @@ $error = new DomainMOD\Error();
 $maint = new DomainMOD\Maintenance();
 $login = new DomainMOD\Login();
 $time = new DomainMOD\Time();
+$log = new DomainMOD\Log();
 
 include(DIR_INC . "head.inc.php");
 include(DIR_INC . "config.inc.php");
