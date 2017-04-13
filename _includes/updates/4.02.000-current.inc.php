@@ -100,6 +100,13 @@ if ($current_db_version === '4.03.000') {
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
     $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
 
+    $sql = "UPDATE settings
+            SET db_version = '4.03.001',
+                update_time = '" . $time->stamp() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $current_db_version = '4.03.001';
+
 }
 
 //@formatter:on
