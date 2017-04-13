@@ -543,13 +543,13 @@ if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_pro
     </button><BR><BR><?php
 
 } ?>
-The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into <?php echo $software_title; ?>. For more information please see the <a href="info.php">Domain Queue information page</a>.<BR>
+The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into <?php echo $software_title; ?>. For more information please see the <a href="intro.php">Domain Queue information page</a>.<BR>
 <BR>
 <a href="<?php echo $web_root; ?>/queue/add.php"><?php echo $layout->showButton('button', 'Add Domains To Queue'); ?></a>&nbsp;&nbsp;&nbsp;
 <?php if ($_SESSION['s_domains_in_queue'] == '1') { ?>
 <a href="index.php?clear=1"><?php echo $layout->showButton('button', 'Clear Completed'); ?></a>&nbsp;&nbsp;&nbsp;
 <?php } ?>
-<a href="info.php"><?php echo $layout->showButton('button', 'More Info'); ?></a>&nbsp;&nbsp;&nbsp;
+<a href="intro.php"><?php echo $layout->showButton('button', 'More Info'); ?></a>&nbsp;&nbsp;&nbsp;
 <?php if ($_SESSION['s_domains_in_list_queue'] == '1') { ?>
 <a href="index.php?s=lists&export_data=1"><?php echo $layout->showButton('button', 'Export Lists'); ?></a>&nbsp;&nbsp;&nbsp;
 <?php } ?>

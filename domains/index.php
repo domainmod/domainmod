@@ -1102,7 +1102,7 @@ if ($_SESSION['s_has_domain'] == '0') {
 
 if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
 
-    $go_text1 = ' [<a href="' . $web_root . '/queue/info.php">go</a>]';
+    $go_text1 = ' [<a href="' . $web_root . '/queue/intro.php">go</a>]';
     $go_text2 = ' [<a href="' . $web_root . '/bulk/">go</a>]';
     $go_text3 = ' [<a href="' . $web_root . '/domains/add.php">go</a>]';
 
@@ -2335,7 +2335,7 @@ if ($segid != "") {
 if (mysqli_num_rows($result) > 0) { ?>
 
     <a href="add.php"><?php echo $layout->showButton('button', 'Add Domain'); ?></a>
-    <a href="<?php echo $web_root; ?>/queue/info.php"><?php echo $layout->showButton('button', 'Add Domains To Queue'); ?></a>
+    <a href="<?php echo $web_root; ?>/queue/intro.php"><?php echo $layout->showButton('button', 'Add Domains To Queue'); ?></a>
     <a target="_blank" href="<?php echo $web_root; ?>/raw.php"><?php echo $layout->showButton('button', 'Raw List'); ?></a>
     <a href="index.php?<?php echo htmlentities($_SERVER['QUERY_STRING']); ?>&export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a>
 

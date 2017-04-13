@@ -1,6 +1,6 @@
 <?php
 /**
- * /queue/info.php
+ * /queue/intro.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2017 Greg Chetcuti <greg@chetcuti.com>
@@ -65,7 +65,7 @@ $supported_registrars = substr($supported_registrars, 2);
 ?>
 <strong>Currently Supported Registrars</strong>: <?php echo $supported_registrars; ?><BR>
 <BR>
-<strong>NOTE:</strong> In order to use the Domain Queue you must setup the cron job that comes with DomainMOD. For more information please see the <a target="_blank" href="https://domainmod.org/readme/#cron">DomainMOD README</a>.<BR>
+<strong>NOTE:</strong> In order to use the Domain Queue you must setup the cron job that comes with DomainMOD. For more information please see the <a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">User Guide</a>.<BR>
 <BR>
 <a href="<?php echo $web_root; ?>/queue/add.php"><?php echo $layout->showButton('button', 'Add Domains To Queue'); ?></a>
 <BR><BR>
