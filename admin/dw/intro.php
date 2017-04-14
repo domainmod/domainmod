@@ -48,29 +48,17 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 <?php include(DIR_INC . "layout/header.inc.php"); ?>
 <BR><a href="dw.php"><?php echo $layout->showButton('button', 'Proceed to the Data Warehouse'); ?></a><BR><BR>
 
-<?php echo $software_title; ?> has a Data Warehouse framework built right into it, which allows you to import the data
-stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel, but I also
-plan to add support for Plesk once I've ironed out all the kinks in the framework and figured out Plesk's API, and
-hopefully one day you'll be able to import any web server into the Data Warehouse, regardless of whether or not it uses
-a control panel.<BR>
+<?php echo $software_title; ?> has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel.<BR>
 <BR>
-If your web server doesn't run WHM/cPanel, or you don't want to import your web server data into
-<?php echo $software_title; ?>, you can ignore this section.<BR>
+If your web server doesn't run WHM/cPanel, or you don't want to import your web server data into <?php echo $software_title; ?>, you can ignore this section.<BR>
 <BR>
-
-<strong>NOTE:</strong> Importing your web server(s) into the Data Warehouse will <strong>not</strong> modify any of your other <?php
-echo $software_title; ?> data, nor any of the data on your web server.<BR>
+<strong>NOTE:</strong> Importing your web server(s) into the Data Warehouse will <strong>not</strong> modify any of your other <?php echo $software_title; ?> data, nor any of the data on your web server.<BR>
 
 <h3>Automating Builds</h3>
-If you're going to use the Data Warehouse, it's recommended that you setup the system cron/scheduled job in order to
-automate your builds (<a href="http://domainmod.org/readme/#cron">more information here</a>). There's a lot of work
-being done in the background during a build, and more often than not a web browser will timeout if you try to build
-through the software instead of using a cron job, leading to incomplete and missing information in your Data Warehouse.
-After you've setup the cron job you will be able to manage the Data Warehouse scheduling through <?php
-echo $software_title; ?>'s Task Scheduler.<BR>
+If you're going to use the Data Warehouse it's recommended that you setup the <a target="_blank" href="https://domainmod.org/docs/userguide/getting-started/#cron-job">system cron/scheduled job</a> in order to automate your builds. There's a lot of work being done in the background during a build, and more often than not a web browser will timeout if you try to build through the software instead of using the cron job, leading to incomplete and missing information in your Data Warehouse. After you've setup the cron job you will be able to manage the Data Warehouse scheduling through <?php echo $software_title; ?>'s <a target="_blank" href="https://domainmod.org/docs/userguide/administration#task-scheduler">Task Scheduler</a>.<BR>
 
-<h3>Data Structure</h3>
-The following data is currently imported into the Data Warehouse.<BR>
+<h3>Supported Data</h3>
+The following WHM sections are currently supported, but our end goal is to have every piece of WHM information that can be retrieved via the API stored in the Data Warehouse.<BR>
 <BR>
 
 <strong>Accounts</strong><BR>
