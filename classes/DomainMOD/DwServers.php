@@ -27,7 +27,7 @@ class DwServers
     public function get($connection)
     {
 
-        $sql = "SELECT id, `host`, protocol, `port`, username, `hash`
+        $sql = "SELECT id, `host`, protocol, `port`, username, api_token, `hash`
                 FROM dw_servers
                 ORDER BY `name`";
         $result = mysqli_query($connection, $sql);
@@ -71,17 +71,17 @@ class DwServers
 
             $api_call = $accounts->getApiCall();
             $api_results = $build->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
-                $row->hash);
+                $row->api_token, $row->hash);
             $accounts->insertAccounts($connection, $api_results, $row->id);
 
             $api_call = $zones->getApiCall();
             $api_results = $build->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
-                $row->hash);
+                $row->api_token, $row->hash);
             $zones->insertZones($connection, $api_results, $row->id);
 
             $result_zones = $zones->getInsertedZones($connection, $row->id);
             $zones->processEachZone($connection, $result_zones, $row->id, $row->protocol, $row->host, $row->port,
-                $row->username, $row->hash);
+                $row->username, $row->api_token, $row->hash);
             $this->serverFinish($connection, $row->id, $build_start_time);
 
         }

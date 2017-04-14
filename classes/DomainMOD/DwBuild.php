@@ -163,14 +163,14 @@ class DwBuild
 
     }
 
-    public function apiCall($api_call, $host, $protocol, $port, $username, $hash)
+    public function apiCall($api_call, $host, $protocol, $port, $username, $api_token, $hash)
     {
 
-        return $this->apiGet($api_call, $host, $protocol, $port, $username, $hash);
+        return $this->apiGet($api_call, $host, $protocol, $port, $username, $api_token, $hash);
 
     }
 
-    public function apiGet($api_call, $host, $protocol, $port, $username, $hash)
+    public function apiGet($api_call, $host, $protocol, $port, $username, $api_token, $hash)
     {
 
         $query = $protocol . "://" . $host . ":" . $port . $api_call;
@@ -179,7 +179,11 @@ class DwBuild
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0); // Allow certs that do not match the domain
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); // Allow self-signed certs
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); // Return contents of transfer on curl_exec
-        $header[0] = "Authorization: WHM " . $username . ":" . preg_replace("'(\r|\n)'", "", $hash); // Remove newlines
+        if ($api_token != "") {
+            $header[0] = "Authorization: WHM " . $username . ":" . $api_token;
+        } else {
+            $header[0] = "Authorization: WHM " . $username . ":" . preg_replace("'(\r|\n)'", "", $hash); // Remove newlines
+        }
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header); // Set curl header
         curl_setopt($curl, CURLOPT_URL, $query); // Set your URL
         $api_results = curl_exec($curl); // Execute Query, assign to $api_results

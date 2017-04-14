@@ -86,7 +86,7 @@ class DwZones
 
     }
 
-    public function processEachZone($connection, $result_zones, $server_id, $protocol, $host, $port, $username, $hash)
+    public function processEachZone($connection, $result_zones, $server_id, $protocol, $host, $port, $username, $api_token, $hash)
     {
 
         while ($row_zones = mysqli_fetch_object($result_zones)) {
@@ -95,7 +95,7 @@ class DwZones
             $records = new DwRecords();
 
             $api_call = $records->getApiCall($row_zones->domain);
-            $api_results = $build->apiCall($api_call, $host, $protocol, $port, $username, $hash);
+            $api_results = $build->apiCall($api_call, $host, $protocol, $port, $username, $api_token, $hash);
             $records->insertRecords($connection, $api_results, $server_id, $row_zones->id, $row_zones->domain);
 
         }

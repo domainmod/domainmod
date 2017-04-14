@@ -45,27 +45,27 @@ $new_host = $_POST['new_host'];
 $new_protocol = $_POST['new_protocol'];
 $new_port = $_POST['new_port'];
 $new_username = $_POST['new_username'];
+$new_api_token = $_POST['new_api_token'];
 $new_hash = $_POST['new_hash'];
 $new_notes = $_POST['new_notes'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" &&
-        $new_hash != ""
+    if ($new_name != "" && $new_host != "" && $new_protocol != "" && $new_port != "" && $new_username != "" && ($new_api_token != "" || $new_hash != "")
     ) {
 
         $query = "INSERT INTO dw_servers
-                  (`name`, `host`, protocol, `port`, username, `hash`, notes, created_by, insert_time)
+                  (`name`, `host`, protocol, `port`, username, `api_token`, `hash`, notes, created_by, insert_time)
                   VALUES
-                  (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $q = $conn->stmt_init();
 
         if ($q->prepare($query)) {
 
             $timestamp = $time->stamp();
 
-            $q->bind_param('sssisssis', $new_name, $new_host, $new_protocol, $new_port, $new_username, $new_hash,
-                $new_notes, $_SESSION['s_user_id'], $timestamp);
+            $q->bind_param('sssissssis', $new_name, $new_host, $new_protocol, $new_port, $new_username, $new_api_token,
+                $new_hash, $new_notes, $_SESSION['s_user_id'], $timestamp);
             $q->execute();
             $q->close();
 
@@ -84,8 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($new_host == "") $_SESSION['s_message_danger'] .= "Enter the hostname<BR>";
         if ($new_protocol == "") $_SESSION['s_message_danger'] .= "Enter the protocol<BR>";
         if ($new_port == "") $_SESSION['s_message_danger'] .= "Enter the port<BR>";
-        if ($new_username == "") $_SESSION['s_message_danger'] .= "Enter the username<BR>";
-        if ($new_hash == "") $_SESSION['s_message_danger'] .= "Enter the hash<BR>";
+        if ($new_username == "") { $_SESSION['s_message_danger'] .= "Enter the username<BR>"; }
+        if ($new_api_token == "" && $new_hash == "") { $_SESSION['s_message_danger'] .= "Enter either the API token or remote access key/hash<BR>"; }
 
     }
 
@@ -109,7 +109,11 @@ echo $form->showDropdownOption('http', 'Unsecured (http)', $new_protocol);
 echo $form->showDropdownBottom('');
 echo $form->showInputText('new_port', 'Port (5)', 'Enter the port that you connect to (usually 2086 or 2087).', $new_port, '5', '', '1', '', '');
 echo $form->showInputText('new_username', 'Username (100)', 'Enter the username for your WHM installation.', $new_username, '100', '', '1', '', '');
-echo $form->showInputTextarea('new_hash', 'Hash/Remote Access Key', 'Enter the hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the right-hand side of the screen.', $new_hash, '1', '', '');
+?>
+<div style="padding-top: 7px; padding-bottom: 17px;"><strong>Only one of the below items is required, either the API Token or the Remote Access Key/Hash. The Remote Access Key/Hash will be getting removed from WHM in version 68 though, so if your WHM already supports the API Token that's what you should use.</strong></div>
+<?php
+echo $form->showInputText('new_api_token', 'API Token (255)', 'Enter the API token.', $new_api_token, '255', '', '1', '', '');
+echo $form->showInputTextarea('new_hash', 'Remote Access Key/Hash', 'Enter the remote access key/hash for you WHM installation. You can retrieve this from your WHM by logging in and searching for "Remote Access". Click on the "Setup Remote Access Key" option on the left, and your hash will be displayed on the right-hand side of the screen.', $new_hash, '1', '', '');
 echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 echo $form->showSubmitButton('Add Server', '', '');
 echo $form->showFormBottom('');

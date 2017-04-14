@@ -42,7 +42,8 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
 $export_data = $_GET['export_data'];
 
-$sql = "SELECT id, `name`, `host`, protocol, `port`, username, `hash`, notes, dw_accounts, dw_dns_zones, dw_dns_records, build_end_time, creation_type_id, created_by, insert_time, update_time
+$sql = "SELECT id, `name`, `host`, protocol, `port`, username, api_token, `hash`, notes, dw_accounts, dw_dns_zones,
+            dw_dns_records, build_end_time, creation_type_id, created_by, insert_time, update_time
         FROM dw_servers
         ORDER BY `name`, `host`";
 
@@ -64,6 +65,7 @@ if ($export_data == "1") {
         'Protocol',
         'Port',
         'Username',
+        'API Token',
         'Hash',
         'Notes',
         'DW Accounts',
@@ -96,6 +98,7 @@ if ($export_data == "1") {
                 $row->protocol,
                 $row->port,
                 $row->username,
+                $row->api_token,
                 $row->hash,
                 $row->notes,
                 $row->dw_accounts,
