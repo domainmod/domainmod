@@ -97,7 +97,6 @@ If you installed DomainMOD using git right from your web server, just run the fo
 **Option #3**  
 If you installed DomainMOD using Softaculous you're just a few clicks away from upgrading to the newest version. Please see the upgrade instructions on the Softaculous Wiki: <https://www.softaculous.com/docs/How_to_upgrade_installations>
 
-
 Data Warehouse
 --------------
 DomainMOD has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel.
