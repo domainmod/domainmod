@@ -26,11 +26,11 @@ class Notice
 
     public function dbUpgrade($software_title)
     {
-
-        $_SESSION['s_notice_page_title'] = "Upgrade Available";
+        $layout = new Layout();
+        $_SESSION['s_notice_page_title'] = "Database Upgrade Available";
         $_SESSION['s_notice'] = "<BR>Your " . $software_title . " software was recently updated, so we now need to
             upgrade your database<BR><BR>Please be patient, this may take a moment<BR><BR>
-            <a href='checks.php?u=1'>Click here to upgrade your database</a>";
+            <a href='checks.php?u=1'>" . $layout->showButton('button', 'Upgrade Database') . "</a>";
 
         return true;
 
