@@ -20,10 +20,10 @@
  */
 ?>
 <?php
-include("../../_includes/start-session.inc.php");
-include("../../_includes/init.inc.php");
+require_once('../../_includes/start-session.inc.php');
+require_once('../../_includes/init.inc.php');
 
-require_once(DIR_ROOT . "classes/Autoloader.php");
+require_once(DIR_ROOT . 'classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -32,11 +32,11 @@ $layout = new DOmainMOD\Layout();
 $time = new DomainMOD\Time();
 $reporting = new DomainMOD\Reporting();
 
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "settings/reporting-dw-potential-problems.inc.php");
-include(DIR_INC . "database.inc.php");
+require_once(DIR_INC . 'head.inc.php');
+require_once(DIR_INC . 'config.inc.php');
+require_once(DIR_INC . 'software.inc.php');
+require_once(DIR_INC . 'settings/reporting-dw-potential-problems.inc.php');
+require_once(DIR_INC . 'database.inc.php');
 
 $system->authCheck($web_root);
 
@@ -139,14 +139,14 @@ if ($export_data == '1') {
 
 }
 ?>
-<?php include(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php include(DIR_INC . "layout/header.inc.php"); ?>
+<?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
 <?php if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account != 0 || $temp_suspended_accounts != 0) { ?>
 
     <BR><a href="<?php echo $report_filename; ?>?export_data=1&all=1<?php echo $layout->showButton('button', 'Export'); ?></a>
@@ -252,6 +252,6 @@ if ($temp_accounts_without_a_dns_zone != 0 || $temp_dns_zones_without_an_account
 
 }
 ?>
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+<?php require_once(DIR_INC . 'layout/footer.inc.php'); ?>
 </body>
 </html>

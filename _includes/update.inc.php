@@ -32,43 +32,43 @@ if ($current_db_version < $software_version) {
 
     if ($current_db_version >= '1.1' && $current_db_version < '2.0022') {
 
-        include('updates/1.1-2.0022.inc.php');
+        require_once('updates/1.1-2.0022.inc.php');
 
     }
 
     if ($current_db_version >= '2.0022' && $current_db_version < '2.0038') {
 
-        include('updates/2.0022-2.0038.inc.php');
+        require_once('updates/2.0022-2.0038.inc.php');
 
     }
 
     if ($current_db_version >= '2.0038' && $current_db_version < '2.0048') {
 
-        include('updates/2.0038-2.0048.inc.php');
+        require_once('updates/2.0038-2.0048.inc.php');
 
     }
 
     if ($current_db_version >= '2.0048' && $current_db_version < '3.0.1') {
 
-        include('updates/2.0048-3.0.1.inc.php');
+        require_once('updates/2.0048-3.0.1.inc.php');
 
     }
 
     if ($current_db_version >= '3.0.1' && $current_db_version < '4.00.000') {
 
-        include('updates/3.0.1-4.00.000.inc.php');
+        require_once('updates/3.0.1-4.00.000.inc.php');
 
     }
 
     if ($current_db_version >= '4.00.000' && $current_db_version < '4.02.000') {
 
-        include('updates/4.00.000-4.02.000.inc.php');
+        require_once('updates/4.00.000-4.02.000.inc.php');
 
     }
 
     if ($current_db_version >= '4.02.000') {
 
-        include('updates/4.02.000-current.inc.php');
+        require_once('updates/4.02.000-current.inc.php');
 
     }
 

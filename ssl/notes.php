@@ -20,18 +20,18 @@
  */
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/init.inc.php");
+require_once('../_includes/start-session.inc.php');
+require_once('../_includes/init.inc.php');
 
-require_once(DIR_ROOT . "classes/Autoloader.php");
+require_once(DIR_ROOT . 'classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
 
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "database.inc.php");
+require_once(DIR_INC . 'head.inc.php');
+require_once(DIR_INC . 'config.inc.php');
+require_once(DIR_INC . 'software.inc.php');
+require_once(DIR_INC . 'database.inc.php');
 
 $system->authCheck($web_root);
 
@@ -52,22 +52,22 @@ while ($row = mysqli_fetch_object($result)) {
 $page_title = "SSL Certificate Notes (" . $new_name . ")";
 $software_section = "ssl-certs";
 ?>
-<?php include(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php
 $page_align = 'left';
-include(DIR_INC . "layout/header-bare.inc.php"); ?>
+require_once(DIR_INC . 'layout/header-bare.inc.php'); ?>
 <strong>Notes For <?php echo $new_name; ?></strong><BR>
 <BR>
 <?php
 $format = new DomainMOD\Format();
 echo $format->replaceBreaks($new_notes);
 ?>
-<?php include(DIR_INC . "layout/footer-bare.inc.php"); ?>
+<?php require_once(DIR_INC . 'layout/footer-bare.inc.php'); ?>
 </body>
 </html>

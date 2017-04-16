@@ -20,10 +20,10 @@
  */
 ?>
 <?php //@formatter:off
-include("../_includes/start-session.inc.php");
-include("../_includes/init.inc.php");
+require_once('../_includes/start-session.inc.php');
+require_once('../_includes/init.inc.php');
 
-require_once(DIR_ROOT . "classes/Autoloader.php");
+require_once(DIR_ROOT . 'classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -36,11 +36,11 @@ $customField = new DomainMOD\CustomField();
 $form = new DomainMOD\Form();
 $date = new DomainMOD\Date();
 
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "settings/domains-main.inc.php");
-include(DIR_INC . "database.inc.php");
+require_once(DIR_INC . 'head.inc.php');
+require_once(DIR_INC . 'config.inc.php');
+require_once(DIR_INC . 'software.inc.php');
+require_once(DIR_INC . 'settings/domains-main.inc.php');
+require_once(DIR_INC . 'database.inc.php');
 
 $system->authCheck($web_root);
 
@@ -1067,16 +1067,16 @@ if ($export_data == "1") {
 
 }
 ?>
-<?php include(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
-    <?php include(DIR_INC . "layout/date-range-picker-head.inc.php"); ?>
+    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
+    <?php require_once(DIR_INC . 'layout/date-range-picker-head.inc.php'); ?>
     <?php echo $layout->jumpMenu(); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php include(DIR_INC . "layout/header.inc.php"); ?>
+<?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
 <?php
 $sql_supported = "SELECT `name`
                   FROM api_registrars
@@ -2356,7 +2356,7 @@ if (mysqli_num_rows($result) > 0) { ?>
     if ($totalrows != '0') {
 
         if ($_SESSION['s_system_large_mode'] == '1') {
-            include(DIR_INC . "layout/pagination-large-mode.inc.php");
+            require_once(DIR_INC . 'layout/pagination-large-mode.inc.php');
         } ?>
 
         <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
@@ -2662,7 +2662,7 @@ if (mysqli_num_rows($result) > 0) { ?>
     }
 
     if ($_SESSION['s_system_large_mode'] == '1') {
-        include(DIR_INC . "layout/pagination-large-mode.inc.php");
+        require_once(DIR_INC . 'layout/pagination-large-mode.inc.php');
     }
 
 } else {
@@ -2674,7 +2674,7 @@ if (mysqli_num_rows($result) > 0) { ?>
     }
 
 } ?>
-<?php include(DIR_INC . "layout/footer.inc.php");  //@formatter:on ?>
-<?php include(DIR_INC . "layout/date-range-picker-footer.inc.php"); ?>
+<?php require_once(DIR_INC . 'layout/footer.inc.php');  //@formatter:on ?>
+<?php require_once(DIR_INC . 'layout/date-range-picker-footer.inc.php'); ?>
 </body>
 </html>

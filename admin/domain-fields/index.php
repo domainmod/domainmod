@@ -20,10 +20,10 @@
  */
 ?>
 <?php //@formatter:off
-include("../../_includes/start-session.inc.php");
-include("../../_includes/init.inc.php");
+require_once('../../_includes/start-session.inc.php');
+require_once('../../_includes/init.inc.php');
 
-require_once(DIR_ROOT . "classes/Autoloader.php");
+require_once(DIR_ROOT . 'classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -31,11 +31,11 @@ $error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "settings/admin-custom-domain-fields.inc.php");
-include(DIR_INC . "database.inc.php");
+require_once(DIR_INC . 'head.inc.php');
+require_once(DIR_INC . 'config.inc.php');
+require_once(DIR_INC . 'software.inc.php');
+require_once(DIR_INC . 'settings/admin-custom-domain-fields.inc.php');
+require_once(DIR_INC . 'database.inc.php');
 
 $system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
@@ -107,14 +107,14 @@ if ($export_data == '1') {
 
 }
 ?>
-<?php include(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php include(DIR_INC . "layout/header.inc.php"); ?>
+<?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
 Below is a list of all the Custom Domain Fields that have been added to <?php echo $software_title; ?>.<BR>
 <BR>
 Custom Domain Fields help extend the functionality of <?php echo $software_title; ?> by allowing the user to create
@@ -188,6 +188,6 @@ if (mysqli_num_rows($result) > 0) { ?>
     It appears as though you haven't created any Custom Domain Fields yet. <a href="add.php">Click here</a> to add one.<?php
 
 } ?>
-<?php include(DIR_INC . "layout/footer.inc.php"); //@formatter:on ?>
+<?php require_once(DIR_INC . 'layout/footer.inc.php'); //@formatter:on ?>
 </body>
 </html>

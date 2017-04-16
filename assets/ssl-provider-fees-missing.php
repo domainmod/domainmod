@@ -20,10 +20,10 @@
  */
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/init.inc.php");
+require_once('../_includes/start-session.inc.php');
+require_once('../_includes/init.inc.php');
 
-require_once(DIR_ROOT . "classes/Autoloader.php");
+require_once(DIR_ROOT . 'classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -31,22 +31,22 @@ $error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "settings/assets-ssl-provider-fees-missing.inc.php");
-include(DIR_INC . "database.inc.php");
+require_once(DIR_INC . 'head.inc.php');
+require_once(DIR_INC . 'config.inc.php');
+require_once(DIR_INC . 'software.inc.php');
+require_once(DIR_INC . 'settings/assets-ssl-provider-fees-missing.inc.php');
+require_once(DIR_INC . 'database.inc.php');
 
 $system->authCheck($web_root);
 ?>
-<?php include(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php include(DIR_INC . "layout/header.inc.php"); ?>
+<?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
 <?php
 $sql = "SELECT sp.id AS ssl_provider_id, sp.name AS ssl_provider_name
         FROM ssl_providers sp, ssl_certs sc
@@ -104,6 +104,6 @@ fees as soon as possible.<BR>
 
     </tbody>
 </table>
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+<?php require_once(DIR_INC . 'layout/footer.inc.php'); ?>
 </body>
 </html>

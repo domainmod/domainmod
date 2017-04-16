@@ -25,5 +25,5 @@
           <?php } else { ?>
               <li><a href="<?php echo $web_root; ?>/dashboard/"><i class="fa fa-dashboard"></i></a></li>
           <?php } ?>
-          <?php include(DIR_INC . '/breadcrumbs/' . $slug . '.inc.php'); ?>
+          <?php require_once(DIR_INC . '/breadcrumbs/' . $slug . '.inc.php'); ?>
       </ol>

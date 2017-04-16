@@ -20,10 +20,10 @@
  */
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/init.inc.php");
+require_once('../_includes/start-session.inc.php');
+require_once('../_includes/init.inc.php');
 
-require_once(DIR_ROOT . "classes/Autoloader.php");
+require_once(DIR_ROOT . 'classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -33,11 +33,11 @@ $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 $timestamp = $time->stamp();
 
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "settings/domains-edit.inc.php");
-include(DIR_INC . "database.inc.php");
+require_once(DIR_INC . 'head.inc.php');
+require_once(DIR_INC . 'config.inc.php');
+require_once(DIR_INC . 'software.inc.php');
+require_once(DIR_INC . 'settings/domains-edit.inc.php');
+require_once(DIR_INC . 'database.inc.php');
 
 $system->authCheck($web_root);
 
@@ -404,14 +404,14 @@ if ($really_del == "1") {
 
 }
 ?>
-<?php include(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php include(DIR_INC . "layout/header.inc.php"); ?>
+<?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
 <?php
 echo $form->showFormTop('');
 echo '<strong>Domain</strong><BR>';
@@ -684,6 +684,6 @@ if ($no_results_dns_zones !== 1) { ?>
 }
 ?>
 <BR><a href="edit.php?did=<?php echo urlencode($did); ?>&del=1">DELETE THIS DOMAIN</a>
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+<?php require_once(DIR_INC . 'layout/footer.inc.php'); ?>
 </body>
 </html>

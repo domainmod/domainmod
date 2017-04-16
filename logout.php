@@ -20,16 +20,16 @@
  */
 ?>
 <?php
-include("_includes/start-session.inc.php");
-include("_includes/init.inc.php");
+require_once('_includes/start-session.inc.php');
+require_once('_includes/init.inc.php');
 
-require_once(DIR_ROOT . "classes/Autoloader.php");
+require_once(DIR_ROOT . 'classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
 
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "software.inc.php");
+require_once(DIR_INC . 'config.inc.php');
+require_once(DIR_INC . 'software.inc.php');
 
 $system->authCheck($web_root);
 

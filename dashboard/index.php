@@ -20,32 +20,32 @@
  */
 ?>
 <?php
-include("../_includes/start-session.inc.php");
-include("../_includes/init.inc.php");
+require_once('../_includes/start-session.inc.php');
+require_once('../_includes/init.inc.php');
 
-require_once(DIR_ROOT . "classes/Autoloader.php");
+require_once(DIR_ROOT . 'classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
 $time = new DomainMOD\Time();
 
-include(DIR_INC . "head.inc.php");
-include(DIR_INC . "config.inc.php");
-include(DIR_INC . "software.inc.php");
-include(DIR_INC . "settings/dashboard-main.inc.php");
-include(DIR_INC . "database.inc.php");
+require_once(DIR_INC . 'head.inc.php');
+require_once(DIR_INC . 'config.inc.php');
+require_once(DIR_INC . 'software.inc.php');
+require_once(DIR_INC . 'settings/dashboard-main.inc.php');
+require_once(DIR_INC . 'database.inc.php');
 
 $system->authCheck($web_root);
 ?>
-<?php include(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php include(DIR_INC . "layout/head-tags.inc.php"); ?>
+    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini" onLoad="document.forms[0].elements[0].focus()">
-<?php include(DIR_INC . "layout/header.inc.php"); ?>
+<?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
 
 <!-- Small boxes (Stat box) -->
 <div class="row">
@@ -450,6 +450,6 @@ $system->authCheck($web_root);
 </div>
 <!-- /.row -->
 
-<?php include(DIR_INC . "layout/footer.inc.php"); ?>
+<?php require_once(DIR_INC . 'layout/footer.inc.php'); ?>
 </body>
 </html>
