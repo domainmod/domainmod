@@ -1114,34 +1114,27 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $
 
 }
 
-$subtext1 = 'Before you can start adding domains to DomainMOD you need to add at least one registrar and a registrar account. Once you\'re created these you can use any of the below options to add your domains.<BR><BR>';
+$subtext1 = 'Before you can start adding domains to DomainMOD you need to add at least one domain registrar and a domain registrar account.';
 
-$subtext2 .= '
-<h4>Domain Queue' . $go_text1 . '</h4>
-The easiest option for adding domains is to use the Domain Queue, which allows you to supply a list of domains and let ' . $software_title . ' take care of the rest. This option uses your domain registrar\'s API to retrieve information required to add domains, so unfortunately it only works if your registrar has an API and support for it has been built into DomainMOD. Before using this option make sure your API credentials have been saved with your registrar account.<BR>
-<BR>
-Currently Supported Registrars: ' . $supported_registrars . '<BR>
-<BR>
-<h4>Bulk Updater' . $go_text2 . '</h4>
-The Bulk Updater also allows you to supply a list of domains to be added, however you need to manually choose the options for the domains you\'re adding, and all of the domains will have the same settings. The Bulk Updater generally works best if you\'re adding a list of newly registered domains, since they will have the same expiry date and will generally have the same settings.<BR>
-<BR>
-<h4>Manually' . $go_text3 . '</h4>
-Domains can also be added one-by-one, which allows you to choose custom settings for each domain.
-';
+$subtext2 = 'Please see the <a target=\'_blank\' href=\'' . $web_root . '/docs/userguide/first-run/\'>First Run</a> section of the User Guide for more detailed information.';
 
 if ($_SESSION['s_has_registrar'] != '1') {
-    echo "<BR><strong>0</strong> Registrars found. <a href=\"../assets/add/registrar.php\">Click here to add one</a>.<BR><BR>";
-    echo $subtext1 . $subtext2 . '<BR><BR>';
+    echo "<strong>0</strong> Domain Registrars found<BR><BR>";
+    echo $subtext1 . '<BR><BR>';
+    echo $subtext2 . '<BR><BR>';
+    echo "<a href=\"../assets/add/registrar.php\">Click here to add a Domain Registrar &raquo;</a><BR>";
 }
 
 if ($_SESSION['s_has_registrar_account'] != '1' && $_SESSION['s_has_registrar'] == '1') {
-    echo "<BR><strong>0</strong> Registrar Accounts found. <a href=\"../assets/add/registrar-account.php\">Click here to add one</a>.<BR><BR>";
-    echo $subtext1 . $subtext2 . '<BR><BR>';
+    echo "<strong>0</strong> Domain Registrar Accounts found<BR><BR>";
+    echo $subtext1 . '<BR><BR>';
+    echo $subtext2 . '<BR><BR>';
+    echo "<a href=\"../assets/add/registrar-account.php\">Click here to add a Domain Registrar Account &raquo;</a><BR>";
 }
 
 if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $_SESSION['s_has_registrar_account'] == '1') {
-    echo "<BR><strong>0</strong> Domains found. Please choose one of the below options to start adding domains.<BR><BR>";
-    echo $subtext2 . '<BR><BR>';
+    echo "<strong>0</strong> Domains found<BR><BR>";
+    echo "<a href='add.php'>Click here</a> to add a domain manually, or see the <a target='_blank' href='../docs/userguide/adding-domains/'>Adding Domains</a> section of the User Guide for more options.<BR>";
 }
 
 if ($_SESSION['s_system_large_mode'] == '1') {

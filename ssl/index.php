@@ -688,25 +688,29 @@ if ($_SESSION['s_has_ssl_cert'] == '0') {
 
 }
 
-$subtext1 = 'Before you can start adding SSL certificates to DomainMOD you need to add at least one SSL provider, an SSL provider account, and a domain.<BR><BR>';
+$subtext1 = 'Before you can start adding SSL certificates to DomainMOD you need to add at least one SSL provider, an SSL provider account, and a domain.';
 
 if ($_SESSION['s_has_ssl_provider'] != '1') {
-    echo "<BR><strong>0</strong> SSL Providers found. <a href=\"../assets/add/ssl-provider.php\">Click here to add one</a>.<BR><BR>";
-    echo $subtext1;
+    echo "<strong>0</strong> SSL Providers found<BR><BR>";
+    echo $subtext1 . '<BR><BR>';
+    echo "<a href=\"../assets/add/ssl-provider.php\">Click here to add an SSL Provider &raquo;</a><BR>";
 }
 
 if ($_SESSION['s_has_ssl_account'] != '1' && $_SESSION['s_has_ssl_provider'] == '1') {
-    echo "<BR><strong>0</strong> SSL Provider Accounts found. <a href=\"../assets/add/ssl-provider-account.php\">Click here to add one</a>.<BR><BR>";
-    echo $subtext1;
+    echo "<strong>0</strong> SSL Provider Accounts found<BR><BR>";
+    echo $subtext1 . '<BR><BR>';
+    echo "<a href=\"../assets/add/ssl-provider-account.php\">Click here to add an SSL Provider Account &raquo;</a><BR>";
 }
 
 if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1') {
-    echo "<BR><strong>0</strong> domains found.  <a href=\"../domains/\">Click here to add one</a>.<BR><BR>";
-    echo $subtext1;
+    echo "<strong>0</strong> Domains found<BR><BR>";
+    echo $subtext1 . '<BR><BR>';
+    echo "<a href=\"../domains/\">Click here to add a Domain &raquo;</a><BR>";
 }
 
 if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == '1' && $_SESSION['s_has_domain'] == '1') {
-    echo "<BR><strong>0</strong> SSL Certificates. <a href=\"add.php\">Click here to add one</a>.<BR><BR>";
+    echo "<strong>0</strong> SSL Certificates found<BR><BR>";
+    echo "<a href=\"add.php\">Click here to add an SSL Certificate &raquo;</a><BR>";
 }
 
 $result = mysqli_query($connection, $sql);
