@@ -70,11 +70,7 @@ class DreamHost
                 if ($value['ns8'] != '' && $value['ns8'] != 'unknown') $ns8 = $value['ns8'];
                 if ($value['ns9'] != '' && $value['ns9'] != 'unknown') $ns9 = $value['ns9'];
                 if ($value['ns10'] != '' && $value['ns10'] != 'unknown') $ns10 = $value['ns10'];
-                if ($value['autorenew'] == 'yes') {
-                    $autorenew = '1';
-                } else {
-                    $autorenew = '0';
-                }
+                $autorenew = $this->processAutorenew($value['autorenew']);
                 $privacy = '0';
 
                 $sql = "INSERT INTO domain_queue_temp
@@ -159,6 +155,16 @@ class DreamHost
             $dns_servers[1] = 'no.dns-servers.2';
         }
         return $dns_servers;
+    }
+
+    public function processAutorenew($autorenewal_result)
+    {
+        if ($autorenewal_result == 'yes') {
+            $autorenewal_status = '1';
+        } else {
+            $autorenewal_status = '0';
+        }
+        return $autorenewal_status;
     }
 
 } //@formatter:on
