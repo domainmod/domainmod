@@ -100,7 +100,7 @@ class DomainQueue
 
                 } elseif ($row->api_registrar_name == 'Name.com') {
 
-                    $registrar = new Namecom();
+                    $registrar = new NameCom();
                     list($account_username, $api_key) = $api->getUserKey($connection, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_key);
 
@@ -226,7 +226,7 @@ class DomainQueue
 
                 } elseif ($row->api_registrar_name == 'Name.com') {
 
-                    $registrar = new Namecom();
+                    $registrar = new NameCom();
                     list($account_username, $api_key) = $api->getUserKey($connection, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $row->domain);
 

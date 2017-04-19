@@ -1,6 +1,6 @@
 <?php
 /**
- * /classes/DomainMOD/Namecom.php
+ * /classes/DomainMOD/NameCom.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2017 Greg Chetcuti <greg@chetcuti.com>
@@ -21,7 +21,7 @@
 //@formatter:off
 namespace DomainMOD;
 
-class Namecom
+class NameCom
 {
     public function getApiUrl($command, $domain)
     {
