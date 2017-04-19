@@ -37,7 +37,13 @@ class DomainQueue
 
             while ($row = mysqli_fetch_object($result)) {
 
-                if ($row->api_registrar_name == 'DNSimple') {
+                if ($row->api_registrar_name == 'Above.com') {
+
+                    $registrar = new AboveCom();
+                    $api_key = $api->getKey($connection, $row->account_id);
+                    list($domain_count, $domain_list) = $registrar->getDomainList($connection, $api_key, $row->account_id);
+
+                } elseif ($row->api_registrar_name == 'DNSimple') {
 
                     $registrar = new DnSimple();
                     $api_key = $api->getKey($connection, $row->account_id);
@@ -164,7 +170,12 @@ class DomainQueue
 
             while ($row = mysqli_fetch_object($result)) {
 
-                if ($row->api_registrar_name == 'DNSimple') {
+                if ($row->api_registrar_name == 'Above.com') {
+
+                    $registrar = new AboveCom();
+                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($connection, $row->account_id, $row->domain);
+
+                } elseif ($row->api_registrar_name == 'DNSimple') {
 
                     $registrar = new DnSimple();
                     $api_key = $api->getKey($connection, $row->account_id);
