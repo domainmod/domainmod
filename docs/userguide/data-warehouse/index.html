@@ -118,6 +118,15 @@
         
             <ul>
             
+                <li class="toctree-l3"><a href="#supported-data">Supported Data</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#setup">Setup</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#building-the-data-warehouse">Building The Data Warehouse</a></li>
+                
+            
             </ul>
         
     </li>
@@ -203,14 +212,43 @@
                 <p>DomainMOD has a Data Warehouse framework built right into it, which allows you to import the data stored on your web server. Currently the only web servers that are supported are ones that run WHM/cPanel.</p>
 <p>If your web server doesn't run WHM/cPanel, or you don't want to import your web server data into DomainMOD, you can ignore this section.</p>
 <p><strong>NOTE:</strong> Importing your web server(s) into the Data Warehouse will not modify any of your other DomainMOD data, nor any of the data on your web server.</p>
-<p><strong>Supported Data</strong><br />
-The following WHM sections are currently supported, but our end goal is to have every piece of WHM information that can be retrieved via the API stored in the Data Warehouse.</p>
+<h2 id="supported-data">Supported Data</h2>
+<p>The following WHM sections are currently supported, but our end goal is to have every piece of WHM information that can be retrieved via the API stored in the Data Warehouse.</p>
 <p><strong>Accounts</strong><br />
 Domain, IP Address, Owner, User, Contact Email, Plan, Theme, Shell, Partition, Disk Limit, Disk Usage, Max Addons, Max FTP Accounts, Max Email Lists, Max Parked Domains, Max POP Accounts, Max SQL Accounts, Max Subdomains, Creation Date, Suspend Status, Suspend Reason, Suspend Time, Max Email Per Hour, Failed Email % Before Defer, Min Failed Email # Before Defer</p>
 <p><strong>DNS Zones</strong><br />
 Zone Filename, Original/Primary Source of Zone Data, Admin Email, Serial #, Refresh, Retry, Expiry, Minimum TTL, Authoritative Name Server</p>
 <p><strong>DNS Records</strong><br />
 TTL, Class, Type, IP Address, CNAME, Mail Server, Mail Server Priority, TXT Data, Line # of Zone, # of Lines, RAW Data</p>
+<h2 id="setup">Setup</h2>
+<p>In order to use the Data Warehouse you first need to add your web server(s).</p>
+<p><strong>Adding A Web Server</strong></p>
+<ol>
+<li>
+<p>Click on <strong>Data Warehouse</strong> on the main menu.</p>
+</li>
+<li>
+<p>Click the <strong>Manage Servers</strong> button.</p>
+</li>
+<li>
+<p>Click the <strong>Add Web Server</strong> button.</p>
+</li>
+<li>
+<p>Enter your web server's details and then click the <strong>Add Server</strong> button.</p>
+<p><strong>NOTE:</strong> When adding your server you will be asked for either an API Token or a Remote Access Key/Hash, which can be found in your WHM. The Remote Access Key/Hash will be getting removed from WHM in version 68 though, so if your WHM already supports the API Token that's what you should use.</p>
+</li>
+</ol>
+<h2 id="building-the-data-warehouse">Building The Data Warehouse</h2>
+<p>Once you've added your web server(s), building your Data Warehouse is just a couple clicks away.</p>
+<ol>
+<li>
+<p>Click on <strong>Data Warehouse</strong> on the main menu.</p>
+</li>
+<li>
+<p>Click the <strong>Rebuild DW</strong> button.</p>
+</li>
+</ol>
+<p>At this point your browser will build the Data Warehouse, which may take some time, and depending on how much data you have stored on your web server this process may timeout. Instead of building the Data Warehouse manually like this, we recommend that you setup the <a href="../getting-started/#cron-job">cron job</a> that comes with DomainMOD, which will completely automate your Data Warehouse builds. </p>
                 
             </div>
           </div>
