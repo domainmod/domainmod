@@ -1,5 +1,11 @@
 DomainMOD CHANGELOG
 ===================
+v4.03.002    2017-04-20
+- Added Above.com API
+- Added WHM API Token support
+- Updated Name.com and DreamHost classes
+- Code cleanup
+
 v4.03.001    2017-04-13
 - Added timestamp to Task Scheduler page
 - Added Log class
