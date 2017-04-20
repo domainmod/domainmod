@@ -109,4 +109,28 @@ if ($current_db_version === '4.03.000') {
 
 }
 
+// upgrade database from 4.03.001 to 4.03.002
+if ($current_db_version === '4.03.001') {
+
+    $sql = "ALTER TABLE `dw_servers`
+            ADD `api_token` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `username`";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "INSERT INTO `api_registrars`
+            (`name`, req_account_username, req_account_password, req_reseller_id, req_api_app_name, req_api_key,
+             req_api_secret, req_ip_address, lists_domains, ret_expiry_date, ret_dns_servers, ret_privacy_status,
+             ret_autorenewal_status, notes, insert_time)
+             VALUES
+            ('Above.com', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "')";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $sql = "UPDATE settings
+            SET db_version = '4.03.002',
+                update_time = '" . $time->stamp() . "'";
+    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+
+    $current_db_version = '4.03.002';
+
+}
+
 //@formatter:on
