@@ -1156,7 +1156,7 @@ if ($is_installed == '1') {
     $_SESSION['s_installation_mode'] = '0';
     $_SESSION['s_message_success'] .= $software_title . " has been installed and you should now delete the /install/ folder<BR><BR>The default username and password are \"admin\"<BR>";
 
-    $log->goal('install');
+    $log->goal('install', '', $software_version);
 
     header("Location: ../");
     exit;

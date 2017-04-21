@@ -28,6 +28,8 @@ while ($row = mysqli_fetch_object($result)) {
     $current_db_version = (string) $row->db_version;
 }
 
+$previous_version = $current_db_version;
+
 if ($current_db_version < $software_version) {
 
     if ($current_db_version >= '1.1' && $current_db_version < '2.0022') {
@@ -82,7 +84,7 @@ if ($current_db_version < $software_version) {
 
     $_SESSION['s_message_success'] .= "Your database has been upgraded<BR>";
 
-    $log->goal('upgrade');
+    $log->goal('upgrade', $previous_version, $software_version);
 
 } elseif ($current_db_version > $software_version) {
 

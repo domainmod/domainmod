@@ -24,12 +24,12 @@ namespace DomainMOD;
 class Log
 {
 
-    public function goal($goal)
+    public function goal($goal, $old_version, $new_version)
     {
-        if ($goal == 'upgrade') {
-            $log_file = 'https://domainmod.org/upgraded/index.php';
-        } elseif ($goal == 'install') {
-            $log_file = 'https://domainmod.org/installed/index.php';
+        if ($goal == 'install') {
+            $log_file = 'https://domainmod.org/installed/index.php?v=' . $new_version;
+        } elseif ($goal == 'upgrade') {
+            $log_file = 'https://domainmod.org/upgraded/index.php?ov=' . $old_version . '&nv=' . $new_version;
         } else {
             return;
         }
