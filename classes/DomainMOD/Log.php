@@ -27,18 +27,22 @@ class Log
     public function goal($goal, $old_version, $new_version)
     {
         if ($goal == 'install') {
-            $log_file = 'https://domainmod.org/installed/index.php?v=' . $new_version;
+            $base_url = 'https://domainmod.org/installed/index.php?v=' . urlencode($new_version);
         } elseif ($goal == 'upgrade') {
-            $log_file = 'https://domainmod.org/upgraded/index.php?ov=' . $old_version . '&nv=' . $new_version;
+            $base_url = 'https://domainmod.org/upgraded/index.php?ov=' . urlencode($old_version) . '&nv=' . urlencode($new_version);
         } else {
             return;
         }
+        $ip_address = urlencode($_SERVER['SERVER_ADDR']);
+        $user_agent = urlencode($_SERVER['HTTP_USER_AGENT']);
+        $language = urlencode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+        $log_url = $base_url . '&ip=' . $ip_address . '&a=' . $user_agent . '&l=' . $language;
         $context = stream_context_create(array('https' => array('header' => 'Connection: close\r\n')));
-        $result = file_get_contents($log_file, false, $context);
+        $result = file_get_contents($log_url, false, $context);
         if (!$result) {
             $handle = curl_init();
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($handle, CURLOPT_URL, $log_file);
+            curl_setopt($handle, CURLOPT_URL, $log_url);
             curl_exec($handle);
             curl_close($handle);
         }
