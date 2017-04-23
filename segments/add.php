@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->close();
 
             } else {
-                $error->outputSqlError($dbcon, "ERROR");
+                $error->outputSqlError($dbcon, '1', 'ERROR');
             }
 
             $query = "SELECT id
@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->close();
 
             } else {
-                $error->outputSqlError($dbcon, "ERROR");
+                $error->outputSqlError($dbcon, '1', 'ERROR');
             }
 
             $query = "DELETE FROM segment_data
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->close();
 
             } else {
-                $error->outputSqlError($dbcon, "ERROR");
+                $error->outputSqlError($dbcon, '1', 'ERROR');
             }
 
             foreach ($domain_list as $domain) {
@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q->close();
 
                 } else {
-                    $error->outputSqlError($dbcon, "ERROR");
+                    $error->outputSqlError($dbcon, '1', 'ERROR');
                 }
 
             }

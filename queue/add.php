@@ -71,7 +71,7 @@ if ($new_raid != '' ) {
         $q->fetch();
         $q->close();
     
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 }
 
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $q->close();
 
-            } else $error->outputSqlError($dbcon, "ERROR");
+            } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
             $query = "INSERT INTO domain_queue_list
                       (api_registrar_id, owner_id, registrar_id, account_id, created_by, insert_time)
@@ -125,10 +125,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $timestamp = $time->stamp();
 
                 $q->bind_param('iiiiis', $temp_api_registrar_id, $temp_owner_id, $temp_registrar_id, $new_raid, $_SESSION['s_user_id'], $timestamp);
-                $q->execute() or $error->outputSqlError($dbcon, "Couldn't add registrar account to list queue");
+                $q->execute() or $error->outputSqlError($dbcon, '1', 'Unable to add registrar account to list queue');
                 $q->close();
 
-            } else $error->outputSqlError($dbcon, "ERROR");
+            } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
             $_SESSION['s_domains_in_list_queue'] = '1';
 
@@ -178,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q2->close();
 
-                } else $error->outputSqlError($dbcon, "ERROR");
+                } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 $has_api_support = '0';
 
@@ -190,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         if ($new_raid == '' || $raw_domain_list == '' || $has_api_support != '1') {
 
@@ -328,7 +328,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $q->close();
 
-                    } else $error->outputSqlError($dbcon, "ERROR");
+                    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                     reset($domain_list);
 
@@ -350,10 +350,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                             $q->bind_param('isiiisis', $temp_api_registrar_id, $new_domain, $temp_owner_id, $temp_registrar_id,
                                 $new_raid, $new_tld, $_SESSION['s_user_id'], $timestamp);
-                            $q->execute() or $error->outputSqlError($dbcon, "Couldn't add domains to queue");
+                            $q->execute() or $error->outputSqlError($dbcon, '1', 'Unable to add domains to queue');
                             $q->close();
 
-                        } else $error->outputSqlError($dbcon, "ERROR");
+                        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                     } // finish cycling through domains here
 
@@ -414,7 +414,7 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                   AND ra.registrar_id = r.id
                   AND r.api_registrar_id != '0'
                 ORDER BY r_name, o_name, ra.username";
-$result_account = mysqli_query($dbcon, $sql_account) or $error->outputOldSqlError($dbcon);
+$result_account = mysqli_query($dbcon, $sql_account) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 echo $form->showDropdownOptionJump('add.php', '', 'Choose the Registrar Account to import', '');
 

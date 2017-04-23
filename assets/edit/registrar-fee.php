@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $query = "UPDATE domains
                   SET fee_id = ?,
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $query = "UPDATE domains d
                   JOIN fees f ON d.fee_id = f.id
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $query = "UPDATE domains d
                   JOIN fees f ON d.fee_id = f.id
@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $conversion->updateRates($dbcon, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
@@ -157,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
@@ -194,7 +194,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($dbcon, "ERROR");
+} else $error->outputSqlError($dbcon, '1', 'ERROR');
 ?>
 <strong>Domain Registrar</strong><BR>
 <?php echo $temp_registrar; ?><BR><BR>
@@ -210,7 +210,7 @@ echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '
 $sql = "SELECT id, currency, `name`, symbol
         FROM currencies
         ORDER BY `name`";
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_currency_id', 'Currency', '', '', '');
 while ($row = mysqli_fetch_object($result)) {
 

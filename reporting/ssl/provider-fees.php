@@ -72,14 +72,14 @@ if ($all == "1") {
 
 }
 
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 $total_rows = mysqli_num_rows($result);
 
 if ($total_rows > 0) {
 
     if ($export_data == "1") {
 
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $export = new DomainMOD\Export();
 

@@ -77,7 +77,7 @@ if ($action != "") {
 
                 $q->close();
 
-            } else $error->outputSqlError($dbcon, "ERROR");
+            } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         }
 
@@ -115,7 +115,7 @@ if ($action != "") {
 
                 $q->close();
 
-            } else $error->outputSqlError($dbcon, "ERROR");
+            } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         }
 

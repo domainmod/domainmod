@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($dbcon, "ERROR");
+            $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
         $ipid = $new_ipid;
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
@@ -140,7 +140,7 @@ if ($del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
@@ -158,7 +158,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $_SESSION['s_message_success'] .= "IP Address " . $new_name . " (" . $new_ip . ") Deleted<BR>";

@@ -47,7 +47,7 @@ $sql = "SELECT id, `name`, notes, creation_type_id, created_by, insert_time, upd
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('account_owner_list', strtotime($time->stamp()));
@@ -194,7 +194,7 @@ Below is a list of all the Account Owners that are stored in <?php echo $softwar
 <a href="add/account-owner.php"><?php echo $layout->showButton('button', 'Add Owner'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="account-owners.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 if (mysqli_num_rows($result) > 0) { ?>
 

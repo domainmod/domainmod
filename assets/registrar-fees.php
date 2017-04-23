@@ -63,7 +63,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($dbcon, "ERROR");
+} else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 $query = "SELECT f.id, f.tld, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, f.insert_time, f.update_time, c.currency, c.symbol, c.symbol_order, c.symbol_space
           FROM fees AS f, currencies AS c
@@ -128,7 +128,7 @@ if ($export_data == '1') {
 
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export->closeFile($export_file);
 
@@ -186,7 +186,7 @@ if ($q2->prepare($query2)) {
 
     $q2->close();
 
-} else $error->outputSqlError($dbcon, "ERROR");
+} else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 $q = $dbcon->stmt_init();
 
@@ -304,7 +304,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($dbcon, "ERROR");
+} else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 require_once(DIR_INC . 'layout/footer.inc.php'); //@formatter:on ?>
 </body>

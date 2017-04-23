@@ -73,7 +73,7 @@ if ($demo_install != '1') {
 
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     if ($active == '1') {
 

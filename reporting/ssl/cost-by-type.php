@@ -77,7 +77,7 @@ $sql = "SELECT sslt.id, sslt.type, SUM(sslc.total_cost * cc.conversion) AS total
           " . $range_string . "
         GROUP BY sslt.type
         ORDER BY sslt.type";
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
@@ -89,7 +89,7 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, 
                       AND sslc.active NOT IN ('0')
                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                       " . $range_string . "";
-$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputOldSqlError($dbcon);
+$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $grand_total = $row_grand_total->grand_total;
@@ -103,7 +103,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
     if ($export_data == '1') {
 
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $export = new DomainMOD\Export();
 

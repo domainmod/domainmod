@@ -176,7 +176,7 @@ if ($segid != "") {
 
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $segid_string = " AND d.domain IN ($temp_segment)";
 
@@ -337,7 +337,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total
                       $tld_string
                       $search_string";
 
-$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputOldSqlError($dbcon);
+$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputSqlError($dbcon, '1', 'ERROR');
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $grand_total = $row_grand_total->grand_total;
 }
@@ -368,7 +368,7 @@ if ($segid != "") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql_filter_update = "UPDATE segment_data
                           SET filtered = '1'
@@ -388,7 +388,7 @@ if ($segid != "") {
 
 if ($export_data == "1") {
 
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
     $total_rows = number_format(mysqli_num_rows($result));
 
     $export = new DomainMOD\Export();
@@ -456,7 +456,7 @@ if ($export_data == "1") {
             $totalrows_inactive = $q->num_rows();
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $query = "SELECT domain
                   FROM segment_data
@@ -473,7 +473,7 @@ if ($export_data == "1") {
             $totalrows_missing = $q->num_rows();
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $query = "SELECT domain
                   FROM segment_data
@@ -490,7 +490,7 @@ if ($export_data == "1") {
             $totalrows_filtered = $q->num_rows();
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         if ($segid != "") {
 
@@ -514,7 +514,7 @@ if ($export_data == "1") {
 
                 $q->close();
 
-            } else $error->outputSqlError($dbcon, "ERROR");
+            } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         }
 
@@ -545,7 +545,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $row_contents = array(
             'Domains in Segment:',
@@ -630,7 +630,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -662,7 +662,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $query = "SELECT r.name AS registrar_name, o.name AS owner_name, ra.username
                   FROM registrar_accounts AS ra, registrars AS r, owners AS o
@@ -690,7 +690,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -720,7 +720,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -750,7 +750,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -780,7 +780,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -810,7 +810,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -840,7 +840,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -1171,7 +1171,7 @@ if ($segid != "") {
 
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 }
 
@@ -2266,7 +2266,7 @@ if ($segid != "") {
         $totalrows_inactive = $q->num_rows();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $query = "SELECT domain
               FROM segment_data
@@ -2283,7 +2283,7 @@ if ($segid != "") {
         $totalrows_missing = $q->num_rows();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $query = "SELECT domain
               FROM segment_data
@@ -2300,7 +2300,7 @@ if ($segid != "") {
         $totalrows_filtered = $q->num_rows();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
     ?>
     <strong>Domains in Segment:</strong> <?php echo number_format($number_of_domains); ?><BR><BR>
 

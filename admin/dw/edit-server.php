@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($dbcon, "ERROR");
+            $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
         $dwsid = $new_dwsid;
@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
@@ -148,7 +148,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $query = "DELETE FROM dw_accounts
@@ -162,7 +162,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $query = "DELETE FROM dw_dns_records
@@ -176,7 +176,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $query = "DELETE FROM dw_dns_zones
@@ -190,7 +190,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $query = "DELETE FROM dw_servers
@@ -204,7 +204,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $dwstats = new DomainMOD\DwStats();

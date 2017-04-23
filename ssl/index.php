@@ -222,7 +222,7 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total
                       $range_string
                       $search_string";
 
-$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputOldSqlError($dbcon);
+$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputSqlError($dbcon, '1', 'ERROR');
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $grand_total = $row_grand_total->grand_total;
 }
@@ -232,7 +232,7 @@ $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_sym
 
 if ($export_data == "1") {
 
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
     $total_rows = number_format(mysqli_num_rows($result));
 
     $export = new DomainMOD\Export();
@@ -299,7 +299,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -329,7 +329,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -361,7 +361,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -391,7 +391,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -421,7 +421,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -451,7 +451,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -481,7 +481,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 

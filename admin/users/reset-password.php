@@ -82,7 +82,7 @@ if ($new_username != '') {
                     $q->close();
 
                 } else {
-                    $error->outputSqlError($dbcon, "ERROR");
+                    $error->outputSqlError($dbcon, '1', 'ERROR');
                 }
 
                 if ($display == '1') {
@@ -113,7 +113,7 @@ if ($new_username != '') {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 } else {

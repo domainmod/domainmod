@@ -47,7 +47,7 @@ $sql = "SELECT id AS rid, `name` AS rname, url, api_registrar_id, notes, creatio
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('registrar_list', strtotime($time->stamp()));
@@ -168,7 +168,7 @@ Below is a list of all the Domain Registrars that are stored in <?php echo $soft
 <a href="add/registrar.php"><?php echo $layout->showButton('button', 'Add Registrar'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="registrars.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 if (mysqli_num_rows($result) > 0) { ?>
 

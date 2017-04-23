@@ -98,7 +98,7 @@ if ($export_data == "1") {
             WHERE s.id = sd.segment_id
             $seg_clause
             ORDER BY s.name ASC, sd.domain ASC";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     if ($segid != "") {
 
@@ -214,7 +214,7 @@ if ($export_data == "1") {
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
 <?php
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 ?>
 Segments are lists of domains that can be used to help filter and manage your <a href="<?php echo $web_root; ?>/domains/">domain
     results</a>.<BR>
@@ -228,7 +228,7 @@ as which domains don't match, and you can easily view and export the results.<BR
 $sql_segment_check = "SELECT id
                       FROM segments
                       LIMIT 1";
-$result_segment_check = mysqli_query($dbcon, $sql_segment_check) or $error->outputOldSqlError($dbcon);
+$result_segment_check = mysqli_query($dbcon, $sql_segment_check) or $error->outputSqlError($dbcon, '1', 'ERROR');
 if (mysqli_num_rows($result_segment_check) == 0) { ?>
     You don't currently have any Segments. <a href="add/segment.php">Click here to add one</a>.<BR><BR><?php
 }

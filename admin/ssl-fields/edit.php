@@ -74,7 +74,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($dbcon, "ERROR");
+} else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $query = "SELECT field_name
               FROM ssl_cert_fields
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     header("Location: ../ssl-fields/");
     exit;
@@ -155,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
@@ -196,7 +196,7 @@ if ($really_del == '1') {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $query = "ALTER TABLE `ssl_cert_field_data`
                   DROP `?`";
@@ -208,7 +208,7 @@ if ($really_del == '1') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $query = "DELETE FROM ssl_cert_fields
                   WHERE id = ?";
@@ -220,7 +220,7 @@ if ($really_del == '1') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $_SESSION['s_message_success'] .= 'Custom SSL Field ' . $temp_name . ' (' . $temp_field_name . ') Deleted<BR>';
 

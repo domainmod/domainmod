@@ -49,7 +49,7 @@ $sql = "SELECT f.id, f.name, f.field_name, f.description, f.notes, f.creation_ty
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('custom_domain_field_list', strtotime($time->stamp()));
@@ -127,7 +127,7 @@ And when you export your domain data, the information contained in your custom f
 the exported data.<BR>
 <BR><?php
 
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 if (mysqli_num_rows($result) > 0) { ?>
 

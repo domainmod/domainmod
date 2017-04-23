@@ -91,7 +91,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($dbcon, "ERROR");
+    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q_ra->close();
 
                 } else {
-                    $error->outputSqlError($dbcon, "ERROR");
+                    $error->outputSqlError($dbcon, '1', 'ERROR');
                 }
 
                 if ($new_privacy == "1") {
@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if ($new_total_cost == "") $new_total_cost = 0;
 
                 } else {
-                    $error->outputSqlError($dbcon, "ERROR");
+                    $error->outputSqlError($dbcon, '1', 'ERROR');
                 }
 
                 $query_d = "INSERT INTO domains
@@ -191,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q_d->close();
 
                 } else {
-                    $error->outputSqlError($dbcon, "ERROR");
+                    $error->outputSqlError($dbcon, '1', 'ERROR');
                 }
 
                 $query_df = "INSERT INTO domain_field_data
@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q_df->close();
 
                 } else {
-                    $error->outputSqlError($dbcon, "ERROR");
+                    $error->outputSqlError($dbcon, '1', 'ERROR');
                 }
 
                 $query_df = "SELECT field_name
@@ -248,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $q_dfd->close();
 
                             } else {
-                                $error->outputSqlError($dbcon, "ERROR");
+                                $error->outputSqlError($dbcon, '1', 'ERROR');
                             }
 
                         }
@@ -258,7 +258,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q_df->close();
 
                 } else {
-                    $error->outputSqlError($dbcon, "ERROR");
+                    $error->outputSqlError($dbcon, '1', 'ERROR');
                 }
 
                 $maint->updateDomainFee($dbcon, $temp_domain_id);
@@ -282,7 +282,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($dbcon, "ERROR");
+            $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
     } else {
@@ -357,7 +357,7 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                 WHERE ra.owner_id = o.id
                   AND ra.registrar_id = r.id
                 ORDER BY r_name ASC, o_name ASC, ra.username ASC";
-$result_account = mysqli_query($dbcon, $sql_account) or $error->outputOldSqlError($dbcon);
+$result_account = mysqli_query($dbcon, $sql_account) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -388,7 +388,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_dns = "SELECT id, `name`
             FROM dns
             ORDER BY `name` ASC";
-$result_dns = mysqli_query($dbcon, $sql_dns) or $error->outputOldSqlError($dbcon);
+$result_dns = mysqli_query($dbcon, $sql_dns) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '1', '');
 while ($row_dns = mysqli_fetch_object($result_dns)) { //@formatter:off
@@ -411,7 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_ip = "SELECT id, `name`, ip
            FROM ip_addresses
            ORDER BY `name` ASC, ip ASC";
-$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputOldSqlError($dbcon);
+$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
 while ($row_ip = mysqli_fetch_object($result_ip)) { //@formatter:off
@@ -434,7 +434,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_hosting = "SELECT id, `name`
                 FROM hosting
                 ORDER BY name ASC";
-$result_hosting = mysqli_query($dbcon, $sql_hosting) or $error->outputOldSqlError($dbcon);
+$result_hosting = mysqli_query($dbcon, $sql_hosting) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '1', '');
 while ($row_hosting = mysqli_fetch_object($result_hosting)) { //@formatter:off
@@ -456,7 +456,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_cat = "SELECT id, `name`
             FROM categories
             ORDER BY name ASC";
-$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputOldSqlError($dbcon);
+$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
 while ($row_cat = mysqli_fetch_object($result_cat)) { //@formatter:off
@@ -549,7 +549,7 @@ if ($q->prepare($query)) {
                 $q_df->close();
 
             } else {
-                $error->outputSqlError($dbcon, "ERROR");
+                $error->outputSqlError($dbcon, '1', 'ERROR');
             }
 
         }
@@ -559,7 +559,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($dbcon, "ERROR");
+    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 
 echo $form->showSubmitButton('Add Domain', '', '');

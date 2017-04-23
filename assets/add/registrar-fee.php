@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q2->close();
 
-                } else $error->outputSqlError($dbcon, "ERROR");
+                } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 $query2 = "INSERT INTO fees
                            (registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id, insert_time)
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q2->close();
 
                 } else {
-                    $error->outputSqlError($dbcon, "ERROR");
+                    $error->outputSqlError($dbcon, '1', 'ERROR');
                 }
 
                 $query2 = "UPDATE domains
@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q2->execute();
                     $q2->close();
 
-                } else $error->outputSqlError($dbcon, "ERROR");
+                } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 $query2 = "UPDATE domains d
                            JOIN fees f ON d.fee_id = f.id
@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q2->execute();
                     $q2->close();
 
-                } else $error->outputSqlError($dbcon, "ERROR");
+                } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 $query2 = "UPDATE domains d
                            JOIN fees f ON d.fee_id = f.id
@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q2->execute();
                     $q2->close();
 
-                } else $error->outputSqlError($dbcon, "ERROR");
+                } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 $queryB = new DomainMOD\QueryBuild();
 
@@ -183,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     } else {
 
@@ -228,7 +228,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($dbcon, "ERROR");
+} else $error->outputSqlError($dbcon, '1', 'ERROR');
 ?>
 <strong>Domain Registrar</strong><BR>
 <?php echo $temp_registrar; ?><BR><BR><?php
@@ -243,7 +243,7 @@ echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '
 $sql = "SELECT id, currency, `name`, symbol
         FROM currencies
         ORDER BY `name`";
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
 while ($row = mysqli_fetch_object($result)) {
 

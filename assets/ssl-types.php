@@ -47,7 +47,7 @@ $sql = "SELECT id, type, notes, creation_type_id, created_by, insert_time, updat
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('ssl_certificate_type_list', strtotime($time->stamp()));
@@ -146,7 +146,7 @@ Below is a list of all the SSL Certificates Types that are stored in <?php echo 
 <a href="add/ssl-type.php"><?php echo $layout->showButton('button', 'Add SSL Type'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="ssl-types.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 if (mysqli_num_rows($result) > 0) { ?>
 

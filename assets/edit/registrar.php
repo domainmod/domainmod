@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($dbcon, "ERROR");
+            $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
         $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Updated<BR>";
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 }
@@ -131,7 +131,7 @@ if ($del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $query = "SELECT registrar_id
@@ -155,7 +155,7 @@ if ($del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
@@ -185,7 +185,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $query = "DELETE FROM registrar_accounts
@@ -199,7 +199,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $query = "DELETE FROM registrars
@@ -213,7 +213,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Deleted<BR>";
@@ -265,7 +265,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($dbcon, "ERROR");
+    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 
 

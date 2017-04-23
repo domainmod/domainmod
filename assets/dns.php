@@ -48,7 +48,7 @@ $sql = "SELECT id, `name`, number_of_servers, dns1, dns2, dns3, dns4, dns5, dns6
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dns_profile_list', strtotime($time->stamp()));
@@ -188,7 +188,7 @@ Below is a list of all the DNS Profiles that are stored in <?php echo $software_
 <a href="add/dns.php"><?php echo $layout->showButton('button', 'Add DNS Profile'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="dns.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 if (mysqli_num_rows($result) > 0) { ?>
 

@@ -24,19 +24,22 @@ namespace DomainMOD;
 class Error
 {
 
-    public function outputSqlError($dbcon, $msg_to_display)
+    public function getLevel($level)
     {
-
-        return trigger_error(htmlentities($msg_to_display . ": " . mysqli_error($dbcon)), E_USER_ERROR, 'UTF-8');
-
+        if ($level == '1') {
+            return E_USER_ERROR;
+        } elseif ($level == '2') {
+            return E_USER_WARNING;
+        } elseif ($level == '3') {
+            return E_USER_NOTICE;
+        } else {
+            return E_USER_ERROR;
+        }
     }
 
-    // This function is temporary. After I convert all database queries to prepared statements this won't be needed.
-    public function outputOldSqlError($dbcon)
+    public function outputSqlError($dbcon, $level, $message)
     {
-
-        return trigger_error(htmlentities(mysqli_error($dbcon)), E_USER_ERROR, 'UTF-8');
-
+        return trigger_error(htmlentities('[' . strtoupper($message) . ']: ' . mysqli_error($dbcon)), $this->getLevel($level));
     }
 
 } //@formatter:on

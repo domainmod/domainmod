@@ -74,7 +74,7 @@ $sql = "SELECT sslc.id, YEAR(sslc.expiry_date) AS year, MONTH(sslc.expiry_date) 
           " . $range_string . "
         GROUP BY YEAR, MONTH
         ORDER BY YEAR, MONTH";
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
@@ -85,7 +85,7 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, 
                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                       AND sslc.active NOT IN ('0')
                       " . $range_string . "";
-$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputOldSqlError($dbcon);
+$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $grand_total = $row_grand_total->grand_total;
@@ -99,7 +99,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
     if ($export_data == '1') {
 
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $export = new DomainMOD\Export();
 
@@ -178,7 +178,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
                                        AND MONTH(sslc.expiry_date) = '" . $row->month . "'
                                        " . $range_string . "";
                 $result_monthly_cost
-                    = mysqli_query($dbcon, $sql_monthly_cost) or $error->outputOldSqlError($dbcon);
+                    = mysqli_query($dbcon, $sql_monthly_cost) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
                     $monthly_cost = $row_monthly_cost->monthly_cost;
@@ -211,7 +211,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
                                       AND YEAR(sslc.expiry_date) = '" . $row->year . "'
                                       " . $range_string . "";
                 $result_yearly_cost
-                    = mysqli_query($dbcon, $sql_yearly_cost) or $error->outputOldSqlError($dbcon);
+                    = mysqli_query($dbcon, $sql_yearly_cost) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
                     $yearly_cost = $row_yearly_cost->yearly_cost;
@@ -291,7 +291,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
                                    AND YEAR(sslc.expiry_date) = '" . $row->year . "'
                                    AND MONTH(sslc.expiry_date) = '" . $row->month . "'
                                    " . $range_string . "";
-            $result_monthly_cost = mysqli_query($dbcon, $sql_monthly_cost) or $error->outputOldSqlError($dbcon);
+            $result_monthly_cost = mysqli_query($dbcon, $sql_monthly_cost) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
             while ($row_monthly_cost = mysqli_fetch_object($result_monthly_cost)) {
                 $monthly_cost = $row_monthly_cost->monthly_cost;
@@ -324,7 +324,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
                                       AND sslc.active NOT IN ('0')
                                       AND YEAR(sslc.expiry_date) = '" . $row->year . "'
                                       " . $range_string . "";
-                $result_yearly_cost = mysqli_query($dbcon, $sql_yearly_cost) or $error->outputOldSqlError($dbcon);
+                $result_yearly_cost = mysqli_query($dbcon, $sql_yearly_cost) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 while ($row_yearly_cost = mysqli_fetch_object($result_yearly_cost)) {
                     $yearly_cost = $row_yearly_cost->yearly_cost;

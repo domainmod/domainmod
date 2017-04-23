@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $query = "SELECT id
                   FROM ssl_fees
@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $fee_string = "renewal_fee + misc_fee";
 
@@ -170,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $query = "UPDATE ssl_certs
                   SET owner_id = ?,
@@ -197,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $sql = "SELECT field_name
                 FROM ssl_cert_fields
@@ -320,7 +320,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 }
 
@@ -343,7 +343,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $query = "DELETE FROM ssl_cert_field_data
               WHERE ssl_id = ?";
@@ -355,7 +355,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $query = "SELECT type
               FROM ssl_cert_types
@@ -377,7 +377,7 @@ if ($really_del == "1") {
 
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $_SESSION['s_message_success'] .= "SSL Certificate " . $new_name . " (" . $temp_type . ") Deleted<BR>";
 
@@ -426,14 +426,14 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($dbcon, "ERROR");
+} else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 $sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS sslp_name
                 FROM ssl_accounts AS sslpa, owners AS o, ssl_providers AS sslp
                 WHERE sslpa.owner_id = o.id
                   AND sslpa.ssl_provider_id = sslp.id
                 ORDER BY sslp_name ASC, o_name ASC, sslpa.username ASC";
-$result_account = mysqli_query($dbcon, $sql_account) or $error->outputOldSqlError($dbcon);
+$result_account = mysqli_query($dbcon, $sql_account) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_account_id', 'SSL Provider Account', '', '1', '');
 while ($row_account = mysqli_fetch_object($result_account)) {
 
@@ -445,7 +445,7 @@ echo $form->showDropdownBottom('');
 $sql_type = "SELECT id, type
              FROM ssl_cert_types
              ORDER BY type ASC";
-$result_type = mysqli_query($dbcon, $sql_type) or $error->outputOldSqlError($dbcon);
+$result_type = mysqli_query($dbcon, $sql_type) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_type_id', 'Certificate Type', '', '1', '');
 while ($row_type = mysqli_fetch_object($result_type)) {
 
@@ -457,7 +457,7 @@ echo $form->showDropdownBottom('');
 $sql_ip = "SELECT id, ip, `name`
            FROM ip_addresses
            ORDER BY `name`, ip";
-$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputOldSqlError($dbcon);
+$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
 while ($row_ip = mysqli_fetch_object($result_ip)) {
 
@@ -469,7 +469,7 @@ echo $form->showDropdownBottom('');
 $sql_cat = "SELECT id, `name`
             FROM categories
             ORDER BY `name`";
-$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputOldSqlError($dbcon);
+$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
 while ($row_cat = mysqli_fetch_object($result_cat)) {
 

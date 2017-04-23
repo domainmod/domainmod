@@ -314,7 +314,7 @@ class DomainQueue
                   AND dql.finished = '0'
                   AND dql.copied_to_history = '0'
                 ORDER BY dql.insert_time DESC";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
         return $result;
     }
 
@@ -330,7 +330,7 @@ class DomainQueue
                   AND dq.copied_to_history = '0'
                   AND dq.already_in_domains = '0'
                   AND dq.already_in_queue = '0'";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
         return $result;
     }
 
@@ -344,7 +344,7 @@ class DomainQueue
                   AND ready_to_import = '0'
                   AND finished = '0'
                   AND copied_to_history = '0'";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
         return $result;
     }
 
@@ -369,7 +369,7 @@ class DomainQueue
                   AND copied_to_history = '0'
                   AND already_in_domains = '0'
                   AND already_in_queue = '0'";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
         return $result;
     }
 
@@ -392,7 +392,7 @@ class DomainQueue
             $sql = "UPDATE domain_queue
                     SET ready_to_import = '1'
                     WHERE id = '" . $queue_domain_id . "'";
-            mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+            mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
             $ready_to_import = '1';
 
@@ -412,7 +412,7 @@ class DomainQueue
         $sql = "UPDATE domain_queue
                 SET expiry_date = '" . $expiration_date . "'
                 WHERE id = '" . $queue_domain_id . "'";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
         return $result;
     }
 
@@ -490,7 +490,7 @@ class DomainQueue
                         '$new_servers[4]', '$new_servers[5]', '$new_servers[6]', '$new_servers[7]', '$new_servers[8]',
                         '$new_servers[9]', '" . $time->timeBasic() . " - Created by queue.', '$number_of_servers',
                         '" . $creation_type_id . "', '" . $created_by . "', '" . $time->stamp() . "')";
-            mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+            mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
             $new_dns_id = mysqli_insert_id($dbcon);
 
@@ -499,7 +499,7 @@ class DomainQueue
         $sql_update = "UPDATE domain_queue
                        SET dns_id = '" . $new_dns_id . "'
                        WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($dbcon, $sql_update) or $error->outputOldSqlError($dbcon);
+        mysqli_query($dbcon, $sql_update) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         return $new_dns_id;
 
@@ -560,7 +560,7 @@ class DomainQueue
                     VALUES
                     ('[created by queue]', '$live_ip', '$rdns', '" . $time->timeBasic() . " - Created by queue.',
                      '" . $creation_type_id . "', '" . $created_by . "', '" . $time->stamp() . "')";
-            mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+            mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
             $new_ip_id = mysqli_insert_id($dbcon);
 
@@ -569,7 +569,7 @@ class DomainQueue
         $sql_update = "UPDATE domain_queue
                        SET ip_id = '" . $new_ip_id . "'
                        WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($dbcon, $sql_update) or $error->outputOldSqlError($dbcon);
+        mysqli_query($dbcon, $sql_update) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         return $new_ip_id;
 
@@ -606,7 +606,7 @@ class DomainQueue
                     (`name`, stakeholder, creation_type_id, created_by, insert_time)
                     VALUES
                     ('[created by queue]', '[created by queue]', '" . $creation_type_id . "', '" . $created_by . "', '" . $time->stamp() . "')";
-            mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+            mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
     
             $category_id = mysqli_insert_id($dbcon);
 
@@ -615,7 +615,7 @@ class DomainQueue
         $sql = "UPDATE domain_queue
                 SET cat_id = '" . $category_id . "'
                 WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         return $category_id;
 
@@ -651,7 +651,7 @@ class DomainQueue
                     (`name`, creation_type_id, created_by,insert_time)
                     VALUES
                     ('[created by queue]', '" . $creation_type_id . "', '" . $created_by . "', '" . $time->stamp() . "')";
-            mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+            mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
     
             $hosting_id = mysqli_insert_id($dbcon);
 
@@ -660,7 +660,7 @@ class DomainQueue
         $sql = "UPDATE domain_queue
                 SET hosting_id = '" . $hosting_id . "'
                 WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         return $hosting_id;
     }
@@ -672,7 +672,7 @@ class DomainQueue
         $sql = "UPDATE domain_queue
                 SET privacy = '" . $privacy_status . "'
                 WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         return $privacy_status;
     }
@@ -684,7 +684,7 @@ class DomainQueue
         $sql = "UPDATE domain_queue
                 SET autorenew = '" . $autorenew_status . "'
                 WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         return $autorenew_status;
     }
@@ -712,7 +712,7 @@ class DomainQueue
                         (api_registrar_id, domain_id, owner_id, registrar_id, account_id, domain, tld, processing, ready_to_import, finished, already_in_domains, created_by, insert_time)
                         VALUES
                         ('$api_registrar_id', '$row->id', '$owner_id', '$registrar_id', '$account_id', '$domain', '$tld', '0', '1', '1', '1', '$created_by', '" . $time->stamp() . "')";
-                mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+                mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
             }
 
@@ -731,7 +731,7 @@ class DomainQueue
                         (api_registrar_id, owner_id, registrar_id, account_id, domain, tld, processing, ready_to_import, finished, already_in_queue, created_by, insert_time)
                         VALUES
                         ('$api_registrar_id', '$owner_id', '$registrar_id', '$account_id', '$domain', '$tld', '0', '1', '1', '1', '$created_by', '" . $time->stamp() . "')";
-                mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+                mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
             } else { // if it's not in the main domain table or the domain queue, insert it into the queue
 
@@ -739,7 +739,7 @@ class DomainQueue
                         (api_registrar_id, owner_id, registrar_id, account_id, domain, tld, created_by, insert_time)
                         VALUES
                         ('$api_registrar_id', '$owner_id', '$registrar_id', '$account_id', '$domain', '$tld', '$created_by', '" . $time->stamp() . "')";
-                mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+                mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
             }
 
@@ -782,7 +782,7 @@ class DomainQueue
                               '$row->expiry_date', '$row->cat_id', '$row->dns_id', '$row->ip_id', '$row->hosting_id',
                               '" . $time->timeBasic() . " - Inserted by Queue.', '$row->autorenew', '$row->privacy',
                               '" . $creation_type_id . "', '$row->created_by', '" . $time->stamp() . "')";
-                mysqli_query($dbcon, $sql_move) or $error->outputOldSqlError($dbcon);
+                mysqli_query($dbcon, $sql_move) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 $new_domain_id = mysqli_insert_id($dbcon);
 
@@ -790,7 +790,7 @@ class DomainQueue
                              (domain_id, insert_time)
                              VALUES
                              ('$new_domain_id', '" . $time->stamp() . "')";
-                mysqli_query($dbcon, $sql_move) or $error->outputOldSqlError($dbcon);
+                mysqli_query($dbcon, $sql_move) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 // update domain's fees
                 $maint->updateDomainFee($dbcon, $new_domain_id);
@@ -813,7 +813,7 @@ class DomainQueue
         $sql = "UPDATE domain_queue
                 SET domain_id = '" . $new_domain_id . "'
                 WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         return 'Updated Queue Domain With New Domain ID';
     }
@@ -827,7 +827,7 @@ class DomainQueue
                     ready_to_import = '2',
                     finished = '1'
                 WHERE id = '" . $list_id . "'";
-        mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         return 'Successfully Added List To Domain Queue';
 
@@ -852,7 +852,7 @@ class DomainQueue
                   AND autorenew = '" . $autorenew_status . "'
                   AND creation_type_id = '" . $creation_type_id . "'
                   AND active = '1'";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         if (mysqli_num_rows($result) == 1) {
 
@@ -861,7 +861,7 @@ class DomainQueue
                         ready_to_import = '2',
                         finished = '1'
                     WHERE id = '" . $queue_domain_id . "'";
-            mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+            mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
             return 'Successfully Imported';
 
@@ -880,7 +880,7 @@ class DomainQueue
         $sql = "UPDATE domain_queue_list
                 SET processing = '0'
                 WHERE id = '" . $list_id . "'";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
         return $result;
     }
 
@@ -891,7 +891,7 @@ class DomainQueue
         $sql = "UPDATE domain_queue
                 SET processing = '0'
                 WHERE id = '" . $queue_domain_id . "'";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
         return $result;
     }
 
@@ -914,7 +914,7 @@ class DomainQueue
                              (api_registrar_id, domain_count, owner_id, registrar_id, account_id, created_by, insert_time)
                              VALUES
                              ('$row->api_registrar_id', '$row->domain_count', '$row->owner_id', '$row->registrar_id', '$row->account_id', '$row->created_by', '$row->insert_time')";
-                mysqli_query($dbcon, $sql_move) or $error->outputOldSqlError($dbcon);
+                mysqli_query($dbcon, $sql_move) or $error->outputSqlError($dbcon, '1', 'ERROR');
                 
                 $sql_update = "UPDATE domain_queue_list
                                SET copied_to_history = '1'
@@ -955,7 +955,7 @@ class DomainQueue
                               '$row->dns_id', '$row->ip_id', '$row->hosting_id', '$row->autorenew', '$row->privacy',
                               '$row->already_in_domains', '$row->already_in_queue', '$row->created_by',
                               '$row->insert_time')";
-                mysqli_query($dbcon, $sql_move) or $error->outputOldSqlError($dbcon);
+                mysqli_query($dbcon, $sql_move) or $error->outputSqlError($dbcon, '1', 'ERROR');
                 
                 $sql_update = "UPDATE domain_queue
                                SET copied_to_history = '1'

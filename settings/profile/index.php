@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                 $q_u->close();
 
             } else {
-                $error->outputSqlError($dbcon, "ERROR");
+                $error->outputSqlError($dbcon, '1', 'ERROR');
             }
 
             $query = "SELECT default_currency, default_timezone
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
                 $q->close();
 
-            } else $error->outputSqlError($dbcon, "ERROR");
+            } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
             if ($saved_currency != $new_currency) {
 
@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
                     $q->close();
 
-                } else $error->outputSqlError($dbcon, "ERROR");
+                } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 $sql_new_currency = "SELECT id
                                      FROM currency_conversions
@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                 $q->execute();
                 $q->close();
 
-            } else $error->outputSqlError($dbcon, "ERROR");
+            } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
             $_SESSION['s_first_name'] = $new_first_name;
             $_SESSION['s_last_name'] = $new_last_name;
@@ -203,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
                 $q->close();
 
-            } else $error->outputSqlError($dbcon, "ERROR");
+            } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
             header("Location: ../index.php");
             exit;
@@ -218,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
 } else {

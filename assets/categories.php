@@ -47,7 +47,7 @@ $sql = "SELECT id, `name`, stakeholder, notes, creation_type_id, created_by, ins
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('category_list', strtotime($time->stamp()));
@@ -172,7 +172,7 @@ Below is a list of all the Categories that are stored in <?php echo $software_ti
 <a href="add/category.php"><?php echo $layout->showButton('button', 'Add Category'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="categories.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 if (mysqli_num_rows($result) > 0) { ?>
 

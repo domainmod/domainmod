@@ -199,7 +199,7 @@ class System
             $q->store_result();
             call_user_func_array(array($q, 'bind_result'), $binding);
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
         return $q;
     }
     
@@ -210,7 +210,7 @@ class System
         $sql = "SELECT `name`
                 FROM creation_types
                 WHERE id = '" . $creation_type_id . "'";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
         
         if (mysqli_num_rows($result) == 1) {
         
@@ -238,7 +238,7 @@ class System
         $sql = "SELECT id
                 FROM creation_types
                 WHERE `name` = '" . $creation_type . "'";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
         
         if (mysqli_num_rows($result) == 1) {
         

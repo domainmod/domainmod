@@ -47,7 +47,7 @@ $sql = "SELECT id, `name`, ip, rdns, notes, creation_type_id, created_by, insert
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('ip_address_list', strtotime($time->stamp()));
@@ -174,7 +174,7 @@ Below is a list of all the IP Addresses that are stored in <?php echo $software_
 <a href="add/ip-address.php"><?php echo $layout->showButton('button', 'Add IP Address'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="ip-addresses.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 if (mysqli_num_rows($result) > 0) { ?>
 

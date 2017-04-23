@@ -48,7 +48,7 @@ $sql_accounts_without_a_dns_zone = "SELECT domain
                                     WHERE domain NOT IN (SELECT domain FROM dw_dns_zones)
                                     ORDER BY domain";
 $result_accounts_without_a_dns_zone
-    = mysqli_query($dbcon, $sql_accounts_without_a_dns_zone) or $error->outputOldSqlError($dbcon);
+    = mysqli_query($dbcon, $sql_accounts_without_a_dns_zone) or $error->outputSqlError($dbcon, '1', 'ERROR');
 $temp_accounts_without_a_dns_zone = mysqli_num_rows($result_accounts_without_a_dns_zone);
 
 $sql_dns_zones_without_an_account = "SELECT domain
@@ -56,7 +56,7 @@ $sql_dns_zones_without_an_account = "SELECT domain
                                      WHERE domain NOT IN (SELECT domain FROM dw_accounts)
                                      ORDER BY domain";
 $result_dns_zones_without_an_account
-    = mysqli_query($dbcon, $sql_dns_zones_without_an_account) or $error->outputOldSqlError($dbcon);
+    = mysqli_query($dbcon, $sql_dns_zones_without_an_account) or $error->outputSqlError($dbcon, '1', 'ERROR');
 $temp_dns_zones_without_an_account = mysqli_num_rows($result_dns_zones_without_an_account);
 
 $sql_suspended_accounts = "SELECT domain
@@ -64,7 +64,7 @@ $sql_suspended_accounts = "SELECT domain
                            WHERE suspended = '1'
                            ORDER BY domain";
 $result_suspended_accounts
-    = mysqli_query($dbcon, $sql_suspended_accounts) or $error->outputOldSqlError($dbcon);
+    = mysqli_query($dbcon, $sql_suspended_accounts) or $error->outputSqlError($dbcon, '1', 'ERROR');
 $temp_suspended_accounts = mysqli_num_rows($result_suspended_accounts);
 
 if ($export_data == '1') {

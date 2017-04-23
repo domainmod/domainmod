@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q2->close();
 
-                } else $error->outputSqlError($dbcon, "ERROR");
+                } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 $query2 = "INSERT INTO ssl_fees
                            (ssl_provider_id, type_id, initial_fee, renewal_fee, misc_fee, currency_id, insert_time)
@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $new_fee_id = $q2->insert_id;
                     $q2->close();
 
-                } else $error->outputSqlError($dbcon, "ERROR");
+                } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 $query2 = "UPDATE ssl_certs
                            SET fee_id = ?,
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q2->execute();
                     $q2->close();
 
-                } else $error->outputSqlError($dbcon, "ERROR");
+                } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 $query2 = "SELECT type
                            FROM ssl_cert_types
@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q2->close();
 
-                } else $error->outputSqlError($dbcon, "ERROR");
+                } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 $query2 = "UPDATE ssl_certs sslc
                            JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q2->execute();
                     $q2->close();
 
-                } else $error->outputSqlError($dbcon, "ERROR");
+                } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 $queryB = new DomainMOD\QueryBuild();
 
@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     } else {
 
@@ -226,7 +226,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($dbcon, "ERROR");
+} else $error->outputSqlError($dbcon, '1', 'ERROR');
 ?>
 <strong>SSL Provider</strong><BR>
 <?php echo $temp_ssl_provider; ?><BR><BR><?php
@@ -234,7 +234,7 @@ if ($q->prepare($query)) {
 $sql = "SELECT id, type
         FROM ssl_cert_types
         ORDER BY `type`";
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_type_id', 'SSL Type', '', '1', '');
 echo $form->showDropdownOption('', 'Choose an SSL Type', 'null');
 while ($row = mysqli_fetch_object($result)) {
@@ -251,7 +251,7 @@ echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '
 $sql = "SELECT id, currency, `name`, symbol
         FROM currencies
         ORDER BY `name`";
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
 while ($row = mysqli_fetch_object($result)) {
 

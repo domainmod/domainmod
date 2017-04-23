@@ -310,7 +310,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($dbcon, "ERROR");
+} else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 if ($type == "inactive") {
     echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, and they are stored in your  " . $software_title . " database, but they are currently marked as inactive.<BR><BR>";

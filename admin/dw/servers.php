@@ -49,7 +49,7 @@ $sql = "SELECT id, `name`, `host`, protocol, `port`, username, api_token, `hash`
 
 if ($export_data == "1") {
 
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dw_servers', strtotime($time->stamp()));
@@ -130,7 +130,7 @@ if ($export_data == "1") {
 <?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
 <a href="add-server.php"><?php echo $layout->showButton('button', 'Add Web Server'); ?></a>&nbsp;&nbsp;&nbsp;
 <?php
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 if (mysqli_num_rows($result) > 0) { ?>
 

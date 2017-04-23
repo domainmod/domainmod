@@ -30,18 +30,18 @@ if ($current_db_version === '2.0022') {
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `timezones`
             (`timezone`, `insert_time`)
             VALUES
             ('Africa/Abidjan', '" . $time->stamp() . "'), ('Africa/Accra', '" . $time->stamp() . "'), ('Africa/Addis_Ababa', '" . $time->stamp() . "'), ('Africa/Algiers', '" . $time->stamp() . "'), ('Africa/Asmara', '" . $time->stamp() . "'), ('Africa/Asmera', '" . $time->stamp() . "'), ('Africa/Bamako', '" . $time->stamp() . "'), ('Africa/Bangui', '" . $time->stamp() . "'), ('Africa/Banjul', '" . $time->stamp() . "'), ('Africa/Bissau', '" . $time->stamp() . "'), ('Africa/Blantyre', '" . $time->stamp() . "'), ('Africa/Brazzaville', '" . $time->stamp() . "'), ('Africa/Bujumbura', '" . $time->stamp() . "'), ('Africa/Cairo', '" . $time->stamp() . "'), ('Africa/Casablanca', '" . $time->stamp() . "'), ('Africa/Ceuta', '" . $time->stamp() . "'), ('Africa/Conakry', '" . $time->stamp() . "'), ('Africa/Dakar', '" . $time->stamp() . "'), ('Africa/Dar_es_Salaam', '" . $time->stamp() . "'), ('Africa/Djibouti', '" . $time->stamp() . "'), ('Africa/Douala', '" . $time->stamp() . "'), ('Africa/El_Aaiun', '" . $time->stamp() . "'), ('Africa/Freetown', '" . $time->stamp() . "'), ('Africa/Gaborone', '" . $time->stamp() . "'), ('Africa/Harare', '" . $time->stamp() . "'), ('Africa/Johannesburg', '" . $time->stamp() . "'), ('Africa/Juba', '" . $time->stamp() . "'), ('Africa/Kampala', '" . $time->stamp() . "'), ('Africa/Khartoum', '" . $time->stamp() . "'), ('Africa/Kigali', '" . $time->stamp() . "'), ('Africa/Kinshasa', '" . $time->stamp() . "'), ('Africa/Lagos', '" . $time->stamp() . "'), ('Africa/Libreville', '" . $time->stamp() . "'), ('Africa/Lome', '" . $time->stamp() . "'), ('Africa/Luanda', '" . $time->stamp() . "'), ('Africa/Lubumbashi', '" . $time->stamp() . "'), ('Africa/Lusaka', '" . $time->stamp() . "'), ('Africa/Malabo', '" . $time->stamp() . "'), ('Africa/Maputo', '" . $time->stamp() . "'), ('Africa/Maseru', '" . $time->stamp() . "'), ('Africa/Mbabane', '" . $time->stamp() . "'), ('Africa/Mogadishu', '" . $time->stamp() . "'), ('Africa/Monrovia', '" . $time->stamp() . "'), ('Africa/Nairobi', '" . $time->stamp() . "'), ('Africa/Ndjamena', '" . $time->stamp() . "'), ('Africa/Niamey', '" . $time->stamp() . "'), ('Africa/Nouakchott', '" . $time->stamp() . "'), ('Africa/Ouagadougou', '" . $time->stamp() . "'), ('Africa/Porto-Novo', '" . $time->stamp() . "'), ('Africa/Sao_Tome', '" . $time->stamp() . "'), ('Africa/Timbuktu', '" . $time->stamp() . "'), ('Africa/Tripoli', '" . $time->stamp() . "'), ('Africa/Tunis', '" . $time->stamp() . "'), ('Africa/Windhoek', '" . $time->stamp() . "'), ('America/Adak', '" . $time->stamp() . "'), ('America/Anchorage', '" . $time->stamp() . "'), ('America/Anguilla', '" . $time->stamp() . "'), ('America/Antigua', '" . $time->stamp() . "'), ('America/Araguaina', '" . $time->stamp() . "'), ('America/Argentina/Buenos_Aires', '" . $time->stamp() . "'), ('America/Argentina/Catamarca', '" . $time->stamp() . "'), ('America/Argentina/ComodRivadavia', '" . $time->stamp() . "'), ('America/Argentina/Cordoba', '" . $time->stamp() . "'), ('America/Argentina/Jujuy', '" . $time->stamp() . "'), ('America/Argentina/La_Rioja', '" . $time->stamp() . "'), ('America/Argentina/Mendoza', '" . $time->stamp() . "'), ('America/Argentina/Rio_Gallegos', '" . $time->stamp() . "'), ('America/Argentina/Salta', '" . $time->stamp() . "'), ('America/Argentina/San_Juan', '" . $time->stamp() . "'), ('America/Argentina/San_Luis', '" . $time->stamp() . "'), ('America/Argentina/Tucuman', '" . $time->stamp() . "'), ('America/Argentina/Ushuaia', '" . $time->stamp() . "'), ('America/Aruba', '" . $time->stamp() . "'), ('America/Asuncion', '" . $time->stamp() . "'), ('America/Atikokan', '" . $time->stamp() . "'), ('America/Atka', '" . $time->stamp() . "'), ('America/Bahia', '" . $time->stamp() . "'), ('America/Bahia_Banderas', '" . $time->stamp() . "'), ('America/Barbados', '" . $time->stamp() . "'), ('America/Belem', '" . $time->stamp() . "'), ('America/Belize', '" . $time->stamp() . "'), ('America/Blanc-Sablon', '" . $time->stamp() . "'), ('America/Boa_Vista', '" . $time->stamp() . "'), ('America/Bogota', '" . $time->stamp() . "'), ('America/Boise', '" . $time->stamp() . "'), ('America/Buenos_Aires', '" . $time->stamp() . "'), ('America/Cambridge_Bay', '" . $time->stamp() . "'), ('America/Campo_Grande', '" . $time->stamp() . "'), ('America/Cancun', '" . $time->stamp() . "'), ('America/Caracas', '" . $time->stamp() . "'), ('America/Catamarca', '" . $time->stamp() . "'), ('America/Cayenne', '" . $time->stamp() . "'), ('America/Cayman', '" . $time->stamp() . "'), ('America/Chicago', '" . $time->stamp() . "'), ('America/Chihuahua', '" . $time->stamp() . "'), ('America/Coral_Harbour', '" . $time->stamp() . "'), ('America/Cordoba', '" . $time->stamp() . "'), ('America/Costa_Rica', '" . $time->stamp() . "'), ('America/Creston', '" . $time->stamp() . "'), ('America/Cuiaba', '" . $time->stamp() . "'), ('America/Curacao', '" . $time->stamp() . "'), ('America/Danmarkshavn', '" . $time->stamp() . "'), ('America/Dawson', '" . $time->stamp() . "'), ('America/Dawson_Creek', '" . $time->stamp() . "'), ('America/Denver', '" . $time->stamp() . "'), ('America/Detroit', '" . $time->stamp() . "'), ('America/Dominica', '" . $time->stamp() . "'), ('America/Edmonton', '" . $time->stamp() . "'), ('America/Eirunepe', '" . $time->stamp() . "'), ('America/El_Salvador', '" . $time->stamp() . "'), ('America/Ensenada', '" . $time->stamp() . "'), ('America/Fort_Wayne', '" . $time->stamp() . "'), ('America/Fortaleza', '" . $time->stamp() . "'), ('America/Glace_Bay', '" . $time->stamp() . "'), ('America/Godthab', '" . $time->stamp() . "'), ('America/Goose_Bay', '" . $time->stamp() . "'), ('America/Grand_Turk', '" . $time->stamp() . "'), ('America/Grenada', '" . $time->stamp() . "'), ('America/Guadeloupe', '" . $time->stamp() . "'), ('America/Guatemala', '" . $time->stamp() . "'), ('America/Guayaquil', '" . $time->stamp() . "'), ('America/Guyana', '" . $time->stamp() . "'), ('America/Halifax', '" . $time->stamp() . "'), ('America/Havana', '" . $time->stamp() . "'), ('America/Hermosillo', '" . $time->stamp() . "'), ('America/Indiana/Indianapolis', '" . $time->stamp() . "'), ('America/Indiana/Knox', '" . $time->stamp() . "'), ('America/Indiana/Marengo', '" . $time->stamp() . "'), ('America/Indiana/Petersburg', '" . $time->stamp() . "'), ('America/Indiana/Tell_City', '" . $time->stamp() . "'), ('America/Indiana/Vevay', '" . $time->stamp() . "'), ('America/Indiana/Vincennes', '" . $time->stamp() . "'), ('America/Indiana/Winamac', '" . $time->stamp() . "'), ('America/Indianapolis', '" . $time->stamp() . "'), ('America/Inuvik', '" . $time->stamp() . "'), ('America/Iqaluit', '" . $time->stamp() . "'), ('America/Jamaica', '" . $time->stamp() . "'), ('America/Jujuy', '" . $time->stamp() . "'), ('America/Juneau', '" . $time->stamp() . "'), ('America/Kentucky/Louisville', '" . $time->stamp() . "'), ('America/Kentucky/Monticello', '" . $time->stamp() . "'), ('America/Knox_IN', '" . $time->stamp() . "'), ('America/Kralendijk', '" . $time->stamp() . "'), ('America/La_Paz', '" . $time->stamp() . "'), ('America/Lima', '" . $time->stamp() . "'), ('America/Los_Angeles', '" . $time->stamp() . "'), ('America/Louisville', '" . $time->stamp() . "'), ('America/Lower_Princes', '" . $time->stamp() . "'), ('America/Maceio', '" . $time->stamp() . "'), ('America/Managua', '" . $time->stamp() . "'), ('America/Manaus', '" . $time->stamp() . "'), ('America/Marigot', '" . $time->stamp() . "'), ('America/Martinique', '" . $time->stamp() . "'), ('America/Matamoros', '" . $time->stamp() . "'), ('America/Mazatlan', '" . $time->stamp() . "'), ('America/Mendoza', '" . $time->stamp() . "'), ('America/Menominee', '" . $time->stamp() . "'), ('America/Merida', '" . $time->stamp() . "'), ('America/Metlakatla', '" . $time->stamp() . "'), ('America/Mexico_City', '" . $time->stamp() . "'), ('America/Miquelon', '" . $time->stamp() . "'), ('America/Moncton', '" . $time->stamp() . "'), ('America/Monterrey', '" . $time->stamp() . "'), ('America/Montevideo', '" . $time->stamp() . "'), ('America/Montreal', '" . $time->stamp() . "'), ('America/Montserrat', '" . $time->stamp() . "'), ('America/Nassau', '" . $time->stamp() . "'), ('America/New_York', '" . $time->stamp() . "'), ('America/Nipigon', '" . $time->stamp() . "'), ('America/Nome', '" . $time->stamp() . "'), ('America/Noronha', '" . $time->stamp() . "'), ('America/North_Dakota/Beulah', '" . $time->stamp() . "'), ('America/North_Dakota/Center', '" . $time->stamp() . "'), ('America/North_Dakota/New_Salem', '" . $time->stamp() . "'), ('America/Ojinaga', '" . $time->stamp() . "'), ('America/Panama', '" . $time->stamp() . "'), ('America/Pangnirtung', '" . $time->stamp() . "'), ('America/Paramaribo', '" . $time->stamp() . "'), ('America/Phoenix', '" . $time->stamp() . "'), ('America/Port-au-Prince', '" . $time->stamp() . "'), ('America/Port_of_Spain', '" . $time->stamp() . "'), ('America/Porto_Acre', '" . $time->stamp() . "'), ('America/Porto_Velho', '" . $time->stamp() . "'), ('America/Puerto_Rico', '" . $time->stamp() . "'), ('America/Rainy_River', '" . $time->stamp() . "'), ('America/Rankin_Inlet', '" . $time->stamp() . "'), ('America/Recife', '" . $time->stamp() . "'), ('America/Regina', '" . $time->stamp() . "'), ('America/Resolute', '" . $time->stamp() . "'), ('America/Rio_Branco', '" . $time->stamp() . "'), ('America/Rosario', '" . $time->stamp() . "'), ('America/Santa_Isabel', '" . $time->stamp() . "'), ('America/Santarem', '" . $time->stamp() . "'), ('America/Santiago', '" . $time->stamp() . "'), ('America/Santo_Domingo', '" . $time->stamp() . "'), ('America/Sao_Paulo', '" . $time->stamp() . "'), ('America/Scoresbysund', '" . $time->stamp() . "'), ('America/Shiprock', '" . $time->stamp() . "'), ('America/Sitka', '" . $time->stamp() . "'), ('America/St_Barthelemy', '" . $time->stamp() . "'), ('America/St_Johns', '" . $time->stamp() . "'), ('America/St_Kitts', '" . $time->stamp() . "'), ('America/St_Lucia', '" . $time->stamp() . "'), ('America/St_Thomas', '" . $time->stamp() . "'), ('America/St_Vincent', '" . $time->stamp() . "'), ('America/Swift_Current', '" . $time->stamp() . "'), ('America/Tegucigalpa', '" . $time->stamp() . "'), ('America/Thule', '" . $time->stamp() . "'), ('America/Thunder_Bay', '" . $time->stamp() . "'), ('America/Tijuana', '" . $time->stamp() . "'), ('America/Toronto', '" . $time->stamp() . "'), ('America/Tortola', '" . $time->stamp() . "'), ('America/Vancouver', '" . $time->stamp() . "'), ('America/Virgin', '" . $time->stamp() . "'), ('America/Whitehorse', '" . $time->stamp() . "'), ('America/Winnipeg', '" . $time->stamp() . "'), ('America/Yakutat', '" . $time->stamp() . "'), ('America/Yellowknife', '" . $time->stamp() . "'), ('Antarctica/Casey', '" . $time->stamp() . "'), ('Antarctica/Davis', '" . $time->stamp() . "'), ('Antarctica/DumontDUrville', '" . $time->stamp() . "'), ('Antarctica/Macquarie', '" . $time->stamp() . "'), ('Antarctica/Mawson', '" . $time->stamp() . "'), ('Antarctica/McMurdo', '" . $time->stamp() . "'), ('Antarctica/Palmer', '" . $time->stamp() . "'), ('Antarctica/Rothera', '" . $time->stamp() . "'), ('Antarctica/South_Pole', '" . $time->stamp() . "'), ('Antarctica/Syowa', '" . $time->stamp() . "'), ('Antarctica/Vostok', '" . $time->stamp() . "'), ('Arctic/Longyearbyen', '" . $time->stamp() . "'), ('Asia/Aden', '" . $time->stamp() . "'), ('Asia/Almaty', '" . $time->stamp() . "'), ('Asia/Amman', '" . $time->stamp() . "'), ('Asia/Anadyr', '" . $time->stamp() . "'), ('Asia/Aqtau', '" . $time->stamp() . "'), ('Asia/Aqtobe', '" . $time->stamp() . "'), ('Asia/Ashgabat', '" . $time->stamp() . "'), ('Asia/Ashkhabad', '" . $time->stamp() . "'), ('Asia/Baghdad', '" . $time->stamp() . "'), ('Asia/Bahrain', '" . $time->stamp() . "'), ('Asia/Baku', '" . $time->stamp() . "'), ('Asia/Bangkok', '" . $time->stamp() . "'), ('Asia/Beirut', '" . $time->stamp() . "'), ('Asia/Bishkek', '" . $time->stamp() . "'), ('Asia/Brunei', '" . $time->stamp() . "'), ('Asia/Calcutta', '" . $time->stamp() . "'), ('Asia/Choibalsan', '" . $time->stamp() . "'), ('Asia/Chongqing', '" . $time->stamp() . "'), ('Asia/Chungking', '" . $time->stamp() . "'), ('Asia/Colombo', '" . $time->stamp() . "'), ('Asia/Dacca', '" . $time->stamp() . "'), ('Asia/Damascus', '" . $time->stamp() . "'), ('Asia/Dhaka', '" . $time->stamp() . "'), ('Asia/Dili', '" . $time->stamp() . "'), ('Asia/Dubai', '" . $time->stamp() . "'), ('Asia/Dushanbe', '" . $time->stamp() . "'), ('Asia/Gaza', '" . $time->stamp() . "'), ('Asia/Harbin', '" . $time->stamp() . "'), ('Asia/Hebron', '" . $time->stamp() . "'), ('Asia/Ho_Chi_Minh', '" . $time->stamp() . "'), ('Asia/Hong_Kong', '" . $time->stamp() . "'), ('Asia/Hovd', '" . $time->stamp() . "'), ('Asia/Irkutsk', '" . $time->stamp() . "'), ('Asia/Istanbul', '" . $time->stamp() . "'), ('Asia/Jakarta', '" . $time->stamp() . "'), ('Asia/Jayapura', '" . $time->stamp() . "'), ('Asia/Jerusalem', '" . $time->stamp() . "'), ('Asia/Kabul', '" . $time->stamp() . "'), ('Asia/Kamchatka', '" . $time->stamp() . "'), ('Asia/Karachi', '" . $time->stamp() . "'), ('Asia/Kashgar', '" . $time->stamp() . "'), ('Asia/Kathmandu', '" . $time->stamp() . "'), ('Asia/Katmandu', '" . $time->stamp() . "'), ('Asia/Khandyga', '" . $time->stamp() . "'), ('Asia/Kolkata', '" . $time->stamp() . "'), ('Asia/Krasnoyarsk', '" . $time->stamp() . "'), ('Asia/Kuala_Lumpur', '" . $time->stamp() . "'), ('Asia/Kuching', '" . $time->stamp() . "'), ('Asia/Kuwait', '" . $time->stamp() . "'), ('Asia/Macao', '" . $time->stamp() . "'), ('Asia/Macau', '" . $time->stamp() . "'), ('Asia/Magadan', '" . $time->stamp() . "'), ('Asia/Makassar', '" . $time->stamp() . "'), ('Asia/Manila', '" . $time->stamp() . "'), ('Asia/Muscat', '" . $time->stamp() . "'), ('Asia/Nicosia', '" . $time->stamp() . "'), ('Asia/Novokuznetsk', '" . $time->stamp() . "'), ('Asia/Novosibirsk', '" . $time->stamp() . "'), ('Asia/Omsk', '" . $time->stamp() . "'), ('Asia/Oral', '" . $time->stamp() . "'), ('Asia/Phnom_Penh', '" . $time->stamp() . "'), ('Asia/Pontianak', '" . $time->stamp() . "'), ('Asia/Pyongyang', '" . $time->stamp() . "'), ('Asia/Qatar', '" . $time->stamp() . "'), ('Asia/Qyzylorda', '" . $time->stamp() . "'), ('Asia/Rangoon', '" . $time->stamp() . "'), ('Asia/Riyadh', '" . $time->stamp() . "'), ('Asia/Saigon', '" . $time->stamp() . "'), ('Asia/Sakhalin', '" . $time->stamp() . "'), ('Asia/Samarkand', '" . $time->stamp() . "'), ('Asia/Seoul', '" . $time->stamp() . "'), ('Asia/Shanghai', '" . $time->stamp() . "'), ('Asia/Singapore', '" . $time->stamp() . "'), ('Asia/Taipei', '" . $time->stamp() . "'), ('Asia/Tashkent', '" . $time->stamp() . "'), ('Asia/Tbilisi', '" . $time->stamp() . "'), ('Asia/Tehran', '" . $time->stamp() . "'), ('Asia/Tel_Aviv', '" . $time->stamp() . "'), ('Asia/Thimbu', '" . $time->stamp() . "'), ('Asia/Thimphu', '" . $time->stamp() . "'), ('Asia/Tokyo', '" . $time->stamp() . "'), ('Asia/Ujung_Pandang', '" . $time->stamp() . "'), ('Asia/Ulaanbaatar', '" . $time->stamp() . "'), ('Asia/Ulan_Bator', '" . $time->stamp() . "'), ('Asia/Urumqi', '" . $time->stamp() . "'), ('Asia/Ust-Nera', '" . $time->stamp() . "'), ('Asia/Vientiane', '" . $time->stamp() . "'), ('Asia/Vladivostok', '" . $time->stamp() . "'), ('Asia/Yakutsk', '" . $time->stamp() . "'), ('Asia/Yekaterinburg', '" . $time->stamp() . "'), ('Asia/Yerevan', '" . $time->stamp() . "'), ('Atlantic/Azores', '" . $time->stamp() . "'), ('Atlantic/Bermuda', '" . $time->stamp() . "'), ('Atlantic/Canary', '" . $time->stamp() . "'), ('Atlantic/Cape_Verde', '" . $time->stamp() . "'), ('Atlantic/Faeroe', '" . $time->stamp() . "'), ('Atlantic/Faroe', '" . $time->stamp() . "'), ('Atlantic/Jan_Mayen', '" . $time->stamp() . "'), ('Atlantic/Madeira', '" . $time->stamp() . "'), ('Atlantic/Reykjavik', '" . $time->stamp() . "'), ('Atlantic/South_Georgia', '" . $time->stamp() . "'), ('Atlantic/St_Helena', '" . $time->stamp() . "'), ('Atlantic/Stanley', '" . $time->stamp() . "'), ('Australia/ACT', '" . $time->stamp() . "'), ('Australia/Adelaide', '" . $time->stamp() . "'), ('Australia/Brisbane', '" . $time->stamp() . "'), ('Australia/Broken_Hill', '" . $time->stamp() . "'), ('Australia/Canberra', '" . $time->stamp() . "'), ('Australia/Currie', '" . $time->stamp() . "'), ('Australia/Darwin', '" . $time->stamp() . "'), ('Australia/Eucla', '" . $time->stamp() . "'), ('Australia/Hobart', '" . $time->stamp() . "'), ('Australia/LHI', '" . $time->stamp() . "'), ('Australia/Lindeman', '" . $time->stamp() . "'), ('Australia/Lord_Howe', '" . $time->stamp() . "'), ('Australia/Melbourne', '" . $time->stamp() . "'), ('Australia/North', '" . $time->stamp() . "'), ('Australia/NSW', '" . $time->stamp() . "'), ('Australia/Perth', '" . $time->stamp() . "'), ('Australia/Queensland', '" . $time->stamp() . "'), ('Australia/South', '" . $time->stamp() . "'), ('Australia/Sydney', '" . $time->stamp() . "'), ('Australia/Tasmania', '" . $time->stamp() . "'), ('Australia/Victoria', '" . $time->stamp() . "'), ('Australia/West', '" . $time->stamp() . "'), ('Australia/Yancowinna', '" . $time->stamp() . "'), ('Brazil/Acre', '" . $time->stamp() . "'), ('Brazil/DeNoronha', '" . $time->stamp() . "'), ('Brazil/East', '" . $time->stamp() . "'), ('Brazil/West', '" . $time->stamp() . "'), ('Canada/Atlantic', '" . $time->stamp() . "'), ('Canada/Central', '" . $time->stamp() . "'), ('Canada/East-Saskatchewan', '" . $time->stamp() . "'), ('Canada/Eastern', '" . $time->stamp() . "'), ('Canada/Mountain', '" . $time->stamp() . "'), ('Canada/Newfoundland', '" . $time->stamp() . "'), ('Canada/Pacific', '" . $time->stamp() . "'), ('Canada/Saskatchewan', '" . $time->stamp() . "'), ('Canada/Yukon', '" . $time->stamp() . "'), ('Chile/Continental', '" . $time->stamp() . "'), ('Chile/EasterIsland', '" . $time->stamp() . "'), ('Cuba', '" . $time->stamp() . "'), ('Egypt', '" . $time->stamp() . "'), ('Eire', '" . $time->stamp() . "'), ('Europe/Amsterdam', '" . $time->stamp() . "'), ('Europe/Andorra', '" . $time->stamp() . "'), ('Europe/Athens', '" . $time->stamp() . "'), ('Europe/Belfast', '" . $time->stamp() . "'), ('Europe/Belgrade', '" . $time->stamp() . "'), ('Europe/Berlin', '" . $time->stamp() . "'), ('Europe/Bratislava', '" . $time->stamp() . "'), ('Europe/Brussels', '" . $time->stamp() . "'), ('Europe/Bucharest', '" . $time->stamp() . "'), ('Europe/Budapest', '" . $time->stamp() . "'), ('Europe/Busingen', '" . $time->stamp() . "'), ('Europe/Chisinau', '" . $time->stamp() . "'), ('Europe/Copenhagen', '" . $time->stamp() . "'), ('Europe/Dublin', '" . $time->stamp() . "'), ('Europe/Gibraltar', '" . $time->stamp() . "'), ('Europe/Guernsey', '" . $time->stamp() . "'), ('Europe/Helsinki', '" . $time->stamp() . "'), ('Europe/Isle_of_Man', '" . $time->stamp() . "'), ('Europe/Istanbul', '" . $time->stamp() . "'), ('Europe/Jersey', '" . $time->stamp() . "'), ('Europe/Kaliningrad', '" . $time->stamp() . "'), ('Europe/Kiev', '" . $time->stamp() . "'), ('Europe/Lisbon', '" . $time->stamp() . "'), ('Europe/Ljubljana', '" . $time->stamp() . "'), ('Europe/London', '" . $time->stamp() . "'), ('Europe/Luxembourg', '" . $time->stamp() . "'), ('Europe/Madrid', '" . $time->stamp() . "'), ('Europe/Malta', '" . $time->stamp() . "'), ('Europe/Mariehamn', '" . $time->stamp() . "'), ('Europe/Minsk', '" . $time->stamp() . "'), ('Europe/Monaco', '" . $time->stamp() . "'), ('Europe/Moscow', '" . $time->stamp() . "'), ('Europe/Nicosia', '" . $time->stamp() . "'), ('Europe/Oslo', '" . $time->stamp() . "'), ('Europe/Paris', '" . $time->stamp() . "'), ('Europe/Podgorica', '" . $time->stamp() . "'), ('Europe/Prague', '" . $time->stamp() . "'), ('Europe/Riga', '" . $time->stamp() . "'), ('Europe/Rome', '" . $time->stamp() . "'), ('Europe/Samara', '" . $time->stamp() . "'), ('Europe/San_Marino', '" . $time->stamp() . "'), ('Europe/Sarajevo', '" . $time->stamp() . "'), ('Europe/Simferopol', '" . $time->stamp() . "'), ('Europe/Skopje', '" . $time->stamp() . "'), ('Europe/Sofia', '" . $time->stamp() . "'), ('Europe/Stockholm', '" . $time->stamp() . "'), ('Europe/Tallinn', '" . $time->stamp() . "'), ('Europe/Tirane', '" . $time->stamp() . "'), ('Europe/Tiraspol', '" . $time->stamp() . "'), ('Europe/Uzhgorod', '" . $time->stamp() . "'), ('Europe/Vaduz', '" . $time->stamp() . "'), ('Europe/Vatican', '" . $time->stamp() . "'), ('Europe/Vienna', '" . $time->stamp() . "'), ('Europe/Vilnius', '" . $time->stamp() . "'), ('Europe/Volgograd', '" . $time->stamp() . "'), ('Europe/Warsaw', '" . $time->stamp() . "'), ('Europe/Zagreb', '" . $time->stamp() . "'), ('Europe/Zaporozhye', '" . $time->stamp() . "'), ('Europe/Zurich', '" . $time->stamp() . "'), ('Greenwich', '" . $time->stamp() . "'), ('Hongkong', '" . $time->stamp() . "'), ('Iceland', '" . $time->stamp() . "'), ('Indian/Antananarivo', '" . $time->stamp() . "'), ('Indian/Chagos', '" . $time->stamp() . "'), ('Indian/Christmas', '" . $time->stamp() . "'), ('Indian/Cocos', '" . $time->stamp() . "'), ('Indian/Comoro', '" . $time->stamp() . "'), ('Indian/Kerguelen', '" . $time->stamp() . "'), ('Indian/Mahe', '" . $time->stamp() . "'), ('Indian/Maldives', '" . $time->stamp() . "'), ('Indian/Mauritius', '" . $time->stamp() . "'), ('Indian/Mayotte', '" . $time->stamp() . "'), ('Indian/Reunion', '" . $time->stamp() . "'), ('Iran', '" . $time->stamp() . "'), ('Israel', '" . $time->stamp() . "'), ('Jamaica', '" . $time->stamp() . "'), ('Japan', '" . $time->stamp() . "'), ('Kwajalein', '" . $time->stamp() . "'), ('Libya', '" . $time->stamp() . "'), ('Mexico/BajaNorte', '" . $time->stamp() . "'), ('Mexico/BajaSur', '" . $time->stamp() . "'), ('Mexico/General', '" . $time->stamp() . "'), ('Pacific/Apia', '" . $time->stamp() . "'), ('Pacific/Auckland', '" . $time->stamp() . "'), ('Pacific/Chatham', '" . $time->stamp() . "'), ('Pacific/Chuuk', '" . $time->stamp() . "'), ('Pacific/Easter', '" . $time->stamp() . "'), ('Pacific/Efate', '" . $time->stamp() . "'), ('Pacific/Enderbury', '" . $time->stamp() . "'), ('Pacific/Fakaofo', '" . $time->stamp() . "'), ('Pacific/Fiji', '" . $time->stamp() . "'), ('Pacific/Funafuti', '" . $time->stamp() . "'), ('Pacific/Galapagos', '" . $time->stamp() . "'), ('Pacific/Gambier', '" . $time->stamp() . "'), ('Pacific/Guadalcanal', '" . $time->stamp() . "'), ('Pacific/Guam', '" . $time->stamp() . "'), ('Pacific/Honolulu', '" . $time->stamp() . "'), ('Pacific/Johnston', '" . $time->stamp() . "'), ('Pacific/Kiritimati', '" . $time->stamp() . "'), ('Pacific/Kosrae', '" . $time->stamp() . "'), ('Pacific/Kwajalein', '" . $time->stamp() . "'), ('Pacific/Majuro', '" . $time->stamp() . "'), ('Pacific/Marquesas', '" . $time->stamp() . "'), ('Pacific/Midway', '" . $time->stamp() . "'), ('Pacific/Nauru', '" . $time->stamp() . "'), ('Pacific/Niue', '" . $time->stamp() . "'), ('Pacific/Norfolk', '" . $time->stamp() . "'), ('Pacific/Noumea', '" . $time->stamp() . "'), ('Pacific/Pago_Pago', '" . $time->stamp() . "'), ('Pacific/Palau', '" . $time->stamp() . "'), ('Pacific/Pitcairn', '" . $time->stamp() . "'), ('Pacific/Pohnpei', '" . $time->stamp() . "'), ('Pacific/Ponape', '" . $time->stamp() . "'), ('Pacific/Port_Moresby', '" . $time->stamp() . "'), ('Pacific/Rarotonga', '" . $time->stamp() . "'), ('Pacific/Saipan', '" . $time->stamp() . "'), ('Pacific/Samoa', '" . $time->stamp() . "'), ('Pacific/Tahiti', '" . $time->stamp() . "'), ('Pacific/Tarawa', '" . $time->stamp() . "'), ('Pacific/Tongatapu', '" . $time->stamp() . "'), ('Pacific/Truk', '" . $time->stamp() . "'), ('Pacific/Wake', '" . $time->stamp() . "'), ('Pacific/Wallis', '" . $time->stamp() . "'), ('Pacific/Yap', '" . $time->stamp() . "'), ('Poland', '" . $time->stamp() . "'), ('Portugal', '" . $time->stamp() . "'), ('Singapore', '" . $time->stamp() . "'), ('Turkey', '" . $time->stamp() . "'), ('US/Alaska', '" . $time->stamp() . "'), ('US/Aleutian', '" . $time->stamp() . "'), ('US/Arizona', '" . $time->stamp() . "'), ('US/Central', '" . $time->stamp() . "'), ('US/East-Indiana', '" . $time->stamp() . "'), ('US/Eastern', '" . $time->stamp() . "'), ('US/Hawaii', '" . $time->stamp() . "'), ('US/Indiana-Starke', '" . $time->stamp() . "'), ('US/Michigan', '" . $time->stamp() . "'), ('US/Mountain', '" . $time->stamp() . "'), ('US/Pacific', '" . $time->stamp() . "'), ('US/Pacific-New', '" . $time->stamp() . "'), ('US/Samoa', '" . $time->stamp() . "'), ('Zulu', '" . $time->stamp() . "');";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "UPDATE settings
             SET db_version = '2.0023',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0023';
 
@@ -52,12 +52,12 @@ if ($current_db_version === '2.0023') {
 
     $sql = "ALTER TABLE `settings`
             CHANGE `timezone` `timezone` VARCHAR(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'Canada/Pacific'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "UPDATE settings
             SET db_version = '2.0024',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0024';
 
@@ -76,22 +76,22 @@ if ($current_db_version === '2.0024') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `hosting`
             (`name`, `default_host`, `insert_time`)
             VALUES
             ('[no hosting]', 1, '" . $time->stamp() . "');";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "ALTER TABLE `domains`
             ADD `hosting_id` INT(10) NOT NULL DEFAULT '1' AFTER `ip_id`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "SELECT id
             FROM hosting
             WHERE name = '[no hosting]'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     while ($row = mysqli_fetch_object($result)) {
         $temp_hosting_id = $row->id;
@@ -100,28 +100,28 @@ if ($current_db_version === '2.0024') {
     $sql = "UPDATE domains
             SET hosting_id = '" . $temp_hosting_id . "',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "ALTER TABLE `domains`
             CHANGE `owner_id` `owner_id` INT(5) NOT NULL DEFAULT '1'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "ALTER TABLE `domains`
             CHANGE `registrar_id` `registrar_id` INT(5) NOT NULL DEFAULT '1'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "ALTER TABLE `domains`
             CHANGE `account_id` `account_id` INT(5) NOT NULL DEFAULT '1'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "ALTER TABLE `domains`
             CHANGE `dns_id` `dns_id` INT(5) NOT NULL DEFAULT '1'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "UPDATE settings
             SET db_version = '2.0025',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0025';
 
@@ -132,12 +132,12 @@ if ($current_db_version === '2.0025') {
 
     $sql = "ALTER TABLE `user_settings`
             ADD `display_domain_host` INT(1) NOT NULL DEFAULT '0' AFTER `display_domain_dns`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "UPDATE settings
             SET db_version = '2.0026',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0026';
 
@@ -148,12 +148,12 @@ if ($current_db_version === '2.0026') {
 
     $sql = "ALTER TABLE `registrar_accounts`
             ADD `password` VARCHAR(100) NOT NULL AFTER `username`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "UPDATE settings
             SET db_version = '2.0027',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0027';
 
@@ -164,12 +164,12 @@ if ($current_db_version === '2.0027') {
 
     $sql = "ALTER TABLE `ssl_accounts`
             ADD `password` VARCHAR(100) NOT NULL AFTER `username`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "UPDATE settings
             SET db_version = '2.0028',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0028';
 
@@ -189,16 +189,16 @@ if ($current_db_version === '2.0028') {
             ADD `ip8` VARCHAR(255) NOT NULL AFTER `ip7`,
             ADD `ip9` VARCHAR(255) NOT NULL AFTER `ip8`,
             ADD `ip10` VARCHAR(255) NOT NULL AFTER `ip9`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "ALTER TABLE `settings`
             ADD `expiration_email_days` INT(3) NOT NULL DEFAULT '60' AFTER `timezone`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "UPDATE settings
             SET db_version = '2.0029',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0029';
 
@@ -209,11 +209,11 @@ if ($current_db_version === '2.0029') {
 
     $sql = "ALTER TABLE `domains`
             ADD `notes_fixed_temp` INT(1) NOT NULL DEFAULT '0' AFTER `notes`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "SELECT id, `status`, status_notes, notes
             FROM domains";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
     while ($row = mysqli_fetch_object($result)) {
 
         if ($row->status != "" || $row->status_notes != "" || $row->notes != "") {
@@ -295,7 +295,7 @@ if ($current_db_version === '2.0029') {
                                   notes_fixed_temp = '1',
                                update_time = '" . $time->stamp() . "'
                            WHERE id = '" . $row->id . "'";
-            $result_update = mysqli_query($dbcon, $sql_update) or $error->outputOldSqlError($dbcon);
+            $result_update = mysqli_query($dbcon, $sql_update) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         } else {
 
@@ -303,7 +303,7 @@ if ($current_db_version === '2.0029') {
                            SET notes_fixed_temp = '1',
                                update_time = '" . $time->stamp() . "'
                            WHERE id = '" . $row->id . "'";
-            $result_update = mysqli_query($dbcon, $sql_update) or $error->outputOldSqlError($dbcon);
+            $result_update = mysqli_query($dbcon, $sql_update) or $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
     }
@@ -311,7 +311,7 @@ if ($current_db_version === '2.0029') {
     $sql = "SELECT *
             FROM domains
             WHERE notes_fixed_temp = '0'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     if (mysqli_num_rows($result) > 0) {
 
@@ -324,14 +324,14 @@ if ($current_db_version === '2.0029') {
                 DROP `status`,
                 DROP `status_notes`,
                 DROP `notes_fixed_temp`";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     }
 
     $sql = "UPDATE settings
             SET db_version = '2.003',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.003';
 
@@ -395,7 +395,7 @@ if ($current_db_version === '2.003') {
     $sql = "UPDATE settings
             SET db_version = '2.0031',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0031';
 
@@ -430,7 +430,7 @@ if ($current_db_version === '2.0032') {
     $sql = "UPDATE settings
             SET db_version = '2.0033',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0033';
 
@@ -490,7 +490,7 @@ if ($current_db_version === '2.0033') {
     $sql = "UPDATE settings
             SET db_version = '2.0034',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0034';
 
@@ -632,7 +632,7 @@ if ($current_db_version === '2.0034') {
     $sql = "UPDATE settings
             SET db_version = '2.0035',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0035';
 
@@ -855,7 +855,7 @@ if ($current_db_version === '2.0035') {
     $sql = "SELECT id, currency
             FROM currencies
             WHERE newly_inserted = '0'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
     while ($row = mysqli_fetch_object($result)) {
 
         $sql_find_new = "SELECT id, symbol
@@ -886,12 +886,12 @@ if ($current_db_version === '2.0035') {
 
     $sql = "ALTER TABLE `currencies`
             DROP `newly_inserted`;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "UPDATE settings
             SET db_version = '2.0036',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0036';
 
@@ -924,7 +924,7 @@ if ($current_db_version === '2.0036') {
     $sql = "UPDATE settings
             SET db_version = '2.0037',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0037';
 
@@ -989,7 +989,7 @@ if ($current_db_version === '2.0037') {
     $sql = "UPDATE settings
             SET db_version = '2.0038',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0038';
 

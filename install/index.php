@@ -61,7 +61,7 @@ if ($is_installed == '1') {
             DEFAULT CHARACTER SET utf8
             COLLATE utf8_unicode_ci
             DEFAULT COLLATE utf8_unicode_ci;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `creation_types` (
                 `id` TINYINT(2) NOT NULL AUTO_INCREMENT,
@@ -69,7 +69,7 @@ if ($is_installed == '1') {
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO creation_types
             (`name`, insert_time)
@@ -79,7 +79,7 @@ if ($is_installed == '1') {
             ('Bulk Updater', '" . $timestamp . "'),
             ('Manual or Bulk Updater', '" . $timestamp . "'),
             ('Queue', '" . $timestamp . "')";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $creation_type_id_installation = $system->getCreationTypeId($dbcon, 'Installation');
     $creation_type_id_manual = $system->getCreationTypeId($dbcon, 'Manual');
@@ -103,13 +103,13 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `users`
             (`first_name`, `last_name`, `username`, `email_address`, `password`, `admin`, `read_only`, `creation_type_id`, `insert_time`)
             VALUES
             ('Domain', 'Administrator', 'admin', '" . $_SESSION['new_install_email'] . "', '*4ACFE3202A5FF5CF467898FC58AAB1D615029441', '1', '0', '" . $creation_type_id_installation . "', '" . $timestamp . "');";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `user_settings` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -157,11 +157,11 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "SELECT id
             FROM users";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     while ($row = mysqli_fetch_object($result)) {
 
@@ -173,7 +173,7 @@ if ($is_installed == '1') {
                  (user_id, default_currency, insert_time)
                  VALUES
                  ('$temp_user_id', 'USD', '" . $timestamp . "');";
-    $result_temp = mysqli_query($dbcon, $sql_temp) or $error->outputOldSqlError($dbcon);
+    $result_temp = mysqli_query($dbcon, $sql_temp) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `categories` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -186,13 +186,13 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `categories`
             (`name`, `stakeholder`, `creation_type_id`, `insert_time`)
             VALUES
             ('[no category]', '[no stakeholder]', '" . $creation_type_id_installation . "', '" . $timestamp . "');";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `hosting` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -205,13 +205,13 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `hosting`
             (`name`, `creation_type_id`, `insert_time`)
             VALUES
             ('[no hosting]', '" . $creation_type_id_installation . "', '" . $timestamp . "');";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `owners` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -224,13 +224,13 @@ if ($is_installed == '1') {
                 PRIMARY KEY  (`id`),
                 KEY `name` (`name`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `owners`
             (`name`, `creation_type_id`, `insert_time`)
             VALUES
             ('[no owner]', '" . $creation_type_id_installation . "', '" . $timestamp . "');";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `currencies` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -244,7 +244,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO currencies
             (`name`, currency, symbol, insert_time)
@@ -415,7 +415,7 @@ if ($is_installed == '1') {
             ('Comoran Franc', 'KMF', 'CF', '" . $timestamp . "'),
             ('Sao Tomean Dobra', 'STD', 'STD', '" . $timestamp . "'),
             ('Seborgan Luigino', 'SPL', 'SPL', '" . $timestamp . "')";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `currency_conversions` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -426,7 +426,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `fees` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -443,7 +443,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_fees` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -458,7 +458,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domains` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -487,7 +487,7 @@ if ($is_installed == '1') {
                 PRIMARY KEY  (`id`),
                 KEY `domain` (`domain`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_queue` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -515,7 +515,7 @@ if ($is_installed == '1') {
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_history` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -539,7 +539,7 @@ if ($is_installed == '1') {
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_list` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -556,7 +556,7 @@ if ($is_installed == '1') {
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_list_history` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -569,7 +569,7 @@ if ($is_installed == '1') {
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_temp` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -591,7 +591,7 @@ if ($is_installed == '1') {
                 PRIMARY KEY  (`id`),
                 KEY `domain` (`domain`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `custom_field_types` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -600,7 +600,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO custom_field_types
             (id, `name`, insert_time)
@@ -608,7 +608,7 @@ if ($is_installed == '1') {
             (1, 'Check Box', '" . $timestamp . "'),
             (2, 'Text', '" . $timestamp . "'),
             (3, 'Text Area', '" . $timestamp . "')";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_fields` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -623,7 +623,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_field_data` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -632,7 +632,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_certs` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -656,7 +656,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_types` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -668,7 +668,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `ssl_cert_types`
             (`id`, `type`, `creation_type_id`, `insert_time`)
@@ -677,7 +677,7 @@ if ($is_installed == '1') {
             (2, 'S/MIME and Authentication Certificate', '" . $creation_type_id_installation . "', '" . $timestamp . "'),
             (3, 'Object Code Signing Certificate', '" . $creation_type_id_installation . "', '" . $timestamp . "'),
             (4, 'Digital ID', '" . $creation_type_id_installation . "', '" . $timestamp . "');";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_fields` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -692,7 +692,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_cert_field_data` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -701,7 +701,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `dns` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -734,13 +734,13 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `dns`
             (`name`, `dns1`, `dns2`, `number_of_servers`, `creation_type_id`, `insert_time`)
             VALUES
             ('[no dns]', 'ns1.no-dns.com', 'ns2.no-dns.com', '2', '" . $creation_type_id_installation . "', '" . $timestamp . "');";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `registrars` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -755,7 +755,7 @@ if ($is_installed == '1') {
                 PRIMARY KEY  (`id`),
                 KEY `name` (`name`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `registrar_accounts` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -778,7 +778,7 @@ if ($is_installed == '1') {
                 PRIMARY KEY  (`id`),
                 KEY `registrar_id` (`registrar_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_providers` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -791,7 +791,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ssl_accounts` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -810,7 +810,7 @@ if ($is_installed == '1') {
                 PRIMARY KEY  (`id`),
                 KEY `ssl_provider_id` (`ssl_provider_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `segments` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -825,7 +825,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `segment_data` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -839,7 +839,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `ip_addresses` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -853,13 +853,13 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `ip_addresses`
             (`id`, `name`, `ip`, `rdns`, `creation_type_id`, `insert_time`)
             VALUES
             ('1', '[no ip address]', '-', '-', '" . $creation_type_id_installation . "', '" . $timestamp . "');";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `timezones` (
                 `id` INT(5) NOT NULL AUTO_INCREMENT,
@@ -867,13 +867,13 @@ if ($is_installed == '1') {
                 `insert_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO `timezones`
             (`timezone`, `insert_time`)
             VALUES
             ('Africa/Abidjan', '" . $timestamp . "'), ('Africa/Accra', '" . $timestamp . "'), ('Africa/Addis_Ababa', '" . $timestamp . "'), ('Africa/Algiers', '" . $timestamp . "'), ('Africa/Asmara', '" . $timestamp . "'), ('Africa/Asmera', '" . $timestamp . "'), ('Africa/Bamako', '" . $timestamp . "'), ('Africa/Bangui', '" . $timestamp . "'), ('Africa/Banjul', '" . $timestamp . "'), ('Africa/Bissau', '" . $timestamp . "'), ('Africa/Blantyre', '" . $timestamp . "'), ('Africa/Brazzaville', '" . $timestamp . "'), ('Africa/Bujumbura', '" . $timestamp . "'), ('Africa/Cairo', '" . $timestamp . "'), ('Africa/Casablanca', '" . $timestamp . "'), ('Africa/Ceuta', '" . $timestamp . "'), ('Africa/Conakry', '" . $timestamp . "'), ('Africa/Dakar', '" . $timestamp . "'), ('Africa/Dar_es_Salaam', '" . $timestamp . "'), ('Africa/Djibouti', '" . $timestamp . "'), ('Africa/Douala', '" . $timestamp . "'), ('Africa/El_Aaiun', '" . $timestamp . "'), ('Africa/Freetown', '" . $timestamp . "'), ('Africa/Gaborone', '" . $timestamp . "'), ('Africa/Harare', '" . $timestamp . "'), ('Africa/Johannesburg', '" . $timestamp . "'), ('Africa/Juba', '" . $timestamp . "'), ('Africa/Kampala', '" . $timestamp . "'), ('Africa/Khartoum', '" . $timestamp . "'), ('Africa/Kigali', '" . $timestamp . "'), ('Africa/Kinshasa', '" . $timestamp . "'), ('Africa/Lagos', '" . $timestamp . "'), ('Africa/Libreville', '" . $timestamp . "'), ('Africa/Lome', '" . $timestamp . "'), ('Africa/Luanda', '" . $timestamp . "'), ('Africa/Lubumbashi', '" . $timestamp . "'), ('Africa/Lusaka', '" . $timestamp . "'), ('Africa/Malabo', '" . $timestamp . "'), ('Africa/Maputo', '" . $timestamp . "'), ('Africa/Maseru', '" . $timestamp . "'), ('Africa/Mbabane', '" . $timestamp . "'), ('Africa/Mogadishu', '" . $timestamp . "'), ('Africa/Monrovia', '" . $timestamp . "'), ('Africa/Nairobi', '" . $timestamp . "'), ('Africa/Ndjamena', '" . $timestamp . "'), ('Africa/Niamey', '" . $timestamp . "'), ('Africa/Nouakchott', '" . $timestamp . "'), ('Africa/Ouagadougou', '" . $timestamp . "'), ('Africa/Porto-Novo', '" . $timestamp . "'), ('Africa/Sao_Tome', '" . $timestamp . "'), ('Africa/Timbuktu', '" . $timestamp . "'), ('Africa/Tripoli', '" . $timestamp . "'), ('Africa/Tunis', '" . $timestamp . "'), ('Africa/Windhoek', '" . $timestamp . "'), ('America/Adak', '" . $timestamp . "'), ('America/Anchorage', '" . $timestamp . "'), ('America/Anguilla', '" . $timestamp . "'), ('America/Antigua', '" . $timestamp . "'), ('America/Araguaina', '" . $timestamp . "'), ('America/Argentina/Buenos_Aires', '" . $timestamp . "'), ('America/Argentina/Catamarca', '" . $timestamp . "'), ('America/Argentina/ComodRivadavia', '" . $timestamp . "'), ('America/Argentina/Cordoba', '" . $timestamp . "'), ('America/Argentina/Jujuy', '" . $timestamp . "'), ('America/Argentina/La_Rioja', '" . $timestamp . "'), ('America/Argentina/Mendoza', '" . $timestamp . "'), ('America/Argentina/Rio_Gallegos', '" . $timestamp . "'), ('America/Argentina/Salta', '" . $timestamp . "'), ('America/Argentina/San_Juan', '" . $timestamp . "'), ('America/Argentina/San_Luis', '" . $timestamp . "'), ('America/Argentina/Tucuman', '" . $timestamp . "'), ('America/Argentina/Ushuaia', '" . $timestamp . "'), ('America/Aruba', '" . $timestamp . "'), ('America/Asuncion', '" . $timestamp . "'), ('America/Atikokan', '" . $timestamp . "'), ('America/Atka', '" . $timestamp . "'), ('America/Bahia', '" . $timestamp . "'), ('America/Bahia_Banderas', '" . $timestamp . "'), ('America/Barbados', '" . $timestamp . "'), ('America/Belem', '" . $timestamp . "'), ('America/Belize', '" . $timestamp . "'), ('America/Blanc-Sablon', '" . $timestamp . "'), ('America/Boa_Vista', '" . $timestamp . "'), ('America/Bogota', '" . $timestamp . "'), ('America/Boise', '" . $timestamp . "'), ('America/Buenos_Aires', '" . $timestamp . "'), ('America/Cambridge_Bay', '" . $timestamp . "'), ('America/Campo_Grande', '" . $timestamp . "'), ('America/Cancun', '" . $timestamp . "'), ('America/Caracas', '" . $timestamp . "'), ('America/Catamarca', '" . $timestamp . "'), ('America/Cayenne', '" . $timestamp . "'), ('America/Cayman', '" . $timestamp . "'), ('America/Chicago', '" . $timestamp . "'), ('America/Chihuahua', '" . $timestamp . "'), ('America/Coral_Harbour', '" . $timestamp . "'), ('America/Cordoba', '" . $timestamp . "'), ('America/Costa_Rica', '" . $timestamp . "'), ('America/Creston', '" . $timestamp . "'), ('America/Cuiaba', '" . $timestamp . "'), ('America/Curacao', '" . $timestamp . "'), ('America/Danmarkshavn', '" . $timestamp . "'), ('America/Dawson', '" . $timestamp . "'), ('America/Dawson_Creek', '" . $timestamp . "'), ('America/Denver', '" . $timestamp . "'), ('America/Detroit', '" . $timestamp . "'), ('America/Dominica', '" . $timestamp . "'), ('America/Edmonton', '" . $timestamp . "'), ('America/Eirunepe', '" . $timestamp . "'), ('America/El_Salvador', '" . $timestamp . "'), ('America/Ensenada', '" . $timestamp . "'), ('America/Fort_Wayne', '" . $timestamp . "'), ('America/Fortaleza', '" . $timestamp . "'), ('America/Glace_Bay', '" . $timestamp . "'), ('America/Godthab', '" . $timestamp . "'), ('America/Goose_Bay', '" . $timestamp . "'), ('America/Grand_Turk', '" . $timestamp . "'), ('America/Grenada', '" . $timestamp . "'), ('America/Guadeloupe', '" . $timestamp . "'), ('America/Guatemala', '" . $timestamp . "'), ('America/Guayaquil', '" . $timestamp . "'), ('America/Guyana', '" . $timestamp . "'), ('America/Halifax', '" . $timestamp . "'), ('America/Havana', '" . $timestamp . "'), ('America/Hermosillo', '" . $timestamp . "'), ('America/Indiana/Indianapolis', '" . $timestamp . "'), ('America/Indiana/Knox', '" . $timestamp . "'), ('America/Indiana/Marengo', '" . $timestamp . "'), ('America/Indiana/Petersburg', '" . $timestamp . "'), ('America/Indiana/Tell_City', '" . $timestamp . "'), ('America/Indiana/Vevay', '" . $timestamp . "'), ('America/Indiana/Vincennes', '" . $timestamp . "'), ('America/Indiana/Winamac', '" . $timestamp . "'), ('America/Indianapolis', '" . $timestamp . "'), ('America/Inuvik', '" . $timestamp . "'), ('America/Iqaluit', '" . $timestamp . "'), ('America/Jamaica', '" . $timestamp . "'), ('America/Jujuy', '" . $timestamp . "'), ('America/Juneau', '" . $timestamp . "'), ('America/Kentucky/Louisville', '" . $timestamp . "'), ('America/Kentucky/Monticello', '" . $timestamp . "'), ('America/Knox_IN', '" . $timestamp . "'), ('America/Kralendijk', '" . $timestamp . "'), ('America/La_Paz', '" . $timestamp . "'), ('America/Lima', '" . $timestamp . "'), ('America/Los_Angeles', '" . $timestamp . "'), ('America/Louisville', '" . $timestamp . "'), ('America/Lower_Princes', '" . $timestamp . "'), ('America/Maceio', '" . $timestamp . "'), ('America/Managua', '" . $timestamp . "'), ('America/Manaus', '" . $timestamp . "'), ('America/Marigot', '" . $timestamp . "'), ('America/Martinique', '" . $timestamp . "'), ('America/Matamoros', '" . $timestamp . "'), ('America/Mazatlan', '" . $timestamp . "'), ('America/Mendoza', '" . $timestamp . "'), ('America/Menominee', '" . $timestamp . "'), ('America/Merida', '" . $timestamp . "'), ('America/Metlakatla', '" . $timestamp . "'), ('America/Mexico_City', '" . $timestamp . "'), ('America/Miquelon', '" . $timestamp . "'), ('America/Moncton', '" . $timestamp . "'), ('America/Monterrey', '" . $timestamp . "'), ('America/Montevideo', '" . $timestamp . "'), ('America/Montreal', '" . $timestamp . "'), ('America/Montserrat', '" . $timestamp . "'), ('America/Nassau', '" . $timestamp . "'), ('America/New_York', '" . $timestamp . "'), ('America/Nipigon', '" . $timestamp . "'), ('America/Nome', '" . $timestamp . "'), ('America/Noronha', '" . $timestamp . "'), ('America/North_Dakota/Beulah', '" . $timestamp . "'), ('America/North_Dakota/Center', '" . $timestamp . "'), ('America/North_Dakota/New_Salem', '" . $timestamp . "'), ('America/Ojinaga', '" . $timestamp . "'), ('America/Panama', '" . $timestamp . "'), ('America/Pangnirtung', '" . $timestamp . "'), ('America/Paramaribo', '" . $timestamp . "'), ('America/Phoenix', '" . $timestamp . "'), ('America/Port-au-Prince', '" . $timestamp . "'), ('America/Port_of_Spain', '" . $timestamp . "'), ('America/Porto_Acre', '" . $timestamp . "'), ('America/Porto_Velho', '" . $timestamp . "'), ('America/Puerto_Rico', '" . $timestamp . "'), ('America/Rainy_River', '" . $timestamp . "'), ('America/Rankin_Inlet', '" . $timestamp . "'), ('America/Recife', '" . $timestamp . "'), ('America/Regina', '" . $timestamp . "'), ('America/Resolute', '" . $timestamp . "'), ('America/Rio_Branco', '" . $timestamp . "'), ('America/Rosario', '" . $timestamp . "'), ('America/Santa_Isabel', '" . $timestamp . "'), ('America/Santarem', '" . $timestamp . "'), ('America/Santiago', '" . $timestamp . "'), ('America/Santo_Domingo', '" . $timestamp . "'), ('America/Sao_Paulo', '" . $timestamp . "'), ('America/Scoresbysund', '" . $timestamp . "'), ('America/Shiprock', '" . $timestamp . "'), ('America/Sitka', '" . $timestamp . "'), ('America/St_Barthelemy', '" . $timestamp . "'), ('America/St_Johns', '" . $timestamp . "'), ('America/St_Kitts', '" . $timestamp . "'), ('America/St_Lucia', '" . $timestamp . "'), ('America/St_Thomas', '" . $timestamp . "'), ('America/St_Vincent', '" . $timestamp . "'), ('America/Swift_Current', '" . $timestamp . "'), ('America/Tegucigalpa', '" . $timestamp . "'), ('America/Thule', '" . $timestamp . "'), ('America/Thunder_Bay', '" . $timestamp . "'), ('America/Tijuana', '" . $timestamp . "'), ('America/Toronto', '" . $timestamp . "'), ('America/Tortola', '" . $timestamp . "'), ('America/Vancouver', '" . $timestamp . "'), ('America/Virgin', '" . $timestamp . "'), ('America/Whitehorse', '" . $timestamp . "'), ('America/Winnipeg', '" . $timestamp . "'), ('America/Yakutat', '" . $timestamp . "'), ('America/Yellowknife', '" . $timestamp . "'), ('Antarctica/Casey', '" . $timestamp . "'), ('Antarctica/Davis', '" . $timestamp . "'), ('Antarctica/DumontDUrville', '" . $timestamp . "'), ('Antarctica/Macquarie', '" . $timestamp . "'), ('Antarctica/Mawson', '" . $timestamp . "'), ('Antarctica/McMurdo', '" . $timestamp . "'), ('Antarctica/Palmer', '" . $timestamp . "'), ('Antarctica/Rothera', '" . $timestamp . "'), ('Antarctica/South_Pole', '" . $timestamp . "'), ('Antarctica/Syowa', '" . $timestamp . "'), ('Antarctica/Vostok', '" . $timestamp . "'), ('Arctic/Longyearbyen', '" . $timestamp . "'), ('Asia/Aden', '" . $timestamp . "'), ('Asia/Almaty', '" . $timestamp . "'), ('Asia/Amman', '" . $timestamp . "'), ('Asia/Anadyr', '" . $timestamp . "'), ('Asia/Aqtau', '" . $timestamp . "'), ('Asia/Aqtobe', '" . $timestamp . "'), ('Asia/Ashgabat', '" . $timestamp . "'), ('Asia/Ashkhabad', '" . $timestamp . "'), ('Asia/Baghdad', '" . $timestamp . "'), ('Asia/Bahrain', '" . $timestamp . "'), ('Asia/Baku', '" . $timestamp . "'), ('Asia/Bangkok', '" . $timestamp . "'), ('Asia/Beirut', '" . $timestamp . "'), ('Asia/Bishkek', '" . $timestamp . "'), ('Asia/Brunei', '" . $timestamp . "'), ('Asia/Calcutta', '" . $timestamp . "'), ('Asia/Choibalsan', '" . $timestamp . "'), ('Asia/Chongqing', '" . $timestamp . "'), ('Asia/Chungking', '" . $timestamp . "'), ('Asia/Colombo', '" . $timestamp . "'), ('Asia/Dacca', '" . $timestamp . "'), ('Asia/Damascus', '" . $timestamp . "'), ('Asia/Dhaka', '" . $timestamp . "'), ('Asia/Dili', '" . $timestamp . "'), ('Asia/Dubai', '" . $timestamp . "'), ('Asia/Dushanbe', '" . $timestamp . "'), ('Asia/Gaza', '" . $timestamp . "'), ('Asia/Harbin', '" . $timestamp . "'), ('Asia/Hebron', '" . $timestamp . "'), ('Asia/Ho_Chi_Minh', '" . $timestamp . "'), ('Asia/Hong_Kong', '" . $timestamp . "'), ('Asia/Hovd', '" . $timestamp . "'), ('Asia/Irkutsk', '" . $timestamp . "'), ('Asia/Istanbul', '" . $timestamp . "'), ('Asia/Jakarta', '" . $timestamp . "'), ('Asia/Jayapura', '" . $timestamp . "'), ('Asia/Jerusalem', '" . $timestamp . "'), ('Asia/Kabul', '" . $timestamp . "'), ('Asia/Kamchatka', '" . $timestamp . "'), ('Asia/Karachi', '" . $timestamp . "'), ('Asia/Kashgar', '" . $timestamp . "'), ('Asia/Kathmandu', '" . $timestamp . "'), ('Asia/Katmandu', '" . $timestamp . "'), ('Asia/Khandyga', '" . $timestamp . "'), ('Asia/Kolkata', '" . $timestamp . "'), ('Asia/Krasnoyarsk', '" . $timestamp . "'), ('Asia/Kuala_Lumpur', '" . $timestamp . "'), ('Asia/Kuching', '" . $timestamp . "'), ('Asia/Kuwait', '" . $timestamp . "'), ('Asia/Macao', '" . $timestamp . "'), ('Asia/Macau', '" . $timestamp . "'), ('Asia/Magadan', '" . $timestamp . "'), ('Asia/Makassar', '" . $timestamp . "'), ('Asia/Manila', '" . $timestamp . "'), ('Asia/Muscat', '" . $timestamp . "'), ('Asia/Nicosia', '" . $timestamp . "'), ('Asia/Novokuznetsk', '" . $timestamp . "'), ('Asia/Novosibirsk', '" . $timestamp . "'), ('Asia/Omsk', '" . $timestamp . "'), ('Asia/Oral', '" . $timestamp . "'), ('Asia/Phnom_Penh', '" . $timestamp . "'), ('Asia/Pontianak', '" . $timestamp . "'), ('Asia/Pyongyang', '" . $timestamp . "'), ('Asia/Qatar', '" . $timestamp . "'), ('Asia/Qyzylorda', '" . $timestamp . "'), ('Asia/Rangoon', '" . $timestamp . "'), ('Asia/Riyadh', '" . $timestamp . "'), ('Asia/Saigon', '" . $timestamp . "'), ('Asia/Sakhalin', '" . $timestamp . "'), ('Asia/Samarkand', '" . $timestamp . "'), ('Asia/Seoul', '" . $timestamp . "'), ('Asia/Shanghai', '" . $timestamp . "'), ('Asia/Singapore', '" . $timestamp . "'), ('Asia/Taipei', '" . $timestamp . "'), ('Asia/Tashkent', '" . $timestamp . "'), ('Asia/Tbilisi', '" . $timestamp . "'), ('Asia/Tehran', '" . $timestamp . "'), ('Asia/Tel_Aviv', '" . $timestamp . "'), ('Asia/Thimbu', '" . $timestamp . "'), ('Asia/Thimphu', '" . $timestamp . "'), ('Asia/Tokyo', '" . $timestamp . "'), ('Asia/Ujung_Pandang', '" . $timestamp . "'), ('Asia/Ulaanbaatar', '" . $timestamp . "'), ('Asia/Ulan_Bator', '" . $timestamp . "'), ('Asia/Urumqi', '" . $timestamp . "'), ('Asia/Ust-Nera', '" . $timestamp . "'), ('Asia/Vientiane', '" . $timestamp . "'), ('Asia/Vladivostok', '" . $timestamp . "'), ('Asia/Yakutsk', '" . $timestamp . "'), ('Asia/Yekaterinburg', '" . $timestamp . "'), ('Asia/Yerevan', '" . $timestamp . "'), ('Atlantic/Azores', '" . $timestamp . "'), ('Atlantic/Bermuda', '" . $timestamp . "'), ('Atlantic/Canary', '" . $timestamp . "'), ('Atlantic/Cape_Verde', '" . $timestamp . "'), ('Atlantic/Faeroe', '" . $timestamp . "'), ('Atlantic/Faroe', '" . $timestamp . "'), ('Atlantic/Jan_Mayen', '" . $timestamp . "'), ('Atlantic/Madeira', '" . $timestamp . "'), ('Atlantic/Reykjavik', '" . $timestamp . "'), ('Atlantic/South_Georgia', '" . $timestamp . "'), ('Atlantic/St_Helena', '" . $timestamp . "'), ('Atlantic/Stanley', '" . $timestamp . "'), ('Australia/ACT', '" . $timestamp . "'), ('Australia/Adelaide', '" . $timestamp . "'), ('Australia/Brisbane', '" . $timestamp . "'), ('Australia/Broken_Hill', '" . $timestamp . "'), ('Australia/Canberra', '" . $timestamp . "'), ('Australia/Currie', '" . $timestamp . "'), ('Australia/Darwin', '" . $timestamp . "'), ('Australia/Eucla', '" . $timestamp . "'), ('Australia/Hobart', '" . $timestamp . "'), ('Australia/LHI', '" . $timestamp . "'), ('Australia/Lindeman', '" . $timestamp . "'), ('Australia/Lord_Howe', '" . $timestamp . "'), ('Australia/Melbourne', '" . $timestamp . "'), ('Australia/North', '" . $timestamp . "'), ('Australia/NSW', '" . $timestamp . "'), ('Australia/Perth', '" . $timestamp . "'), ('Australia/Queensland', '" . $timestamp . "'), ('Australia/South', '" . $timestamp . "'), ('Australia/Sydney', '" . $timestamp . "'), ('Australia/Tasmania', '" . $timestamp . "'), ('Australia/Victoria', '" . $timestamp . "'), ('Australia/West', '" . $timestamp . "'), ('Australia/Yancowinna', '" . $timestamp . "'), ('Brazil/Acre', '" . $timestamp . "'), ('Brazil/DeNoronha', '" . $timestamp . "'), ('Brazil/East', '" . $timestamp . "'), ('Brazil/West', '" . $timestamp . "'), ('Canada/Atlantic', '" . $timestamp . "'), ('Canada/Central', '" . $timestamp . "'), ('Canada/East-Saskatchewan', '" . $timestamp . "'), ('Canada/Eastern', '" . $timestamp . "'), ('Canada/Mountain', '" . $timestamp . "'), ('Canada/Newfoundland', '" . $timestamp . "'), ('Canada/Pacific', '" . $timestamp . "'), ('Canada/Saskatchewan', '" . $timestamp . "'), ('Canada/Yukon', '" . $timestamp . "'), ('Chile/Continental', '" . $timestamp . "'), ('Chile/EasterIsland', '" . $timestamp . "'), ('Cuba', '" . $timestamp . "'), ('Egypt', '" . $timestamp . "'), ('Eire', '" . $timestamp . "'), ('Europe/Amsterdam', '" . $timestamp . "'), ('Europe/Andorra', '" . $timestamp . "'), ('Europe/Athens', '" . $timestamp . "'), ('Europe/Belfast', '" . $timestamp . "'), ('Europe/Belgrade', '" . $timestamp . "'), ('Europe/Berlin', '" . $timestamp . "'), ('Europe/Bratislava', '" . $timestamp . "'), ('Europe/Brussels', '" . $timestamp . "'), ('Europe/Bucharest', '" . $timestamp . "'), ('Europe/Budapest', '" . $timestamp . "'), ('Europe/Busingen', '" . $timestamp . "'), ('Europe/Chisinau', '" . $timestamp . "'), ('Europe/Copenhagen', '" . $timestamp . "'), ('Europe/Dublin', '" . $timestamp . "'), ('Europe/Gibraltar', '" . $timestamp . "'), ('Europe/Guernsey', '" . $timestamp . "'), ('Europe/Helsinki', '" . $timestamp . "'), ('Europe/Isle_of_Man', '" . $timestamp . "'), ('Europe/Istanbul', '" . $timestamp . "'), ('Europe/Jersey', '" . $timestamp . "'), ('Europe/Kaliningrad', '" . $timestamp . "'), ('Europe/Kiev', '" . $timestamp . "'), ('Europe/Lisbon', '" . $timestamp . "'), ('Europe/Ljubljana', '" . $timestamp . "'), ('Europe/London', '" . $timestamp . "'), ('Europe/Luxembourg', '" . $timestamp . "'), ('Europe/Madrid', '" . $timestamp . "'), ('Europe/Malta', '" . $timestamp . "'), ('Europe/Mariehamn', '" . $timestamp . "'), ('Europe/Minsk', '" . $timestamp . "'), ('Europe/Monaco', '" . $timestamp . "'), ('Europe/Moscow', '" . $timestamp . "'), ('Europe/Nicosia', '" . $timestamp . "'), ('Europe/Oslo', '" . $timestamp . "'), ('Europe/Paris', '" . $timestamp . "'), ('Europe/Podgorica', '" . $timestamp . "'), ('Europe/Prague', '" . $timestamp . "'), ('Europe/Riga', '" . $timestamp . "'), ('Europe/Rome', '" . $timestamp . "'), ('Europe/Samara', '" . $timestamp . "'), ('Europe/San_Marino', '" . $timestamp . "'), ('Europe/Sarajevo', '" . $timestamp . "'), ('Europe/Simferopol', '" . $timestamp . "'), ('Europe/Skopje', '" . $timestamp . "'), ('Europe/Sofia', '" . $timestamp . "'), ('Europe/Stockholm', '" . $timestamp . "'), ('Europe/Tallinn', '" . $timestamp . "'), ('Europe/Tirane', '" . $timestamp . "'), ('Europe/Tiraspol', '" . $timestamp . "'), ('Europe/Uzhgorod', '" . $timestamp . "'), ('Europe/Vaduz', '" . $timestamp . "'), ('Europe/Vatican', '" . $timestamp . "'), ('Europe/Vienna', '" . $timestamp . "'), ('Europe/Vilnius', '" . $timestamp . "'), ('Europe/Volgograd', '" . $timestamp . "'), ('Europe/Warsaw', '" . $timestamp . "'), ('Europe/Zagreb', '" . $timestamp . "'), ('Europe/Zaporozhye', '" . $timestamp . "'), ('Europe/Zurich', '" . $timestamp . "'), ('Greenwich', '" . $timestamp . "'), ('Hongkong', '" . $timestamp . "'), ('Iceland', '" . $timestamp . "'), ('Indian/Antananarivo', '" . $timestamp . "'), ('Indian/Chagos', '" . $timestamp . "'), ('Indian/Christmas', '" . $timestamp . "'), ('Indian/Cocos', '" . $timestamp . "'), ('Indian/Comoro', '" . $timestamp . "'), ('Indian/Kerguelen', '" . $timestamp . "'), ('Indian/Mahe', '" . $timestamp . "'), ('Indian/Maldives', '" . $timestamp . "'), ('Indian/Mauritius', '" . $timestamp . "'), ('Indian/Mayotte', '" . $timestamp . "'), ('Indian/Reunion', '" . $timestamp . "'), ('Iran', '" . $timestamp . "'), ('Israel', '" . $timestamp . "'), ('Jamaica', '" . $timestamp . "'), ('Japan', '" . $timestamp . "'), ('Kwajalein', '" . $timestamp . "'), ('Libya', '" . $timestamp . "'), ('Mexico/BajaNorte', '" . $timestamp . "'), ('Mexico/BajaSur', '" . $timestamp . "'), ('Mexico/General', '" . $timestamp . "'), ('Pacific/Apia', '" . $timestamp . "'), ('Pacific/Auckland', '" . $timestamp . "'), ('Pacific/Chatham', '" . $timestamp . "'), ('Pacific/Chuuk', '" . $timestamp . "'), ('Pacific/Easter', '" . $timestamp . "'), ('Pacific/Efate', '" . $timestamp . "'), ('Pacific/Enderbury', '" . $timestamp . "'), ('Pacific/Fakaofo', '" . $timestamp . "'), ('Pacific/Fiji', '" . $timestamp . "'), ('Pacific/Funafuti', '" . $timestamp . "'), ('Pacific/Galapagos', '" . $timestamp . "'), ('Pacific/Gambier', '" . $timestamp . "'), ('Pacific/Guadalcanal', '" . $timestamp . "'), ('Pacific/Guam', '" . $timestamp . "'), ('Pacific/Honolulu', '" . $timestamp . "'), ('Pacific/Johnston', '" . $timestamp . "'), ('Pacific/Kiritimati', '" . $timestamp . "'), ('Pacific/Kosrae', '" . $timestamp . "'), ('Pacific/Kwajalein', '" . $timestamp . "'), ('Pacific/Majuro', '" . $timestamp . "'), ('Pacific/Marquesas', '" . $timestamp . "'), ('Pacific/Midway', '" . $timestamp . "'), ('Pacific/Nauru', '" . $timestamp . "'), ('Pacific/Niue', '" . $timestamp . "'), ('Pacific/Norfolk', '" . $timestamp . "'), ('Pacific/Noumea', '" . $timestamp . "'), ('Pacific/Pago_Pago', '" . $timestamp . "'), ('Pacific/Palau', '" . $timestamp . "'), ('Pacific/Pitcairn', '" . $timestamp . "'), ('Pacific/Pohnpei', '" . $timestamp . "'), ('Pacific/Ponape', '" . $timestamp . "'), ('Pacific/Port_Moresby', '" . $timestamp . "'), ('Pacific/Rarotonga', '" . $timestamp . "'), ('Pacific/Saipan', '" . $timestamp . "'), ('Pacific/Samoa', '" . $timestamp . "'), ('Pacific/Tahiti', '" . $timestamp . "'), ('Pacific/Tarawa', '" . $timestamp . "'), ('Pacific/Tongatapu', '" . $timestamp . "'), ('Pacific/Truk', '" . $timestamp . "'), ('Pacific/Wake', '" . $timestamp . "'), ('Pacific/Wallis', '" . $timestamp . "'), ('Pacific/Yap', '" . $timestamp . "'), ('Poland', '" . $timestamp . "'), ('Portugal', '" . $timestamp . "'), ('Singapore', '" . $timestamp . "'), ('Turkey', '" . $timestamp . "'), ('US/Alaska', '" . $timestamp . "'), ('US/Aleutian', '" . $timestamp . "'), ('US/Arizona', '" . $timestamp . "'), ('US/Central', '" . $timestamp . "'), ('US/East-Indiana', '" . $timestamp . "'), ('US/Eastern', '" . $timestamp . "'), ('US/Hawaii', '" . $timestamp . "'), ('US/Indiana-Starke', '" . $timestamp . "'), ('US/Michigan', '" . $timestamp . "'), ('US/Mountain', '" . $timestamp . "'), ('US/Pacific', '" . $timestamp . "'), ('US/Pacific-New', '" . $timestamp . "'), ('US/Samoa', '" . $timestamp . "'), ('Zulu', '" . $timestamp . "');";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `dw_servers` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -904,7 +904,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `scheduler` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -923,7 +923,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
              ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO scheduler
             (`name`, description, `interval`, expression, slug, sort_order, is_running, active, insert_time)
@@ -934,7 +934,7 @@ if ($is_installed == '1') {
             ('System Cleanup', '" . "<" . "em>Domains:" . "<" . "/em> Converts all domain entries to lowercase." . "<" . "BR>" . "<" . "BR> " . "<" . "em>TLDs:" . "<" . "/em> Updates all TLD entries in the database to ensure their accuracy." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running smoothly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees.', 'Daily', '0 0 * * * *', 'cleanup', '60', '0', '1', '" . $timestamp . "'),
             ('Check For New Version', 'Checks to see if there is a newer version of DomainMOD available to download.', 'Daily', '0 0 * * * *', 'check-new-version', '80', '0', '1', '" . $timestamp . "'),
             ('Data Warehouse Build', 'Rebuilds the Data Warehouse so that you have the most up-to-date information available.', 'Daily', '0 0 * * * *', 'data-warehouse-build', '100', '0', '1', '" . $timestamp . "')";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     // Update tasks that run daily
     $cron = \Cron\CronExpression::factory('0 7 * * * *');
@@ -943,7 +943,7 @@ if ($is_installed == '1') {
     $sql = "UPDATE scheduler
             SET next_run = '" . $next_run . "'
             WHERE `interval` = 'Daily'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     // Update tasks that run every 5 minutes
     $cron = \Cron\CronExpression::factory('*/5 * * * * *');
@@ -952,7 +952,7 @@ if ($is_installed == '1') {
     $sql = "UPDATE scheduler
             SET next_run = '" . $next_run . "'
             WHERE `interval` = 'Every 5 Minutes'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `api_registrars` (
                 `id` TINYINT(3) NOT NULL AUTO_INCREMENT,
@@ -974,7 +974,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "INSERT INTO api_registrars
             (`name`, req_account_username, req_account_password, req_reseller_id, req_api_app_name, req_api_key,
@@ -996,7 +996,7 @@ if ($is_installed == '1') {
             ('NameSilo', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
             ('OpenSRS', '1', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $timestamp . "'),
             ('ResellerClub', '0', '0', '1', '0', '1', '0', '0', '0', '1', '1', '1', '0', 'ResellerClub does not currently allow the auto renewal status of a domain to be retrieved using their API, so all domains added to the queue from a ResellerClub account will have their auto renewal status set to No.', '" . $timestamp . "')";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `settings` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -1030,7 +1030,7 @@ if ($is_installed == '1') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $full_url = substr($_SERVER["HTTP_REFERER"], 0, -1);
 
@@ -1047,11 +1047,11 @@ if ($is_installed == '1') {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql_settings = "SELECT *
                      FROM settings";
-    $result_settings = mysqli_query($dbcon, $sql_settings) or $error->outputOldSqlError($dbcon);
+    $result_settings = mysqli_query($dbcon, $sql_settings) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     while ($row_settings = mysqli_fetch_object($result_settings)) {
 
@@ -1079,7 +1079,7 @@ if ($is_installed == '1') {
                           FROM user_settings
                           ORDER BY id DESC
                           LIMIT 1";
-    $result_user_settings = mysqli_query($dbcon, $sql_user_settings) or $error->outputOldSqlError($dbcon);
+    $result_user_settings = mysqli_query($dbcon, $sql_user_settings) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     while ($row_user_settings = mysqli_fetch_object($result_user_settings)) {
 
@@ -1148,7 +1148,7 @@ if ($is_installed == '1') {
 
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     // Without this, the "DomainMOD is not yet installed" message will continue to display after installation. The header isn't displayed on the install file, which is when this normally unsets.
     unset($_SESSION['s_message_danger']);

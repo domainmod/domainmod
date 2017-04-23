@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->close();
 
             } else {
-                $error->outputSqlError($dbcon, "ERROR");
+                $error->outputSqlError($dbcon, '1', 'ERROR');
             }
 
             $query = "DELETE FROM segment_data
@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->close();
 
             } else {
-                $error->outputSqlError($dbcon, "ERROR");
+                $error->outputSqlError($dbcon, '1', 'ERROR');
             }
 
             foreach ($domain_list as $domain) {
@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q->close();
 
                 } else {
-                    $error->outputSqlError($dbcon, "ERROR");
+                    $error->outputSqlError($dbcon, '1', 'ERROR');
                 }
 
             }
@@ -203,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $raw_domain_list = preg_replace("/', '/", "\r\n", $domain_list_formatted);
@@ -236,7 +236,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $query = "DELETE FROM segments
@@ -250,7 +250,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $query = "DELETE FROM segment_data
@@ -264,7 +264,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($dbcon, "ERROR");
+        $error->outputSqlError($dbcon, '1', 'ERROR');
     }
 
     $_SESSION['s_message_success'] .= "Segment " . $temp_segment_name . " Deleted<BR>";

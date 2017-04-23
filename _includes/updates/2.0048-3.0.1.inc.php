@@ -50,7 +50,7 @@ if ($current_db_version === '2.0048') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
                 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     // This section was made redundant by DB update v2.005
     // (redundant code was here)
@@ -73,15 +73,15 @@ if ($current_db_version === '2.0049') {
 if ($current_db_version === '2.005') {
 
     $sql = "DROP TABLE IF EXISTS `updates`;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "DROP TABLE IF EXISTS `update_data`;";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "UPDATE settings
             SET db_version = '2.0051',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0051';
 
@@ -97,7 +97,7 @@ if ($current_db_version === '2.0051') {
     $sql = "UPDATE settings
             SET db_version = '2.0052',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0052';
 
@@ -117,7 +117,7 @@ if ($current_db_version === '2.0052') {
     $sql = "UPDATE settings
             SET db_version = '2.0053',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0053';
 
@@ -169,7 +169,7 @@ if ($current_db_version === '2.0053') {
     $sql = "UPDATE settings
             SET db_version = '2.0054',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0054';
 
@@ -180,12 +180,12 @@ if ($current_db_version === '2.0054') {
 
     $sql = "ALTER TABLE `user_settings`
             ADD `display_inactive_assets` INT(1) NOT NULL DEFAULT '1' AFTER `display_ssl_fee`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "UPDATE settings
             SET db_version = '2.0055',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0055';
 
@@ -196,12 +196,12 @@ if ($current_db_version === '2.0055') {
 
     $sql = "ALTER TABLE `user_settings`
             ADD `display_dw_intro_page` INT(1) NOT NULL DEFAULT '1' AFTER `display_inactive_assets`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "UPDATE settings
             SET db_version = '2.0056',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0056';
 
@@ -212,12 +212,12 @@ if ($current_db_version === '2.0056') {
 
     $sql = "ALTER TABLE `settings`
             ADD `upgrade_available` INT(1) NOT NULL DEFAULT '0' AFTER `db_version`";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "UPDATE settings
             SET db_version = '2.0057',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '2.0057';
 
@@ -229,7 +229,7 @@ if ($current_db_version === '2.0057') {
     $sql = "UPDATE settings
             SET db_version = '3.0.1',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $current_db_version = '3.0.1';
 

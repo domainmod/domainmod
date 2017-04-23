@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $query = "SELECT id
                   FROM fees
@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         if ($new_privacy == "1") {
 
@@ -204,7 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($dbcon, "ERROR");
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
         $sql = "SELECT field_name
                 FROM domain_fields
@@ -327,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 }
 
@@ -353,7 +353,7 @@ if ($del == "1") {
 
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     if ($existing_ssl_certs > 0) {
 
@@ -379,7 +379,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $query = "DELETE FROM domain_field_data
               WHERE domain_id = ?";
@@ -391,7 +391,7 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $_SESSION['s_message_success'] .= "Domain " . $new_domain . " Deleted<BR>";
 
@@ -424,7 +424,7 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                 WHERE ra.owner_id = o.id
                   AND ra.registrar_id = r.id
                 ORDER BY r_name ASC, o_name ASC, ra.username ASC";
-$result_account = mysqli_query($dbcon, $sql_account) or $error->outputOldSqlError($dbcon);
+$result_account = mysqli_query($dbcon, $sql_account) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_account_id', 'Registrar Account', '', '1', '');
 while ($row_account = mysqli_fetch_object($result_account)) { //@formatter:off
 
@@ -436,7 +436,7 @@ echo $form->showDropdownBottom('');
 $sql_dns = "SELECT id, `name`
             FROM dns
             ORDER BY name ASC";
-$result_dns = mysqli_query($dbcon, $sql_dns) or $error->outputOldSqlError($dbcon);
+$result_dns = mysqli_query($dbcon, $sql_dns) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '1', '');
 while ($row_dns = mysqli_fetch_object($result_dns)) { //@formatter:off
 
@@ -448,7 +448,7 @@ echo $form->showDropdownBottom('');
 $sql_ip = "SELECT id, `name`, ip
            FROM ip_addresses
            ORDER BY `name` ASC, ip ASC";
-$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputOldSqlError($dbcon);
+$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
 while ($row_ip = mysqli_fetch_object($result_ip)) { //@formatter:off
 
@@ -460,7 +460,7 @@ echo $form->showDropdownBottom('');
 $sql_hosting = "SELECT id, `name`
                 FROM hosting
                 ORDER BY name ASC";
-$result_hosting = mysqli_query($dbcon, $sql_hosting) or $error->outputOldSqlError($dbcon);
+$result_hosting = mysqli_query($dbcon, $sql_hosting) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '1', '');
 while ($row_hosting = mysqli_fetch_object($result_hosting)) { //@formatter:off
 
@@ -472,7 +472,7 @@ echo $form->showDropdownBottom('');
 $sql_cat = "SELECT id, `name`
             FROM categories
             ORDER BY name ASC";
-$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputOldSqlError($dbcon);
+$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
 while ($row_cat = mysqli_fetch_object($result_cat)) { //@formatter:off
 
@@ -610,7 +610,7 @@ if ($no_results_accounts !== 1) { ?>
             WHERE a.server_id = s.id
               AND a.domain = '" . mysqli_real_escape_string($dbcon, $new_domain) . "'
             ORDER BY s.name ASC, a.unix_startdate DESC";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $dwdisplay = new DomainMOD\DwDisplay(); ?>
 
@@ -653,7 +653,7 @@ if ($no_results_dns_zones !== 1) { ?>
               AND z.domain = '" . mysqli_real_escape_string($dbcon, $new_domain) . "'
             ORDER BY s.name, z.zonefile, z.domain";
     $result = mysqli_query($dbcon, $sql)
-    or $error->outputOldSqlError($dbcon);
+    or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $dwdisplay = new DomainMOD\DwDisplay(); ?>
 

@@ -62,7 +62,7 @@ $sql = "SELECT ra.id AS raid, ra.email_address, ra.username, ra.password, ra.res
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('registrar_account_list', strtotime($time->stamp()));
@@ -216,7 +216,7 @@ Below is a list of all the Domain Registrar Accounts that are stored in <?php ec
 <a href="add/registrar-account.php"><?php echo $layout->showButton('button', 'Add Registrar Account'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="registrar-accounts.php?export_data=1&rid=<?php echo urlencode($rid); ?>&raid=<?php echo urlencode($raid); ?>&oid=<?php echo urlencode($oid); ?>"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
 if (mysqli_num_rows($result) > 0) { ?>
 

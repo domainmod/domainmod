@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($dbcon, "ERROR");
+            $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
         $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Added<BR>";
@@ -129,7 +129,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($dbcon, "ERROR");
+    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 
 echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');

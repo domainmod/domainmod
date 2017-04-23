@@ -77,7 +77,7 @@ class DreamHost
                         (account_id, domain, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy)
                         VALUES
                         ('" . $account_id . "', '" . $domain_list[$domain_count] . "', '" . $expiry_date . "', '" . $ns1 . "', '" . $ns2 . "', '" . $ns3 . "', '" . $ns4 . "', '" . $ns5 . "', '" . $ns6 . "', '" . $ns7 . "', '" . $ns8 . "', '" . $ns9 . "', '" . $ns10 . "', '" . $autorenew . "', '" . $privacy . "')";
-                $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+                $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 $domain_count++;
 
@@ -102,7 +102,7 @@ class DreamHost
                 WHERE account_id = '" . $account_id . "'
                   AND domain = '" . $domain . "'
                 ORDER BY id ASC";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
          $dns_result = array();
 
@@ -128,7 +128,7 @@ class DreamHost
 
             $sql_temp = "DELETE FROM domain_queue_temp
                          WHERE id = '" . $row->id . "'";
-            mysqli_query($dbcon, $sql_temp) or $error->outputOldSqlError($dbcon);
+            mysqli_query($dbcon, $sql_temp) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         }
 

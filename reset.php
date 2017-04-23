@@ -94,7 +94,7 @@ if ($new_data != "") {
 
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 } else {
 

@@ -45,7 +45,7 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 $sql = "SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
         FROM scheduler
         ORDER BY sort_order ASC";
-$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+$result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 ?>
 <?php require_once(DIR_INC . 'doctype.inc.php'); ?>
 <html>

@@ -491,7 +491,7 @@ if ($really_dell == '1' && $list_id != '') {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $queue->checkListQueue($dbcon);
 
@@ -517,7 +517,7 @@ if ($really_deld == '1' && $domain_id != '') {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $queue->checkDomainQueue($dbcon);
 
@@ -649,7 +649,7 @@ if (mysqli_num_rows($result_lists) == 0) {
 
                         $q->close();
 
-                    } else $error->outputSqlError($dbcon, "ERROR");
+                    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 }
                 echo $to_display; ?>
@@ -805,7 +805,7 @@ if (mysqli_num_rows($result_domains) == 0) {
 
                         $q->close();
 
-                    } else $error->outputSqlError($dbcon, "ERROR");
+                    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 }
                 echo $to_display; ?>
@@ -845,7 +845,7 @@ if (mysqli_num_rows($result_domains) == 0) {
 
                         $q->close();
 
-                    } else $error->outputSqlError($dbcon, "ERROR");
+                    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 }
                 echo $to_display; ?>
@@ -877,7 +877,7 @@ if (mysqli_num_rows($result_domains) == 0) {
 
                         $q->close();
 
-                    } else $error->outputSqlError($dbcon, "ERROR");
+                    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
                 }
                 echo $to_display; ?>

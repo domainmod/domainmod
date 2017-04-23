@@ -64,7 +64,7 @@ if ($a == 'u') {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $message = 'Task Updated<BR>';
 
@@ -90,7 +90,7 @@ if ($a == 'u') {
 
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $cron = \Cron\CronExpression::factory($full_expression);
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
@@ -107,7 +107,7 @@ if ($a == 'u') {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $message = 'Task Enabled<BR>';
 
@@ -125,7 +125,7 @@ if ($a == 'u') {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($dbcon, "ERROR");
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $message = 'Task Disabled<BR>';
 

@@ -31,7 +31,7 @@ class Api
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -58,7 +58,7 @@ class Api
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -86,7 +86,7 @@ class Api
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -114,7 +114,7 @@ class Api
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -144,7 +144,7 @@ class Api
                 WHERE ra.api_ip_id = ip.id
                   AND ra.id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -173,7 +173,7 @@ class Api
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -201,7 +201,7 @@ class Api
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
         if (mysqli_num_rows($result) > 0) {
 

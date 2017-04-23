@@ -87,7 +87,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($dbcon, "ERROR");
+    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($dbcon, "ERROR");
+            $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
         $query = "SELECT id, (renewal_fee + misc_fee) AS total_cost
@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($new_total_cost == "") $new_total_cost = 0;
 
         } else {
-            $error->outputSqlError($dbcon, "ERROR");
+            $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
         $query = "INSERT INTO ssl_certs
@@ -157,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($dbcon, "ERROR");
+            $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
         $query = "INSERT INTO ssl_cert_field_data
@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($dbcon, "ERROR");
+            $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
         $query = "SELECT field_name
@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q_f->close();
 
                     } else {
-                        $error->outputSqlError($dbcon, "ERROR");
+                        $error->outputSqlError($dbcon, '1', 'ERROR');
                     }
 
                 }
@@ -224,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($dbcon, "ERROR");
+            $error->outputSqlError($dbcon, '1', 'ERROR');
         }
 
         $queryB = new DomainMOD\QueryBuild();
@@ -328,7 +328,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($dbcon, "ERROR");
+} else $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownBottom('');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -345,7 +345,7 @@ $sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS 
                 WHERE sslpa.owner_id = o.id
                   AND sslpa.ssl_provider_id = sslp.id
                 ORDER BY sslp_name ASC, o_name ASC, sslpa.username ASC";
-$result_account = mysqli_query($dbcon, $sql_account) or $error->outputOldSqlError($dbcon);
+$result_account = mysqli_query($dbcon, $sql_account) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_account_id', 'SSL Provider Account', '', '1', '');
 while ($row_account = mysqli_fetch_object($result_account)) {
 
@@ -366,7 +366,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_type = "SELECT id, type
              FROM ssl_cert_types
              ORDER BY type ASC";
-$result_type = mysqli_query($dbcon, $sql_type) or $error->outputOldSqlError($dbcon);
+$result_type = mysqli_query($dbcon, $sql_type) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_type_id', 'Certificate Type', '', '1', '');
 while ($row_type = mysqli_fetch_object($result_type)) {
 
@@ -387,7 +387,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_ip = "SELECT id, ip, `name`
            FROM ip_addresses
            ORDER BY `name`, ip";
-$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputOldSqlError($dbcon);
+$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
 while ($row_ip = mysqli_fetch_object($result_ip)) {
 
@@ -408,7 +408,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_cat = "SELECT id, `name`
             FROM categories
             ORDER BY `name`";
-$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputOldSqlError($dbcon);
+$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputSqlError($dbcon, '1', 'ERROR');
 echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
 while ($row_cat = mysqli_fetch_object($result_cat)) {
 
@@ -487,7 +487,7 @@ if ($q->prepare($query)) {
                 $q_cf->close();
 
             } else {
-                $error->outputSqlError($dbcon, "ERROR");
+                $error->outputSqlError($dbcon, '1', 'ERROR');
             }
 
         }
@@ -499,7 +499,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($dbcon, "ERROR");
+    $error->outputSqlError($dbcon, '1', 'ERROR');
 }
 
 echo $form->showSubmitButton('Add SSL Certificate', '', '');

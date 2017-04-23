@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 default_ssl_type = '$new_default_ssl_type',
                 default_ssl_provider = '$new_default_ssl_provider',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $_SESSION['s_system_default_category_domains'] = $new_default_category_domains;
     $_SESSION['s_system_default_category_ssl'] = $new_default_category_ssl;
