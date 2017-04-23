@@ -59,10 +59,12 @@ class Format
 
     }
 
-    public function formatForMysql($domain_list)
+    public function formatForMysql($dbcon, $domain_list)
     {
-
-        $list_formatted = implode("\r\n", $domain_list);
+        foreach($domain_list AS $value) {
+            $new_domain_list[] = mysqli_real_escape_string($dbcon, $value);
+        }
+        $list_formatted = implode("\r\n", $new_domain_list);
         $list_formatted = "'" . $list_formatted;
         $list_formatted = $list_formatted . "'";
         $list_formatted = preg_replace("/\r\n/", "','", $list_formatted);

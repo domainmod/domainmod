@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             }
 
-            $new_data_formatted = $format->formatForMysql($domain_list);
+            $new_data_formatted = $format->formatForMysql($dbcon, $domain_list);
 
             $query = "UPDATE segments
                       SET `name` = ?,

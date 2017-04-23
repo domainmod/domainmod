@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         } else {
 
-            $new_data_formatted = $format->formatForMysql($domain_list);
+            $new_data_formatted = $format->formatForMysql($dbcon, $domain_list);
 
             if ($action == "RENEW") {
 
