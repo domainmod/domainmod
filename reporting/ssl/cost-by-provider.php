@@ -81,7 +81,7 @@ $sql = "SELECT sslp.id, sslp.name AS provider_name, o.name AS owner_name, sslpa.
           " . $range_string . "
         GROUP BY sslp.name, o.name, sslpa.username
         ORDER BY sslp.name, o.name, sslpa.username";
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_certs_total
@@ -96,7 +96,7 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total, 
                       AND sslc.active NOT IN ('0')
                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                       " . $range_string . "";
-$result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
+$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputOldSqlError($dbcon);
 
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $grand_total = $row_grand_total->grand_total;
@@ -110,7 +110,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
     if ($export_data == '1') {
 
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         $export = new DomainMOD\Export();
 
@@ -194,7 +194,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
                                          AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                          AND sslp.id = '" . $row->id . "'
                                          " . $range_string . "";
-                $result_provider_total = mysqli_query($connection, $sql_provider_total) or $error->outputOldSqlError($connection);
+                $result_provider_total = mysqli_query($dbcon, $sql_provider_total) or $error->outputOldSqlError($dbcon);
                 while ($row_provider_total = mysqli_fetch_object($result_provider_total)) {
                     $temp_provider_total = $row_provider_total->provider_total;
                     $number_of_certs_provider = $row_provider_total->number_of_certs_provider;
@@ -293,7 +293,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
                                      AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                      AND sslp.id = '" . $row->id . "'
                                      " . $range_string . "";
-            $result_provider_total = mysqli_query($connection, $sql_provider_total) or $error->outputOldSqlError($connection);
+            $result_provider_total = mysqli_query($dbcon, $sql_provider_total) or $error->outputOldSqlError($dbcon);
 
             while ($row_provider_total = mysqli_fetch_object($result_provider_total)) {
                 $temp_provider_total = $row_provider_total->provider_total;

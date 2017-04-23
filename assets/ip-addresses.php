@@ -47,7 +47,7 @@ $sql = "SELECT id, `name`, ip, rdns, notes, creation_type_id, created_by, insert
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('ip_address_list', strtotime($time->stamp()));
@@ -82,7 +82,7 @@ if ($export_data == '1') {
                                 FROM domains
                                 WHERE active NOT IN ('0', '10')
                                   AND ip_id = '" . $row->id . "'";
-            $result_total_count = mysqli_query($connection, $sql_total_count);
+            $result_total_count = mysqli_query($dbcon, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                 $total_domains = $row_total_count->total_count;
@@ -92,7 +92,7 @@ if ($export_data == '1') {
                                 FROM ssl_certs
                                 WHERE active NOT IN ('0')
                                   AND ip_id = '" . $row->id . "'";
-            $result_total_count = mysqli_query($connection, $sql_total_count);
+            $result_total_count = mysqli_query($dbcon, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                 $total_certs = $row_total_count->total_count;
@@ -128,13 +128,13 @@ if ($export_data == '1') {
 
             }
 
-            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+            $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
             
             if ($row->created_by == '0') {
                 $created_by = 'Unknown';
             } else {
                 $user = new DomainMOD\User();
-                $created_by = $user->getFullName($connection, $row->created_by);
+                $created_by = $user->getFullName($dbcon, $row->created_by);
             }
 
             $row_contents = array(
@@ -174,7 +174,7 @@ Below is a list of all the IP Addresses that are stored in <?php echo $software_
 <a href="add/ip-address.php"><?php echo $layout->showButton('button', 'Add IP Address'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="ip-addresses.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
 if (mysqli_num_rows($result) > 0) { ?>
 
@@ -197,7 +197,7 @@ if (mysqli_num_rows($result) > 0) { ?>
                                 FROM domains
                                 WHERE active NOT IN ('0', '10')
                                   AND ip_id = '" . $row->id . "'";
-            $result_total_count = mysqli_query($connection, $sql_total_count);
+            $result_total_count = mysqli_query($dbcon, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                 $total_domains = $row_total_count->total_count;
@@ -207,7 +207,7 @@ if (mysqli_num_rows($result) > 0) { ?>
                                 FROM ssl_certs
                                 WHERE active NOT IN ('0')
                                   AND ip_id = '" . $row->id . "'";
-            $result_total_count = mysqli_query($connection, $sql_total_count);
+            $result_total_count = mysqli_query($dbcon, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                 $total_certs = $row_total_count->total_count;

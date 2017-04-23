@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
                   number_of_ssl_certs = ?,
                   update_time = ?
               WHERE user_id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $_SESSION['s_number_of_domains'] = $new_number_of_domains;
     $_SESSION['s_number_of_ssl_certs'] = $new_number_of_ssl_certs;
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
         $query = "SELECT number_of_domains, number_of_ssl_certs, display_domain_owner, display_domain_registrar, display_domain_account, display_domain_category, display_domain_expiry_date, display_domain_dns, display_domain_host, display_domain_ip, display_domain_tld, display_domain_fee, display_ssl_owner, display_ssl_provider, display_ssl_account, display_ssl_domain, display_ssl_type, display_ssl_ip, display_ssl_category, display_ssl_expiry_date, display_ssl_fee, display_inactive_assets, display_dw_intro_page
                   FROM user_settings
                   WHERE user_id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -193,7 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_number_of_domains != "" && $new
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 }

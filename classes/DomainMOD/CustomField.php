@@ -39,10 +39,10 @@ class CustomField
 
     }
 
-    public function getCustomFields($connection, $table_name)
+    public function getCustomFields($dbcon, $table_name)
     {
 
-        $result = $this->queryCustomFields($connection, $table_name);
+        $result = $this->queryCustomFields($dbcon, $table_name);
 
         $columns_array = array();
 
@@ -62,20 +62,20 @@ class CustomField
 
     }
 
-    public function queryCustomFields($connection, $table_name)
+    public function queryCustomFields($dbcon, $table_name)
     {
 
         $sql = "SELECT field_name FROM " . $table_name . " ORDER BY `name` ASC";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         return $result;
 
     }
 
-    public function getCustomFieldsSql($connection, $table_name, $column_prefix)
+    public function getCustomFieldsSql($dbcon, $table_name, $column_prefix)
     {
 
-        $result = $this->queryCustomFields($connection, $table_name);
+        $result = $this->queryCustomFields($dbcon, $table_name);
 
         $columns = '';
 

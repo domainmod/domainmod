@@ -54,7 +54,7 @@ $system->authCheck($web_root);
     <?php
     $sql = "SELECT expiration_days
             FROM settings";
-    $result = mysqli_query($connection, $sql);
+    $result = mysqli_query($dbcon, $sql);
 
     while ($row = mysqli_fetch_object($result)) {
         $expiration_days = $row->expiration_days;
@@ -75,7 +75,7 @@ $system->authCheck($web_root);
                                 WHERE active NOT IN ('0', '10')
                                   AND expiry_date <= '" . $end_date . "'
                                 ORDER BY expiry_date, domain";
-                $domains_expiring = $system->checkForRowsResult($connection, $sql_domains);
+                $domains_expiring = $system->checkForRowsResult($dbcon, $sql_domains);
 
                 if ($domains_expiring != '0') {
 
@@ -110,7 +110,7 @@ $system->authCheck($web_root);
                               AND sslc.active NOT IN ('0')
                               AND sslc.expiry_date <= '" . $end_date . "'
                             ORDER BY sslc.expiry_date, sslc.name";
-                $ssl_expiring = $system->checkForRowsResult($connection, $sql_ssl);
+                $ssl_expiring = $system->checkForRowsResult($dbcon, $sql_ssl);
 
                 if ($ssl_expiring != '0') {
 
@@ -146,7 +146,7 @@ $system->authCheck($web_root);
     $sql = "SELECT id
             FROM domain_queue
             LIMIT 1";
-    $result = mysqli_query($connection, $sql);
+    $result = mysqli_query($dbcon, $sql);
 
     if (mysqli_num_rows($result) > 0) { ?>
 
@@ -158,7 +158,7 @@ $system->authCheck($web_root);
                     <?php
                     $sql = "SELECT count(*) AS total_count
                             FROM domain_queue";
-                    $result = mysqli_query($connection, $sql);
+                    $result = mysqli_query($dbcon, $sql);
                     while ($row = mysqli_fetch_object($result)) {
                         $total_count = $row->total_count;
                     }
@@ -186,7 +186,7 @@ $system->authCheck($web_root);
                 $sql = "SELECT count(*) AS total_count
                         FROM domains
                         WHERE active NOT IN ('0', '10')";
-                $result = mysqli_query($connection, $sql);
+                $result = mysqli_query($dbcon, $sql);
                 while ($row = mysqli_fetch_object($result)) {
                     $total_count = $row->total_count;
                 }
@@ -211,7 +211,7 @@ $system->authCheck($web_root);
                 $sql = "SELECT count(*) AS total_count
                         FROM ssl_certs
                         WHERE active NOT IN ('0', '10')";
-                $result = mysqli_query($connection, $sql);
+                $result = mysqli_query($dbcon, $sql);
                 while ($row = mysqli_fetch_object($result)) {
                     $total_count = $row->total_count;
                 }
@@ -236,7 +236,7 @@ $system->authCheck($web_root);
                 $sql = "SELECT count(*) AS total_count
                         FROM domains
                         WHERE active = '10'";
-                $result = mysqli_query($connection, $sql);
+                $result = mysqli_query($dbcon, $sql);
                 while ($row = mysqli_fetch_object($result)) {
                     $total_count = $row->total_count;
                 }
@@ -268,7 +268,7 @@ $system->authCheck($web_root);
                 $sql = "SELECT count(*) AS total_count
                         FROM domains
                         WHERE active = '3'";
-                $result = mysqli_query($connection, $sql);
+                $result = mysqli_query($dbcon, $sql);
                 while ($row = mysqli_fetch_object($result)) {
                     $total_count = $row->total_count;
                 }
@@ -295,7 +295,7 @@ $system->authCheck($web_root);
                 $sql = "SELECT count(*) AS total_count
                         FROM domains
                         WHERE active = '5'";
-                $result = mysqli_query($connection, $sql);
+                $result = mysqli_query($dbcon, $sql);
                 while ($row = mysqli_fetch_object($result)) {
                     $total_count = $row->total_count;
                 }
@@ -321,7 +321,7 @@ $system->authCheck($web_root);
                 $sql = "SELECT count(*) AS total_count
                         FROM domains
                         WHERE active = '2'";
-                $result = mysqli_query($connection, $sql);
+                $result = mysqli_query($dbcon, $sql);
                 while ($row = mysqli_fetch_object($result)) {
                     $total_count = $row->total_count;
                 }
@@ -346,7 +346,7 @@ $system->authCheck($web_root);
                 $sql = "SELECT count(*) AS total_count
                         FROM domains
                         WHERE active = '4'";
-                $result = mysqli_query($connection, $sql);
+                $result = mysqli_query($dbcon, $sql);
                 while ($row = mysqli_fetch_object($result)) {
                     $total_count = $row->total_count;
                 }
@@ -377,7 +377,7 @@ $system->authCheck($web_root);
                 $sql = "SELECT count(*) AS total_count
                         FROM ssl_certs
                         WHERE active = '3'";
-                $result = mysqli_query($connection, $sql);
+                $result = mysqli_query($dbcon, $sql);
                 while ($row = mysqli_fetch_object($result)) {
                     $total_count = $row->total_count;
                 }
@@ -404,7 +404,7 @@ $system->authCheck($web_root);
                 $sql = "SELECT count(*) AS total_count
                         FROM ssl_certs
                         WHERE active = '5'";
-                $result = mysqli_query($connection, $sql);
+                $result = mysqli_query($dbcon, $sql);
                 while ($row = mysqli_fetch_object($result)) {
                     $total_count = $row->total_count;
                 }
@@ -430,7 +430,7 @@ $system->authCheck($web_root);
                 $sql = "SELECT count(*) AS total_count
                         FROM ssl_certs
                         WHERE active = '4'";
-                $result = mysqli_query($connection, $sql);
+                $result = mysqli_query($dbcon, $sql);
                 while ($row = mysqli_fetch_object($result)) {
                     $total_count = $row->total_count;
                 }

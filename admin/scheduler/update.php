@@ -56,7 +56,7 @@ if ($a == 'u') {
               SET expression = ?,
                   next_run = ?
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -64,7 +64,7 @@ if ($a == 'u') {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $message = 'Task Updated<BR>';
 
@@ -73,7 +73,7 @@ if ($a == 'u') {
     $query = "SELECT expression
               FROM scheduler
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -90,7 +90,7 @@ if ($a == 'u') {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $cron = \Cron\CronExpression::factory($full_expression);
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
@@ -99,7 +99,7 @@ if ($a == 'u') {
               SET active = '1', 
                   next_run = ?
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -107,7 +107,7 @@ if ($a == 'u') {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $message = 'Task Enabled<BR>';
 
@@ -117,7 +117,7 @@ if ($a == 'u') {
               SET active = '0', 
                   next_run = '0000-00-00 00:00:00'
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -125,7 +125,7 @@ if ($a == 'u') {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $message = 'Task Disabled<BR>';
 

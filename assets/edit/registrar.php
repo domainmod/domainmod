@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       notes = ?,
                       update_time = ?
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Updated<BR>";
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $query = "SELECT `name`, url, api_registrar_id, notes
               FROM registrars
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
 }
@@ -114,7 +114,7 @@ if ($del == "1") {
               FROM registrar_accounts
               WHERE registrar_id = ?
               LIMIT 1";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -131,14 +131,14 @@ if ($del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $query = "SELECT registrar_id
               FROM domains
               WHERE registrar_id = ?
               LIMIT 1";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -155,7 +155,7 @@ if ($del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     if ($existing_registrar_accounts > 0 || $existing_domains > 0) {
@@ -176,7 +176,7 @@ if ($really_del == "1") {
 
     $query = "DELETE FROM fees
               WHERE registrar_id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -185,12 +185,12 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $query = "DELETE FROM registrar_accounts
               WHERE registrar_id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -199,12 +199,12 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $query = "DELETE FROM registrars
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -213,12 +213,12 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Deleted<BR>";
 
-    $system->checkExistingAssets($connection);
+    $system->checkExistingAssets($dbcon);
 
     header("Location: ../registrars.php");
     exit;
@@ -242,7 +242,7 @@ echo $form->showInputText('new_url', 'Registrar\'s URL (100)', '', $new_url, '10
 $query = "SELECT id, `name`
           FROM api_registrars
           ORDER BY `name` ASC";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -265,7 +265,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($conn, "ERROR");
+    $error->outputSqlError($dbcon, "ERROR");
 }
 
 

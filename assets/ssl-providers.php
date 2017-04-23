@@ -47,7 +47,7 @@ $sql = "SELECT id, `name`, url, notes, creation_type_id, created_by, insert_time
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('ssl_provider_list', strtotime($time->stamp()));
@@ -79,7 +79,7 @@ if ($export_data == '1') {
             $sql_total_count = "SELECT count(*) AS total_count
                                 FROM ssl_accounts
                                 WHERE ssl_provider_id = '" . $row->id . "'";
-            $result_total_count = mysqli_query($connection, $sql_total_count);
+            $result_total_count = mysqli_query($dbcon, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                 $total_accounts = $row_total_count->total_count;
@@ -89,7 +89,7 @@ if ($export_data == '1') {
                                FROM ssl_certs
                                WHERE active != '0'
                                  AND ssl_provider_id = '" . $row->id . "'";
-            $result_cert_count = mysqli_query($connection, $sql_cert_count);
+            $result_cert_count = mysqli_query($dbcon, $sql_cert_count);
 
             while ($row_cert_count = mysqli_fetch_object($result_cert_count)) {
                 $total_certs = $row_cert_count->total_count;
@@ -115,13 +115,13 @@ if ($export_data == '1') {
 
             }
             
-            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+            $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
             
             if ($row->created_by == '0') {
                 $created_by = 'Unknown';
             } else {
                 $user = new DomainMOD\User();
-                $created_by = $user->getFullName($connection, $row->created_by);
+                $created_by = $user->getFullName($dbcon, $row->created_by);
             }
 
             $row_contents = array(
@@ -159,7 +159,7 @@ Below is a list of all the SSL Certificate Providers that are stored in <?php ec
 <a href="add/ssl-provider.php"><?php echo $layout->showButton('button', 'Add SSL Provider'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="ssl-providers.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
 if (mysqli_num_rows($result) > 0) { ?>
 
@@ -181,7 +181,7 @@ if (mysqli_num_rows($result) > 0) { ?>
             $sql_total_count = "SELECT count(*) AS total_count
                                 FROM ssl_accounts
                                 WHERE ssl_provider_id = '" . $row->id . "'";
-            $result_total_count = mysqli_query($connection, $sql_total_count);
+            $result_total_count = mysqli_query($dbcon, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                 $total_accounts = $row_total_count->total_count;
@@ -191,7 +191,7 @@ if (mysqli_num_rows($result) > 0) { ?>
                                FROM ssl_certs
                                WHERE active != '0'
                                  AND ssl_provider_id = '" . $row->id . "'";
-            $result_cert_count = mysqli_query($connection, $sql_cert_count);
+            $result_cert_count = mysqli_query($dbcon, $sql_cert_count);
 
             while ($row_cert_count = mysqli_fetch_object($result_cert_count)) {
                 $total_certs = $row_cert_count->total_count;

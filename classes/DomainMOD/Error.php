@@ -24,18 +24,18 @@ namespace DomainMOD;
 class Error
 {
 
-    public function outputSqlError($connection, $msg_to_display)
+    public function outputSqlError($dbcon, $msg_to_display)
     {
 
-        return trigger_error(htmlentities($msg_to_display . ": " . mysqli_error($connection)), E_USER_ERROR, 'UTF-8');
+        return trigger_error(htmlentities($msg_to_display . ": " . mysqli_error($dbcon)), E_USER_ERROR, 'UTF-8');
 
     }
 
     // This function is temporary. After I convert all database queries to prepared statements this won't be needed.
-    public function outputOldSqlError($connection)
+    public function outputOldSqlError($dbcon)
     {
 
-        return trigger_error(htmlentities(mysqli_error($connection)), E_USER_ERROR, 'UTF-8');
+        return trigger_error(htmlentities(mysqli_error($dbcon)), E_USER_ERROR, 'UTF-8');
 
     }
 

@@ -24,15 +24,15 @@ namespace DomainMOD;
 class Maintenance
 {
 
-    public function performCleanup($connection)
+    public function performCleanup($dbcon)
     {
 
-        $this->lowercaseDomains($connection);
-        $this->updateTlds($connection);
-        $this->updateSegments($connection);
-        $this->updateAllFees($connection);
-        $this->deleteUnusedFees($connection, 'fees', 'domains');
-        $this->deleteUnusedFees($connection, 'ssl_fees', 'ssl_certs');
+        $this->lowercaseDomains($dbcon);
+        $this->updateTlds($dbcon);
+        $this->updateSegments($dbcon);
+        $this->updateAllFees($dbcon);
+        $this->deleteUnusedFees($dbcon, 'fees', 'domains');
+        $this->deleteUnusedFees($dbcon, 'ssl_fees', 'ssl_certs');
 
         $result_message = 'Maintenance Completed<BR>';
 
@@ -40,27 +40,27 @@ class Maintenance
 
     }
 
-    public function lowercaseDomains($connection)
+    public function lowercaseDomains($dbcon)
     {
 
         $sql = "UPDATE domains
                 SET domain = LOWER(domain)";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
         return true;
 
     }
 
-    public function updateTlds($connection)
+    public function updateTlds($dbcon)
     {
         $sql = "SELECT id, domain FROM domains";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
             $tld = $this->getTld($row->domain);
             $sql_update = "UPDATE domains
                            SET tld = '" . $tld . "'
                            WHERE id = '" . $row->id . "'";
-            mysqli_query($connection, $sql_update);
+            mysqli_query($dbcon, $sql_update);
         }
         return true;
     }
@@ -70,42 +70,42 @@ class Maintenance
         return preg_replace("/^((.*?)\.)(.*)$/", "\\3", $domain);
     }
 
-    public function updateSegments($connection)
+    public function updateSegments($dbcon)
     {
 
         $sql = "UPDATE segment_data SET active = '0', inactive = '0', missing = '0', filtered = '0'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         $sql = "UPDATE segment_data
                 SET active = '1'
                 WHERE domain IN (SELECT domain FROM domains WHERE active NOT IN ('0', '10'))";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         $sql = "UPDATE segment_data
                 SET inactive = '1'
                 WHERE domain IN (SELECT domain FROM domains WHERE active IN ('0', '10'))";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         $sql = "UPDATE segment_data
                  SET missing = '1'
                  WHERE domain NOT IN (SELECT domain FROM domains)";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         return true;
 
     }
 
-    public function updateAllFees($connection)
+    public function updateAllFees($dbcon)
     {
 
-        $this->updateDomainFees($connection);
-        $this->updateSslFees($connection);
+        $this->updateDomainFees($dbcon);
+        $this->updateSslFees($dbcon);
 
         return true;
 
     }
 
-    public function updateDomainFees($connection)
+    public function updateDomainFees($dbcon)
     {
 
         $time = new Time();
@@ -113,17 +113,17 @@ class Maintenance
 
         $sql = "UPDATE domains
                 SET fee_fixed = '0'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         $sql = "UPDATE fees
                 SET fee_fixed = '0',
                     update_time = '" . $timestamp . "'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         $sql = "SELECT id, registrar_id, tld
                 FROM fees
                 WHERE fee_fixed = '0'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
 
@@ -132,7 +132,7 @@ class Maintenance
                      WHERE registrar_id = '" . $row->registrar_id . "'
                        AND tld = '" . $row->tld . "'
                        AND fee_fixed = '0'";
-            mysqli_query($connection, $sql2);
+            mysqli_query($dbcon, $sql2);
 
             $sql2 = "UPDATE domains d
                      JOIN fees f ON d.fee_id = f.id
@@ -141,7 +141,7 @@ class Maintenance
                      WHERE d.registrar_id = '" . $row->registrar_id . "'
                        AND d.tld = '" . $row->tld . "'
                        AND d.privacy = '1'";
-            mysqli_query($connection, $sql2);
+            mysqli_query($dbcon, $sql2);
 
             $sql2 = "UPDATE domains d
                      JOIN fees f ON d.fee_id = f.id
@@ -150,14 +150,14 @@ class Maintenance
                      WHERE d.registrar_id = '" . $row->registrar_id . "'
                        AND d.tld = '" . $row->tld . "'
                        AND d.privacy = '0'";
-            mysqli_query($connection, $sql2);
+            mysqli_query($dbcon, $sql2);
 
             $sql2 = "UPDATE fees
                      SET fee_fixed = '1',
                          update_time = '" . $timestamp . "'
                      WHERE registrar_id = '" . $row->registrar_id . "'
                        AND tld = '" . $row->tld . "'";
-            mysqli_query($connection, $sql2);
+            mysqli_query($dbcon, $sql2);
 
         }
 
@@ -165,7 +165,7 @@ class Maintenance
 
     }
 
-    public function updateDomainFee($connection, $domain_id)
+    public function updateDomainFee($dbcon, $domain_id)
     {
 
         $time = new Time();
@@ -174,7 +174,7 @@ class Maintenance
         $sql = "SELECT registrar_id, tld
                 FROM domains
                 WHERE id = '" . $domain_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
 
@@ -186,21 +186,21 @@ class Maintenance
         $sql = "UPDATE domains
                 SET fee_fixed = '0'
                 WHERE id = '" . $domain_id . "'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         $sql = "UPDATE fees
                 SET fee_fixed = '0',
                     update_time = '" . $timestamp . "'
                 WHERE registrar_id = '" . $registrar_id . "'
                   AND tld = '" . $tld . "'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         $sql = "SELECT id, registrar_id, tld
                 FROM fees
                 WHERE fee_fixed = '0'
                   AND registrar_id = '" . $registrar_id . "'
                   AND tld = '" . $tld . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -211,7 +211,7 @@ class Maintenance
                          WHERE registrar_id = '" . $row->registrar_id . "'
                            AND tld = '" . $row->tld . "'
                            AND fee_fixed = '0'";
-                mysqli_query($connection, $sql2);
+                mysqli_query($dbcon, $sql2);
 
                 $sql2 = "UPDATE domains d
                          JOIN fees f ON d.fee_id = f.id
@@ -220,7 +220,7 @@ class Maintenance
                          WHERE d.registrar_id = '" . $row->registrar_id . "'
                            AND d.tld = '" . $row->tld . "'
                            AND d.privacy = '1'";
-                mysqli_query($connection, $sql2);
+                mysqli_query($dbcon, $sql2);
 
                 $sql2 = "UPDATE domains d
                          JOIN fees f ON d.fee_id = f.id
@@ -229,14 +229,14 @@ class Maintenance
                          WHERE d.registrar_id = '" . $row->registrar_id . "'
                            AND d.tld = '" . $row->tld . "'
                            AND d.privacy = '0'";
-                mysqli_query($connection, $sql2);
+                mysqli_query($dbcon, $sql2);
 
                 $sql2 = "UPDATE fees
                          SET fee_fixed = '1',
                              update_time = '" . $timestamp . "'
                          WHERE registrar_id = '" . $row->registrar_id . "'
                            AND tld = '" . $row->tld . "'";
-                mysqli_query($connection, $sql2);
+                mysqli_query($dbcon, $sql2);
 
             }
 
@@ -246,7 +246,7 @@ class Maintenance
 
     }
 
-    public function updateSslFees($connection)
+    public function updateSslFees($dbcon)
     {
 
         $time = new Time();
@@ -254,17 +254,17 @@ class Maintenance
 
         $sql = "UPDATE ssl_certs
                 SET fee_fixed = '0'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         $sql = "UPDATE ssl_fees
                 SET fee_fixed = '0',
                     update_time = '" . $timestamp . "'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         $sql = "SELECT id, ssl_provider_id, type_id
                 FROM ssl_fees
                 WHERE fee_fixed = '0'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
 
@@ -273,7 +273,7 @@ class Maintenance
                      WHERE ssl_provider_id = '$row->ssl_provider_id'
                        AND type_id = '$row->type_id'
                        AND fee_fixed = '0'";
-            mysqli_query($connection, $sql2);
+            mysqli_query($dbcon, $sql2);
 
             $sql2 = "UPDATE ssl_certs sslc
                      JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
@@ -281,14 +281,14 @@ class Maintenance
                          sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
                      WHERE sslc.ssl_provider_id = '" . $row->ssl_provider_id . "'
                        AND sslc.type_id = '" . $row->type_id . "'";
-            mysqli_query($connection, $sql2);
+            mysqli_query($dbcon, $sql2);
 
             $sql2 = "UPDATE ssl_fees
                      SET fee_fixed = '1',
-                         update_time = '" . mysqli_real_escape_string($connection, $timestamp) . "'
+                         update_time = '" . mysqli_real_escape_string($dbcon, $timestamp) . "'
                      WHERE ssl_provider_id = '$row->ssl_provider_id'
                        AND type_id = '$row->type_id'";
-            mysqli_query($connection, $sql2);
+            mysqli_query($dbcon, $sql2);
 
         }
 
@@ -296,14 +296,14 @@ class Maintenance
 
     }
 
-    public function deleteUnusedFees($connection, $fee_table, $compare_table)
+    public function deleteUnusedFees($dbcon, $fee_table, $compare_table)
     {
         $sql = "DELETE FROM " . $fee_table . "
                 WHERE id NOT IN (
                                  SELECT fee_id
                                  FROM " . $compare_table . "
                                  )";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
         return true;
     }
 

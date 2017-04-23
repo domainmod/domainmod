@@ -55,7 +55,7 @@ if ($new_cdfid == '') $new_cdfid = $cdfid;
 $query = "SELECT id
           FROM domain_fields
           WHERE id = ?";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -74,7 +74,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else $error->outputSqlError($dbcon, "ERROR");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
                   notes = ?,
                   update_time = ?
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -94,12 +94,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $query = "SELECT field_name
               FROM domain_fields
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     header("Location: ../domain-fields/");
     exit;
@@ -134,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
                   WHERE f.type_id = t.id
                     AND f.id = ?
                   ORDER BY f.name";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -155,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '') {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -178,7 +178,7 @@ if ($really_del == '1') {
         $query = "SELECT `name`, field_name
                   FROM domain_fields
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -196,11 +196,11 @@ if ($really_del == '1') {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "ALTER TABLE `domain_field_data`
                   DROP `?`";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -208,11 +208,11 @@ if ($really_del == '1') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "DELETE FROM domain_fields
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -220,7 +220,7 @@ if ($really_del == '1') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $_SESSION['s_message_success'] .= 'Custom Domain Field ' . $temp_name . ' (' . $temp_field_name . ') deleted<BR>';
 

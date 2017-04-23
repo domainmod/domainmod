@@ -50,7 +50,7 @@ if ($new_username != '') {
               FROM users
               WHERE username = ?
                 AND active = '1'";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -71,7 +71,7 @@ if ($new_username != '') {
                               update_time = ?
                           WHERE username = ?
                             AND email_address = ?";
-                $q = $conn->stmt_init();
+                $q = $dbcon->stmt_init();
 
                 if ($q->prepare($query)) {
 
@@ -82,7 +82,7 @@ if ($new_username != '') {
                     $q->close();
 
                 } else {
-                    $error->outputSqlError($conn, "ERROR");
+                    $error->outputSqlError($dbcon, "ERROR");
                 }
 
                 if ($display == '1') {
@@ -113,7 +113,7 @@ if ($new_username != '') {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
 } else {

@@ -24,9 +24,9 @@ namespace DomainMOD;
 class DwDisplay
 {
 
-    public function account($connection, $server_id, $domain)
+    public function account($dbcon, $server_id, $domain)
     { 
-        $result_account = $this->getAccount($connection, $server_id, $domain);
+        $result_account = $this->getAccount($dbcon, $server_id, $domain);
         $result = '';
 
         while ($row = mysqli_fetch_object($result_account)) {
@@ -68,7 +68,7 @@ class DwDisplay
         return $result;
     } 
 
-    public function getAccount($connection, $server_id, $domain)
+    public function getAccount($dbcon, $server_id, $domain)
     {
         $sql = "SELECT a.unix_startdate, a.email, a.ip, a.plan, a.theme, a.`user`, a.`owner`, a.shell, a.`partition`,
                     a.disklimit, a.diskused, a.maxpop, a.maxlst, a.maxaddons, a.maxsub, a.maxsql, a.maxftp, a.maxparked,
@@ -76,8 +76,8 @@ class DwDisplay
                 FROM dw_accounts AS a, dw_servers AS s
                 WHERE a.server_id = s.id
                   AND a.server_id = '" . $server_id . "'
-                  AND a.domain = '" . mysqli_real_escape_string($connection, $domain) . "'";
-        return mysqli_query($connection, $sql);
+                  AND a.domain = '" . mysqli_real_escape_string($dbcon, $domain) . "'";
+        return mysqli_query($dbcon, $sql);
     }
 
     public function accountSidebar($server_name, $domain, $show_heading, $show_url)
@@ -112,15 +112,15 @@ class DwDisplay
         return $result;
     } 
 
-    public function zone($connection, $server_id, $domain)
+    public function zone($dbcon, $server_id, $domain)
     { 
         ob_start();
 
-        $result_zone = $this->getZone($connection, $server_id, $domain);
+        $result_zone = $this->getZone($dbcon, $server_id, $domain);
 
         while ($row_zone = mysqli_fetch_object($result_zone)) {
 
-            $result_records = $this->getRecords($connection, $row_zone->zone_id); ?>
+            $result_records = $this->getRecords($dbcon, $row_zone->zone_id); ?>
 
             <table><?php
 
@@ -147,12 +147,12 @@ class DwDisplay
         return $result;
     } 
 
-    public function zoneSidebar($connection, $server_id, $domain, $show_heading, $show_url)
+    public function zoneSidebar($dbcon, $server_id, $domain, $show_heading, $show_url)
     { 
         ob_start();
-        $zone = $this->getZonefile($connection, $server_id, $domain);
+        $zone = $this->getZonefile($dbcon, $server_id, $domain);
         echo $this->showHeading($zone, $show_heading);
-        $server_name = $this->getServerName($connection, $server_id);
+        $server_name = $this->getServerName($dbcon, $server_id);
         echo $server_name . "<BR>";
         echo $this->showURL($domain, 'account', 'list-accounts.php', $show_url);
         $result = ob_get_clean();
@@ -160,40 +160,40 @@ class DwDisplay
         return $result;
     } 
 
-    public function getZonefile($connection, $server_id, $domain)
+    public function getZonefile($dbcon, $server_id, $domain)
     {
         $zonefile = '';
         $sql = "SELECT zonefile
                 FROM dw_dns_zones
                 WHERE server_id = '" . $server_id . "'
                   AND domain = '" . $domain . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
         while ($row = mysqli_fetch_object($result)) { $zonefile = $row->zonefile; }
         return $zonefile;
     } 
 
-    public function getServerName($connection, $server_id)
+    public function getServerName($dbcon, $server_id)
     { 
         $server_name = '';
         $sql = "SELECT `name`
                 FROM dw_servers
                 WHERE id = '" . $server_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
         while ($row = mysqli_fetch_object($result)) { $server_name = $row->name; }
         return $server_name;
     } 
 
-    public function getZone($connection, $server_id, $domain)
+    public function getZone($dbcon, $server_id, $domain)
     {
         $sql = "SELECT z.id AS zone_id, z.domain, z.zonefile, s.id AS server_id, s.name AS server_name
                 FROM dw_dns_zones AS z, dw_servers AS s
                 WHERE z.server_id = s.id
                   AND z.server_id = '" . $server_id . "'
-                  AND z.domain = '" . mysqli_real_escape_string($connection, $domain) . "'";
-        return mysqli_query($connection, $sql);
+                  AND z.domain = '" . mysqli_real_escape_string($dbcon, $domain) . "'";
+        return mysqli_query($dbcon, $sql);
     }
 
-    public function getRecords($connection, $zone_id)
+    public function getRecords($dbcon, $zone_id)
     {
         $sql = "SELECT address, cname, `exchange`, expire, line, minimum, mname, `name`, nsdname, preference, raw,
                     refresh, retry, rname, `serial`, ttl, txtdata, type, formatted_line, formatted_type,
@@ -201,7 +201,7 @@ class DwDisplay
                 FROM dw_dns_records
                 WHERE dns_zone_id = '" . $zone_id . "'
                 ORDER BY new_order";
-        return mysqli_query($connection, $sql);
+        return mysqli_query($dbcon, $sql);
     }
 
 } //@formatter:on

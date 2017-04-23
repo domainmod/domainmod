@@ -70,19 +70,19 @@ class Domain
 
     }
 
-    public function renew($conn, $domain, $renewal_years, $notes)
+    public function renew($dbcon, $domain, $renewal_years, $notes)
     {
-        $expiry_date = $this->getExpiry($conn, $domain);
+        $expiry_date = $this->getExpiry($dbcon, $domain);
         $new_expiry = $this->getNewExpiry($expiry_date, $renewal_years);
-        $this->writeNewExpiry($conn, $domain, $new_expiry, $notes);
+        $this->writeNewExpiry($dbcon, $domain, $new_expiry, $notes);
     }
 
-    public function getExpiry($conn, $domain)
+    public function getExpiry($dbcon, $domain)
     {
         $query = "SELECT expiry_date
                   FROM domains
                   WHERE domain = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
         $q->prepare($query);
         $q->bind_param('s', $domain);
         $q->execute();
@@ -99,7 +99,7 @@ class Domain
         return $expiry_pieces[0] + $renewal_years . "-" . $expiry_pieces[1] . "-" . $expiry_pieces[2];
     }
 
-    public function writeNewExpiry($conn, $domain, $new_expiry, $notes)
+    public function writeNewExpiry($dbcon, $domain, $new_expiry, $notes)
     {
         $time = new Time();
         $timestamp = $time->stamp();
@@ -111,7 +111,7 @@ class Domain
                           notes = CONCAT(?, '\r\n\r\n', notes),
                           update_time = ?
                       WHERE domain = ?";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
             $q->prepare($query);
             $q->bind_param('ssss', $new_expiry, $notes, $timestamp, $domain);
 
@@ -121,7 +121,7 @@ class Domain
                       SET expiry_date = ?,
                           update_time = ?
                       WHERE domain = ?";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
             $q->prepare($query);
             $q->bind_param('sss', $new_expiry, $timestamp, $domain);
 

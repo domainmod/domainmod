@@ -24,19 +24,19 @@ namespace DomainMOD;
 class Scheduler
 {
 
-    public function isRunning($connection, $id)
+    public function isRunning($dbcon, $id)
     {
-        $sql_running = "UPDATE scheduler SET is_running = '1' WHERE id = '" . mysqli_real_escape_string($connection, $id) . "'";
-        return mysqli_query($connection, $sql_running);
+        $sql_running = "UPDATE scheduler SET is_running = '1' WHERE id = '" . mysqli_real_escape_string($dbcon, $id) . "'";
+        return mysqli_query($dbcon, $sql_running);
     }
 
-    public function isFinished($connection, $id)
+    public function isFinished($dbcon, $id)
     {
-        $sql_finished = "UPDATE scheduler SET is_running = '0' WHERE id = '" . mysqli_real_escape_string($connection, $id) . "'";
-        return mysqli_query($connection, $sql_finished);
+        $sql_finished = "UPDATE scheduler SET is_running = '0' WHERE id = '" . mysqli_real_escape_string($dbcon, $id) . "'";
+        return mysqli_query($dbcon, $sql_finished);
     }
 
-    public function updateTime($connection, $id, $timestamp, $next_run, $active)
+    public function updateTime($dbcon, $id, $timestamp, $next_run, $active)
     {
         $time = new Time();
         $current_time = $time->stamp();
@@ -46,14 +46,14 @@ class Scheduler
                            SET last_run = '" . $timestamp . "',
                                last_duration = '" . $duration . "',
                                next_run = '" . $next_run . "'
-                           WHERE id = '" . mysqli_real_escape_string($connection, $id) . "'";
+                           WHERE id = '" . mysqli_real_escape_string($dbcon, $id) . "'";
         } else {
             $sql_update = "UPDATE scheduler
                            SET last_run = '" . $timestamp . "',
                                duration = '" . $duration . "'
-                           WHERE id = '" . mysqli_real_escape_string($connection, $id) . "'";
+                           WHERE id = '" . mysqli_real_escape_string($dbcon, $id) . "'";
         }
-        return mysqli_query($connection, $sql_update);
+        return mysqli_query($dbcon, $sql_update);
     }
 
     public function getTimeDifference($start_time, $end_time)
@@ -69,13 +69,13 @@ class Scheduler
         return $result;
     }
 
-    public function getTask($connection, $id)
+    public function getTask($dbcon, $id)
     {
         $sql_task = "SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
                      FROM scheduler
                      WHERE id = '" . $id . "'
                      ORDER BY sort_order ASC";
-        return mysqli_query($connection, $sql_task);
+        return mysqli_query($dbcon, $sql_task);
     }
 
     public function createActive($active, $id)

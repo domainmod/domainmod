@@ -39,10 +39,10 @@ require_once(DIR_INC . 'database.inc.php');
 $system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 
-$_SESSION['s_message_success'] .= $queue->clearQueues($connection);
+$_SESSION['s_message_success'] .= $queue->clearQueues($dbcon);
 
-$queue->checkListQueue($connection);
-$queue->checkDomainQueue($connection);
+$queue->checkListQueue($dbcon);
+$queue->checkDomainQueue($dbcon);
 
 header("Location: index.php");
 exit;

@@ -50,7 +50,7 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 <strong>Operating System:</strong> <?php echo php_uname(); ?><BR>
 <strong>Web Server:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>
 <strong>PHP:</strong> <?php echo phpversion(); ?><BR>
-<strong>MySQL:</strong> <?php echo mysqli_get_server_info($connection); ?><BR>
+<strong>MySQL:</strong> <?php echo mysqli_get_server_info($dbcon); ?><BR>
 <strong><?php echo $software_title; ?>:</strong> <?php echo $software_version; ?> (<em><?php echo $_SESSION['s_system_db_version']; ?></em>)<BR>
 
 <?php require_once(DIR_INC . 'layout/footer.inc.php'); ?>

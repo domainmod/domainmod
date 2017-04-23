@@ -24,7 +24,7 @@ namespace DomainMOD;
 class Login
 {
 
-    public function getUserInfo($connection, $user_id, $username)
+    public function getUserInfo($dbcon, $user_id, $username)
     {
 
         $sql = "SELECT first_name, last_name, username, email_address, new_password, admin, `read_only`,
@@ -33,13 +33,13 @@ class Login
                 WHERE id = '" . $user_id . "'
                   AND username = '" . $username . "'
                   AND active = '1'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         return $result;
 
     }
 
-    public function getSystemSettings($connection)
+    public function getSystemSettings($dbcon)
     {
 
         $sql = "SELECT full_url, db_version, upgrade_available, email_address, large_mode, default_category_domains,
@@ -48,13 +48,13 @@ class Login
                        default_registrar_account, default_ssl_provider_account, default_ssl_type, default_ssl_provider,
                        expiration_days
                 FROM settings";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         return $result;
 
     }
 
-    public function getUserSettings($connection, $user_id)
+    public function getUserSettings($dbcon, $user_id)
     {
 
         $sql = "SELECT default_currency, default_timezone, default_category_domains, default_category_ssl, default_dns,
@@ -69,25 +69,25 @@ class Login
                        display_inactive_assets, display_dw_intro_page
                 FROM user_settings
                 WHERE user_id = '" . $user_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         return $result;
 
     }
 
-    public function getCurrencyInfo($connection, $currency)
+    public function getCurrencyInfo($dbcon, $currency)
     {
 
         $sql = "SELECT `name`, symbol, symbol_order, symbol_space
                 FROM currencies
                 WHERE currency = '" . $currency . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         return $result;
 
     }
 
-    public function setLastLogin($connection, $user_id, $email_address)
+    public function setLastLogin($dbcon, $user_id, $email_address)
     {
 
         $time = new Time();
@@ -99,7 +99,7 @@ class Login
                     update_time = '" . $timestamp . "'
                 WHERE id = '" . $user_id . "'
                   AND email_address = '" . $email_address . "'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
     }
 

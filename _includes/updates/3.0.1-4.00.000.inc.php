@@ -26,24 +26,24 @@ if ($current_db_version === '3.0.1') {
 
     $sql = "ALTER TABLE `settings`
             ADD `temp_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `full_url`";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "UPDATE `settings`
             SET `temp_version` = `db_version`";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "ALTER TABLE `settings`
             DROP `db_version`";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "ALTER TABLE `settings`
             CHANGE `temp_version` `db_version` VARCHAR(12) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "UPDATE settings
             SET db_version = '3.0.2',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $current_db_version = '3.0.2';
 
@@ -69,7 +69,7 @@ if ($current_db_version === '3.0.2') {
                 `update_time` DATETIME NOT NULL DEFAULT '1978-01-23 00:00:01',
                 PRIMARY KEY  (`id`)
              ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "INSERT INTO scheduler
             (`name`, description, slug, sort_order, is_running, active, insert_time)
@@ -78,19 +78,19 @@ if ($current_db_version === '3.0.2') {
             ('Update Conversion Rates', 'Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date." . "<" . "BR>" . "<" . "BR>Users can set their default currency via " . "<" . "a href=\'../../settings/defaults.php\'>User Defaults" . "<" . "/a>." . "<" . "BR>" . "<" . "BR>Administrators can set the default system currency via " . "<" . "a href=\'../defaults.php\'>System Defaults" . "<" . "/a>.', 'update-conversion-rates', '40', '0', '1', '" . $time->stamp() . "'),
             ('System Cleanup', '" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running quickly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>TLDs:" . "<" . "/em> Makes sure that the TLD entries recorded in the database are accurate.', 'cleanup', '60', '0', '1', '" . $time->stamp() . "'),
             ('Check For New Version', 'Checks to see if there is a newer version of DomainMOD available to download." . "<" . "BR>" . "<" . "BR>You can view your current version on the " . "<" . "a href=\'../system-info.php\'>System Information" . "<" . "/a> page.', 'check-new-version', '80', '0', '1', '" . $time->stamp() . "')";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $cron = \Cron\CronExpression::factory('0 7 * * * *');
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
 
     $sql = "UPDATE scheduler
             SET next_run = '" . $next_run . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "UPDATE settings
             SET db_version = '3.0.4',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $current_db_version = '3.0.4';
 
@@ -101,12 +101,12 @@ if ($current_db_version === '3.0.4') {
 
     $sql = "ALTER TABLE `domains`
             ADD `autorenew` TINYINT(1) NOT NULL DEFAULT '0' AFTER `notes`";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "UPDATE settings
             SET db_version = '3.0.8',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $current_db_version = '3.0.8';
 
@@ -118,7 +118,7 @@ if ($current_db_version === '3.0.8') {
     $sql = "UPDATE settings
             SET db_version = '3.0.9',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $current_db_version = '3.0.9';
 
@@ -132,27 +132,27 @@ if ($current_db_version === '3.0.9') {
     $sql = "UPDATE scheduler
             SET description = '" . $temp_message . "'
             WHERE `name` = 'Send Expiration Email'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $temp_message = "Retrieves the current currency conversion rates and updates the entire system, which keeps all of the financial information in DomainMOD accurate and up-to-date.<BR><BR>Users can set their default currency via their User Profile.";
 
     $sql = "UPDATE scheduler
             SET description = '" . $temp_message . "'
             WHERE `name` = 'Update Conversion Rates'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $temp_message = "Checks to see if there is a newer version of DomainMOD available to download.";
 
     $sql = "UPDATE scheduler
             SET description = '" . $temp_message . "'
             WHERE `name` = 'Check For New Version'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "INSERT INTO scheduler
             (`name`, description, slug, sort_order, is_running, active, insert_time)
              VALUES
             ('Data Warehouse Build', 'Rebuilds the Data Warehouse so that you have the most up-to-date information available.', 'data-warehouse-build', '100', '0', '1', '" . $time->stamp() . "')";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $cron = \Cron\CronExpression::factory('0 7 * * * *');
     $next_run = $cron->getNextRunDate()->format('Y-m-d H:i:s');
@@ -160,21 +160,21 @@ if ($current_db_version === '3.0.9') {
     $sql = "UPDATE scheduler
             SET next_run = '" . $next_run . "'
             WHERE `name` = 'Data Warehouse Build'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "ALTER TABLE `settings`
             ADD `large_mode` TINYINT(1) NOT NULL DEFAULT '0' AFTER `email_address`;";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "UPDATE ssl_certs
             SET active = '5'
             WHERE active = '2'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "UPDATE settings
             SET db_version = '4.00.000',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $current_db_version = '4.00.000';
 

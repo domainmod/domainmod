@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
                   smtp_password = ?,
                   expiration_days = ?,
                   update_time = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $_SESSION['s_system_full_url'] = $new_full_url;
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
         $query = "SELECT full_url, email_address, large_mode, use_smtp, smtp_server, smtp_protocol, smtp_port,
                     smtp_email_address, smtp_username, smtp_password, expiration_days
                   FROM settings";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_email_address != "" && $new_ful
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
     }

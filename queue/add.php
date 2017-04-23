@@ -56,7 +56,7 @@ if ($new_raid != '' ) {
               WHERE ra.registrar_id = r.id
                 AND r.api_registrar_id = apir.id
                 AND ra.id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
     
     if ($q->prepare($query)) {
     
@@ -71,7 +71,7 @@ if ($new_raid != '' ) {
         $q->fetch();
         $q->close();
     
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
 }
 
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       FROM registrar_accounts AS ra, registrars AS r
                       WHERE ra.registrar_id = r.id
                         AND ra.id = ?";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
@@ -112,23 +112,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $q->close();
 
-            } else $error->outputSqlError($conn, "ERROR");
+            } else $error->outputSqlError($dbcon, "ERROR");
 
             $query = "INSERT INTO domain_queue_list
                       (api_registrar_id, owner_id, registrar_id, account_id, created_by, insert_time)
                       VALUES
                       (?, ?, ?, ?, ?, ?)";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
                 $timestamp = $time->stamp();
 
                 $q->bind_param('iiiiis', $temp_api_registrar_id, $temp_owner_id, $temp_registrar_id, $new_raid, $_SESSION['s_user_id'], $timestamp);
-                $q->execute() or $error->outputSqlError($conn, "Couldn't add registrar account to list queue");
+                $q->execute() or $error->outputSqlError($dbcon, "Couldn't add registrar account to list queue");
                 $q->close();
 
-            } else $error->outputSqlError($conn, "ERROR");
+            } else $error->outputSqlError($dbcon, "ERROR");
 
             $_SESSION['s_domains_in_list_queue'] = '1';
 
@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   WHERE ra.registrar_id = r.id
                     AND r.api_registrar_id = ar.id
                     AND ra.id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $query2 = "SELECT registrar_id
                            FROM registrar_accounts
                            WHERE id = ?";
-                $q2 = $conn->stmt_init();
+                $q2 = $dbcon->stmt_init();
 
                 if ($q2->prepare($query2)) {
 
@@ -178,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q2->close();
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else $error->outputSqlError($dbcon, "ERROR");
 
                 $has_api_support = '0';
 
@@ -190,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         if ($new_raid == '' || $raw_domain_list == '' || $has_api_support != '1') {
 
@@ -251,7 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $query = "SELECT domain
                               FROM domains
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
 
                     if ($q->prepare($query)) {
 
@@ -277,7 +277,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $query = "SELECT domain
                               FROM domain_queue
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
 
                     if ($q->prepare($query)) {
 
@@ -309,7 +309,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               FROM registrar_accounts AS ra, registrars AS r
                               WHERE ra.registrar_id = r.id
                                 AND ra.id = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
 
                     if ($q->prepare($query)) {
 
@@ -328,7 +328,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $q->close();
 
-                    } else $error->outputSqlError($conn, "ERROR");
+                    } else $error->outputSqlError($dbcon, "ERROR");
 
                     reset($domain_list);
 
@@ -342,7 +342,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   (api_registrar_id, domain, owner_id, registrar_id, account_id, tld, created_by, insert_time)
                                   VALUES
                                   (?, ?, ?, ?, ?, ?, ?, ?)";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
 
                         if ($q->prepare($query)) {
 
@@ -350,10 +350,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                             $q->bind_param('isiiisis', $temp_api_registrar_id, $new_domain, $temp_owner_id, $temp_registrar_id,
                                 $new_raid, $new_tld, $_SESSION['s_user_id'], $timestamp);
-                            $q->execute() or $error->outputSqlError($conn, "Couldn't add domains to queue");
+                            $q->execute() or $error->outputSqlError($dbcon, "Couldn't add domains to queue");
                             $q->close();
 
-                        } else $error->outputSqlError($conn, "ERROR");
+                        } else $error->outputSqlError($dbcon, "ERROR");
 
                     } // finish cycling through domains here
 
@@ -414,7 +414,7 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                   AND ra.registrar_id = r.id
                   AND r.api_registrar_id != '0'
                 ORDER BY r_name, o_name, ra.username";
-$result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
+$result_account = mysqli_query($dbcon, $sql_account) or $error->outputOldSqlError($dbcon);
 
 echo $form->showDropdownOptionJump('add.php', '', 'Choose the Registrar Account to import', '');
 

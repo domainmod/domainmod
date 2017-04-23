@@ -24,7 +24,7 @@ namespace DomainMOD;
 class DwAccounts
 {
 
-    public function createTable($connection)
+    public function createTable($dbcon)
     {
 
         $sql_accounts = "CREATE TABLE IF NOT EXISTS dw_accounts (
@@ -59,7 +59,7 @@ class DwAccounts
                              insert_time DATETIME NOT NULL,
                              PRIMARY KEY  (id)
                          ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        mysqli_query($connection, $sql_accounts);
+        mysqli_query($dbcon, $sql_accounts);
 
         return true;
 
@@ -72,7 +72,7 @@ class DwAccounts
 
     }
 
-    public function insertAccounts($connection, $api_results, $server_id)
+    public function insertAccounts($dbcon, $api_results, $server_id)
     {
 
         if ($api_results !== false) {
@@ -101,7 +101,7 @@ class DwAccounts
                          '" . $hit->suspended . "', '" . $hit->suspendreason . "', '" . $hit->suspendtime . "',
                          '" . $hit->MAX_EMAIL_PER_HOUR . "', '" . $hit->MAX_DEFER_FAIL_PERCENTAGE . "',
                          '" . $hit->MIN_DEFER_FAIL_TO_TRIGGER_PROTECTION . "', '" . $time->stamp() . "')";
-                mysqli_query($connection, $sql);
+                mysqli_query($dbcon, $sql);
 
             }
 
@@ -111,14 +111,14 @@ class DwAccounts
 
     }
 
-    public function getTotalDwAccounts($connection)
+    public function getTotalDwAccounts($dbcon)
     {
 
         $total_dw_accounts = '';
 
         $sql_accounts = "SELECT count(*) AS total_dw_accounts
                          FROM `dw_accounts`";
-        $result_accounts = mysqli_query($connection, $sql_accounts);
+        $result_accounts = mysqli_query($dbcon, $sql_accounts);
 
         while ($row_accounts = mysqli_fetch_object($result_accounts)) {
 

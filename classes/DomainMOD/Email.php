@@ -24,25 +24,25 @@ namespace DomainMOD;
 class Email
 {
 
-    public function sendExpirations($connection, $software_title, $from_cron)
+    public function sendExpirations($dbcon, $software_title, $from_cron)
     {
         $time = new Time();
         $timestamp_basic = $time->timeBasic();
         $timestamp_long = $time->timeLong();
 
-        list($full_url, $from_address, $number_of_days, $use_smtp) = $this->getSettings($connection);
-        $send_to = $this->getRecipients($connection);
+        list($full_url, $from_address, $number_of_days, $use_smtp) = $this->getSettings($dbcon);
+        $send_to = $this->getRecipients($dbcon);
         $subject = "Upcoming Expirations - " . $timestamp_long;
         $headers = $this->getHeaders($software_title, $from_address);
 
-        list($result_domains, $result_ssl) = $this->checkExpiring($connection, $number_of_days, $from_cron);
+        list($result_domains, $result_ssl) = $this->checkExpiring($dbcon, $number_of_days, $from_cron);
         $message_html = '';
         $message_html .= $this->messageTopHtml($software_title, $full_url, $subject, $number_of_days);
         $message_html .= $this->showDomainsHtml($result_domains, $full_url, $timestamp_basic);
         $message_html .= $this->showSslHtml($result_ssl, $full_url, $timestamp_basic);
         $message_html .= $this->messageBottomHtml($software_title, $full_url);
 
-        list($result_domains, $result_ssl) = $this->checkExpiring($connection, $number_of_days, $from_cron);
+        list($result_domains, $result_ssl) = $this->checkExpiring($dbcon, $number_of_days, $from_cron);
         $message_text = '';
         $message_text = $subject . "\n\n";
         $message_text .= $this->messageTopText($software_title, $number_of_days);
@@ -61,7 +61,7 @@ class Email
             } else {
 
                 $smtp = new Smtp();
-                $smtp->send($connection, $from_address, $row_recipients->email_address, $row_recipients->first_name
+                $smtp->send($dbcon, $from_address, $row_recipients->email_address, $row_recipients->first_name
                     . ' ' . $row_recipients->last_name, $subject, $message_html, $message_text);
 
             }
@@ -69,10 +69,10 @@ class Email
         }
     }
 
-    public function getSettings($connection)
+    public function getSettings($dbcon)
     {
         $sql = "SELECT full_url, email_address, expiration_days, use_smtp FROM settings";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
         $url = '';
         $email = '';
         $days = '';
@@ -85,7 +85,7 @@ class Email
         return array($url, $email, $days, $use_smtp);
     }
 
-    public function checkExpiring($connection, $days, $from_cron)
+    public function checkExpiring($dbcon, $days, $from_cron)
     {
         $system = new System();
         $time = new Time();
@@ -96,7 +96,7 @@ class Email
                         WHERE active NOT IN ('0', '10')
                           AND expiry_date <= '" . $date . "'
                         ORDER BY expiry_date, domain";
-        $domains_expiring = $system->checkForRowsResult($connection, $sql_domains);
+        $domains_expiring = $system->checkForRowsResult($dbcon, $sql_domains);
 
         $sql_ssl = "SELECT sslc.id, sslc.expiry_date, sslc.name, sslt.type
                     FROM ssl_certs AS sslc, ssl_cert_types AS sslt
@@ -104,7 +104,7 @@ class Email
                       AND sslc.active NOT IN ('0')
                       AND sslc.expiry_date <= '" . $date . "'
                     ORDER BY sslc.expiry_date, sslc.name";
-        $ssl_expiring = $system->checkForRowsResult($connection, $sql_ssl);
+        $ssl_expiring = $system->checkForRowsResult($dbcon, $sql_ssl);
 
         if ($domains_expiring != '0' || $ssl_expiring != '0') {
             $_SESSION['s_message_success'] .= 'Expiration Email Sent<BR>';
@@ -116,14 +116,14 @@ class Email
         }
     }
 
-    public function getRecipients($connection)
+    public function getRecipients($dbcon)
     {
         $sql_recipients = "SELECT u.email_address, u.first_name, u.last_name
                            FROM users AS u, user_settings AS us
                            WHERE u.id = us.user_id
                              AND u.active = '1'
                              AND us.expiration_emails = '1'";
-        $result_recipients = mysqli_query($connection, $sql_recipients);
+        $result_recipients = mysqli_query($dbcon, $sql_recipients);
 
         if (mysqli_num_rows($result_recipients) <= 0) {
             $_SESSION['s_message_danger'] .= 'No Users Are Subscribed<BR>';

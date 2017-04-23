@@ -70,14 +70,14 @@ if ($all == "1") {
 
 }
 
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 $total_rows = mysqli_num_rows($result);
 
 if ($total_rows > 0) {
 
     if ($export_data == "1") {
 
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         $export = new DomainMOD\Export();
 
@@ -168,7 +168,7 @@ if ($total_rows > 0) {
                                      WHERE registrar_id = '" . $row->id . "'
                                        AND fee_id = '" . $row->fee_id . "'
                                        AND active NOT IN ('0', '10')";
-                $result_domain_count = mysqli_query($connection, $sql_domain_count);
+                $result_domain_count = mysqli_query($dbcon, $sql_domain_count);
 
                 while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
 
@@ -286,7 +286,7 @@ if ($total_rows > 0) {
                                              WHERE registrar_id = '" . $row->id . "'
                                                AND fee_id = '" . $row->fee_id . "'
                                                AND active NOT IN ('0', '10')";
-                        $result_domain_count = mysqli_query($connection, $sql_domain_count);
+                        $result_domain_count = mysqli_query($dbcon, $sql_domain_count);
                         while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
 
                             if ($row_domain_count->total_domain_count == 0) {
@@ -355,7 +355,7 @@ if ($total_rows > 0) {
                                              WHERE registrar_id = '" . $row->id . "'
                                                AND fee_id = '" . $row->fee_id . "'
                                                AND active NOT IN ('0', '10')";
-                        $result_domain_count = mysqli_query($connection, $sql_domain_count);
+                        $result_domain_count = mysqli_query($dbcon, $sql_domain_count);
                         while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
 
                             if ($row_domain_count->total_domain_count == 0) {

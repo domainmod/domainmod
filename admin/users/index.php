@@ -49,7 +49,7 @@ $sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email_address, u.a
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('user_list', strtotime($time->stamp()));
@@ -112,13 +112,13 @@ if ($export_data == '1') {
 
             }
 
-            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+            $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
 
             if ($row->created_by == '0') {
                 $created_by = 'Unknown';
             } else {
                 $user = new DomainMOD\User();
-                $created_by = $user->getFullName($connection, $row->created_by);
+                $created_by = $user->getFullName($dbcon, $row->created_by);
             }
 
             $row_contents = array(
@@ -160,7 +160,7 @@ Below is a list of all users that have access to <?php echo $software_title; ?>.
 <a href="add.php"><?php echo $layout->showButton('button', 'Add User'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="index.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
 if (mysqli_num_rows($result) > 0) { ?>
 

@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       number_of_servers = ?,
                       update_time = ?
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $dnsid = $new_dnsid;
@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   ip7, ip8, ip9, ip10, notes
               FROM dns
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
 }
@@ -175,7 +175,7 @@ if ($del == "1") {
               FROM domains
               WHERE dns_id = ?
               LIMIT 1";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -197,7 +197,7 @@ if ($del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
 }
@@ -206,7 +206,7 @@ if ($really_del == "1") {
 
     $query = "DELETE FROM dns
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -215,7 +215,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $_SESSION['s_message_success'] .= "DNS Profile " . $new_name . " Deleted<BR>";

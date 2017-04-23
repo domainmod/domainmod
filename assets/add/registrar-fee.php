@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   FROM fees
                   WHERE registrar_id = ?
                     AND tld = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $query2 = "SELECT id
                            FROM currencies
                            WHERE currency = ?";
-                $q2 = $conn->stmt_init();
+                $q2 = $dbcon->stmt_init();
 
                 if ($q2->prepare($query2)) {
 
@@ -101,13 +101,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q2->close();
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else $error->outputSqlError($dbcon, "ERROR");
 
                 $query2 = "INSERT INTO fees
                            (registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id, insert_time)
                            VALUES
                            (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                $q2 = $conn->stmt_init();
+                $q2 = $dbcon->stmt_init();
 
                 if ($q2->prepare($query2)) {
 
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q2->close();
 
                 } else {
-                    $error->outputSqlError($conn, "ERROR");
+                    $error->outputSqlError($dbcon, "ERROR");
                 }
 
                 $query2 = "UPDATE domains
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                update_time = ?
                            WHERE registrar_id = ?
                              AND tld = ?";
-                $q2 = $conn->stmt_init();
+                $q2 = $dbcon->stmt_init();
 
                 if ($q2->prepare($query2)) {
 
@@ -135,14 +135,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q2->execute();
                     $q2->close();
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else $error->outputSqlError($dbcon, "ERROR");
 
                 $query2 = "UPDATE domains d
                            JOIN fees f ON d.fee_id = f.id
                            SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
                            WHERE d.privacy = '1'
                              AND d.fee_id = ?";
-                $q2 = $conn->stmt_init();
+                $q2 = $dbcon->stmt_init();
 
                 if ($q2->prepare($query2)) {
 
@@ -150,14 +150,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q2->execute();
                     $q2->close();
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else $error->outputSqlError($dbcon, "ERROR");
 
                 $query2 = "UPDATE domains d
                            JOIN fees f ON d.fee_id = f.id
                            SET d.total_cost = f.renewal_fee + f.misc_fee
                            WHERE d.privacy = '0'
                              AND d.fee_id = ?";
-                $q2 = $conn->stmt_init();
+                $q2 = $dbcon->stmt_init();
 
                 if ($q2->prepare($query2)) {
 
@@ -165,14 +165,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q2->execute();
                     $q2->close();
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else $error->outputSqlError($dbcon, "ERROR");
 
                 $queryB = new DomainMOD\QueryBuild();
 
                 $sql = $queryB->missingFees('domains');
-                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
+                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
 
-                $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+                $conversion->updateRates($dbcon, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
                 $_SESSION['s_message_success'] .= "The fee for " . $new_tld . "has been added<BR>";
 
@@ -183,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     } else {
 
@@ -211,7 +211,7 @@ echo $form->showFormTop('');
 $query = "SELECT `name`
           FROM registrars
           WHERE id = ?";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -228,7 +228,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else $error->outputSqlError($dbcon, "ERROR");
 ?>
 <strong>Domain Registrar</strong><BR>
 <?php echo $temp_registrar; ?><BR><BR><?php
@@ -243,7 +243,7 @@ echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '
 $sql = "SELECT id, currency, `name`, symbol
         FROM currencies
         ORDER BY `name`";
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
 while ($row = mysqli_fetch_object($result)) {
 

@@ -64,7 +64,7 @@ $new_uid = $_POST['new_uid'];
 $query = "SELECT username
           FROM users
           WHERE id = ?";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -88,7 +88,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else $error->outputSqlError($dbcon, "ERROR");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_name != '' && $new_username != '' && $new_email_address != '') {
 
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
               FROM users
               WHERE username = ?
                 AND id != ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     // Make sure they aren't trying to assign a reserved username
     // If it's the primary admin account editing their own profile the query will return 1, otherwise 0
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                   FROM users
                   WHERE username = ?
                     AND id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -159,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                   active = ?,
                   update_time = ?
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -169,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $query = "UPDATE user_settings
               SET default_currency = ?,
@@ -177,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                   expiration_emails = ?,
                   update_time = ?
               WHERE user_id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -187,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Updated<BR>';
 
@@ -217,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                   FROM users AS u, user_settings AS us
                   WHERE u.id = us.user_id
                     AND u.id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -244,7 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 }
@@ -259,7 +259,7 @@ if ($really_del == '1') {
     $sql = "SELECT id
             FROM users
             WHERE username = 'admin'";
-    $result = mysqli_query($connection, $sql);
+    $result = mysqli_query($dbcon, $sql);
 
     while ($row = mysqli_fetch_object($result)) {
         $temp_uid = $row->id;
@@ -274,7 +274,7 @@ if ($really_del == '1') {
 
         $query = "DELETE FROM user_settings
                   WHERE user_id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -282,11 +282,11 @@ if ($really_del == '1') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "DELETE FROM users
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -294,7 +294,7 @@ if ($really_del == '1') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $_SESSION['s_message_success'] .= 'User ' . $new_first_name . ' ' . $new_last_name . ' (' . $new_username . ') Deleted<BR>';
 
@@ -334,7 +334,7 @@ echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
 $sql = "SELECT currency, `name`, symbol
         FROM currencies
         ORDER BY name";
-$result = mysqli_query($connection, $sql);
+$result = mysqli_query($dbcon, $sql);
 while ($row = mysqli_fetch_object($result)) {
     echo $form->showDropdownOption($row->currency, $row->name . ' (' . $row->currency . ' ' . $row->symbol . ')', $new_currency);
 }
@@ -344,7 +344,7 @@ echo $form->showDropdownTop('new_timezone', 'Time Zone', '', '', '');
 $sql = "SELECT timezone
         FROM timezones
         ORDER BY timezone";
-$result = mysqli_query($connection, $sql);
+$result = mysqli_query($dbcon, $sql);
 while ($row = mysqli_fetch_object($result)) {
     echo $form->showDropdownOption($row->timezone, $row->timezone, $new_timezone);
 }

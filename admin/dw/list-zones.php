@@ -66,7 +66,7 @@ if ($domain != "") {
     $sql = "SELECT z.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
             FROM dw_dns_zones AS z, dw_servers AS s
             WHERE z.server_id = s.id
-              AND z.domain = '" . mysqli_real_escape_string($connection, $domain) . "'" .
+              AND z.domain = '" . mysqli_real_escape_string($dbcon, $domain) . "'" .
               $where_clause . "
             ORDER BY s.name, z.zonefile, z.domain";
 
@@ -82,7 +82,7 @@ if ($domain != "") {
 
 if ($export_data == "1") {
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dw_dns_zones', strtotime($time->stamp()));
@@ -96,7 +96,7 @@ if ($export_data == "1") {
 
         $sql_total_records = "SELECT count(*) AS total_dns_record_count
                               FROM dw_dns_records
-                              WHERE domain = '" . mysqli_real_escape_string($connection, $domain) . "'" .
+                              WHERE domain = '" . mysqli_real_escape_string($dbcon, $domain) . "'" .
                                 $where_clause_no_join;
 
     } else {
@@ -106,7 +106,7 @@ if ($export_data == "1") {
                               $where_clause_no_join_first_line;
 
     }
-    $result_total_records = mysqli_query($connection, $sql_total_records);
+    $result_total_records = mysqli_query($dbcon, $sql_total_records);
 
     while ($row_total_dns_record_count = mysqli_fetch_object($result_total_records)) {
 
@@ -178,7 +178,7 @@ if ($export_data == "1") {
                                 WHERE server_id = '" . $row_dw_dns_zone_temp->dw_server_id . "'
                                   AND domain = '" . $row_dw_dns_zone_temp->domain . "'
                                 ORDER BY new_order ASC";
-            $result_get_records = mysqli_query($connection, $sql_get_records);
+            $result_get_records = mysqli_query($dbcon, $sql_get_records);
 
             while ($row_get_records = mysqli_fetch_object($result_get_records)) {
 
@@ -230,7 +230,7 @@ if ($export_data == "1") {
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
 <?php
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
 if (mysqli_num_rows($result) == 0) {
 
@@ -257,10 +257,10 @@ if (mysqli_num_rows($result) == 0) {
             <tr>
                 <td></td>
                 <td>
-                    <?php echo $dwdisplay->zoneSidebar($connection, $row->server_id, $row->domain, '1', '1'); ?>
+                    <?php echo $dwdisplay->zoneSidebar($dbcon, $row->server_id, $row->domain, '1', '1'); ?>
                 </td>
                 <td>
-                    <?php echo $dwdisplay->zone($connection, $row->server_id, $row->domain); ?>
+                    <?php echo $dwdisplay->zone($dbcon, $row->server_id, $row->domain); ?>
                 </td>
             </tr><?php
 

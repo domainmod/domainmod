@@ -60,7 +60,7 @@ if ($domain != "") { //@formatter:off
     $sql = "SELECT a.*, s.id AS dw_server_id, s.name AS dw_server_name, s.host AS dw_server_host
             FROM dw_accounts AS a, dw_servers AS s
             WHERE a.server_id = s.id
-              AND a.domain = '" . mysqli_real_escape_string($connection, $domain) . "'" .
+              AND a.domain = '" . mysqli_real_escape_string($dbcon, $domain) . "'" .
               $where_clause .
             $order_clause;
 } else {
@@ -75,7 +75,7 @@ if ($domain != "") { //@formatter:off
 
 if ($export_data == "1") {
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dw_account_list', strtotime($time->stamp()));
@@ -190,7 +190,7 @@ if ($export_data == "1") {
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . 'layout/header.inc.php');
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
 if (mysqli_num_rows($result) == 0) {
 
@@ -223,7 +223,7 @@ if (mysqli_num_rows($result) == 0) {
                         <?php echo $dwdisplay->accountSidebar($row->dw_server_name, $row->domain, '1', '1'); ?>
                     </td>
 
-                    <?php echo $dwdisplay->account($connection, $row->server_id, $row->domain); ?>
+                    <?php echo $dwdisplay->account($dbcon, $row->server_id, $row->domain); ?>
 
                 </tr><?php
 

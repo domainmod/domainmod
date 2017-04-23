@@ -108,7 +108,7 @@ if ($type == "inactive") {
     $binding = array(&$domain);
 
 }
-$qd = $system->dynamicQuery($conn, $query, $params1, $params2, $binding);
+$qd = $system->dynamicQuery($dbcon, $query, $params1, $params2, $binding);
 
 if ($export_data == "1") {
 
@@ -293,7 +293,7 @@ require_once(DIR_INC . 'layout/header-bare.inc.php'); ?>
 $query = "SELECT `name`
           FROM segments
           WHERE id = ?";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -310,7 +310,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else $error->outputSqlError($dbcon, "ERROR");
 
 if ($type == "inactive") {
     echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, and they are stored in your  " . $software_title . " database, but they are currently marked as inactive.<BR><BR>";

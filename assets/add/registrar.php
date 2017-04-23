@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   (`name`, url, api_registrar_id, notes, created_by, insert_time)
                   VALUES
                   (?, ?, ?, ?, ?, ?)";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -64,14 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $_SESSION['s_message_success'] .= "Registrar " . $new_registrar . " Added<BR>";
 
         if ($_SESSION['s_has_registrar'] != '1') {
 
-            $system->checkExistingAssets($connection);
+            $system->checkExistingAssets($dbcon);
 
             header("Location: ../../domains/index.php");
 
@@ -106,7 +106,7 @@ echo $form->showInputText('new_url', 'Registrar\'s URL (100)', '', $new_url, '10
 $query = "SELECT id, `name`
           FROM api_registrars
           ORDER BY `name` ASC";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -129,7 +129,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($conn, "ERROR");
+    $error->outputSqlError($dbcon, "ERROR");
 }
 
 echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');

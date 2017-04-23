@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       update_time = ?
                   WHERE registrar_id = ?
                     AND tld = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -78,14 +78,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "UPDATE domains
                   SET fee_id = ?,
                       update_time = ?
                   WHERE registrar_id = ?
                     AND tld = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -93,14 +93,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "UPDATE domains d
                   JOIN fees f ON d.fee_id = f.id
                   SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
                   WHERE d.privacy = '1'
                     AND d.fee_id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -108,14 +108,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "UPDATE domains d
                   JOIN fees f ON d.fee_id = f.id
                   SET d.total_cost = f.renewal_fee + f.misc_fee
                   WHERE d.privacy = '0'
                     AND d.fee_id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -123,9 +123,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
-        $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+        $conversion->updateRates($dbcon, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
         $_SESSION['s_message_success'] .= "The fee for ." . $new_tld . " has been updated<BR>";
 
@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $query = "SELECT registrar_id, tld, initial_fee, renewal_fee, transfer_fee, privacy_fee, misc_fee, currency_id
               FROM fees
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -157,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
 }
@@ -177,7 +177,7 @@ echo $form->showFormTop('');
 $query = "SELECT `name`
           FROM registrars
           WHERE id = ?";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -194,7 +194,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else $error->outputSqlError($dbcon, "ERROR");
 ?>
 <strong>Domain Registrar</strong><BR>
 <?php echo $temp_registrar; ?><BR><BR>
@@ -210,7 +210,7 @@ echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '
 $sql = "SELECT id, currency, `name`, symbol
         FROM currencies
         ORDER BY `name`";
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 echo $form->showDropdownTop('new_currency_id', 'Currency', '', '', '');
 while ($row = mysqli_fetch_object($result)) {
 

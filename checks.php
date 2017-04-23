@@ -62,7 +62,7 @@ if ($_SESSION['s_system_db_version'] !== $software_version && $upgrade_approved 
 }
 
 // Load system and user data
-$result = $login->getUserInfo($connection, $_SESSION['s_user_id'], $_SESSION['s_username']);
+$result = $login->getUserInfo($dbcon, $_SESSION['s_user_id'], $_SESSION['s_username']);
 
 while ($row = mysqli_fetch_object($result)) {
 
@@ -76,7 +76,7 @@ while ($row = mysqli_fetch_object($result)) {
 
 }
 
-$result_settings = $login->getSystemSettings($connection);
+$result_settings = $login->getSystemSettings($dbcon);
 
 while ($row_settings = mysqli_fetch_object($result_settings)) {
 
@@ -101,7 +101,7 @@ while ($row_settings = mysqli_fetch_object($result_settings)) {
 
 }
 
-$result_user_settings = $login->getUserSettings($connection, $_SESSION['s_user_id']);
+$result_user_settings = $login->getUserSettings($dbcon, $_SESSION['s_user_id']);
 
 while ($row_user_settings = mysqli_fetch_object($result_user_settings)) {
 
@@ -148,7 +148,7 @@ while ($row_user_settings = mysqli_fetch_object($result_user_settings)) {
 
 }
 
-$result_currencies = $login->getCurrencyInfo($connection, $_SESSION['s_default_currency']);
+$result_currencies = $login->getCurrencyInfo($dbcon, $_SESSION['s_default_currency']);
 
 while ($row_currencies = mysqli_fetch_object($result_currencies)) {
 
@@ -161,15 +161,15 @@ while ($row_currencies = mysqli_fetch_object($result_currencies)) {
 
 // Check to see if there are any domain lists or domains in the queue
 $queue = new DomainMOD\DomainQueue();
-$queue->checkListQueue($connection);
-$queue->checkDomainQueue($connection);
+$queue->checkListQueue($dbcon);
+$queue->checkDomainQueue($dbcon);
 
 // Check for existing Domain and SSL assets
-$system->checkExistingAssets($connection);
+$system->checkExistingAssets($dbcon);
 
 unset($_SESSION['s_installation_mode']);
 
-$login->setLastLogin($connection, $_SESSION['s_user_id'], $_SESSION['s_email_address']);
+$login->setLastLogin($dbcon, $_SESSION['s_user_id'], $_SESSION['s_email_address']);
 
 if ($_SESSION['s_version_error'] != '1') {
 
@@ -186,12 +186,12 @@ if ($_SESSION['s_version_error'] != '1') {
     $queryB = new DomainMOD\QueryBuild();
 
     $sql = $queryB->missingFees('domains');
-    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
+    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
 
     $queryB = new DomainMOD\QueryBuild();
 
     $sql = $queryB->missingFees('ssl_certs');
-    $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($connection, $sql);
+    $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($dbcon, $sql);
 
     if ($_SESSION['s_is_new_password'] == 1) {
 
@@ -204,7 +204,7 @@ if ($_SESSION['s_version_error'] != '1') {
 }
 
 // Check GitHub to see if a newer version is available
-$system->checkVersion($connection, $software_version);
+$system->checkVersion($dbcon, $software_version);
 
 if (isset($_SESSION['s_user_redirect'])) {
 

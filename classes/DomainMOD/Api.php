@@ -24,14 +24,14 @@ namespace DomainMOD;
 class Api
 {
 
-    public function getKey($connection, $account_id)
+    public function getKey($dbcon, $account_id)
     {
         $error = new Error();
         $sql = "SELECT api_key
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -51,14 +51,14 @@ class Api
         return $api_key;
     }
 
-    public function getKeySecret($connection, $account_id)
+    public function getKeySecret($dbcon, $account_id)
     {
         $error = new Error();
         $sql = "SELECT api_key, api_secret
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -79,14 +79,14 @@ class Api
         return array($api_key, $api_secret);
     }
 
-    public function getUserKey($connection, $account_id)
+    public function getUserKey($dbcon, $account_id)
     {
         $error = new Error();
         $sql = "SELECT username, api_key
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -107,14 +107,14 @@ class Api
         return array($account_username, $api_key);
     }
 
-    public function getUserAppSecret($connection, $account_id)
+    public function getUserAppSecret($dbcon, $account_id)
     {
         $error = new Error();
         $sql = "SELECT username, api_app_name, api_secret
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -136,7 +136,7 @@ class Api
         return array($account_username, $api_app_name, $api_secret);
     }
 
-    public function getUserKeyIp($connection, $account_id)
+    public function getUserKeyIp($dbcon, $account_id)
     {
         $error = new Error();
         $sql = "SELECT ra.username, ra.api_key, ip.ip
@@ -144,7 +144,7 @@ class Api
                 WHERE ra.api_ip_id = ip.id
                   AND ra.id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -166,14 +166,14 @@ class Api
         return array($account_username, $api_key, $api_ip_address);
     }
 
-    public function getReselleridKey($connection, $account_id)
+    public function getReselleridKey($dbcon, $account_id)
     {
         $error = new Error();
         $sql = "SELECT reseller_id, api_key
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -194,14 +194,14 @@ class Api
         return array($reseller_id, $api_key);
     }
 
-    public function getUserPass($connection, $account_id)
+    public function getUserPass($dbcon, $account_id)
     {
         $error = new Error();
         $sql = "SELECT username, `password`
                 FROM registrar_accounts
                 WHERE id = '" . $account_id . "'
                 LIMIT 1";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -222,12 +222,12 @@ class Api
         return array($account_username, $account_password);
     }
 
-    public function getApiRegistrarName($connection, $api_registrar_id)
+    public function getApiRegistrarName($dbcon, $api_registrar_id)
     {
         $sql = "SELECT `name`
                 FROM api_registrars
                 WHERE id = '" . $api_registrar_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
         
         while ($row = mysqli_fetch_object($result)) {
             

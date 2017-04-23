@@ -51,7 +51,7 @@ if ($new_data != "") {
               FROM users
               WHERE (username = ? OR email_address = ?)
                 AND active = '1'";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -72,7 +72,7 @@ if ($new_data != "") {
                                    update_time = '" . $time->stamp() . "'
                                WHERE username = '" . $username . "'
                                  AND email_address = '" . $email_address . "'";
-                $result_update = mysqli_query($connection, $sql_update);
+                $result_update = mysqli_query($dbcon, $sql_update);
 
                 require_once(DIR_INC . 'email/send-new-password.inc.php');
 
@@ -94,7 +94,7 @@ if ($new_data != "") {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
 } else {
 

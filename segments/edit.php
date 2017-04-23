@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                           notes = ?,
                           update_time = ?
                       WHERE id = ?";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
@@ -131,12 +131,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->close();
 
             } else {
-                $error->outputSqlError($conn, "ERROR");
+                $error->outputSqlError($dbcon, "ERROR");
             }
 
             $query = "DELETE FROM segment_data
                       WHERE segment_id = ?";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->close();
 
             } else {
-                $error->outputSqlError($conn, "ERROR");
+                $error->outputSqlError($dbcon, "ERROR");
             }
 
             foreach ($domain_list as $domain) {
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                           (segment_id, domain, update_time)
                           VALUES
                           (?, ?, ?)";
-                $q = $conn->stmt_init();
+                $q = $dbcon->stmt_init();
 
                 if ($q->prepare($query)) {
 
@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q->close();
 
                 } else {
-                    $error->outputSqlError($conn, "ERROR");
+                    $error->outputSqlError($dbcon, "ERROR");
                 }
 
             }
@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $_SESSION['s_message_success'] .= "Segment " . $new_name . " Updated<BR>";
 
-            $maint->updateSegments($connection);
+            $maint->updateSegments($dbcon);
 
             header("Location: ../segments/");
             exit;
@@ -191,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $query = "SELECT id, `name`, description, segment, notes
               FROM segments
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -203,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $raw_domain_list = preg_replace("/', '/", "\r\n", $domain_list_formatted);
@@ -224,7 +224,7 @@ if ($really_del == "1") {
     $query = "SELECT `name`
               FROM segments
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -236,12 +236,12 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $query = "DELETE FROM segments
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -250,12 +250,12 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $query = "DELETE FROM segment_data
               WHERE segment_id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -264,7 +264,7 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $_SESSION['s_message_success'] .= "Segment " . $temp_segment_name . " Deleted<BR>";

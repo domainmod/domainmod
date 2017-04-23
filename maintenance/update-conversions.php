@@ -40,7 +40,7 @@ require_once(DIR_INC . 'database.inc.php');
 $system->authCheck($web_root);
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
-$_SESSION['s_message_success'] .= $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+$_SESSION['s_message_success'] .= $conversion->updateRates($dbcon, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
 header("Location: index.php");
 exit;

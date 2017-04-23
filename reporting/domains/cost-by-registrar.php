@@ -80,7 +80,7 @@ $sql = "SELECT r.id, r.name AS registrar_name, o.name AS owner_name, ra.id AS re
           " . $range_string . "
         GROUP BY r.name, o.name, ra.username
         ORDER BY r.name, o.name, ra.username";
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 $total_rows = mysqli_num_rows($result);
 
 $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, count(*) AS number_of_domains_total
@@ -94,7 +94,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total, cou
                       AND d.active NOT IN ('0', '10')
                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                       " . $range_string . "";
-$result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
+$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputOldSqlError($dbcon);
 
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $grand_total = $row_grand_total->grand_total;
@@ -108,7 +108,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
     if ($export_data == '1') {
 
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         $export = new DomainMOD\Export();
 
@@ -192,7 +192,7 @@ if ($submission_failed != '1' && $total_rows > 0) {
                                           AND r.id = '" . $row->id . "'
                                           " . $range_string . "";
                 $result_registrar_total
-                    = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
+                    = mysqli_query($dbcon, $sql_registrar_total) or $error->outputOldSqlError($dbcon);
 
                 while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) {
                     $temp_registrar_total = $row_registrar_total->registrar_total;
@@ -292,7 +292,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
                                       AND cc.user_id = '" . $_SESSION['s_user_id'] . "'
                                       AND r.id = '" . $row->id . "'
                                       " . $range_string . "";
-            $result_registrar_total = mysqli_query($connection, $sql_registrar_total) or $error->outputOldSqlError($connection);
+            $result_registrar_total = mysqli_query($dbcon, $sql_registrar_total) or $error->outputOldSqlError($dbcon);
 
             while ($row_registrar_total = mysqli_fetch_object($result_registrar_total)) {
 

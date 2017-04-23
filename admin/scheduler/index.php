@@ -45,7 +45,7 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 $sql = "SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
         FROM scheduler
         ORDER BY sort_order ASC";
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 ?>
 <?php require_once(DIR_INC . 'doctype.inc.php'); ?>
 <html>
@@ -76,7 +76,7 @@ Current Timestamp: <strong><?php echo $time->toUserTimezone($time->stamp()); ?><
     </thead>
     <tbody><?php
 
-    $row = mysqli_fetch_object($schedule->getTask($connection, $row->id));
+    $row = mysqli_fetch_object($schedule->getTask($dbcon, $row->id));
     $hour = explode(" ", $row->expression);
 
     while ($row = mysqli_fetch_object($result)) { ?>

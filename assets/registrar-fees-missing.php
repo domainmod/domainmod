@@ -54,7 +54,7 @@ $sql = "SELECT r.id AS registrar_id, r.name AS registrar_name
           AND d.fee_id = '0'
         GROUP BY r.name
         ORDER BY r.name ASC";
-$result = mysqli_query($connection, $sql);
+$result = mysqli_query($dbcon, $sql);
 ?>
 The following Registrars/TLDs are missing Domain fees. In order to ensure your domain reporting is accurate please
 update these fees as soon as possible.<BR>
@@ -84,7 +84,7 @@ update these fees as soon as possible.<BR>
                                    AND fee_id = '0'
                                  GROUP BY tld
                                  ORDER BY tld ASC";
-            $result_missing_tlds = mysqli_query($connection, $sql_missing_tlds);
+            $result_missing_tlds = mysqli_query($dbcon, $sql_missing_tlds);
 
             $full_tld_list = "";
 

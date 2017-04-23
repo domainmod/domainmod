@@ -22,7 +22,7 @@
 <?php
 $sql = "SELECT db_version
         FROM settings";
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
 while ($row = mysqli_fetch_object($result)) {
     $current_db_version = (string) $row->db_version;
@@ -80,7 +80,7 @@ if ($current_db_version < $software_version) {
 
     $sql = "UPDATE settings
             SET upgrade_available = '0'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $_SESSION['s_message_success'] .= "Your database has been upgraded<BR>";
 

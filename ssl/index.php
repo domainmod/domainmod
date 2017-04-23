@@ -52,7 +52,7 @@ $ssltid = $_REQUEST['ssltid'];
 $sslipid = $_REQUEST['sslipid'];
 $sslpcid = $_REQUEST['sslpcid'];
 $is_active = $_REQUEST['is_active'];
-$search_for = mysqli_real_escape_string($conn, $_REQUEST['search_for']);
+$search_for = mysqli_real_escape_string($dbcon, $_REQUEST['search_for']);
 $from_dropdown = $_REQUEST['from_dropdown'];
 $expand = $_REQUEST['expand'];
 $daterange = $_REQUEST['daterange'];
@@ -169,7 +169,7 @@ if ($_SESSION['s_search_for_ssl'] != "") {
     $search_string = "";
 }
 
-$sslfd_columns = $customField->getCustomFieldsSql($connection, 'ssl_cert_fields', 'sslfd');
+$sslfd_columns = $customField->getCustomFieldsSql($dbcon, 'ssl_cert_fields', 'sslfd');
 
 $sql = "SELECT sslc.id, sslc.domain_id, sslc.name, sslc.expiry_date, sslc.total_cost, sslc.notes, sslc.active, sslc.creation_type_id, sslc.created_by, sslc.insert_time, sslc.update_time, sslpa.id AS sslpa_id, sslpa.username, sslp.id AS sslp_id, sslp.name AS ssl_provider_name, o.id AS o_id, o.name AS owner_name, f.id AS f_id, f.initial_fee, f.renewal_fee, f.misc_fee, cc.conversion, d.domain, sslcf.id as type_id, sslcf.type, ip.id AS ip_id, ip.name as ip_name, ip.ip, ip.rdns, cat.id AS cat_id, cat.name AS cat_name" . $sslfd_columns . "
         FROM ssl_certs AS sslc, ssl_accounts AS sslpa, ssl_providers AS sslp, owners AS o, ssl_fees AS f, currencies AS c, currency_conversions AS cc, domains AS d, ssl_cert_types AS sslcf, ip_addresses AS ip, categories AS cat, ssl_cert_field_data AS sslfd
@@ -222,7 +222,7 @@ $sql_grand_total = "SELECT SUM(sslc.total_cost * cc.conversion) AS grand_total
                       $range_string
                       $search_string";
 
-$result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
+$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputOldSqlError($dbcon);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $grand_total = $row_grand_total->grand_total;
 }
@@ -232,7 +232,7 @@ $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_sym
 
 if ($export_data == "1") {
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
     $total_rows = number_format(mysqli_num_rows($result));
 
     $export = new DomainMOD\Export();
@@ -278,7 +278,7 @@ if ($export_data == "1") {
         $query = "SELECT domain
                   FROM domains
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -299,7 +299,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -308,7 +308,7 @@ if ($export_data == "1") {
         $query = "SELECT `name`
                   FROM ssl_providers
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -329,7 +329,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -340,7 +340,7 @@ if ($export_data == "1") {
                   WHERE sslpa.ssl_provider_id = sslp.id
                     AND sslpa.owner_id = o.id
                     AND sslpa.id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -361,7 +361,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -370,7 +370,7 @@ if ($export_data == "1") {
         $query = "SELECT type
                   FROM ssl_cert_types
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -391,7 +391,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -400,7 +400,7 @@ if ($export_data == "1") {
         $query = "SELECT `name`, ip
                   FROM ip_addresses
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -421,7 +421,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -430,7 +430,7 @@ if ($export_data == "1") {
         $query = "SELECT `name`
                   FROM categories
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -451,7 +451,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -460,7 +460,7 @@ if ($export_data == "1") {
         $query = "SELECT `name`
                   FROM owners
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -481,7 +481,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -563,7 +563,7 @@ if ($export_data == "1") {
     $sql_field = "SELECT `name`
                   FROM ssl_cert_fields
                   ORDER BY `name` ASC";
-    $result_field = mysqli_query($connection, $sql_field);
+    $result_field = mysqli_query($dbcon, $sql_field);
 
     if (mysqli_num_rows($result_field) > 0) {
 
@@ -615,13 +615,13 @@ if ($export_data == "1") {
         unset($row_contents);
         $count = 0;
 
-        $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+        $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
 
         if ($row->created_by == '0') {
             $created_by = 'Unknown';
         } else {
             $user = new DomainMOD\User();
-            $created_by = $user->getFullName($connection, $row->created_by);
+            $created_by = $user->getFullName($dbcon, $row->created_by);
         }
 
         $row_contents[$count++] = $ssl_status;
@@ -648,7 +648,7 @@ if ($export_data == "1") {
         $row_contents[$count++] = $time->toUserTimezone($row->update_time);
         $row_contents[$count++] = '';
 
-        $sslfd_columns_array = $customField->getCustomFields($connection, 'ssl_cert_fields');
+        $sslfd_columns_array = $customField->getCustomFields($dbcon, 'ssl_cert_fields');
 
         if ($sslfd_columns_array != "") {
 
@@ -684,7 +684,7 @@ if ($_SESSION['s_has_ssl_cert'] == '0') {
 
     $queryB = new DomainMOD\QueryBuild();
     $sql_asset_check = $queryB->singleAsset('ssl_certs');
-    $_SESSION['s_has_ssl_cert'] = $system->checkForRows($connection, $sql_asset_check);
+    $_SESSION['s_has_ssl_cert'] = $system->checkForRows($dbcon, $sql_asset_check);
 
 }
 
@@ -713,7 +713,7 @@ if ($_SESSION['s_has_ssl_cert'] != '1' && $_SESSION['s_has_ssl_provider'] == '1'
     echo "<a href=\"add.php\">Click here to add an SSL Certificate &raquo;</a><BR>";
 }
 
-$result = mysqli_query($connection, $sql);
+$result = mysqli_query($dbcon, $sql);
 $total_rows = number_format(mysqli_num_rows($result));
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' || $expand == '1') {
@@ -821,7 +821,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                              $search_string
                            GROUP BY d.domain
                            ORDER BY d.domain asc";
-            $result_domain = mysqli_query($connection, $sql_domain);
+            $result_domain = mysqli_query($dbcon, $sql_domain);
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'Domain - ALL', 'null');
@@ -918,7 +918,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                                    $search_string
                                  GROUP BY sslp.name
                                  ORDER BY sslp.name asc";
-            $result_ssl_provider = mysqli_query($connection, $sql_ssl_provider);
+            $result_ssl_provider = mysqli_query($dbcon, $sql_ssl_provider);
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'SSL Provider - ALL', 'null');
@@ -1017,7 +1017,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                               $search_string
                             GROUP BY sslp.name, o.name, sslpa.username
                             ORDER BY sslp.name asc, o.name asc, sslpa.username asc";
-            $result_account = mysqli_query($connection, $sql_account);
+            $result_account = mysqli_query($dbcon, $sql_account);
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'SSL Provider Account - ALL', 'null');
@@ -1114,7 +1114,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                            $search_string
                          GROUP BY sslcf.type
                          ORDER BY sslcf.type asc";
-            $result_type = mysqli_query($connection, $sql_type);
+            $result_type = mysqli_query($dbcon, $sql_type);
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'SSL Type - ALL', 'null');
@@ -1211,7 +1211,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                          $search_string
                        GROUP BY ip.name, ip.ip
                        ORDER BY ip.name, ip.ip";
-            $result_ip = mysqli_query($connection, $sql_ip);
+            $result_ip = mysqli_query($dbcon, $sql_ip);
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'IP Address - ALL', 'null');
@@ -1308,7 +1308,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                           $search_string
                        GROUP BY c.name
                        ORDER BY c.name";
-            $result_cat = mysqli_query($connection, $sql_cat);
+            $result_cat = mysqli_query($dbcon, $sql_cat);
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'Category - ALL', 'null');
@@ -1405,7 +1405,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                             $search_string
                           GROUP BY o.name
                           ORDER BY o.name asc";
-            $result_owner = mysqli_query($connection, $sql_owner);
+            $result_owner = mysqli_query($dbcon, $sql_owner);
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=' . $is_active . '&from_dropdown=1&expand=1', '', 'Owner - ALL', 'null');
@@ -1506,7 +1506,7 @@ if ($_SESSION['s_has_ssl_provider'] == '1' && $_SESSION['s_has_ssl_account'] == 
                              $search_string
                            GROUP BY active
                            ORDER BY active asc";
-            $result_active = mysqli_query($connection, $sql_active);
+            $result_active = mysqli_query($dbcon, $sql_active);
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?oid=' . $oid . '&did=' . $did . '&sslpid=' . $sslpid . '&sslpaid=' . $sslpaid . '&ssltid=' . $ssltid . '&sslipid=' . $sslipid . '&sslpcid=' . $sslpcid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&is_active=LIVE&from_dropdown=1&expand=1&null=', $is_active, '"Live" SSL Certificates (Active / Pending)', 'LIVE');

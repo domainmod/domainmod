@@ -47,7 +47,7 @@ $sql = "SELECT id, `name`, url, notes, creation_type_id, created_by, insert_time
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('web_hosting_provider_list', strtotime($time->stamp()));
@@ -79,7 +79,7 @@ if ($export_data == '1') {
                                 FROM domains
                                 WHERE hosting_id = '" . $row->id . "'
                                   AND active NOT IN ('0', '10')";
-            $result_total_count = mysqli_query($connection, $sql_total_count);
+            $result_total_count = mysqli_query($dbcon, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                 $total_domains = $row_total_count->total_count;
@@ -105,13 +105,13 @@ if ($export_data == '1') {
 
             }
 
-            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+            $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
 
             if ($row->created_by == '0') {
                 $created_by = 'Unknown';
             } else {
                 $user = new DomainMOD\User();
-                $created_by = $user->getFullName($connection, $row->created_by);
+                $created_by = $user->getFullName($dbcon, $row->created_by);
             }
 
             $row_contents = array(
@@ -148,7 +148,7 @@ Below is a list of all the Web Hosting Providers that are stored in <?php echo $
 <a href="add/host.php"><?php echo $layout->showButton('button', 'Add Hosting Provider'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="hosting.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
 if (mysqli_num_rows($result) > 0) { ?>
 
@@ -169,7 +169,7 @@ if (mysqli_num_rows($result) > 0) { ?>
                                  FROM domains
                                  WHERE active NOT IN ('0', '10')
                                    AND hosting_id = '" . $row->id . "'";
-            $result_domain_count = mysqli_query($connection, $sql_domain_count);
+            $result_domain_count = mysqli_query($dbcon, $sql_domain_count);
 
             while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
                 $total_domains = $row_domain_count->total_count;

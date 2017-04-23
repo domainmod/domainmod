@@ -61,7 +61,7 @@ $sql = "SELECT sa.id AS sslpaid, sa.email_address, sa.username, sa.password, sa.
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('ssl_provider_account_list', strtotime($time->stamp()));
@@ -98,7 +98,7 @@ if ($export_data == '1') {
                                 FROM ssl_certs
                                 WHERE account_id = '$row->sslpaid'
                                   AND active NOT IN ('0')";
-            $result_total_count = mysqli_query($connection, $sql_total_count);
+            $result_total_count = mysqli_query($dbcon, $sql_total_count);
 
             while ($row_cert_count = mysqli_fetch_object($result_total_count)) {
                 $total_certs = $row_cert_count->total_cert_count;
@@ -134,13 +134,13 @@ if ($export_data == '1') {
 
             }
 
-            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+            $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
 
             if ($row->created_by == '0') {
                 $created_by = 'Unknown';
             } else {
                 $user = new DomainMOD\User();
-                $created_by = $user->getFullName($connection, $row->created_by);
+                $created_by = $user->getFullName($dbcon, $row->created_by);
             }
 
             $row_contents = array(
@@ -182,7 +182,7 @@ Below is a list of all the SSL Provider Accounts that are stored in <?php echo $
 <a href="add/ssl-provider-account.php"><?php echo $layout->showButton('button', 'Add SSL Account'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="ssl-accounts.php?export_data=1&sslpid=<?php echo urlencode($sslpid); ?>&sslpaid=<?php echo urlencode($sslpaid); ?>&oid=<?php echo urlencode($oid); ?>"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
 if (mysqli_num_rows($result) > 0) { ?>
 
@@ -205,7 +205,7 @@ if (mysqli_num_rows($result) > 0) { ?>
                                 FROM ssl_certs
                                 WHERE account_id = '$row->sslpaid'
                                   AND active NOT IN ('0')";
-            $result_total_count = mysqli_query($connection, $sql_total_count);
+            $result_total_count = mysqli_query($dbcon, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                 $total_certs = $row_total_count->total_cert_count;
@@ -255,7 +255,7 @@ if (mysqli_num_rows($result) > 0) { ?>
     $sql = "SELECT id
             FROM ssl_providers
             LIMIT 1";
-    $result = mysqli_query($connection, $sql);
+    $result = mysqli_query($dbcon, $sql);
 
     if (mysqli_num_rows($result) == 0) { ?>
 

@@ -57,7 +57,7 @@ if ($action != "") {
             $query = "SELECT `name`, `host`
                       FROM dw_servers
                       WHERE id = ?";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
@@ -77,7 +77,7 @@ if ($action != "") {
 
                 $q->close();
 
-            } else $error->outputSqlError($conn, "ERROR");
+            } else $error->outputSqlError($dbcon, "ERROR");
 
         }
 
@@ -95,7 +95,7 @@ if ($action != "") {
             $query = "SELECT `name`, `host`
                       FROM dw_servers
                       WHERE id = ?";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
@@ -115,7 +115,7 @@ if ($action != "") {
 
                 $q->close();
 
-            } else $error->outputSqlError($conn, "ERROR");
+            } else $error->outputSqlError($dbcon, "ERROR");
 
         }
 
@@ -140,7 +140,7 @@ if ($action != "") {
 $sql = "SELECT id
         FROM dw_servers
         LIMIT 1";
-$result = mysqli_query($connection, $sql);
+$result = mysqli_query($dbcon, $sql);
 
 if ($result === false || mysqli_num_rows($result) <= 0) {
 
@@ -166,7 +166,7 @@ if ($has_servers == 1) { ?>&nbsp;&nbsp;&nbsp;<a href="rebuild.php"><?php echo $l
 <?php
 $sql_accounts = "SELECT id
                  FROM dw_accounts";
-$result_accounts = mysqli_query($connection, $sql_accounts);
+$result_accounts = mysqli_query($dbcon, $sql_accounts);
 
 if ($result_accounts === false || mysqli_num_rows($result_accounts) <= 0) {
 
@@ -181,7 +181,7 @@ if ($result_accounts === false || mysqli_num_rows($result_accounts) <= 0) {
 
 $sql_dns_zones = "SELECT id
                   FROM dw_dns_records";
-$result_dns_zones = mysqli_query($connection, $sql_dns_zones);
+$result_dns_zones = mysqli_query($dbcon, $sql_dns_zones);
 
 if ($result_dns_zones === false || mysqli_num_rows($result_dns_zones) <= 0) {
 
@@ -197,7 +197,7 @@ if ($result_dns_zones === false || mysqli_num_rows($result_dns_zones) <= 0) {
 $sql_build_finished = "SELECT build_status_overall
                        FROM dw_servers
                        LIMIT 1";
-$result_build_finished = mysqli_query($connection, $sql_build_finished);
+$result_build_finished = mysqli_query($dbcon, $sql_build_finished);
 
 if ($result_build_finished === false || mysqli_num_rows($result_build_finished) <= 0) {
 
@@ -232,7 +232,7 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
         $sql_dw_account = "SELECT id, `name`, dw_accounts
                            FROM dw_servers
                            ORDER BY name, `host`";
-        $result_dw_account = mysqli_query($connection, $sql_dw_account);
+        $result_dw_account = mysqli_query($dbcon, $sql_dw_account);
 
         echo $form->showDropdownOptionJump($web_root . '/admin/dw/dw.php', '', 'Server Accounts', '');
         echo $form->showDropdownOptionJump('dw.php?action=dw_accounts&view_all=1', '', 'VIEW ALL', 'null');
@@ -258,7 +258,7 @@ if ($is_the_build_finished == 1 && ($no_results_accounts !== 1 || $no_results_dn
         $sql_dw_dns_records = "SELECT id, name, dw_dns_zones, dw_dns_records
                                FROM dw_servers
                                ORDER BY name, host";
-        $result_dw_dns_records = mysqli_query($connection, $sql_dw_dns_records);
+        $result_dw_dns_records = mysqli_query($dbcon, $sql_dw_dns_records);
 
         echo $form->showDropdownOptionJump($web_root . '/admin/dw/dw.php', '', 'DNS Zones & Records', '');
         echo $form->showDropdownOptionJump('dw.php?action=dw_dns_zones&view_all=1', '', 'VIEW ALL', 'null');
@@ -280,7 +280,7 @@ $sql_build_info = "SELECT build_status_overall, build_start_time_overall, build_
                    FROM dw_servers
                    ORDER BY build_end_time_overall DESC
                    LIMIT 1";
-$result_build_info = mysqli_query($connection, $sql_build_info);
+$result_build_info = mysqli_query($dbcon, $sql_build_info);
 
 if ($result_build_info === false || mysqli_num_rows($result_build_info) <= 0) {
 
@@ -326,7 +326,7 @@ if ($no_results_build_info !== 1) { ?>
                 $sql_check_builds = "SELECT id
                                      FROM dw_servers
                                      WHERE build_status = '0'";
-                $result_check_builds = mysqli_query($connection, $sql_check_builds);
+                $result_check_builds = mysqli_query($dbcon, $sql_check_builds);
 
                 if ($result_check_builds === false || mysqli_num_rows($result_check_builds) <= 0) {
 
@@ -425,7 +425,7 @@ if ($no_results_build_info !== 1) { ?>
     $sql = "SELECT `name`, `host`, build_status, build_start_time, build_end_time, build_time, has_ever_been_built
             FROM dw_servers
             ORDER BY name, host";
-    $result = mysqli_query($connection, $sql);
+    $result = mysqli_query($dbcon, $sql);
 
     if (mysqli_num_rows($result) == 0) {
 
@@ -544,7 +544,7 @@ if ($no_results_build_info !== 1) { ?>
 
 $sql_data_check = "SELECT dw_accounts, dw_dns_zones, dw_dns_records
                    FROM dw_server_totals";
-$result_data_check = mysqli_query($connection, $sql_data_check);
+$result_data_check = mysqli_query($dbcon, $sql_data_check);
 
 if ($result_data_check === false || mysqli_num_rows($result_data_check) <= 0) {
 
@@ -568,7 +568,7 @@ if (mysqli_num_rows($result) == 0) {
 
 } else {
 
-    if (mysqli_num_rows(mysqli_query($connection, "SHOW TABLES LIKE '" . `dw_server_totals` . "'")) >= 1) {
+    if (mysqli_num_rows(mysqli_query($dbcon, "SHOW TABLES LIKE '" . `dw_server_totals` . "'")) >= 1) {
 
         $table_exists = 1;
 
@@ -598,7 +598,7 @@ if (mysqli_num_rows($result) == 0) {
 
         $sql = "SELECT dw_servers, dw_accounts, dw_dns_zones, dw_dns_records
                     FROM dw_server_totals";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
 
@@ -628,7 +628,7 @@ if (mysqli_num_rows($result) == 0) {
                 FROM dw_servers
                 WHERE has_ever_been_built = '1'
                 ORDER BY name";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         while ($row = mysqli_fetch_object($result)) { ?>
 

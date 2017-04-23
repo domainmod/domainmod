@@ -24,7 +24,7 @@ namespace DomainMOD;
 class DwRecords
 {
 
-    public function createTable($connection)
+    public function createTable($dbcon)
     {
 
         $sql_records = "CREATE TABLE IF NOT EXISTS dw_dns_records (
@@ -60,7 +60,7 @@ class DwRecords
                             insert_time DATETIME NOT NULL,
                             PRIMARY KEY  (id)
                         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        mysqli_query($connection, $sql_records);
+        mysqli_query($dbcon, $sql_records);
 
         return true;
 
@@ -73,7 +73,7 @@ class DwRecords
 
     }
 
-    public function insertRecords($connection, $api_results, $server_id, $zone_id, $domain)
+    public function insertRecords($dbcon, $api_results, $server_id, $zone_id, $domain)
     {
 
         if ($api_results !== false) {
@@ -96,7 +96,7 @@ class DwRecords
                          '" . $hit->cname . "', '" . $hit->exchange . "', '" . $hit->preference . "',
                          '" . $hit->txtdata . "', '" . $hit->Line . "', '" . $hit->Lines . "', '" . $hit->raw . "',
                          '" . $time->stamp() . "')";
-                mysqli_query($connection, $sql);
+                mysqli_query($dbcon, $sql);
 
             }
 
@@ -106,14 +106,14 @@ class DwRecords
 
     }
 
-    public function getTotalDwRecords($connection)
+    public function getTotalDwRecords($dbcon)
     {
 
         $total_dw_records = '';
 
         $sql_records = "SELECT count(*) AS total_dw_records
                         FROM `dw_dns_records`";
-        $result_records = mysqli_query($connection, $sql_records);
+        $result_records = mysqli_query($dbcon, $sql_records);
 
         while ($row_records = mysqli_fetch_object($result_records)) {
 

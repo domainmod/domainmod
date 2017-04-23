@@ -41,7 +41,7 @@ require_once(DIR_INC . 'database.inc.php');
 
 $system->loginCheck();
 
-list($installation_mode, $result_message) = $system->installCheck($connection);
+list($installation_mode, $result_message) = $system->installCheck($dbcon);
 $_SESSION['s_installation_mode'] = $installation_mode;
 $_SESSION['s_message_danger'] .= $result_message;
 
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
               WHERE username = ?
                 AND `password` = password(?)
                 AND active = '1'";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
             $sql = "SELECT db_version
                     FROM settings";
-            $result = mysqli_query($connection, $sql);
+            $result = mysqli_query($dbcon, $sql);
 
             while ($row = mysqli_fetch_object($result)) {
 
@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
 } else {
 

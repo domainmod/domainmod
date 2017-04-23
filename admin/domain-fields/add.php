@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
               FROM domain_fields
               WHERE field_name = ?
               LIMIT 1";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
                         (`name`, field_name, description, type_id, notes, created_by, insert_time)
                         VALUES
                         (?, ?, ?, ?, ?, ?, ?)";
-            $q_i = $conn->stmt_init();
+            $q_i = $dbcon->stmt_init();
 
             if ($q_i->prepare($query_i)) {
 
@@ -82,21 +82,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
                 $q_i->close();
 
             } else {
-                $error->outputSqlError($conn, "ERROR");
+                $error->outputSqlError($dbcon, "ERROR");
             }
 
             if ($new_field_type_id == '1') { // Check Box
 
                 $query = "ALTER TABLE `domain_field_data`
                           ADD `" . $new_field_name . "` INT(1) NOT NULL DEFAULT '0'";
-                $q = $conn->stmt_init();
+                $q = $dbcon->stmt_init();
 
                 if ($q->prepare($query)) {
                     $q->execute();
                     $q->close();
 
                 } else {
-                    $error->outputSqlError($conn, "ERROR");
+                    $error->outputSqlError($dbcon, "ERROR");
                 }
 
             } elseif ($new_field_type_id == '2') { // Text
@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
                 $query = "ALTER TABLE `domain_field_data`
                           ADD `" . $new_field_name . "` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT
                           NULL";
-                $q = $conn->stmt_init();
+                $q = $dbcon->stmt_init();
 
                 if ($q->prepare($query)) {
 
@@ -113,14 +113,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
 
                 } else {
 
-                    $error->outputSqlError($conn, "ERROR");
+                    $error->outputSqlError($dbcon, "ERROR");
                 }
 
             } elseif ($new_field_type_id == '3') { // Text Area
 
                 $query = "ALTER TABLE `domain_field_data`
                           ADD `" . $new_field_name . "` LONGTEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL";
-                $q = $conn->stmt_init();
+                $q = $dbcon->stmt_init();
 
                 if ($q->prepare($query)) {
 
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
                     $q->close();
 
                 } else {
-                    $error->outputSqlError($conn, "ERROR");
+                    $error->outputSqlError($dbcon, "ERROR");
                 }
 
             }
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_name != '' && $new_field_name !
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
 } else {
@@ -174,7 +174,7 @@ echo $form->showInputText('new_field_name', 'Database Field Name (30)', 'The Dat
 $query = "SELECT id, `name`
           FROM custom_field_types
           ORDER BY `name` ASC";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -195,7 +195,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($conn, "ERROR");
+    $error->outputSqlError($dbcon, "ERROR");
 }
 
 echo $form->showInputText('new_description', 'Description (255)', '', $new_description, '255', '', '', '', '');

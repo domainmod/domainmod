@@ -54,7 +54,7 @@ If you use a registrar that isn't already supported, and they have an API, send 
 $sql_supported = "SELECT `name`
                  FROM api_registrars
                  ORDER BY name ASC";
-$result_supported = mysqli_query($connection, $sql_supported);
+$result_supported = mysqli_query($dbcon, $sql_supported);
 $supported_registrars = '';
 while ($row_supported = mysqli_fetch_object($result_supported)) {
 

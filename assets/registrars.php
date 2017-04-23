@@ -47,7 +47,7 @@ $sql = "SELECT id AS rid, `name` AS rname, url, api_registrar_id, notes, creatio
 
 if ($export_data == '1') {
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('registrar_list', strtotime($time->stamp()));
@@ -80,7 +80,7 @@ if ($export_data == '1') {
             $sql_total_count = "SELECT count(*) AS total_count
                                 FROM registrar_accounts
                                 WHERE registrar_id = '" . $row->rid . "'";
-            $result_total_count = mysqli_query($connection, $sql_total_count);
+            $result_total_count = mysqli_query($dbcon, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                 $total_accounts = $row_total_count->total_count;
@@ -90,7 +90,7 @@ if ($export_data == '1') {
                                  FROM domains
                                  WHERE active NOT IN ('0', '10')
                                    AND registrar_id = '" . $row->rid . "'";
-            $result_domain_count = mysqli_query($connection, $sql_domain_count);
+            $result_domain_count = mysqli_query($dbcon, $sql_domain_count);
 
             while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
                 $total_domains = $row_domain_count->total_count;
@@ -116,17 +116,17 @@ if ($export_data == '1') {
 
             }
 
-            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+            $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
 
             if ($row->created_by == '0') {
                 $created_by = 'Unknown';
             } else {
                 $user = new DomainMOD\User();
-                $created_by = $user->getFullName($connection, $row->created_by);
+                $created_by = $user->getFullName($dbcon, $row->created_by);
             }
 
             $api = new DomainMOD\Api();
-            $api_registrar_name = $api->getApiRegistrarName($connection, $row->api_registrar_id);
+            $api_registrar_name = $api->getApiRegistrarName($dbcon, $row->api_registrar_id);
 
             if ($api_registrar_name == '') {
                 $api_registrar_name = 'n/a';
@@ -168,7 +168,7 @@ Below is a list of all the Domain Registrars that are stored in <?php echo $soft
 <a href="add/registrar.php"><?php echo $layout->showButton('button', 'Add Registrar'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="registrars.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
 if (mysqli_num_rows($result) > 0) { ?>
 
@@ -190,7 +190,7 @@ if (mysqli_num_rows($result) > 0) { ?>
             $sql_total_count = "SELECT count(*) AS total_count
                                 FROM registrar_accounts
                                 WHERE registrar_id = '" . $row->rid . "'";
-            $result_total_count = mysqli_query($connection, $sql_total_count);
+            $result_total_count = mysqli_query($dbcon, $sql_total_count);
 
             while ($row_total_count = mysqli_fetch_object($result_total_count)) {
                 $total_accounts = $row_total_count->total_count;
@@ -200,7 +200,7 @@ if (mysqli_num_rows($result) > 0) { ?>
                                  FROM domains
                                  WHERE active NOT IN ('0', '10')
                                    AND registrar_id = '" . $row->rid . "'";
-            $result_domain_count = mysqli_query($connection, $sql_domain_count);
+            $result_domain_count = mysqli_query($dbcon, $sql_domain_count);
 
             while ($row_domain_count = mysqli_fetch_object($result_domain_count)) {
                 $total_domains = $row_domain_count->total_count;

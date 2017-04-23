@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       notes = ?,
                       update_time = ?
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $dwsid = $new_dwsid;
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $query = "SELECT `name`, `host`, protocol, `port`, username, api_token, `hash`, notes
               FROM dw_servers
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
 }
@@ -136,7 +136,7 @@ if ($really_del == "1") {
     $query = "SELECT `name`, `host`
               FROM dw_servers
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -148,12 +148,12 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $query = "DELETE FROM dw_accounts
               WHERE server_id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -162,12 +162,12 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $query = "DELETE FROM dw_dns_records
               WHERE server_id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -176,12 +176,12 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $query = "DELETE FROM dw_dns_zones
               WHERE server_id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -190,12 +190,12 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $query = "DELETE FROM dw_servers
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -204,11 +204,11 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $dwstats = new DomainMOD\DwStats();
-    $dwstats->updateDwTotalsTable($connection);
+    $dwstats->updateDwTotalsTable($dbcon);
 
     $_SESSION['s_message_success'] .= "Server " . $new_name . " (" . $new_host . ") Deleted<BR>";
 

@@ -62,7 +62,7 @@ $sql_lists = "SELECT dql.id, dql.api_registrar_id, dql.domain_count, dql.owner_i
                 AND dql.owner_id = o.id
                 AND dql.api_registrar_id = ar.id
               ORDER BY dql.insert_time DESC";
-$result_lists = mysqli_query($connection, $sql_lists);
+$result_lists = mysqli_query($dbcon, $sql_lists);
 
 $sql_domains = "SELECT dq.id, dq.api_registrar_id, dq.domain_id, dq.owner_id, dq.registrar_id, dq.account_id, dq.domain,
                     dq.tld, dq.expiry_date, dq.cat_id, dq.dns_id, dq.ip_id, dq.hosting_id, dq.autorenew, dq.privacy,
@@ -75,7 +75,7 @@ $sql_domains = "SELECT dq.id, dq.api_registrar_id, dq.domain_id, dq.owner_id, dq
                   AND dq.owner_id = o.id
                   AND dq.api_registrar_id = ar.id
                 ORDER BY dq.already_in_domains ASC, dq.already_in_queue ASC, dq.insert_time DESC";
-$result_domains = mysqli_query($connection, $sql_domains);
+$result_domains = mysqli_query($dbcon, $sql_domains);
 
 if ($export_data == '1') {
 
@@ -129,7 +129,7 @@ if ($export_data == '1') {
                 $sql_temp = "SELECT first_name, last_name
                              FROM users
                              WHERE id = '" . $row_lists->created_by . "'";
-                $result_temp = mysqli_query($connection, $sql_temp);
+                $result_temp = mysqli_query($dbcon, $sql_temp);
 
                 while ($row_temp = mysqli_fetch_object($result_temp)) {
 
@@ -264,7 +264,7 @@ if ($export_data == '1') {
                     $sql_temp = "SELECT `name`
                                  FROM dns
                                  WHERE id = '" . $row_domains->dns_id . "'";
-                    $result_temp = mysqli_query($connection, $sql_temp);
+                    $result_temp = mysqli_query($dbcon, $sql_temp);
 
                     while ($row_temp = mysqli_fetch_object($result_temp)) {
 
@@ -293,7 +293,7 @@ if ($export_data == '1') {
                     $sql_temp = "SELECT `name`, ip
                                  FROM ip_addresses
                                  WHERE id = '" . $row_domains->ip_id . "'";
-                    $result_temp = mysqli_query($connection, $sql_temp);
+                    $result_temp = mysqli_query($dbcon, $sql_temp);
 
                     while ($row_temp = mysqli_fetch_object($result_temp)) {
 
@@ -320,7 +320,7 @@ if ($export_data == '1') {
                     $sql_temp = "SELECT `name`
                                  FROM hosting
                                  WHERE id = '" . $row_domains->hosting_id . "'";
-                    $result_temp = mysqli_query($connection, $sql_temp);
+                    $result_temp = mysqli_query($dbcon, $sql_temp);
 
                     while ($row_temp = mysqli_fetch_object($result_temp)) {
 
@@ -347,7 +347,7 @@ if ($export_data == '1') {
                     $sql_temp = "SELECT `name`
                                  FROM categories
                                  WHERE id = '" . $row_domains->cat_id . "'";
-                    $result_temp = mysqli_query($connection, $sql_temp);
+                    $result_temp = mysqli_query($dbcon, $sql_temp);
 
                     while ($row_temp = mysqli_fetch_object($result_temp)) {
 
@@ -396,7 +396,7 @@ if ($export_data == '1') {
                 $sql_temp = "SELECT `username`
                              FROM registrar_accounts
                              WHERE id = '" . $row_domains->account_id . "'";
-                $result_temp = mysqli_query($connection, $sql_temp);
+                $result_temp = mysqli_query($dbcon, $sql_temp);
 
                 while ($row_temp = mysqli_fetch_object($result_temp)) {
 
@@ -413,7 +413,7 @@ if ($export_data == '1') {
                     $sql_temp = "SELECT first_name, last_name
                                  FROM users
                                  WHERE id = '" . $row_domains->created_by . "'";
-                    $result_temp = mysqli_query($connection, $sql_temp);
+                    $result_temp = mysqli_query($dbcon, $sql_temp);
 
                     while ($row_temp = mysqli_fetch_object($result_temp)) {
 
@@ -467,7 +467,7 @@ if ($clear == "1") {
 
 if ($really_clear == "1") {
 
-    $queue->clearFinished($connection);
+    $queue->clearFinished($dbcon);
 
     $_SESSION['s_message_success'] .= "Completed items cleared from the queue<BR>";
 
@@ -483,7 +483,7 @@ if ($really_dell == '1' && $list_id != '') {
 
     $query = "DELETE FROM domain_queue_list
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -491,9 +491,9 @@ if ($really_dell == '1' && $list_id != '') {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
-    $queue->checkListQueue($connection);
+    $queue->checkListQueue($dbcon);
 
     $_SESSION['s_message_success'] .= "Domain List deleted from Queue<BR>";
 
@@ -509,7 +509,7 @@ if ($really_deld == '1' && $domain_id != '') {
 
     $query = "DELETE FROM domain_queue
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -517,9 +517,9 @@ if ($really_deld == '1' && $domain_id != '') {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
-    $queue->checkDomainQueue($connection);
+    $queue->checkDomainQueue($dbcon);
 
     $_SESSION['s_message_success'] .= "Domain deleted from Queue<BR>";
 
@@ -534,8 +534,8 @@ if ($really_deld == '1' && $domain_id != '') {
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
 <?php
-$queue->checkProcessingLists($connection);
-$queue->checkProcessingDomains($connection);
+$queue->checkProcessingLists($dbcon);
+$queue->checkProcessingDomains($dbcon);
 if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_processing'] == '1') { ?>
 
     <button type="button" class="btn btn-default btn-lrg">
@@ -558,7 +558,7 @@ The Domain Queue relies on your domain registrar's API to import your domains, s
 <?php } ?>
 <BR><BR>
 <?php
-$result_lists = mysqli_query($connection, $sql_lists);
+$result_lists = mysqli_query($dbcon, $sql_lists);
 
 if (mysqli_num_rows($result_lists) == 0) {
 
@@ -632,7 +632,7 @@ if (mysqli_num_rows($result_lists) == 0) {
                     $query = "SELECT first_name, last_name
                               FROM users
                               WHERE id = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
 
                     if ($q->prepare($query)) {
 
@@ -649,7 +649,7 @@ if (mysqli_num_rows($result_lists) == 0) {
 
                         $q->close();
 
-                    } else $error->outputSqlError($conn, "ERROR");
+                    } else $error->outputSqlError($dbcon, "ERROR");
 
                 }
                 echo $to_display; ?>
@@ -678,7 +678,7 @@ if (mysqli_num_rows($result_lists) == 0) {
     </table><?php
 }
 
-$result_domains = mysqli_query($connection, $sql_domains);
+$result_domains = mysqli_query($dbcon, $sql_domains);
 
 if (mysqli_num_rows($result_domains) == 0) {
 
@@ -788,7 +788,7 @@ if (mysqli_num_rows($result_domains) == 0) {
                     $query = "SELECT `name`
                               FROM dns
                               WHERE id = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
 
                     if ($q->prepare($query)) {
 
@@ -805,7 +805,7 @@ if (mysqli_num_rows($result_domains) == 0) {
 
                         $q->close();
 
-                    } else $error->outputSqlError($conn, "ERROR");
+                    } else $error->outputSqlError($dbcon, "ERROR");
 
                 }
                 echo $to_display; ?>
@@ -828,7 +828,7 @@ if (mysqli_num_rows($result_domains) == 0) {
                     $query = "SELECT `name`
                               FROM ip_addresses
                               WHERE id = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
 
                     if ($q->prepare($query)) {
 
@@ -845,7 +845,7 @@ if (mysqli_num_rows($result_domains) == 0) {
 
                         $q->close();
 
-                    } else $error->outputSqlError($conn, "ERROR");
+                    } else $error->outputSqlError($dbcon, "ERROR");
 
                 }
                 echo $to_display; ?>
@@ -860,7 +860,7 @@ if (mysqli_num_rows($result_domains) == 0) {
                     $query = "SELECT first_name, last_name
                               FROM users
                               WHERE id = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
 
                     if ($q->prepare($query)) {
 
@@ -877,7 +877,7 @@ if (mysqli_num_rows($result_domains) == 0) {
 
                         $q->close();
 
-                    } else $error->outputSqlError($conn, "ERROR");
+                    } else $error->outputSqlError($dbcon, "ERROR");
 
                 }
                 echo $to_display; ?>

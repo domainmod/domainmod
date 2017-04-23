@@ -24,12 +24,12 @@ namespace DomainMOD;
 class Smtp
 {
 
-    public function send($connection, $reply_address, $to_address, $to_name, $subject, $message_html, $message_text)
+    public function send($dbcon, $reply_address, $to_address, $to_name, $subject, $message_html, $message_text)
     {
         require_once(DIR_ROOT . 'vendor/autoload.php');
         $mail = new \PHPMailer();
 
-        list($server, $protocol, $port, $email_address, $username, $password) = $this->getSettings($connection);
+        list($server, $protocol, $port, $email_address, $username, $password) = $this->getSettings($dbcon);
 
         // $mail->SMTPDebug = 3;  // Enable verbose debug output
         $mail->isSMTP();
@@ -54,10 +54,10 @@ class Smtp
         return;
     }
 
-    public function getSettings($connection)
+    public function getSettings($dbcon)
     {
         $sql = "SELECT smtp_server, smtp_protocol, smtp_port, smtp_email_address, smtp_username, smtp_password FROM settings";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
         $server = '';
         $protocol = '';
         $port = '';

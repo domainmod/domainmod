@@ -24,10 +24,10 @@ namespace DomainMOD;
 class System
 {
 
-    public function installCheck($connection)
+    public function installCheck($dbcon)
     {
         $full_install_path = DIR_ROOT . "install/";
-        $result = mysqli_query($connection, "SHOW TABLES LIKE 'settings'");
+        $result = mysqli_query($dbcon, "SHOW TABLES LIKE 'settings'");
         $is_installed = mysqli_num_rows($result) > 0;
         if (is_dir($full_install_path) && $is_installed != '1') {
             $installation_mode = 1;
@@ -39,17 +39,17 @@ class System
         return array($installation_mode, $result_message);
     }
 
-    public function checkVersion($connection, $current_version)
+    public function checkVersion($dbcon, $current_version)
     {
         $live_version = $this->getLiveVersion();
         if ($current_version < $live_version && $live_version != '') {
             $sql = "UPDATE settings SET upgrade_available = '1'";
-            mysqli_query($connection, $sql);
+            mysqli_query($dbcon, $sql);
             $_SESSION['s_system_upgrade_available'] = '1';
             $message = $this->getUpgradeMessage();
         } else {
             $sql = "UPDATE settings SET upgrade_available = '0'";
-            mysqli_query($connection, $sql);
+            mysqli_query($dbcon, $sql);
             $_SESSION['s_system_upgrade_available'] = '0';
             $message = "No Upgrade Available";
         }
@@ -85,34 +85,34 @@ class System
         return $software_title . " :: " . $page_title;
     }
 
-    public function checkExistingAssets($connection)
+    public function checkExistingAssets($dbcon)
     {
         $queryB = new QueryBuild();
 
         $sql = $queryB->singleAsset('registrars');
-        $_SESSION['s_has_registrar'] = $this->checkForRows($connection, $sql);
+        $_SESSION['s_has_registrar'] = $this->checkForRows($dbcon, $sql);
         $sql = $queryB->singleAsset('registrar_accounts');
-        $_SESSION['s_has_registrar_account'] = $this->checkForRows($connection, $sql);
+        $_SESSION['s_has_registrar_account'] = $this->checkForRows($dbcon, $sql);
         $sql = $queryB->singleAsset('domains');
-        $_SESSION['s_has_domain'] = $this->checkForRows($connection, $sql);
+        $_SESSION['s_has_domain'] = $this->checkForRows($dbcon, $sql);
         $sql = $queryB->singleAsset('ssl_providers');
-        $_SESSION['s_has_ssl_provider'] = $this->checkForRows($connection, $sql);
+        $_SESSION['s_has_ssl_provider'] = $this->checkForRows($dbcon, $sql);
         $sql = $queryB->singleAsset('ssl_accounts');
-        $_SESSION['s_has_ssl_account'] = $this->checkForRows($connection, $sql);
+        $_SESSION['s_has_ssl_account'] = $this->checkForRows($dbcon, $sql);
         $sql = $queryB->singleAsset('ssl_certs');
-        $_SESSION['s_has_ssl_cert'] = $this->checkForRows($connection, $sql);
+        $_SESSION['s_has_ssl_cert'] = $this->checkForRows($dbcon, $sql);
         return true;
     }
 
-    public function checkForRows($connection, $sql)
+    public function checkForRows($dbcon, $sql)
     {
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
         if (mysqli_num_rows($result) >= 1) { return '1'; } else { return '0'; }
     }
 
-    public function checkForRowsResult($connection, $sql)
+    public function checkForRowsResult($dbcon, $sql)
     {
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
         if (mysqli_num_rows($result) >= 1) { return $result; } else { return '0'; }
     }
 
@@ -188,10 +188,10 @@ class System
         return ob_get_clean();
     }
 
-    public function dynamicQuery($conn, $query, $params1, $params2, $binding)
+    public function dynamicQuery($dbcon, $query, $params1, $params2, $binding)
     {
         $error = new Error();
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
         if ($q->prepare($query)) {
 
             call_user_func_array(array($q, 'bind_param'), array_merge(array($params1), $params2));
@@ -199,18 +199,18 @@ class System
             $q->store_result();
             call_user_func_array(array($q, 'bind_result'), $binding);
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
         return $q;
     }
     
-    public function getCreationType($connection, $creation_type_id)
+    public function getCreationType($dbcon, $creation_type_id)
     {
         $error = new Error();
         
         $sql = "SELECT `name`
                 FROM creation_types
                 WHERE id = '" . $creation_type_id . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
         
         if (mysqli_num_rows($result) == 1) {
         
@@ -231,14 +231,14 @@ class System
     
     }
 
-    public function getCreationTypeId($connection, $creation_type)
+    public function getCreationTypeId($dbcon, $creation_type)
     {
         $error = new Error();
         
         $sql = "SELECT id
                 FROM creation_types
                 WHERE `name` = '" . $creation_type . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
         
         if (mysqli_num_rows($result) == 1) {
         

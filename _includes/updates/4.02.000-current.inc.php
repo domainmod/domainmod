@@ -27,16 +27,16 @@ if ($current_db_version === '4.02.000') {
     $sql = "UPDATE currencies
             SET symbol = '₺'
             WHERE currency = 'TRY'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "ALTER TABLE `settings`
             CHANGE `smtp_port` `smtp_port` VARCHAR(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '587'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "UPDATE settings
             SET db_version = '4.02.001',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $current_db_version = '4.02.001';
 
@@ -48,12 +48,12 @@ if ($current_db_version === '4.02.001') {
     $sql = "UPDATE scheduler
             SET description = '" . "<" . "em>Domains:" . "<" . "/em> Converts all domain entries to lowercase." . "<" . "BR>" . "<" . "BR> " . "<" . "em>TLDs:" . "<" . "/em> Updates all TLD entries to ensure their accuracy." . "<" . "BR>" . "<" . "BR> " . "<" . "em>Segments:" . "<" . "/em> Compares the Segment data to the domain database and records the status of each domain. This keeps the Segment filtering data up-to-date and running smoothly." . "<" . "BR>" . "<" . "BR>" . "<" . "em>Fees:" . "<" . "/em> Cross-references the Domain, SSL Certificate, and fee tables, making sure that everything is accurate. It also deletes all unused fees.'
             WHERE `name` = 'System Cleanup'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "UPDATE settings
             SET db_version = '4.03.000',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $current_db_version = '4.03.000';
 
@@ -67,7 +67,7 @@ if ($current_db_version === '4.03.000') {
                 ret_autorenewal_status = '1',
                 notes = ''
             WHERE `name` = 'Fabulous'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "INSERT INTO api_registrars
             (`name`, req_account_username, req_account_password, req_reseller_id, req_api_app_name, req_api_key,
@@ -76,7 +76,7 @@ if ($current_db_version === '4.03.000') {
              VALUES
             ('Freenom', '1', '1', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', 'Freenom currently only gives API access to reseller accounts.', '" . $time->stamp() . "'),
             ('DreamHost', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '0', '1', 'DreamHost does not currently allow the WHOIS privacy status of a domain to be retrieved using their API, so all domains added to the queue from a DreamHost account will have their WHOIS privacy status set to No.', '" . $time->stamp() . "')";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "CREATE TABLE IF NOT EXISTS `domain_queue_temp` (
                 `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -98,12 +98,12 @@ if ($current_db_version === '4.03.000') {
                 PRIMARY KEY  (`id`),
                 KEY `domain` (`domain`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "UPDATE settings
             SET db_version = '4.03.001',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $current_db_version = '4.03.001';
 
@@ -114,7 +114,7 @@ if ($current_db_version === '4.03.001') {
 
     $sql = "ALTER TABLE `dw_servers`
             ADD `api_token` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `username`";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "INSERT INTO `api_registrars`
             (`name`, req_account_username, req_account_password, req_reseller_id, req_api_app_name, req_api_key,
@@ -122,12 +122,12 @@ if ($current_db_version === '4.03.001') {
              ret_autorenewal_status, notes, insert_time)
              VALUES
             ('Above.com', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '', '" . $time->stamp() . "')";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $sql = "UPDATE settings
             SET db_version = '4.03.002',
                 update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $current_db_version = '4.03.002';
 

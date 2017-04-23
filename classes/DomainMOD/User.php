@@ -24,24 +24,24 @@ namespace DomainMOD;
 class User
 {
 
-    public function getAdminId($connection)
+    public function getAdminId($dbcon)
     {
         $sql = "SELECT id
                 FROM users
                 WHERE username = 'admin'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
         while ($row = mysqli_fetch_object($result)) {
             $admin_id = $row->id;
         }
         return $admin_id;
     }
 
-    public function getFullName($connection, $user_id)
+    public function getFullName($dbcon, $user_id)
     {
         $sql = "SELECT first_name, last_name
                 FROM users
                 WHERE id = '" . $user_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
         while ($row = mysqli_fetch_object($result)) {
             $full_name = $row->first_name . ' ' . $row->last_name;
         }
@@ -49,24 +49,24 @@ class User
     }
 
     // leave user_id empty to use the primary admin
-    public function getDefaultSetting($connection, $default_field, $primary_table, $user_id)
+    public function getDefaultSetting($dbcon, $default_field, $primary_table, $user_id)
     {
         if ($user_id == '') {
-            $user_id = $this->getAdminId($connection);
+            $user_id = $this->getAdminId($dbcon);
         }
 
         $sql = "SELECT us." . $default_field . "
                 FROM users AS u, user_settings AS us
                 WHERE u.id = us.user_id
                   AND u.id = '" . $user_id . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
 
             $sql_confirm = "SELECT id
                             FROM `" . $primary_table . "`
                             WHERE id = '" . $row->{$default_field} . "'";
-            $result_confirm = mysqli_query($connection, $sql_confirm);
+            $result_confirm = mysqli_query($dbcon, $sql_confirm);
 
             if ($row->{$default_field} != '0' && mysqli_num_rows($result_confirm) > 0) {
 

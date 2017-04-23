@@ -72,14 +72,14 @@ if ($all == "1") {
 
 }
 
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 $total_rows = mysqli_num_rows($result);
 
 if ($total_rows > 0) {
 
     if ($export_data == "1") {
 
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         $export = new DomainMOD\Export();
 
@@ -160,7 +160,7 @@ if ($total_rows > 0) {
                                   WHERE ssl_provider_id = '" . $row->id . "'
                                     AND fee_id = '" . $row->fee_id . "'
                                     AND active NOT IN ('0')";
-                $result_ssl_count = mysqli_query($connection, $sql_ssl_count);
+                $result_ssl_count = mysqli_query($dbcon, $sql_ssl_count);
 
                 while ($row_ssl_count = mysqli_fetch_object($result_ssl_count)) {
 
@@ -265,7 +265,7 @@ if ($total_rows > 0) {
                                       WHERE ssl_provider_id = '" . $row->id . "'
                                         AND fee_id = '" . $row->fee_id . "'
                                         AND active NOT IN ('0')";
-                        $result_ssl_count = mysqli_query($connection, $sql_ssl_count);
+                        $result_ssl_count = mysqli_query($dbcon, $sql_ssl_count);
                         while ($row_ssl_count = mysqli_fetch_object($result_ssl_count)) {
 
                             if ($row_ssl_count->total_ssl_count == 0) {
@@ -322,7 +322,7 @@ if ($total_rows > 0) {
                                       WHERE ssl_provider_id = '" . $row->id . "'
                                         AND fee_id = '" . $row->fee_id . "'
                                         AND active NOT IN ('0')";
-                        $result_ssl_count = mysqli_query($connection, $sql_ssl_count);
+                        $result_ssl_count = mysqli_query($dbcon, $sql_ssl_count);
                         while ($row_ssl_count = mysqli_fetch_object($result_ssl_count)) {
 
                             if ($row_ssl_count->total_ssl_count == 0) {

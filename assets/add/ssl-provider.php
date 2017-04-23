@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   (`name`, url, notes, created_by, insert_time)
                   VALUES
                   (?, ?, ?, ?, ?)";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -63,14 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $_SESSION['s_message_success'] .= 'SSL Provider ' . $new_ssl_provider . ' Added<BR>';
 
         if ($_SESSION['s_has_ssl_provider'] != '1') {
 
-            $system->checkExistingAssets($connection);
+            $system->checkExistingAssets($dbcon);
 
             header("Location: ../../ssl/index.php");
 

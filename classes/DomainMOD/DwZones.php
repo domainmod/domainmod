@@ -24,7 +24,7 @@ namespace DomainMOD;
 class DwZones
 {
 
-    public function createTable($connection)
+    public function createTable($dbcon)
     {
 
         $sql_zones = "CREATE TABLE IF NOT EXISTS dw_dns_zones (
@@ -35,7 +35,7 @@ class DwZones
                           insert_time DATETIME NOT NULL,
                           PRIMARY KEY  (id)
                           ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1";
-        mysqli_query($connection, $sql_zones);
+        mysqli_query($dbcon, $sql_zones);
 
         return true;
 
@@ -48,7 +48,7 @@ class DwZones
 
     }
 
-    public function insertZones($connection, $api_results, $server_id)
+    public function insertZones($dbcon, $api_results, $server_id)
     {
 
         if ($api_results !== false) {
@@ -63,7 +63,7 @@ class DwZones
                         (server_id, domain, zonefile, insert_time)
                         VALUES
                         ('" . $server_id . "', '" . $hit->domain . "', '" . $hit->zonefile . "', '" . $time->stamp() . "')";
-                mysqli_query($connection, $sql);
+                mysqli_query($dbcon, $sql);
 
             }
 
@@ -73,20 +73,20 @@ class DwZones
 
     }
 
-    public function getInsertedZones($connection, $server_id)
+    public function getInsertedZones($dbcon, $server_id)
     {
 
         $sql = "SELECT id, domain
                 FROM dw_dns_zones
                 WHERE server_id = '" . $server_id . "'
                 ORDER BY domain";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         return $result;
 
     }
 
-    public function processEachZone($connection, $result_zones, $server_id, $protocol, $host, $port, $username, $api_token, $hash)
+    public function processEachZone($dbcon, $result_zones, $server_id, $protocol, $host, $port, $username, $api_token, $hash)
     {
 
         while ($row_zones = mysqli_fetch_object($result_zones)) {
@@ -96,20 +96,20 @@ class DwZones
 
             $api_call = $records->getApiCall($row_zones->domain);
             $api_results = $build->apiCall($api_call, $host, $protocol, $port, $username, $api_token, $hash);
-            $records->insertRecords($connection, $api_results, $server_id, $row_zones->id, $row_zones->domain);
+            $records->insertRecords($dbcon, $api_results, $server_id, $row_zones->id, $row_zones->domain);
 
         }
 
     }
 
-    public function getTotalDwZones($connection)
+    public function getTotalDwZones($dbcon)
     {
 
         $total_dw_zones = '';
 
         $sql_zones = "SELECT count(*) AS total_dw_zones
                       FROM `dw_dns_zones`";
-        $result_zones = mysqli_query($connection, $sql_zones);
+        $result_zones = mysqli_query($dbcon, $sql_zones);
 
         while ($row_zones = mysqli_fetch_object($result_zones)) {
 

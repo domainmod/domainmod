@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
               FROM users
               WHERE id = ?
                 AND email_address = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                             update_time = ?
                         WHERE id = ?
                           AND email_address = ?";
-            $q_u = $conn->stmt_init();
+            $q_u = $dbcon->stmt_init();
 
             if ($q_u->prepare($query_u)) {
 
@@ -83,13 +83,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                 $q_u->close();
 
             } else {
-                $error->outputSqlError($conn, "ERROR");
+                $error->outputSqlError($dbcon, "ERROR");
             }
 
             $query = "SELECT default_currency, default_timezone
                       FROM user_settings
                       WHERE user_id = ?";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
@@ -107,14 +107,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
                 $q->close();
 
-            } else $error->outputSqlError($conn, "ERROR");
+            } else $error->outputSqlError($dbcon, "ERROR");
 
             if ($saved_currency != $new_currency) {
 
                 $query = "SELECT id
                           FROM currencies
                           WHERE currency = ?";
-                $q = $conn->stmt_init();
+                $q = $dbcon->stmt_init();
 
                 if ($q->prepare($query)) {
 
@@ -131,13 +131,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
                     $q->close();
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else $error->outputSqlError($dbcon, "ERROR");
 
                 $sql_new_currency = "SELECT id
                                      FROM currency_conversions
                                      WHERE user_id = '" . $_SESSION['s_user_id'] . "'
                                        AND currency_id = '" . $temp_new_currency_id . "'";
-                $result_new_currency = mysqli_query($connection, $sql_new_currency);
+                $result_new_currency = mysqli_query($dbcon, $sql_new_currency);
 
                 if (mysqli_num_rows($result_new_currency) == 0) {
 
@@ -147,13 +147,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                                             VALUES
                                             ('" . $temp_new_currency_id . "', '" . $_SESSION['s_user_id'] . "', '1', '" .
                                              $timestamp . "', '" . $timestamp . "')";
-                    $result_insert_currency = mysqli_query($connection, $sql_insert_currency);
+                    $result_insert_currency = mysqli_query($dbcon, $sql_insert_currency);
                     //@formatter:on
 
                 }
 
                 $_SESSION['s_message_success']
-                    .= $conversion->updateRates($connection, $new_currency, $_SESSION['s_user_id']);
+                    .= $conversion->updateRates($dbcon, $new_currency, $_SESSION['s_user_id']);
 
             }
 
@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                           expiration_emails = ?,
                           update_time = ?
                       WHERE user_id = ?";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
                 $q->execute();
                 $q->close();
 
-            } else $error->outputSqlError($conn, "ERROR");
+            } else $error->outputSqlError($dbcon, "ERROR");
 
             $_SESSION['s_first_name'] = $new_first_name;
             $_SESSION['s_last_name'] = $new_last_name;
@@ -183,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
             $query = "SELECT `name`, symbol, symbol_order, symbol_space
                       FROM currencies
                       WHERE currency = ?";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
@@ -203,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
 
                 $q->close();
 
-            } else $error->outputSqlError($conn, "ERROR");
+            } else $error->outputSqlError($dbcon, "ERROR");
 
             header("Location: ../index.php");
             exit;
@@ -218,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != "" && $new_last_n
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
 } else {
@@ -258,7 +258,7 @@ echo $form->showDropdownTop('new_currency', 'Currency', '', '', '');
 $sql = "SELECT currency, `name`, symbol
         FROM currencies
         ORDER BY name";
-$result = mysqli_query($connection, $sql);
+$result = mysqli_query($dbcon, $sql);
 while ($row = mysqli_fetch_object($result)) {
     echo $form->showDropdownOption($row->currency, $row->name . ' (' . $row->currency . ' ' . $row->symbol . ')', $_SESSION['s_default_currency']);
 }
@@ -268,7 +268,7 @@ echo $form->showDropdownTop('new_timezone', 'Time Zone', '', '', '');
 $sql = "SELECT timezone
         FROM timezones
         ORDER BY timezone";
-$result = mysqli_query($connection, $sql);
+$result = mysqli_query($dbcon, $sql);
 while ($row = mysqli_fetch_object($result)) {
     echo $form->showDropdownOption($row->timezone, $row->timezone, $_SESSION['s_default_timezone']);
 }

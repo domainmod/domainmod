@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   (`name`, ip, rdns, notes, created_by, insert_time)
                   VALUES
                   (?, ?, ?, ?, ?, ?)";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $_SESSION['s_message_success'] .= "IP Address " . $new_name . " (" . $new_ip . ") Added<BR>";

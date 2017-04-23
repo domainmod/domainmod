@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
               FROM users
               WHERE id = ?
                 AND email_address = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
                                  update_time = ?
                              WHERE id = ?
                                AND email_address = ?";
-            $q_update = $conn->stmt_init();
+            $q_update = $dbcon->stmt_init();
 
             if ($q_update->prepare($query_update)) {
 
@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
                 $q_update->close();
 
             } else {
-                $error->outputSqlError($conn, "ERROR");
+                $error->outputSqlError($dbcon, "ERROR");
             }
 
             $_SESSION['s_message_success'] .= "Password changed<BR>";
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_password != "" && $new_password
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
 } else {

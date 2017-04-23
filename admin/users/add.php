@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
     $query = "SELECT username
               FROM users
               WHERE username = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     if ($existing_username == 1) {
@@ -88,17 +88,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                   (first_name, last_name, username, email_address, `password`, admin, `read_only`, active, created_by, insert_time)
                   VALUES
                   (?, ?, ?, ?, password(?), ?, ?, ?, ?, ?)";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
             $q->bind_param('sssssiiiis', $new_first_name, $new_last_name, $new_username, $new_email_address,
                 $new_password, $new_admin, $new_read_only, $new_active, $_SESSION['s_user_id'], $timestamp);
-            $q->execute() or $error->outputSqlError($conn, '');
+            $q->execute() or $error->outputSqlError($dbcon, '');
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $query = "SELECT id
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                   WHERE first_name = ?
                     AND last_name = ?
                     AND insert_time = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $query = "INSERT INTO user_settings
@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
                    insert_time)
                    VALUES
                    (?, 'USD', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         //@formatter:off
@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_first_name != '' && $new_last_n
             $software_title . ' email them for you<BR><BR>';
         //@formatter:on
 
-        $conversion->updateRates($connection, 'USD', $temp_user_id);
+        $conversion->updateRates($dbcon, 'USD', $temp_user_id);
 
         header("Location: index.php");
         exit;

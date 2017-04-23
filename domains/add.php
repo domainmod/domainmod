@@ -60,7 +60,7 @@ $new_notes = $_POST['new_notes'];
 $query = "SELECT field_name
           FROM domain_fields
           ORDER BY `name`";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -91,7 +91,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($conn, "ERROR");
+    $error->outputSqlError($dbcon, "ERROR");
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query = "SELECT domain
                   FROM domains
                   WHERE domain = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $query_ra = "SELECT registrar_id, owner_id
                              FROM registrar_accounts
                              WHERE id = ?";
-                $q_ra = $conn->stmt_init();
+                $q_ra = $dbcon->stmt_init();
 
                 if ($q_ra->prepare($query_ra)) {
 
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q_ra->close();
 
                 } else {
-                    $error->outputSqlError($conn, "ERROR");
+                    $error->outputSqlError($dbcon, "ERROR");
                 }
 
                 if ($new_privacy == "1") {
@@ -152,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 }
 
-                $q_f = $conn->stmt_init();
+                $q_f = $dbcon->stmt_init();
 
                 if ($q_f->prepare($query_f)) {
 
@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if ($new_total_cost == "") $new_total_cost = 0;
 
                 } else {
-                    $error->outputSqlError($conn, "ERROR");
+                    $error->outputSqlError($dbcon, "ERROR");
                 }
 
                 $query_d = "INSERT INTO domains
@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                              active, insert_time)
                             VALUES
                             (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                $q_d = $conn->stmt_init();
+                $q_d = $dbcon->stmt_init();
 
                 if ($q_d->prepare($query_d)) {
 
@@ -191,14 +191,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q_d->close();
 
                 } else {
-                    $error->outputSqlError($conn, "ERROR");
+                    $error->outputSqlError($dbcon, "ERROR");
                 }
 
                 $query_df = "INSERT INTO domain_field_data
                              (domain_id, insert_time)
                              VALUES
                              (?, ?)";
-                $q_df = $conn->stmt_init();
+                $q_df = $dbcon->stmt_init();
 
                 if ($q_df->prepare($query_df)) {
 
@@ -207,13 +207,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q_df->close();
 
                 } else {
-                    $error->outputSqlError($conn, "ERROR");
+                    $error->outputSqlError($dbcon, "ERROR");
                 }
 
                 $query_df = "SELECT field_name
                              FROM domain_fields
                              ORDER BY `name`";
-                $q_df = $conn->stmt_init();
+                $q_df = $dbcon->stmt_init();
 
                 if ($q_df->prepare($query_df)) {
 
@@ -239,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $query_dfd = "UPDATE domain_field_data
                                           SET `" . $field . "` = ?
                                           WHERE domain_id = ?";
-                            $q_dfd = $conn->stmt_init();
+                            $q_dfd = $dbcon->stmt_init();
 
                             if ($q_dfd->prepare($query_dfd)) {
 
@@ -248,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $q_dfd->close();
 
                             } else {
-                                $error->outputSqlError($conn, "ERROR");
+                                $error->outputSqlError($dbcon, "ERROR");
                             }
 
                         }
@@ -258,18 +258,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q_df->close();
 
                 } else {
-                    $error->outputSqlError($conn, "ERROR");
+                    $error->outputSqlError($dbcon, "ERROR");
                 }
 
-                $maint->updateDomainFee($connection, $temp_domain_id);
+                $maint->updateDomainFee($dbcon, $temp_domain_id);
 
                 $queryB = new DomainMOD\QueryBuild();
                 $sql = $queryB->missingFees('domains');
-                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
+                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
 
-                $maint->updateSegments($connection);
+                $maint->updateSegments($dbcon);
 
-                $system->checkExistingAssets($connection);
+                $system->checkExistingAssets($dbcon);
 
                 $_SESSION['s_message_success'] .= 'Domain ' . $new_domain . ' Added<BR>';
 
@@ -282,7 +282,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
     } else {
@@ -357,7 +357,7 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                 WHERE ra.owner_id = o.id
                   AND ra.registrar_id = r.id
                 ORDER BY r_name ASC, o_name ASC, ra.username ASC";
-$result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
+$result_account = mysqli_query($dbcon, $sql_account) or $error->outputOldSqlError($dbcon);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -388,7 +388,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_dns = "SELECT id, `name`
             FROM dns
             ORDER BY `name` ASC";
-$result_dns = mysqli_query($connection, $sql_dns) or $error->outputOldSqlError($connection);
+$result_dns = mysqli_query($dbcon, $sql_dns) or $error->outputOldSqlError($dbcon);
 
 echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '1', '');
 while ($row_dns = mysqli_fetch_object($result_dns)) { //@formatter:off
@@ -411,7 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_ip = "SELECT id, `name`, ip
            FROM ip_addresses
            ORDER BY `name` ASC, ip ASC";
-$result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
+$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputOldSqlError($dbcon);
 
 echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
 while ($row_ip = mysqli_fetch_object($result_ip)) { //@formatter:off
@@ -434,7 +434,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_hosting = "SELECT id, `name`
                 FROM hosting
                 ORDER BY name ASC";
-$result_hosting = mysqli_query($connection, $sql_hosting) or $error->outputOldSqlError($connection);
+$result_hosting = mysqli_query($dbcon, $sql_hosting) or $error->outputOldSqlError($dbcon);
 
 echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '1', '');
 while ($row_hosting = mysqli_fetch_object($result_hosting)) { //@formatter:off
@@ -456,7 +456,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_cat = "SELECT id, `name`
             FROM categories
             ORDER BY name ASC";
-$result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
+$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputOldSqlError($dbcon);
 
 echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
 while ($row_cat = mysqli_fetch_object($result_cat)) { //@formatter:off
@@ -493,7 +493,7 @@ echo $form->showInputTextarea('new_notes', 'Notes', '', $new_notes, '', '', '');
 $query = "SELECT field_name
           FROM domain_fields
           ORDER BY type_id ASC, `name` ASC";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
     $q->execute();
@@ -519,7 +519,7 @@ if ($q->prepare($query)) {
                          FROM domain_fields AS df, custom_field_types AS cft
                          WHERE df.type_id = cft.id
                            AND df.field_name = ?";
-            $q_df = $conn->stmt_init();
+            $q_df = $dbcon->stmt_init();
 
             if ($q_df->prepare($query_df)) {
 
@@ -549,7 +549,7 @@ if ($q->prepare($query)) {
                 $q_df->close();
 
             } else {
-                $error->outputSqlError($conn, "ERROR");
+                $error->outputSqlError($dbcon, "ERROR");
             }
 
         }
@@ -559,7 +559,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($conn, "ERROR");
+    $error->outputSqlError($dbcon, "ERROR");
 }
 
 echo $form->showSubmitButton('Add Domain', '', '');

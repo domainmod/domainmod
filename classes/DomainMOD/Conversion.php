@@ -24,10 +24,10 @@ namespace DomainMOD;
 class Conversion
 {
 
-    public function updateRates($connection, $default_currency, $user_id)
+    public function updateRates($dbcon, $default_currency, $user_id)
     {
 
-        $result = $this->getActiveCurrencies($connection);
+        $result = $this->getActiveCurrencies($dbcon);
 
         while ($row = mysqli_fetch_object($result)) {
 
@@ -40,9 +40,9 @@ class Conversion
 
             $system = new System();
 
-            $is_existing = $system->checkForRows($connection, $sql);
+            $is_existing = $system->checkForRows($dbcon, $sql);
 
-            $this->updateConversionRate($connection, $conversion_rate, $is_existing, $row->id, $user_id);
+            $this->updateConversionRate($dbcon, $conversion_rate, $is_existing, $row->id, $user_id);
 
         }
 
@@ -52,7 +52,7 @@ class Conversion
 
     }
 
-    public function getActiveCurrencies($connection)
+    public function getActiveCurrencies($dbcon)
     {
 
         $sql = "SELECT id, currency
@@ -70,7 +70,7 @@ class Conversion
                     GROUP BY c.currency
                 ) AS temp
                 GROUP BY currency";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         return $result;
 
@@ -97,7 +97,7 @@ class Conversion
 
     }
 
-    public function updateConversionRate($connection, $conversion_rate, $is_existing, $currency_id, $user_id)
+    public function updateConversionRate($dbcon, $conversion_rate, $is_existing, $currency_id, $user_id)
     {
 
         $time = new Time();
@@ -120,7 +120,7 @@ class Conversion
 
         }
 
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         return $result;
 

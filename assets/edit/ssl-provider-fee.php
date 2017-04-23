@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       update_time = ?
                   WHERE ssl_provider_id = ?
                     AND type_id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "SELECT id
                   FROM ssl_fees
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     AND type_id = ?
                     AND currency_id = ?
                   LIMIT 1";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -98,14 +98,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "UPDATE ssl_certs
                   SET fee_id = ?,
                       update_time = ?
                   WHERE ssl_provider_id = ?
                     AND type_id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -113,12 +113,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "SELECT type
                   FROM ssl_cert_types
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -135,13 +135,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "UPDATE ssl_certs sslc
                   JOIN ssl_fees sslf ON sslc.fee_id = sslf.id
                   SET sslc.total_cost = sslf.renewal_fee + sslf.misc_fee
                   WHERE sslc.fee_id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -149,9 +149,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
-        $conversion->updateRates($connection, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
+        $conversion->updateRates($dbcon, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);
 
         $_SESSION['s_message_success'] .= "The fee for " . $temp_type . " has been updated<BR>";
 
@@ -170,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $query = "SELECT ssl_provider_id, type_id, initial_fee, renewal_fee, misc_fee, currency_id
               FROM ssl_fees
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
 }
@@ -202,7 +202,7 @@ echo $form->showFormTop('');
 $query = "SELECT `name`
           FROM ssl_providers
           where id = ?";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -219,7 +219,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else $error->outputSqlError($dbcon, "ERROR");
 ?>
 <strong>SSL Provider</strong><BR>
 <?php echo $temp_ssl_provider; ?><BR><BR><?php
@@ -227,7 +227,7 @@ if ($q->prepare($query)) {
 $query = "SELECT type
           FROM ssl_cert_types
           WHERE id = ?";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -244,7 +244,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else $error->outputSqlError($dbcon, "ERROR");
 ?>
 <strong>Type</strong><BR>
 <?php echo $temp_type; ?><BR><BR>
@@ -256,7 +256,7 @@ echo $form->showInputText('new_misc_fee', 'Misc Fee', '', $new_misc_fee, '10', '
 $sql = "SELECT id, currency, `name`, symbol
         FROM currencies
         ORDER BY `name`";
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 echo $form->showDropdownTop('new_currency_id', 'Currency', '', '', '');
 while ($row = mysqli_fetch_object($result)) {
 

@@ -24,12 +24,12 @@ namespace DomainMOD;
 class DomainQueue
 {
 
-    public function processQueueList($connection)
+    public function processQueueList($dbcon)
     {
         // process domain lists in the queue
-        $result = $this->getQueueList($connection);
+        $result = $this->getQueueList($dbcon);
 
-        $this->markProcessingList($connection);
+        $this->markProcessingList($dbcon);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -40,86 +40,86 @@ class DomainQueue
                 if ($row->api_registrar_name == 'Above.com') {
 
                     $registrar = new AboveCom();
-                    $api_key = $api->getKey($connection, $row->account_id);
-                    list($domain_count, $domain_list) = $registrar->getDomainList($connection, $api_key, $row->account_id);
+                    $api_key = $api->getKey($dbcon, $row->account_id);
+                    list($domain_count, $domain_list) = $registrar->getDomainList($dbcon, $api_key, $row->account_id);
 
                 } elseif ($row->api_registrar_name == 'DNSimple') {
 
                     $registrar = new DnSimple();
-                    $api_key = $api->getKey($connection, $row->account_id);
+                    $api_key = $api->getKey($dbcon, $row->account_id);
                     $account_id = $registrar->getAccountId($api_key);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $account_id);
 
                 } elseif ($row->api_registrar_name == 'DreamHost') {
 
                     $registrar = new DreamHost();
-                    $api_key = $api->getKey($connection, $row->account_id);
-                    list($domain_count, $domain_list) = $registrar->getDomainList($connection, $api_key, $row->account_id);
+                    $api_key = $api->getKey($dbcon, $row->account_id);
+                    list($domain_count, $domain_list) = $registrar->getDomainList($dbcon, $api_key, $row->account_id);
 
                 } elseif ($row->api_registrar_name == 'Dynadot') {
 
                     $registrar = new Dynadot();
-                    $api_key = $api->getKey($connection, $row->account_id);
+                    $api_key = $api->getKey($dbcon, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key);
 
                 } elseif ($row->api_registrar_name == 'eNom') {
 
                     $registrar = new Enom();
-                    list($account_username, $account_password) = $api->getUserPass($connection, $row->account_id);
+                    list($account_username, $account_password) = $api->getUserPass($dbcon, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $account_password);
 
                 } elseif ($row->api_registrar_name == 'Fabulous') {
 
                     $registrar = new Fabulous();
-                    list($account_username, $account_password) = $api->getUserPass($connection, $row->account_id);
+                    list($account_username, $account_password) = $api->getUserPass($dbcon, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $account_password);
 
                 } elseif ($row->api_registrar_name == 'Freenom') {
 
                     $registrar = new Freenom();
-                    list($account_username, $account_password) = $api->getUserPass($connection, $row->account_id);
+                    list($account_username, $account_password) = $api->getUserPass($dbcon, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $account_password);
 
                 } elseif ($row->api_registrar_name == 'GoDaddy') {
 
                     $registrar = new GoDaddy();
-                    list($api_key, $api_secret) = $api->getKeySecret($connection, $row->account_id);
+                    list($api_key, $api_secret) = $api->getKeySecret($dbcon, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $api_secret);
 
                 } elseif ($row->api_registrar_name == 'Internet.bs') {
 
                     $registrar = new InternetBs();
-                    list($api_key, $api_secret) = $api->getKeySecret($connection, $row->account_id);
+                    list($api_key, $api_secret) = $api->getKeySecret($dbcon, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key, $api_secret);
 
                 } elseif ($row->api_registrar_name == 'NameBright') {
 
                     $registrar = new NameBright();
-                    list($account_username, $api_app_name, $api_secret) = $api->getUserAppSecret($connection, $row->account_id);
+                    list($account_username, $api_app_name, $api_secret) = $api->getUserAppSecret($dbcon, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_app_name, $api_secret);
 
                 } elseif ($row->api_registrar_name == 'Namecheap') {
 
                     $registrar = new Namecheap();
-                    list($account_username, $api_key, $api_ip_address) = $api->getUserKeyIp($connection, $row->account_id);
+                    list($account_username, $api_key, $api_ip_address) = $api->getUserKeyIp($dbcon, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_key, $api_ip_address);
 
                 } elseif ($row->api_registrar_name == 'Name.com') {
 
                     $registrar = new NameCom();
-                    list($account_username, $api_key) = $api->getUserKey($connection, $row->account_id);
+                    list($account_username, $api_key) = $api->getUserKey($dbcon, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_key);
 
                 } elseif ($row->api_registrar_name == 'NameSilo') {
 
                     $registrar = new NameSilo();
-                    $api_key = $api->getKey($connection, $row->account_id);
+                    $api_key = $api->getKey($dbcon, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($api_key);
 
                 } elseif ($row->api_registrar_name == 'OpenSRS') {
 
                     $registrar = new OpenSrs();
-                    list($account_username, $api_key) = $api->getUserKey($connection, $row->account_id);
+                    list($account_username, $api_key) = $api->getUserKey($dbcon, $row->account_id);
                     list($domain_count, $domain_list) = $registrar->getDomainList($account_username, $api_key);
 
                 } else {
@@ -132,19 +132,19 @@ class DomainQueue
                 if ($domain_count != '' && $domain_list != '') {
 
                     // update the domain count
-                    $this->updateDomainCount($connection, $row->id, $domain_count);
+                    $this->updateDomainCount($dbcon, $row->id, $domain_count);
 
                     foreach ($domain_list AS $domain) {
 
-                        $this->importToDomainQueue($connection, $row->api_registrar_id, $domain, $row->owner_id, $row->registrar_id, $row->account_id, $row->created_by);
+                        $this->importToDomainQueue($dbcon, $row->api_registrar_id, $domain, $row->owner_id, $row->registrar_id, $row->account_id, $row->created_by);
 
                     }
 
-                    $this->markFinishedList($connection, $row->id);
+                    $this->markFinishedList($dbcon, $row->id);
 
                 } else {
 
-                    $this->markNotProcessingList($connection, $row->id);
+                    $this->markNotProcessingList($dbcon, $row->id);
 
                 }
 
@@ -152,17 +152,17 @@ class DomainQueue
 
         }
 
-        $this->copyToHistoryList($connection);
+        $this->copyToHistoryList($dbcon);
 
         return 'Domain List Queue Processed<BR>';
 
     }
 
-    public function processQueueDomain($connection)
+    public function processQueueDomain($dbcon)
     {
         // process domains in the queue
-        $result = $this->getQueueDomain($connection);
-        $this->markProcessingDomain($connection);
+        $result = $this->getQueueDomain($dbcon);
+        $this->markProcessingDomain($dbcon);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -173,90 +173,90 @@ class DomainQueue
                 if ($row->api_registrar_name == 'Above.com') {
 
                     $registrar = new AboveCom();
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($connection, $row->account_id, $row->domain);
+                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($dbcon, $row->account_id, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'DNSimple') {
 
                     $registrar = new DnSimple();
-                    $api_key = $api->getKey($connection, $row->account_id);
+                    $api_key = $api->getKey($dbcon, $row->account_id);
                     $account_id = $registrar->getAccountId($api_key);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $account_id, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'DreamHost') {
 
                     $registrar = new DreamHost();
-                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($connection, $row->account_id, $row->domain);
+                    list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($dbcon, $row->account_id, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Dynadot') {
 
                     $registrar = new Dynadot();
-                    $api_key = $api->getKey($connection, $row->account_id);
+                    $api_key = $api->getKey($dbcon, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'eNom') {
 
                     $registrar = new Enom();
-                    list($account_username, $account_password) = $api->getUserPass($connection, $row->account_id);
+                    list($account_username, $account_password) = $api->getUserPass($dbcon, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Fabulous') {
 
                     $registrar = new Fabulous();
-                    list($account_username, $account_password) = $api->getUserPass($connection, $row->account_id);
+                    list($account_username, $account_password) = $api->getUserPass($dbcon, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Freenom') {
 
                     $registrar = new Freenom();
-                    list($account_username, $account_password) = $api->getUserPass($connection, $row->account_id);
+                    list($account_username, $account_password) = $api->getUserPass($dbcon, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $account_password, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'GoDaddy') {
 
                     $registrar = new GoDaddy();
-                    list($api_key, $api_secret) = $api->getKeySecret($connection, $row->account_id);
+                    list($api_key, $api_secret) = $api->getKeySecret($dbcon, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Internet.bs') {
 
                     $registrar = new InternetBs();
-                    list($api_key, $api_secret) = $api->getKeySecret($connection, $row->account_id);
+                    list($api_key, $api_secret) = $api->getKeySecret($dbcon, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $api_secret, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'NameBright') {
 
                     $registrar = new NameBright();
-                    list($account_username, $api_app_name, $api_secret) = $api->getUserAppSecret($connection, $row->account_id);
+                    list($account_username, $api_app_name, $api_secret) = $api->getUserAppSecret($dbcon, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_app_name, $api_secret, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Namecheap') {
 
                     $registrar = new Namecheap();
-                    list($account_username, $api_key, $api_ip_address) = $api->getUserKeyIp($connection, $row->account_id);
+                    list($account_username, $api_key, $api_ip_address) = $api->getUserKeyIp($dbcon, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $api_ip_address, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'Name.com') {
 
                     $registrar = new NameCom();
-                    list($account_username, $api_key) = $api->getUserKey($connection, $row->account_id);
+                    list($account_username, $api_key) = $api->getUserKey($dbcon, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'NameSilo') {
 
                     $registrar = new NameSilo();
-                    $api_key = $api->getKey($connection, $row->account_id);
+                    $api_key = $api->getKey($dbcon, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'OpenSRS') {
 
                     $registrar = new OpenSrs();
-                    list($account_username, $api_key) = $api->getUserKey($connection, $row->account_id);
+                    list($account_username, $api_key) = $api->getUserKey($dbcon, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($account_username, $api_key, $row->domain);
 
                 } elseif ($row->api_registrar_name == 'ResellerClub') {
 
                     $registrar = new ResellerClub();
-                    list($reseller_id, $api_key) = $api->getReselleridKey($connection, $row->account_id);
+                    list($reseller_id, $api_key) = $api->getReselleridKey($dbcon, $row->account_id);
                     list($expiration_date, $dns_servers, $privacy_status, $autorenew_status) = $registrar->getFullInfo($reseller_id, $api_key, $row->domain);
 
                 } else {
@@ -271,24 +271,24 @@ class DomainQueue
 
                     $created_by = $row->created_by;
                     list($ready_to_import, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status)
-                        = $this->updateDomain($connection, $row->id, $row->domain, $expiration_date, $dns_servers, $privacy_status, $autorenew_status, $created_by);
+                        = $this->updateDomain($dbcon, $row->id, $row->domain, $expiration_date, $dns_servers, $privacy_status, $autorenew_status, $created_by);
 
                     // only process the domain if $ready_to_import = 1 (ie. all the information is valid)
                     if ($ready_to_import == '1') {
 
-                        $new_domain_id = $this->importToMainDb($connection, $row->id);
+                        $new_domain_id = $this->importToMainDb($dbcon, $row->id);
 
                         // updates queue with the new domain id
-                        $this->updateNewDomainId($connection, $row->id, $new_domain_id);
+                        $this->updateNewDomainId($dbcon, $row->id, $new_domain_id);
 
                         // markFinishedDomain confirms that the domain was added to the main domain database before marketing it as finished
-                        $this->markFinishedDomain($connection, $row->id, $row->domain, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status);
+                        $this->markFinishedDomain($dbcon, $row->id, $row->domain, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status);
 
                     }
 
                 } else {
 
-                    $this->markNotProcessingDomain($connection, $row->id);
+                    $this->markNotProcessingDomain($dbcon, $row->id);
 
                 }
 
@@ -296,13 +296,13 @@ class DomainQueue
 
         }
 
-        $this->copyToHistoryDomain($connection);
+        $this->copyToHistoryDomain($dbcon);
 
         return 'Domain Queue Processed<BR>';
 
     }
 
-    public function getQueueList($connection)
+    public function getQueueList($dbcon)
     {
         $error = new Error();
         $sql = "SELECT dql.id, dql.api_registrar_id, dql.owner_id, dql.registrar_id, dql.account_id, dql.created_by,
@@ -314,11 +314,11 @@ class DomainQueue
                   AND dql.finished = '0'
                   AND dql.copied_to_history = '0'
                 ORDER BY dql.insert_time DESC";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
         return $result;
     }
 
-    public function getQueueDomain($connection)
+    public function getQueueDomain($dbcon)
     {
         $error = new Error();
         $sql = "SELECT dq.id, dq.api_registrar_id, dq.domain, dq.account_id, dq.created_by, ar.name AS api_registrar_name
@@ -330,11 +330,11 @@ class DomainQueue
                   AND dq.copied_to_history = '0'
                   AND dq.already_in_domains = '0'
                   AND dq.already_in_queue = '0'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
         return $result;
     }
 
-    public function markProcessingList($connection)
+    public function markProcessingList($dbcon)
     {
         $error = new Error();
 
@@ -344,20 +344,20 @@ class DomainQueue
                   AND ready_to_import = '0'
                   AND finished = '0'
                   AND copied_to_history = '0'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
         return $result;
     }
 
-    public function updateDomainCount($connection, $list_id, $domain_count)
+    public function updateDomainCount($dbcon, $list_id, $domain_count)
     {
         $sql = "UPDATE domain_queue_list
                 SET domain_count = '" . $domain_count . "'
                 WHERE id = '" . $list_id . "'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
         return;
     }
 
-    public function markProcessingDomain($connection)
+    public function markProcessingDomain($dbcon)
     {
         $error = new Error();
 
@@ -369,20 +369,20 @@ class DomainQueue
                   AND copied_to_history = '0'
                   AND already_in_domains = '0'
                   AND already_in_queue = '0'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
         return $result;
     }
 
-    public function updateDomain($connection, $queue_domain_id, $domain, $expiration_date, $dns_servers, $privacy_status, $autorenew_status, $created_by)
+    public function updateDomain($dbcon, $queue_domain_id, $domain, $expiration_date, $dns_servers, $privacy_status, $autorenew_status, $created_by)
     {
         $error = new Error();
-        $this->updateExpirationDate($connection, $queue_domain_id, $expiration_date);
-        $dns_id = $this->updateDnsServers($connection, $queue_domain_id, $dns_servers, $created_by);
-        $ip_id = $this->updateIp($connection, $queue_domain_id, $domain, $created_by);
-        $cat_id = $this->updateCategory($connection, $queue_domain_id, $created_by);
-        $hosting_id = $this->updateHosting($connection, $queue_domain_id, $created_by);
-        $privacy_status = $this->updatePrivacy($connection, $queue_domain_id, $privacy_status);
-        $autorenew_status = $this->updateRenewStatus($connection, $queue_domain_id, $autorenew_status);
+        $this->updateExpirationDate($dbcon, $queue_domain_id, $expiration_date);
+        $dns_id = $this->updateDnsServers($dbcon, $queue_domain_id, $dns_servers, $created_by);
+        $ip_id = $this->updateIp($dbcon, $queue_domain_id, $domain, $created_by);
+        $cat_id = $this->updateCategory($dbcon, $queue_domain_id, $created_by);
+        $hosting_id = $this->updateHosting($dbcon, $queue_domain_id, $created_by);
+        $privacy_status = $this->updatePrivacy($dbcon, $queue_domain_id, $privacy_status);
+        $autorenew_status = $this->updateRenewStatus($dbcon, $queue_domain_id, $autorenew_status);
 
         // don't mark the domain as ready to import if the information isn't valid
         if ($expiration_date != '0000-00-00' && $dns_id != '0' && $dns_id != '' && $ip_id != '0' && $ip_id != ''
@@ -392,7 +392,7 @@ class DomainQueue
             $sql = "UPDATE domain_queue
                     SET ready_to_import = '1'
                     WHERE id = '" . $queue_domain_id . "'";
-            mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
             $ready_to_import = '1';
 
@@ -405,18 +405,18 @@ class DomainQueue
         return array($ready_to_import, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status);
     }
 
-    public function updateExpirationDate($connection, $queue_domain_id, $expiration_date)
+    public function updateExpirationDate($dbcon, $queue_domain_id, $expiration_date)
     {
         $error = new Error();
 
         $sql = "UPDATE domain_queue
                 SET expiry_date = '" . $expiration_date . "'
                 WHERE id = '" . $queue_domain_id . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
         return $result;
     }
 
-    public function updateDnsServers($connection, $queue_domain_id, $dns_servers, $created_by)
+    public function updateDnsServers($dbcon, $queue_domain_id, $dns_servers, $created_by)
     {
         $error = new Error();
         $time = new Time();
@@ -433,7 +433,7 @@ class DomainQueue
         $sql = "SELECT id, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10
                 FROM dns
                 ORDER BY update_time DESC, insert_time DESC";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         // Cycle through the existing DNS servers to see if there's a match
         if (mysqli_num_rows($result) > 0) {
@@ -480,7 +480,7 @@ class DomainQueue
             $number_of_servers = count($clean_servers);
 
             $system = new System();
-            $creation_type_id = $system->getCreationTypeId($connection, 'Queue');
+            $creation_type_id = $system->getCreationTypeId($dbcon, 'Queue');
 
             $sql = "INSERT INTO dns
                     (`name`, dns1, dns2, dns3, dns4, dns5, dns6, dns7, dns8, dns9, dns10, notes, number_of_servers,
@@ -490,22 +490,22 @@ class DomainQueue
                         '$new_servers[4]', '$new_servers[5]', '$new_servers[6]', '$new_servers[7]', '$new_servers[8]',
                         '$new_servers[9]', '" . $time->timeBasic() . " - Created by queue.', '$number_of_servers',
                         '" . $creation_type_id . "', '" . $created_by . "', '" . $time->stamp() . "')";
-            mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
-            $new_dns_id = mysqli_insert_id($connection);
+            $new_dns_id = mysqli_insert_id($dbcon);
 
         }
 
         $sql_update = "UPDATE domain_queue
                        SET dns_id = '" . $new_dns_id . "'
                        WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
+        mysqli_query($dbcon, $sql_update) or $error->outputOldSqlError($dbcon);
 
         return $new_dns_id;
 
     }
 
-    public function updateIp($connection, $queue_domain_id, $domain, $created_by)
+    public function updateIp($dbcon, $queue_domain_id, $domain, $created_by)
     {
         $error = new Error();
         $time = new Time();
@@ -530,7 +530,7 @@ class DomainQueue
         $sql = "SELECT id, ip
                 FROM ip_addresses
                 ORDER BY update_time DESC, insert_time DESC";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         // Cycle through the existing IPs to see if there's a match
         if (mysqli_num_rows($result) > 0) {
@@ -553,29 +553,29 @@ class DomainQueue
         if ($has_match != '1') {
             
             $system = new System();
-            $creation_type_id = $system->getCreationTypeId($connection, 'Queue');
+            $creation_type_id = $system->getCreationTypeId($dbcon, 'Queue');
 
             $sql = "INSERT INTO ip_addresses
                     (`name`, ip, rdns, notes, creation_type_id, created_by, insert_time)
                     VALUES
                     ('[created by queue]', '$live_ip', '$rdns', '" . $time->timeBasic() . " - Created by queue.',
                      '" . $creation_type_id . "', '" . $created_by . "', '" . $time->stamp() . "')";
-            mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
-            $new_ip_id = mysqli_insert_id($connection);
+            $new_ip_id = mysqli_insert_id($dbcon);
 
         }
 
         $sql_update = "UPDATE domain_queue
                        SET ip_id = '" . $new_ip_id . "'
                        WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
+        mysqli_query($dbcon, $sql_update) or $error->outputOldSqlError($dbcon);
 
         return $new_ip_id;
 
     }
 
-    public function updateCategory($connection, $queue_domain_id, $created_by)
+    public function updateCategory($dbcon, $queue_domain_id, $created_by)
     {
 
         // Check to see if there's an existing '[created by queue]' category
@@ -586,7 +586,7 @@ class DomainQueue
                 FROM categories
                 WHERE `name` = '[created by queue]'
                 ORDER BY update_time DESC, insert_time DESC";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         // If there's an existing '[created by queue]' category use it
         if (mysqli_num_rows($result) > 0) {
@@ -600,28 +600,28 @@ class DomainQueue
         } else { // If there isn't an existing '[created by queue]' category create one
 
             $system = new System();
-            $creation_type_id = $system->getCreationTypeId($connection, 'Queue');
+            $creation_type_id = $system->getCreationTypeId($dbcon, 'Queue');
     
             $sql = "INSERT INTO categories
                     (`name`, stakeholder, creation_type_id, created_by, insert_time)
                     VALUES
                     ('[created by queue]', '[created by queue]', '" . $creation_type_id . "', '" . $created_by . "', '" . $time->stamp() . "')";
-            mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
     
-            $category_id = mysqli_insert_id($connection);
+            $category_id = mysqli_insert_id($dbcon);
 
         }
 
         $sql = "UPDATE domain_queue
                 SET cat_id = '" . $category_id . "'
                 WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         return $category_id;
 
     }
 
-    public function updateHosting($connection, $queue_domain_id, $created_by)
+    public function updateHosting($dbcon, $queue_domain_id, $created_by)
     {
         // Check to see if there's an existing '[created by queue]' host
         $error = new Error();
@@ -631,7 +631,7 @@ class DomainQueue
                 FROM hosting
                 WHERE `name` = '[created by queue]'
                 ORDER BY update_time DESC, insert_time DESC";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         // If there's an existing '[created by queue]' category use it
         if (mysqli_num_rows($result) > 0) {
@@ -645,51 +645,51 @@ class DomainQueue
         } else { // If there isn't an existing '[created by queue]' host create one
 
             $system = new System();
-            $creation_type_id = $system->getCreationTypeId($connection, 'Queue');
+            $creation_type_id = $system->getCreationTypeId($dbcon, 'Queue');
             
             $sql = "INSERT INTO hosting
                     (`name`, creation_type_id, created_by,insert_time)
                     VALUES
                     ('[created by queue]', '" . $creation_type_id . "', '" . $created_by . "', '" . $time->stamp() . "')";
-            mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
     
-            $hosting_id = mysqli_insert_id($connection);
+            $hosting_id = mysqli_insert_id($dbcon);
 
         }
 
         $sql = "UPDATE domain_queue
                 SET hosting_id = '" . $hosting_id . "'
                 WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         return $hosting_id;
     }
 
-    public function updatePrivacy($connection, $queue_domain_id, $privacy_status)
+    public function updatePrivacy($dbcon, $queue_domain_id, $privacy_status)
     {
         $error = new Error();
 
         $sql = "UPDATE domain_queue
                 SET privacy = '" . $privacy_status . "'
                 WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         return $privacy_status;
     }
 
-    public function updateRenewStatus($connection, $queue_domain_id, $autorenew_status)
+    public function updateRenewStatus($dbcon, $queue_domain_id, $autorenew_status)
     {
         $error = new Error();
 
         $sql = "UPDATE domain_queue
                 SET autorenew = '" . $autorenew_status . "'
                 WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         return $autorenew_status;
     }
 
-    public function importToDomainQueue($connection, $api_registrar_id, $domain, $owner_id, $registrar_id, $account_id, $created_by)
+    public function importToDomainQueue($dbcon, $api_registrar_id, $domain, $owner_id, $registrar_id, $account_id, $created_by)
     {
         $error = new Error();
         $time = new Time();
@@ -701,7 +701,7 @@ class DomainQueue
         $sql = "SELECT id
                 FROM domains
                 WHERE domain = '" . $domain . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         // already in the main domain table
         if (mysqli_num_rows($result) > 0) {
@@ -712,7 +712,7 @@ class DomainQueue
                         (api_registrar_id, domain_id, owner_id, registrar_id, account_id, domain, tld, processing, ready_to_import, finished, already_in_domains, created_by, insert_time)
                         VALUES
                         ('$api_registrar_id', '$row->id', '$owner_id', '$registrar_id', '$account_id', '$domain', '$tld', '0', '1', '1', '1', '$created_by', '" . $time->stamp() . "')";
-                mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
             }
 
@@ -722,7 +722,7 @@ class DomainQueue
             $sql_temp = "SELECT id
                          FROM domain_queue
                          WHERE domain = '" . $domain . "'";
-            $result_temp = mysqli_query($connection, $sql_temp);
+            $result_temp = mysqli_query($dbcon, $sql_temp);
 
             if (mysqli_num_rows($result_temp) > 0) {
 
@@ -731,7 +731,7 @@ class DomainQueue
                         (api_registrar_id, owner_id, registrar_id, account_id, domain, tld, processing, ready_to_import, finished, already_in_queue, created_by, insert_time)
                         VALUES
                         ('$api_registrar_id', '$owner_id', '$registrar_id', '$account_id', '$domain', '$tld', '0', '1', '1', '1', '$created_by', '" . $time->stamp() . "')";
-                mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
             } else { // if it's not in the main domain table or the domain queue, insert it into the queue
 
@@ -739,7 +739,7 @@ class DomainQueue
                         (api_registrar_id, owner_id, registrar_id, account_id, domain, tld, created_by, insert_time)
                         VALUES
                         ('$api_registrar_id', '$owner_id', '$registrar_id', '$account_id', '$domain', '$tld', '$created_by', '" . $time->stamp() . "')";
-                mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
             }
 
@@ -751,7 +751,7 @@ class DomainQueue
 
     }
 
-    public function importToMainDb($connection, $queue_domain_id)
+    public function importToMainDb($dbcon, $queue_domain_id)
     {
         $error = new Error();
         $maint = new Maintenance();
@@ -765,14 +765,14 @@ class DomainQueue
                   AND already_in_domains != '1'
                   AND already_in_queue != '1'
                 ORDER BY insert_time ASC";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         if (mysqli_num_rows($result) > 0) {
 
             while ($row = mysqli_fetch_object($result)) {
 
                 $system = new System();
-                $creation_type_id = $system->getCreationTypeId($connection, 'Queue');
+                $creation_type_id = $system->getCreationTypeId($dbcon, 'Queue');
 
                 $sql_move = "INSERT INTO domains
                              (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, dns_id, ip_id,
@@ -782,22 +782,22 @@ class DomainQueue
                               '$row->expiry_date', '$row->cat_id', '$row->dns_id', '$row->ip_id', '$row->hosting_id',
                               '" . $time->timeBasic() . " - Inserted by Queue.', '$row->autorenew', '$row->privacy',
                               '" . $creation_type_id . "', '$row->created_by', '" . $time->stamp() . "')";
-                mysqli_query($connection, $sql_move) or $error->outputOldSqlError($connection);
+                mysqli_query($dbcon, $sql_move) or $error->outputOldSqlError($dbcon);
 
-                $new_domain_id = mysqli_insert_id($connection);
+                $new_domain_id = mysqli_insert_id($dbcon);
 
                 $sql_move = "INSERT INTO domain_field_data
                              (domain_id, insert_time)
                              VALUES
                              ('$new_domain_id', '" . $time->stamp() . "')";
-                mysqli_query($connection, $sql_move) or $error->outputOldSqlError($connection);
+                mysqli_query($dbcon, $sql_move) or $error->outputOldSqlError($dbcon);
 
                 // update domain's fees
-                $maint->updateDomainFee($connection, $new_domain_id);
+                $maint->updateDomainFee($dbcon, $new_domain_id);
 
                 $queryB = new QueryBuild();
                 $sql = $queryB->missingFees('domains');
-                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
+                $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
 
             }
 
@@ -806,19 +806,19 @@ class DomainQueue
         return $new_domain_id;
     }
 
-    public function updateNewDomainId($connection, $queue_domain_id, $new_domain_id)
+    public function updateNewDomainId($dbcon, $queue_domain_id, $new_domain_id)
     {
         $error = new Error();
 
         $sql = "UPDATE domain_queue
                 SET domain_id = '" . $new_domain_id . "'
                 WHERE id = '" . $queue_domain_id . "'";
-        mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         return 'Updated Queue Domain With New Domain ID';
     }
 
-    public function markFinishedList($connection, $list_id)
+    public function markFinishedList($dbcon, $list_id)
     {
         $error = new Error();
 
@@ -827,17 +827,17 @@ class DomainQueue
                     ready_to_import = '2',
                     finished = '1'
                 WHERE id = '" . $list_id . "'";
-        mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         return 'Successfully Added List To Domain Queue';
 
     }
 
-    public function markFinishedDomain($connection, $queue_domain_id, $domain, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status)
+    public function markFinishedDomain($dbcon, $queue_domain_id, $domain, $expiration_date, $dns_id, $ip_id, $cat_id, $hosting_id, $privacy_status, $autorenew_status)
     {
         $system = new System();
         $error = new Error();
-        $creation_type_id = $system->getCreationTypeId($connection, 'Queue');
+        $creation_type_id = $system->getCreationTypeId($dbcon, 'Queue');
 
         // confirm that the domain was successfully imported into the main database before marking it as finished
         $sql = "SELECT id
@@ -852,7 +852,7 @@ class DomainQueue
                   AND autorenew = '" . $autorenew_status . "'
                   AND creation_type_id = '" . $creation_type_id . "'
                   AND active = '1'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
         if (mysqli_num_rows($result) == 1) {
 
@@ -861,7 +861,7 @@ class DomainQueue
                         ready_to_import = '2',
                         finished = '1'
                     WHERE id = '" . $queue_domain_id . "'";
-            mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+            mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
             return 'Successfully Imported';
 
@@ -873,29 +873,29 @@ class DomainQueue
 
     }
 
-    public function markNotProcessingList($connection, $list_id)
+    public function markNotProcessingList($dbcon, $list_id)
     {
         $error = new Error();
 
         $sql = "UPDATE domain_queue_list
                 SET processing = '0'
                 WHERE id = '" . $list_id . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
         return $result;
     }
 
-    public function markNotProcessingDomain($connection, $queue_domain_id)
+    public function markNotProcessingDomain($dbcon, $queue_domain_id)
     {
         $error = new Error();
 
         $sql = "UPDATE domain_queue
                 SET processing = '0'
                 WHERE id = '" . $queue_domain_id . "'";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
         return $result;
     }
 
-    public function copyToHistoryList($connection)
+    public function copyToHistoryList($dbcon)
     {
         $error = new Error();
 
@@ -904,7 +904,7 @@ class DomainQueue
                 WHERE finished = '1'
                   AND copied_to_history = '0'
                 ORDER BY insert_time ASC";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -914,13 +914,13 @@ class DomainQueue
                              (api_registrar_id, domain_count, owner_id, registrar_id, account_id, created_by, insert_time)
                              VALUES
                              ('$row->api_registrar_id', '$row->domain_count', '$row->owner_id', '$row->registrar_id', '$row->account_id', '$row->created_by', '$row->insert_time')";
-                mysqli_query($connection, $sql_move) or $error->outputOldSqlError($connection);
+                mysqli_query($dbcon, $sql_move) or $error->outputOldSqlError($dbcon);
                 
                 $sql_update = "UPDATE domain_queue_list
                                SET copied_to_history = '1'
                                WHERE finished = '1'
                                  AND copied_to_history = '0'";
-                mysqli_query($connection, $sql_update);
+                mysqli_query($dbcon, $sql_update);
 
             }
 
@@ -929,7 +929,7 @@ class DomainQueue
         return;
     }
 
-    public function copyToHistoryDomain($connection)
+    public function copyToHistoryDomain($dbcon)
     {
         $error = new Error();
 
@@ -940,7 +940,7 @@ class DomainQueue
                 WHERE finished = '1'
                   AND copied_to_history = '0'
                 ORDER BY insert_time ASC";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -955,13 +955,13 @@ class DomainQueue
                               '$row->dns_id', '$row->ip_id', '$row->hosting_id', '$row->autorenew', '$row->privacy',
                               '$row->already_in_domains', '$row->already_in_queue', '$row->created_by',
                               '$row->insert_time')";
-                mysqli_query($connection, $sql_move) or $error->outputOldSqlError($connection);
+                mysqli_query($dbcon, $sql_move) or $error->outputOldSqlError($dbcon);
                 
                 $sql_update = "UPDATE domain_queue
                                SET copied_to_history = '1'
                                WHERE finished = '1'
                                  AND copied_to_history = '0'";
-                mysqli_query($connection, $sql_update);
+                mysqli_query($dbcon, $sql_update);
 
             }
 
@@ -970,59 +970,59 @@ class DomainQueue
         return;
     }
 
-    public function clearFinished($connection)
+    public function clearFinished($dbcon)
     {
 
         $sql = "DELETE FROM domain_queue_list
                 WHERE finished = '1'
                   AND copied_to_history = '1'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
         
-        $this->checkListQueue($connection);
+        $this->checkListQueue($dbcon);
 
         $sql = "DELETE FROM domain_queue
                 WHERE finished = '1'
                   AND copied_to_history = '1'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
         
-        $this->checkDomainQueue($connection);
+        $this->checkDomainQueue($dbcon);
 
         return;
     }
 
-    public function clearProcessing($connection)
+    public function clearProcessing($dbcon)
     {
         $sql = "UPDATE domain_queue_list
                 SET processing = '0'
                 WHERE processing = '1'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         $sql = "UPDATE domain_queue
                 SET processing = '0'
                 WHERE processing = '1'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
         
         return 'Queue Processing Cleared<BR>'; // This is used in a maintenance file so it needs a response message
     }
 
-    public function clearQueues($connection)
+    public function clearQueues($dbcon)
     {
 
         $sql = "DELETE FROM domain_queue_list";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         $sql = "DELETE FROM domain_queue";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
         
         return 'Queues Cleared';
     }
     
-    public function checkListQueue($connection)
+    public function checkListQueue($dbcon)
     {
         $sql = "SELECT id
                 FROM domain_queue_list
                 LIMIT 1";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         if (mysqli_num_rows($result) == 0) {
             unset($_SESSION['s_domains_in_list_queue']);
@@ -1034,12 +1034,12 @@ class DomainQueue
 
     }
 
-    public function checkDomainQueue($connection)
+    public function checkDomainQueue($dbcon)
     {
         $sql = "SELECT id
                 FROM domain_queue
                 LIMIT 1";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         if (mysqli_num_rows($result) == 0) {
             unset($_SESSION['s_domains_in_queue']);
@@ -1051,13 +1051,13 @@ class DomainQueue
 
     }
 
-    public function checkProcessingLists($connection)
+    public function checkProcessingLists($dbcon)
     {
         $sql = "SELECT id
                 FROM domain_queue_list
                 WHERE processing = '1'
                 LIMIT 1";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         if (mysqli_num_rows($result) == 0) {
             unset($_SESSION['s_list_queue_processing']);
@@ -1069,13 +1069,13 @@ class DomainQueue
 
     }
 
-    public function checkProcessingDomains($connection)
+    public function checkProcessingDomains($dbcon)
     {
         $sql = "SELECT id
                 FROM domain_queue
                 WHERE processing = '1'
                 LIMIT 1";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         if (mysqli_num_rows($result) == 0) {
             unset($_SESSION['s_domain_queue_processing']);

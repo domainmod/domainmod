@@ -46,7 +46,7 @@ $export_data = $_GET['export_data'];
 $query = "SELECT `name`
           FROM ssl_providers
           WHERE id = ?";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -63,7 +63,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else $error->outputSqlError($dbcon, "ERROR");
 
 $query = "SELECT f.id, f.initial_fee, f.renewal_fee, f.misc_fee, f.insert_time, f.update_time, sslct.type, c.currency, c.symbol, c.symbol_order, c.symbol_space
           FROM ssl_fees AS f, ssl_cert_types AS sslct, currencies AS c
@@ -94,7 +94,7 @@ if ($export_data == '1') {
     );
     $export->writeRow($export_file, $row_contents);
 
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -125,7 +125,7 @@ if ($export_data == '1') {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $export->closeFile($export_file);
 
@@ -150,7 +150,7 @@ $query2 = "SELECT sslct.id, sslct.type
              AND sslc.fee_id = '0'
            GROUP BY sslct.type
            ORDER BY sslct.type ASC";
-$q2 = $conn->stmt_init();
+$q2 = $dbcon->stmt_init();
 
 if ($q2->prepare($query2)) {
 
@@ -184,9 +184,9 @@ if ($q2->prepare($query2)) {
 
     $q2->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else $error->outputSqlError($dbcon, "ERROR");
 
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -273,7 +273,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else $error->outputSqlError($dbcon, "ERROR");
 
 require_once(DIR_INC . 'layout/footer.inc.php'); //@formatter:on ?>
 </body>

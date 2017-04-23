@@ -71,7 +71,7 @@ $field_id = $_REQUEST['field_id'];
 $sql = "SELECT field_name
         FROM domain_fields
         ORDER BY name";
-$result = mysqli_query($connection, $sql);
+$result = mysqli_query($dbcon, $sql);
 
 if (mysqli_num_rows($result) > 0) {
 
@@ -147,13 +147,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 foreach ($domain_list AS $each_domain) {
 
-                    $domain->renew($conn, $each_domain, $new_renewal_years, $new_notes);
+                    $domain->renew($dbcon, $each_domain, $new_renewal_years, $new_notes);
 
                 }
 
                 $_SESSION['s_message_success'] .= "Domains Renewed<BR>";
 
-                $maint->updateSegments($connection);
+                $maint->updateSegments($dbcon);
 
             } elseif ($action == "AD") {
 
@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $query = "SELECT domain
                               FROM domains
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
 
                     if ($q->prepare($query)) {
 
@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $query = "SELECT owner_id, registrar_id
                               FROM registrar_accounts
                               WHERE id = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
 
                     if ($q->prepare($query)) {
 
@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $q->close();
 
-                    } else $error->outputSqlError($conn, "ERROR");
+                    } else $error->outputSqlError($dbcon, "ERROR");
 
                     reset($domain_list);
 
@@ -233,7 +233,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   FROM fees
                                   WHERE registrar_id = ?
                                     AND tld = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
 
                         if ($q->prepare($query)) {
 
@@ -250,7 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                             $q->close();
 
-                        } else $error->outputSqlError($conn, "ERROR");
+                        } else $error->outputSqlError($dbcon, "ERROR");
 
                         if ($temp_fee_id == '0' || $temp_fee_id == "") {
                             $temp_fee_fixed = 0;
@@ -273,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   FROM fees
                                   WHERE registrar_id = ?
                                     AND tld = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
 
                         if ($q->prepare($query)) {
 
@@ -292,7 +292,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                             $q->close();
 
-                        } else $error->outputSqlError($conn, "ERROR");
+                        } else $error->outputSqlError($dbcon, "ERROR");
 
                         $query = "INSERT INTO domains
                                   (owner_id, registrar_id, account_id, domain, tld, expiry_date, cat_id, fee_id,
@@ -300,21 +300,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                    creation_type_id, created_by, active, fee_fixed, insert_time)
                                   VALUES
                                   (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
 
                         if ($q->prepare($query)) {
 
-                            $creation_type_id = $system->getCreationTypeId($connection, 'Bulk Updater');
+                            $creation_type_id = $system->getCreationTypeId($dbcon, 'Bulk Updater');
 
                             $q->bind_param('iiisssiidiiissiiiiiis', $temp_owner_id, $temp_registrar_id, $new_raid,
                                 $new_domain, $new_tld, $new_expiry_date, $new_pcid, $temp_fee_id, $new_total_cost,
                                 $new_dnsid, $new_ipid, $new_whid, $new_function, $new_notes, $new_autorenew,
                                 $new_privacy, $creation_type_id, $_SESSION['s_user_id'], $new_active, $temp_fee_fixed,
                                 $timestamp);
-                            $q->execute() or $error->outputSqlError($conn, "Couldn't insert domains");
+                            $q->execute() or $error->outputSqlError($dbcon, "Couldn't insert domains");
                             $q->close();
 
-                        } else $error->outputSqlError($conn, "ERROR");
+                        } else $error->outputSqlError($dbcon, "ERROR");
 
                         $temp_fee_id = 0;
 
@@ -322,7 +322,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   FROM domains
                                   WHERE domain = ?
                                     AND insert_time = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
 
                         if ($q->prepare($query)) {
 
@@ -339,13 +339,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                             $q->close();
 
-                        } else $error->outputSqlError($conn, "ERROR");
+                        } else $error->outputSqlError($dbcon, "ERROR");
 
                         $query = "INSERT INTO domain_field_data
                                   (domain_id, insert_time)
                                   VALUES
                                   (?, ?)";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
 
                         if ($q->prepare($query)) {
 
@@ -353,12 +353,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $q->execute();
                             $q->close();
 
-                        } else $error->outputSqlError($conn, "ERROR");
+                        } else $error->outputSqlError($dbcon, "ERROR");
 
                         $sql = "SELECT field_name
                                 FROM domain_fields
                                 ORDER BY `name`";
-                        $result = mysqli_query($connection, $sql);
+                        $result = mysqli_query($dbcon, $sql);
 
                         if (mysqli_num_rows($result) > 0) {
 
@@ -376,9 +376,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $full_field = "new_" . $field;
 
                                 $sql = "UPDATE domain_field_data
-                                        SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "'
+                                        SET `" . $field . "` = '" . mysqli_real_escape_string($dbcon, ${$full_field}) . "'
                                         WHERE domain_id = '" . $temp_domain_id . "'";
-                                $result = mysqli_query($connection, $sql);
+                                $result = mysqli_query($dbcon, $sql);
 
                             }
 
@@ -392,11 +392,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $queryB = new DomainMOD\QueryBuild();
 
                     $sql = $queryB->missingFees('domains');
-                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
+                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
 
-                    $maint->updateSegments($connection);
+                    $maint->updateSegments($dbcon);
 
-                    $maint->updateTlds($connection);
+                    $maint->updateTlds($dbcon);
 
                 }
 
@@ -405,7 +405,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = "SELECT domain, expiry_date
                         FROM domains
                         WHERE domain IN (" . $new_data_formatted . ")";
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
                 while ($row = mysqli_fetch_object($result)) {
 
@@ -424,8 +424,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $new_notes_renewal = $timestamp_basic . " - Domain Renewed For " . $renewal_years_string;
 
                         $sql_update = "UPDATE domains
-                                       SET expiry_date = '" . mysqli_real_escape_string($connection, $new_expiry) . "',
-                                              notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', '" . mysqli_real_escape_string($connection, $new_notes_renewal) . "\r\n\r\n', notes),
+                                       SET expiry_date = '" . mysqli_real_escape_string($dbcon, $new_expiry) . "',
+                                              notes = CONCAT('" . mysqli_real_escape_string($dbcon, $new_notes) . "\r\n\r\n', '" . mysqli_real_escape_string($dbcon, $new_notes_renewal) . "\r\n\r\n', notes),
                                            active = '1',
                                            update_time = '" . $timestamp . "'
                                        WHERE domain = '" . $row->domain . "'";
@@ -435,18 +435,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $new_notes_renewal = $timestamp_basic . " - Domain Renewed For " . $renewal_years_string;
 
                         $sql_update = "UPDATE domains
-                                       SET expiry_date = '" . mysqli_real_escape_string($connection, $new_expiry) . "',
-                                              notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes_renewal) . "\r\n\r\n', notes),
+                                       SET expiry_date = '" . mysqli_real_escape_string($dbcon, $new_expiry) . "',
+                                              notes = CONCAT('" . mysqli_real_escape_string($dbcon, $new_notes_renewal) . "\r\n\r\n', notes),
                                            active = '1',
                                            update_time = '" . $timestamp . "'
                                        WHERE domain = '" . $row->domain . "'";
 
                     }
-                    $result_update = mysqli_query($connection, $sql_update);
+                    $result_update = mysqli_query($dbcon, $sql_update);
 
                 }
 
-                $maint->updateSegments($connection);
+                $maint->updateSegments($dbcon);
 
                 $_SESSION['s_message_success'] .= "Domains Fully Renewed<BR>";
 
@@ -466,7 +466,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                       notes = CONCAT(?, '\r\n\r\n', notes),
                                       update_time = ?
                                   WHERE domain = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
                         foreach ($domain_list AS $each_domain) {
@@ -482,7 +482,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   SET cat_id  = ?,
                                       update_time = ?
                                   WHERE domain = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
                         foreach ($domain_list AS $each_domain) {
@@ -514,7 +514,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                       notes = CONCAT(?, '\r\n\r\n', notes),
                                       update_time = ?
                                   WHERE domain = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
                         foreach ($domain_list AS $each_domain) {
@@ -530,7 +530,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   SET dns_id  = ?,
                                       update_time = ?
                                   WHERE domain = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
                         foreach ($domain_list AS $each_domain) {
@@ -561,7 +561,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                       notes = CONCAT(?, '\r\n\r\n', notes),
                                       update_time = ?
                                   WHERE domain = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
                         foreach ($domain_list AS $each_domain) {
@@ -577,7 +577,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   SET ip_id  = ?,
                                       update_time = ?
                                   WHERE domain = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
                         foreach ($domain_list AS $each_domain) {
@@ -606,7 +606,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -637,7 +637,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 AND ra.id = ?
                               GROUP BY r.name, o.name, ra.username
                               ORDER BY r.name ASC, o.name ASC, ra.username ASC";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
 
                     if ($q->prepare($query)) {
 
@@ -659,7 +659,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $q->close();
 
-                    } else $error->outputSqlError($conn, "ERROR");
+                    } else $error->outputSqlError($dbcon, "ERROR");
 
                     if ($new_notes != "") {
 
@@ -670,7 +670,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                       notes = CONCAT(?, '\r\n\r\n', notes),
                                       update_time = ?
                                   WHERE domain = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
                         foreach ($domain_list AS $each_domain) {
@@ -689,7 +689,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                       account_id = ?,
                                       update_time = ?
                                   WHERE domain = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
                         foreach ($domain_list AS $each_domain) {
@@ -705,21 +705,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $sql = "UPDATE domains
                             SET fee_id = '0', total_cost = '0'
                             WHERE domain IN (" . $new_data_formatted . ")";
-                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
                     $sql = "SELECT d.id, f.id AS fee_id
                             FROM domains AS d, fees AS f
                             WHERE d.registrar_id = f.registrar_id
                               AND d.tld = f.tld
                               AND d.domain IN (" . $new_data_formatted . ")";
-                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
                     while ($row = mysqli_fetch_object($result)) {
 
                         $sql_update = "UPDATE domains
                                        SET fee_id = '" . $row->fee_id . "'
                                        WHERE id = '" . $row->id . "'";
-                        $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
+                        $result_update = mysqli_query($dbcon, $sql_update) or $error->outputOldSqlError($dbcon);
 
                     }
 
@@ -728,21 +728,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             SET d.total_cost = f.renewal_fee + f.privacy_fee + f.misc_fee
                             WHERE d.privacy = '1'
                               AND d.domain IN (" . $new_data_formatted . ")";
-                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
                     $sql = "UPDATE domains d
                             JOIN fees f ON d.fee_id = f.id
                             SET d.total_cost = f.renewal_fee + f.misc_fee
                             WHERE d.privacy = '0'
                               AND d.domain IN (" . $new_data_formatted . ")";
-                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
                     $_SESSION['s_message_success'] .= "Registrar Account Changed<BR>";
 
                     $queryB = new DomainMOD\QueryBuild();
 
                     $sql = $queryB->missingFees('domains');
-                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
+                    $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
 
                 }
 
@@ -762,7 +762,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                       notes = CONCAT(?, '\r\n\r\n', notes),
                                       update_time = ?
                                   WHERE domain = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
                         foreach ($domain_list AS $each_domain) {
@@ -778,7 +778,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   SET hosting_id  = ?,
                                       update_time = ?
                                   WHERE domain = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
                         foreach ($domain_list AS $each_domain) {
@@ -799,7 +799,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = "SELECT id
                         FROM domains
                         WHERE domain IN (" . $new_data_formatted . ")";
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
                 if (mysqli_num_rows($result) > 0) {
 
@@ -813,16 +813,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $sql_domain = "DELETE FROM domains
                                    WHERE id IN (" . $domain_id_list_formatted . ")";
-                    $result_domain = mysqli_query($connection, $sql_domain) or $error->outputOldSqlError($connection);
+                    $result_domain = mysqli_query($dbcon, $sql_domain) or $error->outputOldSqlError($dbcon);
 
                     $sql_domain = "DELETE FROM domain_field_data
                                    WHERE domain_id IN (" . $domain_id_list_formatted . ")";
-                    $result_domain = mysqli_query($connection, $sql_domain) or $error->outputOldSqlError($connection);
+                    $result_domain = mysqli_query($dbcon, $sql_domain) or $error->outputOldSqlError($dbcon);
 
                     $sql_ssl = "SELECT id
                                 FROM ssl_certs
                                 WHERE domain_id IN (" . $domain_id_list_formatted . ")";
-                    $result_ssl = mysqli_query($connection, $sql_ssl) or $error->outputOldSqlError($connection);
+                    $result_ssl = mysqli_query($dbcon, $sql_ssl) or $error->outputOldSqlError($dbcon);
 
                     if (mysqli_num_rows($result_ssl) > 0) {
 
@@ -836,11 +836,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $sql_ssl = "DELETE FROM ssl_certs
                                     WHERE domain_id IN (" . $domain_id_list_formatted . ")";
-                        $result_ssl = mysqli_query($connection, $sql_ssl) or $error->outputOldSqlError($connection);
+                        $result_ssl = mysqli_query($dbcon, $sql_ssl) or $error->outputOldSqlError($dbcon);
 
                         $sql_ssl = "DELETE FROM ssl_cert_field_data
                                     WHERE ssl_id IN (" . $ssl_id_list_formatted . ")";
-                        $result_ssl = mysqli_query($connection, $sql_ssl) or $error->outputOldSqlError($connection);
+                        $result_ssl = mysqli_query($dbcon, $sql_ssl) or $error->outputOldSqlError($dbcon);
 
                     }
 
@@ -848,7 +848,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains (and associated data) Deleted<BR>";
 
-                $maint->updateSegments($connection);
+                $maint->updateSegments($dbcon);
 
             } elseif ($action == "E") {
 
@@ -859,7 +859,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -875,7 +875,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET active = '0',
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -889,7 +889,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as expired<BR>";
 
-                $maint->updateSegments($connection);
+                $maint->updateSegments($dbcon);
 
             } elseif ($action == "S") {
 
@@ -900,7 +900,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -916,7 +916,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET active = '10',
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -930,7 +930,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as sold<BR>";
 
-                $maint->updateSegments($connection);
+                $maint->updateSegments($dbcon);
 
             } elseif ($action == "A") {
 
@@ -941,7 +941,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -957,7 +957,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET active = '1',
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -971,7 +971,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as active<BR>";
 
-                $maint->updateSegments($connection);
+                $maint->updateSegments($dbcon);
 
             } elseif ($action == "T") {
 
@@ -982,7 +982,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -998,7 +998,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET active = '2',
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1012,7 +1012,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as Pending Transfer<BR>";
 
-                $maint->updateSegments($connection);
+                $maint->updateSegments($dbcon);
 
             } elseif ($action == "PRg") {
 
@@ -1023,7 +1023,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1039,7 +1039,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET active = '5',
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1053,7 +1053,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as Pending Registration<BR>";
 
-                $maint->updateSegments($connection);
+                $maint->updateSegments($dbcon);
 
             } elseif ($action == "PRn") {
 
@@ -1064,7 +1064,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1080,7 +1080,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET active = '3',
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1094,7 +1094,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as Pending Renewal<BR>";
 
-                $maint->updateSegments($connection);
+                $maint->updateSegments($dbcon);
 
             } elseif ($action == "PO") {
 
@@ -1105,7 +1105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1121,7 +1121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET active = '4',
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1135,7 +1135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as Pending (Other)<BR>";
 
-                $maint->updateSegments($connection);
+                $maint->updateSegments($dbcon);
 
             } elseif ($action == "AURNE") {
 
@@ -1146,7 +1146,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1162,7 +1162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET autorenew = '1',
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1176,7 +1176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 $_SESSION['s_message_success'] .= "Domains marked as Auto Renewal<BR>";
 
-                $maint->updateSegments($connection);
+                $maint->updateSegments($dbcon);
 
             } elseif ($action == "AURND") {
 
@@ -1187,7 +1187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1203,7 +1203,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET autorenew = '0',
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1226,7 +1226,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1242,7 +1242,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET privacy = '1',
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1258,20 +1258,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             FROM domains AS d, fees AS f
                             WHERE d.fee_id = f.id
                               AND d.domain IN (" . $new_data_formatted . ")";
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
                 while ($row = mysqli_fetch_object($result)) {
 
                     $sql_update = "UPDATE domains
                                        SET total_cost = '" . $row->total_cost . "'
                                        WHERE id = '" . $row->id . "'";
-                    $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
+                    $result_update = mysqli_query($dbcon, $sql_update) or $error->outputOldSqlError($dbcon);
 
                 }
 
                 $_SESSION['s_message_success'] .= "Domains marked as Private WHOIS<BR>";
 
-                $maint->updateSegments($connection);
+                $maint->updateSegments($dbcon);
 
             } elseif ($action == "PRVD") {
 
@@ -1282,7 +1282,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   notes = CONCAT(?, '\r\n\r\n', notes),
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1298,7 +1298,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                               SET privacy = '0',
                                   update_time = ?
                               WHERE domain = ?";
-                    $q = $conn->stmt_init();
+                    $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
                     foreach ($domain_list AS $each_domain) {
@@ -1314,14 +1314,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             FROM domains AS d, fees AS f
                             WHERE d.fee_id = f.id
                               AND d.domain IN (" . $new_data_formatted . ")";
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
                 while ($row = mysqli_fetch_object($result)) {
 
                     $sql_update = "UPDATE domains
                                        SET total_cost = '" . $row->total_cost . "'
                                        WHERE id = '" . $row->id . "'";
-                    $result_update = mysqli_query($connection, $sql_update) or $error->outputOldSqlError($connection);
+                    $result_update = mysqli_query($dbcon, $sql_update) or $error->outputOldSqlError($dbcon);
 
                 }
 
@@ -1343,7 +1343,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                       notes = CONCAT(?, '\r\n\r\n', notes),
                                       update_time = ?
                                   WHERE domain = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
                         foreach ($domain_list AS $each_domain) {
@@ -1359,7 +1359,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                   SET expiry_date = ?,
                                       update_time = ?
                                   WHERE domain = ?";
-                        $q = $conn->stmt_init();
+                        $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
                         foreach ($domain_list AS $each_domain) {
@@ -1380,7 +1380,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = "SELECT id
                         FROM domains
                         WHERE domain IN (" . $new_data_formatted . ")";
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
                 while ($row = mysqli_fetch_object($result)) {
 
@@ -1393,7 +1393,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $query = "SELECT `name`, field_name
                           FROM domain_fields
                           WHERE id = ?";
-                $q = $conn->stmt_init();
+                $q = $dbcon->stmt_init();
 
                 if ($q->prepare($query)) {
 
@@ -1411,23 +1411,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     $q->close();
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else $error->outputSqlError($dbcon, "ERROR");
 
                 $full_field = "new_" . $temp_field_name;
 
                 $sql = "UPDATE domain_field_data
-                        SET `" . $temp_field_name . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "',
+                        SET `" . $temp_field_name . "` = '" . mysqli_real_escape_string($dbcon, ${$full_field}) . "',
                              update_time = '" . $timestamp . "'
                         WHERE domain_id IN (" . $domain_id_list_formatted . ")";
-                $result = mysqli_query($connection, $sql);
+                $result = mysqli_query($dbcon, $sql);
 
                 if ($new_notes != "") {
 
                     $sql = "UPDATE domains
-                            SET notes = CONCAT('" . mysqli_real_escape_string($connection, $new_notes) . "\r\n\r\n', notes),
+                            SET notes = CONCAT('" . mysqli_real_escape_string($dbcon, $new_notes) . "\r\n\r\n', notes),
                                 update_time = '" . $timestamp . "'
                             WHERE id IN (" . $domain_id_list_formatted . ")";
-                    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
                 }
 
@@ -1587,7 +1587,7 @@ if ($action == "UCF") {
             FROM domain_fields AS df, custom_field_types AS cft
             WHERE df.type_id = cft.id
             ORDER BY df.name";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     while ($row = mysqli_fetch_object($result)) {
 
@@ -1642,7 +1642,7 @@ if ($action == "AD") { // Add Domains
                     WHERE ra.owner_id = o.id
                       AND ra.registrar_id = r.id
                     ORDER BY r_name, o_name, ra.username";
-    $result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
+    $result_account = mysqli_query($dbcon, $sql_account) or $error->outputOldSqlError($dbcon);
 
     while ($row_account = mysqli_fetch_object($result_account)) {
 
@@ -1663,7 +1663,7 @@ if ($action == "AD") { // Add Domains
     $sql_dns = "SELECT id, `name`
                 FROM dns
                 ORDER BY name";
-    $result_dns = mysqli_query($connection, $sql_dns) or $error->outputOldSqlError($connection);
+    $result_dns = mysqli_query($dbcon, $sql_dns) or $error->outputOldSqlError($dbcon);
 
     while ($row_dns = mysqli_fetch_object($result_dns)) {
 
@@ -1684,7 +1684,7 @@ if ($action == "AD") { // Add Domains
     $sql_ip = "SELECT id, `name`, ip
                FROM ip_addresses
                ORDER BY name, ip";
-    $result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
+    $result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputOldSqlError($dbcon);
 
     while ($row_ip = mysqli_fetch_object($result_ip)) {
 
@@ -1705,7 +1705,7 @@ if ($action == "AD") { // Add Domains
     $sql_host = "SELECT id, `name`
                  FROM hosting
                  ORDER BY name";
-    $result_host = mysqli_query($connection, $sql_host) or $error->outputOldSqlError($connection);
+    $result_host = mysqli_query($dbcon, $sql_host) or $error->outputOldSqlError($dbcon);
 
     while ($row_host = mysqli_fetch_object($result_host)) {
 
@@ -1726,7 +1726,7 @@ if ($action == "AD") { // Add Domains
     $sql_cat = "SELECT id, `name`
                 FROM categories
                 ORDER BY name";
-    $result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
+    $result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputOldSqlError($dbcon);
 
     while ($row_cat = mysqli_fetch_object($result_cat)) {
 
@@ -1789,7 +1789,7 @@ if ($action == "AD") { // Add Domains
     $sql_cat = "SELECT id, `name`
                 FROM categories
                 ORDER BY name";
-    $result_cat = mysqli_query($connection, $sql_cat);
+    $result_cat = mysqli_query($dbcon, $sql_cat);
     while ($row_cat = mysqli_fetch_object($result_cat)) {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -1813,7 +1813,7 @@ if ($action == "AD") { // Add Domains
     $sql_dns = "SELECT id, `name`
                 FROM dns
                 ORDER BY name ASC";
-    $result_dns = mysqli_query($connection, $sql_dns);
+    $result_dns = mysqli_query($dbcon, $sql_dns);
 
     while ($row_dns = mysqli_fetch_object($result_dns)) {
 
@@ -1837,7 +1837,7 @@ if ($action == "AD") { // Add Domains
     $sql_ip = "SELECT id, `name`, ip
                FROM ip_addresses
                ORDER BY name ASC, ip ASC";
-    $result_ip = mysqli_query($connection, $sql_ip);
+    $result_ip = mysqli_query($dbcon, $sql_ip);
 
     while ($row_ip = mysqli_fetch_object($result_ip)) {
 
@@ -1868,7 +1868,7 @@ if ($action == "AD") { // Add Domains
                       $tld_string
                     GROUP BY r.name, o.name, ra.username
                     ORDER BY r.name asc, o.name asc, ra.username asc";
-    $result_account = mysqli_query($connection, $sql_account);
+    $result_account = mysqli_query($dbcon, $sql_account);
 
     while ($row_account = mysqli_fetch_object($result_account)) {
 
@@ -1892,7 +1892,7 @@ if ($action == "AD") { // Add Domains
     $sql_host = "SELECT id, `name`
                  FROM hosting
                  ORDER BY name ASC";
-    $result_host = mysqli_query($connection, $sql_host);
+    $result_host = mysqli_query($dbcon, $sql_host);
 
     while ($row_host = mysqli_fetch_object($result_host)) {
 
@@ -1926,7 +1926,7 @@ if ($action == "AD") { // Add Domains
                   FROM domain_fields AS df, custom_field_types AS cft
                   WHERE df.type_id = cft.id
                     AND df.id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -1943,7 +1943,7 @@ if ($action == "AD") { // Add Domains
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     } elseif ($type_id == "2") {
 
@@ -1951,7 +1951,7 @@ if ($action == "AD") { // Add Domains
                   FROM domain_fields AS df, custom_field_types AS cft
                   WHERE df.type_id = cft.id
                     AND df.id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -1968,7 +1968,7 @@ if ($action == "AD") { // Add Domains
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     } elseif ($type_id == "3") {
 
@@ -1976,7 +1976,7 @@ if ($action == "AD") { // Add Domains
                   FROM domain_fields AS df, custom_field_types AS cft
                   WHERE df.type_id = cft.id
                     AND df.id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -1993,7 +1993,7 @@ if ($action == "AD") { // Add Domains
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -2034,7 +2034,7 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
         $sql = "SELECT field_name
                 FROM domain_fields
                 ORDER BY type_id, `name`";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         if (mysqli_num_rows($result) > 0) { ?>
 
@@ -2055,7 +2055,7 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
                           FROM domain_fields AS df, custom_field_types AS cft
                           WHERE df.type_id = cft.id
                             AND df.field_name = ?";
-                $q = $conn->stmt_init();
+                $q = $dbcon->stmt_init();
 
                 if ($q->prepare($query)) {
 
@@ -2084,7 +2084,7 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
 
                     $q->close();
 
-                } else $error->outputSqlError($conn, "ERROR");
+                } else $error->outputSqlError($dbcon, "ERROR");
 
             }
 

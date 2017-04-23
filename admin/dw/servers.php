@@ -49,7 +49,7 @@ $sql = "SELECT id, `name`, `host`, protocol, `port`, username, api_token, `hash`
 
 if ($export_data == "1") {
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $export = new DomainMOD\Export();
     $export_file = $export->openFile('dw_servers', strtotime($time->stamp()));
@@ -83,13 +83,13 @@ if ($export_data == "1") {
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+            $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
 
             if ($row->created_by == '0') {
                 $created_by = 'Unknown';
             } else {
                 $user = new DomainMOD\User();
-                $created_by = $user->getFullName($connection, $row->created_by);
+                $created_by = $user->getFullName($dbcon, $row->created_by);
             }
 
             $row_contents = array(
@@ -130,7 +130,7 @@ if ($export_data == "1") {
 <?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
 <a href="add-server.php"><?php echo $layout->showButton('button', 'Add Web Server'); ?></a>&nbsp;&nbsp;&nbsp;
 <?php
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
 if (mysqli_num_rows($result) > 0) { ?>
 

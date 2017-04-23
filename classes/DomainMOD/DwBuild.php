@@ -24,7 +24,7 @@ namespace DomainMOD;
 class DwBuild
 {
 
-    public function build($connection)
+    public function build($dbcon)
     {
 
         $accounts = new DwAccounts();
@@ -34,10 +34,10 @@ class DwBuild
         $stats = new DwStats();
         $time = new Time();
 
-        $result = $servers->get($connection);
+        $result = $servers->get($dbcon);
         if ($servers->checkForHosts($result) == '0')
             return false;
-        $this->dropDwTables($connection);
+        $this->dropDwTables($dbcon);
 
         $build_start_time_o = $time->stamp();
 
@@ -53,23 +53,23 @@ class DwBuild
                     dw_accounts = '0',
                     dw_dns_zones = '0',
                     dw_dns_records = '0'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
-        $accounts->createTable($connection);
-        $zones->createTable($connection);
-        $records->createTable($connection);
-        $servers->processEachServer($connection, $result);
+        $accounts->createTable($dbcon);
+        $zones->createTable($dbcon);
+        $records->createTable($dbcon);
+        $servers->processEachServer($dbcon, $result);
 
         $clean = new DwClean();
-        $clean->all($connection);
+        $clean->all($dbcon);
 
-        $result = $servers->get($connection);
-        $stats->updateServerStats($connection, $result);
-        $stats->updateDwTotalsTable($connection);
-        $this->buildFinish($connection, $build_start_time_o);
-        list($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records) = $stats->getServerTotals($connection);
+        $result = $servers->get($dbcon);
+        $stats->updateServerStats($dbcon, $result);
+        $stats->updateDwTotalsTable($dbcon);
+        $this->buildFinish($dbcon, $build_start_time_o);
+        list($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records) = $stats->getServerTotals($dbcon);
         $has_empty = $this->checkDwAssets($temp_dw_accounts, $temp_dw_dns_zones, $temp_dw_dns_records);
-        $this->updateEmpty($connection, $has_empty);
+        $this->updateEmpty($dbcon, $has_empty);
 
         $result_message = 'The Data Warehouse has been rebuilt.';
 
@@ -77,23 +77,23 @@ class DwBuild
 
     }
 
-    public function dropDwTables($connection)
+    public function dropDwTables($dbcon)
     {
 
         $sql_accounts = "DROP TABLE IF EXISTS dw_accounts";
-        mysqli_query($connection, $sql_accounts);
+        mysqli_query($dbcon, $sql_accounts);
 
         $sql_zones = "DROP TABLE IF EXISTS dw_dns_zones";
-        mysqli_query($connection, $sql_zones);
+        mysqli_query($dbcon, $sql_zones);
 
         $sql_records = "DROP TABLE IF EXISTS dw_dns_records";
-        mysqli_query($connection, $sql_records);
+        mysqli_query($dbcon, $sql_records);
 
         return true;
 
     }
 
-    public function buildFinish($connection, $build_start_time_o)
+    public function buildFinish($dbcon, $build_start_time_o)
     {
 
         list($build_end_time_o, $total_build_time_o) = $this->getBuildTime($build_start_time_o);
@@ -103,7 +103,7 @@ class DwBuild
                     build_end_time_overall = '" . $build_end_time_o . "',
                     build_time_overall = '" . $total_build_time_o . "',
                     has_ever_been_built_overall = '1'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         return true;
 
@@ -137,7 +137,7 @@ class DwBuild
 
     }
 
-    public function updateEmpty($connection, $empty_assets)
+    public function updateEmpty($dbcon, $empty_assets)
     {
 
         if ($empty_assets == '1') {
@@ -155,7 +155,7 @@ class DwBuild
                         dw_accounts = '0',
                         dw_dns_zones = '0',
                         dw_dns_records = '0'";
-            mysqli_query($connection, $sql);
+            mysqli_query($dbcon, $sql);
 
         }
 

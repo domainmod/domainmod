@@ -55,7 +55,7 @@ if ($_SESSION['s_raw_list_type'] == 'domains') {
 </head>
 <body>
 <?php
-$result = mysqli_query($connection, $_SESSION['s_raw_list_query']);
+$result = mysqli_query($dbcon, $_SESSION['s_raw_list_query']);
 
 if ($_SESSION['s_raw_list_type'] == 'domains') {
 

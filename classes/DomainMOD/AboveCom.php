@@ -43,7 +43,7 @@ class AboveCom
         return $result;
     }
 
-    public function getDomainList($connection, $api_key, $account_id)
+    public function getDomainList($dbcon, $api_key, $account_id)
     {
         $error = new Error();
         $api_url = $this->getApiUrl($api_key, 'domainlist');
@@ -77,7 +77,7 @@ class AboveCom
                         (account_id, domain, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy)
                         VALUES
                         ('" . $account_id . "', '" . $domain_list[$domain_count] . "', '" . $expiry_date . "', '" . $ns1 . "', '" . $ns2 . "', '" . $ns3 . "', '" . $ns4 . "', '" . $ns5 . "', '" . $ns6 . "', '" . $ns7 . "', '" . $ns8 . "', '" . $ns9 . "', '" . $ns10 . "', '" . $autorenew . "', '" . $privacy . "')";
-                $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+                $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
                 $domain_count++;
 
@@ -94,7 +94,7 @@ class AboveCom
         return array($domain_count, $domain_list);
     }
 
-    public function getFullInfo($connection, $account_id, $domain)
+    public function getFullInfo($dbcon, $account_id, $domain)
     {
         $error = new Error();
         $sql = "SELECT id, expiry_date, ns1, ns2, ns3, ns4, ns5, ns6, ns7, ns8, ns9, ns10, autorenew, privacy
@@ -102,7 +102,7 @@ class AboveCom
                 WHERE account_id = '" . $account_id . "'
                   AND domain = '" . $domain . "'
                 ORDER BY id ASC";
-        $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+        $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
          $dns_result = array();
 
@@ -128,7 +128,7 @@ class AboveCom
 
             $sql_temp = "DELETE FROM domain_queue_temp
                          WHERE id = '" . $row->id . "'";
-            mysqli_query($connection, $sql_temp) or $error->outputOldSqlError($connection);
+            mysqli_query($dbcon, $sql_temp) or $error->outputOldSqlError($dbcon);
 
         }
 

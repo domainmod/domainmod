@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       notes = ?,
                       update_time = ?
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -91,13 +91,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $query = "UPDATE domains
                   SET owner_id = ?
                   WHERE account_id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $raid = $new_raid;
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query = "SELECT `name`
                   FROM registrars
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -126,13 +126,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $query = "SELECT `name`
                   FROM owners
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $_SESSION['s_message_success'] .= "Registrar Account " . $new_username . " (" . $temp_registrar . ", " . $temp_owner . ") Updated<BR>";
@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   api_key, api_secret, api_ip_id, notes
               FROM registrar_accounts
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -191,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
 }
@@ -202,7 +202,7 @@ if ($del == "1") {
               FROM domains
               WHERE account_id = ?
               LIMIT 1";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -230,7 +230,7 @@ if ($del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
 }
@@ -242,7 +242,7 @@ if ($really_del == "1") {
               WHERE ra.owner_id = o.id
                 AND ra.registrar_id = r.id
                 AND ra.id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -254,12 +254,12 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $query = "DELETE FROM registrar_accounts
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -268,12 +268,12 @@ if ($really_del == "1") {
         $q->close();
 
     } else {
-        $error->outputSqlError($conn, "ERROR");
+        $error->outputSqlError($dbcon, "ERROR");
     }
 
     $_SESSION['s_message_success'] .= "Registrar Account " . $temp_username . " (" . $temp_registrar_name . ", " . $temp_owner_name . ") Deleted<BR>";
 
-    $system->checkExistingAssets($connection);
+    $system->checkExistingAssets($dbcon);
 
     header("Location: ../registrar-accounts.php");
     exit;
@@ -288,7 +288,7 @@ $query = "SELECT apir.name, apir.req_account_username, apir.req_account_password
           WHERE ra.registrar_id = r.id
             AND r.api_registrar_id = apir.id
             AND ra.id = ?";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -305,7 +305,7 @@ if ($q->prepare($query)) {
 
 } else {
 
-    $error->outputSqlError($conn, "ERROR");
+    $error->outputSqlError($dbcon, "ERROR");
 }
 ?>
 <?php require_once(DIR_INC . 'doctype.inc.php'); ?>
@@ -322,7 +322,7 @@ echo $form->showFormTop('');
 $query = "SELECT id, `name`
           FROM registrars
           ORDER BY `name` ASC";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -343,13 +343,13 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($conn, "ERROR");
+    $error->outputSqlError($dbcon, "ERROR");
 }
 
 $query = "SELECT id, `name`
           FROM owners
           ORDER BY `name` ASC";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -370,7 +370,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($conn, "ERROR");
+    $error->outputSqlError($dbcon, "ERROR");
 }
 
 echo $form->showInputText('new_email_address', 'Email Address (100)', '', $new_email_address, '100', '', '', '', '');
@@ -481,7 +481,7 @@ if ($has_api_support >= 1) { ?>
             $query = "SELECT id, `name`, ip
                       FROM ip_addresses
                       ORDER BY `name` ASC";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
@@ -504,7 +504,7 @@ if ($has_api_support >= 1) { ?>
                 $q->close();
 
             } else {
-                $error->outputSqlError($conn, "ERROR");
+                $error->outputSqlError($dbcon, "ERROR");
             } ?>
 
         </div>

@@ -56,7 +56,7 @@ $new_notes = $_POST['new_notes'];
 $query = "SELECT field_name
           FROM ssl_cert_fields
           ORDER BY `name`";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -87,7 +87,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($conn, "ERROR");
+    $error->outputSqlError($dbcon, "ERROR");
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query = "SELECT ssl_provider_id, owner_id
                   FROM ssl_accounts
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -113,14 +113,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $query = "SELECT id, (renewal_fee + misc_fee) AS total_cost
                   FROM ssl_fees
                   WHERE ssl_provider_id = ?
                     AND type_id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($new_total_cost == "") $new_total_cost = 0;
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $query = "INSERT INTO ssl_certs
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                    fee_id, total_cost, notes, active, created_by, insert_time)
                   VALUES
                   (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -157,14 +157,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $query = "INSERT INTO ssl_cert_field_data
                   (ssl_id, insert_time)
                   VALUES
                   (?, ?)";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -173,13 +173,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $query = "SELECT field_name
                   FROM ssl_cert_fields
                   ORDER BY `name`";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -205,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $query_f = "UPDATE ssl_cert_field_data
                                 SET `" . $field . "` = ?
                                 WHERE ssl_id = ?";
-                    $q_f = $conn->stmt_init();
+                    $q_f = $dbcon->stmt_init();
 
                     if ($q_f->prepare($query_f)) {
 
@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q_f->close();
 
                     } else {
-                        $error->outputSqlError($conn, "ERROR");
+                        $error->outputSqlError($dbcon, "ERROR");
                     }
 
                 }
@@ -224,14 +224,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->close();
 
         } else {
-            $error->outputSqlError($conn, "ERROR");
+            $error->outputSqlError($dbcon, "ERROR");
         }
 
         $queryB = new DomainMOD\QueryBuild();
         $sql = $queryB->missingFees('ssl_certs');
-        $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($connection, $sql);
+        $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($dbcon, $sql);
 
-        $system->checkExistingAssets($connection);
+        $system->checkExistingAssets($dbcon);
         
         $_SESSION['s_message_success'] .= 'SSL Certificate ' . $new_name . ' Added<BR>';
 
@@ -311,7 +311,7 @@ $query = "SELECT id, domain
           FROM domains
           WHERE (active NOT IN ('0', '10') OR id = ?)
           ORDER BY domain";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -328,7 +328,7 @@ if ($q->prepare($query)) {
 
     $q->close();
 
-} else $error->outputSqlError($conn, "ERROR");
+} else $error->outputSqlError($dbcon, "ERROR");
 echo $form->showDropdownBottom('');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -345,7 +345,7 @@ $sql_account = "SELECT sslpa.id, sslpa.username, o.name AS o_name, sslp.name AS 
                 WHERE sslpa.owner_id = o.id
                   AND sslpa.ssl_provider_id = sslp.id
                 ORDER BY sslp_name ASC, o_name ASC, sslpa.username ASC";
-$result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
+$result_account = mysqli_query($dbcon, $sql_account) or $error->outputOldSqlError($dbcon);
 echo $form->showDropdownTop('new_account_id', 'SSL Provider Account', '', '1', '');
 while ($row_account = mysqli_fetch_object($result_account)) {
 
@@ -366,7 +366,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_type = "SELECT id, type
              FROM ssl_cert_types
              ORDER BY type ASC";
-$result_type = mysqli_query($connection, $sql_type) or $error->outputOldSqlError($connection);
+$result_type = mysqli_query($dbcon, $sql_type) or $error->outputOldSqlError($dbcon);
 echo $form->showDropdownTop('new_type_id', 'Certificate Type', '', '1', '');
 while ($row_type = mysqli_fetch_object($result_type)) {
 
@@ -387,7 +387,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_ip = "SELECT id, ip, `name`
            FROM ip_addresses
            ORDER BY `name`, ip";
-$result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
+$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputOldSqlError($dbcon);
 echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
 while ($row_ip = mysqli_fetch_object($result_ip)) {
 
@@ -408,7 +408,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $sql_cat = "SELECT id, `name`
             FROM categories
             ORDER BY `name`";
-$result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
+$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputOldSqlError($dbcon);
 echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
 while ($row_cat = mysqli_fetch_object($result_cat)) {
 
@@ -430,7 +430,7 @@ echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', ''
 $query = "SELECT field_name
           FROM ssl_cert_fields
           ORDER BY type_id, `name`";
-$q = $conn->stmt_init();
+$q = $dbcon->stmt_init();
 
 if ($q->prepare($query)) {
 
@@ -457,7 +457,7 @@ if ($q->prepare($query)) {
                          FROM ssl_cert_fields AS sf, custom_field_types AS cft
                          WHERE sf.type_id = cft.id
                            AND sf.field_name = ?";
-            $q_cf = $conn->stmt_init();
+            $q_cf = $dbcon->stmt_init();
 
             if ($q_cf->prepare($query_cf)) {
 
@@ -487,7 +487,7 @@ if ($q->prepare($query)) {
                 $q_cf->close();
 
             } else {
-                $error->outputSqlError($conn, "ERROR");
+                $error->outputSqlError($dbcon, "ERROR");
             }
 
         }
@@ -499,7 +499,7 @@ if ($q->prepare($query)) {
     $q->close();
 
 } else {
-    $error->outputSqlError($conn, "ERROR");
+    $error->outputSqlError($dbcon, "ERROR");
 }
 
 echo $form->showSubmitButton('Add SSL Certificate', '', '');

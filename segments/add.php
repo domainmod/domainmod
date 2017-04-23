@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       (`name`, description, segment, number_of_domains, notes, created_by, insert_time)
                       VALUES
                       (?, ?, ?, ?, ?, ?, ?)";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->close();
 
             } else {
-                $error->outputSqlError($conn, "ERROR");
+                $error->outputSqlError($dbcon, "ERROR");
             }
 
             $query = "SELECT id
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       WHERE `name` = ?
                         AND segment = ?
                         AND insert_time = ?";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
@@ -140,12 +140,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->close();
 
             } else {
-                $error->outputSqlError($conn, "ERROR");
+                $error->outputSqlError($dbcon, "ERROR");
             }
 
             $query = "DELETE FROM segment_data
                       WHERE segment_id = ?";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->close();
 
             } else {
-                $error->outputSqlError($conn, "ERROR");
+                $error->outputSqlError($dbcon, "ERROR");
             }
 
             foreach ($domain_list as $domain) {
@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                           (segment_id, domain, insert_time)
                           VALUES
                           (?, ?, ?)";
-                $q = $conn->stmt_init();
+                $q = $dbcon->stmt_init();
 
                 if ($q->prepare($query)) {
 
@@ -172,14 +172,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q->close();
 
                 } else {
-                    $error->outputSqlError($conn, "ERROR");
+                    $error->outputSqlError($dbcon, "ERROR");
                 }
 
             }
 
             $_SESSION['s_message_success'] .= "Segment " . $new_name . " Added<BR>";
 
-            $maint->updateSegments($connection);
+            $maint->updateSegments($dbcon);
 
             header("Location: ../segments/");
             exit;

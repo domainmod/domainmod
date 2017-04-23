@@ -52,7 +52,7 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 <?php
 if ($demo_install !== '1') {
 
-    $result_message = $dw->build($connection);
+    $result_message = $dw->build($dbcon);
 
 } else {
 

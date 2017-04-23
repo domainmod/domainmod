@@ -54,7 +54,7 @@ $sql = "SELECT sp.id AS ssl_provider_id, sp.name AS ssl_provider_name
           AND sc.fee_id = '0'
         GROUP BY sp.name
         ORDER BY sp.name ASC";
-$result = mysqli_query($connection, $sql);
+$result = mysqli_query($dbcon, $sql);
 ?>
 The following SSL Certificates are missing fees. In order to ensure your SSL reporting is accurate please update these
 fees as soon as possible.<BR>
@@ -85,7 +85,7 @@ fees as soon as possible.<BR>
                                     AND sslc.fee_id = '0'
                                   GROUP BY sslct.type
                                   ORDER BY sslct.type ASC";
-            $result_missing_types = mysqli_query($connection, $sql_missing_types);
+            $result_missing_types = mysqli_query($dbcon, $sql_missing_types);
 
             $full_type_list = "";
 

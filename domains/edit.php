@@ -64,7 +64,7 @@ $new_notes = $_POST['new_notes'];
 $sql = "SELECT field_name
         FROM domain_fields
         ORDER BY `name`";
-$result = mysqli_query($connection, $sql);
+$result = mysqli_query($dbcon, $sql);
 
 if (mysqli_num_rows($result) > 0) {
 
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query = "SELECT registrar_id, owner_id
                   FROM registrar_accounts
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -117,13 +117,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "SELECT id
                   FROM fees
                   WHERE registrar_id = ?
                     AND tld = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         if ($new_privacy == "1") {
 
@@ -166,8 +166,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = "SELECT (" . $fee_string . ") AS total_cost
                 FROM fees
                 WHERE registrar_id = '" . $new_registrar_id . "'
-                  AND tld = '" . mysqli_real_escape_string($connection, $new_tld) . "'";
-        $result = mysqli_query($connection, $sql);
+                  AND tld = '" . mysqli_real_escape_string($dbcon, $new_tld) . "'";
+        $result = mysqli_query($dbcon, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
             $new_total_cost = $row->total_cost;
@@ -193,7 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       fee_fixed = ?,
                       update_time = ?
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -204,12 +204,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->execute();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $sql = "SELECT field_name
                 FROM domain_fields
                 ORDER BY `name`";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -227,10 +227,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $full_field = "new_" . $field;
 
                 $sql = "UPDATE domain_field_data
-                        SET `" . $field . "` = '" . mysqli_real_escape_string($connection, ${$full_field}) . "',
+                        SET `" . $field . "` = '" . mysqli_real_escape_string($dbcon, ${$full_field}) . "',
                             update_time = '" . $timestamp . "'
-                        WHERE domain_id = '" . mysqli_real_escape_string($connection, $did) . "'";
-                $result = mysqli_query($connection, $sql);
+                        WHERE domain_id = '" . mysqli_real_escape_string($dbcon, $did) . "'";
+                $result = mysqli_query($dbcon, $sql);
 
             }
 
@@ -238,12 +238,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $_SESSION['s_message_success'] .= "Domain " . $new_domain . " Updated<BR>";
 
-        $maint->updateSegments($connection);
+        $maint->updateSegments($dbcon);
 
         $queryB = new DomainMOD\QueryBuild();
 
         $sql = $queryB->missingFees('domains');
-        $_SESSION['s_missing_domain_fees'] = $system->checkForRows($connection, $sql);
+        $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
 
         header("Location: edit.php?did=$did");
         exit;
@@ -298,7 +298,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               FROM domains AS d, registrar_accounts AS ra
               WHERE d.account_id = ra.id
                 AND d.id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -327,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
 }
 
@@ -337,7 +337,7 @@ if ($del == "1") {
               FROM ssl_certs
               WHERE domain_id = ?
               LIMIT 1";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -353,7 +353,7 @@ if ($del == "1") {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     if ($existing_ssl_certs > 0) {
 
@@ -371,7 +371,7 @@ if ($really_del == "1") {
 
     $query = "DELETE FROM domains
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -379,11 +379,11 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $query = "DELETE FROM domain_field_data
               WHERE domain_id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -391,13 +391,13 @@ if ($really_del == "1") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $_SESSION['s_message_success'] .= "Domain " . $new_domain . " Deleted<BR>";
 
-    $maint->updateSegments($connection);
+    $maint->updateSegments($dbcon);
 
-    $system->checkExistingAssets($connection);
+    $system->checkExistingAssets($dbcon);
 
     header("Location: ../domains/index.php");
     exit;
@@ -424,7 +424,7 @@ $sql_account = "SELECT ra.id, ra.username, o.name AS o_name, r.name AS r_name
                 WHERE ra.owner_id = o.id
                   AND ra.registrar_id = r.id
                 ORDER BY r_name ASC, o_name ASC, ra.username ASC";
-$result_account = mysqli_query($connection, $sql_account) or $error->outputOldSqlError($connection);
+$result_account = mysqli_query($dbcon, $sql_account) or $error->outputOldSqlError($dbcon);
 echo $form->showDropdownTop('new_account_id', 'Registrar Account', '', '1', '');
 while ($row_account = mysqli_fetch_object($result_account)) { //@formatter:off
 
@@ -436,7 +436,7 @@ echo $form->showDropdownBottom('');
 $sql_dns = "SELECT id, `name`
             FROM dns
             ORDER BY name ASC";
-$result_dns = mysqli_query($connection, $sql_dns) or $error->outputOldSqlError($connection);
+$result_dns = mysqli_query($dbcon, $sql_dns) or $error->outputOldSqlError($dbcon);
 echo $form->showDropdownTop('new_dns_id', 'DNS Profile', '', '1', '');
 while ($row_dns = mysqli_fetch_object($result_dns)) { //@formatter:off
 
@@ -448,7 +448,7 @@ echo $form->showDropdownBottom('');
 $sql_ip = "SELECT id, `name`, ip
            FROM ip_addresses
            ORDER BY `name` ASC, ip ASC";
-$result_ip = mysqli_query($connection, $sql_ip) or $error->outputOldSqlError($connection);
+$result_ip = mysqli_query($dbcon, $sql_ip) or $error->outputOldSqlError($dbcon);
 echo $form->showDropdownTop('new_ip_id', 'IP Address', '', '1', '');
 while ($row_ip = mysqli_fetch_object($result_ip)) { //@formatter:off
 
@@ -460,7 +460,7 @@ echo $form->showDropdownBottom('');
 $sql_hosting = "SELECT id, `name`
                 FROM hosting
                 ORDER BY name ASC";
-$result_hosting = mysqli_query($connection, $sql_hosting) or $error->outputOldSqlError($connection);
+$result_hosting = mysqli_query($dbcon, $sql_hosting) or $error->outputOldSqlError($dbcon);
 echo $form->showDropdownTop('new_hosting_id', 'Web Hosting Provider', '', '1', '');
 while ($row_hosting = mysqli_fetch_object($result_hosting)) { //@formatter:off
 
@@ -472,7 +472,7 @@ echo $form->showDropdownBottom('');
 $sql_cat = "SELECT id, `name`
             FROM categories
             ORDER BY name ASC";
-$result_cat = mysqli_query($connection, $sql_cat) or $error->outputOldSqlError($connection);
+$result_cat = mysqli_query($dbcon, $sql_cat) or $error->outputOldSqlError($dbcon);
 echo $form->showDropdownTop('new_cat_id', 'Category', '', '1', '');
 while ($row_cat = mysqli_fetch_object($result_cat)) { //@formatter:off
 
@@ -511,7 +511,7 @@ echo $form->showInputTextarea('new_notes', 'Notes', $subtext, $new_notes, '', ''
 $sql = "SELECT field_name
         FROM domain_fields
         ORDER BY type_id, `name`";
-$result = mysqli_query($connection, $sql);
+$result = mysqli_query($dbcon, $sql);
 
 if (mysqli_num_rows($result) > 0) { ?>
 
@@ -532,14 +532,14 @@ if (mysqli_num_rows($result) > 0) { ?>
                 FROM domain_fields AS df, custom_field_types AS cft
                 WHERE df.type_id = cft.id
                   AND df.field_name = '" . $field . "'";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         while ($row = mysqli_fetch_object($result)) {
 
             $sql_data = "SELECT " . $row->field_name . "
                          FROM domain_field_data
-                         WHERE domain_id = '" . mysqli_real_escape_string($connection, $did) . "'";
-            $result_data = mysqli_query($connection, $sql_data);
+                         WHERE domain_id = '" . mysqli_real_escape_string($dbcon, $did) . "'";
+            $result_data = mysqli_query($dbcon, $sql_data);
 
             while ($row_data = mysqli_fetch_object($result_data)) {
 
@@ -575,8 +575,8 @@ echo $form->showFormBottom('');
 
 $sql_accounts = "SELECT id
                  FROM dw_accounts
-                 WHERE domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'";
-$result_accounts = mysqli_query($connection, $sql_accounts);
+                 WHERE domain = '" . mysqli_real_escape_string($dbcon, $new_domain) . "'";
+$result_accounts = mysqli_query($dbcon, $sql_accounts);
 
 if ($result_accounts === false || mysqli_num_rows($result_accounts) <= 0) {
 
@@ -586,8 +586,8 @@ if ($result_accounts === false || mysqli_num_rows($result_accounts) <= 0) {
 
 $sql_dns_zones = "SELECT id
                   FROM dw_dns_zones
-                  WHERE domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'";
-$result_dns_zones = mysqli_query($connection, $sql_dns_zones);
+                  WHERE domain = '" . mysqli_real_escape_string($dbcon, $new_domain) . "'";
+$result_dns_zones = mysqli_query($dbcon, $sql_dns_zones);
 
 if ($result_dns_zones === false || mysqli_num_rows($result_dns_zones) <= 0) {
 
@@ -608,9 +608,9 @@ if ($no_results_accounts !== 1) { ?>
     $sql = "SELECT s.id, s.name
             FROM dw_accounts AS a, dw_servers AS s
             WHERE a.server_id = s.id
-              AND a.domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'
+              AND a.domain = '" . mysqli_real_escape_string($dbcon, $new_domain) . "'
             ORDER BY s.name ASC, a.unix_startdate DESC";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     $dwdisplay = new DomainMOD\DwDisplay(); ?>
 
@@ -633,7 +633,7 @@ if ($no_results_accounts !== 1) { ?>
                     <td></td>
                     <td><?php echo $row->name; ?></td>
 
-                    <?php echo $dwdisplay->account($connection, $row->id, $new_domain); ?>
+                    <?php echo $dwdisplay->account($dbcon, $row->id, $new_domain); ?>
 
                 </tr><?php
 
@@ -650,10 +650,10 @@ if ($no_results_dns_zones !== 1) { ?>
     $sql = "SELECT s.id AS dw_server_id, s.name
             FROM dw_dns_zones AS z, dw_servers AS s
             WHERE z.server_id = s.id
-              AND z.domain = '" . mysqli_real_escape_string($connection, $new_domain) . "'
+              AND z.domain = '" . mysqli_real_escape_string($dbcon, $new_domain) . "'
             ORDER BY s.name, z.zonefile, z.domain";
-    $result = mysqli_query($connection, $sql)
-    or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql)
+    or $error->outputOldSqlError($dbcon);
 
     $dwdisplay = new DomainMOD\DwDisplay(); ?>
 
@@ -673,7 +673,7 @@ if ($no_results_dns_zones !== 1) { ?>
                 <td></td>
                 <td valign="top"><?php echo $row->name; ?></td>
                 <td>
-                    <?php echo $dwdisplay->zone($connection, $row->dw_server_id, $new_domain); ?>
+                    <?php echo $dwdisplay->zone($dbcon, $row->dw_server_id, $new_domain); ?>
                 </td>
             </tr><?php
 

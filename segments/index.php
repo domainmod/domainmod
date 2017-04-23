@@ -57,7 +57,7 @@ if ($export_data == "1") {
         $sql_seg = "SELECT `name`, number_of_domains
                     FROM segments
                     WHERE id = '$segid'";
-        $result_seg = mysqli_query($connection, $sql_seg);
+        $result_seg = mysqli_query($dbcon, $sql_seg);
 
         while ($row_seg = mysqli_fetch_object($result_seg)) {
 
@@ -72,7 +72,7 @@ if ($export_data == "1") {
 
         $sql_seg = "SELECT count(*) AS total_segments
                     FROM segments";
-        $result_seg = mysqli_query($connection, $sql_seg);
+        $result_seg = mysqli_query($dbcon, $sql_seg);
 
         while ($row_seg = mysqli_fetch_object($result_seg)) {
 
@@ -82,7 +82,7 @@ if ($export_data == "1") {
 
         $sql_seg = "SELECT count(*) AS total_segment_domains
                     FROM segment_data";
-        $result_seg = mysqli_query($connection, $sql_seg);
+        $result_seg = mysqli_query($dbcon, $sql_seg);
 
         while ($row_seg = mysqli_fetch_object($result_seg)) {
 
@@ -98,7 +98,7 @@ if ($export_data == "1") {
             WHERE s.id = sd.segment_id
             $seg_clause
             ORDER BY s.name ASC, sd.domain ASC";
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 
     if ($segid != "") {
 
@@ -171,13 +171,13 @@ if ($export_data == "1") {
 
         while ($row = mysqli_fetch_object($result)) {
 
-            $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+            $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
 
             if ($row->created_by == '0') {
                 $created_by = 'Unknown';
             } else {
                 $user = new DomainMOD\User();
-                $created_by = $user->getFullName($connection, $row->created_by);
+                $created_by = $user->getFullName($dbcon, $row->created_by);
             }
 
             unset($row_contents);
@@ -214,7 +214,7 @@ if ($export_data == "1") {
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
 <?php
-$result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+$result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
 ?>
 Segments are lists of domains that can be used to help filter and manage your <a href="<?php echo $web_root; ?>/domains/">domain
     results</a>.<BR>
@@ -228,7 +228,7 @@ as which domains don't match, and you can easily view and export the results.<BR
 $sql_segment_check = "SELECT id
                       FROM segments
                       LIMIT 1";
-$result_segment_check = mysqli_query($connection, $sql_segment_check) or $error->outputOldSqlError($connection);
+$result_segment_check = mysqli_query($dbcon, $sql_segment_check) or $error->outputOldSqlError($dbcon);
 if (mysqli_num_rows($result_segment_check) == 0) { ?>
     You don't currently have any Segments. <a href="add/segment.php">Click here to add one</a>.<BR><BR><?php
 }

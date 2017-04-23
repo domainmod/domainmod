@@ -55,7 +55,7 @@ $raid = $_REQUEST['raid'];
 $tld = $_REQUEST['tld'];
 $segid = $_REQUEST['segid'];
 $is_active = $_REQUEST['is_active'];
-$search_for = mysqli_real_escape_string($conn, $_REQUEST['search_for']);
+$search_for = mysqli_real_escape_string($dbcon, $_REQUEST['search_for']);
 $from_dropdown = $_REQUEST['from_dropdown'];
 $expand = $_REQUEST['expand'];
 $daterange = $_REQUEST['daterange'];
@@ -159,7 +159,7 @@ if ($segid != "") {
     $query = "SELECT segment
               FROM segments
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -176,7 +176,7 @@ if ($segid != "") {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $segid_string = " AND d.domain IN ($temp_segment)";
 
@@ -279,7 +279,7 @@ if ($_SESSION['s_system_large_mode'] == '1') {
 
 }
 
-$dfd_columns = $customField->getCustomFieldsSql($connection, 'domain_fields', 'dfd');
+$dfd_columns = $customField->getCustomFieldsSql($dbcon, 'domain_fields', 'dfd');
 
 $sql = "SELECT d.id, d.domain, d.tld, d.expiry_date, d.total_cost, d.function, d.notes, d.autorenew, d.privacy, d.creation_type_id, d.created_by, d.active, d.insert_time, d.update_time, ra.id AS ra_id, ra.username, r.id AS r_id, r.name AS registrar_name, o.id AS o_id, o.name AS owner_name, cat.id AS pcid, cat.name AS category_name, cat.stakeholder, f.id AS f_id, f.initial_fee, f.renewal_fee, f.transfer_fee, f.privacy_fee, f.misc_fee, c.currency, cc.conversion, dns.id as dnsid, dns.name as dns_name, ip.id AS ipid, ip.ip AS ip, ip.name AS ip_name, ip.rdns, h.id AS whid, h.name AS wh_name" . $dfd_columns . "
         FROM domains AS d, registrar_accounts AS ra, registrars AS r, owners AS o, categories AS cat, fees AS f, currencies AS c, currency_conversions AS cc, dns AS dns, ip_addresses AS ip, hosting AS h, domain_field_data AS dfd
@@ -337,7 +337,7 @@ $sql_grand_total = "SELECT SUM(d.total_cost * cc.conversion) AS grand_total
                       $tld_string
                       $search_string";
 
-$result_grand_total = mysqli_query($connection, $sql_grand_total) or $error->outputOldSqlError($connection);
+$result_grand_total = mysqli_query($dbcon, $sql_grand_total) or $error->outputOldSqlError($dbcon);
 while ($row_grand_total = mysqli_fetch_object($result_grand_total)) {
     $grand_total = $row_grand_total->grand_total;
 }
@@ -347,7 +347,7 @@ $grand_total = $currency->format($grand_total, $_SESSION['s_default_currency_sym
 
 if ($segid != "") {
 
-    $result = mysqli_query($connection, $sql);
+    $result = mysqli_query($dbcon, $sql);
 
     $active_domains = "'";
     while ($row = mysqli_fetch_object($result)) {
@@ -360,7 +360,7 @@ if ($segid != "") {
               SET filtered = '0'
               WHERE active = '1'
                 AND segment_id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -368,27 +368,27 @@ if ($segid != "") {
         $q->execute();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $sql_filter_update = "UPDATE segment_data
                           SET filtered = '1'
                           WHERE active = '1'
                             AND segment_id = '$segid'
                             AND domain NOT IN ($active_domains)";
-    $result_filter_update = mysqli_query($connection, $sql_filter_update);
+    $result_filter_update = mysqli_query($dbcon, $sql_filter_update);
 
     $sql_filter_update = "UPDATE segment_data
                           SET filtered = '1'
                           WHERE active = '1'
                             AND segment_id = '$segid'
                             AND domain NOT LIKE '%" . $search_for . "%'";
-    $result_filter_update = mysqli_query($connection, $sql_filter_update);
+    $result_filter_update = mysqli_query($dbcon, $sql_filter_update);
 
 }
 
 if ($export_data == "1") {
 
-    $result = mysqli_query($connection, $sql) or $error->outputOldSqlError($connection);
+    $result = mysqli_query($dbcon, $sql) or $error->outputOldSqlError($dbcon);
     $total_rows = number_format(mysqli_num_rows($result));
 
     $export = new DomainMOD\Export();
@@ -446,7 +446,7 @@ if ($export_data == "1") {
                   WHERE segment_id = ?
                     AND inactive = '1'
                   ORDER BY domain";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -456,14 +456,14 @@ if ($export_data == "1") {
             $totalrows_inactive = $q->num_rows();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "SELECT domain
                   FROM segment_data
                   WHERE segment_id = ?
                     AND missing = '1'
                   ORDER BY domain";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -473,14 +473,14 @@ if ($export_data == "1") {
             $totalrows_missing = $q->num_rows();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "SELECT domain
                   FROM segment_data
                   WHERE segment_id = ?
                     AND filtered = '1'
                   ORDER BY domain";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -490,14 +490,14 @@ if ($export_data == "1") {
             $totalrows_filtered = $q->num_rows();
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         if ($segid != "") {
 
             $query = "SELECT number_of_domains
                       FROM segments
                       WHERE id = ?";
-            $q = $conn->stmt_init();
+            $q = $dbcon->stmt_init();
 
             if ($q->prepare($query)) {
 
@@ -514,7 +514,7 @@ if ($export_data == "1") {
 
                 $q->close();
 
-            } else $error->outputSqlError($conn, "ERROR");
+            } else $error->outputSqlError($dbcon, "ERROR");
 
         }
 
@@ -524,7 +524,7 @@ if ($export_data == "1") {
         $query = "SELECT `name`
                   FROM segments
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -545,7 +545,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $row_contents = array(
             'Domains in Segment:',
@@ -609,7 +609,7 @@ if ($export_data == "1") {
         $query = "SELECT `name`
                   FROM registrars
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -630,7 +630,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -641,7 +641,7 @@ if ($export_data == "1") {
                   WHERE ra.registrar_id = r.id
                     AND ra.owner_id = o.id
                     AND ra.id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -662,14 +662,14 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
         $query = "SELECT r.name AS registrar_name, o.name AS owner_name, ra.username
                   FROM registrar_accounts AS ra, registrars AS r, owners AS o
                   WHERE ra.registrar_id = r.id
                     AND ra.owner_id = o.id
                     AND ra.id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -690,7 +690,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -699,7 +699,7 @@ if ($export_data == "1") {
         $query = "SELECT `name`
                   FROM dns
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -720,7 +720,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -729,7 +729,7 @@ if ($export_data == "1") {
         $query = "SELECT `name`, ip
                   FROM ip_addresses
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -750,7 +750,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -759,7 +759,7 @@ if ($export_data == "1") {
         $query = "SELECT `name`
                   FROM hosting
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -780,7 +780,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -789,7 +789,7 @@ if ($export_data == "1") {
         $query = "SELECT `name`
                   FROM categories
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -810,7 +810,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -819,7 +819,7 @@ if ($export_data == "1") {
         $query = "SELECT `name`
                   FROM owners
                   WHERE id = ?";
-        $q = $conn->stmt_init();
+        $q = $dbcon->stmt_init();
 
         if ($q->prepare($query)) {
 
@@ -840,7 +840,7 @@ if ($export_data == "1") {
 
             $q->close();
 
-        } else $error->outputSqlError($conn, "ERROR");
+        } else $error->outputSqlError($dbcon, "ERROR");
 
     }
 
@@ -937,7 +937,7 @@ if ($export_data == "1") {
     $sql_field = "SELECT `name`
                   FROM domain_fields
                   ORDER BY `name` ASC";
-    $result_field = mysqli_query($connection, $sql_field);
+    $result_field = mysqli_query($dbcon, $sql_field);
 
     if (mysqli_num_rows($result_field) > 0) {
 
@@ -1009,7 +1009,7 @@ if ($export_data == "1") {
         unset($row_contents);
         $count = 0;
         
-        $creation_type = $system->getCreationType($connection, $row->creation_type_id);
+        $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
 
         $row_contents[$count++] = $domain_status;
         $row_contents[$count++] = $row->expiry_date;
@@ -1041,13 +1041,13 @@ if ($export_data == "1") {
             $row_contents[$count++] = 'Unknown';
         } else {
             $user = new DomainMOD\User();
-            $row_contents[$count++] = $user->getFullName($connection, $row->created_by);
+            $row_contents[$count++] = $user->getFullName($dbcon, $row->created_by);
         }
         $row_contents[$count++] = $time->toUserTimezone($row->insert_time);
         $row_contents[$count++] = $time->toUserTimezone($row->update_time);
         $row_contents[$count++] = '';
 
-        $dfd_columns_array = $customField->getCustomFields($connection, 'domain_fields');
+        $dfd_columns_array = $customField->getCustomFields($dbcon, 'domain_fields');
 
         if ($dfd_columns_array != "") {
 
@@ -1081,7 +1081,7 @@ if ($export_data == "1") {
 $sql_supported = "SELECT `name`
                   FROM api_registrars
                   ORDER BY name ASC";
-$result_supported = mysqli_query($connection, $sql_supported);
+$result_supported = mysqli_query($dbcon, $sql_supported);
 $supported_registrars = '';
 while ($row_supported = mysqli_fetch_object($result_supported)) {
 
@@ -1096,7 +1096,7 @@ if ($_SESSION['s_has_domain'] == '0') {
     
     $queryB = new DomainMOD\QueryBuild();
     $sql_asset_check = $queryB->singleAsset('domains');
-    $_SESSION['s_has_domain'] = $system->checkForRows($connection, $sql_asset_check);
+    $_SESSION['s_has_domain'] = $system->checkForRows($dbcon, $sql_asset_check);
 
 }
 
@@ -1139,14 +1139,14 @@ if ($_SESSION['s_has_domain'] != '1' && $_SESSION['s_has_registrar'] == '1' && $
 
 if ($_SESSION['s_system_large_mode'] == '1') {
 
-    $totalrows = mysqli_num_rows(mysqli_query($connection, $sql));
+    $totalrows = mysqli_num_rows(mysqli_query($dbcon, $sql));
     $parameters = array($totalrows, 15, $result_limit, "&pcid=" . $pcid . "&oid=" . $oid . "&dnsid=" . $dnsid . "&ipid=" . $ipid . "&whid=" . $whid . "&rid=" . $rid . "&raid=" . $raid . "&daterange=" . $daterange . "&tld=" . $tld . "&segid=" . $segid . "&is_active=" . $is_active . "&result_limit=" . $result_limit . "&sort_by=" . $sort_by, $_REQUEST[numBegin], $_REQUEST[begin], $_REQUEST[num]);
     $navigate = $page->browser($parameters);
     $sql = $sql . $navigate[0];
 
 }
 
-$result = mysqli_query($connection, $sql);
+$result = mysqli_query($dbcon, $sql);
 $total_rows = number_format(mysqli_num_rows($result));
 
 if ($segid != "") {
@@ -1154,7 +1154,7 @@ if ($segid != "") {
     $query = "SELECT number_of_domains
               FROM segments
               WHERE id = ?";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -1171,7 +1171,7 @@ if ($segid != "") {
 
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
 }
 
@@ -1206,7 +1206,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
             $sql_segment = "SELECT id, `name`
                             FROM segments
                             ORDER BY `name` ASC";
-            $result_segment = mysqli_query($connection, $sql_segment);
+            $result_segment = mysqli_query($dbcon, $sql_segment);
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Segment Filter - OFF', 'null');
@@ -1316,7 +1316,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                                 $segment_string
                               GROUP BY r.name
                               ORDER BY r.name asc";
-            $result_registrar = mysqli_query($connection, $sql_registrar);
+            $result_registrar = mysqli_query($dbcon, $sql_registrar);
 
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Registrar - ALL', 'null');
@@ -1423,7 +1423,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                               $segment_string
                             GROUP BY r.name, o.name, ra.username
                             ORDER BY r.name asc, o.name asc, ra.username asc";
-            $result_account = mysqli_query($connection, $sql_account);
+            $result_account = mysqli_query($dbcon, $sql_account);
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Registrar Account - ALL', 'null');
             while ($row_account = mysqli_fetch_object($result_account)) {
@@ -1532,7 +1532,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                           $segment_string
                         GROUP BY dns.name
                         ORDER BY dns.name asc";
-            $result_dns = mysqli_query($connection, $sql_dns);
+            $result_dns = mysqli_query($dbcon, $sql_dns);
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'DNS Profile - ALL', 'null');
             while ($row_dns = mysqli_fetch_object($result_dns)) {
@@ -1641,7 +1641,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                          $segment_string
                        GROUP BY ip.name
                        ORDER BY ip.name asc";
-            $result_ip = mysqli_query($connection, $sql_ip);
+            $result_ip = mysqli_query($dbcon, $sql_ip);
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'IP Address - ALL', 'null');
             while ($row_ip = mysqli_fetch_object($result_ip)) {
@@ -1750,7 +1750,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                               $segment_string
                             GROUP BY h.name
                             ORDER BY h.name asc";
-            $result_hosting = mysqli_query($connection, $sql_hosting);
+            $result_hosting = mysqli_query($dbcon, $sql_hosting);
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Web Hosting Provider - ALL', 'null');
             while ($row_hosting = mysqli_fetch_object($result_hosting)) {
@@ -1859,7 +1859,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                                $segment_string
                              GROUP BY c.name
                              ORDER BY c.name asc";
-            $result_category = mysqli_query($connection, $sql_category);
+            $result_category = mysqli_query($dbcon, $sql_category);
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Category - ALL', 'null');
             while ($row_category = mysqli_fetch_object($result_category)) {
@@ -1967,7 +1967,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                             $segment_string
                           GROUP BY o.name
                           ORDER BY o.name asc";
-            $result_owner = mysqli_query($connection, $sql_owner);
+            $result_owner = mysqli_query($dbcon, $sql_owner);
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'Owner - ALL', 'null');
             while ($row_owner = mysqli_fetch_object($result_owner)) {
@@ -2075,7 +2075,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                           $segment_string
                         GROUP BY tld
                         ORDER BY tld asc";
-            $result_tld = mysqli_query($connection, $sql_tld);
+            $result_tld = mysqli_query($dbcon, $sql_tld);
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=&segid=' . $segid . '&is_active=' . $is_active . '&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1', '', 'TLD - ALL', 'null');
             while ($row_tld = mysqli_fetch_object($result_tld)) {
@@ -2159,7 +2159,7 @@ if ($_SESSION['s_has_domain'] == '1' && $_SESSION['s_has_registrar'] == '1' && $
                              $segment_string
                            GROUP BY active
                            ORDER BY active asc";
-            $result_active = mysqli_query($connection, $sql_active);
+            $result_active = mysqli_query($dbcon, $sql_active);
             echo $form->showDropdownTopJump('', '', '', '');
             echo $form->showDropdownOptionJump('index.php?pcid=' . $pcid . '&oid=' . $oid . '&dnsid=' . $dnsid . '&ipid=' . $ipid . '&whid=' . $whid . '&rid=' . $rid . '&raid=' . $raid . '&start_date=' . $new_start_date . '&end_date=' . $new_end_date . '&tld=' . $tld . '&segid=' . $segid . '&is_active=LIVE&result_limit=' . $result_limit . '&sort_by=' . $sort_by . '&from_dropdown=1&expand=1&null=', $is_active, '"Live" Domains (Active / Transfers / Pending)', 'LIVE');
             while ($row_active = mysqli_fetch_object($result_active)) {
@@ -2256,7 +2256,7 @@ if ($segid != "") {
               WHERE segment_id = ?
                 AND inactive = '1'
               ORDER BY domain";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -2266,14 +2266,14 @@ if ($segid != "") {
         $totalrows_inactive = $q->num_rows();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $query = "SELECT domain
               FROM segment_data
               WHERE segment_id = ?
                 AND missing = '1'
               ORDER BY domain";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -2283,14 +2283,14 @@ if ($segid != "") {
         $totalrows_missing = $q->num_rows();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
 
     $query = "SELECT domain
               FROM segment_data
               WHERE segment_id = ?
                 AND filtered = '1'
               ORDER BY domain";
-    $q = $conn->stmt_init();
+    $q = $dbcon->stmt_init();
 
     if ($q->prepare($query)) {
 
@@ -2300,7 +2300,7 @@ if ($segid != "") {
         $totalrows_filtered = $q->num_rows();
         $q->close();
 
-    } else $error->outputSqlError($conn, "ERROR");
+    } else $error->outputSqlError($dbcon, "ERROR");
     ?>
     <strong>Domains in Segment:</strong> <?php echo number_format($number_of_domains); ?><BR><BR>
 

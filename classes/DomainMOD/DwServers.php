@@ -24,13 +24,13 @@ namespace DomainMOD;
 class DwServers
 {
 
-    public function get($connection)
+    public function get($dbcon)
     {
 
         $sql = "SELECT id, `host`, protocol, `port`, username, api_token, `hash`
                 FROM dw_servers
                 ORDER BY `name`";
-        $result = mysqli_query($connection, $sql);
+        $result = mysqli_query($dbcon, $sql);
 
         return $result;
 
@@ -51,7 +51,7 @@ class DwServers
 
     }
 
-    public function processEachServer($connection, $result)
+    public function processEachServer($dbcon, $result)
     {
 
         $build = new DwBuild();
@@ -67,22 +67,22 @@ class DwServers
                     SET build_start_time = '" . $build_start_time . "',
                         build_status = '0'
                     WHERE id = '" . $row->id . "'";
-            mysqli_query($connection, $sql);
+            mysqli_query($dbcon, $sql);
 
             $api_call = $accounts->getApiCall();
             $api_results = $build->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
                 $row->api_token, $row->hash);
-            $accounts->insertAccounts($connection, $api_results, $row->id);
+            $accounts->insertAccounts($dbcon, $api_results, $row->id);
 
             $api_call = $zones->getApiCall();
             $api_results = $build->apiCall($api_call, $row->host, $row->protocol, $row->port, $row->username,
                 $row->api_token, $row->hash);
-            $zones->insertZones($connection, $api_results, $row->id);
+            $zones->insertZones($dbcon, $api_results, $row->id);
 
-            $result_zones = $zones->getInsertedZones($connection, $row->id);
-            $zones->processEachZone($connection, $result_zones, $row->id, $row->protocol, $row->host, $row->port,
+            $result_zones = $zones->getInsertedZones($dbcon, $row->id);
+            $zones->processEachZone($dbcon, $result_zones, $row->id, $row->protocol, $row->host, $row->port,
                 $row->username, $row->api_token, $row->hash);
-            $this->serverFinish($connection, $row->id, $build_start_time);
+            $this->serverFinish($dbcon, $row->id, $build_start_time);
 
         }
 
@@ -90,7 +90,7 @@ class DwServers
 
     }
 
-    public function serverFinish($connection, $server_id, $build_start_time)
+    public function serverFinish($dbcon, $server_id, $build_start_time)
     {
 
         $build = new DwBuild();
@@ -103,7 +103,7 @@ class DwServers
                     build_time = '" . $total_build_time . "',
                     has_ever_been_built = '1'
                 WHERE id = '" . $server_id . "'";
-        mysqli_query($connection, $sql);
+        mysqli_query($dbcon, $sql);
 
         return true;
 
