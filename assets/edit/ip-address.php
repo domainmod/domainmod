@@ -132,8 +132,8 @@ if ($del == "1") {
 
         } else {
 
-            $_SESSION['s_message_danger'] .= "Are you sure you want to delete this IP Address?<BR><BR><a
-                href=\"ip-address.php?ipid=$ipid&really_del=1\">YES, REALLY DELETE THIS IP ADDRESS</a><BR>";
+            $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this IP Address?<BR><BR><a
+                href="ip-address.php?ipid=' . $ipid . '&really_del=1">YES, REALLY DELETE THIS IP ADDRESS</a><BR>';
 
         }
 

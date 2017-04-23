@@ -96,7 +96,7 @@ if ($new_username != '') {
 
                 }
 
-                header("Location: edit.php?uid=$id");
+                header('Location: edit.php?uid=' . $id);
                 exit;
 
             }

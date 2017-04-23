@@ -211,12 +211,12 @@ if (isset($_SESSION['s_user_redirect'])) {
     $temp_redirect = $_SESSION['s_user_redirect'];
     unset($_SESSION['s_user_redirect']);
 
-    header("Location: $temp_redirect");
+    header('Location: ' . $temp_redirect);
     exit;
 
 } else {
 
-    header("Location: dashboard/");
+    header('Location: dashboard/');
 
     exit;
 

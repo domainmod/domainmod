@@ -129,8 +129,8 @@ if ($del == "1") {
 
         } else {
 
-            $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Web Host?<BR><BR><a
-                href=\"host.php?whid=$whid&really_del=1\">YES, REALLY DELETE THIS WEB HOST</a><BR>";
+            $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this Web Host?<BR><BR><a
+                href="host.php?whid=' . $whid . '&really_del=1">YES, REALLY DELETE THIS WEB HOST</a><BR>';
 
         }
 

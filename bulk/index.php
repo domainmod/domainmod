@@ -1861,11 +1861,11 @@ if ($action == "AD") { // Add Domains
     $sql_account = "SELECT ra.id AS ra_id, ra.username, r.name AS r_name, o.name AS o_name
                     FROM registrar_accounts AS ra, registrars AS r, owners AS o
                     WHERE ra.registrar_id = r.id
-                      AND ra.owner_id = o.id
-                      $is_active_string
-                      $oid_string
-                      $rid_string
-                      $tld_string
+                      AND ra.owner_id = o.id" .
+                      $is_active_string .
+                      $oid_string .
+                      $rid_string .
+                      $tld_string . "
                     GROUP BY r.name, o.name, ra.username
                     ORDER BY r.name asc, o.name asc, ra.username asc";
     $result_account = mysqli_query($dbcon, $sql_account);

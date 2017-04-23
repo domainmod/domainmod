@@ -172,7 +172,7 @@ if ($is_installed == '1') {
     $sql_temp = "INSERT INTO user_settings
                  (user_id, default_currency, insert_time)
                  VALUES
-                 ('$temp_user_id', 'USD', '" . $timestamp . "');";
+                 ('" . $temp_user_id . "', 'USD', '" . $timestamp . "');";
     $result_temp = mysqli_query($dbcon, $sql_temp) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $sql = "CREATE TABLE IF NOT EXISTS `categories` (

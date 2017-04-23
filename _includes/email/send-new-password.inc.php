@@ -63,8 +63,8 @@ $message_html .= "<BR>";
 $message_html .= "URL: <a title=\"DomainMOD\" target=\"_blank\" href=\"" . $full_url . "/\">" .
     $full_url . "/</a><BR>";
 $message_html .= "<BR>";
-$message_html .= "Your Username: $username<BR>";
-$message_html .= "Your New Password: $new_password<BR>";
+$message_html .= 'Your Username: ' . $username . '<BR>';
+$message_html .= 'Your New Password: ' . $new_password . '<BR>';
 $message_html .= "<BR>";
 $message_html .= "Best Regards,<BR>";
 $message_html .= "<BR>";
@@ -125,7 +125,7 @@ $message_text .= "If you did not request this yourself, it sounds like somebody 
 
 if ($use_smtp != '1') {
 
-    mail($to_address, $subject, $message_html, $headers, "-f $from_address");
+    mail($to_address, $subject, $message_html, $headers, '-f' . $from_address);
 
 } else {
 

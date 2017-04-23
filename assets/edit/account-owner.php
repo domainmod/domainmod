@@ -224,13 +224,14 @@ if ($del == "1") {
         }
 
         if ($existing_ssl_certs > 0) {
-            $_SESSION['s_message_danger'] .= "This Owner has SSL certificates associated with it and cannot be deleted<BR>";
+            $_SESSION['s_message_danger'] .= "This Owner has SSL certificates associated with it and cannot be
+                deleted<BR>";
         }
 
     } else {
 
-        $_SESSION['s_message_danger'] .= "Are you sure you want to delete this Owner?<BR><BR><a
-            href=\"account-owner.php?oid=$oid&really_del=1\">YES, REALLY DELETE THIS OWNER</a><BR>";
+        $_SESSION['s_message_danger'] .= 'Are you sure you want to delete this Owner?<BR><BR><a
+            href="account-owner.php?oid=' . $oid . '&really_del=1">YES, REALLY DELETE THIS OWNER</a><BR>';
 
     }
 

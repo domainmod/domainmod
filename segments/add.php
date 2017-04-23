@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             while (list($key, $new_domain) = each($domain_list)) {
 
                 if (!$domain->checkFormat($new_domain)) {
-                    echo "invalid domain $key";
+                    echo 'invalid domain ' . $key;
                     exit;
                 }
 

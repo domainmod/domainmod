@@ -236,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = $queryB->missingFees('ssl_certs');
         $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($dbcon, $sql);
 
-        header("Location: edit.php?sslcid=$sslcid");
+        header('Location: edit.php?sslcid=' . $sslcid);
         exit;
 
     } else {

@@ -52,11 +52,11 @@ if ($export_data == "1") {
 
     if ($segid != "") {
 
-        $seg_clause = " AND s.id = $segid ";
+        $seg_clause = " AND s.id = " . $segid . " ";
 
         $sql_seg = "SELECT `name`, number_of_domains
                     FROM segments
-                    WHERE id = '$segid'";
+                    WHERE id = '" . $segid . "'";
         $result_seg = mysqli_query($dbcon, $sql_seg);
 
         while ($row_seg = mysqli_fetch_object($result_seg)) {
@@ -95,8 +95,8 @@ if ($export_data == "1") {
     // The only difference between this SELECT statement and the primary one above is that it uses a GROUP BY clause
     $sql = "SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.creation_type_id, s.created_by, s.insert_time, s.update_time, sd.domain
             FROM segments AS s, segment_data AS sd
-            WHERE s.id = sd.segment_id
-            $seg_clause
+            WHERE s.id = sd.segment_id" .
+            $seg_clause . "
             ORDER BY s.name ASC, sd.domain ASC";
     $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
@@ -111,7 +111,7 @@ if ($export_data == "1") {
     }
 
     $export = new DomainMOD\Export();
-    $export_file = $export->openFile("$base_filename", strtotime($time->stamp()));
+    $export_file = $export->openFile($base_filename, strtotime($time->stamp()));
 
     if ($segid != "") {
 
