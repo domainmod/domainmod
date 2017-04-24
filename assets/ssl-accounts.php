@@ -203,7 +203,7 @@ if (mysqli_num_rows($result) > 0) { ?>
 
             $sql_total_count = "SELECT count(*) AS total_cert_count
                                 FROM ssl_certs
-                                WHERE account_id = '$row->sslpaid'
+                                WHERE account_id = '" . $row->sslpaid . "'
                                   AND active NOT IN ('0')";
             $result_total_count = mysqli_query($dbcon, $sql_total_count);
 
