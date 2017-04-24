@@ -245,7 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = $queryB->missingFees('domains');
         $_SESSION['s_missing_domain_fees'] = $system->checkForRows($dbcon, $sql);
 
-        header("Location: edit.php?did=$did");
+        header('Location: edit.php?did=' . $did);
         exit;
 
     } else {

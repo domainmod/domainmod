@@ -52,11 +52,11 @@ class Email
 
         while ($row_recipients = mysqli_fetch_object($send_to)) {
 
-            $full_to = "\"$row_recipients->first_name $row_recipients->last_name\" <$row_recipients->email_address>";
+            $full_to = '"' . $row_recipients->first_name . ' ' . $row_recipients->last_name . '"' . ' <' . $row_recipients->email_address . '>';
 
             if ($use_smtp != '1') {
 
-                mail($full_to, $subject, $message_html, $headers, "-f $from_address");
+                mail($full_to, $subject, $message_html, $headers, '-f' . $from_address);
 
             } else {
 

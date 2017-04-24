@@ -52,13 +52,15 @@ class User
     public function getDefaultSetting($dbcon, $default_field, $primary_table, $user_id)
     {
         if ($user_id == '') {
-            $user_id = $this->getAdminId($dbcon);
+            $admin_id = $this->getAdminId($dbcon);
+        } else {
+            $admin_id = $user_id;
         }
 
         $sql = "SELECT us." . $default_field . "
                 FROM users AS u, user_settings AS us
                 WHERE u.id = us.user_id
-                  AND u.id = '" . $user_id . "'";
+                  AND u.id = '" . $admin_id . "'";
         $result = mysqli_query($dbcon, $sql);
 
         while ($row = mysqli_fetch_object($result)) {

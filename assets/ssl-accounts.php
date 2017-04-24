@@ -44,20 +44,20 @@ $sslpaid = $_GET['sslpaid'];
 $oid = $_GET['oid'];
 $export_data = $_GET['export_data'];
 
-if ($sslpid != '') { $sslpid_string = " AND sa.ssl_provider_id = '$sslpid' "; } else { $sslpid_string = ''; }
-if ($sslpaid != '') { $sslpaid_string = " AND sa.id = '$sslpaid' "; } else { $sslpaid_string = ''; }
-if ($oid != '') { $oid_string = " AND sa.owner_id = '$oid' "; } else { $oid_string = ''; }
+if ($sslpid != '') { $sslpid_string = ' AND sa.ssl_provider_id = ' . $sslpid . ' '; } else { $sslpid_string = ''; }
+if ($sslpaid != '') { $sslpaid_string = ' AND sa.id = ' . $sslpaid . ' '; } else { $sslpaid_string = ''; }
+if ($oid != '') { $oid_string = ' AND sa.owner_id = ' . $oid . ' '; } else { $oid_string = ''; }
 
-$sql = "SELECT sa.id AS sslpaid, sa.email_address, sa.username, sa.password, sa.owner_id, sa.ssl_provider_id, sa.reseller, sa.reseller_id, o.id AS oid,
+$sql = 'SELECT sa.id AS sslpaid, sa.email_address, sa.username, sa.password, sa.owner_id, sa.ssl_provider_id, sa.reseller, sa.reseller_id, o.id AS oid,
             o.name AS oname, sslp.id AS sslpid, sslp.name AS sslpname, sa.notes, sa.creation_type_id, sa.created_by, sa.insert_time, sa.update_time
         FROM ssl_accounts AS sa, owners AS o, ssl_providers AS sslp
         WHERE sa.owner_id = o.id
-          AND sa.ssl_provider_id = sslp.id
-          $sslpid_string
-          $sslpaid_string
-          $oid_string
+          AND sa.ssl_provider_id = sslp.id' .
+          $sslpid_string .
+          $sslpaid_string .
+          $oid_string . '
         GROUP BY sa.username, oname, sslpname
-        ORDER BY sslpname, username, oname";
+        ORDER BY sslpname, username, oname';
 
 if ($export_data == '1') {
 
@@ -96,7 +96,7 @@ if ($export_data == '1') {
 
             $sql_total_count = "SELECT count(*) AS total_cert_count
                                 FROM ssl_certs
-                                WHERE account_id = '$row->sslpaid'
+                                WHERE account_id = '" . $row->sslpaid . "'
                                   AND active NOT IN ('0')";
             $result_total_count = mysqli_query($dbcon, $sql_total_count);
 

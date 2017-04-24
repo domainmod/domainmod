@@ -76,7 +76,7 @@ if ($export_data == '1') {
 
             $sql_total_count = "SELECT count(*) AS total_count
                                 FROM ssl_certs
-                                WHERE type_id = '$row->id'
+                                WHERE type_id = '" . $row->id . "'
                                   AND active NOT IN ('0')";
             $result_total_count = mysqli_query($dbcon, $sql_total_count);
 

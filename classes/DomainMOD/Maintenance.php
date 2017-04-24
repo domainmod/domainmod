@@ -269,9 +269,9 @@ class Maintenance
         while ($row = mysqli_fetch_object($result)) {
 
             $sql2 = "UPDATE ssl_certs
-                     SET fee_id = '$row->id'
-                     WHERE ssl_provider_id = '$row->ssl_provider_id'
-                       AND type_id = '$row->type_id'
+                     SET fee_id = '" . $row->id . "'
+                     WHERE ssl_provider_id = '" . $row->ssl_provider_id . "'
+                       AND type_id = '" . $row->type_id . "'
                        AND fee_fixed = '0'";
             mysqli_query($dbcon, $sql2);
 
@@ -286,8 +286,8 @@ class Maintenance
             $sql2 = "UPDATE ssl_fees
                      SET fee_fixed = '1',
                          update_time = '" . mysqli_real_escape_string($dbcon, $timestamp) . "'
-                     WHERE ssl_provider_id = '$row->ssl_provider_id'
-                       AND type_id = '$row->type_id'";
+                     WHERE ssl_provider_id = '" . $row->ssl_provider_id . "'
+                       AND type_id = '" . $row->type_id . "'";
             mysqli_query($dbcon, $sql2);
 
         }

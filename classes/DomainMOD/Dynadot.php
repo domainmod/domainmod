@@ -122,8 +122,8 @@ class Dynadot
 
     public function processExpiry($expiry_result)
     {
-        $unix_expiration_date = substr($expiry_result, 0, -3);
-        return gmdate("Y-m-d", $unix_expiration_date);
+        $expiry_formatted = substr($expiry_result, 0, -3);
+        return gmdate("Y-m-d", $expiry_formatted);
     }
 
     public function processDns($dns_result)

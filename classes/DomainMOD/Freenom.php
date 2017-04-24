@@ -117,9 +117,8 @@ class Freenom
 
     public function processExpiry($expiry_result)
     {
-        $expiry_result = substr_replace($expiry_result, '-', 4, 0);
-        $expiry_result = substr_replace($expiry_result, '-', 7, 0);
-        return $expiry_result;
+        $expiry_formatted = substr_replace($expiry_result, '-', 4, 0);
+        return substr_replace($expiry_formatted, '-', 7, 0);
     }
 
     public function processDns($dns_result)
