@@ -37,17 +37,28 @@ $system->authCheck($web_root);
 
 $sslcid = $_GET['sslcid'];
 
-$sql = "SELECT `name`, notes
-        FROM ssl_certs
-        WHERE id = '" . $sslcid . "'";
-$result = mysqli_query($dbcon, $sql);
+$query = "SELECT `name`, notes
+          FROM ssl_certs
+          WHERE id = ?";
+$q = $dbcon->stmt_init();
 
-while ($row = mysqli_fetch_object($result)) {
+if ($q->prepare($query)) {
 
-    $new_name = $row->name;
-    $new_notes = $row->notes;
+    $q->bind_param('i', $sslcid);
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($name, $notes);
 
-}
+    while ($q->fetch()) {
+
+        $new_name = $name;
+        $new_notes = $notes;
+
+    }
+
+    $q->close();
+
+} else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 $page_title = "SSL Certificate Notes (" . $new_name . ")";
 $software_section = "ssl-certs";

@@ -35,19 +35,30 @@ require_once(DIR_INC . 'database.inc.php');
 
 $system->authCheck($web_root);
 
-$did = $_GET['did'];
+$did = (integer) $_GET['did'];
 
-$sql = "SELECT domain, notes
-        FROM domains
-        WHERE id = '" . $did . "'";
-$result = mysqli_query($dbcon, $sql);
+$query = "SELECT domain, notes
+          FROM domains
+          WHERE id = ?";
+$q = $dbcon->stmt_init();
 
-while ($row = mysqli_fetch_object($result)) {
+if ($q->prepare($query)) {
 
-    $new_domain = $row->domain;
-    $new_notes = $row->notes;
+    $q->bind_param('i', $did);
+    $q->execute();
+    $q->store_result();
+    $q->bind_result($domain, $notes);
 
-}
+    while ($q->fetch()) {
+
+        $new_domain = $domain;
+        $new_notes = $notes;
+
+    }
+
+    $q->close();
+
+} else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 $page_title = "Domain Notes (" . $new_domain . ")";
 $software_section = "domains";

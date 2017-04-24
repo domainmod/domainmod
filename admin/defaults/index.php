@@ -58,22 +58,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $_SESSION['s_message_success'] .= "The System Defaults were updated<BR>";
 
-    $sql = "UPDATE settings
-            SET default_category_domains = '" . $new_default_category_domains . "',
-                default_category_ssl = '" . $new_default_category_ssl . "',
-                default_dns = '" . $new_default_dns . "',
-                default_host = '" . $new_default_host . "',
-                default_ip_address_domains = '" . $new_default_ip_address_domains . "',
-                default_ip_address_ssl = '" . $new_default_ip_address_ssl . "',
-                default_owner_domains = '" . $new_default_owner_domains . "',
-                default_owner_ssl = '" . $new_default_owner_ssl . "',
-                default_registrar = '" . $new_default_registrar . "',
-                default_registrar_account = '" . $new_default_registrar_account . "',
-                default_ssl_provider_account = '" . $new_default_ssl_provider_account . "',
-                default_ssl_type = '" . $new_default_ssl_type . "',
-                default_ssl_provider = '" . $new_default_ssl_provider . "',
-                update_time = '" . $time->stamp() . "'";
-    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
+    $query = "UPDATE settings
+              SET default_category_domains = ?,
+                  default_category_ssl = ?,
+                  default_dns = ?,
+                  default_host = ?,
+                  default_ip_address_domains = ?,
+                  default_ip_address_ssl = ?,
+                  default_owner_domains = ?,
+                  default_owner_ssl = ?,
+                  default_registrar = ?,
+                  default_registrar_account = ?,
+                  default_ssl_provider_account = ?,
+                  default_ssl_type = ?,
+                  default_ssl_provider = ?,
+                  update_time = ?";
+    $q = $dbcon->stmt_init();
+
+    if ($q->prepare($query)) {
+
+        $timestamp = $time->stamp();
+
+        $q->bind_param('iiiiiiiiiiiiis', $new_default_category_domains, $new_default_category_ssl, $new_default_dns,
+            $new_default_host, $new_default_ip_address_domains, $new_default_ip_address_ssl,
+            $new_default_owner_domains, $new_default_owner_ssl, $new_default_registrar, $new_default_registrar_account,
+            $new_default_ssl_provider_account, $new_default_ssl_type, $new_default_ssl_provider, $timestamp);
+        $q->execute();
+        $q->close();
+
+    } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     $_SESSION['s_system_default_category_domains'] = $new_default_category_domains;
     $_SESSION['s_system_default_category_ssl'] = $new_default_category_ssl;

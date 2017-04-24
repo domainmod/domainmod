@@ -39,9 +39,9 @@ require_once(DIR_INC . 'database.inc.php');
 
 $system->authCheck($web_root);
 
-$sslpid = $_GET['sslpid'];
-$sslpaid = $_GET['sslpaid'];
-$oid = $_GET['oid'];
+$sslpid = (integer) $_GET['sslpid'];
+$sslpaid = (integer) $_GET['sslpaid'];
+$oid = (integer) $_GET['oid'];
 $export_data = $_GET['export_data'];
 
 if ($sslpid != '') { $sslpid_string = ' AND sa.ssl_provider_id = ' . $sslpid . ' '; } else { $sslpid_string = ''; }

@@ -51,7 +51,7 @@ class Format
 
         foreach($domain_list AS &$value) {
 
-            $value = $this->stripSpacing($value);
+            $value = urlencode($this->stripSpacing($value));
 
         }
 

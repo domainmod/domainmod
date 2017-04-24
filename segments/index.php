@@ -54,17 +54,28 @@ if ($export_data == "1") {
 
         $seg_clause = " AND s.id = " . $segid . " ";
 
-        $sql_seg = "SELECT `name`, number_of_domains
-                    FROM segments
-                    WHERE id = '" . $segid . "'";
-        $result_seg = mysqli_query($dbcon, $sql_seg);
+        $query = "SELECT `name`, number_of_domains
+                  FROM segments
+                  WHERE id = ?";
+        $q = $dbcon->stmt_init();
 
-        while ($row_seg = mysqli_fetch_object($result_seg)) {
+        if ($q->prepare($query)) {
 
-            $segment_name = $row_seg->name;
-            $number_of_domains = $row_seg->number_of_domains;
+            $q->bind_param('i', $segid);
+            $q->execute();
+            $q->store_result();
+            $q->bind_result($name, $number);
 
-        }
+            while ($q->fetch()) {
+
+                $segment_name = $name;
+                $number_of_domains = $number;
+
+            }
+
+            $q->close();
+
+        } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
     } else {
 

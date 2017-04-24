@@ -39,9 +39,9 @@ require_once(DIR_INC . 'database.inc.php');
 
 $system->authCheck($web_root);
 
-$rid = $_GET['rid'];
-$raid = $_GET['raid'];
-$oid = $_GET['oid'];
+$rid = (integer) $_GET['rid'];
+$raid = (integer) $_GET['raid'];
+$oid = (integer) $_GET['oid'];
 $export_data = $_GET['export_data'];
 
 if ($rid != '') { $rid_string = " AND ra.registrar_id = '" . $rid . "' "; } else { $rid_string = ''; }
