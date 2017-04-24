@@ -26,23 +26,41 @@ class Log
 
     public function goal($goal, $old_version, $new_version)
     {
-        if ($goal == 'install') {
-            $base_url = 'https://domainmod.org/installed/index.php?v=' . urlencode($new_version);
-        } elseif ($goal == 'upgrade') {
-            $base_url = 'https://domainmod.org/upgraded/index.php?ov=' . urlencode($old_version) . '&nv=' . urlencode($new_version);
-        } else {
-            return;
-        }
-        $ip_address = urlencode($_SERVER['SERVER_ADDR']);
+        $base_url = $this->getBaseUrl($goal, $old_version, $new_version);
+        $ip_address = urlencode($this->getIp());
         $user_agent = urlencode($_SERVER['HTTP_USER_AGENT']);
         $language = urlencode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
-        $log_url = $base_url . '&ip=' . $ip_address . '&a=' . $user_agent . '&l=' . $language;
+        $goal_url = $base_url . '&ip=' . $ip_address . '&a=' . $user_agent . '&l=' . $language;
+        $this->triggerGoal($goal_url);
+        return;
+    }
+
+    public function getBaseUrl($goal, $old_version, $new_version)
+    {
+        if ($goal == 'install') { // install
+            return 'https://domainmod.org/installed/index.php?v=' . urlencode($new_version);
+        } else { // upgrade
+            return 'https://domainmod.org/upgraded/index.php?ov=' . urlencode($old_version) . '&nv=' . urlencode($new_version);
+        }
+    }
+
+    public function getIp()
+    {
+        if ($_SERVER['SERVER_ADDR'] == '127.0.0.1' || $_SERVER['SERVER_ADDR'] == '::1') {
+            return $_SERVER['REMOTE_ADDR'];
+        } else {
+            return $_SERVER['SERVER_ADDR'];
+        }
+    }
+
+    public function triggerGoal($goal_url)
+    {
         $context = stream_context_create(array('https' => array('header' => 'Connection: close\r\n')));
-        $result = file_get_contents($log_url, false, $context);
+        $result = file_get_contents($goal_url, false, $context);
         if (!$result) {
             $handle = curl_init();
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($handle, CURLOPT_URL, $log_url);
+            curl_setopt($handle, CURLOPT_URL, $goal_url);
             curl_exec($handle);
             curl_close($handle);
         }
