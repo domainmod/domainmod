@@ -39,7 +39,7 @@ require_once(DIR_INC . 'database.inc.php');
 
 $system->authCheck($web_root);
 
-$segid = $_GET['segid'];
+$segid = (integer) $_GET['segid'];
 $export_data = $_GET['export_data'];
 
 $sql = "SELECT s.id, s.name, s.description, s.segment, s.number_of_domains, s.notes, s.creation_type_id, s.created_by, s.insert_time, s.update_time, sd.domain
