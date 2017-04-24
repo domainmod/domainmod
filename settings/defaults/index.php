@@ -131,37 +131,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
+    $sql = "SELECT *
+            FROM user_settings
+            WHERE user_id = '" . $_SESSION['s_user_id'] . "'";
+    $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    while ($row = mysqli_fetch_object($result)) {
 
-        // placeholder
-
-    } else {
-
-        $sql = "SELECT *
-                FROM user_settings
-                WHERE user_id = '" . $_SESSION['s_user_id'] . "'";
-        $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERROR');
-
-        while ($row = mysqli_fetch_object($result)) {
-
-            $new_default_category_domains = $row->default_category_domains;
-            $new_default_category_ssl = $row->default_category_ssl;
-            $new_default_dns = $row->default_dns;
-            $new_default_host = $row->default_host;
-            $new_default_ip_address_domains = $row->default_ip_address_domains;
-            $new_default_ip_address_ssl = $row->default_ip_address_ssl;
-            $new_default_owner_domains = $row->default_owner_domains;
-            $new_default_owner_ssl = $row->default_owner_ssl;
-            $new_default_registrar = $row->default_registrar;
-            $new_default_registrar_account = $row->default_registrar_account;
-            $new_default_ssl_provider_account = $row->default_ssl_provider_account;
-            $new_default_ssl_type = $row->default_ssl_type;
-            $new_default_ssl_provider = $row->default_ssl_provider;
-
-        }
+        $new_default_category_domains = $row->default_category_domains;
+        $new_default_category_ssl = $row->default_category_ssl;
+        $new_default_dns = $row->default_dns;
+        $new_default_host = $row->default_host;
+        $new_default_ip_address_domains = $row->default_ip_address_domains;
+        $new_default_ip_address_ssl = $row->default_ip_address_ssl;
+        $new_default_owner_domains = $row->default_owner_domains;
+        $new_default_owner_ssl = $row->default_owner_ssl;
+        $new_default_registrar = $row->default_registrar;
+        $new_default_registrar_account = $row->default_registrar_account;
+        $new_default_ssl_provider_account = $row->default_ssl_provider_account;
+        $new_default_ssl_type = $row->default_ssl_type;
+        $new_default_ssl_provider = $row->default_ssl_provider;
 
     }
+
 }
 ?>
 <?php require_once(DIR_INC . 'doctype.inc.php'); ?>

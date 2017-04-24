@@ -41,7 +41,7 @@ require_once(DIR_INC . 'database.inc.php');
 
 $system->authCheck($web_root);
 
-$did = $_REQUEST['did'];
+$did = (integer) $_REQUEST['did'];
 
 $del = $_GET['del'];
 $really_del = $_GET['really_del'];

@@ -26,41 +26,30 @@ class Format
 
     public function stripSpacing($input)
     {
-
         return trim(preg_replace("/^\n+|^[\t\s]*\n+/m", "", $input));
-
     }
 
     public function replaceBreaks($input_notes)
     {
-
         $output_notes = trim($input_notes);
         $output_notes = str_replace("\n\n", "<BR><BR>", $output_notes);
-        $output_notes = str_replace("\n", "<BR>", $output_notes);
-
-        return $output_notes;
-
+        return str_replace("\n", "<BR>", $output_notes);
     }
 
     public function cleanAndSplitDomains($raw_domain_list)
     {
-
         $clean_domain_list = $this->stripSpacing($raw_domain_list);
-
         $domain_list = explode("\r\n", $clean_domain_list);
-
-        foreach($domain_list AS &$value) {
-
-            $value = urlencode($this->stripSpacing($value));
-
+        $new_domain_list = array();
+        foreach($domain_list AS $value) {
+            $new_domain_list[] = urlencode($this->stripSpacing($value));
         }
-
-        return array_unique($domain_list);
-
+        return array_unique($new_domain_list);
     }
 
     public function formatForMysql($dbcon, $domain_list)
     {
+        $new_domain_list = array();
         foreach($domain_list AS $value) {
             $new_domain_list[] = mysqli_real_escape_string($dbcon, $value);
         }
@@ -69,9 +58,7 @@ class Format
         $list_formatted = $list_formatted . "'";
         $list_formatted = preg_replace("/\r\n/", "','", $list_formatted);
         $list_formatted = str_replace(" ", "", $list_formatted);
-
         return trim($list_formatted);
-
     }
 
 } //@formatter:on

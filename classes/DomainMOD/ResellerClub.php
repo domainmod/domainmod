@@ -72,6 +72,7 @@ class ResellerClub
             $api_results = $this->apiCall($api_url);
             $array_results = $this->convertToArray($api_results);
 
+            $dns_list = array();
             $dns_list[0] = $array_results['ns1'];
             $dns_list[1] = $array_results['ns2'];
             $dns_list[2] = $array_results['ns3'];
@@ -110,6 +111,7 @@ class ResellerClub
 
     public function processDns($dns_result)
     {
+        $dns_servers = array();
         if (!empty($dns_result)) {
             $dns_servers = array_filter($dns_result);
         } else {

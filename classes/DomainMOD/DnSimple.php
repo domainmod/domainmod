@@ -137,6 +137,7 @@ class DnSimple
 
     public function processDns($dns_result)
     {
+        $dns_servers = array();
         if (!empty($dns_result)) {
             $dns_servers = array_filter($dns_result);
         } else {
