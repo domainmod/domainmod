@@ -39,4 +39,4 @@
 
     <strong>Number of SSL Certs:</strong> <?php echo $number_of_certs_total; ?><BR>
 
-<?php } ?>
+<?php }

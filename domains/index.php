@@ -1008,7 +1008,7 @@ if ($export_data == "1") {
 
         unset($row_contents);
         $count = 0;
-        
+
         $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
 
         $row_contents[$count++] = $domain_status;

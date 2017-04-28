@@ -57,7 +57,7 @@ if ($new_raid != '' ) {
                 AND r.api_registrar_id = apir.id
                 AND ra.id = ?";
     $q = $dbcon->stmt_init();
-    
+
     if ($q->prepare($query)) {
     
         $q->bind_param('i', $new_raid);

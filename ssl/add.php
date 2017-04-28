@@ -232,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['s_missing_ssl_fees'] = $system->checkForRows($dbcon, $sql);
 
         $system->checkExistingAssets($dbcon);
-        
+
         $_SESSION['s_message_success'] .= 'SSL Certificate ' . $new_name . ' Added<BR>';
 
     } else {

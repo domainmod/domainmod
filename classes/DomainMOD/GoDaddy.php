@@ -60,7 +60,7 @@ class GoDaddy
             $domain_list = array();
             $domain_count = 0;
 
-            foreach ($array_results AS $domain) {
+            foreach ($array_results as $domain) {
 
                 $domain_list[] = $domain['domain'];
                 $domain_count++;
@@ -114,10 +114,10 @@ class GoDaddy
 
         return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
     }
-    
+
     public function convertToArray($api_result)
     {
-        return json_decode($api_result, TRUE);
+        return json_decode($api_result, true);
     }
 
     public function processDns($dns_result)

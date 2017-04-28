@@ -37,7 +37,7 @@ class DreamHost
     public function apiCall($full_url)
     {
         $handle = curl_init($full_url);
-        curl_setopt( $handle, CURLOPT_RETURNTRANSFER, TRUE );
+        curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
         $result = curl_exec($handle);
         curl_close($handle);
         return $result;
@@ -56,7 +56,7 @@ class DreamHost
             $domain_list = array();
             $domain_count = 0;
 
-            foreach ($array_results['data'] AS $value) {
+            foreach ($array_results['data'] as $value) {
 
                 $domain_list[] = $value['domain'];
                 $expiry_date = $this->processExpiry($value['expires']);
@@ -137,7 +137,7 @@ class DreamHost
 
     public function convertToArray($api_result)
     {
-        return json_decode($api_result, TRUE);
+        return json_decode($api_result, true);
     }
 
     public function processExpiry($expiry_result)

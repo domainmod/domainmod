@@ -129,7 +129,7 @@ if ($export_data == '1') {
             }
 
             $creation_type = $system->getCreationType($dbcon, $row->creation_type_id);
-            
+
             if ($row->created_by == '0') {
                 $created_by = 'Unknown';
             } else {

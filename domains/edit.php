@@ -415,7 +415,7 @@ if ($really_del == "1") {
 <?php
 echo $form->showFormTop('');
 echo '<strong>Domain</strong><BR>';
-echo htmlentities($new_domain , ENT_QUOTES, 'UTF-8'). '<BR><BR>';
+echo htmlentities($new_domain, ENT_QUOTES, 'UTF-8'). '<BR><BR>';
 echo $form->showInputText('new_function', 'Function (255)', '', $new_function, '255', '', '', '', '');
 echo $form->showInputText('new_expiry_date', 'Expiry Date (YYYY-MM-DD)', '', $new_expiry_date, '10', '', '1', '', '');
 

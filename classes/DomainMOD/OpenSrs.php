@@ -177,7 +177,7 @@ EOD;
             $domain_list = array();
             $domain_count = 0;
 
-            foreach ($array_results[0]['body']['data_block']['dt_assoc']['item'][4]['dt_assoc']['item'][0]['dt_array']['item'] AS $domain) {
+            foreach ($array_results[0]['body']['data_block']['dt_assoc']['item'][4]['dt_assoc']['item'][0]['dt_array']['item'] as $domain) {
 
                 $domain_list[] = $domain['dt_assoc']['item'][1];
                 $domain_count++;
@@ -227,7 +227,7 @@ EOD;
 
             $dns_result = array();
 
-            foreach ($array_results[0]['body']['data_block']['dt_assoc']['item'][4]['dt_assoc']['item'][0]['dt_array']['item'] AS $server_list) {
+            foreach ($array_results[0]['body']['data_block']['dt_assoc']['item'][4]['dt_assoc']['item'][0]['dt_array']['item'] as $server_list) {
 
                 $dns_result[] = $server_list['dt_assoc']['item'][0];
 
@@ -267,8 +267,8 @@ EOD;
     public function convertToArray($api_result)
     {
         $xml = simplexml_load_string($api_result);
-        $json = json_encode((array($xml)), TRUE);
-        return json_decode($json, TRUE);
+        $json = json_encode((array($xml)), true);
+        return json_decode($json, true);
     }
 
     public function processExpiry($expiry_result)

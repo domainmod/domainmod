@@ -39,7 +39,7 @@ class ResellerClub
     public function apiCall($full_url)
     {
         $handle = curl_init($full_url);
-        curl_setopt( $handle, CURLOPT_RETURNTRANSFER, TRUE );
+        curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
         $result = curl_exec($handle);
         curl_close($handle);
         return $result;
@@ -101,7 +101,7 @@ class ResellerClub
 
     public function convertToArray($api_result)
     {
-        return json_decode($api_result, TRUE);
+        return json_decode($api_result, true);
     }
 
     public function processExpiry($expiry_result)

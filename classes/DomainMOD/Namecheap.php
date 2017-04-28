@@ -37,11 +37,11 @@ class Namecheap
             return 'Unable to build API URL';
         }
     }
-                    
+
     public function apiCall($full_url)
     {
         $handle = curl_init($full_url);
-        curl_setopt( $handle, CURLOPT_RETURNTRANSFER, TRUE );
+        curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
         $result = curl_exec($handle);
         curl_close($handle);
         return $result;
@@ -59,7 +59,7 @@ class Namecheap
             $domain_list = array();
             $domain_count = 0;
 
-            foreach ($array_results[0]['CommandResponse']['DomainGetListResult']['Domain'] AS $domain) {
+            foreach ($array_results[0]['CommandResponse']['DomainGetListResult']['Domain'] as $domain) {
 
                 $domain_list[] = $domain['@attributes']['Name'];
                 $domain_count++;
@@ -141,8 +141,8 @@ class Namecheap
     public function convertToArray($api_result)
     {
         $xml = simplexml_load_string($api_result);
-        $json = json_encode((array($xml)), TRUE);
-        return json_decode($json, TRUE);
+        $json = json_encode((array($xml)), true);
+        return json_decode($json, true);
     }
 
     public function processDns($dns_result)

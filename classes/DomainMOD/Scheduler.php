@@ -24,19 +24,19 @@ namespace DomainMOD;
 class Scheduler
 {
 
-    public function isRunning($dbcon, $id)
+    public function isRunning($dbcon, $task_id)
     {
-        $sql_running = "UPDATE scheduler SET is_running = '1' WHERE id = '" . mysqli_real_escape_string($dbcon, $id) . "'";
+        $sql_running = "UPDATE scheduler SET is_running = '1' WHERE id = '" . mysqli_real_escape_string($dbcon, $task_id) . "'";
         return mysqli_query($dbcon, $sql_running);
     }
 
-    public function isFinished($dbcon, $id)
+    public function isFinished($dbcon, $task_id)
     {
-        $sql_finished = "UPDATE scheduler SET is_running = '0' WHERE id = '" . mysqli_real_escape_string($dbcon, $id) . "'";
+        $sql_finished = "UPDATE scheduler SET is_running = '0' WHERE id = '" . mysqli_real_escape_string($dbcon, $task_id) . "'";
         return mysqli_query($dbcon, $sql_finished);
     }
 
-    public function updateTime($dbcon, $id, $timestamp, $next_run, $active)
+    public function updateTime($dbcon, $task_id, $timestamp, $next_run, $active)
     {
         $time = new Time();
         $current_time = $time->stamp();
@@ -46,12 +46,12 @@ class Scheduler
                            SET last_run = '" . $timestamp . "',
                                last_duration = '" . $duration . "',
                                next_run = '" . $next_run . "'
-                           WHERE id = '" . mysqli_real_escape_string($dbcon, $id) . "'";
+                           WHERE id = '" . mysqli_real_escape_string($dbcon, $task_id) . "'";
         } else {
             $sql_update = "UPDATE scheduler
                            SET last_run = '" . $timestamp . "',
                                duration = '" . $duration . "'
-                           WHERE id = '" . mysqli_real_escape_string($dbcon, $id) . "'";
+                           WHERE id = '" . mysqli_real_escape_string($dbcon, $task_id) . "'";
         }
         return mysqli_query($dbcon, $sql_update);
     }
@@ -69,22 +69,22 @@ class Scheduler
         return $result;
     }
 
-    public function getTask($dbcon, $id)
+    public function getTask($dbcon, $task_id)
     {
         $sql_task = "SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
                      FROM scheduler
-                     WHERE id = '" . $id . "'
+                     WHERE id = '" . $task_id . "'
                      ORDER BY sort_order ASC";
         return mysqli_query($dbcon, $sql_task);
     }
 
-    public function createActive($active, $id)
+    public function createActive($active, $task_id)
     {
-        $result = '<strong><font color=\'green\'>Active</font></strong> [<a href=\'update.php?a=d&id=' . $id .
-            '\'>disable</a>] [<a href=\'run.php?id=' . $id . '\'>run now</a>]';
+        $result = '<strong><font color=\'green\'>Active</font></strong> [<a href=\'update.php?a=d&id=' . $task_id .
+            '\'>disable</a>] [<a href=\'run.php?id=' . $task_id . '\'>run now</a>]';
         if ($active == '0') {
-            $result = '<strong><font color=\'red\'>Inactive</font></strong> [<a href=\'update.php?a=e&id=' . $id .
-                '\'>enable</a>] [<a href=\'run.php?id=' . $id . '\'>run now</a>]';
+            $result = '<strong><font color=\'red\'>Inactive</font></strong> [<a href=\'update.php?a=e&id=' . $task_id .
+                '\'>enable</a>] [<a href=\'run.php?id=' . $task_id . '\'>run now</a>]';
         }
         return $result;
     }
@@ -106,7 +106,7 @@ class Scheduler
                        '16' => '16:00', '17' => '17:00', '18' => '18:00', '19' => '19:00', '20' => '20:00',
                        '21' => '21:00', '22' => '22:00', '23' => '23:00');
         ob_start();
-        foreach ($hours AS $key => $value) { ?>
+        foreach ($hours as $key => $value) { ?>
             <option value="<?php echo $key; ?>"<?php if ($hour == $key) echo ' selected'; ?>><?php echo $value; ?></option><?php
         }
         return ob_get_clean();

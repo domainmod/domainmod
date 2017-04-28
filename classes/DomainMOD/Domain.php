@@ -79,17 +79,18 @@ class Domain
 
     public function getExpiry($dbcon, $domain)
     {
+        $expiry = '';
         $query = "SELECT expiry_date
                   FROM domains
                   WHERE domain = ?";
-        $q = $dbcon->stmt_init();
-        $q->prepare($query);
-        $q->bind_param('s', $domain);
-        $q->execute();
-        $q->store_result();
-        $q->bind_result($expiry);
-        while ($q->fetch()) { $expiry_date = $expiry; }
-        $q->close();
+        $qrun = $dbcon->stmt_init();
+        $qrun->prepare($query);
+        $qrun->bind_param('s', $domain);
+        $qrun->execute();
+        $qrun->store_result();
+        $qrun->bind_result($expiry);
+        while ($qrun->fetch()) { $expiry_date = $expiry; }
+        $qrun->close();
         return $expiry_date;
     }
 
@@ -130,7 +131,7 @@ class Domain
         $q->execute();
         $q->close();
     }
-    
+
     public function getTld($domain)
     {
         return preg_replace("/^((.*?)\.)(.*)$/", "\\3", $domain);

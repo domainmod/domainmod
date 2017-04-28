@@ -39,7 +39,7 @@ class NameSilo
     public function apiCall($full_url)
     {
         $handle = curl_init($full_url);
-        curl_setopt( $handle, CURLOPT_RETURNTRANSFER, TRUE );
+        curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
         $result = curl_exec($handle);
         curl_close($handle);
         return $result;
@@ -57,7 +57,7 @@ class NameSilo
             $domain_list = array();
             $domain_count = 0;
 
-            foreach ($array_results[0]['reply']['domains']['domain'] AS $domain) {
+            foreach ($array_results[0]['reply']['domains']['domain'] as $domain) {
 
                 $domain_list[] = $domain;
                 $domain_count++;
@@ -111,12 +111,12 @@ class NameSilo
 
         return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
     }
-    
+
     public function convertToArray($api_result)
     {
         $xml = simplexml_load_string($api_result);
-        $json = json_encode((array($xml)), TRUE);
-        return json_decode($json, TRUE);
+        $json = json_encode((array($xml)), true);
+        return json_decode($json, true);
     }
 
     public function processDns($dns_result)

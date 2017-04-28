@@ -134,7 +134,7 @@ class DomainQueue
                     // update the domain count
                     $this->updateDomainCount($dbcon, $row->id, $domain_count);
 
-                    foreach ($domain_list AS $domain) {
+                    foreach ($domain_list as $domain) {
 
                         $this->importToDomainQueue($dbcon, $row->api_registrar_id, $domain, $row->owner_id, $row->registrar_id, $row->account_id, $row->created_by);
 
@@ -470,7 +470,7 @@ class DomainQueue
             $count = 0;
 
             // Make sure DNS servers were returned
-            foreach($dns_servers AS $server) {
+            foreach($dns_servers as $server) {
 
                 $new_servers[$count++] = strtolower($server);
 

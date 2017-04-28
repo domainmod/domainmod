@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($action == "RENEW") {
 
-                foreach ($domain_list AS $each_domain) {
+                foreach ($domain_list as $each_domain) {
 
                     $domain->renew($dbcon, $each_domain, $new_renewal_years, $new_notes);
 
@@ -469,7 +469,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
-                        foreach ($domain_list AS $each_domain) {
+                        foreach ($domain_list as $each_domain) {
 
                             $q->bind_param('isss', $new_pcid, $new_notes, $timestamp, $each_domain);
                             $q->execute();
@@ -485,7 +485,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
-                        foreach ($domain_list AS $each_domain) {
+                        foreach ($domain_list as $each_domain) {
 
                             $q->bind_param('iss', $new_pcid, $timestamp, $each_domain);
                             $q->execute();
@@ -517,7 +517,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
-                        foreach ($domain_list AS $each_domain) {
+                        foreach ($domain_list as $each_domain) {
 
                             $q->bind_param('isss', $new_dnsid, $new_notes, $timestamp, $each_domain);
                             $q->execute();
@@ -533,7 +533,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
-                        foreach ($domain_list AS $each_domain) {
+                        foreach ($domain_list as $each_domain) {
 
                             $q->bind_param('iss', $new_dnsid, $timestamp, $each_domain);
                             $q->execute();
@@ -564,7 +564,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
-                        foreach ($domain_list AS $each_domain) {
+                        foreach ($domain_list as $each_domain) {
 
                             $q->bind_param('isss', $new_ipid, $new_notes, $timestamp, $each_domain);
                             $q->execute();
@@ -580,7 +580,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
-                        foreach ($domain_list AS $each_domain) {
+                        foreach ($domain_list as $each_domain) {
 
                             $q->bind_param('iss', $new_ipid, $timestamp, $each_domain);
                             $q->execute();
@@ -609,7 +609,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
@@ -673,7 +673,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
-                        foreach ($domain_list AS $each_domain) {
+                        foreach ($domain_list as $each_domain) {
 
                             $q->bind_param('iiisss', $new_owner_id, $new_registrar_id, $new_registrar_account_id,
                                 $new_notes, $timestamp, $each_domain);
@@ -692,7 +692,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
-                        foreach ($domain_list AS $each_domain) {
+                        foreach ($domain_list as $each_domain) {
 
                             $q->bind_param('iiiss', $new_owner_id, $new_registrar_id, $new_registrar_account_id,
                                 $timestamp, $each_domain);
@@ -765,7 +765,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
-                        foreach ($domain_list AS $each_domain) {
+                        foreach ($domain_list as $each_domain) {
 
                             $q->bind_param('isss', $new_whid, $new_notes, $timestamp, $each_domain);
                             $q->execute();
@@ -781,7 +781,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
-                        foreach ($domain_list AS $each_domain) {
+                        foreach ($domain_list as $each_domain) {
 
                             $q->bind_param('iss', $new_whid, $timestamp, $each_domain);
                             $q->execute();
@@ -862,7 +862,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
@@ -878,7 +878,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('ss', $timestamp, $each_domain);
                         $q->execute();
@@ -903,7 +903,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
@@ -919,7 +919,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('ss', $timestamp, $each_domain);
                         $q->execute();
@@ -944,7 +944,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
@@ -960,7 +960,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('ss', $timestamp, $each_domain);
                         $q->execute();
@@ -985,7 +985,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
@@ -1001,7 +1001,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('ss', $timestamp, $each_domain);
                         $q->execute();
@@ -1026,7 +1026,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
@@ -1042,7 +1042,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('ss', $timestamp, $each_domain);
                         $q->execute();
@@ -1067,7 +1067,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
@@ -1083,7 +1083,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('ss', $timestamp, $each_domain);
                         $q->execute();
@@ -1108,7 +1108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
@@ -1124,7 +1124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('ss', $timestamp, $each_domain);
                         $q->execute();
@@ -1149,7 +1149,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
@@ -1165,7 +1165,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('ss', $timestamp, $each_domain);
                         $q->execute();
@@ -1190,7 +1190,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
@@ -1206,7 +1206,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('ss', $timestamp, $each_domain);
                         $q->execute();
@@ -1229,7 +1229,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
@@ -1245,7 +1245,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('ss', $timestamp, $each_domain);
                         $q->execute();
@@ -1285,7 +1285,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('sss', $new_notes, $timestamp, $each_domain);
                         $q->execute();
@@ -1301,7 +1301,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = $dbcon->stmt_init();
                     $stmt = $q->prepare($query);
 
-                    foreach ($domain_list AS $each_domain) {
+                    foreach ($domain_list as $each_domain) {
 
                         $q->bind_param('ss', $timestamp, $each_domain);
                         $q->execute();
@@ -1346,7 +1346,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
-                        foreach ($domain_list AS $each_domain) {
+                        foreach ($domain_list as $each_domain) {
 
                             $q->bind_param('ssss', $new_expiry_date, $new_notes, $timestamp, $each_domain);
                             $q->execute();
@@ -1362,7 +1362,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $q = $dbcon->stmt_init();
                         $stmt = $q->prepare($query);
 
-                        foreach ($domain_list AS $each_domain) {
+                        foreach ($domain_list as $each_domain) {
 
                             $q->bind_param('sss', $new_expiry_date, $timestamp, $each_domain);
                             $q->execute();

@@ -53,7 +53,7 @@ class NameBright
             curl_setopt($handle, CURLOPT_HEADER, true);
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($handle, CURLOPT_POST, true);
-            curl_setopt($handle, CURLOPT_HEADER,'Content-Type: application/x-www-form-urlencoded');
+            curl_setopt($handle, CURLOPT_HEADER, 'Content-Type: application/x-www-form-urlencoded');
             curl_setopt($handle, CURLOPT_POSTFIELDS, $post_fields);
             $result = curl_exec($handle);
             curl_close($handle);
@@ -89,7 +89,7 @@ class NameBright
             $domain_list = array();
             $domain_count = 0;
 
-            foreach ($array_results['Domains'] AS $domain) {
+            foreach ($array_results['Domains'] as $domain) {
 
                 $domain_list[] = $domain['DomainName'];
                 $domain_count++;
@@ -165,7 +165,7 @@ class NameBright
 
     public function convertToArray($api_result)
     {
-        return json_decode($api_result, TRUE);
+        return json_decode($api_result, true);
     }
 
     public function processDns($dns_result)

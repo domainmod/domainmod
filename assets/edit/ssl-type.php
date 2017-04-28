@@ -49,7 +49,7 @@ $new_notes = $_REQUEST['new_notes'];
 $new_ssltid = $_REQUEST['new_ssltid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
+
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
     if ($new_type != "") {

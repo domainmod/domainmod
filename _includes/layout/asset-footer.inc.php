@@ -27,4 +27,4 @@
 
     <em>Inactive Assets are currently displayed. <a href="<?php echo $web_root; ?>/settings/toggles/inactive-assets.php">Click here to hide them</a>.</em><BR><?php
 
-} ?>
+}

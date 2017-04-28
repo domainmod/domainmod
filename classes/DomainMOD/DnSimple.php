@@ -73,7 +73,7 @@ class DnSimple
             $domain_list = array();
             $domain_count = 0;
 
-            foreach ($array_results['data'] AS $domain) {
+            foreach ($array_results['data'] as $domain) {
 
                 $domain_list[] = $domain['name'];
                 $domain_count++;
@@ -129,10 +129,10 @@ class DnSimple
 
         return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
     }
-    
+
     public function convertToArray($api_result)
     {
-        return json_decode($api_result, TRUE);
+        return json_decode($api_result, true);
     }
 
     public function processDns($dns_result)

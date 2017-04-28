@@ -228,7 +228,7 @@ class Api
                 FROM api_registrars
                 WHERE id = '" . $api_registrar_id . "'";
         $result = mysqli_query($dbcon, $sql);
-        
+
         while ($row = mysqli_fetch_object($result)) {
             
             $api_registrar_name = $row->name;

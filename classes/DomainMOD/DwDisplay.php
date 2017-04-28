@@ -25,7 +25,7 @@ class DwDisplay
 {
 
     public function account($dbcon, $server_id, $domain)
-    { 
+    {
         $result_account = $this->getAccount($dbcon, $server_id, $domain);
         $result = '';
 
@@ -66,7 +66,7 @@ class DwDisplay
             $result = ob_get_clean();
         }
         return $result;
-    } 
+    }
 
     public function getAccount($dbcon, $server_id, $domain)
     {
@@ -92,7 +92,7 @@ class DwDisplay
     } 
 
     public function showHeading($heading, $show_heading)
-    { 
+    {
         $result = '';
         
         if ($show_heading == '1') {

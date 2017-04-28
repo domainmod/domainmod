@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   update_time = ?
               WHERE user_id = ?";
     $q = $dbcon->stmt_init();
-    
+
     if ($q->prepare($query)) {
         
         $timestamp = $time->stamp();

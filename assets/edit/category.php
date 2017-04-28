@@ -50,7 +50,7 @@ $new_notes = $_REQUEST['new_notes'];
 $new_pcid = $_REQUEST['new_pcid'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
+
     $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
     if ($new_category != "") {

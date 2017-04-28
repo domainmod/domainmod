@@ -43,7 +43,7 @@ class NameCom
         curl_setopt($handle, CURLOPT_HTTPHEADER, array(
             'Api-Username: ' . $account_username,
             'Api-Token: ' . $api_key));
-        curl_setopt( $handle, CURLOPT_RETURNTRANSFER, TRUE );
+        curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
         $result = curl_exec($handle);
         curl_close($handle);
         return $result;
@@ -119,7 +119,7 @@ class NameCom
 
     public function convertToArray($api_result)
     {
-        return json_decode($api_result, TRUE);
+        return json_decode($api_result, true);
     }
 
     public function processDns($dns_result)

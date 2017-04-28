@@ -39,7 +39,7 @@ class Freenom
     public function apiCall($full_url)
     {
         $handle = curl_init($full_url);
-        curl_setopt( $handle, CURLOPT_RETURNTRANSFER, TRUE );
+        curl_setopt( $handle, CURLOPT_RETURNTRANSFER, true );
         $result = curl_exec($handle);
         curl_close($handle);
         return $result;
@@ -57,7 +57,7 @@ class Freenom
             $domain_list = array();
             $domain_count = 0;
 
-            foreach ($array_results['domain'] AS $domain) {
+            foreach ($array_results['domain'] as $domain) {
 
                 $domain_list[] = $domain['domainname'];
                 $domain_count++;
@@ -112,7 +112,7 @@ class Freenom
 
     public function convertToArray($api_result)
     {
-        return json_decode($api_result, TRUE);
+        return json_decode($api_result, true);
     }
 
     public function processExpiry($expiry_result)
@@ -126,7 +126,7 @@ class Freenom
         $dns_servers = array();
         if (!empty($dns_result)) {
             $dns_servers = array();
-            foreach ($dns_result AS $nameserver) {
+            foreach ($dns_result as $nameserver) {
                 $dns_servers[] = $nameserver['hostname'];
             }
         } else {

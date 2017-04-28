@@ -118,7 +118,7 @@ class Form
     public function showDropdownOptionJump($url, $value, $text_to_display, $to_compare)
     {
         ob_start(); ?>
-            <option value="<?php echo htmlentities($url, ENT_QUOTES, 'UTF-8'); ?><?php echo htmlentities($value , ENT_QUOTES, 'UTF-8')?>"<?php if ($value == $to_compare) echo " selected" ?>><?php echo htmlentities($text_to_display, ENT_QUOTES, 'UTF-8'); ?></option><?php
+            <option value="<?php echo htmlentities($url, ENT_QUOTES, 'UTF-8'); ?><?php echo htmlentities($value, ENT_QUOTES, 'UTF-8')?>"<?php if ($value == $to_compare) echo " selected" ?>><?php echo htmlentities($text_to_display, ENT_QUOTES, 'UTF-8'); ?></option><?php
         return ob_get_clean();
     }
 
