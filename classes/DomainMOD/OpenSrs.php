@@ -24,130 +24,125 @@ namespace DomainMOD;
 class OpenSrs
 {
 
-    public function getApiUrl($command, $domain)
+    public function domainList()
     {
-        if ($command == 'domainlist') {
+        $start_date = gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y") - 2));
+        $end_date = gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y") + 15));
 
-            $start_date = gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y") - 2));
-            $end_date = gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y") + 15));
-
-            $xml = <<<EOD
-                    <?xml version='1.0' encoding='UTF-8' standalone='no' ?>
-                    <!DOCTYPE OPS_envelope SYSTEM 'ops.dtd'>
-                    <OPS_envelope>
-                    <header>
-                        <version>0.9</version>
-                    </header>
-                    <body>
-                    <data_block>
-                        <dt_assoc>
-                            <item key="protocol">XCP</item>
-                            <item key="object">DOMAIN</item>
-                            <item key="action">GET_DOMAINS_BY_EXPIREDATE</item>
-                            <item key="attributes">
-                             <dt_assoc>
-                                    <item key="exp_from">$start_date</item>
-                                    <item key="exp_to">$end_date</item>
-                                    <item key="page">1</item>
-                                    <item key="limit">10000</item>
-                             </dt_assoc>
-                            </item>
-                        </dt_assoc>
-                    </data_block>
-                    </body>
-                    </OPS_envelope>
+        $xml = <<<EOD
+                <?xml version='1.0' encoding='UTF-8' standalone='no' ?>
+                <!DOCTYPE OPS_envelope SYSTEM 'ops.dtd'>
+                <OPS_envelope>
+                <header>
+                    <version>0.9</version>
+                </header>
+                <body>
+                <data_block>
+                    <dt_assoc>
+                        <item key="protocol">XCP</item>
+                        <item key="object">DOMAIN</item>
+                        <item key="action">GET_DOMAINS_BY_EXPIREDATE</item>
+                        <item key="attributes">
+                         <dt_assoc>
+                                <item key="exp_from">$start_date</item>
+                                <item key="exp_to">$end_date</item>
+                                <item key="page">1</item>
+                                <item key="limit">10000</item>
+                         </dt_assoc>
+                        </item>
+                    </dt_assoc>
+                </data_block>
+                </body>
+                </OPS_envelope>
 EOD;
-            return $xml;
+        return $xml;
+    }
 
-        } elseif ($command == 'info') {
-
-            $xml = <<<EOD
-                    <?xml version='1.0' encoding='UTF-8' standalone='no' ?>
-                    <!DOCTYPE OPS_envelope SYSTEM 'ops.dtd'>
-                    <OPS_envelope>
-                    <header>
-                        <version>0.9</version>
-                    </header>
-                    <body>
-                    <data_block>
-                        <dt_assoc>
-                            <item key="protocol">XCP</item>
-                            <item key="object">DOMAIN</item>
-                            <item key="action">GET</item>
-                            <item key="attributes">
-                             <dt_assoc>
-                                    <item key="domain">$domain</item>
-                                    <item key="type">all_info</item>
-                             </dt_assoc>
-                            </item>
-                        </dt_assoc>
-                    </data_block>
-                    </body>
-                    </OPS_envelope>
+    public function domainInfo($domain)
+    {
+        $xml = <<<EOD
+                <?xml version='1.0' encoding='UTF-8' standalone='no' ?>
+                <!DOCTYPE OPS_envelope SYSTEM 'ops.dtd'>
+                <OPS_envelope>
+                <header>
+                    <version>0.9</version>
+                </header>
+                <body>
+                <data_block>
+                    <dt_assoc>
+                        <item key="protocol">XCP</item>
+                        <item key="object">DOMAIN</item>
+                        <item key="action">GET</item>
+                        <item key="attributes">
+                         <dt_assoc>
+                                <item key="domain">$domain</item>
+                                <item key="type">all_info</item>
+                         </dt_assoc>
+                        </item>
+                    </dt_assoc>
+                </data_block>
+                </body>
+                </OPS_envelope>
 EOD;
-            return $xml;
+        return $xml;
+    }
 
-        } elseif ($command == 'dns') {
-
-            $xml = <<<EOD
-                    <?xml version='1.0' encoding='UTF-8' standalone='no' ?>
-                    <!DOCTYPE OPS_envelope SYSTEM 'ops.dtd'>
-                    <OPS_envelope>
-                    <header>
-                        <version>0.9</version>
-                    </header>
-                    <body>
-                    <data_block>
-                        <dt_assoc>
-                            <item key="protocol">XCP</item>
-                            <item key="object">DOMAIN</item>
-                            <item key="action">GET</item>
-                            <item key="attributes">
-                             <dt_assoc>
-                                    <item key="domain">$domain</item>
-                                    <item key="type">nameservers</item>
-                             </dt_assoc>
-                            </item>
-                        </dt_assoc>
-                    </data_block>
-                    </body>
-                    </OPS_envelope>
+    public function domainDns($domain)
+    {
+        $xml = <<<EOD
+                <?xml version='1.0' encoding='UTF-8' standalone='no' ?>
+                <!DOCTYPE OPS_envelope SYSTEM 'ops.dtd'>
+                <OPS_envelope>
+                <header>
+                    <version>0.9</version>
+                </header>
+                <body>
+                <data_block>
+                    <dt_assoc>
+                        <item key="protocol">XCP</item>
+                        <item key="object">DOMAIN</item>
+                        <item key="action">GET</item>
+                        <item key="attributes">
+                         <dt_assoc>
+                                <item key="domain">$domain</item>
+                                <item key="type">nameservers</item>
+                         </dt_assoc>
+                        </item>
+                    </dt_assoc>
+                </data_block>
+                </body>
+                </OPS_envelope>
 EOD;
-            return $xml;
+        return $xml;
+    }
 
-        } elseif ($command == 'privacy') {
-
-            $xml = <<<EOD
-                    <?xml version='1.0' encoding='UTF-8' standalone='no' ?>
-                    <!DOCTYPE OPS_envelope SYSTEM 'ops.dtd'>
-                    <OPS_envelope>
-                    <header>
-                        <version>0.9</version>
-                    </header>
-                    <body>
-                    <data_block>
-                        <dt_assoc>
-                            <item key="protocol">XCP</item>
-                            <item key="object">DOMAIN</item>
-                            <item key="action">GET</item>
-                            <item key="attributes">
-                             <dt_assoc>
-                                    <item key="domain">$domain</item>
-                                    <item key="type">whois_privacy_state</item>
-                             </dt_assoc>
-                            </item>
-                        </dt_assoc>
-                    </data_block>
-                    </body>
-                    </OPS_envelope>
+    public function domainPrivacy($domain)
+    {
+        $xml = <<<EOD
+                <?xml version='1.0' encoding='UTF-8' standalone='no' ?>
+                <!DOCTYPE OPS_envelope SYSTEM 'ops.dtd'>
+                <OPS_envelope>
+                <header>
+                    <version>0.9</version>
+                </header>
+                <body>
+                <data_block>
+                    <dt_assoc>
+                        <item key="protocol">XCP</item>
+                        <item key="object">DOMAIN</item>
+                        <item key="action">GET</item>
+                        <item key="attributes">
+                         <dt_assoc>
+                                <item key="domain">$domain</item>
+                                <item key="type">whois_privacy_state</item>
+                         </dt_assoc>
+                        </item>
+                    </dt_assoc>
+                </data_block>
+                </body>
+                </OPS_envelope>
 EOD;
-            return $xml;
-
-        } else {
-
-            return 'Unable to build API URL';
-
-        }
+        return $xml;
     }
 
     public function apiCall($xml, $account_username, $api_key)
@@ -167,7 +162,7 @@ EOD;
 
     public function getDomainList($account_username, $api_key)
     {
-        $api_xml = $this->getApiUrl('domainlist', '');
+        $api_xml = $this->domainList();
         $api_results = $this->apiCall($api_xml, $account_username, $api_key);
         $array_results = $this->convertToArray($api_results);
 
@@ -197,7 +192,7 @@ EOD;
     public function getFullInfo($account_username, $api_key, $domain)
     {
         // get the domain info (for expiration date and auto renewal status)
-        $api_xml = $this->getApiUrl('info', $domain);
+        $api_xml = $this->domainInfo($domain);
         $api_results = $this->apiCall($api_xml, $account_username, $api_key);
         $array_results = $this->convertToArray($api_results);
 
@@ -218,7 +213,7 @@ EOD;
         }
 
         // get dns servers
-        $api_xml = $this->getApiUrl('dns', $domain);
+        $api_xml = $this->domainDns($domain);
         $api_results = $this->apiCall($api_xml, $account_username, $api_key);
         $array_results = $this->convertToArray($api_results);
 
@@ -243,7 +238,7 @@ EOD;
         }
 
         // get privacy status
-        $api_xml = $this->getApiUrl('privacy', $domain);
+        $api_xml = $this->domainPrivacy($domain);
         $api_results = $this->apiCall($api_xml, $account_username, $api_key);
         $array_results = $this->convertToArray($api_results);
 
