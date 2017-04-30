@@ -26,8 +26,8 @@ class OpenSrs
 
     public function domainList()
     {
-        $start_date = gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y") - 2));
-        $end_date = gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y") + 15));
+        $start_date = gmdate("Y-m-d", mktime(date("H") - 12, date("i"), date("s"), date("m"), date("d"), date("Y")));
+        $end_date = gmdate("Y-m-d", mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y") + 19));
 
         $xml = <<<EOD
                 <?xml version='1.0' encoding='UTF-8' standalone='no' ?>
@@ -87,35 +87,6 @@ EOD;
         return $xml;
     }
 
-    public function domainDns($domain)
-    {
-        $xml = <<<EOD
-                <?xml version='1.0' encoding='UTF-8' standalone='no' ?>
-                <!DOCTYPE OPS_envelope SYSTEM 'ops.dtd'>
-                <OPS_envelope>
-                <header>
-                    <version>0.9</version>
-                </header>
-                <body>
-                <data_block>
-                    <dt_assoc>
-                        <item key="protocol">XCP</item>
-                        <item key="object">DOMAIN</item>
-                        <item key="action">GET</item>
-                        <item key="attributes">
-                         <dt_assoc>
-                                <item key="domain">$domain</item>
-                                <item key="type">nameservers</item>
-                         </dt_assoc>
-                        </item>
-                    </dt_assoc>
-                </data_block>
-                </body>
-                </OPS_envelope>
-EOD;
-        return $xml;
-    }
-
     public function domainPrivacy($domain)
     {
         $xml = <<<EOD
@@ -147,8 +118,8 @@ EOD;
 
     public function apiCall($xml, $account_username, $api_key)
     {
-        // $handle = curl_init('https://horizon.opensrs.net:55443'); // OpenSRS test environment
-        $handle = curl_init('https://rr-n1-tor.opensrs.net:55443');
+        $handle = curl_init('https://rr-n1-tor.opensrs.net:55443'); // Production Environment
+        // $handle = curl_init('https://horizon.opensrs.net:55443'); // Test environment
         curl_setopt($handle, CURLOPT_HTTPHEADER, array(
             'Content-Type:text/xml',
             'X-Username:' . $account_username,
@@ -164,26 +135,21 @@ EOD;
     {
         $api_xml = $this->domainList();
         $api_results = $this->apiCall($api_xml, $account_username, $api_key);
-        $array_results = $this->convertToArray($api_results);
+        $api_call_status = $this->apiStatus($api_results);
 
-        // confirm that the api call was successful
-        if ($array_results[0]['body']['data_block']['dt_assoc']['item'][2] == 'Command successful') {
+        $domain_list = array();
+        $domain_count = 0;
 
-            $domain_list = array();
-            $domain_count = 0;
+        if ($api_call_status == '1') {
 
-            foreach ($array_results[0]['body']['data_block']['dt_assoc']['item'][4]['dt_assoc']['item'][0]['dt_array']['item'] as $domain) {
+            foreach(preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
 
-                $domain_list[] = $domain['dt_assoc']['item'][1];
-                $domain_count++;
+                if (preg_match('/<item key="name">(.*)<\/item>/', $xml_line, $match)) {
+                    $domain_list[] = $match[1];
+                    $domain_count++;
+                }
 
             }
-
-        } else {
-
-            // if the API call failed assign empty values
-            $domain_list = '';
-            $domain_count = '';
 
         }
         return array($domain_count, $domain_list);
@@ -191,79 +157,72 @@ EOD;
 
     public function getFullInfo($account_username, $api_key, $domain)
     {
-        // get the domain info (for expiration date and auto renewal status)
+        // get the partial domain info (expiration date, dns servers, and auto renewal status)
         $api_xml = $this->domainInfo($domain);
         $api_results = $this->apiCall($api_xml, $account_username, $api_key);
-        $array_results = $this->convertToArray($api_results);
+        $api_call_status = $this->apiStatus($api_results);
 
-        if ($array_results[0]['body']['data_block']['dt_assoc']['item'][2] == 'Query Successful') {
+        $expiration_date = '';
+        $dns_result = array();
+        $autorenewal_status = '';
+        $dns_servers = array();
 
-            // get expiration date
-            $expiry_result = $array_results[0]['body']['data_block']['dt_assoc']['item'][4]['dt_assoc']['item'][6];
-            $expiration_date = $this->processExpiry($expiry_result);
+        if ($api_call_status == '1') {
 
-            // get auto renewal status
-            $autorenewal_status = $array_results[0]['body']['data_block']['dt_assoc']['item'][4]['dt_assoc']['item'][0];
+            foreach(preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
 
-        } else {
+                // get expiration date
+                if (preg_match('/<item key="expiredate">(.*)<\/item>/', $xml_line, $match)) {
+                    $expiration_date = $this->processExpiry($match[1]);
+                }
 
-            $expiration_date = '';
-            $autorenewal_status = '';
+                // get dns servers
+                if (preg_match('/<item key="name">(.*)<\/item>/', $xml_line, $match)) {
+                    $dns_result[] = $match[1];
+                }
+
+                // get auto renewal status
+                if (preg_match('/<item key="auto_renew">(.*)<\/item>/', $xml_line, $match)) {
+                    $autorenewal_status = $this->processAutorenew($match[1]);
+                }
+
+            }
+            $dns_servers = $this->processDns($dns_result);
 
         }
 
-        // get dns servers
-        $api_xml = $this->domainDns($domain);
+        // get the privacy status
+        $api_xml = $this->domainPrivacy($domain);
         $api_results = $this->apiCall($api_xml, $account_username, $api_key);
-        $array_results = $this->convertToArray($api_results);
+        $api_call_status = $this->apiStatus($api_results);
 
-        // confirm that the api call was successful
-        if ($array_results[0]['body']['data_block']['dt_assoc']['item'][2] == 'Query Successful') {
+        $privacy_status = '';
 
-            $dns_result = array();
+        if ($api_call_status == '1') {
 
-            foreach ($array_results[0]['body']['data_block']['dt_assoc']['item'][4]['dt_assoc']['item'][0]['dt_array']['item'] as $server_list) {
+            foreach(preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
 
-                $dns_result[] = $server_list['dt_assoc']['item'][0];
+                // get privacy status
+                if (preg_match('/<item key="state">(.*)<\/item>/', $xml_line, $match)) {
+                    $privacy_status = $this->processPrivacy($match[1]);
+                }
 
             }
 
-            $dns_servers = $this->processDns($dns_result);
-
-        } else {
-
-            // if the API call failed assign empty values
-            $dns_servers = '';
-
         }
-
-        // get privacy status
-        $api_xml = $this->domainPrivacy($domain);
-        $api_results = $this->apiCall($api_xml, $account_username, $api_key);
-        $array_results = $this->convertToArray($api_results);
-
-        // confirm that the api call was successful
-        if ($array_results[0]['body']['data_block']['dt_assoc']['item'][2] == 'Query Successful') {
-
-            // get privacy status
-            $privacy_result = $array_results[0]['body']['data_block']['dt_assoc']['item'][4]['dt_assoc']['item'][2];
-            $privacy_status = $this->processPrivacy($privacy_result);
-
-        } else {
-
-            $privacy_status = '';
-
-        }
-
         return array($expiration_date, $dns_servers, $privacy_status, $autorenewal_status);
 
     }
 
-    public function convertToArray($api_result)
+    public function apiStatus($api_results)
     {
-        $xml = simplexml_load_string($api_result);
-        $json = json_encode((array($xml)), true);
-        return json_decode($json, true);
+        $status = '';
+        foreach(preg_split("/((\r?\n)|(\r\n?))/", $api_results) as $xml_line) {
+            if (preg_match('/<item key="response_code">200<\/item>/', $xml_line)) {
+                $status = '1';
+            }
+        }
+        return $status;
     }
 
     public function processExpiry($expiry_result)
@@ -286,12 +245,22 @@ EOD;
 
     public function processPrivacy($privacy_result)
     {
-        if ($privacy_result == 'disabled') {
-            $privacy_status = '0';
-        } else { // 'enabled'
+        if ($privacy_result == 'enabled') {
             $privacy_status = '1';
+        } else {
+            $privacy_status = '0';
         }
         return $privacy_status;
+    }
+
+    public function processAutorenew($autorenewal_result)
+    {
+        if ($autorenewal_result == '1') {
+            $autorenewal_status = '1';
+        } else {
+            $autorenewal_status = '0';
+        }
+        return $autorenewal_status;
     }
 
 } //@formatter:on
