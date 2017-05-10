@@ -29,9 +29,9 @@ spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 $system = new DomainMOD\System();
 
 require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 
-$system->authCheck($web_root);
+$system->authCheck();
 
 $_SESSION = array();
 
@@ -44,5 +44,5 @@ if (ini_get("session.use_cookies")) {
 
 session_destroy();
 
-header("Location: " . $web_root . "/");
+header('Location: ' . $web_root . "/");
 exit;

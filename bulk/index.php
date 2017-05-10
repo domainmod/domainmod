@@ -41,11 +41,11 @@ $timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/settings/bulk-main.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$system->authCheck($web_root);
+$system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $jumpMenu = $_GET['jumpMenu'];
@@ -187,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if (!$date->checkDateFormat($new_expiry_date) || $new_pcid == "" || $new_dnsid == "" || $new_ipid == "" || $new_whid == "" || $new_raid == "" || $new_pcid == "0" || $new_dnsid == "0" || $new_ipid == "0" || $new_whid == "0" || $new_raid == "0" || $has_existing_domains == '1') {
 
-                    if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered already exists in " . $software_title . ".<BR><BR>You should run the domain list through a Segment filter to determine which one(s).<BR>";
+                    if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered already exists in " . SOFTWARE_TITLE . ".<BR><BR>You should run the domain list through a Segment filter to determine which one(s).<BR>";
                     if (!$date->checkDateFormat($new_expiry_date)) $_SESSION['s_message_danger'] .= "You have entered an invalid expiry date<BR>";
                     if ($new_pcid == "" || $new_pcid == "0") $_SESSION['s_message_danger'] .= "Please choose the new Category<BR>";
                     if ($new_dnsid == "" || $new_dnsid == "0") $_SESSION['s_message_danger'] .= "Please choose the new DNS Profile<BR>";
@@ -1448,7 +1448,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <title><?php echo $system->pageTitle($page_title); ?></title>
     <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
     <?php echo $layout->jumpMenu(); ?>
 </head>

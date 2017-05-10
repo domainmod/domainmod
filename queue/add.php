@@ -35,11 +35,11 @@ $form = new DomainMOD\Form();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/settings/queue-add.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$system->authCheck($web_root);
+$system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $new_raid = $_REQUEST['new_raid'];
@@ -297,7 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 if ($new_raid == "" || $new_raid == "0" || $has_existing_domains == '1' || $has_existing_domains_queue == '1') {
 
-                    if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered already exists in " . $software_title . ".<BR><BR>You should run the domain list through a Segment filter to determine which one(s).<BR><BR>";
+                    if ($has_existing_domains == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered already exists in " . SOFTWARE_TITLE . ".<BR><BR>You should run the domain list through a Segment filter to determine which one(s).<BR><BR>";
                     if ($has_existing_domains_queue == '1') $_SESSION['s_message_danger'] .= "At least one of the domains you entered is already in the domain queue.<BR>";
                     if ($new_raid == "" || $new_raid == "0") $_SESSION['s_message_danger'] .= "Please choose the registrar account<BR>";
 
@@ -378,7 +378,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <title><?php echo $system->pageTitle($page_title); ?></title>
     <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
     <?php echo $layout->jumpMenu(); ?>
 </head>

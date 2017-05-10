@@ -33,11 +33,11 @@ $time = new DomainMOD\Time();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$system->authCheck($web_root);
-$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
+$system->authCheck();
+$system->checkAdminUser($_SESSION['s_is_admin']);
 
 $_SESSION['s_message_success'] .= $queue->clearQueues($dbcon);
 

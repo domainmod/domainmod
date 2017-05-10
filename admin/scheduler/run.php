@@ -39,11 +39,11 @@ $timestamp = $time->stamp();
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
 require_once(DIR_INC . '/config-demo.inc.php');
-require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$system->authCheck($web_root);
-$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
+$system->authCheck();
+$system->checkAdminUser($_SESSION['s_is_admin']);
 
 $id = $_GET['id'];
 
@@ -99,7 +99,7 @@ if ($demo_install != '1') {
 
         $email = new DomainMOD\Email();
         $schedule->isRunning($dbcon, $id);
-        $email->sendExpirations($dbcon, $software_title, '0');
+        $email->sendExpirations($dbcon, '0');
         $schedule->updateTime($dbcon, $id, $timestamp, $next_run, $active);
         $schedule->isFinished($dbcon, $id);
 
@@ -121,7 +121,7 @@ if ($demo_install != '1') {
     } elseif ($slug == 'check-new-version') {
 
         $schedule->isRunning($dbcon, $id);
-        $system->checkVersion($dbcon, $software_version);
+        $system->checkVersion($dbcon, SOFTWARE_VERSION);
         $schedule->updateTime($dbcon, $id, $timestamp, $next_run, $active);
         $schedule->isFinished($dbcon, $id);
 

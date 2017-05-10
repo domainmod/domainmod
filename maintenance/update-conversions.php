@@ -34,10 +34,10 @@ $timestamp = $time->stamp();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$system->authCheck($web_root);
+$system->authCheck();
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
 
 $_SESSION['s_message_success'] .= $conversion->updateRates($dbcon, $_SESSION['s_default_currency'], $_SESSION['s_user_id']);

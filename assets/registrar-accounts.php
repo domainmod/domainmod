@@ -33,11 +33,11 @@ $time = new DomainMOD\Time();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/settings/assets-registrar-accounts.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$system->authCheck($web_root);
+$system->authCheck();
 
 $rid = (integer) $_GET['rid'];
 $raid = (integer) $_GET['raid'];
@@ -207,12 +207,12 @@ if ($export_data == '1') {
 <?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <title><?php echo $system->pageTitle($page_title); ?></title>
     <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
-Below is a list of all the Domain Registrar Accounts that are stored in <?php echo $software_title; ?>.<BR><BR>
+Below is a list of all the Domain Registrar Accounts that are stored in <?php echo SOFTWARE_TITLE; ?>.<BR><BR>
 <a href="add/registrar-account.php"><?php echo $layout->showButton('button', 'Add Registrar Account'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="registrar-accounts.php?export_data=1&rid=<?php echo urlencode($rid); ?>&raid=<?php echo urlencode($raid); ?>&oid=<?php echo urlencode($oid); ?>"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
 

@@ -24,11 +24,11 @@ namespace DomainMOD;
 class Notice
 {
 
-    public function dbUpgrade($software_title)
+    public function dbUpgrade()
     {
         $layout = new Layout();
         $_SESSION['s_notice_page_title'] = "Database Upgrade Available";
-        $_SESSION['s_notice'] = "<BR>Your " . $software_title . " software was recently updated, so we now need to
+        $_SESSION['s_notice'] = "<BR>Your " . SOFTWARE_TITLE . " software was recently updated, so we now need to
             upgrade your database<BR><BR>Please be patient, this may take a moment<BR><BR>
             <a href='checks.php?u=1'>" . $layout->showButton('button', 'Upgrade Database') . "</a>";
 

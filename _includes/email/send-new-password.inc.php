@@ -25,15 +25,15 @@ $email = new DomainMOD\Email();
 list($full_url, $from_address, $null_variable, $use_smtp) = $email->getSettings($dbcon);
 
 $to_address = $email_address;
-$from_name = $software_title;
+$from_name = SOFTWARE_TITLE;
 
-$subject = "Your " . $software_title . " Password has been Reset";
-$headline = "Your " . $software_title . " Password has been Reset";
+$subject = "Your " . SOFTWARE_TITLE . " Password has been Reset";
+$headline = "Your " . SOFTWARE_TITLE . " Password has been Reset";
 
 $headers = '';
 $headers .= 'MIME-Version: 1.0' . "\r\n";
 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-$headers .= 'From: "' . $software_title . '" <' . $from_address . ">\r\n";
+$headers .= 'From: "' . SOFTWARE_TITLE . '" <' . $from_address . ">\r\n";
 $headers .= 'Return-Path: ' . $from_address . "\r\n";
 $headers .= 'Reply-to: ' . $from_address . "\r\n";
 $version = phpversion();
@@ -53,8 +53,8 @@ $message_html .= "
                     <td width=\"4%\" valign=\"top\" align=\"left\">&nbsp;</td>
                     <td width=\"92%\"><font color=\"#000000\" size=\"2\" face=\"Verdana, Arial, Helvetica,
                         sans-serif\">";
-$message_html .= "<a title=\"" . $software_title . "\" href=\"" . $full_url . "/\"><img alt=\"" .
-    $software_title . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
+$message_html .= "<a title=\"" . SOFTWARE_TITLE . "\" href=\"" . $full_url . "/\"><img alt=\"" .
+    SOFTWARE_TITLE . "\" border=\"0\" src=\"" . $full_url . "/images/logo.png\"></a><BR><BR>";
 $message_html .= "Your password has been reset and you can find it below. The next ";
 $message_html .= "time you login you should change your password to something that ";
 $message_html .= "will be easy for you to remember, but still hard for someone ";
@@ -87,7 +87,7 @@ $message_html .= "</font>
 $message_html .= "<hr width=\"100%\" size=\"2\" noshade>";
 $message_html .= "You've received this notification because someone requested a password reset for
                             your ";
-$message_html .= $software_title . " account.<BR>";
+$message_html .= SOFTWARE_TITLE . " account.<BR>";
 $message_html .= "<BR>";
 $message_html .= "If you did not request this yourself, it sounds like somebody might be trying to
                             gain access ";
@@ -119,7 +119,7 @@ $message_text .= "\n";
 $message_text .= "Greg Chetcuti\n";
 $message_text .= "greg@domainmod.org\n";
 $message_text .= "\n---\n\n";
-$message_text .= "You've received this notification because someone requested a password reset for your " . $software_title . " account.\n";
+$message_text .= "You've received this notification because someone requested a password reset for your " . SOFTWARE_TITLE . " account.\n";
 $message_text .= "\n";
 $message_text .= "If you did not request this yourself, it sounds like somebody might be trying to gain access to your account. This might be a good time to reset your password again just to be safe. " . $full_url . "/reset.php";
 

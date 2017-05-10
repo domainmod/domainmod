@@ -21,7 +21,6 @@
 ?>
 <?php
 require_once('_includes/init.inc.php');
-require_once('_includes/software.inc.php');
 
 require_once(DIR_ROOT . '/classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
@@ -38,6 +37,7 @@ $time = new DomainMOD\Time();
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
 require_once(DIR_INC . '/config-demo.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
 if ($demo_install != '1') {
@@ -69,7 +69,7 @@ if ($demo_install != '1') {
 
             $email = new DomainMOD\Email();
             $schedule->isRunning($dbcon, $row->id);
-            $email->sendExpirations($dbcon, $software_title, '1');
+            $email->sendExpirations($dbcon, '1');
             $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
             $schedule->isFinished($dbcon, $row->id);
 
@@ -91,7 +91,7 @@ if ($demo_install != '1') {
         } elseif ($row->slug == 'check-new-version') {
 
             $schedule->isRunning($dbcon, $row->id);
-            $system->checkVersion($dbcon, $software_version);
+            $system->checkVersion($dbcon, SOFTWARE_VERSION);
             $schedule->updateTime($dbcon, $row->id, $time->stamp(), $next_run, $row->active);
             $schedule->isFinished($dbcon, $row->id);
 

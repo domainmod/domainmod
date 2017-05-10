@@ -24,7 +24,7 @@ namespace DomainMOD;
 class Email
 {
 
-    public function sendExpirations($dbcon, $software_title, $from_cron)
+    public function sendExpirations($dbcon, $from_cron)
     {
         $time = new Time();
         $timestamp_basic = $time->timeBasic();
@@ -33,22 +33,22 @@ class Email
         list($full_url, $from_address, $number_of_days, $use_smtp) = $this->getSettings($dbcon);
         $send_to = $this->getRecipients($dbcon);
         $subject = "Upcoming Expirations - " . $timestamp_long;
-        $headers = $this->getHeaders($software_title, $from_address);
+        $headers = $this->getHeaders($from_address);
 
         list($result_domains, $result_ssl) = $this->checkExpiring($dbcon, $number_of_days, $from_cron);
         $message_html = '';
-        $message_html .= $this->messageTopHtml($software_title, $full_url, $subject, $number_of_days);
+        $message_html .= $this->messageTopHtml($full_url, $subject, $number_of_days);
         $message_html .= $this->showDomainsHtml($result_domains, $full_url, $timestamp_basic);
         $message_html .= $this->showSslHtml($result_ssl, $full_url, $timestamp_basic);
-        $message_html .= $this->messageBottomHtml($software_title, $full_url);
+        $message_html .= $this->messageBottomHtml($full_url);
 
         list($result_domains, $result_ssl) = $this->checkExpiring($dbcon, $number_of_days, $from_cron);
         $message_text = '';
         $message_text = $subject . "\n\n";
-        $message_text .= $this->messageTopText($software_title, $number_of_days);
+        $message_text .= $this->messageTopText($number_of_days);
         $message_text .= $this->showDomainsText($result_domains, $timestamp_basic);
         $message_text .= $this->showSslText($result_ssl, $timestamp_basic);
-        $message_text .= $this->messageBottomText($software_title, $full_url);
+        $message_text .= $this->messageBottomText($full_url);
 
         while ($row_recipients = mysqli_fetch_object($send_to)) {
 
@@ -132,12 +132,12 @@ class Email
         return $result_recipients;
     }
 
-    public function getHeaders($software_title, $from_address)
+    public function getHeaders($from_address)
     {
         $headers = '';
         $headers .= 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        $headers .= 'From: "' . $software_title . '" <' . $from_address . ">\r\n";
+        $headers .= 'From: "' . SOFTWARE_TITLE . '" <' . $from_address . ">\r\n";
         $headers .= 'Return-Path: ' . $from_address . "\r\n";
         $headers .= 'Reply-to: ' . $from_address . "\r\n";
         $version = phpversion();
@@ -145,7 +145,7 @@ class Email
         return $headers;
     }
 
-    public function messageTopHtml($software_title, $full_url, $subject, $number_of_days)
+    public function messageTopHtml($full_url, $subject, $number_of_days)
     {
         ob_start(); ?>
         <html>
@@ -155,17 +155,17 @@ class Email
         <tr>
         <td width="100%" bgcolor="#FFFFFF">
         <font color="#000000" size="2" face="Verdana, Arial, Helvetica, sans-serif">
-        <a title="<?php echo $software_title; ?>" href="<?php echo $full_url; ?>/"><img border="0" alt="<?php
-            echo $software_title; ?>" src="<?php echo $full_url; ?>/images/logo.png"></a><BR><BR>Below is a
-        list of all the Domains & SSL Certificates in <?php echo $software_title; ?> that are expiring in the next
+        <a title="<?php echo SOFTWARE_TITLE; ?>" href="<?php echo $full_url; ?>/"><img border="0" alt="<?php
+            echo SOFTWARE_TITLE; ?>" src="<?php echo $full_url; ?>/images/logo.png"></a><BR><BR>Below is a
+        list of all the Domains & SSL Certificates in <?php echo SOFTWARE_TITLE; ?> that are expiring in the next
         <?php echo $number_of_days; ?> days.<BR> <BR>If you would like to change the frequency of this email
-        notification please contact your <?php echo $software_title; ?> administrator.<BR><BR><?php
+        notification please contact your <?php echo SOFTWARE_TITLE; ?> administrator.<BR><BR><?php
         return ob_get_clean();
     }
 
-    public function messageTopText($software_title, $number_of_days)
+    public function messageTopText($number_of_days)
     {
-        $message = "Below is a list of all the Domains & SSL Certificates in " . $software_title . " that are expiring in the next " . $number_of_days . " days.\n\nIf you would like to change the frequency of this email notification please contact your " . $software_title . " administrator.\n\n";
+        $message = "Below is a list of all the Domains & SSL Certificates in " . SOFTWARE_TITLE . " that are expiring in the next " . $number_of_days . " days.\n\nIf you would like to change the frequency of this email notification please contact your " . SOFTWARE_TITLE . " administrator.\n\n";
         return $message;
     }
 
@@ -245,7 +245,7 @@ class Email
         return $message;
     }
 
-    public function messageBottomHtml($software_title, $full_url)
+    public function messageBottomHtml($full_url)
     {
         ob_start(); ?>
         <BR>Best Regards,<BR><BR>Greg Chetcuti<BR><a
@@ -256,7 +256,7 @@ class Email
         <table width="575" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF"><tr>
         <td width="100%"><font color="#000000" size="2" face="Verdana, Arial, Helvetica, sans-serif">
         <BR><hr width="100%" size="2" noshade>You've received this email because you're currently subscribed to receive
-        expiration notifications from the <?php echo $software_title; ?> installation located at: <a target="_blank"
+        expiration notifications from the <?php echo SOFTWARE_TITLE; ?> installation located at: <a target="_blank"
         href="<?php echo $full_url; ?>/"><?php echo $full_url; ?>/</a><BR><BR>To unsubscribe from these notifications
         please visit: <BR><a target="_blank" href="<?php echo $full_url; ?>/settings/email/"><?php echo $full_url;
         ?>/settings/email/</a><BR><BR></font>
@@ -267,14 +267,14 @@ class Email
         return ob_get_clean();
     }
 
-    public function messageBottomText($software_title, $full_url)
+    public function messageBottomText($full_url)
     {
         $message .= "Best Regards,\n";
         $message .= "\n";
         $message .= "Greg Chetcuti\n";
         $message .= "greg@domainmod.org\n\n";
         $message .= "---\n\n";
-        $message .= "You've received this email because you're currently subscribed to receive expiration notifications from the " . $software_title . " installation located at: " . $full_url . "\n\n";
+        $message .= "You've received this email because you're currently subscribed to receive expiration notifications from the " . SOFTWARE_TITLE . " installation located at: " . $full_url . "\n\n";
         $message .= "To unsubscribe from these notifications please visit: " . $full_url . "/settings/email/";
         return $message;
     }

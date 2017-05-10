@@ -236,9 +236,9 @@
     <footer class="main-footer">
 
         <div class="pull-right hidden-xs">
-            Version <?php echo $software_version; ?>
+            Version <?php echo SOFTWARE_VERSION; ?>
         </div>
-        <a href="http://domainmod.org"><?php echo $software_title; ?></a> is open source software released under the <a href="http://www.gnu.org/licenses/">GNU/GPL License</a>.
+        <a href="http://domainmod.org"><?php echo SOFTWARE_TITLE; ?></a> is open source software released under the <a href="http://www.gnu.org/licenses/">GNU/GPL License</a>.
         Created by <a href="http://chetcuti.com">Greg Chetcuti</a>.<BR>
 
     </footer>

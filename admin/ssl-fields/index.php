@@ -33,12 +33,12 @@ $time = new DomainMOD\Time();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/settings/admin-custom-ssl-fields.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$system->authCheck($web_root);
-$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
+$system->authCheck();
+$system->checkAdminUser($_SESSION['s_is_admin']);
 
 $export_data = $_GET['export_data'];
 
@@ -110,14 +110,14 @@ if ($export_data == '1') {
 <?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <title><?php echo $system->pageTitle($page_title); ?></title>
     <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
-Below is a list of all the Custom SSL Fields that have been added to <?php echo $software_title; ?>.<BR>
+Below is a list of all the Custom SSL Fields that have been added to <?php echo SOFTWARE_TITLE; ?>.<BR>
 <BR>
-Custom SSL Fields help extend the functionality of <?php echo $software_title; ?> by allowing the user to create their
+Custom SSL Fields help extend the functionality of <?php echo SOFTWARE_TITLE; ?> by allowing the user to create their
 own data fields. For example, if you were working in a corporate environment and wanted to keep a record of who
 purchased each of your SSL certificates, you could create a Purchaser Name text field and keep track of this information
 for every one of your SSL certificates. And when you export your SSL data, the information contained in your custom

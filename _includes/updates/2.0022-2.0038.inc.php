@@ -315,7 +315,7 @@ if ($current_db_version === '2.0029') {
 
     if (mysqli_num_rows($result) > 0) {
 
-        echo "DATABASE UPDATE v2.003 FAILED: PLEASE CONTACT YOUR " . strtoupper($software_title) . " ADMINISTRATOR IMMEDIATELY";
+        echo "DATABASE UPDATE v2.003 FAILED: PLEASE CONTACT YOUR " . strtoupper(SOFTWARE_TITLE) . " ADMINISTRATOR IMMEDIATELY";
         exit;
 
     } else {

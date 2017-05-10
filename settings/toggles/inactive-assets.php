@@ -32,5 +32,5 @@ if ($_SESSION['s_display_inactive_assets'] == '1') {
 
 }
 
-header("Location: " . $_SESSION['s_redirect']);
+header('Location: ' . $_SESSION['s_redirect']);
 exit;

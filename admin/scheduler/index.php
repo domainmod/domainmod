@@ -35,12 +35,12 @@ $form = new DomainMOD\Form();
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
 require_once(DIR_INC . '/config-demo.inc.php');
-require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/settings/admin-scheduler-main.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$system->authCheck($web_root);
-$system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
+$system->authCheck();
+$system->checkAdminUser($_SESSION['s_is_admin']);
 
 $sql = "SELECT id, `name`, description, `interval`, expression, last_run, last_duration, next_run, active
         FROM scheduler
@@ -50,16 +50,16 @@ $result = mysqli_query($dbcon, $sql) or $error->outputSqlError($dbcon, '1', 'ERR
 <?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <title><?php echo $system->pageTitle($page_title); ?></title>
     <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
 The Task Scheduler allows you to run various system jobs at specified times, which helps keep your <?php
-echo $software_title; ?> installation up-to-date and running smoothly, as well as notifies you of important information,
+echo SOFTWARE_TITLE; ?> installation up-to-date and running smoothly, as well as notifies you of important information,
 such as emailing you to let you know about upcoming Domain & SSL Certificate expirations. In order to use the Task
 Scheduler you must setup a cron/scheduled job on your web server to execute the file <strong>cron.php</strong>, which is
-located in the root folder of your <?php echo $software_title; ?> installation.
+located in the root folder of your <?php echo SOFTWARE_TITLE; ?> installation.
 This file should be executed <em>every 10 minutes</em>, and once it's setup the Task Scheduler will be live.<BR>
 <BR>
 Using the Task Scheduler is optional, but <em>highly</em> recommended.<BR>

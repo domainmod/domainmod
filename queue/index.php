@@ -34,11 +34,11 @@ $time = new DomainMOD\Time();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/settings/queue-main.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$system->authCheck($web_root);
+$system->authCheck();
 
 $list_id = $_GET['list_id'];
 $dell = $_GET['dell'];
@@ -528,7 +528,7 @@ if ($really_deld == '1' && $domain_id != '') {
 <?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <title><?php echo $system->pageTitle($page_title); ?></title>
     <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
@@ -543,7 +543,7 @@ if ($_SESSION['s_list_queue_processing'] == '1' || $_SESSION['s_domain_queue_pro
     </button><BR><BR><?php
 
 } ?>
-The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into <?php echo $software_title; ?>. For more information please see the <a href="intro.php">Domain Queue information page</a>.<BR>
+The Domain Queue relies on your domain registrar's API to import your domains, so they must have an API and support for it must be built into <?php echo SOFTWARE_TITLE; ?>. For more information please see the <a href="intro.php">Domain Queue information page</a>.<BR>
 <BR>
 <a href="<?php echo $web_root; ?>/queue/add.php"><?php echo $layout->showButton('button', 'Add Domains To Queue'); ?></a>&nbsp;&nbsp;&nbsp;
 <?php if ($_SESSION['s_domains_in_queue'] == '1') { ?>

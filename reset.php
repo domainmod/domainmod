@@ -35,7 +35,7 @@ $form = new DomainMOD\Form();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
 $system->loginCheck();
@@ -78,7 +78,7 @@ if ($new_data != "") {
 
                 $_SESSION['s_message_success'] .= "If there is a matching username or email address in the system your new password will been emailed to you.<BR>";
 
-                header("Location: " . $web_root . "/");
+                header('Location: ' . $web_root . "/");
                 exit;
 
             }
@@ -87,7 +87,7 @@ if ($new_data != "") {
 
             $_SESSION['s_message_success'] .= "If there is a matching username or email address in the system your new password will been emailed to you.<BR>";
 
-            header("Location: " . $web_root . "/");
+            header('Location: ' . $web_root . "/");
             exit;
 
         }
@@ -111,7 +111,7 @@ if ($new_data != "") {
 <?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <title><?php echo $system->pageTitle($page_title); ?></title>
     <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red" onLoad="document.forms[0].elements[0].focus()">

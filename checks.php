@@ -37,10 +37,10 @@ $log = new DomainMOD\Log();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$system->authCheck($web_root);
+$system->authCheck();
 
 $upgrade_approved = $_GET['u'];
 
@@ -50,12 +50,12 @@ $upgrade_approved = $_GET['u'];
  *
  * If If the database and software versions are different and the user HAS approved the upgrade, perform the upgrade
  */
-if ($_SESSION['s_system_db_version'] !== $software_version && $upgrade_approved != '1') {
+if ($_SESSION['s_system_db_version'] !== SOFTWARE_VERSION && $upgrade_approved != '1') {
 
     header("Location: notice.php?a=u");
     exit;
 
-} elseif ($_SESSION['s_system_db_version'] !== $software_version && $upgrade_approved == '1') {
+} elseif ($_SESSION['s_system_db_version'] !== SOFTWARE_VERSION && $upgrade_approved == '1') {
 
     require_once(DIR_INC . '/update.inc.php');
 
@@ -204,7 +204,7 @@ if ($_SESSION['s_version_error'] != '1') {
 }
 
 // Check GitHub to see if a newer version is available
-$system->checkVersion($dbcon, $software_version);
+$system->checkVersion($dbcon, SOFTWARE_VERSION);
 
 if (isset($_SESSION['s_user_redirect'])) {
 

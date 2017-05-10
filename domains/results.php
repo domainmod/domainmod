@@ -33,10 +33,10 @@ $currency = new DomainMOD\Currency();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
-$system->authCheck($web_root);
+$system->authCheck();
 
 $segid = $_GET['segid'];
 $export_data = $_GET['export_data'];
@@ -282,7 +282,7 @@ if ($export_data == "1") {
 <?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
-    <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
+    <title><?php echo $system->pageTitle($page_title); ?></title>
     <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
@@ -313,11 +313,11 @@ if ($q->prepare($query)) {
 } else $error->outputSqlError($dbcon, '1', 'ERROR');
 
 if ($type == "inactive") {
-    echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, and they are stored in your  " . $software_title . " database, but they are currently marked as inactive.<BR><BR>";
+    echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, and they are stored in your  " . SOFTWARE_TITLE . " database, but they are currently marked as inactive.<BR><BR>";
 } elseif ($type == "filtered") {
-    echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, and they are stored in your  " . $software_title . " database, but they were filtered out based on your search criteria.<BR><BR>";
+    echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, and they are stored in your  " . SOFTWARE_TITLE . " database, but they were filtered out based on your search criteria.<BR><BR>";
 } elseif ($type == "missing") {
-    echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, but they are not in your " . $software_title . " database.<BR><BR>";
+    echo "The below domains are in the segment <strong>" . $segment_name . "</strong>, but they are not in your " . SOFTWARE_TITLE . " database.<BR><BR>";
 }
 ?>
 <?php

@@ -31,7 +31,7 @@ class System
         $is_installed = mysqli_num_rows($result) > 0;
         if (is_dir($full_install_path) && $is_installed != '1') {
             $installation_mode = 1;
-            $result_message = "DomainMOD is not yet installed<BR>";
+            $result_message = 'DomainMOD is not yet installed<BR>';
         } else {
             $installation_mode = 0;
             $result_message = '';
@@ -51,7 +51,7 @@ class System
             $sql = "UPDATE settings SET upgrade_available = '0'";
             mysqli_query($dbcon, $sql);
             $_SESSION['s_system_upgrade_available'] = '0';
-            $message = "No Upgrade Available";
+            $message = 'No Upgrade Available';
         }
         return $message;
     }
@@ -80,9 +80,9 @@ class System
                 href=\"http://domainmod.org/upgrade/\">Click here for upgrade instructions</a>.<BR>";
     }
 
-    public function pageTitle($software_title, $page_title)
+    public function pageTitle($page_title)
     {
-        return $software_title . " :: " . $page_title;
+        return SOFTWARE_TITLE . ' :: ' . $page_title;
     }
 
     public function checkExistingAssets($dbcon)
@@ -116,12 +116,12 @@ class System
         if (mysqli_num_rows($result) >= 1) { return $result; } else { return '0'; }
     }
 
-    public function authCheck($web_root)
+    public function authCheck()
     {
         if ($_SESSION['s_is_logged_in'] != 1) {
             $_SESSION['s_user_redirect'] = $_SERVER["REQUEST_URI"];
-            $_SESSION['s_message_danger'] .= "You must be logged in to access this area<BR>";
-            header("Location: " . $web_root . "/");
+            $_SESSION['s_message_danger'] .= 'You must be logged in to access this area<BR>';
+            header('Location: ' . WEB_ROOT . '/');
             exit;
         }
     }
@@ -131,7 +131,7 @@ class System
         if ($_SESSION['s_read_only'] == '1') {
             $_SESSION['s_message_danger'] .= "You are not authorized to perform that action<BR>";
             $temp_redirect_url = urlencode($redirect_url);
-            header("Location: " . $temp_redirect_url);
+            header('Location: ' . $temp_redirect_url);
             exit;
         }
     }
@@ -139,15 +139,15 @@ class System
     public function loginCheck()
     {
         if ($_SESSION['s_is_logged_in'] == 1) {
-            header("Location: " . $_SESSION['s_web_root'] . "/dashboard/");
+            header('Location: ' . WEB_ROOT . '/dashboard/');
             exit;
         }
     }
 
-    public function checkAdminUser($is_admin, $web_root)
+    public function checkAdminUser($is_admin)
     {
         if ($is_admin !== 1) {
-            header("Location: " . $web_root . "/invalid.php");
+            header('Location: ' . WEB_ROOT . "/invalid.php");
             exit;
         }
     }
