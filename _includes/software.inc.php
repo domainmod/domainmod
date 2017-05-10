@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/settings.inc.php
+ * /_includes/software.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2017 Greg Chetcuti <greg@chetcuti.com>

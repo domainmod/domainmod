@@ -34,7 +34,7 @@ $currency = new DomainMOD\Currency();
 
 require_once(DIR_INC . '/head.inc.php');
 require_once(DIR_INC . '/config.inc.php');
-require_once(DIR_INC . '/settings.inc.php');
+require_once(DIR_INC . '/software.inc.php');
 require_once(DIR_INC . '/settings/assets-registrar-fees.inc.php');
 require_once(DIR_INC . '/database.inc.php');
 
