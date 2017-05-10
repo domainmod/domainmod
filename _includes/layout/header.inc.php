@@ -229,7 +229,7 @@
       </form>
       <!-- /.search form -->
       <!-- sidebar menu: : style can be found in sidebar.less -->
-      <?php require_once(DIR_INC . 'layout/menu-main.inc.php'); ?>
+      <?php require_once(DIR_INC . '/layout/menu-main.inc.php'); ?>
     </section>
     <!-- /.sidebar -->
   </aside>
@@ -245,14 +245,14 @@
           <span class="visible-sm visible-md visible-lg">
               <?php
               $breadcrumb_position = 'left';
-              require_once(DIR_INC . 'layout/breadcrumbs.inc.php');
+              require_once(DIR_INC . '/layout/breadcrumbs.inc.php');
               ?>
           </span>
 
           <span class="visible-xs">
               <?php
               $breadcrumb_position = 'right';
-              require_once(DIR_INC . 'layout/breadcrumbs.inc.php');
+              require_once(DIR_INC . '/layout/breadcrumbs.inc.php');
               ?>
           </span>
           <BR>
@@ -264,7 +264,7 @@
 <?php */ ?>
 
         <?php
-        require_once(DIR_INC . 'layout/table-maintenance.inc.php');
+        require_once(DIR_INC . '/layout/table-maintenance.inc.php');
 
         if ($_SESSION['s_message_success'] != "") {
             echo $system->showMessageSuccess($_SESSION['s_message_success']);

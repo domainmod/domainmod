@@ -23,7 +23,7 @@
 require_once('../_includes/start-session.inc.php');
 require_once('../_includes/init.inc.php');
 
-require_once(DIR_ROOT . 'classes/Autoloader.php');
+require_once(DIR_ROOT . '/classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -31,11 +31,11 @@ $error = new DomainMOD\Error();
 $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 
-require_once(DIR_INC . 'head.inc.php');
-require_once(DIR_INC . 'config.inc.php');
-require_once(DIR_INC . 'software.inc.php');
-require_once(DIR_INC . 'settings/assets-ip-addresses.inc.php');
-require_once(DIR_INC . 'database.inc.php');
+require_once(DIR_INC . '/head.inc.php');
+require_once(DIR_INC . '/config.inc.php');
+require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings/assets-ip-addresses.inc.php');
+require_once(DIR_INC . '/database.inc.php');
 
 $system->authCheck($web_root);
 
@@ -162,14 +162,14 @@ if ($export_data == '1') {
 
 }
 ?>
-<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
+    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
 Below is a list of all the IP Addresses that are stored in <?php echo $software_title; ?>.<BR><BR>
 <a href="add/ip-address.php"><?php echo $layout->showButton('button', 'Add IP Address'); ?></a>&nbsp;&nbsp;&nbsp;
 <a href="ip-addresses.php?export_data=1"><?php echo $layout->showButton('button', 'Export'); ?></a><BR><BR><?php
@@ -268,7 +268,7 @@ if (mysqli_num_rows($result) > 0) { ?>
     <BR>You don't currently have any IP Addresses. <a href="add/ip-address.php">Click here to add one</a>.<?php
 
 } ?>
-<?php require_once(DIR_INC . 'layout/asset-footer.inc.php'); ?>
-<?php require_once(DIR_INC . 'layout/footer.inc.php'); //@formatter:on ?>
+<?php require_once(DIR_INC . '/layout/asset-footer.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/footer.inc.php'); //@formatter:on ?>
 </body>
 </html>

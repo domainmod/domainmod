@@ -247,11 +247,11 @@
 <!-- ./wrapper -->
 <?php $_SESSION['s_redirect'] = $_SERVER["REQUEST_URI"]; ?>
 <?php
-$full_filename = DIR_INC . "layout/footer.DEMO.inc.php";
+$full_filename = DIR_INC . '/layout/footer.DEMO.inc.php';
 
 if (file_exists($full_filename)) {
 
-    require_once(DIR_INC . 'layout/footer.DEMO.inc.php');
+    require_once(DIR_INC . '/layout/footer.DEMO.inc.php');
 
 }
 ?>

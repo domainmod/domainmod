@@ -23,7 +23,7 @@
 require_once('../../_includes/start-session.inc.php');
 require_once('../../_includes/init.inc.php');
 
-require_once(DIR_ROOT . 'classes/Autoloader.php');
+require_once(DIR_ROOT . '/classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -31,11 +31,11 @@ $layout = new DomainMOD\Layout();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 
-require_once(DIR_INC . 'head.inc.php');
-require_once(DIR_INC . 'config.inc.php');
-require_once(DIR_INC . 'software.inc.php');
-require_once(DIR_INC . 'settings/dw-main.inc.php');
-require_once(DIR_INC . 'database.inc.php');
+require_once(DIR_INC . '/head.inc.php');
+require_once(DIR_INC . '/config.inc.php');
+require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings/dw-main.inc.php');
+require_once(DIR_INC . '/database.inc.php');
 
 $system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
@@ -126,15 +126,15 @@ if ($action != "") {
 
 }
 ?>
-<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
+    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
     <?php echo $layout->jumpMenu(); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
 
 <?php
 $sql = "SELECT id
@@ -656,6 +656,6 @@ if (mysqli_num_rows($result) == 0) {
     }
 
 } ?>
-<?php require_once(DIR_INC . 'layout/footer.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/footer.inc.php'); ?>
 </body>
 </html>

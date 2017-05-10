@@ -23,29 +23,29 @@
 require_once('../../_includes/start-session.inc.php');
 require_once('../../_includes/init.inc.php');
 
-require_once(DIR_ROOT . 'classes/Autoloader.php');
+require_once(DIR_ROOT . '/classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
 $system = new DomainMOD\System();
 
-require_once(DIR_INC . 'head.inc.php');
-require_once(DIR_INC . 'config.inc.php');
-require_once(DIR_INC . 'software.inc.php');
-require_once(DIR_INC . 'settings/admin-info.inc.php');
-require_once(DIR_INC . 'database.inc.php');
+require_once(DIR_INC . '/head.inc.php');
+require_once(DIR_INC . '/config.inc.php');
+require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings/admin-info.inc.php');
+require_once(DIR_INC . '/database.inc.php');
 
 $system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 ?>
-<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
+    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
 
 <strong>Operating System:</strong> <?php echo php_uname(); ?><BR>
 <strong>Web Server:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?><BR>
@@ -53,6 +53,6 @@ $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
 <strong>MySQL:</strong> <?php echo mysqli_get_server_info($dbcon); ?><BR>
 <strong><?php echo $software_title; ?>:</strong> <?php echo $software_version; ?> (<em><?php echo $_SESSION['s_system_db_version']; ?></em>)<BR>
 
-<?php require_once(DIR_INC . 'layout/footer.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/footer.inc.php'); ?>
 </body>
 </html>

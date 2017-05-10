@@ -23,18 +23,18 @@
 require_once('../_includes/start-session.inc.php');
 require_once('../_includes/init.inc.php');
 
-require_once(DIR_ROOT . 'classes/Autoloader.php');
+require_once(DIR_ROOT . '/classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
 $layout = new DomainMOD\Layout();
 $form = new DomainMOD\Form();
 
-require_once(DIR_INC . 'head.inc.php');
-require_once(DIR_INC . 'config.inc.php');
-require_once(DIR_INC . 'software.inc.php');
-require_once(DIR_INC . 'settings/reporting-main.inc.php');
-require_once(DIR_INC . 'database.inc.php');
+require_once(DIR_INC . '/head.inc.php');
+require_once(DIR_INC . '/config.inc.php');
+require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings/reporting-main.inc.php');
+require_once(DIR_INC . '/database.inc.php');
 
 $system->authCheck($web_root);
 
@@ -42,14 +42,14 @@ $report = $_REQUEST['report'];
 
 echo $layout->jumpMenu();
 ?>
-<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
+    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
 Before running any reports you should <a href="<?php echo $web_root; ?>/maintenance/update-conversions.php">update the conversion rates</a>.
 
 <h3>Domain Reports</h3>
@@ -97,6 +97,6 @@ echo $form->showDropdownBottom('');
 echo $form->showFormBottom('');
 ?>
 
-<?php require_once(DIR_INC . 'layout/footer.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/footer.inc.php'); ?>
 </body>
 </html>

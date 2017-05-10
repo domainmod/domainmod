@@ -23,7 +23,7 @@
 require_once('../../_includes/start-session.inc.php');
 require_once('../../_includes/init.inc.php');
 
-require_once(DIR_ROOT . 'classes/Autoloader.php');
+require_once(DIR_ROOT . '/classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -35,11 +35,11 @@ $currency = new DomainMOD\Currency();
 $form = new DomainMOD\Form();
 $date = new DomainMOD\Date();
 
-require_once(DIR_INC . 'head.inc.php');
-require_once(DIR_INC . 'config.inc.php');
-require_once(DIR_INC . 'software.inc.php');
-require_once(DIR_INC . 'settings/reporting-domain-cost-by-dns.inc.php');
-require_once(DIR_INC . 'database.inc.php');
+require_once(DIR_INC . '/head.inc.php');
+require_once(DIR_INC . '/config.inc.php');
+require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings/reporting-domain-cost-by-dns.inc.php');
+require_once(DIR_INC . '/database.inc.php');
 
 $system->authCheck($web_root);
 
@@ -191,20 +191,20 @@ if ($submission_failed != '1' && $total_rows > 0) {
 
 }
 ?>
-<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
-    <?php require_once(DIR_INC . 'layout/date-range-picker-head.inc.php'); ?>
+    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
+    <?php require_once(DIR_INC . '/layout/date-range-picker-head.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
-<?php require_once(DIR_INC . 'layout/reporting-block.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/reporting-block.inc.php'); ?>
 <?php
 if ($submission_failed != '1' && $total_rows > 0) { ?>
 
-    <?php require_once(DIR_INC . 'layout/reporting-block-sub.inc.php'); ?>
+    <?php require_once(DIR_INC . '/layout/reporting-block-sub.inc.php'); ?>
 
     <table id="<?php echo $slug; ?>" class="<?php echo $datatable_class; ?>">
         <thead>
@@ -247,7 +247,7 @@ if ($submission_failed != '1' && $total_rows > 0) { ?>
 
 }
 ?>
-<?php require_once(DIR_INC . 'layout/footer.inc.php'); //@formatter:on ?>
-<?php require_once(DIR_INC . 'layout/date-range-picker-footer.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/footer.inc.php'); //@formatter:on ?>
+<?php require_once(DIR_INC . '/layout/date-range-picker-footer.inc.php'); ?>
 </body>
 </html>

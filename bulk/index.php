@@ -23,7 +23,7 @@
 require_once('../_includes/start-session.inc.php');
 require_once('../_includes/init.inc.php');
 
-require_once(DIR_ROOT . 'classes/Autoloader.php');
+require_once(DIR_ROOT . '/classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -39,11 +39,11 @@ $timestamp = $time->stamp();
 $timestamp_basic = $time->timeBasic();
 $timestamp_basic_plus_one_year = $time->timeBasicPlusYears(1);
 
-require_once(DIR_INC . 'head.inc.php');
-require_once(DIR_INC . 'config.inc.php');
-require_once(DIR_INC . 'software.inc.php');
-require_once(DIR_INC . 'settings/bulk-main.inc.php');
-require_once(DIR_INC . 'database.inc.php');
+require_once(DIR_INC . '/head.inc.php');
+require_once(DIR_INC . '/config.inc.php');
+require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings/bulk-main.inc.php');
+require_once(DIR_INC . '/database.inc.php');
 
 $system->authCheck($web_root);
 $system->readOnlyCheck($_SERVER['HTTP_REFERER']);
@@ -1445,11 +1445,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 ?>
-<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
+    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
     <?php echo $layout->jumpMenu(); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
@@ -1484,7 +1484,7 @@ if ($breadcrumb_text != '') {
 } //@formatter:on
 ?>
 
-<?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
 The Bulk Updater allows you add or modify multiple domains at the same time, whether it's a couple dozen or a couple thousand, all with a few clicks.<BR>
 <?php if ($done == "1") { ?>
 
@@ -2274,6 +2274,6 @@ if (($action != "" && $action != "UCF") || ($action == "UCF" && $type_id != ""))
 echo $form->showFormBottom('');
 ?>
 
-<?php require_once(DIR_INC . 'layout/footer.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/footer.inc.php'); ?>
 </body>
 </html>

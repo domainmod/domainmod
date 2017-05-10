@@ -23,7 +23,7 @@
 require_once('../../_includes/start-session.inc.php');
 require_once('../../_includes/init.inc.php');
 
-require_once(DIR_ROOT . 'classes/Autoloader.php');
+require_once(DIR_ROOT . '/classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $error = new DomainMOD\Error();
@@ -31,11 +31,11 @@ $system = new DomainMOD\System();
 $form = new DomainMOD\Form();
 $time = new DomainMOD\Time();
 
-require_once(DIR_INC . 'head.inc.php');
-require_once(DIR_INC . 'config.inc.php');
-require_once(DIR_INC . 'software.inc.php');
-require_once(DIR_INC . 'settings/admin-defaults.inc.php');
-require_once(DIR_INC . 'database.inc.php');
+require_once(DIR_INC . '/head.inc.php');
+require_once(DIR_INC . '/config.inc.php');
+require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/settings/admin-defaults.inc.php');
+require_once(DIR_INC . '/database.inc.php');
 
 $system->authCheck($web_root);
 $system->checkAdminUser($_SESSION['s_is_admin'], $web_root);
@@ -107,14 +107,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 ?>
-<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
     <title><?php echo $system->pageTitle($software_title, $page_title); ?></title>
-    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
+    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
-<?php require_once(DIR_INC . 'layout/header.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/header.inc.php'); ?>
 
 <h3>Domain Defaults</h3><?php
 
@@ -262,6 +262,6 @@ echo $form->showSubmitButton('Update System Defaults', '<BR>', '');
 echo $form->showFormBottom('');
 ?>
 
-<?php require_once(DIR_INC . 'layout/footer.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/footer.inc.php'); ?>
 </body>
 </html>

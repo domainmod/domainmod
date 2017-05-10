@@ -23,7 +23,7 @@
 require_once('_includes/start-session.inc.php');
 require_once('_includes/init.inc.php');
 
-require_once(DIR_ROOT . 'classes/Autoloader.php');
+require_once(DIR_ROOT . '/classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
 $system = new DomainMOD\System();
@@ -33,11 +33,11 @@ $login = new DomainMOD\Login();
 $time = new DomainMOD\Time();
 $form = new DomainMOD\Form();
 
-require_once(DIR_INC . 'head.inc.php');
-require_once(DIR_INC . 'config.inc.php');
-require_once(DIR_INC . 'config-demo.inc.php');
-require_once(DIR_INC . 'software.inc.php');
-require_once(DIR_INC . 'database.inc.php');
+require_once(DIR_INC . '/head.inc.php');
+require_once(DIR_INC . '/config.inc.php');
+require_once(DIR_INC . '/config-demo.inc.php');
+require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/database.inc.php');
 
 $system->loginCheck();
 
@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $new_username != "" && $new_password
 }
 $new_password = "";
 ?>
-<?php require_once(DIR_INC . 'doctype.inc.php'); ?>
+<?php require_once(DIR_INC . '/doctype.inc.php'); ?>
 <html>
 <head>
     <?php
@@ -160,7 +160,7 @@ $new_password = "";
     } else { ?>
         <title><?php echo $software_title; ?></title><?php
     } ?>
-    <?php require_once(DIR_INC . 'layout/head-tags.inc.php'); ?>
+    <?php require_once(DIR_INC . '/layout/head-tags.inc.php'); ?>
 </head>
 <?php
 if ($new_username == "") { ?>
@@ -172,7 +172,7 @@ if ($new_username == "") { ?>
     <body class="hold-transition skin-red" onLoad="document.forms[0].elements[1].focus()"><?php
 
 } ?>
-<?php require_once(DIR_INC . 'layout/header-login.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/header-login.inc.php'); ?>
 <?php
 if ($_SESSION['s_installation_mode'] == '0') {
 
@@ -203,6 +203,6 @@ if ($_SESSION['s_installation_mode'] == '0') {
 
 }
 ?>
-<?php require_once(DIR_INC . 'layout/footer-login.inc.php'); ?>
+<?php require_once(DIR_INC . '/layout/footer-login.inc.php'); ?>
 </body>
 </html>

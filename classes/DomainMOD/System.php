@@ -26,7 +26,7 @@ class System
 
     public function installCheck($dbcon)
     {
-        $full_install_path = DIR_ROOT . "install/";
+        $full_install_path = DIR_ROOT . '/install/';
         $result = mysqli_query($dbcon, "SHOW TABLES LIKE 'settings'");
         $is_installed = mysqli_num_rows($result) > 0;
         if (is_dir($full_install_path) && $is_installed != '1') {

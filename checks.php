@@ -23,10 +23,10 @@
 require_once('_includes/start-session.inc.php');
 require_once('_includes/init.inc.php');
 
-require_once(DIR_ROOT . 'classes/Autoloader.php');
+require_once(DIR_ROOT . '/classes/Autoloader.php');
 spl_autoload_register('DomainMOD\Autoloader::classAutoloader');
 
-require_once(DIR_ROOT . 'vendor/autoload.php');
+require_once(DIR_ROOT . '/vendor/autoload.php');
 
 $system = new DomainMOD\System();
 $error = new DomainMOD\Error();
@@ -35,10 +35,10 @@ $login = new DomainMOD\Login();
 $time = new DomainMOD\Time();
 $log = new DomainMOD\Log();
 
-require_once(DIR_INC . 'head.inc.php');
-require_once(DIR_INC . 'config.inc.php');
-require_once(DIR_INC . 'software.inc.php');
-require_once(DIR_INC . 'database.inc.php');
+require_once(DIR_INC . '/head.inc.php');
+require_once(DIR_INC . '/config.inc.php');
+require_once(DIR_INC . '/software.inc.php');
+require_once(DIR_INC . '/database.inc.php');
 
 $system->authCheck($web_root);
 
@@ -57,7 +57,7 @@ if ($_SESSION['s_system_db_version'] !== $software_version && $upgrade_approved 
 
 } elseif ($_SESSION['s_system_db_version'] !== $software_version && $upgrade_approved == '1') {
 
-    require_once(DIR_INC . 'update.inc.php');
+    require_once(DIR_INC . '/update.inc.php');
 
 }
 
