@@ -1,6 +1,6 @@
 <?php
 /**
- * /_includes/software.inc.php
+ * /_includes/settings.inc.php
  *
  * This file is part of DomainMOD, an open source domain and internet asset manager.
  * Copyright (c) 2010-2017 Greg Chetcuti <greg@chetcuti.com>
@@ -20,7 +20,6 @@
  */
 ?>
 <?php
-$software_title = 'DomainMOD';
-$code_home_url = 'https://domainmod.org';
-$software_version = '4.03.002';
-$_SESSION['s_web_root'] = $web_root;
+define('SOFTWARE_TITLE', 'DomainMOD');
+define('SOFTWARE_VERSION', '4.03.003');
+define('WEB_ROOT', $web_root);
